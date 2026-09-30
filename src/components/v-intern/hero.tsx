@@ -7,39 +7,39 @@ import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
 
 const SIDEBAR_ITEMS = [
-  { label: "Dashboard", icon: LayoutDashboard, active: true },
-  { label: "My Tasks", icon: ListTodo, active: false },
+  { label: "Bảng điều khiển", icon: LayoutDashboard, active: true },
+  { label: "Nhiệm vụ của tôi", icon: ListTodo, active: false },
   { label: "Sprint", icon: CalendarDays, active: false },
-  { label: "Project", icon: FolderKanban, active: false },
+  { label: "Dự án", icon: FolderKanban, active: false },
   { label: "AI Mentor", icon: Bot, active: false },
-  { label: "Performance", icon: TrendingUp, active: false },
-  { label: "Settings", icon: Settings, active: false },
+  { label: "Hiệu suất", icon: TrendingUp, active: false },
+  { label: "Cài đặt", icon: Settings, active: false },
 ];
 
 const KANBAN_COLUMNS = [
   {
-    title: "To Do",
+    title: "Cần làm",
     dot: "bg-red-500",
     tasks: [
-      { code: "PRO-100", name: "Integrate Login API", due: "Due in 2 days" },
-      { code: "PRO-104", name: "Form Validation", due: "Due in 3 days" },
-      { code: "PRO-108", name: "Error Handling", due: "Due in 5 days" },
+      { code: "PRO-100", name: "Tích hợp API đăng nhập", due: "Còn 2 ngày" },
+      { code: "PRO-104", name: "Kiểm tra form", due: "Còn 3 ngày" },
+      { code: "PRO-108", name: "Xử lý lỗi", due: "Còn 5 ngày" },
     ],
   },
   {
-    title: "In Progress",
+    title: "Đang làm",
     dot: "bg-blue-500",
     tasks: [
-      { code: "PRO-102", name: "Setup Project", due: "Due tomorrow" },
-      { code: "PRO-105", name: "UI Components", due: "Due in 4 days" },
+      { code: "PRO-102", name: "Thiết lập dự án", due: "Hạn ngày mai" },
+      { code: "PRO-105", name: "Component UI", due: "Còn 4 ngày" },
     ],
   },
   {
-    title: "Review",
+    title: "Chờ đánh giá",
     dot: "bg-amber-500",
     tasks: [
-      { code: "PRO-101", name: "Register Flow", due: "Due in 2 days" },
-      { code: "PRO-107", name: "Payment Integration", due: "Due in 6 days" },
+      { code: "PRO-101", name: "Luồng đăng ký", due: "Còn 2 ngày" },
+      { code: "PRO-107", name: "Tích hợp thanh toán", due: "Còn 6 ngày" },
     ],
   },
 ];
@@ -81,15 +81,15 @@ function DashboardMockup() {
         {/* Main area */}
         <div className="min-w-0 flex-1 bg-[#F7F9FE] p-4 sm:p-5">
           <p className="truncate text-sm font-bold text-navy sm:text-base">
-            Good morning, Nguyễn Văn A 👋
+            Chào buổi sáng, Nguyễn Văn A 👋
           </p>
           <p className="mt-0.5 truncate text-[11px] text-slate-500 sm:text-xs">
-            Frontend Developer · Intern · Sprint 02
+            Lập trình viên Frontend · Thực tập sinh · Sprint 02
           </p>
 
           <div className="mt-4">
             <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
-              <span>Sprint Progress</span>
+              <span>Tiến độ Sprint</span>
               <span className="text-blue-600">70%</span>
             </div>
             <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-blue-100">
@@ -163,15 +163,15 @@ export function Hero() {
           <FadeIn>
             <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold text-blue-700">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-              AI-Powered Virtual Internship Platform
+              Nền tảng thực tập ảo ứng dụng AI
             </span>
 
             <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
-              Real Skills.
+              Kỹ năng thật.
               <br />
-              Real Projects.
+              Dự án thật.
               <br />
-              <span className="text-blue-600">Your Future.</span>
+              <span className="text-blue-600">Tương lai của bạn.</span>
             </h1>
 
             <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 md:text-lg">
@@ -203,24 +203,24 @@ export function Hero() {
               <DashboardMockup />
             </div>
 
-            {/* Floating card: AI Review — nhích lên trên để không che dòng chào */}
+            {/* Floating card: Đánh giá AI — nhích lên trên để không che dòng chào */}
             <div className="absolute -top-6 right-0 hidden animate-float items-center gap-3 rounded-2xl bg-white p-3.5 shadow-xl shadow-blue-900/10 ring-1 ring-slate-900/5 sm:flex md:-top-16 md:-right-2">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-100">
                 <Sparkles className="h-5 w-5 text-violet-600" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-navy">AI Review</p>
+                <p className="text-xs font-bold text-navy">Đánh giá AI</p>
                 <p className="truncate text-[11px] text-slate-500">
-                  Task PRO-100 has been reviewed
+                  Nhiệm vụ PRO-100 đã được đánh giá
                 </p>
-                <p className="text-[11px] font-bold text-blue-600">Score: 82/100</p>
+                <p className="text-[11px] font-bold text-blue-600">Điểm: 82/100</p>
               </div>
             </div>
 
-            {/* Floating card: Your Progress */}
+            {/* Floating card: Tiến độ của bạn */}
             <div className="absolute -bottom-8 right-2 hidden animate-float-delayed rounded-2xl bg-white p-4 shadow-xl shadow-blue-900/10 ring-1 ring-slate-900/5 sm:block md:right-6">
               <p className="text-[11px] font-semibold text-slate-500">
-                Your Progress
+                Tiến độ của bạn
               </p>
               <p className="mt-0.5 text-2xl font-extrabold text-blue-600">
                 82<span className="text-base font-bold text-slate-400">/100</span>
@@ -246,7 +246,7 @@ export function Hero() {
                 priority
               />
               <span className="mb-10 rounded-2xl rounded-bl-md bg-white px-4 py-2.5 text-xs font-semibold text-blue-600 shadow-lg shadow-blue-900/10 ring-1 ring-slate-900/5">
-                Let&apos;s build your future!
+                Cùng xây dựng tương lai nhé!
               </span>
             </div>
           </FadeIn>

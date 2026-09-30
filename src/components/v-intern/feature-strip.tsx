@@ -4,22 +4,22 @@ import type { LucideIcon } from "lucide-react";
 const FEATURES: { icon: LucideIcon; title: string; subtitle: string }[] = [
   {
     icon: UserSearch,
-    title: "AI Interview",
+    title: "Phỏng vấn AI",
     subtitle: "Tuyển dụng thông minh",
   },
   {
     icon: Building2,
-    title: "Real Projects",
+    title: "Dự án thực tế",
     subtitle: "Dự án từ doanh nghiệp",
   },
   {
     icon: Bot,
-    title: "AI Mentor & Review",
+    title: "AI Mentor & Đánh giá",
     subtitle: "Hỗ trợ 24/7",
   },
   {
     icon: Award,
-    title: "Certificate",
+    title: "Chứng nhận",
     subtitle: "Công nhận năng lực",
   },
 ];

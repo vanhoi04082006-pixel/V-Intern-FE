@@ -5,10 +5,10 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 
 const NAV_LINKS = [
-  { label: "Platform", href: "#platform" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "For Students", href: "#for-students" },
-  { label: "For Instructors", href: "#for-instructors" },
+  { label: "Nền tảng", href: "#platform" },
+  { label: "Cách hoạt động", href: "#how-it-works" },
+  { label: "Dành cho sinh viên", href: "#for-students" },
+  { label: "Dành cho giảng viên", href: "#for-instructors" },
 ];
 
 export function Navbar() {
@@ -48,7 +48,7 @@ export function Navbar() {
             href="#platform"
             className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
           >
-            Get started
+            Bắt đầu
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </div>
@@ -93,7 +93,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className="inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-blue-600 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
-              Get started
+              Bắt đầu
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
           </div>

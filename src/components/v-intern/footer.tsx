@@ -23,9 +23,9 @@ const LINK_COLUMNS: FooterColumn[] = [
     heading: "Sản phẩm",
     links: [
       { label: "Nền tảng V-Intern", href: "#platform" },
-      { label: "Phòng vấn AI", href: "#how-it-works" },
+      { label: "Phỏng vấn AI", href: "#how-it-works" },
       { label: "Dự án thực tế", href: "#workflow" },
-      { label: "AI Mentor & Review", href: "#how-it-works" },
+      { label: "AI Mentor & Đánh giá", href: "#how-it-works" },
       { label: "Chứng nhận", href: "#workflow" },
       { label: "Bảng giá", href: null },
     ],
