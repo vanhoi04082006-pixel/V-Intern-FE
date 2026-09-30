@@ -148,7 +148,7 @@ function Scorecard() {
           Đạt yêu cầu — vào thẳng vòng dự án
         </p>
         <p className="ml-auto font-mono text-[10px] leading-none text-slate-400 tabular-nums">
-          Top 18% thí sinh
+          Nhóm 18% cao nhất
         </p>
       </div>
     </div>
@@ -190,7 +190,7 @@ function Repository() {
           v-intern/onboarding
         </span>
         <span className="ml-auto shrink-0 rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[9px] leading-none text-slate-500">
-          Private
+          Riêng tư
         </span>
       </div>
 
@@ -200,7 +200,7 @@ function Repository() {
         </span>
         <Flame className="h-3 w-3 shrink-0 text-blue-600" aria-hidden="true" />
         <span className="font-mono text-[10px] leading-none text-slate-400">
-          streak 6 tuần
+          chuỗi hoạt động 6 tuần
         </span>
       </div>
 
@@ -277,10 +277,10 @@ function Burndown() {
     <div className="mt-4">
       <div className="flex items-baseline justify-between">
         <p className="font-mono text-[10px] leading-none text-slate-400">
-          Burndown
+          Công việc còn lại
         </p>
         <p className="text-[10px] font-semibold leading-none text-blue-700">
-          còn 9/24 task
+          còn 9/24 nhiệm vụ
         </p>
       </div>
       <svg
@@ -341,9 +341,9 @@ function Burndown() {
         className="mt-1 flex justify-between px-[3%] font-mono text-[9px] leading-none text-slate-400"
         aria-hidden="true"
       >
-        <span>D1</span>
-        <span>D7</span>
-        <span>D14</span>
+        <span>N1</span>
+        <span>N7</span>
+        <span>N14</span>
       </div>
     </div>
   );
@@ -425,7 +425,7 @@ function SprintBoard() {
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <p className="text-[11px] font-bold text-navy">Sprint 08 · Onboarding</p>
+        <p className="text-[11px] font-bold text-navy">Sprint 08 · Hội nhập</p>
         <p className="font-mono text-[10px] text-slate-400 tabular-nums">
           Ngày 7/14 · 62%
         </p>
@@ -441,9 +441,9 @@ function SprintBoard() {
       </div>
 
       <div className="mt-3.5 grid grid-cols-3 gap-2.5">
-        <BoardColumn title="Todo" count={2} variant="todo" />
-        <BoardColumn title="Doing" count={2} variant="doing" />
-        <BoardColumn title="Done" count={5} variant="done" />
+        <BoardColumn title="Cần làm" count={2} variant="todo" />
+        <BoardColumn title="Đang làm" count={2} variant="doing" />
+        <BoardColumn title="Hoàn thành" count={5} variant="done" />
       </div>
 
       <Burndown />
@@ -525,7 +525,7 @@ function Commit() {
             aria-hidden="true"
           />
           <span className="text-[9px] font-medium leading-none text-emerald-700">
-            Verified
+            Đã xác minh
           </span>
         </span>
       </div>
@@ -541,7 +541,7 @@ function Commit() {
         </p>
         <p className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium leading-none text-emerald-700">
           <CircleCheck className="h-3.5 w-3.5" aria-hidden="true" />
-          24/24 test pass
+          24/24 kiểm thử đạt
         </p>
       </div>
 
@@ -606,7 +606,7 @@ function PullRequest() {
         ))}
       </ul>
       <p className="mt-2 font-mono text-[10px] leading-none text-slate-400">
-        3/3 checks passed
+        3/3 kiểm tra đạt
       </p>
 
       <div className="mt-3 flex items-center gap-2">
@@ -684,10 +684,10 @@ function ReviewReport() {
         </span>
         <div className="min-w-0">
           <p className="text-[11px] font-bold leading-none text-navy">
-            V-Intern AI Review
+            Đánh giá AI của V-Intern
           </p>
           <p className="mt-1 font-mono text-[10px] leading-none text-slate-400">
-            Rubric v3 · tự động 100%
+            Khung đánh giá v3 · tự động 100%
           </p>
         </div>
         <span className="ml-auto shrink-0 rounded-full bg-blue-50 px-2 py-1 font-mono text-[10px] font-semibold text-blue-700 tabular-nums">
@@ -836,13 +836,13 @@ function Certificate() {
           V-Intern
         </p>
         <p className="mt-2 text-[13px] font-bold leading-tight text-navy">
-          Certificate of Completion
+          Chứng nhận hoàn thành
         </p>
         <p className="mt-2.5 font-handwriting text-2xl leading-none text-blue-600">
           Nguyễn Văn A
         </p>
         <p className="mt-1.5 text-[10px] text-slate-500">
-          Virtual Internship · Fullstack Track
+          Thực tập ảo · Lộ trình Fullstack
         </p>
       </div>
 
@@ -889,7 +889,7 @@ function Certificate() {
 const STEPS: Step[] = [
   {
     icon: UserSearch,
-    name: "Interview",
+    name: "Phỏng vấn",
     summary: "Phỏng vấn bởi AI",
     phase: "Bắt đầu",
     range: "01–02",
@@ -900,23 +900,23 @@ const STEPS: Step[] = [
       "Trả lời câu hỏi phỏng vấn và câu hỏi tình huống",
     ],
     gets: "Điểm năng lực kèm nhận xét chi tiết từ AI",
-    artifact: "scorecard",
+    artifact: "Phiếu điểm",
     preview: <Scorecard />,
   },
   {
     icon: FolderOpen,
-    name: "Project",
+    name: "Dự án",
     summary: "Chọn dự án thật",
     phase: "Bắt đầu",
     range: "01–02",
     detail:
-      "Chọn một dự án đang mở từ doanh nghiệp đối tác, đọc đặc tả và làm quen codebase trước khi viết dòng đầu tiên.",
+      "Chọn một dự án đang mở từ doanh nghiệp đối tác, đọc đặc tả và làm quen với mã nguồn hiện có trước khi viết dòng đầu tiên.",
     does: [
       "Duyệt danh sách dự án đang tuyển người",
       "Đọc đặc tả và tiêu chí nghiệm thu",
     ],
     gets: "Repository riêng cùng người hướng dẫn phía doanh nghiệp",
-    artifact: "repository",
+    artifact: "Repository",
     preview: <Repository />,
   },
   {
@@ -926,60 +926,60 @@ const STEPS: Step[] = [
     phase: "Thực chiến",
     range: "03–05",
     detail:
-      "Công việc được chia thành sprint hai tuần. Bạn họp điểm danh, cập nhật tiến độ và trao đổi với các thành viên khác trong team.",
+      "Công việc được chia thành sprint hai tuần. Bạn họp điểm danh, cập nhật tiến độ và trao đổi với các thành viên khác trong nhóm.",
     does: [
-      "Lập kế hoạch sprint cùng team",
+      "Lập kế hoạch sprint cùng nhóm",
       "Cập nhật tiến độ mỗi ngày làm việc",
     ],
     gets: "Bảng theo dõi sprint và KPI cá nhân",
-    artifact: "sprint board",
+    artifact: "Bảng sprint",
     preview: <SprintBoard />,
   },
   {
     icon: Code2,
-    name: "Task",
+    name: "Nhiệm vụ",
     summary: "Nhận và hoàn thành nhiệm vụ",
     phase: "Thực chiến",
     range: "03–05",
     detail:
-      "Nhận task từ backlog, viết code, chạy test và mở pull request kèm mô tả rõ thay đổi.",
-    does: ["Nhận task từ backlog và viết test", "Commit theo từng thay đổi nhỏ"],
+      "Nhận nhiệm vụ từ danh sách việc cần làm, lập trình, chạy kiểm thử và mở pull request kèm mô tả rõ thay đổi.",
+    does: ["Nhận nhiệm vụ từ danh sách việc cần làm và viết kiểm thử", "Commit theo từng thay đổi nhỏ"],
     gets: "Pull request đã qua kiểm tra tự động",
-    artifact: "commit",
+    artifact: "Commit",
     preview: <Commit />,
   },
   {
     icon: GitPullRequest,
     name: "PR",
-    summary: "Gửi mã nguồn để review",
+    summary: "Gửi mã nguồn để đánh giá",
     phase: "Thực chiến",
     range: "03–05",
     detail:
-      "Mã nguồn của bạn được review, thảo luận rồi merge vào nhánh chính. Mọi ý kiến đều nằm lại trong lịch sử pull request.",
-    does: ["Trả lời comment của reviewer", "Sửa và push lại khi được yêu cầu"],
+      "Mã nguồn của bạn được đánh giá, thảo luận rồi merge vào nhánh chính. Mọi ý kiến đều nằm lại trong lịch sử pull request.",
+    does: ["Trả lời bình luận của người đánh giá", "Sửa và push lại khi được yêu cầu"],
     gets: "Pull request đã merge vào nhánh chính",
-    artifact: "pull request",
+    artifact: "Pull request",
     preview: <PullRequest />,
   },
   {
     icon: Bot,
-    name: "AI Review",
-    summary: "Đánh giá theo rubric",
+    name: "Đánh giá AI",
+    summary: "Đánh giá theo khung tiêu chí",
     phase: "Công nhận",
     range: "06–07",
     detail:
-      "AI đọc từng dòng code theo rubric của dự án, chấm điểm và góp ý cụ thể kèm ví dụ sửa.",
+      "AI đọc từng dòng mã nguồn theo khung tiêu chí của dự án, chấm điểm và góp ý cụ thể kèm ví dụ sửa.",
     does: [
-      "Đọc nhận xét và sửa code lần hai",
-      "Đối chiếu điểm qua từng vòng review",
+      "Đọc nhận xét và chỉnh sửa mã lần hai",
+      "Đối chiếu điểm qua từng vòng đánh giá",
     ],
     gets: "Báo cáo đánh giá theo từng tiêu chí",
-    artifact: "review report",
+    artifact: "Báo cáo đánh giá",
     preview: <ReviewReport />,
   },
   {
     icon: Award,
-    name: "Certificate",
+    name: "Chứng nhận",
     summary: "Nhận chứng nhận",
     phase: "Công nhận",
     range: "06–07",
@@ -987,7 +987,7 @@ const STEPS: Step[] = [
       "Khi mọi nhiệm vụ đã merge và điểm đạt ngưỡng, bạn nhận chứng nhận ghi tên kèm mã xác minh công khai.",
     does: ["Hoàn thành các nhiệm vụ còn lại", "Xác nhận thông tin trong hồ sơ"],
     gets: "Chứng nhận có mã xác minh để chia sẻ",
-    artifact: "certificate",
+    artifact: "Chứng nhận",
     preview: <Certificate />,
   },
 ];
@@ -1072,7 +1072,7 @@ export function Workflow() {
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <FadeIn>
           <SectionHeading
-            title="Virtual Internship Workflow"
+            title="Quy trình thực tập ảo"
             subtitle="Bảy bước, từ lúc bạn bước vào phòng phỏng vấn đến ngày nhận chứng nhận."
           />
         </FadeIn>

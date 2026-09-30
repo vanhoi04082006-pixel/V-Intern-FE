@@ -9,27 +9,27 @@ import { FadeIn } from "@/components/v-intern/reveal";
 const STEPS: { icon: LucideIcon; title: string; description: string }[] = [
   {
     icon: UserSearch,
-    title: "AI Recruitment",
+    title: "Tuyển dụng AI",
     description: "Phỏng vấn AI, đánh giá năng lực và phản hồi tự động.",
   },
   {
     icon: Building2,
-    title: "Virtual Workplace",
+    title: "Môi trường làm việc ảo",
     description: "Làm việc trong môi trường công ty ảo chuyên nghiệp.",
   },
   {
     icon: Code2,
-    title: "Real Tasks",
+    title: "Nhiệm vụ thực tế",
     description: "Thực hiện các tác vụ thực tế từ doanh nghiệp.",
   },
   {
     icon: Bot,
-    title: "AI Review",
+    title: "Đánh giá AI",
     description: "Đồng nghiệp AI đánh giá, nhận phản hồi chi tiết và cải thiện.",
   },
   {
     icon: BadgeCheck,
-    title: "Performance",
+    title: "Hiệu suất",
     description: "Theo dõi tiến độ, KPI và nhận chứng nhận hoàn thành.",
   },
 ];
@@ -44,7 +44,7 @@ export function HowItWorks() {
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <FadeIn>
           <SectionHeading
-            title="How V-Intern Works"
+            title="Cách V-Intern hoạt động"
             subtitle="Từ phỏng vấn AI đến chứng nhận hoàn thành, V-Intern mô phỏng toàn bộ quy trình thực tập chuyên nghiệp trong môi trường doanh nghiệp."
           />
         </FadeIn>
