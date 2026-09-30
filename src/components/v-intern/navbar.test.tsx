@@ -11,8 +11,8 @@ describe("Navbar", () => {
       "href",
       "#platform"
     );
-    expect(screen.getByRole("link", { name: "Platform" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "For Instructors" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Nền tảng" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Dành cho giảng viên" })).toBeInTheDocument();
   });
 
   it("mobile menu đóng mặc định", () => {
@@ -38,7 +38,7 @@ describe("Navbar", () => {
     const menu = document.getElementById("mobile-menu");
     expect(menu).not.toBeNull();
     expect(
-      within(menu as HTMLElement).getByRole("link", { name: "For Students" })
+      within(menu as HTMLElement).getByRole("link", { name: "Dành cho sinh viên" })
     ).toBeInTheDocument();
   });
 
@@ -56,5 +56,12 @@ describe("Navbar", () => {
     render(<Navbar />);
 
     expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
+  });
+
+  it("CTA đã Việt hóa: có 'Bắt đầu', không còn 'Get started' (regression i18n)", () => {
+    render(<Navbar />);
+
+    expect(screen.getAllByRole("link", { name: "Bắt đầu" }).length).toBeGreaterThan(0);
+    expect(screen.queryByText("Get started")).not.toBeInTheDocument();
   });
 });

@@ -42,7 +42,7 @@ const AUDIENCES: Audience[] = [
       "Trải nghiệm quy trình làm việc thực tế, học hỏi kỹ năng chuyên môn và mềm, được hỗ trợ bởi AI Mentor và kết nối với cộng đồng.",
     checklist: [
       "Thực hành trên các dự án thực tế",
-      "Nhận phản hồi từ AI và Mentor",
+      "Nhận phản hồi từ AI và người hướng dẫn",
       "Theo dõi tiến độ và KPI cá nhân",
       "Nhận chứng nhận hoàn thành",
     ],
@@ -51,7 +51,7 @@ const AUDIENCES: Audience[] = [
     imageAlt: "Sinh viên thực tập ảo đang làm việc với laptop và tai nghe",
     visualBasis: "md:basis-[52%]",
     imagePositionClass: "bottom-0 right-0 max-h-[64%] max-w-full sm:max-h-[72%]",
-    scriptLines: ["Learn", "Build", "Grow"],
+    scriptLines: ["Học", "Làm", "Vươn xa"],
     scriptIndents: [0, 16, 34],
     scriptColor: "text-blue-600",
     scriptWrapClass: "left-1 top-3 -rotate-6 sm:left-7 sm:top-5",
@@ -68,7 +68,7 @@ const AUDIENCES: Audience[] = [
     description:
       "Tạo và quản lý các đợt thực tập, theo dõi tiến độ sinh viên, đánh giá năng lực và xuất báo cáo chi tiết, trực quan.",
     checklist: [
-      "Quản lý dự án, task, sprint",
+      "Quản lý dự án, nhiệm vụ, sprint",
       "Theo dõi tiến độ và hiệu suất sinh viên",
       "Đánh giá và phê duyệt kết quả",
       "Báo cáo và thống kê tự động",
@@ -78,7 +78,7 @@ const AUDIENCES: Audience[] = [
     imageAlt: "Giảng viên quản lý lớp thực tập ảo trên tablet",
     visualBasis: "md:basis-[46%]",
     imagePositionClass: "bottom-0 right-0 max-h-[56%] max-w-full sm:max-h-[66%]",
-    scriptLines: ["Better", "Students", "Better", "Future"],
+    scriptLines: ["Sinh viên", "tốt hơn", "Tương lai", "rộng hơn"],
     scriptIndents: [0, 14, 6, 20],
     scriptColor: "text-violet-600",
     scriptWrapClass: "right-2 top-3 rotate-2 sm:right-4 sm:top-4",

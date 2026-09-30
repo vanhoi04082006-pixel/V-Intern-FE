@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "V-Intern - Nền tảng thực tập ảo với AI",
     description:
-      "Real Skills. Real Projects. Your Future. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
+      "Kỹ năng thật. Dự án thật. Tương lai của bạn. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
     siteName: "V-Intern",
     type: "website",
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "V-Intern - Nền tảng thực tập ảo với AI",
     description:
-      "Real Skills. Real Projects. Your Future. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
+      "Kỹ năng thật. Dự án thật. Tương lai của bạn. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
   },
 };
 
