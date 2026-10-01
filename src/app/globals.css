@@ -5,6 +5,7 @@
 
 @theme {
   --color-navy: #16243e;
+  --color-brand: #0c67ed;
   --font-handwriting: var(--font-caveat), cursive;
 }
 
