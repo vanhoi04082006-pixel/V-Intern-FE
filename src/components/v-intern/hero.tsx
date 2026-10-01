@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Bot, CalendarDays, FolderKanban, LayoutDashboard, ListTodo, Settings, Sparkles, TrendingUp } from "lucide-react";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
@@ -181,13 +182,13 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <a
-                href="#for-students"
+              <Link
+                href="/login"
                 className="inline-flex h-12 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-700"
               >
                 Bắt đầu ngay
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </a>
+              </Link>
               <a
                 href="#how-it-works"
                 className="inline-flex h-12 items-center rounded-lg border border-slate-300 bg-white px-6 text-sm font-semibold text-slate-700 transition-colors hover:border-blue-300 hover:text-blue-600"

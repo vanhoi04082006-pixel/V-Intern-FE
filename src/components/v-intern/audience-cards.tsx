@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -18,6 +19,7 @@ type Audience = {
   description: string;
   checklist: string[];
   cta: string;
+  ctaHref: string;
   image: string;
   imageAlt: string;
   visualBasis: string;
@@ -47,6 +49,7 @@ const AUDIENCES: Audience[] = [
       "Nhận chứng nhận hoàn thành",
     ],
     cta: "Bắt đầu hành trình của bạn",
+    ctaHref: "/login",
     image: "/images/student-v2.png",
     imageAlt: "Sinh viên thực tập ảo đang làm việc với laptop và tai nghe",
     visualBasis: "md:basis-[52%]",
@@ -74,6 +77,7 @@ const AUDIENCES: Audience[] = [
       "Báo cáo và thống kê tự động",
     ],
     cta: "Khám phá tính năng",
+    ctaHref: "#platform",
     image: "/images/instructor-v3.png",
     imageAlt: "Giảng viên quản lý lớp thực tập ảo trên tablet",
     visualBasis: "md:basis-[46%]",
@@ -161,13 +165,13 @@ function AudienceCard({ audience }: { audience: Audience }) {
           ))}
         </ul>
 
-        <a
-          href="#platform"
+        <Link
+          href={audience.ctaHref}
           className={`mt-7 inline-flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-semibold text-white shadow-lg transition-colors ${audience.buttonColor}`}
         >
           {audience.cta}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </a>
+        </Link>
       </div>
 
       <div
