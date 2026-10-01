@@ -64,4 +64,28 @@ describe("Navbar", () => {
     expect(screen.getAllByRole("link", { name: "Bắt đầu" }).length).toBeGreaterThan(0);
     expect(screen.queryByText("Get started")).not.toBeInTheDocument();
   });
+
+  it("CTA 'Bắt đầu' desktop + mobile đều dẫn tới /login", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    // Desktop: menu đóng → chỉ CTA desktop trong DOM
+    expect(screen.getByRole("link", { name: "Bắt đầu" })).toHaveAttribute(
+      "href",
+      "/login"
+    );
+
+    // Mobile: mở menu → CTA trong menu cũng trỏ /login
+    await user.click(screen.getByRole("button", { name: /mở menu/i }));
+    const menu = document.getElementById("mobile-menu");
+    expect(menu).not.toBeNull();
+    const mobileCta = within(menu as HTMLElement).getByRole("link", {
+      name: "Bắt đầu",
+    });
+    expect(mobileCta).toHaveAttribute("href", "/login");
+
+    // Behavior giữ nguyên: click CTA mobile phải đóng menu
+    await user.click(mobileCta);
+    expect(document.getElementById("mobile-menu")).toBeNull();
+  });
 });

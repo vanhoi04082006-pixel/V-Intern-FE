@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 
@@ -44,13 +45,13 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center lg:flex">
-          <a
-            href="#platform"
+          <Link
+            href="/login"
             className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
           >
             Bắt đầu
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </a>
+          </Link>
         </div>
 
         <button
@@ -88,14 +89,14 @@ export function Navbar() {
             ))}
           </ul>
           <div className="mx-auto flex max-w-7xl flex-col px-4 pb-4 md:px-6">
-            <a
-              href="#platform"
+            <Link
+              href="/login"
               onClick={() => setOpen(false)}
               className="inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-blue-600 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
               Bắt đầu
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </a>
+            </Link>
           </div>
         </div>
       ) : null}

@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { BarChart3, Code, Users } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, BarChart3, Code, Users } from "lucide-react";
 
 /**
  * AuthShell — layout dùng chung cho toàn bộ auth experience
@@ -17,6 +18,9 @@ import { BarChart3, Code, Users } from "lucide-react";
  * - KHÔNG có header/footer chrome (theo review): bỏ wordmark brand
  *   và control ngôn ngữ để trang sạch, tập trung vào form và luôn
  *   vừa viewport laptop không cần scroll.
+ * - Back control "Quay lại" (Link href="/" + ArrowLeft) dùng chung
+ *   cho cả 3 route: mobile là row gọn trên đầu, ≥lg là overlay
+ *   absolute (0 layout impact — Register vẫn fit 1366×768).
  * - Density: spacing desktop được tính để Login/Register nằm gọn
  *   trong viewport laptop phổ biến (1366×768, 1440×900).
  */
@@ -92,9 +96,23 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         />
       </div>
 
+      {/* Back về Landing — dùng chung cho mọi auth route. Mobile: row riêng
+          gọn trên đầu (không che card); ≥lg: overlay absolute góc trái trên,
+          0 layout impact nên Register vẫn fit 1366×768. */}
+      <div className="relative z-20 mx-auto flex w-full max-w-[1280px] px-5 pt-3 sm:px-8 lg:h-0 lg:px-10 lg:pt-0 2xl:max-w-[1360px]">
+        <Link
+          href="/"
+          aria-label="Quay lại trang chủ"
+          className="inline-flex min-h-11 items-center gap-1.5 self-start rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-sm backdrop-blur-sm transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 lg:absolute lg:left-10 lg:top-3 lg:min-h-0 lg:py-1.5"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Quay lại
+        </Link>
+      </div>
+
       <main className="relative z-10 flex flex-1 items-center py-4">
         <div className="mx-auto grid w-full max-w-[1280px] items-center gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,1fr)_540px] lg:gap-16 lg:px-10 2xl:max-w-[1360px] 2xl:grid-cols-[minmax(0,1fr)_570px]">
-          <div className="hidden lg:block lg:self-start lg:pt-6">
+          <div className="hidden lg:block lg:self-start lg:pt-12">
             <AuthMarketing />
           </div>
           <div className="flex justify-center lg:justify-end">
