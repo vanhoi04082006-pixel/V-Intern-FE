@@ -133,7 +133,9 @@ export const INSTRUCTOR_KPIS: InstructorKpi[] = [
   {
     id: "phien-dang-hoat-dong",
     label: "Phiên đang hoạt động",
-    value: "3 / 4",
+    // 4/4 — cả 4 phiên trong bảng (kể cả LAB-004 "Sắp kết thúc") đều chưa
+    // kết thúc, đều đang active.
+    value: "4 / 4",
     note: "+1 phiên so với tháng trước",
     noteTone: "green",
     icon: Layers,
@@ -143,7 +145,8 @@ export const INSTRUCTOR_KPIS: InstructorKpi[] = [
   {
     id: "sinh-vien-tham-gia",
     label: "Sinh viên tham gia",
-    value: "84",
+    // Tổng số sinh viên của 4 phiên active: 28+18+20+16 = 82.
+    value: "82",
     note: "+12% so với tháng trước",
     noteTone: "green",
     icon: Users,
@@ -151,17 +154,18 @@ export const INSTRUCTOR_KPIS: InstructorKpi[] = [
     bars: [50, 66, 46, 82],
   },
   {
-    // Tổng thể TẤT CẢ phiên/task đang quản lý (142 / 212) — khác với 70%
-    // của riêng Sprint 03 trong card "Tiến độ Sprint & Burndown".
+    // Tổng thể TẤT CẢ phiên/task đang quản lý — cùng dataset với "Tổng quan
+    // Task (Tất cả phiên)": Done 142 / tổng 216 (38+24+12+142) ≈ 66%. Khác
+    // với 70% của riêng Sprint 03 trong card "Tiến độ Sprint & Burndown".
     id: "ty-le-hoan-thanh-tong-the",
     label: "Tỷ lệ hoàn thành tổng thể",
-    value: "67%",
-    note: "142 / 212 task",
+    value: "66%",
+    note: "142 / 216 task",
     noteTone: "slate",
     icon: CircleCheck,
     tone: "green",
     bars: [],
-    progress: 67,
+    progress: 66,
   },
   {
     id: "diem-ai-trung-binh",
@@ -609,7 +613,8 @@ export const TASK_OVERVIEW: TaskOverviewCell[] = [
     id: "done",
     label: "Done",
     count: 142,
-    note: "67% hoàn thành",
+    // 142 / 216 ≈ 66% — cùng dataset với KPI "Tỷ lệ hoàn thành tổng thể".
+    note: "66% hoàn thành",
     noteTone: "green",
     icon: CircleCheck,
     tone: "green",

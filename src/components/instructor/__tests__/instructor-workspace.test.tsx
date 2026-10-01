@@ -3,6 +3,10 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { InstructorWorkspace } from "@/components/instructor/instructor-workspace";
+import {
+  ACTIVE_SESSIONS,
+  TASK_OVERVIEW,
+} from "@/components/instructor/data/instructor-mock-data";
 
 /**
  * Test Instructor Workspace (/instructor) — mock UI theo reference image.
@@ -81,9 +85,9 @@ describe("InstructorWorkspace", () => {
     expect(within(kpiList).getAllByRole("article")).toHaveLength(5);
 
     const expectations: Array<[string, string, string]> = [
-      ["Phiên đang hoạt động", "3 / 4", "+1 phiên so với tháng trước"],
-      ["Sinh viên tham gia", "84", "+12% so với tháng trước"],
-      ["Tỷ lệ hoàn thành tổng thể", "67%", "142 / 212 task"],
+      ["Phiên đang hoạt động", "4 / 4", "+1 phiên so với tháng trước"],
+      ["Sinh viên tham gia", "82", "+12% so với tháng trước"],
+      ["Tỷ lệ hoàn thành tổng thể", "66%", "142 / 216 task"],
       ["Điểm AI trung bình", "82 / 100", "+6% so với sprint trước"],
       ["Task / PR chờ duyệt", "12", "4 task quá hạn"],
     ];
@@ -188,7 +192,7 @@ describe("InstructorWorkspace", () => {
     render(<InstructorWorkspace />);
 
     // Không còn hai metric cùng tên "Tỷ lệ hoàn thành sprint":
-    // 67% = tổng thể tất cả phiên, 70% = riêng Sprint 03.
+    // 66% = tổng thể tất cả phiên, 70% = riêng Sprint 03.
     expect(screen.queryByText("Tỷ lệ hoàn thành sprint")).not.toBeInTheDocument();
     expect(screen.getByText("Tỷ lệ hoàn thành tổng thể")).toBeInTheDocument();
 
@@ -200,6 +204,52 @@ describe("InstructorWorkspace", () => {
       name: "Tiến độ Sprint & Burndown",
     });
     expect(within(sprintSection).getByText("18 task")).toBeInTheDocument();
+  });
+
+  it("tổng KPI tính từ dataset thật: sinh viên, task totals, số phiên active", () => {
+    render(<InstructorWorkspace />);
+
+    const kpiList = screen.getByRole("list", { name: "Chỉ số tổng quan" });
+
+    // 1) KPI "Sinh viên tham gia" = tổng students của các phiên trong bảng.
+    const studentTotal = ACTIVE_SESSIONS.reduce((sum, s) => sum + s.students, 0);
+    const studentKpi = within(kpiList)
+      .getByText("Sinh viên tham gia")
+      .closest("article") as HTMLElement;
+    expect(within(studentKpi).getByText(String(studentTotal))).toBeInTheDocument();
+
+    // 2) KPI "Tỷ lệ hoàn thành tổng thể" dùng cùng dataset Tổng quan Task:
+    //    note = `Done / tổng` và % = round(Done / tổng * 100).
+    const taskTotal = TASK_OVERVIEW.reduce((sum, cell) => sum + cell.count, 0);
+    const doneCount = TASK_OVERVIEW.find((cell) => cell.id === "done")?.count ?? 0;
+    const overallPercent = Math.round((doneCount / taskTotal) * 100);
+
+    const overallKpi = within(kpiList)
+      .getByText("Tỷ lệ hoàn thành tổng thể")
+      .closest("article") as HTMLElement;
+    expect(
+      within(overallKpi).getByText(`${doneCount} / ${taskTotal} task`)
+    ).toBeInTheDocument();
+    expect(within(overallKpi).getByText(`${overallPercent}%`)).toBeInTheDocument();
+
+    // Ô Done trong Tổng quan Task cùng % với KPI tổng thể (cùng dataset).
+    const taskSection = screen.getByRole("region", {
+      name: "Tổng quan Task (Tất cả phiên)",
+    });
+    const doneCell = within(taskSection).getByText("Done").closest("li") as HTMLElement;
+    expect(
+      within(doneCell).getByText(`${overallPercent}% hoàn thành`)
+    ).toBeInTheDocument();
+
+    // 3) KPI "Phiên đang hoạt động" = số phiên trong bảng (mọi phiên chưa
+    //    kết thúc, kể cả "Sắp kết thúc", đều tính là active).
+    const activeCount = ACTIVE_SESSIONS.length;
+    const sessionKpi = within(kpiList)
+      .getByText("Phiên đang hoạt động")
+      .closest("article") as HTMLElement;
+    expect(
+      within(sessionKpi).getByText(`${activeCount} / ${activeCount}`)
+    ).toBeInTheDocument();
   });
 
   it("render bảng Hiệu suất sinh viên (Top 5) đủ 5 sinh viên", () => {
@@ -287,7 +337,7 @@ describe("InstructorWorkspace", () => {
       ["To Do", "38", "3 task quá hạn"],
       ["Doing", "24", "4 đang chờ review"],
       ["Review", "12", "2 đã quá hạn"],
-      ["Done", "142", "67% hoàn thành"],
+      ["Done", "142", "66% hoàn thành"],
     ];
     for (const [label, count, note] of taskExpectations) {
       const cell = within(taskList).getByText(label).closest("li") as HTMLElement;
