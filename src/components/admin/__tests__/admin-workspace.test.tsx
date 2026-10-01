@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { AdminWorkspace } from "@/components/admin/admin-workspace";
 
@@ -194,6 +200,67 @@ describe("AdminWorkspace", () => {
       screen.getByRole("heading", { name: "Thiết lập nhanh" })
     ).toBeInTheDocument();
     expect(screen.getByText("Sao lưu & khôi phục")).toBeInTheDocument();
+  });
+
+  it("drawer mobile: mở menu đưa focus vào điều hướng, Escape đóng và trả focus", async () => {
+    const user = userEvent.setup();
+    render(<AdminWorkspace />);
+
+    const menuButton = screen.getByRole("button", {
+      name: "Mở menu điều hướng",
+    });
+    await user.click(menuButton);
+
+    const dialog = await screen.findByRole("dialog", {
+      name: "Menu quản trị",
+    });
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(
+      within(dialog).getByRole("link", { name: "Tổng quan" })
+    ).toHaveFocus();
+
+    await user.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Menu quản trị" })
+      ).not.toBeInTheDocument();
+    });
+    expect(menuButton).toHaveFocus();
+  });
+
+  it("focus trap drawer: Tab/Shift+Tab quấn vòng trong, không thoát ra nền", async () => {
+    const user = userEvent.setup();
+    render(<AdminWorkspace />);
+
+    const menuButton = screen.getByRole("button", {
+      name: "Mở menu điều hướng",
+    });
+    await user.click(menuButton);
+
+    const dialog = await screen.findByRole("dialog", {
+      name: "Menu quản trị",
+    });
+    const firstItem = within(dialog).getByRole("link", {
+      name: "Tổng quan",
+    });
+    const lastItem = within(dialog).getByRole("button", { name: "Cài đặt" });
+
+    // Nút phủ overlay chỉ dùng cho chuột, không nằm trong tab order.
+    expect(
+      within(dialog).getByRole("button", { name: "Đóng menu quản trị" })
+    ).toHaveAttribute("tabindex", "-1");
+
+    // Focus khởi đầu ở "Tổng quan" — phần tử focus được ĐẦU nhìn thấy được.
+    expect(firstItem).toHaveFocus();
+
+    // Shift+Tab từ ĐẦU -> quấn tới CUỐI ("Cài đặt").
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(lastItem).toHaveFocus();
+
+    // Tab từ CUỐI -> quấn về ĐẦU, không rơi ra topbar/nội dung nền.
+    await user.keyboard("{Tab}");
+    expect(firstItem).toHaveFocus();
+    expect(dialog.contains(document.activeElement)).toBe(true);
   });
 });
 

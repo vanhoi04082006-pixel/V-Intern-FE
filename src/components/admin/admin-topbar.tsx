@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Ref } from "react";
 import {
   Bell,
   ChevronDown,
@@ -19,10 +20,13 @@ export function AdminTopbar({
   className,
   menuOpen,
   onOpenMenu,
+  menuButtonRef,
 }: {
   className?: string;
   menuOpen?: boolean;
   onOpenMenu?: () => void;
+  /** Ref nút mở menu — workspace dùng để trả focus khi drawer đóng */
+  menuButtonRef?: Ref<HTMLButtonElement>;
 }) {
   return (
     <header
@@ -34,6 +38,7 @@ export function AdminTopbar({
       <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
+          ref={menuButtonRef}
           aria-label="Mở menu điều hướng"
           aria-expanded={menuOpen ? true : false}
           onClick={onOpenMenu}

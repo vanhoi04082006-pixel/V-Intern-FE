@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { FlaskConical } from "lucide-react";
 
@@ -17,6 +17,15 @@ import { UserManagementTable } from "./user-management-table";
 import { ADMIN_KPIS, WORKSPACE_META } from "./data/admin-mock-data";
 
 /**
+ * Selector phần tử focus được trong drawer: link, nút/input/select/textarea
+ * còn enabled và KHÔNG bị loại khỏi tab order (tabindex="-1", ví dụ nút phủ
+ * overlay chỉ dùng cho chuột). Giữ local cho drawer này, không dựng
+ * framework modal dùng chung.
+ */
+const DRAWER_FOCUSABLE_SELECTOR =
+  'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
+
+/**
  * Admin Workspace (/admin) — layout tổng theo ảnh reference:
  * - Desktop (≥lg): sidebar cố định trái + content phải.
  * - Tablet/mobile: sidebar vào drawer, KPI wrap, 1 cột, không overlap.
@@ -25,14 +34,53 @@ import { ADMIN_KPIS, WORKSPACE_META } from "./data/admin-mock-data";
  */
 export function AdminWorkspace() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const openMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const drawerWasOpenRef = useRef(false);
 
   useEffect(() => {
     if (!menuOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        return;
+      }
+      // Focus trap tối thiểu cho drawer modal: Tab/Shift+Tab quấn vòng trong
+      // drawer, không thoát ra topbar/search/nội dung nền. Không đổi visual.
+      if (event.key !== "Tab") return;
+      const container = drawerRef.current;
+      if (!container) return;
+      const items = Array.from(
+        container.querySelectorAll<HTMLElement>(DRAWER_FOCUSABLE_SELECTOR)
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const inside = !!active && container.contains(active);
+      const wrapBackward = event.shiftKey && (!inside || active === first);
+      const wrapForward = !event.shiftKey && (!inside || active === last);
+      if (wrapBackward || wrapForward) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (menuOpen) {
+      drawerWasOpenRef.current = true;
+      // Đưa focus vào mục điều hướng đầu drawer: keyboard user vào menu ngay
+      // thay vì tab lạc ra nội dung nền sau overlay. Không đổi visual.
+      drawerRef.current
+        ?.querySelector<HTMLElement>("nav a[href], nav button:not([disabled])")
+        ?.focus();
+    } else if (drawerWasOpenRef.current) {
+      drawerWasOpenRef.current = false;
+      openMenuButtonRef.current?.focus();
+    }
   }, [menuOpen]);
 
   return (
@@ -50,6 +98,7 @@ export function AdminWorkspace() {
       {/* Drawer mobile */}
       {menuOpen ? (
         <div
+          ref={drawerRef}
           role="dialog"
           aria-modal="true"
           aria-label="Menu quản trị"
@@ -58,6 +107,7 @@ export function AdminWorkspace() {
           <button
             type="button"
             aria-label="Đóng menu quản trị"
+            tabIndex={-1}
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 h-full w-full cursor-default bg-slate-900/50"
           />
@@ -72,6 +122,7 @@ export function AdminWorkspace() {
         <AdminTopbar
           menuOpen={menuOpen}
           onOpenMenu={() => setMenuOpen(true)}
+          menuButtonRef={openMenuButtonRef}
         />
 
         <main
