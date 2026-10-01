@@ -21,7 +21,6 @@ import {
   ShieldCheck,
   Sparkles,
   User,
-  UserCheck,
   Users,
   UsersRound,
 } from "lucide-react";
@@ -169,16 +168,6 @@ export const ADMIN_KPIS: AdminKpi[] = [
     tone: "amber",
     bars: [60, 72, 54, 80, 66, 90, 74, 96],
   },
-  {
-    id: "dich-vu-ai",
-    label: "Dịch vụ AI",
-    value: "2,480",
-    delta: "+22% so với hôm qua",
-    footnote: "lượt sử dụng hôm nay",
-    icon: Sparkles,
-    tone: "violet",
-    bars: [30, 50, 66, 42, 74, 58, 86, 70],
-  },
 ];
 
 /* --------------------------- User management ----------------------------- */
@@ -288,14 +277,6 @@ export const ADMIN_ROLES: AdminRoleSummary[] = [
     permissions: 8,
     icon: GraduationCap,
     tone: "purple",
-  },
-  {
-    id: "qa-reviewer",
-    name: "QA Reviewer",
-    description: "Đánh giá nội dung, review code, kiểm duyệt nội dung.",
-    permissions: 14,
-    icon: UserCheck,
-    tone: "green",
   },
 ];
 

@@ -55,7 +55,7 @@ describe("AdminWorkspace", () => {
     expect(within(breadcrumb).getByText("Tổng quan")).toBeInTheDocument();
   });
 
-  it("render đủ 5 KPI card", () => {
+  it("render đủ 4 KPI card, không còn KPI Dịch vụ AI", () => {
     render(<AdminWorkspace />);
 
     const kpiList = screen.getByRole("list", { name: "Chỉ số tổng quan" });
@@ -65,10 +65,15 @@ describe("AdminWorkspace", () => {
       "Giảng viên",
       "Sinh viên",
       "Phiên đang hoạt động",
-      "Dịch vụ AI",
     ]) {
       expect(within(kpiList).getByText(label)).toBeInTheDocument();
     }
+
+    // KPI "Dịch vụ AI" đã bị xóa khỏi mock data (xóa hẳn, không phải CSS hide).
+    // "2,480" chỉ thuộc KPI này nên không được xuất hiện ở bất kỳ đâu trên trang.
+    expect(within(kpiList).getAllByRole("article")).toHaveLength(4);
+    expect(screen.queryByText("Dịch vụ AI")).not.toBeInTheDocument();
+    expect(screen.queryByText("2,480")).not.toBeInTheDocument();
 
     const totalCard = within(kpiList)
       .getByText("Tổng người dùng")
@@ -105,7 +110,7 @@ describe("AdminWorkspace", () => {
     expect(within(section).getByText(USER_SUMMARY_TEXT)).toBeInTheDocument();
   });
 
-  it("render vai trò & phân quyền và phân bổ tài khoản", () => {
+  it("render vai trò & phân quyền với 3 vai trò, không còn QA Reviewer", () => {
     render(<AdminWorkspace />);
 
     const roleSection = screen.getByRole("region", {
@@ -114,7 +119,17 @@ describe("AdminWorkspace", () => {
     expect(
       within(roleSection).getByRole("heading", { name: "Vai trò & phân quyền" })
     ).toBeInTheDocument();
-    expect(within(roleSection).getByText("QA Reviewer")).toBeInTheDocument();
+
+    // Role "QA Reviewer" đã bị xóa khỏi mục Vai trò & phân quyền.
+    // Lưu ý: legend "QA Reviewer" trong card Phân bổ tài khoản được giữ nguyên
+    // (thuộc dữ liệu phân bổ, ngoài scope thay đổi này) nên assertion phải scope
+    // vào trong roleSection thay vì query toàn trang.
+    expect(
+      within(roleSection).queryByText("QA Reviewer")
+    ).not.toBeInTheDocument();
+    for (const roleName of ["Admin", "Giảng viên", "Sinh viên"]) {
+      expect(within(roleSection).getByText(roleName)).toBeInTheDocument();
+    }
     expect(
       within(roleSection).getAllByText("quyền được cấp").length
     ).toBeGreaterThan(0);

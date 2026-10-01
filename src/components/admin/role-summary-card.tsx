@@ -5,7 +5,7 @@ import { TONE_STYLES } from "./admin-ui-tones";
 import { ADMIN_ROLES, type AdminRoleSummary } from "./data/admin-mock-data";
 
 /**
- * Card "Vai trò & phân quyền" — 4 tile vai trò với số quyền được cấp.
+ * Card "Vai trò & phân quyền" — 3 tile vai trò với số quyền được cấp.
  * Nút chi tiết là visual-only (không điều hướng tới trang khác).
  */
 export function RoleSummaryCard() {
@@ -30,7 +30,7 @@ export function RoleSummaryCard() {
         <LinkButton label="Quản lý chi tiết" />
       </div>
 
-      <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+      <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {ADMIN_ROLES.map((role) => (
           <li key={role.id}>
             <RoleTile role={role} />

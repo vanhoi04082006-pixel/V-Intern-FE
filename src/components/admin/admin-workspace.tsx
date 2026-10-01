@@ -96,7 +96,7 @@ export function AdminWorkspace() {
 
           <ul
             aria-label="Chỉ số tổng quan"
-            className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+            className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
           >
             {ADMIN_KPIS.map((kpi) => (
               <li key={kpi.id}>
