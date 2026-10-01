@@ -88,6 +88,14 @@ export const INSTRUCTOR_CURRENT_USER: InstructorCurrentUser = {
 export const INSTRUCTOR_SEARCH_PLACEHOLDER =
   "Tìm kiếm sinh viên, lớp học, project, task...";
 
+/*
+ * Quy ước domain V-Intern dùng cho toàn bộ mock data:
+ *   Internship Program → Project → LabSession → Sprint → Task
+ * - ID phiên (LabSession): "LAB-xxx".
+ * - ID task: "VIN-xxx" (chỉ xuất hiện trong ngữ cảnh task/sprint/PR).
+ * - Một mốc thời gian "hiện tại" duy nhất cho cả dashboard: 21/05/2024, 14:21.
+ */
+
 /* ---------------------------- Workspace header --------------------------- */
 
 export interface InstructorMetaItem {
@@ -98,11 +106,11 @@ export interface InstructorMetaItem {
 }
 
 export const INSTRUCTOR_WORKSPACE_META: InstructorMetaItem[] = [
-  { id: "vai-tro", label: "Vai trò", value: "Giảng viên / Technical Lead", icon: CodeXml },
+  { id: "vai-tro", label: "Vai trò", value: "Giảng viên / PM / Technical Lead", icon: CodeXml },
   { id: "he-thong", label: "Hệ thống", value: "V-Intern Platform", icon: Landmark },
-  { id: "phien-hien-tai", label: "Phiên hiện tại", value: "Session 01", icon: CalendarDays },
+  { id: "phien-hien-tai", label: "Phiên hiện tại", value: "LAB-001", icon: CalendarDays },
   { id: "sprint-hien-tai", label: "Sprint hiện tại", value: "Sprint 03", icon: Layers },
-  { id: "cap-nhat-luc", label: "Cập nhật lúc", value: "16/05/2024, 14:21", icon: Clock },
+  { id: "cap-nhat-luc", label: "Cập nhật lúc", value: "21/05/2024, 14:21", icon: Clock },
 ];
 
 /* -------------------------------- KPI cards ------------------------------ */
@@ -143,8 +151,10 @@ export const INSTRUCTOR_KPIS: InstructorKpi[] = [
     bars: [50, 66, 46, 82],
   },
   {
-    id: "ty-le-hoan-thanh-sprint",
-    label: "Tỷ lệ hoàn thành sprint",
+    // Tổng thể TẤT CẢ phiên/task đang quản lý (142 / 212) — khác với 70%
+    // của riêng Sprint 03 trong card "Tiến độ Sprint & Burndown".
+    id: "ty-le-hoan-thanh-tong-the",
+    label: "Tỷ lệ hoàn thành tổng thể",
     value: "67%",
     note: "142 / 212 task",
     noteTone: "slate",
@@ -179,6 +189,11 @@ export const INSTRUCTOR_KPIS: InstructorKpi[] = [
 
 export type SessionStatus = "ongoing" | "ending";
 
+/**
+ * Một dòng = một LabSession (ID "LAB-xxx") thuộc một Project thật.
+ * KHÔNG dùng "VIN-xxx" ở đây — đó là Task ID, chỉ nằm trong ngữ cảnh
+ * task/sprint/PR (xem quy ước domain đầu file).
+ */
 export interface ActiveSession {
   id: string;
   sessionLabel: string;
@@ -201,10 +216,10 @@ export const SESSION_STATUS_TONES: Record<SessionStatus, InstructorTone> = {
 
 export const ACTIVE_SESSIONS: ActiveSession[] = [
   {
-    id: "VIN-103",
-    sessionLabel: "Session 01",
-    project: "Integrate Login API",
-    projectDetail: "Xây dựng hệ thống đăng nhập cho ứng dụng web",
+    id: "LAB-001",
+    sessionLabel: "Lab Session 01",
+    project: "E-commerce Platform",
+    projectDetail: "Xây dựng nền tảng thương mại điện tử hoàn chỉnh",
     students: 28,
     extraStudents: 24,
     avatarInitials: ["TN", "QM", "PH"],
@@ -214,10 +229,10 @@ export const ACTIVE_SESSIONS: ActiveSession[] = [
     timeframe: "01/05/2024 – 30/06/2024",
   },
   {
-    id: "VIN-104",
-    sessionLabel: "Session 01",
-    project: "Form Validation",
-    projectDetail: "Xây dựng validation cho form đăng ký và đăng nhập",
+    id: "LAB-002",
+    sessionLabel: "Lab Session 02",
+    project: "Student Management System",
+    projectDetail: "Xây dựng hệ thống quản lý sinh viên",
     students: 18,
     extraStudents: 14,
     avatarInitials: ["MT", "AD", "NK"],
@@ -227,10 +242,10 @@ export const ACTIVE_SESSIONS: ActiveSession[] = [
     timeframe: "17/05/2024 – 25/06/2024",
   },
   {
-    id: "VIN-102",
-    sessionLabel: "Session 01",
-    project: "Design Login UI",
-    projectDetail: "Thiết kế giao diện đăng nhập theo design system",
+    id: "LAB-003",
+    sessionLabel: "Lab Session 03",
+    project: "Learning Management System",
+    projectDetail: "Xây dựng hệ thống quản lý học tập",
     students: 20,
     extraStudents: 16,
     avatarInitials: ["HV", "TB", "QN"],
@@ -240,17 +255,19 @@ export const ACTIVE_SESSIONS: ActiveSession[] = [
     timeframe: "13/05/2024 – 20/06/2024",
   },
   {
-    id: "VIN-099",
-    sessionLabel: "Session 01",
-    project: "Register Flow",
-    projectDetail: "Xây dựng luồng đăng ký tài khoản sinh viên",
+    // Kết thúc 24/05 = 3 ngày sau mốc hiện tại 21/05, khớp "còn 3 ngày"
+    // trong Hoạt động gần đây.
+    id: "LAB-004",
+    sessionLabel: "Lab Session 04",
+    project: "Booking Platform",
+    projectDetail: "Xây dựng nền tảng đặt lịch trực tuyến",
     students: 16,
     extraStudents: 12,
     avatarInitials: ["DL", "PN", "TM"],
     progress: 45,
     status: "ending",
     statusLabel: "Sắp kết thúc",
-    timeframe: "20/04/2024 – 18/05/2024",
+    timeframe: "20/04/2024 – 24/05/2024",
   },
 ];
 
@@ -272,7 +289,8 @@ export const SPRINT_METRICS: SprintMetric[] = [
   {
     id: "thoi-gian-con-lai",
     label: "Thời gian còn lại",
-    value: "8 ngày",
+    // Mốc hiện tại 21/05 → sprint kết thúc 26/05 = còn 5 ngày.
+    value: "5 ngày",
     icon: CalendarDays,
     tone: "blue",
   },
@@ -318,14 +336,16 @@ export const BURNDOWN_CHART = {
   xLabelIndices: [0, 2, 4, 6, 8, 9, 10],
   points: [
     { date: "13/05", actual: 60, ideal: 60 },
-    { date: "14/05", actual: 57, ideal: 55 },
-    { date: "15/05", actual: 54, ideal: 51 },
-    { date: "16/05", actual: 50, ideal: 46 },
-    { date: "17/05", actual: 46, ideal: 42 },
-    { date: "18/05", actual: 42, ideal: 37 },
-    { date: "19/05", actual: 38, ideal: 32 },
-    { date: "20/05", actual: 33, ideal: 28 },
-    { date: "21/05", actual: 28, ideal: 23 },
+    { date: "14/05", actual: 56, ideal: 55 },
+    { date: "15/05", actual: 52, ideal: 51 },
+    { date: "16/05", actual: 47, ideal: 46 },
+    { date: "17/05", actual: 43, ideal: 42 },
+    { date: "18/05", actual: 38, ideal: 37 },
+    { date: "19/05", actual: 33, ideal: 32 },
+    { date: "20/05", actual: 26, ideal: 28 },
+    // Điểm hiện tại 21/05: còn 18 task = 60 - 42 hoàn thành,
+    // khớp "Task hoàn thành 42 / 60" và "Burn còn lại 18 task".
+    { date: "21/05", actual: 18, ideal: 23 },
     { date: "23/05", actual: null, ideal: 14 },
     { date: "26/05", actual: null, ideal: 0 },
   ] as BurndownPoint[],
@@ -334,9 +354,9 @@ export const BURNDOWN_CHART = {
     ideal: "Đường lý tưởng",
   },
   /** Tooltip-style annotation ghim tại điểm dữ liệu thực tế cuối */
-  annotation: { index: 8, date: "21/05/2024", actual: 28, ideal: 23 },
+  annotation: { index: 8, date: "21/05/2024", actual: 18, ideal: 23 },
   description:
-    "Task còn lại thực tế giảm từ 60 xuống 28 tính đến 21/05, đường lý tưởng về 0 vào 26/05",
+    "Task còn lại thực tế giảm từ 60 xuống 18 tính đến 21/05, đường lý tưởng về 0 vào 26/05",
 };
 
 /* --------------------------- Hiệu suất sinh viên -------------------------- */
@@ -655,7 +675,7 @@ export const RECENT_ACTIVITY: RecentActivityItem[] = [
   },
   {
     id: "act-5",
-    text: "Phiên VIN-099 sắp kết thúc (còn 3 ngày)",
+    text: "Phiên LAB-004 sắp kết thúc (còn 3 ngày)",
     time: "09:42",
     tone: "amber",
   },

@@ -18,14 +18,16 @@ describe("InstructorWorkspace", () => {
     ).toBeInTheDocument();
 
     expect(screen.getByText("Vai trò:")).toBeInTheDocument();
-    expect(screen.getByText("Giảng viên / Technical Lead")).toBeInTheDocument();
+    expect(screen.getByText("Giảng viên / PM / Technical Lead")).toBeInTheDocument();
     expect(screen.getByText("Hệ thống:")).toBeInTheDocument();
     expect(screen.getByText("V-Intern Platform")).toBeInTheDocument();
     expect(screen.getByText("Phiên hiện tại:")).toBeInTheDocument();
     expect(screen.getByText("Sprint hiện tại:")).toBeInTheDocument();
     expect(screen.getByText("Sprint 03")).toBeInTheDocument();
     expect(screen.getByText("Cập nhật lúc:")).toBeInTheDocument();
-    expect(screen.getByText("16/05/2024, 14:21")).toBeInTheDocument();
+    expect(screen.getByText("21/05/2024, 14:21")).toBeInTheDocument();
+    // Phiên hiện tại dùng LabSession ID (LAB-xxx), khớp bảng phiên.
+    expect(screen.getAllByText("LAB-001").length).toBeGreaterThan(0);
 
     // Badge công bố dữ liệu mock (chưa nối instructor backend).
     expect(screen.getByText("Dữ liệu mẫu")).toBeInTheDocument();
@@ -81,7 +83,7 @@ describe("InstructorWorkspace", () => {
     const expectations: Array<[string, string, string]> = [
       ["Phiên đang hoạt động", "3 / 4", "+1 phiên so với tháng trước"],
       ["Sinh viên tham gia", "84", "+12% so với tháng trước"],
-      ["Tỷ lệ hoàn thành sprint", "67%", "142 / 212 task"],
+      ["Tỷ lệ hoàn thành tổng thể", "67%", "142 / 212 task"],
       ["Điểm AI trung bình", "82 / 100", "+6% so với sprint trước"],
       ["Task / PR chờ duyệt", "12", "4 task quá hạn"],
     ];
@@ -111,14 +113,18 @@ describe("InstructorWorkspace", () => {
     const rows = within(table).getAllByRole("row");
     expect(rows).toHaveLength(5); // 1 header + 4 phiên
 
-    for (const sessionId of ["VIN-103", "VIN-104", "VIN-102", "VIN-099"]) {
+    // Session ID là LabSession ID (LAB-xxx), KHÔNG phải Task ID (VIN-xxx).
+    for (const sessionId of ["LAB-001", "LAB-002", "LAB-003", "LAB-004"]) {
       expect(within(table).getByText(sessionId)).toBeInTheDocument();
     }
+    expect(within(table).queryByText(/VIN-/)).not.toBeInTheDocument();
+
+    // Project là project thật trong domain (không phải tên task).
     for (const project of [
-      "Integrate Login API",
-      "Form Validation",
-      "Design Login UI",
-      "Register Flow",
+      "E-commerce Platform",
+      "Student Management System",
+      "Learning Management System",
+      "Booking Platform",
     ]) {
       expect(within(table).getByText(project)).toBeInTheDocument();
     }
@@ -154,7 +160,7 @@ describe("InstructorWorkspace", () => {
       name: "Chỉ số sprint hiện tại",
     });
     expect(within(metricList).getByText("Thời gian còn lại")).toBeInTheDocument();
-    expect(within(metricList).getByText("8 ngày")).toBeInTheDocument();
+    expect(within(metricList).getByText("5 ngày")).toBeInTheDocument();
     expect(within(metricList).getByText("Task hoàn thành")).toBeInTheDocument();
     expect(within(metricList).getByText("42 / 60")).toBeInTheDocument();
     expect(within(metricList).getByText("70%")).toBeInTheDocument();
@@ -176,6 +182,24 @@ describe("InstructorWorkspace", () => {
 
     // Annotation tooltip ghim tại điểm thực tế cuối.
     expect(within(section).getByText("21/05/2024")).toBeInTheDocument();
+  });
+
+  it("dữ liệu mock nhất quán domain: KPI tổng thể vs Sprint 03, mốc thời gian 21/05, số burndown khớp", () => {
+    render(<InstructorWorkspace />);
+
+    // Không còn hai metric cùng tên "Tỷ lệ hoàn thành sprint":
+    // 67% = tổng thể tất cả phiên, 70% = riêng Sprint 03.
+    expect(screen.queryByText("Tỷ lệ hoàn thành sprint")).not.toBeInTheDocument();
+    expect(screen.getByText("Tỷ lệ hoàn thành tổng thể")).toBeInTheDocument();
+
+    // Một mốc thời gian hiện tại duy nhất 21/05/2024 cho header + burndown.
+    expect(screen.getAllByText(/21\/05\/2024/).length).toBeGreaterThanOrEqual(2);
+
+    // Burn còn lại (18 task) khớp điểm hiện tại của chart (annotation 18).
+    const sprintSection = screen.getByRole("region", {
+      name: "Tiến độ Sprint & Burndown",
+    });
+    expect(within(sprintSection).getByText("18 task")).toBeInTheDocument();
   });
 
   it("render bảng Hiệu suất sinh viên (Top 5) đủ 5 sinh viên", () => {
@@ -299,7 +323,7 @@ describe("InstructorWorkspace", () => {
       "Trần Thị Bảo Ngọc hoàn thành task VIN-103-T12",
       "Hệ thống đã đánh giá 5 PR #40 (85 điểm)",
       "Phạm Quang Duy đã tạo task mới",
-      "Phiên VIN-099 sắp kết thúc (còn 3 ngày)",
+      "Phiên LAB-004 sắp kết thúc (còn 3 ngày)",
     ]) {
       expect(within(log).getByText(text)).toBeInTheDocument();
     }
