@@ -4,7 +4,7 @@ import { render, screen, within } from "@testing-library/react";
 import { AdminWorkspace } from "@/components/admin/admin-workspace";
 
 describe("AdminWorkspace", () => {
-  it("render tiêu đề Admin Workspace + metadata vai trò/hệ thống", () => {
+  it("render tiêu đề Admin Workspace + metadata + badge Dữ liệu mẫu", () => {
     render(<AdminWorkspace />);
 
     expect(
@@ -14,6 +14,9 @@ describe("AdminWorkspace", () => {
     expect(screen.getAllByText("System Admin").length).toBeGreaterThan(0);
     expect(screen.getByText("V-Intern Platform")).toBeInTheDocument();
     expect(screen.getByText("Production")).toBeInTheDocument();
+
+    // Badge công bố dữ liệu mock (chưa nối admin backend).
+    expect(screen.getByText("Dữ liệu mẫu")).toBeInTheDocument();
   });
 
   it("sidebar render đủ mục điều hướng, Tổng quan là active link tới /admin", () => {
@@ -78,7 +81,7 @@ describe("AdminWorkspace", () => {
     const totalCard = within(kpiList)
       .getByText("Tổng người dùng")
       .closest("article") as HTMLElement;
-    expect(within(totalCard).getByText("1,284")).toBeInTheDocument();
+    expect(within(totalCard).getByText("1,266")).toBeInTheDocument();
     expect(
       within(totalCard).getByText("+12% so với tháng trước")
     ).toBeInTheDocument();
@@ -110,7 +113,7 @@ describe("AdminWorkspace", () => {
     expect(within(section).getByText(USER_SUMMARY_TEXT)).toBeInTheDocument();
   });
 
-  it("render vai trò & phân quyền với 3 vai trò, không còn QA Reviewer", () => {
+  it("render vai trò & phân quyền (3 vai trò) và phân bổ tài khoản (3 nhóm, tổng 1,266)", () => {
     render(<AdminWorkspace />);
 
     const roleSection = screen.getByRole("region", {
@@ -119,26 +122,32 @@ describe("AdminWorkspace", () => {
     expect(
       within(roleSection).getByRole("heading", { name: "Vai trò & phân quyền" })
     ).toBeInTheDocument();
-
-    // Role "QA Reviewer" đã bị xóa khỏi mục Vai trò & phân quyền.
-    // Lưu ý: legend "QA Reviewer" trong card Phân bổ tài khoản được giữ nguyên
-    // (thuộc dữ liệu phân bổ, ngoài scope thay đổi này) nên assertion phải scope
-    // vào trong roleSection thay vì query toàn trang.
-    expect(
-      within(roleSection).queryByText("QA Reviewer")
-    ).not.toBeInTheDocument();
     for (const roleName of ["Admin", "Giảng viên", "Sinh viên"]) {
       expect(within(roleSection).getByText(roleName)).toBeInTheDocument();
     }
-    expect(
-      within(roleSection).getAllByText("quyền được cấp").length
-    ).toBeGreaterThan(0);
+
+    // Role bị xóa ở pass trước nay bị xóa cả khỏi dữ liệu Phân bổ tài khoản —
+    // assertion toàn trang: bất kỳ text node nào khớp tên role này đều fail.
+    expect(screen.queryByText("QA Reviewer")).not.toBeInTheDocument();
 
     const distributionSection = screen.getByRole("region", {
       name: "Phân bổ tài khoản",
     });
-    expect(within(distributionSection).getByText("85.3%")).toBeInTheDocument();
+
+    // Tổng population mock mới: 1,266 = 1,096 (Sinh viên) + 142 (Giảng viên) + 28 (Admin).
+    expect(within(distributionSection).getByText("1,266")).toBeInTheDocument();
     expect(within(distributionSection).getByText("người dùng")).toBeInTheDocument();
+
+    // Donut + legend chỉ còn đúng 3 nhóm, percent tính trên tổng 1,266 (xấp xỉ 100%).
+    expect(within(distributionSection).getAllByRole("listitem")).toHaveLength(3);
+    for (const [label, percent] of [
+      ["Sinh viên", "86.6%"],
+      ["Giảng viên", "11.2%"],
+      ["Admin", "2.2%"],
+    ] as const) {
+      expect(within(distributionSection).getByText(label)).toBeInTheDocument();
+      expect(within(distributionSection).getByText(percent)).toBeInTheDocument();
+    }
   });
 
   it("render trạng thái hệ thống, nhật ký, cảnh báo, thiết lập nhanh", () => {
@@ -149,6 +158,10 @@ describe("AdminWorkspace", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Backend API (v1)")).toBeInTheDocument();
     expect(screen.getByText("99.98%")).toBeInTheDocument();
+
+    // Database label trình bày mới (mock text, không health check thật).
+    expect(screen.getByText("Database (SQL Server)")).toBeInTheDocument();
+    expect(screen.queryByText(/PostgreSQL/)).not.toBeInTheDocument();
 
     expect(
       screen.getByRole("heading", { name: "Nhật ký hoạt động" })
@@ -167,4 +180,4 @@ describe("AdminWorkspace", () => {
   });
 });
 
-const USER_SUMMARY_TEXT = "Hiển thị 1 - 5 trong tổng số 1.284 người dùng";
+const USER_SUMMARY_TEXT = "Hiển thị 1 - 5 trong tổng số 1.266 người dùng";

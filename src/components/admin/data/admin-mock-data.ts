@@ -135,7 +135,7 @@ export const ADMIN_KPIS: AdminKpi[] = [
   {
     id: "tong-nguoi-dung",
     label: "Tổng người dùng",
-    value: "1,284",
+    value: "1,266",
     delta: "+12% so với tháng trước",
     icon: Users,
     tone: "blue",
@@ -240,7 +240,7 @@ export const ADMIN_USERS: AdminUserRow[] = [
   },
 ];
 
-export const USER_TABLE_SUMMARY = "Hiển thị 1 - 5 trong tổng số 1.284 người dùng";
+export const USER_TABLE_SUMMARY = "Hiển thị 1 - 5 trong tổng số 1.266 người dùng";
 
 /* ----------------------------- Role summary ------------------------------ */
 
@@ -292,15 +292,14 @@ export interface AccountDistributionSlice {
 }
 
 export const ACCOUNT_DISTRIBUTION_TOTAL = {
-  value: "1,284",
+  value: "1,266",
   label: "người dùng",
 };
 
 export const ACCOUNT_DISTRIBUTION: AccountDistributionSlice[] = [
-  { id: "sinh-vien", label: "Sinh viên", count: 1096, percent: 85.3, color: "#8B5CF6" },
-  { id: "giang-vien", label: "Giảng viên", count: 142, percent: 11.1, color: "#3B82F6" },
+  { id: "sinh-vien", label: "Sinh viên", count: 1096, percent: 86.6, color: "#8B5CF6" },
+  { id: "giang-vien", label: "Giảng viên", count: 142, percent: 11.2, color: "#3B82F6" },
   { id: "admin", label: "Admin", count: 28, percent: 2.2, color: "#EF4444" },
-  { id: "qa-reviewer", label: "QA Reviewer", count: 18, percent: 1.4, color: "#22C55E" },
 ];
 
 /* ---------------------------- System status ------------------------------ */
@@ -317,7 +316,7 @@ export const SERVICE_STATE_LABEL = "Hoạt động tốt";
 
 export const SYSTEM_SERVICES: SystemServiceStatus[] = [
   { id: "backend-api", name: "Backend API (v1)", latencyMs: 124, uptime: "99.98%", icon: Server },
-  { id: "database", name: "Database (PostgreSQL)", latencyMs: 8, uptime: "99.99%", icon: Database },
+  { id: "database", name: "Database (SQL Server)", latencyMs: 8, uptime: "99.99%", icon: Database },
   { id: "redis", name: "Redis (Cache)", latencyMs: 2, uptime: "99.97%", icon: MemoryStick },
   { id: "github", name: "GitHub (Integration)", latencyMs: 156, uptime: "99.95%", icon: Users },
   { id: "gemini", name: "Gemini API (AI Mentoring)", latencyMs: 312, uptime: "99.90%", icon: Sparkles },

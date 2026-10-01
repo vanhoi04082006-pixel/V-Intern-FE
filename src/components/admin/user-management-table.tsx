@@ -197,10 +197,10 @@ export function UserManagementTable() {
             <li>
               <button
                 type="button"
-                aria-label="Trang 257"
+                aria-label="Trang 254"
                 className="grid size-8 place-items-center rounded-md text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
               >
-                257
+                254
               </button>
             </li>
             <li>

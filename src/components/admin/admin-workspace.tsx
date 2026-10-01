@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { FlaskConical } from "lucide-react";
+
 import { AccountDistributionCard } from "./account-distribution-card";
 import { ActivityLogCard } from "./activity-log-card";
 import { AdminSidebar } from "./admin-sidebar";
@@ -77,9 +79,18 @@ export function AdminWorkspace() {
           className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8"
         >
           <header>
-            <h1 className="text-[26px] font-extrabold tracking-tight text-navy sm:text-3xl">
-              Admin Workspace
-            </h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h1 className="text-[26px] font-extrabold tracking-tight text-navy sm:text-3xl">
+                Admin Workspace
+              </h1>
+              <span
+                title="Số liệu mô phỏng để trình bày UI — chưa kết nối dữ liệu live"
+                className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
+              >
+                <FlaskConical className="size-3.5" aria-hidden="true" />
+                Dữ liệu mẫu
+              </span>
+            </div>
             <ul className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">
               {WORKSPACE_META.map((meta) => (
                 <li
