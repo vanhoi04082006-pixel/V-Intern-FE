@@ -51,7 +51,7 @@ export function AccountDistributionCard() {
                 {slice.label}
               </span>
               <span className="text-[13px] font-semibold tabular-nums text-navy">
-                {slice.count.toLocaleString("en-US")}
+                {slice.count.toLocaleString("vi-VN")}
               </span>
               <span className="w-9 shrink-0 text-right text-xs tabular-nums text-slate-400">
                 {slice.percent}%

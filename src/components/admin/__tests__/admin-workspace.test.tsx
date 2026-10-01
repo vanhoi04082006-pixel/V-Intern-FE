@@ -81,10 +81,20 @@ describe("AdminWorkspace", () => {
     const totalCard = within(kpiList)
       .getByText("Tổng người dùng")
       .closest("article") as HTMLElement;
-    expect(within(totalCard).getByText("1,266")).toBeInTheDocument();
+    expect(within(totalCard).getByText("1.266")).toBeInTheDocument();
     expect(
       within(totalCard).getByText("+12% so với tháng trước")
     ).toBeInTheDocument();
+
+    // KPI Sinh viên dùng format số tiếng Việt (dấu chấm ngăn cách nghìn).
+    const studentCard = within(kpiList)
+      .getByText("Sinh viên")
+      .closest("article") as HTMLElement;
+    expect(within(studentCard).getByText("1.096")).toBeInTheDocument();
+
+    // Không còn format en-US render ở bất kỳ đâu trên trang.
+    expect(screen.queryByText("1,266")).not.toBeInTheDocument();
+    expect(screen.queryByText("1,096")).not.toBeInTheDocument();
   });
 
   it("render bảng quản lý người dùng với filter và dữ liệu mock", () => {
@@ -113,7 +123,7 @@ describe("AdminWorkspace", () => {
     expect(within(section).getByText(USER_SUMMARY_TEXT)).toBeInTheDocument();
   });
 
-  it("render vai trò & phân quyền (3 vai trò) và phân bổ tài khoản (3 nhóm, tổng 1,266)", () => {
+  it("render vai trò & phân quyền (3 vai trò) và phân bổ tài khoản (3 nhóm, tổng 1.266)", () => {
     render(<AdminWorkspace />);
 
     const roleSection = screen.getByRole("region", {
@@ -134,11 +144,15 @@ describe("AdminWorkspace", () => {
       name: "Phân bổ tài khoản",
     });
 
-    // Tổng population mock mới: 1,266 = 1,096 (Sinh viên) + 142 (Giảng viên) + 28 (Admin).
-    expect(within(distributionSection).getByText("1,266")).toBeInTheDocument();
+    // Tổng population mock: 1.266 = 1.096 (Sinh viên) + 142 (Giảng viên) + 28 (Admin)
+    // — hiển thị theo format số tiếng Việt.
+    expect(within(distributionSection).getByText("1.266")).toBeInTheDocument();
     expect(within(distributionSection).getByText("người dùng")).toBeInTheDocument();
 
-    // Donut + legend chỉ còn đúng 3 nhóm, percent tính trên tổng 1,266 (xấp xỉ 100%).
+    // Legend Sinh viên hiển thị "1.096" theo format tiếng Việt.
+    expect(within(distributionSection).getByText("1.096")).toBeInTheDocument();
+
+    // Donut + legend chỉ còn đúng 3 nhóm, percent tính trên tổng 1.266 (xấp xỉ 100%).
     expect(within(distributionSection).getAllByRole("listitem")).toHaveLength(3);
     for (const [label, percent] of [
       ["Sinh viên", "86.6%"],
@@ -158,6 +172,9 @@ describe("AdminWorkspace", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Backend API (v1)")).toBeInTheDocument();
     expect(screen.getByText("99.98%")).toBeInTheDocument();
+
+    // Gemini giữ nguyên trong pass chuẩn hóa format số.
+    expect(screen.getByText("Gemini API (AI Mentoring)")).toBeInTheDocument();
 
     // Database label trình bày mới (mock text, không health check thật).
     expect(screen.getByText("Database (SQL Server)")).toBeInTheDocument();

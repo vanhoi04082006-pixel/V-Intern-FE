@@ -135,7 +135,7 @@ export const ADMIN_KPIS: AdminKpi[] = [
   {
     id: "tong-nguoi-dung",
     label: "Tổng người dùng",
-    value: "1,266",
+    value: "1.266",
     delta: "+12% so với tháng trước",
     icon: Users,
     tone: "blue",
@@ -153,7 +153,7 @@ export const ADMIN_KPIS: AdminKpi[] = [
   {
     id: "sinh-vien",
     label: "Sinh viên",
-    value: "1,096",
+    value: "1.096",
     delta: "+15% so với tháng trước",
     icon: GraduationCap,
     tone: "purple",
@@ -292,7 +292,7 @@ export interface AccountDistributionSlice {
 }
 
 export const ACCOUNT_DISTRIBUTION_TOTAL = {
-  value: "1,266",
+  value: "1.266",
   label: "người dùng",
 };
 
