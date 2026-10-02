@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
+import { WorkspaceGuard } from "@/components/auth/workspace-guard";
 import { InstructorWorkspace } from "@/components/instructor/instructor-workspace";
+import { PROTECTED_ROUTES } from "@/lib/auth/role-landing";
 
 export const metadata: Metadata = {
   title: "Instructor Workspace | V-Intern",
@@ -9,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function InstructorPage() {
-  return <InstructorWorkspace />;
+  return (
+    <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/instructor"]}>
+      <InstructorWorkspace />
+    </WorkspaceGuard>
+  );
 }

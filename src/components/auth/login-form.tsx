@@ -3,12 +3,14 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2, Mail } from "lucide-react";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
 import { login } from "@/lib/auth/auth-service";
+import { getWorkspacePathForUser } from "@/lib/auth/role-landing";
 import { validateLogin } from "@/lib/auth/validation";
 import type { LoginFieldErrors } from "@/lib/auth/validation";
 import { cn } from "@/lib/utils";
@@ -50,6 +52,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ previewState }: LoginFormProps) {
+  const router = useRouter();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -107,10 +110,11 @@ export function LoginForm({ previewState }: LoginFormProps) {
     });
 
     if (result.ok) {
-      // Chỉ đạt được khi adapter auth thật trả về thành công
-      // (production hiện tại không bao giờ vào nhánh này).
       setStatus("success");
       setStatusMessage("Đăng nhập thành công.");
+      // Đích đến sau đăng nhập theo role (admin → /admin, teacher →
+      // /instructor). `replace` để nút Back không quay lại form đã dùng.
+      router.replace(getWorkspacePathForUser(result.user));
       return;
     }
 

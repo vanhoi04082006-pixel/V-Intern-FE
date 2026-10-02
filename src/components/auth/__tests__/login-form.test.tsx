@@ -4,6 +4,12 @@ import userEvent from "@testing-library/user-event";
 import { LoginForm } from "@/components/auth/login-form";
 import { login } from "@/lib/auth/auth-service";
 
+const replace = vi.fn();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace, push: vi.fn(), refresh: vi.fn() }),
+}));
+
 vi.mock("@/lib/auth/auth-service", () => ({
   login: vi.fn(),
 }));
@@ -164,10 +170,68 @@ describe("LoginForm", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("previewState=success (dev-only) → hiển thị trạng thái thành công", () => {
+  it("đăng nhập thành công → chuyển hướng theo role (admin → /admin)", async () => {
+    const user = userEvent.setup();
+    mockLogin.mockResolvedValue({
+      ok: true,
+      user: {
+        id: "user-1",
+        email: "admin@vintern.local",
+        displayName: "V-Intern Admin",
+        roles: ["admin"],
+        permissions: ["auth.me.read"],
+      },
+    });
+    render(<LoginForm />);
+
+    await fillAndSubmit(user, { identifier: "admin@vintern.local" });
+
+    await waitFor(() => {
+      expect(replace).toHaveBeenCalledWith("/admin");
+    });
+  });
+
+  it("đăng nhập thành công với role teacher → chuyển hướng /instructor", async () => {
+    const user = userEvent.setup();
+    mockLogin.mockResolvedValue({
+      ok: true,
+      user: {
+        id: "user-2",
+        email: "teacher@vintern.local",
+        displayName: "V-Intern Teacher",
+        roles: ["teacher"],
+        permissions: ["auth.me.read"],
+      },
+    });
+    render(<LoginForm />);
+
+    await fillAndSubmit(user, { identifier: "teacher@vintern.local" });
+
+    await waitFor(() => {
+      expect(replace).toHaveBeenCalledWith("/instructor");
+    });
+  });
+
+  it("đăng nhập lỗi → KHÔNG chuyển hướng", async () => {
+    const user = userEvent.setup();
+    mockLogin.mockResolvedValue({
+      ok: false,
+      kind: "auth-error",
+      message: "Email hoặc mật khẩu không chính xác.",
+    });
+    render(<LoginForm />);
+
+    await fillAndSubmit(user, { identifier: "admin@vintern.local" });
+
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it("previewState=success (dev-only) → hiển thị trạng thái thành công, không redirect", () => {
     render(<LoginForm previewState="success" />);
     expect(screen.getByRole("status")).toHaveTextContent(
       "Đăng nhập thành công."
     );
+    expect(replace).not.toHaveBeenCalled();
   });
 });
