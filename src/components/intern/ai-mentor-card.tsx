@@ -1,7 +1,6 @@
 import { Bot, Send } from "lucide-react";
 
-import { CardLinkAction, SectionCard } from "./intern-primitives";
-import { Avatar } from "./intern-primitives";
+import { Avatar, CardLinkAction, SectionCard } from "./intern-primitives";
 import type { InternWorkspaceState } from "./data/intern-mock-data";
 
 /**

@@ -46,7 +46,7 @@ export function EmptyInternWorkspace({
               aria-hidden="true"
               className="grid size-16 shrink-0 place-items-center rounded-2xl bg-brand text-2xl font-extrabold text-white shadow-sm"
             >
-              NA
+              {state.user.initials}
             </span>
             <div className="min-w-0 flex-1">
               <h2

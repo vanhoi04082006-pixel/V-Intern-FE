@@ -1,8 +1,7 @@
 import { ChartColumn } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-import { SectionCard } from "./intern-primitives";
-import { ProgressBar } from "./intern-primitives";
+import { ProgressBar, SectionCard } from "./intern-primitives";
 import { INTERN_TONES } from "./intern-ui-tones";
 import type { InternWorkspaceState } from "./data/intern-mock-data";
 

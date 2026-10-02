@@ -40,6 +40,31 @@ function getActiveState(): Extract<
   return state;
 }
 
+/**
+ * Derive số liệu board TỪ DATASET — test dùng chính cơ chế derive này để
+ * assert KPI "Task Sprint hiện tại" không hardcode. Riêng "Tiến độ Sprint"
+ * là commitment metric (dataset sprint planning riêng) — KHÔNG assert
+ * sprint progress bằng tổng points của board.
+ */
+function getBoardStats(state: Extract<InternWorkspaceState, { status: "active" }>) {
+  const doneColumn = state.boardColumns.find((column) => column.id === "done");
+  const totalTasks = state.boardColumns.reduce(
+    (sum, column) => sum + column.tasks.length,
+    0
+  );
+  const totalPoints = state.boardColumns.reduce(
+    (sum, column) =>
+      sum + column.tasks.reduce((acc, task) => acc + task.points, 0),
+    0
+  );
+  return {
+    totalTasks,
+    doneTasks: doneColumn?.tasks.length ?? 0,
+    totalPoints,
+    donePoints: doneColumn?.tasks.reduce((acc, task) => acc + task.points, 0) ?? 0,
+  };
+}
+
 describe("InternWorkspace — state EMPTY (unassigned)", () => {
   it("render tiêu đề + subtitle + welcome với badges", () => {
     renderEmpty();
@@ -189,17 +214,25 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(screen.getByText("Dữ liệu mẫu")).toBeInTheDocument();
   });
 
-  it("5 KPI đúng giá trị mock (Sprint 67%, Task 6/9, Review 82/100, Deadline VIN-103, Lương ảo)", () => {
+  it("5 KPI đúng giá trị derive từ dataset (Sprint points, Task Sprint hiện tại, Review, Deadline, Lương ảo)", () => {
     renderActive();
 
     const kpis = screen.getByRole("list", { name: "Chỉ số tổng quan" });
+    const stats = getBoardStats(getActiveState());
 
     expect(within(kpis).getByText("Tiến độ Sprint")).toBeInTheDocument();
+    // Sprint progress = metric ĐIỂM CAM KẾT sprint-level (sprint planning
+    // 12/18 → 67%), KHÔNG phải phép cộng points các card trên board —
+    // note phải ghi rõ "điểm cam kết" để tách scope khỏi board dataset.
+    expect(within(kpis).getByText("12 / 18 điểm cam kết")).toBeInTheDocument();
     expect(within(kpis).getByText("67%")).toBeInTheDocument();
-    expect(within(kpis).getByText("12 / 18 points")).toBeInTheDocument();
 
-    expect(within(kpis).getByText("Task của tôi")).toBeInTheDocument();
-    expect(within(kpis).getByText("6 / 9")).toBeInTheDocument();
+    // Scope rõ ràng: KPI task là SPRINT HIỆN TẠI (derive từ board), metric
+    // tích lũy nằm riêng ở Performance "Task hoàn thành (Sprint 01 – 03)".
+    expect(within(kpis).getByText("Task Sprint hiện tại")).toBeInTheDocument();
+    expect(
+      within(kpis).getByText(`${stats.doneTasks} / ${stats.totalTasks}`)
+    ).toBeInTheDocument();
     expect(within(kpis).getByText("hoàn thành")).toBeInTheDocument();
 
     expect(
@@ -216,11 +249,16 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(within(kpis).getByText("+12% so với sprint trước")).toBeInTheDocument();
   });
 
-  it("Task Board 4 cột đúng số task, VIN-103 nằm trong Doing", () => {
+  it("Task Board 4 cột 3/2/2/2, VIN-103 + VIN-107 ở Doing, tổng 9 task — derive từ dataset", () => {
     renderActive();
 
     const board = screen.getByRole("region", { name: "Task Board" });
     const active = getActiveState();
+
+    // Business state gốc của board: To Do 3 / Doing 2 / Review 2 / Done 2.
+    expect(
+      active.boardColumns.map((column) => column.tasks.length)
+    ).toEqual([3, 2, 2, 2]);
 
     for (const column of active.boardColumns) {
       const columnItem = within(board).getByRole("listitem", {
@@ -232,11 +270,20 @@ describe("InternWorkspace — state ACTIVE", () => {
       }
     }
 
-    // VIN-103 nằm trong cột Doing (không ở cột khác).
-    const doing = within(board).getByRole("listitem", { name: "Doing, 2 task" });
+    // VIN-103 nằm trong cột Doing (không ở cột khác) — số task cột derive.
+    const doingColumn = active.boardColumns.find(
+      (column) => column.id === "doing"
+    );
+    expect(doingColumn).toBeDefined();
+    const doing = within(board).getByRole("listitem", {
+      name: `Doing, ${doingColumn!.tasks.length} task`,
+    });
     expect(within(doing).getByText("VIN-103")).toBeInTheDocument();
     expect(within(doing).getByText("Integrate Login API")).toBeInTheDocument();
     expect(within(doing).getByText("Hôm nay, 16:00")).toBeInTheDocument();
+    // VIN-107 vẫn nằm ở Doing — không chuyển task sang Done để ép KPI.
+    expect(within(doing).getByText("VIN-107")).toBeInTheDocument();
+    expect(within(doing).getByText("Error Handling")).toBeInTheDocument();
 
     // Tổng 9 task trên board — derive từ dataset, khớp số card render.
     const boardTotal = active.boardColumns.reduce(
@@ -247,6 +294,57 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(
       within(board).getAllByText(/^VIN-\d{3}$/).length
     ).toBe(boardTotal);
+  });
+
+  it("3 metric 3 scope: sprint commitment 12/18, board KPI derive 2/9, cumulative 14/21", () => {
+    const active = getActiveState();
+    const stats = getBoardStats(active);
+
+    // Ràng buộc business state gốc: 3/2/2/2, tổng 9 task, Done = 2,
+    // VIN-103 và VIN-107 vẫn ở Doing (không đẩy task sang Done ép KPI).
+    expect(active.boardColumns.map((c) => c.tasks.length)).toEqual([
+      3, 2, 2, 2,
+    ]);
+    expect(stats.totalTasks).toBe(9);
+    expect(stats.doneTasks).toBe(2);
+    const doing = active.boardColumns.find((column) => column.id === "doing");
+    expect(doing?.tasks.some((task) => task.id === "VIN-103")).toBe(true);
+    expect(doing?.tasks.some((task) => task.id === "VIN-107")).toBe(true);
+
+    // Story points giữ nguyên dữ liệu gốc (không đổi points để ép KPI):
+    // To Do 7 + Doing 8 + Review 8 + Done 5 = 28; Done = 5.
+    expect(stats.totalPoints).toBe(28);
+    expect(stats.donePoints).toBe(5);
+
+    const sprintKpi = active.kpis.find((kpi) => kpi.id === "tien-do-sprint");
+    const taskKpi = active.kpis.find(
+      (kpi) => kpi.id === "task-sprint-hien-tai"
+    );
+
+    // Scope A — Sprint progress: commitment metric sprint-level, giá trị
+    // 12/18 = 67% chốt từ sprint planning, KHÔNG derive từ board points
+    // (28/5) — note "điểm cam kết" thể hiện scope trong UI.
+    expect(sprintKpi?.value).toBe("67%");
+    expect(sprintKpi?.note).toBe("12 / 18 điểm cam kết");
+    expect(sprintKpi?.progress).toBe(67);
+
+    // Scope B — KPI task derive TRỰC TIẾP từ board dataset (không
+    // hardcode 2/9): dùng đúng stats derive từ dataset ở trên.
+    expect(taskKpi?.value).toBe(`${stats.doneTasks} / ${stats.totalTasks}`);
+    expect(taskKpi?.value).toBe("2 / 9");
+    expect(taskKpi?.progress).toBe(
+      Math.round((stats.doneTasks / stats.totalTasks) * 100)
+    );
+
+    // Scope C — Cumulative Sprint 01–03 nằm riêng ở Performance, khác
+    // dataset với 2 KPI trên.
+    expect(active.performance.title).toBe(
+      "Hiệu suất thực tập (Sprint 01 – 03)"
+    );
+    expect(active.performance.metrics[0]?.label).toBe(
+      "Task hoàn thành (Sprint 01 – 03)"
+    );
+    expect(active.performance.metrics[0]?.value).toBe("14 / 21");
   });
 
   it("Task đang tập trung VIN-103: wording KHÔNG gợi ý localStorage", () => {
@@ -270,6 +368,10 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(
       within(focused).getByText("Hạn nộp: Hôm nay, 16:00")
     ).toBeInTheDocument();
+
+    // Trạng thái từng mục DoD có text cho screen reader, không chỉ màu.
+    expect(within(focused).getAllByText("(hoàn thành)")).toHaveLength(2);
+    expect(within(focused).getAllByText("(chưa hoàn thành)")).toHaveLength(3);
 
     // Toàn trang không wording "local storage" (mâu thuẫn auth thật:
     // access token in-memory + refresh token HttpOnly cookie).
@@ -347,6 +449,11 @@ describe("InternWorkspace — state ACTIVE", () => {
     });
 
     expect(within(performance).getByText("14 / 21")).toBeInTheDocument();
+    // Metric tích lũy phải nói rõ scope để không đọc nhầm với KPI
+    // "Task Sprint hiện tại" (chỉ Sprint 03).
+    expect(
+      within(performance).getByText("Task hoàn thành (Sprint 01 – 03)")
+    ).toBeInTheDocument();
     expect(within(performance).getByText("42 / 60")).toBeInTheDocument();
     expect(within(performance).getByText("82 / 100")).toBeInTheDocument();
     expect(within(performance).getByText("84 / 100")).toBeInTheDocument();

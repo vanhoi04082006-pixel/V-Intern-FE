@@ -308,13 +308,18 @@ export const INTERN_VIRTUAL_SALARY = 2_500_000;
 export const INTERN_SALARY_DELTA_PERCENT = 12;
 
 /**
- * "Task của tôi 6/9 hoàn thành" là metric TÍCH LŨY Sprint 01–03 (tổng 9 task
- * được giao từ đầu program, 6 hoàn thành) — khác scope với Task Board bên
- * dưới, board chỉ là snapshot Sprint 03 hiện tại (9 task, Done = 2).
- * Hai số CỐ Ý khác nhau; không derive từ board để tránh nhầm ngữ nghĩa.
+ * LƯU Ý VỀ SCOPE SỐ LIỆU TASK — có 3 metric RỜI NHAU, không cùng dataset:
+ * 1. "Tiến độ Sprint" (12/18 = 67%): metric ĐIỂM CAM KẾT sprint-level,
+ *    chốt tại sprint planning của Sprint 03. KHÔNG phải phép cộng story
+ *    points của các card đang hiển thị trên Task Board (points card được
+ *    ước lượng lại trong sprint nên không còn khớp commitment gốc).
+ * 2. "Task Sprint hiện tại" (2/9 hoàn thành): DERIVE trực tiếp từ
+ *    INTERN_BOARD_COLUMNS bên dưới (task cột Done / tổng task) — chỉ
+ *    phản ánh snapshot board Sprint 03.
+ * 3. "Task hoàn thành (Sprint 01 – 03)" (14/21): metric TÍCH LŨY toàn
+ *    program, chỉ xuất hiện ở INTERN_PERFORMANCE với label nói rõ phạm vi.
+ * Không được mô tả/gộp 3 metric này như cùng một nguồn số liệu.
  */
-export const INTERN_MY_TASKS_COMPLETED = 6;
-export const INTERN_MY_TASKS_TOTAL = 9;
 
 /* ------------------------------ Empty state ------------------------------- */
 
@@ -577,61 +582,13 @@ const INTERN_NAV_ACTIVE: InternNavGroup[] = [
   },
 ];
 
-const INTERN_KPIS: InternKpi[] = [
-  {
-    id: "tien-do-sprint",
-    label: "Tiến độ Sprint",
-    // 12/18 points → 67% (derive qua percentOf).
-    value: `${percentOf(12, 18)}%`,
-    note: "12 / 18 points",
-    noteTone: "slate",
-    icon: ListChecks,
-    tone: "blue",
-    progress: percentOf(12, 18),
-  },
-  {
-    id: "task-cua-toi",
-    label: "Task của tôi",
-    // Metric tích lũy Sprint 01–03 (xem comment trên INTERN_MY_TASKS_*),
-    // không derive từ board snapshot.
-    value: `${INTERN_MY_TASKS_COMPLETED} / ${INTERN_MY_TASKS_TOTAL}`,
-    note: "hoàn thành",
-    noteTone: "slate",
-    icon: CircleCheck,
-    tone: "green",
-    progress: percentOf(INTERN_MY_TASKS_COMPLETED, INTERN_MY_TASKS_TOTAL),
-  },
-  {
-    id: "diem-review-trung-binh",
-    label: "Điểm review trung bình",
-    value: "82 / 100",
-    icon: Star,
-    tone: "amber",
-    progress: 82,
-  },
-  {
-    id: "deadline-gan-nhat",
-    label: "Deadline gần nhất",
-    value: "VIN-103",
-    note: "Hôm nay, 16:00",
-    noteTone: "red",
-    icon: Clock,
-    tone: "red",
-  },
-  {
-    id: "luong-ao-tam-tinh",
-    label: "Lương ảo tạm tính",
-    value: formatVnd(INTERN_VIRTUAL_SALARY),
-    note: `+${INTERN_SALARY_DELTA_PERCENT}% so với sprint trước`,
-    noteTone: "green",
-    icon: Wallet,
-    tone: "violet",
-  },
-];
-
 /**
  * Task Board — snapshot Sprint 03 (mốc hiện tại 21/05/2024 14:21).
- * Đếm cột (3/2/2/2) và tổng 9 task derive từ mảng khi render/test.
+ * Nguồn truth cho: placement task (3/2/2/2), tổng 9 task và KPI
+ * "Task Sprint hiện tại" (task cột Done / tổng task — derive bên dưới).
+ * KHÔNG phải nguồn của "Tiến độ Sprint" (12/18 điểm cam kết — metric
+ * sprint planning, xem scope note đầu file) hay "Task hoàn thành
+ * (Sprint 01 – 03)" (metric tích lũy ở INTERN_PERFORMANCE).
  */
 const INTERN_BOARD_COLUMNS: InternBoardColumn[] = [
   {
@@ -747,6 +704,91 @@ const INTERN_BOARD_COLUMNS: InternBoardColumn[] = [
   },
 ];
 
+/* --------------- Derived sprint stats (nguồn duy nhất: board) -------------- */
+
+const INTERN_DONE_COLUMN = INTERN_BOARD_COLUMNS.find(
+  (column) => column.id === "done"
+);
+
+/** Tổng số task của Sprint 03 — derive từ board (hiện tại 9). */
+const INTERN_SPRINT_TOTAL_TASKS = INTERN_BOARD_COLUMNS.reduce(
+  (sum, column) => sum + column.tasks.length,
+  0
+);
+/** Số task đã hoàn thành (cột Done) — derive từ board (hiện tại 2). */
+const INTERN_SPRINT_DONE_TASKS = INTERN_DONE_COLUMN?.tasks.length ?? 0;
+
+/**
+ * Điểm cam kết Sprint 03 — chốt tại sprint planning (sprint-level
+ * commitment). KHÔNG derive từ points các card trên board: card points
+ * được ước lượng lại trong sprint nên không còn khớp commitment gốc
+ * (xem scope note đầu file — 3 metric, 3 dataset khác nhau).
+ */
+const INTERN_SPRINT_COMMITTED_POINTS = 18;
+/** Phần commitment đã hoàn thành tính đến mốc snapshot (hiện tại 12). */
+const INTERN_SPRINT_COMPLETED_COMMITTED_POINTS = 12;
+
+const INTERN_KPIS: InternKpi[] = [
+  {
+    id: "tien-do-sprint",
+    label: "Tiến độ Sprint",
+    // Scope: ĐIỂM CAM KẾT sprint-level (sprint planning 12/18 → 67%),
+    // KHÔNG phải tổng points các card trên board — note ghi rõ để tách
+    // scope với "Task Sprint hiện tại" (derive từ board).
+    value: `${percentOf(
+      INTERN_SPRINT_COMPLETED_COMMITTED_POINTS,
+      INTERN_SPRINT_COMMITTED_POINTS
+    )}%`,
+    note: `${INTERN_SPRINT_COMPLETED_COMMITTED_POINTS} / ${INTERN_SPRINT_COMMITTED_POINTS} điểm cam kết`,
+    noteTone: "slate",
+    icon: ListChecks,
+    tone: "blue",
+    progress: percentOf(
+      INTERN_SPRINT_COMPLETED_COMMITTED_POINTS,
+      INTERN_SPRINT_COMMITTED_POINTS
+    ),
+  },
+  {
+    id: "task-sprint-hien-tai",
+    label: "Task Sprint hiện tại",
+    // Derive từ board: số task Done / tổng task của Sprint 03. Scope là
+    // SPRINT HIỆN TẠI — metric tích lũy program nằm ở Performance
+    // "Task hoàn thành (Sprint 01 – 03)", hai số này không cùng phạm vi.
+    value: `${INTERN_SPRINT_DONE_TASKS} / ${INTERN_SPRINT_TOTAL_TASKS}`,
+    note: "hoàn thành",
+    noteTone: "slate",
+    icon: CircleCheck,
+    tone: "green",
+    progress: percentOf(INTERN_SPRINT_DONE_TASKS, INTERN_SPRINT_TOTAL_TASKS),
+  },
+  {
+    id: "diem-review-trung-binh",
+    label: "Điểm review trung bình",
+    value: "82 / 100",
+    icon: Star,
+    tone: "amber",
+    progress: 82,
+  },
+  {
+    id: "deadline-gan-nhat",
+    label: "Deadline gần nhất",
+    value: "VIN-103",
+    note: "Hôm nay, 16:00",
+    noteTone: "red",
+    icon: Clock,
+    tone: "red",
+  },
+  {
+    id: "luong-ao-tam-tinh",
+    label: "Lương ảo tạm tính",
+    value: formatVnd(INTERN_VIRTUAL_SALARY),
+    note: `+${INTERN_SALARY_DELTA_PERCENT}% so với sprint trước`,
+    noteTone: "green",
+    icon: Wallet,
+    tone: "violet",
+  },
+];
+
 const INTERN_FOCUSED_TASK: InternFocusedTask = {
   taskId: "VIN-103",
   title: "Integrate Login API",
@@ -835,8 +877,12 @@ const INTERN_PERFORMANCE: InternPerformanceSummary = {
   title: "Hiệu suất thực tập (Sprint 01 – 03)",
   metrics: [
     {
+      // TÍCH LŨY toàn program (Sprint 01 – 03): 21 task được giao từ đầu,
+      // 14 hoàn thành. KHÁC scope với KPI "Task Sprint hiện tại" (chỉ
+      // Sprint 03, derive từ board) — label nói rõ phạm vi để không bị
+      // đọc nhầm là cùng một số liệu.
       id: "task-hoan-thanh",
-      label: "Task hoàn thành",
+      label: "Task hoàn thành (Sprint 01 – 03)",
       value: "14 / 21",
       icon: CircleCheck,
       tone: "green",

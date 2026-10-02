@@ -102,6 +102,10 @@ export function FocusedTaskCard({
                   }
                 >
                   {item.label}
+                  {/* Trạng thái không chỉ truyền qua màu/gạch ngang — SR đọc được. */}
+                  <span className="sr-only">
+                    {item.done ? " (hoàn thành)" : " (chưa hoàn thành)"}
+                  </span>
                 </span>
               </li>
             ))}

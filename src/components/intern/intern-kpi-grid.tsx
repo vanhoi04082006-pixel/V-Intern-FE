@@ -5,8 +5,8 @@ import { INTERN_TONES } from "./intern-ui-tones";
 import type { InternKpi } from "./data/intern-mock-data";
 
 /**
- * Hàng 5 KPI của state active (reference: Tiến độ Sprint, Task của tôi,
- * Điểm review trung bình, Deadline gần nhất, Lương ảo tạm tính).
+ * Hàng 5 KPI của state active (reference: Tiến độ Sprint, Task Sprint hiện
+ * tại, Điểm review trung bình, Deadline gần nhất, Lương ảo tạm tính).
  * KPI có `progress` hiển thị progress bar; note màu semantic.
  * Grid: 1 cột mobile → 2 cột sm → 3 lg → 5 xl (tablet giảm cột theo task).
  */
