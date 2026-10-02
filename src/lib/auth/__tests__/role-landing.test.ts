@@ -21,8 +21,8 @@ describe("role → workspace mapping", () => {
   it("ánh xạ đúng 3 role của backend sang workspace", () => {
     expect(getWorkspacePathForRoles(["admin"])).toBe("/admin");
     expect(getWorkspacePathForRoles(["teacher"])).toBe("/instructor");
-    // Intern chưa có workspace riêng → landing, không invent route /intern.
-    expect(getWorkspacePathForRoles(["intern"])).toBe("/");
+    // Intern có workspace riêng tại /intern (Intern Workspace).
+    expect(getWorkspacePathForRoles(["intern"])).toBe("/intern");
   });
 
   it("lấy role khớp đầu tiên khi user có nhiều role", () => {
@@ -38,9 +38,10 @@ describe("role → workspace mapping", () => {
 });
 
 describe("route protection map", () => {
-  it("/admin chỉ cho admin, /instructor chỉ cho teacher", () => {
+  it("/admin chỉ cho admin, /instructor chỉ cho teacher, /intern chỉ cho intern", () => {
     expect(PROTECTED_ROUTES["/admin"]).toEqual(["admin"]);
     expect(PROTECTED_ROUTES["/instructor"]).toEqual(["teacher"]);
+    expect(PROTECTED_ROUTES["/intern"]).toEqual(["intern"]);
   });
 
   it("hasAllowedRole chỉ đúng khi có role thuộc danh sách cho phép", () => {
@@ -55,6 +56,15 @@ describe("route protection map", () => {
     ).toBe(true);
     expect(
       hasAllowedRole(userWith(["intern"]), PROTECTED_ROUTES["/instructor"])
+    ).toBe(false);
+    expect(
+      hasAllowedRole(userWith(["intern"]), PROTECTED_ROUTES["/intern"])
+    ).toBe(true);
+    expect(
+      hasAllowedRole(userWith(["admin"]), PROTECTED_ROUTES["/intern"])
+    ).toBe(false);
+    expect(
+      hasAllowedRole(userWith(["teacher"]), PROTECTED_ROUTES["/intern"])
     ).toBe(false);
   });
 });

@@ -212,6 +212,27 @@ describe("LoginForm", () => {
     });
   });
 
+  it("đăng nhập thành công với role intern → chuyển hướng /intern", async () => {
+    const user = userEvent.setup();
+    mockLogin.mockResolvedValue({
+      ok: true,
+      user: {
+        id: "user-3",
+        email: "intern@vintern.local",
+        displayName: "Nguyễn Văn A",
+        roles: ["intern"],
+        permissions: ["auth.me.read"],
+      },
+    });
+    render(<LoginForm />);
+
+    await fillAndSubmit(user, { identifier: "intern@vintern.local" });
+
+    await waitFor(() => {
+      expect(replace).toHaveBeenCalledWith("/intern");
+    });
+  });
+
   it("đăng nhập lỗi → KHÔNG chuyển hướng", async () => {
     const user = userEvent.setup();
     mockLogin.mockResolvedValue({

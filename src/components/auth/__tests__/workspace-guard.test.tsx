@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { WorkspaceGuard } from "@/components/auth/workspace-guard";
 import { refreshSession } from "@/lib/auth/auth-service";
+import { PROTECTED_ROUTES } from "@/lib/auth/role-landing";
 import { clearSession, setSession } from "@/lib/auth/session";
 
 const replace = vi.fn();
@@ -83,6 +84,49 @@ describe("WorkspaceGuard", () => {
 
     render(
       <WorkspaceGuard allowedRoles={["admin"]}>
+        <ProtectedContent />
+      </WorkspaceGuard>
+    );
+
+    await waitFor(() => {
+      expect(replace).toHaveBeenCalledWith("/instructor");
+    });
+    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
+  });
+
+  it("intern mở /intern đủ role → render nội dung", async () => {
+    setSession("token", { ...ADMIN_USER, roles: ["intern"] });
+
+    render(
+      <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/intern"]}>
+        <ProtectedContent />
+      </WorkspaceGuard>
+    );
+
+    expect(await screen.findByText("Nội dung admin")).toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it("admin mở /intern → chuyển hướng về /admin, không render nội dung intern", async () => {
+    setSession("token", ADMIN_USER);
+
+    render(
+      <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/intern"]}>
+        <ProtectedContent />
+      </WorkspaceGuard>
+    );
+
+    await waitFor(() => {
+      expect(replace).toHaveBeenCalledWith("/admin");
+    });
+    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
+  });
+
+  it("teacher mở /intern → chuyển hướng về /instructor", async () => {
+    setSession("token", { ...ADMIN_USER, roles: ["teacher"] });
+
+    render(
+      <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/intern"]}>
         <ProtectedContent />
       </WorkspaceGuard>
     );
