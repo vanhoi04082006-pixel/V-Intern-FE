@@ -343,15 +343,14 @@ describe("Onboarding màn 4 — Kết quả (dùng chung Đạt/Chưa đạt)", 
     expect(screen.getByText("72/100")).toBeInTheDocument();
     expect(screen.getByText("62.2/100")).toBeInTheDocument();
 
-    // Card đề xuất: QA / Tester + lý do
+    // Card đề xuất (rail): QA / Tester + tags + lý do — KHÔNG còn full-width dưới main
     const recommendation = screen.getByRole("region", {
       name: /Đề xuất từ AI Recruiter/,
     });
     expect(within(recommendation).getAllByText("QA / Tester").length).toBeGreaterThan(0);
+    // CTA chính nằm ở hàng CTA của cột chính (giống reference) — KHÔNG nhân bản trong card
     expect(
-      within(recommendation).getByRole("button", {
-        name: "Tiếp tục với QA / Tester",
-      })
+      screen.getByRole("button", { name: "Tiếp tục với QA / Tester" })
     ).toBeInTheDocument();
 
     // CTA fail: không có "Vào Workspace", có "Xem lại tiêu chí đánh giá"
@@ -428,6 +427,59 @@ describe("Onboarding a11y — trạng thái steps đọc được", () => {
         screen.getByRole("progressbar", { name: /Tiến độ phỏng vấn/ })
       ).toHaveAttribute("aria-valuenow", "50");
     });
+  });
+});
+
+describe("Round 3 — cấu trúc desktop (1 viewport, không duplicate stepper)", () => {
+  it("PASS: main không render stepper ngang — chỉ stepper dọc ở shell; rail đủ 3 card", () => {
+    renderWithProvider(<RecruitmentResult result={RECRUITMENT_RESULT_PASS} />);
+
+    // Duplicate stepper (trước đây có cả ngang trong main) đã bị bỏ
+    expect(
+      screen.queryByRole("navigation", { name: "Tiến trình onboarding" })
+    ).not.toBeInTheDocument();
+
+    // Rail pass đúng thứ tự reference: Bước tiếp theo → Vị trí đã tuyển dụng → Lưu ý
+    expect(
+      screen.getByRole("region", { name: "Bước tiếp theo" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Vị trí đã tuyển dụng" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Lưu ý" })
+    ).toBeInTheDocument();
+  });
+
+  it("FAIL: đề xuất QA / Tester ở rail + không stepper ngang; next steps + lưu ý đầy đủ", () => {
+    renderWithProvider(<RecruitmentResult result={RECRUITMENT_RESULT_FAIL} />);
+
+    expect(
+      screen.queryByRole("navigation", { name: "Tiến trình onboarding" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: /Đề xuất từ AI Recruiter/ })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Bước tiếp theo" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Lưu ý" })
+    ).toBeInTheDocument();
+  });
+
+  it("Interview rail: danh sách câu hỏi dùng shortTitle compact 1 dòng", () => {
+    renderWithProvider(<InterviewStep />);
+
+    const questionList = screen.getByRole("navigation", {
+      name: "Danh sách câu hỏi phỏng vấn",
+    });
+    expect(
+      within(questionList).getByText("Xử lý validation form")
+    ).toBeInTheDocument();
+    expect(
+      within(questionList).getByText("Định hướng nghề nghiệp")
+    ).toBeInTheDocument();
   });
 });
 

@@ -63,6 +63,12 @@ export interface InterviewQuestion {
   category: QuestionCategory;
   /** Có thể chứa placeholder `{role}` — format bằng `formatQuestionPrompt`. */
   prompt: string;
+  /**
+   * Tiêu đề ngắn hiển thị trong rail danh sách câu hỏi (reference màn 3:
+   * mỗi item gồm 1 dòng ngắn + nhãn category — KHÔNG dùng prompt dài).
+   * Thuần nhãn hiển thị cho layout compact — không đổi nội dung câu hỏi.
+   */
+  shortTitle: string;
   /** Gợi ý ngắn hiển thị dưới câu hỏi (mô phỏng "hint" của AI Recruiter). */
   hint?: string;
 }
@@ -295,6 +301,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q1",
     category: "Technical",
+    shortTitle: "Kiến thức nền tảng",
     prompt:
       "Hãy trình bày những kiến thức nền tảng bạn thấy chắc chắn nhất khi làm web (HTML, CSS, JavaScript/TypeScript) và cách bạn tự luyện tập chúng.",
     hint: "Nêu ví dụ cụ thể bạn từng làm thay vì liệt kê công nghệ.",
@@ -302,6 +309,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q2",
     category: "Technical",
+    shortTitle: "Vì sao chọn vị trí này",
     prompt:
       "Tại sao bạn chọn vị trí {role}? Bạn hiểu gì về công việc hằng ngày của vị trí này?",
     hint: "Kết nối thế mạnh cá nhân với đặc thù của vị trí.",
@@ -309,6 +317,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q3",
     category: "Technical",
+    shortTitle: "Xử lý validation form",
     prompt:
       "Khi xây dựng một form, bạn xử lý validation ở client và server như thế nào? Ưu và nhược điểm của từng mức?",
     hint: "Nêu ví dụ: bắt buộc nhập email, kiểm tra độ dài mật khẩu...",
@@ -316,6 +325,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q4",
     category: "Technical",
+    shortTitle: "Quản lý state",
     prompt:
       "Với một ứng dụng vừa phải, bạn chọn chiến lược quản lý state nào (useState, context, thư viện ngoài...) và vì sao?",
     hint: "Cân nhắc giữa độ phức tạp và khả năng bảo trì.",
@@ -323,6 +333,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q5",
     category: "Technical",
+    shortTitle: "Xử lý lỗi ứng dụng",
     prompt:
       "Khi gọi API thất bại giữa chừng, bạn xử lý lỗi phía frontend ra sao để người dùng không bị kẹt?",
     hint: "Nghĩ về loading, thông báo lỗi, thử lại.",
@@ -330,6 +341,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q6",
     category: "Soft Skill",
+    shortTitle: "Làm việc nhóm",
     prompt:
       "Kể về một lần làm việc nhóm có mâu thuẫn về hướng giải pháp. Bạn đã xử lý thế nào?",
     hint: "Mô tả tình huống – hành động – kết quả.",
@@ -337,6 +349,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q7",
     category: "Soft Skill",
+    shortTitle: "Tình huống thực tế",
     prompt:
       "Nếu bạn nhận một task nhưng thời gian quá gấp so với khối lượng, bạn sẽ làm gì?",
     hint: "Ưu tiên giao tiếp sớm với người giao việc.",
@@ -344,6 +357,7 @@ export const INTERVIEW_QUESTIONS: readonly InterviewQuestion[] = [
   {
     id: "q8",
     category: "Soft Skill",
+    shortTitle: "Định hướng nghề nghiệp",
     prompt: "Định hướng nghề nghiệp của bạn trong 2 năm tới là gì?",
     hint: "Chia sẻ mục tiêu học tập và công việc cụ thể.",
   },

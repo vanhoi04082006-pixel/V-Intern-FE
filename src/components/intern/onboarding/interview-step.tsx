@@ -4,10 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import {
-  ArrowRight,
   BadgeCheck,
-  CircleAlert,
   Clock,
+  FileText,
   ListChecks,
   Mic,
   Paperclip,
@@ -29,14 +28,18 @@ import { OnboardingProgress, StepBadge, TagPill } from "./onboarding-primitives"
 import { useRecruitmentFlow } from "./recruitment-provider";
 
 /**
- * Màn 3 — Phỏng vấn cùng AI Recruiter (Bước 3/4).
+ * Màn 3 — Phỏng vấn cùng AI Recruiter (Bước 3/4) — DASHBOARD desktop
+ * theo reference "03 AI Recruitment": toàn bộ nội dung chính nằm trong
+ * MỘT viewport (shell sidebar đã khóa 100dvh, không body scroll lg+).
  *
- * Nội dung chính: header vai trò đang ứng tuyển + tags, panel AI Recruiter
- * (tái sử dụng robot-v2.png có sẵn), card câu hỏi hiện tại, khu trả lời
- * (đã ghi nhận → xem/sửa; chưa → textarea + đếm ký tự), tab Văn bản/Giọng
- * nói, đính kèm mock, nút gửi câu trả lời, link "Rời phỏng vấn".
- * Rail phải: thời gian, tiến độ (derive từ vị trí câu hiện tại/tổng), danh
- * sách 8 câu hỏi highlight câu đang trả lời.
+ * Cấu trúc:
+ * - Header 1 hàng compact: Bước 3/4 + tiêu đề + vai trò + tags + "Rời
+ *   phỏng vấn" (top-right như reference, KHÔNG nằm đáy card).
+ * - Hàng hero main: panel AI Recruiter (robot-v2.png) | card câu hỏi
+ *   hiện tại — xếp NGANG (reference), không full-width intro card.
+ * - Composer: tabs Văn bản/Giọng nói (mock) + textarea + đính kèm + gửi.
+ * - Rail phải: timer + tiến độ gộp 1 card + danh sách 8 câu ngắn gọn
+ *   (shortTitle) — list tự scroll nội bộ nếu thiếu chỗ, page không cuộn.
  *
  * MOCK-ONLY có chủ đích (theo task):
  * - Timer hiển thị giá trị tĩnh theo reference — KHÔNG đếm ngược thật.
@@ -98,79 +101,84 @@ export function InterviewStep() {
   return (
     <div
       aria-labelledby="interview-heading"
-      className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_320px]"
+      className="grid min-w-0 grid-cols-1 gap-4 lg:min-h-0 xl:grid-cols-[minmax(0,1fr)_312px]"
     >
-      <div className="min-w-0">
-        <header>
+      {/* Cột chính */}
+      <div className="flex min-w-0 flex-col gap-4">
+        {/* Header 1 hàng compact: step + title + role + tags + leave */}
+        <header className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <StepBadge step={3} />
-          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h1
-              id="interview-heading"
-              className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl"
-            >
-              {INTERVIEW_HEADING}
-            </h1>
-            {RoleIcon ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[13px] font-semibold text-navy">
-                <RoleIcon className="size-4 text-brand" aria-hidden="true" />
-                {roleLabel}
-              </span>
-            ) : null}
-          </div>
-          <ul className="mt-2.5 flex flex-wrap gap-1.5" aria-label="Nhóm kỹ năng của vị trí">
+          <h1
+            id="interview-heading"
+            className="text-xl font-extrabold tracking-tight text-navy sm:text-2xl"
+          >
+            {INTERVIEW_HEADING}
+          </h1>
+          {RoleIcon ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[13px] font-semibold text-navy">
+              <RoleIcon className="size-4 text-brand" aria-hidden="true" />
+              {roleLabel}
+            </span>
+          ) : null}
+          <ul
+            className="flex flex-wrap items-center gap-1.5"
+            aria-label="Nhóm kỹ năng của vị trí"
+          >
             {role?.tags.map((tag) => (
               <li key={tag}>
                 <TagPill tone={role.tone}>{tag}</TagPill>
               </li>
             ))}
           </ul>
+          <Link
+            href="/intern/onboarding"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[13px] font-semibold text-red-600 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+          >
+            Rời phỏng vấn
+          </Link>
         </header>
 
-        {/* Panel AI Recruiter */}
-        <section
-          aria-labelledby="recruiter-panel-heading"
-          className="mt-5 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:flex-row sm:items-center sm:p-5"
-        >
-          <div
-            aria-hidden="true"
-            className="relative mx-auto h-24 w-20 shrink-0 sm:mx-0"
+        {/* Hàng hero: AI Recruiter | câu hỏi hiện tại — ngang như reference */}
+        <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(240px,300px)_minmax(0,1fr)]">
+          <section
+            aria-labelledby="recruiter-panel-heading"
+            className="flex min-w-0 flex-col items-center rounded-xl border border-slate-200 bg-white p-4 text-center shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
           >
-            <Image
-              src="/images/robot-v2.png"
-              alt=""
-              fill
-              sizes="80px"
-              className="object-contain"
-            />
-          </div>
-          <div className="min-w-0 text-center sm:text-left">
+            <div
+              aria-hidden="true"
+              className="relative h-32 w-28 shrink-0"
+            >
+              <Image
+                src="/images/robot-v2.png"
+                alt=""
+                fill
+                sizes="112px"
+                className="object-contain"
+              />
+            </div>
             <h2
               id="recruiter-panel-heading"
-              className="flex items-center justify-center gap-2 text-base font-bold text-navy sm:justify-start"
+              className="mt-2 flex items-center gap-2 text-[15px] font-bold text-navy"
             >
               AI Recruiter
               <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-brand">
                 Đang phỏng vấn
               </span>
             </h2>
-            <p className="mt-1 text-[13px] leading-relaxed text-slate-600">
-              Chào bạn, mình sẽ cùng bạn hoàn thành 8 câu hỏi cho vị trí{" "}
-              <strong className="font-semibold text-navy">{roleLabel}</strong>.
-              Câu trả lời được ghi nhận ngay khi bạn gửi — cứ chọn câu đang
-              làm trong danh sách bên phải.
+            <p className="mt-1 line-clamp-3 text-[13px] leading-relaxed text-slate-600">
+              Chào bạn, mình sẽ cùng bạn hoàn thành {total} câu hỏi cho vị
+              trí <strong className="font-semibold text-navy">{roleLabel}</strong>.
+              Câu trả lời được ghi nhận ngay khi bạn gửi.
             </p>
-          </div>
-        </section>
+          </section>
 
-        {/* Card câu hỏi hiện tại */}
-        <section
-          aria-labelledby="current-question-heading"
-          className="mt-5 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:p-5"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <section
+            aria-labelledby="current-question-heading"
+            className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+          >
             <h2
               id="current-question-heading"
-              className="flex items-center gap-2.5 text-base font-bold text-navy"
+              className="flex flex-wrap items-center gap-2.5 text-base font-bold text-navy"
             >
               <span
                 aria-hidden="true"
@@ -190,36 +198,41 @@ export function InterviewStep() {
                 {currentQuestion.category}
               </span>
             </h2>
-          </div>
-          <p className="mt-3 text-[15px] font-medium leading-relaxed text-slate-800">
-            {formatQuestionPrompt(currentQuestion, roleLabel)}
-          </p>
-          {currentQuestion.hint ? (
-            <p className="mt-2 text-[13px] italic leading-relaxed text-slate-500">
-              Gợi ý: {currentQuestion.hint}
+            <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-slate-800">
+              {formatQuestionPrompt(currentQuestion, roleLabel)}
             </p>
-          ) : null}
-
-          {recordedAnswer ? (
-            <div className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50/60 p-3.5">
-              <p
-                aria-live="polite"
-                className="flex items-center gap-1.5 text-[13px] font-bold text-emerald-700"
-              >
-                <BadgeCheck className="size-4" aria-hidden="true" />
-                Đã ghi nhận câu trả lời cho câu này
+            {currentQuestion.hint ? (
+              <p className="mt-1.5 text-[13px] italic leading-relaxed text-slate-500">
+                Gợi ý: {currentQuestion.hint}
               </p>
-              <p className="mt-2 text-[13px] leading-relaxed text-slate-700">
-                {recordedAnswer}
-              </p>
-            </div>
-          ) : null}
+            ) : null}
 
-          {/* Chế độ trả lời: Văn bản / Giọng nói (mock) */}
+            {recordedAnswer ? (
+              <div className="mt-3 rounded-lg border border-emerald-100 bg-emerald-50/60 p-3">
+                <p
+                  aria-live="polite"
+                  className="flex items-center gap-1.5 text-[13px] font-bold text-emerald-700"
+                >
+                  <BadgeCheck className="size-4" aria-hidden="true" />
+                  Đã ghi nhận câu trả lời cho câu này
+                </p>
+                <p className="mt-1.5 line-clamp-3 text-[13px] leading-relaxed text-slate-700">
+                  {recordedAnswer}
+                </p>
+              </div>
+            ) : null}
+          </section>
+        </div>
+
+        {/* Composer: tabs + textarea + đính kèm + gửi — 1 card compact */}
+        <section
+          aria-label="Soạn câu trả lời"
+          className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+        >
           <div
             role="group"
             aria-label="Chế độ trả lời"
-            className="mt-4 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1"
+            className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1"
           >
             <button
               type="button"
@@ -232,6 +245,7 @@ export function InterviewStep() {
                   : "text-slate-500 hover:text-navy"
               )}
             >
+              <FileText className="size-4" aria-hidden="true" />
               Văn bản
             </button>
             <button
@@ -262,10 +276,10 @@ export function InterviewStep() {
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Nhập câu trả lời của bạn..."
-                rows={5}
-                className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3.5 py-3 text-sm leading-relaxed text-navy outline-none transition-shadow placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-brand/40"
+                rows={4}
+                className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm leading-relaxed text-navy outline-none transition-shadow placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-brand/40"
               />
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
                 <button
                   type="button"
                   disabled
@@ -282,7 +296,7 @@ export function InterviewStep() {
               </div>
             </div>
           ) : (
-            <div className="mt-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4">
+            <div className="mt-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3.5">
               <p className="flex items-center gap-2 text-[13px] font-semibold text-slate-600">
                 <Mic className="size-4 text-slate-400" aria-hidden="true" />
                 Trả lời bằng giọng nói (mô phỏng)
@@ -303,7 +317,7 @@ export function InterviewStep() {
             </div>
           )}
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-3 flex justify-end border-t border-slate-100 pt-3">
             <button
               type="button"
               onClick={handleSubmit}
@@ -313,61 +327,48 @@ export function InterviewStep() {
               <Send className="size-4" aria-hidden="true" />
               {recordedAnswer ? "Cập nhật câu trả lời" : "Gửi câu trả lời"}
             </button>
-            <Link
-              href="/intern/onboarding"
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-semibold text-red-600 transition-colors hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
-            >
-              Rời phỏng vấn
-            </Link>
           </div>
         </section>
       </div>
 
-      {/* Rail phải: thời gian + tiến độ + danh sách câu hỏi */}
-      <div className="flex min-w-0 flex-col gap-4">
+      {/* Rail phải: timer + tiến độ (gộp 1 card) + danh sách câu hỏi */}
+      <div className="flex min-w-0 flex-col gap-4 lg:min-h-0">
         <section
-          aria-labelledby="interview-timer-heading"
+          aria-label="Thời gian và tiến độ phỏng vấn"
           className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
         >
-          <h2
-            id="interview-timer-heading"
-            className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-slate-500"
-          >
+          <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-slate-500">
             <Clock className="size-4 text-brand" aria-hidden="true" />
-            Thời gian
-          </h2>
-          <p className="mt-2 text-3xl font-extrabold tabular-nums tracking-tight text-navy">
-            {INTERVIEW_TIMER_LABEL}
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            Tổng thời gian {INTERVIEW_TOTAL_MINUTES} phút · bộ đếm mô phỏng
-          </p>
-        </section>
-
-        <section
-          aria-labelledby="interview-progress-heading"
-          className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <h2
-              id="interview-progress-heading"
-              className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-slate-500"
-            >
-              <ListChecks className="size-4 text-brand" aria-hidden="true" />
-              Tiến độ phỏng vấn
-            </h2>
-            <span className="text-sm font-bold text-navy">
-              {position}/{total}
-            </span>
+            Thời gian còn lại
           </div>
-          <OnboardingProgress
-            value={progressPercent}
-            label={`Tiến độ phỏng vấn: câu ${position} trên ${total}`}
-            className="mt-3"
-          />
-          <p className="mt-2 text-xs text-slate-500">
-            Hoàn thành {progressPercent}% ({position} trên {total} câu hỏi)
-          </p>
+          <div className="mt-1 flex items-end justify-between gap-2">
+            <p className="text-3xl font-extrabold tabular-nums leading-none tracking-tight text-navy">
+              {INTERVIEW_TIMER_LABEL}
+            </p>
+            <p className="text-xs text-slate-500">
+              Tổng thời gian {INTERVIEW_TOTAL_MINUTES} phút · mô phỏng
+            </p>
+          </div>
+
+          <div className="mt-3 border-t border-slate-100 pt-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-slate-500">
+                <ListChecks className="size-4 text-brand" aria-hidden="true" />
+                Tiến độ phỏng vấn
+              </p>
+              <span className="text-sm font-bold text-navy">
+                {position}/{total}
+              </span>
+            </div>
+            <OnboardingProgress
+              value={progressPercent}
+              label={`Tiến độ phỏng vấn: câu ${position} trên ${total}`}
+              className="mt-2"
+            />
+            <p className="mt-1.5 text-xs text-slate-500">
+              Hoàn thành {progressPercent}% ({position} trên {total} câu hỏi)
+            </p>
+          </div>
         </section>
 
         <nav
@@ -377,7 +378,8 @@ export function InterviewStep() {
           <h2 className="text-[13px] font-bold uppercase tracking-wide text-slate-500">
             Danh sách câu hỏi
           </h2>
-          <ol className="mt-3 flex flex-col gap-1">
+          {/* Chỉ list được phép scroll nội bộ khi thiếu chỗ — page không cuộn */}
+          <ol className="mt-2.5 flex flex-col gap-0.5 lg:max-h-[400px] lg:overflow-y-auto">
             {INTERVIEW_QUESTIONS.map((question, index) => {
               const itemPosition = index + 1;
               const isCurrent = index === currentQuestionIndex;
@@ -386,7 +388,7 @@ export function InterviewStep() {
                 <li key={question.id} aria-current={isCurrent ? "step" : undefined}>
                   <span
                     className={cn(
-                      "flex items-start gap-2.5 rounded-lg px-2.5 py-2 text-[13px] leading-snug",
+                      "flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] leading-snug",
                       isCurrent
                         ? "bg-blue-50 font-bold text-navy"
                         : "text-slate-600"
@@ -395,7 +397,7 @@ export function InterviewStep() {
                     <span
                       aria-hidden="true"
                       className={cn(
-                        "mt-0.5 grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold",
+                        "grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold",
                         isCurrent
                           ? "bg-brand text-white"
                           : isAnswered
@@ -409,10 +411,13 @@ export function InterviewStep() {
                         itemPosition
                       )}
                     </span>
-                    <span className="min-w-0">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate">
+                        {question.shortTitle}
+                      </span>
                       <span
                         className={cn(
-                          "block text-[11px] font-semibold uppercase tracking-wide",
+                          "block text-[11px] font-semibold",
                           question.category === "Technical"
                             ? "text-blue-600"
                             : "text-emerald-600"
@@ -420,8 +425,15 @@ export function InterviewStep() {
                       >
                         {question.category}
                       </span>
-                      <span className="line-clamp-2">{question.prompt}</span>
                     </span>
+                    {isCurrent ? (
+                      <span
+                        aria-hidden="true"
+                        className="text-[11px] font-bold text-brand"
+                      >
+                        ▸
+                      </span>
+                    ) : null}
                   </span>
                 </li>
               );
@@ -462,10 +474,8 @@ function InterviewCompleted({ roleLabel }: { roleLabel: string }) {
         className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
       >
         Xem kết quả
-        <ArrowRight className="size-4" aria-hidden="true" />
       </Link>
-      <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-        <CircleAlert className="size-3.5" aria-hidden="true" />
+      <p className="mt-4 text-xs text-slate-400">
         Kết quả hiển thị là dữ liệu mẫu — chưa kết nối API thật.
       </p>
     </section>
