@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, BookOpen, Info } from "lucide-react";
@@ -29,8 +28,8 @@ import {
  * - "Bắt đầu" là Link thật → /intern/onboarding/role (không API).
  * - "Xem hướng dẫn" là toggle panel hướng dẫn thuần UI — hành vi thật
  *   (expand/collapse, aria-expanded), không giả điều hướng.
- * - Ảnh minh họa tái sử dụng asset hiện có của repo (student-v2.png) —
- *   thuần trang trí, ẩn trên mobile để ưu tiên nội dung.
+ * - Hero là khối text thuần (heading + subtitle + breadcrumb) với max-width
+ *   hợp lý để dễ đọc — không có ảnh minh họa (đã bỏ, không thay mascot).
  */
 export function WelcomeStep() {
   const [guidanceOpen, setGuidanceOpen] = useState(false);
@@ -39,8 +38,8 @@ export function WelcomeStep() {
     <div>
       <StepBadge step={1} />
 
-      <header className="mt-3 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-        <div className="max-w-[640px]">
+      <header className="mt-3">
+        <div className="max-w-[720px]">
           <h1 className="text-[30px] font-extrabold leading-[1.15] tracking-tight text-navy sm:text-4xl">
             {WELCOME_HEADING}
           </h1>
@@ -61,19 +60,6 @@ export function WelcomeStep() {
               ))}
             </ol>
           </nav>
-        </div>
-
-        <div
-          aria-hidden="true"
-          className="relative hidden h-44 w-36 shrink-0 lg:block"
-        >
-          <Image
-            src="/images/student-v2.png"
-            alt=""
-            fill
-            sizes="144px"
-            className="object-contain object-bottom"
-          />
         </div>
       </header>
 

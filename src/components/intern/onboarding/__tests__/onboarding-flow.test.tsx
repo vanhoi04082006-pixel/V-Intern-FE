@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { RECRUITMENT_RESULT_FAIL, RECRUITMENT_RESULT_PASS } from "@/components/intern/onboarding/data/recruitment-mock-data";
+import { RECRUITMENT_RESULT_FAIL, RECRUITMENT_RESULT_PASS, resolveRecruitmentResult } from "@/components/intern/onboarding/data/recruitment-mock-data";
 import { InterviewStep } from "@/components/intern/onboarding/interview-step";
+import { parseInternResultPreviewParam } from "@/components/intern/onboarding/onboarding-preview";
 import { RoleSelectionStep } from "@/components/intern/onboarding/role-selection-step";
 import { RecruitmentProvider } from "@/components/intern/onboarding/recruitment-provider";
 import { RecruitmentResult } from "@/components/intern/onboarding/recruitment-result";
@@ -427,5 +428,76 @@ describe("Onboarding a11y — trạng thái steps đọc được", () => {
         screen.getByRole("progressbar", { name: /Tiến độ phỏng vấn/ })
       ).toHaveAttribute("aria-valuenow", "50");
     });
+  });
+});
+
+describe("Preview kết quả ?_preview=pass|fail — dev-only, không phải auth switch", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("dev: ?_preview=pass → dataset PASS → 85/72/81.1 + Đạt yêu cầu, không redirect login", () => {
+    vi.stubEnv("NODE_ENV", "development");
+
+    const preview = parseInternResultPreviewParam("pass");
+    expect(preview).toBe("pass");
+
+    const result = resolveRecruitmentResult(preview);
+    expect(result.overall).toBe(81.1);
+    expect(result.passed).toBe(true);
+
+    renderWithProvider(<RecruitmentResult result={result} />);
+
+    expect(screen.getByText("Đạt yêu cầu")).toBeInTheDocument();
+    expect(screen.getByText("85/100")).toBeInTheDocument();
+    expect(screen.getByText("72/100")).toBeInTheDocument();
+    expect(screen.getByText("81.1/100")).toBeInTheDocument();
+    // Render trực tiếp dataset mock — không qua trạng thái checking của guard
+    expect(
+      screen.queryByText("Đang kiểm tra phiên đăng nhập...")
+    ).not.toBeInTheDocument();
+  });
+
+  it("dev: ?_preview=fail → dataset FAIL → 58/72/62.2 + Chưa đạt + QA / Tester", () => {
+    vi.stubEnv("NODE_ENV", "development");
+
+    const preview = parseInternResultPreviewParam("fail");
+    expect(preview).toBe("fail");
+
+    const result = resolveRecruitmentResult(preview);
+    expect(result.overall).toBe(62.2);
+    expect(result.passed).toBe(false);
+
+    renderWithProvider(<RecruitmentResult result={result} />);
+
+    expect(screen.getByText("Chưa đạt")).toBeInTheDocument();
+    expect(screen.getByText("58/100")).toBeInTheDocument();
+    expect(screen.getByText("62.2/100")).toBeInTheDocument();
+
+    const recommendation = screen.getByRole("region", {
+      name: /Đề xuất từ AI Recruiter/,
+    });
+    expect(
+      within(recommendation).getAllByText("QA / Tester").length
+    ).toBeGreaterThan(0);
+  });
+
+  it("production: _preview bị bỏ qua hoàn toàn (chỉ là mock data, không phải auth bypass)", () => {
+    vi.stubEnv("NODE_ENV", "production");
+
+    expect(parseInternResultPreviewParam("pass")).toBeNull();
+    expect(parseInternResultPreviewParam("fail")).toBeNull();
+
+    // null → dataset mặc định của flow (pass) — không bao giờ rơi vào fail
+    const result = resolveRecruitmentResult(null);
+    expect(result.overall).toBe(81.1);
+    expect(result.passed).toBe(true);
+  });
+
+  it("giá trị lạ/không hợp lệ → null (dù dev hay production)", () => {
+    vi.stubEnv("NODE_ENV", "development");
+    expect(parseInternResultPreviewParam("admin")).toBeNull();
+    expect(parseInternResultPreviewParam(undefined)).toBeNull();
+    expect(parseInternResultPreviewParam(["pass"])).toBeNull();
   });
 });
