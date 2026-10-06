@@ -40,7 +40,9 @@ const DRAWER_FOCUSABLE_SELECTOR =
 export function InternWorkspace({
   previewState = null,
 }: {
-  /** Dev-only: `?_preview=empty|active` — page đã parse và guard auth trước. */
+  /** Dev-only: `?_preview=empty|active` — page đã parse; dev preview render
+   * không mount guard (review UI không cần Backend), production luôn `null`
+   * và render sau `WorkspaceGuard` như cũ. */
   previewState?: InternPreviewState | null;
 }) {
   const state = resolveInternWorkspaceState(previewState);

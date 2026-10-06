@@ -17,7 +17,8 @@ import type { InternWorkspaceState } from "@/components/intern/data/intern-mock-
 /**
  * Test Intern Workspace (/intern) — 1 route, 2 business state, mock-only.
  * Tránh test pixel; tập trung nội dung, ARIA, dữ liệu derive và preview
- * dev-only. Preview KHÔNG bypass auth — auth đã được cover bởi
+ * dev-only. Component KHÔNG tự kiểm tra auth; nhánh preview dev render
+ * không guard còn nhánh guard được cover ở intern-page.test.tsx (page),
  * workspace-guard.test.tsx (guard) và login-form.test.tsx (redirect).
  */
 

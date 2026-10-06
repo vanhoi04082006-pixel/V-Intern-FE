@@ -1007,8 +1007,9 @@ function deriveDefaultState(): InternWorkspaceState {
 /**
  * Chọn business state cho `/intern`.
  * - Production / không có preview → derive từ dataset (hiện là ACTIVE).
- * - Dev + `?_preview=empty|active` → ép state tương ứng (chỉ SAU khi
- *   WorkspaceGuard đã xác thực role intern — preview không bypass auth).
+ * - Dev + `?_preview=empty|active` → ép state tương ứng (dev preview render
+ *   không mount guard để review UI không cần Backend; production luôn derive
+ *   từ dataset, không nhận query param).
  */
 export function resolveInternWorkspaceState(
   preview: InternPreviewState | null
