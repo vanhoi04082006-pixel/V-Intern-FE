@@ -1,4 +1,4 @@
-import { CheckCircle2, History } from "lucide-react";
+import { CheckCircle2, History, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { CardLinkAction, SectionCard } from "./intern-primitives";
@@ -48,7 +48,9 @@ export function RecentActivityCard({
                 {isDone ? (
                   <CheckCircle2 className={cn("size-4", toneStyle.icon)} />
                 ) : (
-                  <span className={cn("size-2 rounded-full", toneStyle.bar)} />
+                  // Chờ phân công: icon "⋯" đúng reference (phân biệt với
+                  // mục hoàn thành bằng icon, không chỉ màu).
+                  <MoreHorizontal className={cn("size-4", toneStyle.icon)} />
                 )}
               </span>
               <div className="min-w-0 flex-1">

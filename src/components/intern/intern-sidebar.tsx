@@ -49,6 +49,28 @@ function NavItem({
     );
   }
 
+  // State waiting: Sprint/Dự án cần Project đã phân công — render disabled
+  // muted (không giả link, không điều hướng sai). State active không có item
+  // unavailable nên không ảnh hưởng.
+  if (item.unavailable) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-disabled="true"
+        title="Chưa khả dụng — cần dự án được phân công"
+        className={cn(
+          itemBase,
+          "cursor-not-allowed text-slate-300",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        )}
+      >
+        {icon}
+        {item.label}
+      </button>
+    );
+  }
+
   return (
     <button
       type="button"

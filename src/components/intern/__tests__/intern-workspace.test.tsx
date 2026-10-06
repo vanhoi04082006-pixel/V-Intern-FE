@@ -193,6 +193,42 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
       within(nav).queryByText(/^\d+$/)
     ).not.toBeInTheDocument();
   });
+
+  it("sidebar waiting: Sprint + Dự án unavailable (disabled, không giả link)", () => {
+    renderEmpty();
+
+    const nav = screen.getByRole("navigation", {
+      name: "Điều hướng thực tập sinh",
+    });
+
+    // Chưa có Project → Sprint/Dự án chưa khả dụng: disabled, không href.
+    expect(within(nav).getByRole("button", { name: "Sprint" })).toBeDisabled();
+    expect(within(nav).getByRole("button", { name: "Dự án" })).toBeDisabled();
+
+    // Các mục khác vẫn tương tác được (không bị disabled theo).
+    expect(
+      within(nav).getByRole("button", { name: "Công việc của tôi" })
+    ).toBeEnabled();
+    expect(
+      within(nav).getByRole("button", { name: "AI Mentor" })
+    ).toBeEnabled();
+
+    // Tổng quan vẫn là link thật và là mục active duy nhất.
+    const overview = within(nav).getByRole("link", { name: "Tổng quan" });
+    expect(overview).toHaveAttribute("href", "/intern");
+    expect(overview).toHaveAttribute("aria-current", "page");
+  });
+
+  it("welcome card: mascot minh hoạ là ảnh trang trí (không lỡ screen reader)", () => {
+    const { container } = renderEmpty();
+
+    // next/image render src qua optimizer URL → khớp một phần tên asset.
+    const mascot = container.querySelector('img[src*="student-mascot"]');
+    expect(mascot).not.toBeNull();
+    // Ảnh thuần trang trí: alt rỗng + aria-hidden ở wrapper.
+    expect(mascot).toHaveAttribute("alt", "");
+    expect(mascot?.parentElement).toHaveAttribute("aria-hidden", "true");
+  });
 });
 
 describe("InternWorkspace — state ACTIVE", () => {
@@ -489,6 +525,20 @@ describe("InternWorkspace — state ACTIVE", () => {
       (item) => item.unread
     ).length;
     expect(within(nav).getByText(String(unread))).toBeInTheDocument();
+  });
+
+  it("sidebar active: không có mục nào bị disabled (regression waiting flag)", () => {
+    renderActive();
+
+    const nav = screen.getByRole("navigation", {
+      name: "Điều hướng thực tập sinh",
+    });
+
+    // Flag `unavailable` chỉ dùng ở state waiting — active phải toàn bộ
+    // item đều tương tác được.
+    for (const button of within(nav).getAllByRole("button")) {
+      expect(button).toBeEnabled();
+    }
   });
 });
 

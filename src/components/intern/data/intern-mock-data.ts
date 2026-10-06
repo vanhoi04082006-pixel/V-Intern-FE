@@ -68,6 +68,12 @@ export interface InternNavItem {
   href?: string;
   /** Số chưa đọc. Khi có thể, derive từ dataset (unread notifications). */
   badge?: number;
+  /**
+   * Mục chưa khả dụng ở state waiting (Sprint/Dự án cần Project đã được
+   * phân công) — render muted + disabled, không giả link. State active
+   * không dùng flag này.
+   */
+  unavailable?: boolean;
 }
 
 export interface InternNavGroup {
@@ -341,8 +347,18 @@ const INTERN_NAV_EMPTY: InternNavGroup[] = [
         href: "/intern",
       },
       { id: "cong-viec-cua-toi", label: "Công việc của tôi", icon: ListTodo },
-      { id: "sprint", label: "Sprint", icon: Timer },
-      { id: "du-an", label: "Dự án", icon: FolderKanban },
+      {
+        id: "sprint",
+        label: "Sprint",
+        icon: Timer,
+        unavailable: true,
+      },
+      {
+        id: "du-an",
+        label: "Dự án",
+        icon: FolderKanban,
+        unavailable: true,
+      },
     ],
   },
   {

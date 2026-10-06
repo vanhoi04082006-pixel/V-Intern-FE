@@ -1,4 +1,5 @@
-import { BookOpen, FileText, Info } from "lucide-react";
+import Image from "next/image";
+import { BookOpen, FileText, Info, Send } from "lucide-react";
 
 import {
   OutlineAction,
@@ -12,13 +13,15 @@ import { RecentActivityCard } from "./recent-activity";
 import type { InternWorkspaceState } from "./data/intern-mock-data";
 
 /**
- * State A — UNASSIGNED/EMPTY của Intern Workspace (reference image 2):
- * welcome card (badge vai trò + hoàn thành tuyển dụng), card chính "Chưa có
- * dự án được phân công", Thông tin thực tập, Quy trình tiếp theo, Hoạt động
- * gần đây, Lưu ý. Chỉ render SAU khi WorkspaceGuard xác thực role intern.
+ * State A — UNASSIGNED/WAITING của Intern Workspace (reference "Waiting State"):
+ * welcome card (mascot + badge vai trò + hoàn thành tuyển dụng), card chính
+ * "Chưa có dự án được phân công", Thông tin thực tập, Quy trình tiếp theo,
+ * Hoạt động gần đây, Lưu ý. Chỉ render SAU khi WorkspaceGuard xác thực role
+ * intern.
  *
- * Minh hoạ trong reference là illustration 3D — thay bằng khối minh hoạ
- * thuần CSS/icon (không pull ảnh ngoài theo quy ước repo).
+ * Minh hoạ hero là khối thuần CSS/SVG (không pull ảnh ngoài). Mascot welcome
+ * tái sử dụng asset có sẵn của repo (student-mascot-v2.png, nền trong suốt) —
+ * phong cách 3D khớp reference; chỉ trang trí (alt rỗng + aria-hidden).
  */
 export function EmptyInternWorkspace({
   state,
@@ -35,18 +38,27 @@ export function EmptyInternWorkspace({
         {/* Welcome card */}
         <section
           aria-labelledby="intern-welcome"
-          className="relative overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:p-6"
+          className="relative overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:p-6"
         >
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -right-10 -top-14 hidden size-44 rounded-full bg-blue-100/60 blur-2xl sm:block"
           />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-16 right-24 hidden size-40 rounded-full border-[14px] border-white/50 blur-[2px] sm:block"
+          />
           <div className="relative flex flex-wrap items-center gap-x-5 gap-y-4">
-            <span
-              aria-hidden="true"
-              className="grid size-16 shrink-0 place-items-center rounded-2xl bg-brand text-2xl font-extrabold text-white shadow-sm"
-            >
-              {state.user.initials}
+            {/* Mascot — asset có sẵn trong repo (nền đã trong suốt), thuần trang trí */}
+            <span aria-hidden="true" className="shrink-0">
+              <Image
+                src="/images/student-mascot-v2.png"
+                alt=""
+                width={136}
+                height={181}
+                priority
+                className="h-28 w-auto drop-shadow-[0_10px_18px_rgba(37,99,235,0.18)] sm:h-32"
+              />
             </span>
             <div className="min-w-0 flex-1">
               <h2
@@ -61,7 +73,14 @@ export function EmptyInternWorkspace({
               <ul className="mt-3 flex flex-wrap items-center gap-2">
                 {welcome.badges.map((badge) => (
                   <li key={badge.id}>
-                    <StatusBadge tone={badge.tone}>
+                    <StatusBadge
+                      tone={badge.tone}
+                      className={
+                        badge.tone === "blue"
+                          ? "border border-blue-200 bg-white"
+                          : "border border-emerald-200 bg-white"
+                      }
+                    >
                       <badge.icon className="size-3.5" aria-hidden="true" />
                       {badge.label}
                     </StatusBadge>
@@ -77,8 +96,25 @@ export function EmptyInternWorkspace({
           aria-labelledby="intern-empty-assignment"
           className="flex flex-col items-center rounded-xl border border-slate-200 bg-white px-5 py-10 text-center shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:px-8"
         >
-          {/* Minh hoạ thuần CSS: khung trình duyệt + mã nguồn + hộp mở */}
+          {/* Minh hoạ thuần CSS/SVG: khung trình duyệt + mã nguồn + hộp mở +
+              máy bay giấy bay ra cùng đường nối nét đứt (theo reference) */}
           <div aria-hidden="true" className="relative mb-6">
+            <svg
+              viewBox="0 0 110 70"
+              fill="none"
+              className="absolute -right-16 -top-8 hidden h-[70px] w-[110px] sm:block"
+            >
+              <path
+                d="M6 66 C 34 62, 62 48, 88 16"
+                stroke="#93C5FD"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray="1 8"
+              />
+            </svg>
+            <Send
+              className="absolute -right-[72px] -top-11 hidden size-6 -rotate-12 fill-blue-100 text-brand sm:block"
+            />
             <div className="flex h-24 w-52 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               <div className="flex items-center gap-1 border-b border-slate-100 bg-slate-50 px-2.5 py-1.5">
                 <span className="size-1.5 rounded-full bg-slate-300" />
@@ -117,7 +153,8 @@ export function EmptyInternWorkspace({
           </div>
         </section>
 
-        <div className="grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-2">
+        {/* Reference: hoạt động rộng hơn lưu ý (~1.6:1) */}
+        <div className="grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <RecentActivityCard
             activities={recentActivities}
             actionLabel={state.activitiesActionLabel}

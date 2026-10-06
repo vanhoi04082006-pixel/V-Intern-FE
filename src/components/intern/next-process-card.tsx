@@ -1,4 +1,5 @@
 import { ListChecks } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import { SectionCard } from "./intern-primitives";
 import type { InternNextStep } from "./data/intern-mock-data";
@@ -18,6 +19,8 @@ export function NextProcessCard({ steps }: { steps: InternNextStep[] }) {
       <ol className="relative flex flex-col gap-5">
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
+          // Reference: bước 1 (sắp tới) đậm màu blue, các bước sau trung tính.
+          const isNextUp = index === 0;
 
           return (
             <li key={step.order} className="relative flex gap-3.5">
@@ -26,7 +29,14 @@ export function NextProcessCard({ steps }: { steps: InternNextStep[] }) {
                 chạy từ dưới số hiện tại xuống đầu mục kế tiếp.
               */}
               <span aria-hidden="true" className="relative flex flex-col items-center">
-                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-blue-50 text-[13px] font-bold text-brand">
+                <span
+                  className={cn(
+                    "grid size-7 shrink-0 place-items-center rounded-full text-[13px] font-bold",
+                    isNextUp
+                      ? "bg-brand text-white shadow-sm"
+                      : "bg-slate-100 text-slate-500"
+                  )}
+                >
                   {step.order}
                 </span>
                 {!isLast ? (
