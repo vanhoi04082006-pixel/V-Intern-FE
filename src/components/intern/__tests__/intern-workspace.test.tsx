@@ -66,6 +66,39 @@ function getBoardStats(state: Extract<InternWorkspaceState, { status: "active" }
   };
 }
 
+/**
+ * Round 3.1 — navigation consistency: Waiting và Active phải cùng 1 nav
+ * model nên thứ tự item (theo DOM) phải giống hệt nhau. Badge "3" của
+ * Thông báo nằm trong cùng button → cắt digits cuối để so label thuần.
+ * ("Cài đặt" ở bottom nav không nằm trong <li> — không thuộc list này.)
+ */
+const EXPECTED_INTERN_NAV_ITEM_ORDER = [
+  "Tổng quan",
+  "Công việc của tôi",
+  "Sprint Board",
+  "Dự án",
+  "AI Mentor",
+  "Thông báo",
+  "Đánh giá",
+  "KPI & Lương ảo",
+  "Chứng nhận",
+];
+
+function getSidebarNavLabels(nav: HTMLElement): string[] {
+  return within(nav)
+    .getAllByRole("listitem")
+    .map((li) =>
+      (li.querySelector("a, button")?.textContent ?? "")
+        .replace(/\d+$/, "")
+        .trim()
+    );
+}
+
+/** Unread count từ dataset thông báo — nguồn truth duy nhất của badge. */
+function getUnreadNotificationCount(): number {
+  return getActiveState().notifications.filter((item) => item.unread).length;
+}
+
 describe("InternWorkspace — state EMPTY (unassigned)", () => {
   it("render tiêu đề + subtitle + welcome với badges", () => {
     renderEmpty();
@@ -188,55 +221,125 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     ).toBeInTheDocument();
   });
 
-  it("sidebar empty: 2 nhóm không tiêu đề, không badge thông báo", () => {
+  it("sidebar waiting: cùng model với Active — 2 section heading, label chuẩn, badge unread chung", () => {
     renderEmpty();
 
     const nav = screen.getByRole("navigation", {
       name: "Điều hướng thực tập sinh",
     });
 
+    // Round 3.1: heading section GIỐNG HỆT Active (không còn "2 nhóm
+    // không tiêu đề" của waiting cũ).
+    expect(within(nav).getByText("Workspace")).toBeInTheDocument();
+    expect(
+      within(nav).getByText("Hiệu suất & Phát triển")
+    ).toBeInTheDocument();
+
+    // Label chuẩn hoá theo source of truth Active: "Sprint" → "Sprint
+    // Board", "KPI" → "KPI & Lương ảo", bổ sung "Đánh giá".
     for (const label of [
       "Tổng quan",
       "Công việc của tôi",
-      "Sprint",
+      "Sprint Board",
       "Dự án",
       "AI Mentor",
       "Thông báo",
-      "KPI",
+      "Đánh giá",
+      "KPI & Lương ảo",
       "Chứng nhận",
       "Cài đặt",
     ]) {
       expect(within(nav).getAllByText(label).length).toBeGreaterThan(0);
     }
-    // Empty state chưa có hệ thống thông báo → không badge số.
+    // Không còn label cũ standalone trong nav.
     expect(
-      within(nav).queryByText(/^\d+$/)
+      within(nav).queryByRole("button", { name: "Sprint" })
     ).not.toBeInTheDocument();
+    expect(
+      within(nav).queryByRole("button", { name: "KPI" })
+    ).not.toBeInTheDocument();
+
+    // Badge "Thông báo" dùng CÙNG nguồn unread với Active (dataset thông
+    // báo chung) — không hardcode số riêng cho waiting.
+    const unread = getUnreadNotificationCount();
+    expect(unread).toBeGreaterThan(0);
+    expect(within(nav).getByText(String(unread))).toBeInTheDocument();
   });
 
-  it("sidebar waiting: Sprint + Dự án unavailable (disabled, không giả link)", () => {
+  it("sidebar waiting: thứ tự item GIỐNG HỆT Active (1 nav model chung)", () => {
+    renderEmpty();
+
+    const nav = screen.getByRole("navigation", {
+      name: "Điều hướng thực tập sinh",
+    });
+    expect(getSidebarNavLabels(nav)).toEqual(EXPECTED_INTERN_NAV_ITEM_ORDER);
+  });
+
+  it("sidebar waiting: Sprint Board + Dự án unavailable (disabled, aria-disabled, không giả link)", () => {
     renderEmpty();
 
     const nav = screen.getByRole("navigation", {
       name: "Điều hướng thực tập sinh",
     });
 
-    // Chưa có Project → Sprint/Dự án chưa khả dụng: disabled, không href.
-    expect(within(nav).getByRole("button", { name: "Sprint" })).toBeDisabled();
-    expect(within(nav).getByRole("button", { name: "Dự án" })).toBeDisabled();
+    // Chưa có Project → Sprint Board/Dự án: visible nhưng disabled +
+    // aria-disabled, không giả link (không đổi icon/label theo state).
+    const sprintBoard = within(nav).getByRole("button", {
+      name: "Sprint Board",
+    });
+    expect(sprintBoard).toBeDisabled();
+    expect(sprintBoard).toHaveAttribute("aria-disabled", "true");
+    const duAn = within(nav).getByRole("button", { name: "Dự án" });
+    expect(duAn).toBeDisabled();
+    expect(duAn).toHaveAttribute("aria-disabled", "true");
 
-    // Các mục khác vẫn tương tác được (không bị disabled theo).
+    // Không tự tiện disable thêm mục nào — business behavior giữ nguyên.
     expect(
       within(nav).getByRole("button", { name: "Công việc của tôi" })
     ).toBeEnabled();
     expect(
       within(nav).getByRole("button", { name: "AI Mentor" })
     ).toBeEnabled();
+    expect(
+      within(nav).getByRole("button", { name: "Đánh giá" })
+    ).toBeEnabled();
+    expect(
+      within(nav).getByRole("button", { name: "KPI & Lương ảo" })
+    ).toBeEnabled();
 
     // Tổng quan vẫn là link thật và là mục active duy nhất.
     const overview = within(nav).getByRole("link", { name: "Tổng quan" });
     expect(overview).toHaveAttribute("href", "/intern");
     expect(overview).toHaveAttribute("aria-current", "page");
+  });
+
+  it("drawer mobile (waiting): cùng nav model — 2 section, đủ item, badge, Sprint Board/Dự án disabled", async () => {
+    const user = userEvent.setup();
+    renderEmpty();
+
+    await user.click(
+      screen.getByRole("button", { name: "Mở menu điều hướng" })
+    );
+    const dialog = screen.getByRole("dialog", { name: "Menu thực tập sinh" });
+
+    // Drawer dùng CÙNG groups với desktop — không có list mobile riêng.
+    const nav = within(dialog).getByRole("navigation", {
+      name: "Điều hướng thực tập sinh",
+    });
+    expect(within(nav).getByText("Workspace")).toBeInTheDocument();
+    expect(
+      within(nav).getByText("Hiệu suất & Phát triển")
+    ).toBeInTheDocument();
+    expect(getSidebarNavLabels(nav)).toEqual(EXPECTED_INTERN_NAV_ITEM_ORDER);
+    expect(
+      within(nav).getByText(String(getUnreadNotificationCount()))
+    ).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("button", { name: "Sprint Board" })
+    ).toBeDisabled();
+    expect(
+      within(nav).getByRole("button", { name: "Dự án" })
+    ).toBeDisabled();
   });
 
   it("welcome card: mascot minh hoạ là ảnh trang trí (không lỡ screen reader)", () => {
@@ -532,7 +635,9 @@ describe("InternWorkspace — state ACTIVE", () => {
     });
 
     expect(within(nav).getByText("Workspace")).toBeInTheDocument();
-    expect(within(nav).getByText("Hiệu suất & Phát triển")).toBeInTheDocument();
+    expect(
+      within(nav).getByText("Hiệu suất & Phát triển")
+    ).toBeInTheDocument();
     expect(within(nav).getByText("Sprint Board")).toBeInTheDocument();
     expect(within(nav).getByText("KPI & Lương ảo")).toBeInTheDocument();
 
@@ -540,10 +645,17 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(overview).toHaveAttribute("href", "/intern");
     expect(overview).toHaveAttribute("aria-current", "page");
 
+    // Round 3.1: cùng nav model với waiting — thứ tự item phải giống hệt.
+    expect(getSidebarNavLabels(nav)).toEqual(EXPECTED_INTERN_NAV_ITEM_ORDER);
+
+    // Sprint Board + Dự án available ở active (regression waiting flag).
+    expect(
+      within(nav).getByRole("button", { name: "Sprint Board" })
+    ).toBeEnabled();
+    expect(within(nav).getByRole("button", { name: "Dự án" })).toBeEnabled();
+
     // Badge "Thông báo" derive từ unread notifications (3).
-    const unread = getActiveState().notifications.filter(
-      (item) => item.unread
-    ).length;
+    const unread = getUnreadNotificationCount();
     expect(within(nav).getByText(String(unread))).toBeInTheDocument();
   });
 
