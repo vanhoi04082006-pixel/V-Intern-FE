@@ -36,14 +36,32 @@ const DRAWER_FOCUSABLE_SELECTOR =
  *   (page.tsx lo) — shell này KHÔNG tự kiểm tra auth.
  * - Toàn bộ dữ liệu là mock presentation (data/intern-mock-data.ts); tách
  *   hoàn toàn khỏi Admin/Instructor Workspace — không import chéo.
+ *
+ * COMPOSITION THEO STATE (Round 2 — one-viewport waiting desktop):
+ * - ACTIVE giữ nguyên: header spanning full width (h1 + badge "Dữ liệu mẫu"
+ *   + meta) rồi nội dung — KHÔNG ép layout one-viewport của Waiting lên
+ *   Active (tránh regression).
+ * - WAITING: right rail (Thông tin thực tập + Quy trình tiếp theo) bắt đầu
+ *   NGAY dưới topbar, ngang hàng với page title nằm trong MAIN column
+ *   (EmptyInternWorkspace tự render header + grid 2 cột). Desktop ≥xl shell
+ *   cao 100dvh + overflow-hidden scoped CHỈ cho waiting — không đụng
+ *   html/body overflow; tablet/mobile scroll bình thường. Badge "Dữ liệu
+ *   mẫu" chỉ còn ở Active (reference waiting không có debug/demo noise).
+ *
+ * Round 3 (design-system sync với Instructor): topbar MỘT composition cho
+ * cả 2 state — breadcrumb trái (Waiting: V-Intern > Intern Workspace >
+ * Tổng quan; Active: org > project > sprint), search phải, h-16.
  */
 export function InternWorkspace({
   previewState = null,
 }: {
-  /** Dev-only: `?_preview=empty|active` — page đã parse và guard auth trước. */
+  /** Dev-only: `?_preview=empty|active` — page đã parse; dev preview render
+   * không mount guard (review UI không cần Backend), production luôn `null`
+   * và render sau `WorkspaceGuard` như cũ. */
   previewState?: InternPreviewState | null;
 }) {
   const state = resolveInternWorkspaceState(previewState);
+  const isWaiting = state.status !== "active";
 
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement | null>(null);
@@ -133,7 +151,12 @@ export function InternWorkspace({
         </div>
       ) : null}
 
-      <div className="flex min-h-dvh flex-col lg:pl-[240px]">
+      <div
+        className={cnJoin(
+          "flex min-h-dvh flex-col lg:pl-[240px]",
+          isWaiting && "xl:h-dvh xl:min-h-0"
+        )}
+      >
         <InternTopbar
           breadcrumb={buildBreadcrumb(state)}
           searchPlaceholder={state.searchPlaceholder}
@@ -143,26 +166,26 @@ export function InternWorkspace({
           menuButtonRef={openMenuButtonRef}
         />
 
-        <main
-          id="intern-main-content"
-          className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-5 sm:px-6 sm:py-6 2xl:px-8"
-        >
-          <header>
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <h1 className="text-[26px] font-extrabold tracking-tight text-navy sm:text-3xl">
-                  Intern Workspace
-                </h1>
-                <span
-                  title="Số liệu mô phỏng để trình bày UI — chưa kết nối dữ liệu live"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
-                >
-                  <FlaskConical className="size-3.5" aria-hidden="true" />
-                  Dữ liệu mẫu
-                </span>
-              </div>
+        {state.status === "active" ? (
+          <main
+            id="intern-main-content"
+            className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-5 sm:px-6 sm:py-6 2xl:px-8"
+          >
+            <header>
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <h1 className="text-[26px] font-extrabold tracking-tight text-navy sm:text-3xl">
+                    Intern Workspace
+                  </h1>
+                  <span
+                    title="Số liệu mô phỏng để trình bày UI — chưa kết nối dữ liệu live"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                  >
+                    <FlaskConical className="size-3.5" aria-hidden="true" />
+                    Dữ liệu mẫu
+                  </span>
+                </div>
 
-              {state.status === "active" ? (
                 <div className="flex flex-wrap items-center gap-2.5">
                   {state.headerActions.map((action) =>
                     action.primary ? (
@@ -170,14 +193,14 @@ export function InternWorkspace({
                         {action.label}
                       </PrimaryAction>
                     ) : (
-                      <OutlineAction key={action.id}>{action.label}</OutlineAction>
+                      <OutlineAction key={action.id}>
+                        {action.label}
+                      </OutlineAction>
                     )
                   )}
                 </div>
-              ) : null}
-            </div>
+              </div>
 
-            {state.status === "active" ? (
               <ul className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">
                 {state.assignment.meta.map((meta) => (
                   <li
@@ -203,25 +226,37 @@ export function InternWorkspace({
                   </span>
                 </li>
               </ul>
-            ) : (
-              <p className="mt-1 text-sm text-slate-500">{state.pageSubtitle}</p>
-            )}
-          </header>
+            </header>
 
-          <div className="mt-5">
-            {state.status === "active" ? (
+            <div className="mt-5">
               <ActiveInternWorkspace state={state} />
-            ) : (
-              <EmptyInternWorkspace state={state} />
-            )}
-          </div>
-        </main>
+            </div>
+          </main>
+        ) : (
+          /* Waiting: main chứa toàn bộ chiều cao còn lại của viewport,
+           * grid 2 cột bên trong tự phân bổ — desktop không scroll body. */
+          <main
+            id="intern-main-content"
+            className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-4 sm:px-6 sm:py-5 xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8"
+          >
+            <EmptyInternWorkspace state={state} />
+          </main>
+        )}
       </div>
     </div>
   );
 }
 
-/** Breadcrumb theo state (active: org > project > sprint; empty: ngắn gọn). */
+/** Join className strings với điều kiện (tránh thêm dependency mới). */
+function cnJoin(...parts: Array<string | false | undefined>): string {
+  return parts.filter(Boolean).join(" ");
+}
+
+/**
+ * Breadcrumb theo state, cùng ngôn ngữ shell với Instructor Workspace:
+ * - Waiting: V-Intern > Intern Workspace > Tổng quan (current = mục nav active).
+ * - Active: V-Intern > org > project > sprint hiện tại.
+ */
 function buildBreadcrumb(state: InternWorkspaceState) {
   if (state.status === "active") {
     const { org, project, sprint } = state.assignment.breadcrumb;
@@ -231,5 +266,8 @@ function buildBreadcrumb(state: InternWorkspaceState) {
       { id: "sprint", label: sprint, current: true },
     ];
   }
-  return [{ id: "workspace", label: "Intern Workspace", current: true }];
+  return [
+    { id: "workspace", label: "Intern Workspace", href: "/intern" },
+    { id: "overview", label: "Tổng quan", current: true },
+  ];
 }

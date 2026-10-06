@@ -66,13 +66,22 @@ export interface InternNavItem {
   icon: LucideIcon;
   /** Route thật — task này chỉ "Tổng quan" có destination. */
   href?: string;
-  /** Số chưa đọc. Khi có thể, derive từ dataset (unread notifications). */
+  /** Số chưa đọc. Derive từ dataset chung (unread notifications). */
   badge?: number;
+  /**
+   * Mục chưa khả dụng (Sprint Board/Dự án cần Project đã được phân công) —
+   * do `buildInternNavGroups` derive theo state, KHÔNG set tay; render
+   * muted + disabled, không giả link. State active không có item này.
+   */
+  unavailable?: boolean;
 }
 
 export interface InternNavGroup {
   id: string;
-  /** Nhóm có tiêu đề (state active) hoặc không (state empty — chỉ divider). */
+  /**
+   * Tiêu đề nhóm — cả 2 state dùng chung 1 nav model nên heading luôn có
+   * ("Workspace" / "Hiệu suất & Phát triển"), giống hệt nhau.
+   */
   label?: string;
   items: InternNavItem[];
 }
@@ -84,6 +93,98 @@ export const INTERN_BOTTOM_NAV: InternNavItem = {
   label: "Cài đặt",
   icon: Settings,
 };
+
+/**
+ * MỘT navigation model dùng chung cho cả 2 workspace state (Round 3.1 —
+ * navigation consistency): Active là source of truth cho section heading,
+ * label, icon và thứ tự item; Waiting CHỈ khác ở availability của các item
+ * cần Project đã phân công — KHÔNG có list nav riêng cho từng state.
+ */
+interface InternNavDefinition {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  /** Route thật — chỉ "Tổng quan" có destination (như Admin/Instructor). */
+  href?: string;
+  /**
+   * Item cần Project đã phân công: state waiting (chưa có project) render
+   * muted + disabled; state active luôn khả dụng.
+   */
+  requiresProject?: boolean;
+}
+
+const INTERN_NAV_SECTIONS: Array<{
+  id: string;
+  label: string;
+  items: InternNavDefinition[];
+}> = [
+  {
+    id: "nhom-workspace",
+    label: "Workspace",
+    items: [
+      {
+        id: INTERN_OVERVIEW_NAV_ID,
+        label: "Tổng quan",
+        icon: Home,
+        href: "/intern",
+      },
+      { id: "cong-viec-cua-toi", label: "Công việc của tôi", icon: ListTodo },
+      {
+        id: "sprint-board",
+        label: "Sprint Board",
+        icon: SquareKanban,
+        requiresProject: true,
+      },
+      {
+        id: "du-an",
+        label: "Dự án",
+        icon: FolderKanban,
+        requiresProject: true,
+      },
+      { id: "ai-mentor", label: "AI Mentor", icon: Bot },
+      { id: "thong-bao", label: "Thông báo", icon: Bell },
+    ],
+  },
+  {
+    id: "nhom-hieu-suat",
+    label: "Hiệu suất & Phát triển",
+    items: [
+      { id: "danh-gia", label: "Đánh giá", icon: ClipboardCheck },
+      { id: "kpi-luong-ao", label: "KPI & Lương ảo", icon: ChartColumn },
+      { id: "chung-nhan", label: "Chứng nhận", icon: Award },
+    ],
+  },
+];
+
+/**
+ * Derive `InternNavGroup[]` cho 1 workspace state từ CÙNG model trên:
+ * - Section heading ("Workspace" / "Hiệu suất & Phát triển"), label, icon,
+ *   thứ tự: GIỐNG NHAU ở cả 2 state.
+ * - `requiresProject` + chưa có project → `unavailable` (chỉ waiting).
+ * - Badge "Thông báo" = unread count từ dataset thông báo chung — 1 nguồn
+ *   truth, không hardcode riêng cho từng state.
+ */
+function buildInternNavGroups(options: {
+  hasProject: boolean;
+  notificationBadge: number;
+}): InternNavGroup[] {
+  return INTERN_NAV_SECTIONS.map((section) => ({
+    id: section.id,
+    label: section.label,
+    items: section.items.map((item) => ({
+      id: item.id,
+      label: item.label,
+      icon: item.icon,
+      ...(item.href ? { href: item.href } : {}),
+      ...(item.requiresProject && !options.hasProject
+        ? { unavailable: true }
+        : {}),
+      ...(item.id === "thong-bao" && options.notificationBadge > 0
+        ? { badge: options.notificationBadge }
+        : {}),
+    })),
+  }));
+}
 
 /* ---------------------------- Current user ------------------------------- */
 
@@ -330,32 +431,6 @@ const INTERN_USER_EMPTY: InternWorkspaceUser = {
   notificationBadge: null,
 };
 
-const INTERN_NAV_EMPTY: InternNavGroup[] = [
-  {
-    id: "nhom-chinh",
-    items: [
-      {
-        id: INTERN_OVERVIEW_NAV_ID,
-        label: "Tổng quan",
-        icon: Home,
-        href: "/intern",
-      },
-      { id: "cong-viec-cua-toi", label: "Công việc của tôi", icon: ListTodo },
-      { id: "sprint", label: "Sprint", icon: Timer },
-      { id: "du-an", label: "Dự án", icon: FolderKanban },
-    ],
-  },
-  {
-    id: "nhom-ho-tro",
-    items: [
-      { id: "ai-mentor", label: "AI Mentor", icon: Bot },
-      { id: "thong-bao", label: "Thông báo", icon: Bell },
-      { id: "kpi", label: "KPI", icon: ChartColumn },
-      { id: "chung-nhan", label: "Chứng nhận", icon: Award },
-    ],
-  },
-];
-
 const INTERN_WELCOME: InternWelcomeContent = {
   greeting: "Xin chào, Nguyễn Văn A 👋",
   message:
@@ -480,7 +555,13 @@ export const INTERN_WORKSPACE_EMPTY_STATE: InternWorkspaceState = {
   status: "unassigned",
   user: INTERN_USER_EMPTY,
   assignment: null,
-  navGroups: INTERN_NAV_EMPTY,
+  // Round 3.1: CÙNG nav model với Active (badge là placeholder 0 — ghi đè
+  // ngay sau khi khai báo dataset thông báo, cùng pattern với
+  // INTERN_USER_ACTIVE.notificationBadge để giữ 1 nguồn truth).
+  navGroups: buildInternNavGroups({
+    hasProject: false,
+    notificationBadge: 0,
+  }),
   searchPlaceholder: INTERN_SEARCH_PLACEHOLDER_EMPTY,
   pageSubtitle: "Không gian làm việc và thực tập của bạn tại V-Intern",
   welcome: INTERN_WELCOME,
@@ -552,35 +633,6 @@ const INTERN_ASSIGNMENT: InternAssignment = {
     },
   ],
 };
-
-const INTERN_NAV_ACTIVE: InternNavGroup[] = [
-  {
-    id: "nhom-workspace",
-    label: "Workspace",
-    items: [
-      {
-        id: INTERN_OVERVIEW_NAV_ID,
-        label: "Tổng quan",
-        icon: Home,
-        href: "/intern",
-      },
-      { id: "cong-viec-cua-toi", label: "Công việc của tôi", icon: ListTodo },
-      { id: "sprint-board", label: "Sprint Board", icon: SquareKanban },
-      { id: "du-an", label: "Dự án", icon: FolderKanban },
-      { id: "ai-mentor", label: "AI Mentor", icon: Bot },
-      { id: "thong-bao", label: "Thông báo", icon: Bell },
-    ],
-  },
-  {
-    id: "nhom-hieu-suat",
-    label: "Hiệu suất & Phát triển",
-    items: [
-      { id: "danh-gia", label: "Đánh giá", icon: ClipboardCheck },
-      { id: "kpi-luong-ao", label: "KPI & Lương ảo", icon: ChartColumn },
-      { id: "chung-nhan", label: "Chứng nhận", icon: Award },
-    ],
-  },
-];
 
 /**
  * Task Board — snapshot Sprint 03 (mốc hiện tại 21/05/2024 14:21).
@@ -937,29 +989,31 @@ const INTERN_PERFORMANCE: InternPerformanceSummary = {
 
 const INTERN_NOTIFICATIONS_ACTIVE = INTERN_NOTIFICATIONS;
 
-INTERN_USER_ACTIVE.notificationBadge = countUnreadNotifications(
+/**
+ * 1 nguồn truth cho unread count: chuông topbar + badge "Thông báo" trên
+ * sidebar (CẢ 2 state) đều derive từ đây — không hardcode "3" ở đâu khác.
+ */
+const INTERN_UNREAD_NOTIFICATION_COUNT = countUnreadNotifications(
   INTERN_NOTIFICATIONS_ACTIVE
 );
 
-const INTERN_NAV_ACTIVE_WITH_BADGE: InternNavGroup[] = INTERN_NAV_ACTIVE.map(
-  (group) => ({
-    ...group,
-    items: group.items.map((item) =>
-      item.id === "thong-bao"
-        ? {
-            ...item,
-            badge: countUnreadNotifications(INTERN_NOTIFICATIONS_ACTIVE),
-          }
-        : item
-    ),
-  })
-);
+INTERN_USER_ACTIVE.notificationBadge = INTERN_UNREAD_NOTIFICATION_COUNT;
+
+// Round 3.1: Waiting dùng chung nav model với Active — badge "Thông báo"
+// cũng từ CÙNG nguồn unread (ghi đè placeholder của EMPTY_STATE phía trên).
+INTERN_WORKSPACE_EMPTY_STATE.navGroups = buildInternNavGroups({
+  hasProject: false,
+  notificationBadge: INTERN_UNREAD_NOTIFICATION_COUNT,
+});
 
 export const INTERN_WORKSPACE_ACTIVE_STATE: InternWorkspaceState = {
   status: "active",
   user: INTERN_USER_ACTIVE,
   assignment: INTERN_ASSIGNMENT,
-  navGroups: INTERN_NAV_ACTIVE_WITH_BADGE,
+  navGroups: buildInternNavGroups({
+    hasProject: true,
+    notificationBadge: INTERN_UNREAD_NOTIFICATION_COUNT,
+  }),
   searchPlaceholder: INTERN_SEARCH_PLACEHOLDER_ACTIVE,
   headerActions: [
     { id: "xem-sprint-board", label: "Xem Sprint Board", primary: true },
@@ -991,8 +1045,9 @@ function deriveDefaultState(): InternWorkspaceState {
 /**
  * Chọn business state cho `/intern`.
  * - Production / không có preview → derive từ dataset (hiện là ACTIVE).
- * - Dev + `?_preview=empty|active` → ép state tương ứng (chỉ SAU khi
- *   WorkspaceGuard đã xác thực role intern — preview không bypass auth).
+ * - Dev + `?_preview=empty|active` → ép state tương ứng (dev preview render
+ *   không mount guard để review UI không cần Backend; production luôn derive
+ *   từ dataset, không nhận query param).
  */
 export function resolveInternWorkspaceState(
   preview: InternPreviewState | null

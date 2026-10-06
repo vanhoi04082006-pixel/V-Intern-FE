@@ -2,11 +2,14 @@
  * Dev-only preview cho Intern Workspace (`/intern?_preview=empty|active`).
  *
  * Quy tắc (bắt buộc theo task):
- * - Preview KHÔNG bypass auth: page vẫn bọc trong `WorkspaceGuard` — preview
- *   chỉ chọn business data state SAU khi role `intern` đã được xác thực.
- * - Chỉ bật khi `process.env.NODE_ENV === "development"`. Production build
- *   luôn nhận `null` → bỏ qua query param, không có fake state.
- * - Helper là pure function đọc env bên trong để test có thể `vi.stubEnv`.
+ * - Preview chọn business data state VÀ (dev-only) cho phép page render
+ *   workspace không mount `WorkspaceGuard` — phục vụ local UI review khi
+ *   Backend/auth session không chạy. Production KHÔNG bao giờ bypass auth.
+ * - Helper là ĐIỂM ENFORCE duy nhất của điều kiện bypass: phải thỏa CẢ HAI
+ *   `process.env.NODE_ENV === "development"` (Next.js inline lúc build →
+ *   production build luôn nhận `null`) VÀ giá trị param chính xác
+ *   `empty|active`. Mọi giá trị khác → `null` → page đi qua guard như cũ.
+ * - Đọc env bên trong (render/call time) để test có thể `vi.stubEnv`.
  */
 
 export const INTERN_PREVIEW_STATES = ["empty", "active"] as const;

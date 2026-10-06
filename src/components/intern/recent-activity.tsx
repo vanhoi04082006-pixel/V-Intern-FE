@@ -1,4 +1,4 @@
-import { CheckCircle2, History } from "lucide-react";
+import { CheckCircle2, History, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { CardLinkAction, SectionCard } from "./intern-primitives";
@@ -9,13 +9,18 @@ import type { InternActivityItem } from "./data/intern-mock-data";
  * Card "Hoạt động gần đây" (state empty): timeline các mốc trong quá trình
  * tuyển dụng → chờ phân công. Icon kiểm tra xanh = đã hoàn thành, chấm xanh
  * dương = đang chờ (phân biệt bằng icon, không chỉ màu).
+ *
+ * Round 2: spacing timeline điều khiển qua token `--iw-act-pb` (globals.css)
+ * để card gọn trong viewport desktop một màn hình.
  */
 export function RecentActivityCard({
   activities,
   actionLabel,
+  className,
 }: {
   activities: InternActivityItem[];
   actionLabel: string;
+  className?: string;
 }) {
   return (
     <SectionCard
@@ -24,6 +29,9 @@ export function RecentActivityCard({
       tone="blue"
       title="Hoạt động gần đây"
       actions={<CardLinkAction label={actionLabel} />}
+      className={className}
+      headerClassName="xl:px-4 xl:py-2"
+      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
     >
       <ol className="flex flex-col">
         {activities.map((item, index) => {
@@ -31,7 +39,7 @@ export function RecentActivityCard({
           const isDone = item.tone === "green";
 
           return (
-            <li key={item.id} className="relative flex gap-3.5 pb-5 last:pb-0">
+            <li key={item.id} className="relative flex gap-3.5 pb-[var(--iw-act-pb)] last:pb-0">
               {index < activities.length - 1 ? (
                 <span
                   aria-hidden="true"
@@ -48,7 +56,9 @@ export function RecentActivityCard({
                 {isDone ? (
                   <CheckCircle2 className={cn("size-4", toneStyle.icon)} />
                 ) : (
-                  <span className={cn("size-2 rounded-full", toneStyle.bar)} />
+                  // Chờ phân công: icon "⋯" đúng reference (phân biệt với
+                  // mục hoàn thành bằng icon, không chỉ màu).
+                  <MoreHorizontal className={cn("size-4", toneStyle.icon)} />
                 )}
               </span>
               <div className="min-w-0 flex-1">
@@ -60,7 +70,7 @@ export function RecentActivityCard({
                     {item.timeLabel}
                   </time>
                 </div>
-                <p className="mt-0.5 text-[13px] leading-relaxed text-slate-500">
+                <p className="mt-0.5 text-[13px] leading-relaxed text-slate-500 xl:text-xs xl:leading-[var(--iw-lead)]">
                   {item.description}
                 </p>
               </div>

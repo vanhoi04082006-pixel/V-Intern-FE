@@ -9,6 +9,13 @@ import type { InternWorkspaceUser } from "./data/intern-mock-data";
  * Topbar của Intern Workspace: breadcrumb, ô tìm kiếm, thông báo, user.
  * Thuần presentational — drawer mobile điều khiển qua props bởi workspace.
  * Dùng initials placeholder cho avatar (yêu cầu: không pull ảnh ngoài).
+ *
+ * Round 3 (đồng bộ design system với Instructor Workspace): MỘT composition
+ * duy nhất cho cả Waiting lẫn Active — breadcrumb bên trái, cụm search +
+ * thông báo + profile bên phải, cao h-16 như Instructor/Admin. Không còn
+ * variant riêng cho Waiting (trước đó search trái + bỏ breadcrumb khiến
+ * Waiting "như một app khác"); breadcrumb của Waiting do workspace truyền
+ * vào: V-Intern > Intern Workspace > Tổng quan.
  */
 export function InternTopbar({
   className,
@@ -85,8 +92,11 @@ export function InternTopbar({
         </nav>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          <div className="hidden h-10 w-[300px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[340px]">
-            <Search className="size-4 shrink-0 text-slate-400" aria-hidden="true" />
+          <div className="hidden h-10 w-[320px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[360px]">
+            <Search
+              className="size-4 shrink-0 text-slate-400"
+              aria-hidden="true"
+            />
             <input
               type="search"
               aria-label="Tìm kiếm trong không gian thực tập"

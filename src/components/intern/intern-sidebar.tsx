@@ -10,10 +10,14 @@ import {
 } from "./data/intern-mock-data";
 
 /**
- * Sidebar của Intern Workspace — presentational, dựng theo 2 reference
- * (empty: 2 nhóm không tiêu đề; active: "Workspace" + "Hiệu suất & Phát triển").
+ * Sidebar của Intern Workspace — presentational, dựng từ MỘT nav model
+ * dùng chung (data/intern-mock-data.ts → INTERN_NAV_SECTIONS +
+ * buildInternNavGroups): cả 2 state render cùng section heading
+ * ("Workspace" / "Hiệu suất & Phát triển"), cùng label/icon/thứ tự — chỉ
+ * khác availability (waiting: Sprint Board/Dự án disabled muted).
  * Desktop: nằm cố định bên trái (cha điều khiển positioning qua className).
- * Mobile: render trong drawer của InternWorkspace, onNavigate đóng drawer.
+ * Mobile: render trong drawer của InternWorkspace với CÙNG groups — không
+ * có list mobile riêng, onNavigate đóng drawer.
  *
  * Giống Admin/Instructor Workspace: chỉ "Tổng quan" là link thật tới route
  * hiện có (/intern); các mục còn lại là section chưa implement — render bằng
@@ -46,6 +50,28 @@ function NavItem({
         {icon}
         {item.label}
       </Link>
+    );
+  }
+
+  // State waiting: Sprint/Dự án cần Project đã phân công — render disabled
+  // muted (không giả link, không điều hướng sai). State active không có item
+  // unavailable nên không ảnh hưởng.
+  if (item.unavailable) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-disabled="true"
+        title="Chưa khả dụng — cần dự án được phân công"
+        className={cn(
+          itemBase,
+          "cursor-not-allowed text-slate-300",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        )}
+      >
+        {icon}
+        {item.label}
+      </button>
     );
   }
 
