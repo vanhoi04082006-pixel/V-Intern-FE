@@ -26,6 +26,7 @@ export function SectionCard({
   titleSuffix,
   actions,
   className,
+  headerClassName,
   bodyClassName,
   children,
 }: {
@@ -37,6 +38,8 @@ export function SectionCard({
   titleSuffix?: string;
   actions?: ReactNode;
   className?: string;
+  /** Override padding header (dùng cho compact density của Waiting desktop) */
+  headerClassName?: string;
   bodyClassName?: string;
   children: ReactNode;
 }) {
@@ -53,7 +56,12 @@ export function SectionCard({
         className
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 px-4 py-3.5 sm:px-5">
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 px-4 py-3.5 sm:px-5",
+          headerClassName
+        )}
+      >
         <h2
           id={id}
           className="flex min-w-0 items-center gap-2.5 text-base font-bold text-navy"

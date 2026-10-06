@@ -82,8 +82,23 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
       screen.getAllByText("Frontend Developer").length
     ).toBeGreaterThan(0);
     expect(screen.getByText("Đã hoàn thành tuyển dụng")).toBeInTheDocument();
-    // Badge công bố dữ liệu mock (giống Instructor Workspace).
-    expect(screen.getByText("Dữ liệu mẫu")).toBeInTheDocument();
+    // Round 2: reference Waiting KHÔNG có badge demo — badge "Dữ liệu mẫu"
+    // chỉ còn ở Active workspace (không thêm visual noise cho waiting).
+    expect(screen.queryByText("Dữ liệu mẫu")).not.toBeInTheDocument();
+  });
+
+  it("waiting topbar: KHÔNG breadcrumb (reference), search vẫn ở topbar", () => {
+    renderEmpty();
+
+    // Reference Waiting State: search trái, không breadcrumb V-Intern > …
+    expect(
+      screen.queryByRole("navigation", { name: "Breadcrumb" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("searchbox", {
+        name: "Tìm kiếm trong không gian thực tập",
+      })
+    ).toBeInTheDocument();
   });
 
   it("card chính: Chưa có dự án được phân công + mô tả + 2 hành động", () => {
@@ -540,6 +555,15 @@ describe("InternWorkspace — state ACTIVE", () => {
     for (const button of within(nav).getAllByRole("button")) {
       expect(button).toBeEnabled();
     }
+  });
+
+  it("active topbar: giữ breadcrumb (regression waiting variant)", () => {
+    renderActive();
+
+    // Chỉ waiting mới bỏ breadcrumb — active giữ nguyên hành vi cũ.
+    expect(
+      screen.getByRole("navigation", { name: "Breadcrumb" })
+    ).toBeInTheDocument();
   });
 });
 

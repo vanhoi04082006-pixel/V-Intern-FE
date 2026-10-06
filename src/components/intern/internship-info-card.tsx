@@ -9,14 +9,26 @@ import type { InternInfoRow } from "./data/intern-mock-data";
  * Card "Thông tin thực tập" (state empty): từng dòng label → chip giá trị.
  * Trạng thái chưa phân công hiển thị chip xám/amber — không chỉ dựa màu,
  * chữ value đã nói rõ ("Chưa được phân công", "Chờ phân công").
+ *
+ * Round 2: chiều cao dòng điều khiển qua token `--iw-row-py` (globals.css)
+ * để 6 dòng gọn trong viewport desktop một màn hình.
  */
-export function InternshipInfoCard({ rows }: { rows: InternInfoRow[] }) {
+export function InternshipInfoCard({
+  rows,
+  className,
+}: {
+  rows: InternInfoRow[];
+  className?: string;
+}) {
   return (
     <SectionCard
       id="thong-tin-thuc-tap"
       icon={rows[0]?.icon ?? ListTodo}
       tone="blue"
       title="Thông tin thực tập"
+      className={className}
+      headerClassName="xl:px-4 xl:py-2"
+      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
     >
       <dl className="flex flex-col divide-y divide-slate-100">
         {rows.map((row) => {
@@ -26,7 +38,7 @@ export function InternshipInfoCard({ rows }: { rows: InternInfoRow[] }) {
           return (
             <div
               key={row.id}
-              className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+              className="flex items-center justify-between gap-3 py-[var(--iw-row-py)] first:pt-0 last:pb-0"
             >
               <dt className="flex min-w-0 items-center gap-2.5 text-[13px] font-medium text-slate-500">
                 <RowIcon
