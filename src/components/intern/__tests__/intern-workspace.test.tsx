@@ -87,13 +87,17 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     expect(screen.queryByText("Dữ liệu mẫu")).not.toBeInTheDocument();
   });
 
-  it("waiting topbar: KHÔNG breadcrumb (reference), search vẫn ở topbar", () => {
+  it("waiting topbar: breadcrumb V-Intern > Intern Workspace > Tổng quan + search", () => {
     renderEmpty();
 
-    // Reference Waiting State: search trái, không breadcrumb V-Intern > …
+    // Round 3 (sync Instructor shell): Waiting dùng CÙNG composition topbar
+    // với Active/Instructor — breadcrumb trái, search phải, không variant.
+    const breadcrumb = screen.getByRole("navigation", { name: "Breadcrumb" });
     expect(
-      screen.queryByRole("navigation", { name: "Breadcrumb" })
-    ).not.toBeInTheDocument();
+      within(breadcrumb).getByText("Intern Workspace")
+    ).toBeInTheDocument();
+    const current = within(breadcrumb).getByText("Tổng quan");
+    expect(current).toHaveAttribute("aria-current", "page");
     expect(
       screen.getByRole("searchbox", {
         name: "Tìm kiếm trong không gian thực tập",
@@ -557,10 +561,10 @@ describe("InternWorkspace — state ACTIVE", () => {
     }
   });
 
-  it("active topbar: giữ breadcrumb (regression waiting variant)", () => {
+  it("active topbar: giữ breadcrumb org > project > sprint", () => {
     renderActive();
 
-    // Chỉ waiting mới bỏ breadcrumb — active giữ nguyên hành vi cũ.
+    // Round 3: không còn variant — Active giữ nguyên breadcrumb như cũ.
     expect(
       screen.getByRole("navigation", { name: "Breadcrumb" })
     ).toBeInTheDocument();

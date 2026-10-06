@@ -166,11 +166,11 @@ html {
 @media (min-width: 1280px) and (max-height: 860px) {
   .intern-waiting {
     --iw-gap: 0.5rem; /* 8px */
-    --iw-welcome-h: 7.75rem; /* 124px */
+    --iw-welcome-h: 7.5rem; /* 120px */
     --iw-mascot-h: 6rem; /* 96px */
     --iw-illu-h: 4.5rem; /* 72px */
     --iw-win-w: 12rem; /* 192px */
-    --iw-h1: 1.375rem; /* 22px */
+    --iw-h1: 1.625rem; /* 26px — Round 3: khớp cỡ h1 Instructor (text-[26px]) */
     --iw-h2: 1.25rem; /* 20px */
     --iw-greet: 1.0625rem; /* 17px */
     --iw-row-py: 0.375rem; /* 6px */

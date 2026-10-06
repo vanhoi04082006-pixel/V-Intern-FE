@@ -10,16 +10,15 @@ import type { InternWorkspaceUser } from "./data/intern-mock-data";
  * Thuần presentational — drawer mobile điều khiển qua props bởi workspace.
  * Dùng initials placeholder cho avatar (yêu cầu: không pull ảnh ngoài).
  *
- * `variant`:
- * - "default" (Active Workspace): breadcrumb trái + search cụm phải —
- *   giữ nguyên hành vi cũ.
- * - "waiting" (Waiting State, theo reference): KHÔNG breadcrumb, search
- *   nằm bên TRÁI topbar ngay sau sidebar, phải là thông báo + user.
- *   Không duplicate topbar — cùng 1 component, chỉ đổi composition.
+ * Round 3 (đồng bộ design system với Instructor Workspace): MỘT composition
+ * duy nhất cho cả Waiting lẫn Active — breadcrumb bên trái, cụm search +
+ * thông báo + profile bên phải, cao h-16 như Instructor/Admin. Không còn
+ * variant riêng cho Waiting (trước đó search trái + bỏ breadcrumb khiến
+ * Waiting "như một app khác"); breadcrumb của Waiting do workspace truyền
+ * vào: V-Intern > Intern Workspace > Tổng quan.
  */
 export function InternTopbar({
   className,
-  variant = "default",
   breadcrumb,
   searchPlaceholder,
   user,
@@ -28,7 +27,6 @@ export function InternTopbar({
   menuButtonRef,
 }: {
   className?: string;
-  variant?: "default" | "waiting";
   breadcrumb: { id: string; label: string; href?: string; current?: boolean }[];
   searchPlaceholder: string;
   user: InternWorkspaceUser;
@@ -37,8 +35,6 @@ export function InternTopbar({
   /** Ref nút mở menu — workspace dùng để trả focus khi drawer đóng */
   menuButtonRef?: Ref<HTMLButtonElement>;
 }) {
-  const isWaiting = variant === "waiting";
-
   return (
     <header
       className={cn(
@@ -46,12 +42,7 @@ export function InternTopbar({
         className
       )}
     >
-      <div
-        className={cn(
-          "flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8",
-          isWaiting && "xl:h-14 xl:gap-4"
-        )}
-      >
+      <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
           ref={menuButtonRef}
@@ -63,9 +54,45 @@ export function InternTopbar({
           <Menu className="size-5" aria-hidden="true" />
         </button>
 
-        {isWaiting ? (
-          /* Reference Waiting State: search ở TRÁI, không breadcrumb. */
-          <div className="hidden h-10 min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:h-9 xl:w-[380px]">
+        <nav aria-label="Breadcrumb" className="hidden min-w-0 md:block">
+          <ol className="flex items-center gap-1.5 text-[13px]">
+            <li>
+              <Link
+                href="/"
+                className="flex items-center gap-1.5 rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              >
+                <Home className="size-4" aria-hidden="true" />
+                V-Intern
+              </Link>
+            </li>
+            {breadcrumb.map((crumb) => (
+              <li key={crumb.id} className="flex min-w-0 items-center gap-1.5">
+                <ChevronRight
+                  className="size-3.5 shrink-0 text-slate-300"
+                  aria-hidden="true"
+                />
+                {crumb.current ? (
+                  <span
+                    aria-current="page"
+                    className="truncate px-1 font-semibold text-navy"
+                  >
+                    {crumb.label}
+                  </span>
+                ) : (
+                  <Link
+                    href={crumb.href ?? "/intern"}
+                    className="truncate rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  >
+                    {crumb.label}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <div className="hidden h-10 w-[320px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[360px]">
             <Search
               className="size-4 shrink-0 text-slate-400"
               aria-hidden="true"
@@ -80,63 +107,6 @@ export function InternTopbar({
               ⌘K
             </kbd>
           </div>
-        ) : (
-          <nav aria-label="Breadcrumb" className="hidden min-w-0 md:block">
-            <ol className="flex items-center gap-1.5 text-[13px]">
-              <li>
-                <Link
-                  href="/"
-                  className="flex items-center gap-1.5 rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                >
-                  <Home className="size-4" aria-hidden="true" />
-                  V-Intern
-                </Link>
-              </li>
-              {breadcrumb.map((crumb) => (
-                <li key={crumb.id} className="flex min-w-0 items-center gap-1.5">
-                  <ChevronRight
-                    className="size-3.5 shrink-0 text-slate-300"
-                    aria-hidden="true"
-                  />
-                  {crumb.current ? (
-                    <span
-                      aria-current="page"
-                      className="truncate px-1 font-semibold text-navy"
-                    >
-                      {crumb.label}
-                    </span>
-                  ) : (
-                    <Link
-                      href={crumb.href ?? "/intern"}
-                      className="truncate rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                    >
-                      {crumb.label}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )}
-
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          {!isWaiting ? (
-            <div className="hidden h-10 w-[300px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[340px]">
-              <Search
-                className="size-4 shrink-0 text-slate-400"
-                aria-hidden="true"
-              />
-              <input
-                type="search"
-                aria-label="Tìm kiếm trong không gian thực tập"
-                placeholder={searchPlaceholder}
-                className="w-full bg-transparent text-sm text-navy outline-none placeholder:text-slate-400"
-              />
-              <kbd className="shrink-0 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[11px] font-medium text-slate-400">
-                ⌘K
-              </kbd>
-            </div>
-          ) : null}
 
           <button
             type="button"

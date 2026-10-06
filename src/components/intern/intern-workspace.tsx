@@ -47,6 +47,10 @@ const DRAWER_FOCUSABLE_SELECTOR =
  *   cao 100dvh + overflow-hidden scoped CHỈ cho waiting — không đụng
  *   html/body overflow; tablet/mobile scroll bình thường. Badge "Dữ liệu
  *   mẫu" chỉ còn ở Active (reference waiting không có debug/demo noise).
+ *
+ * Round 3 (design-system sync với Instructor): topbar MỘT composition cho
+ * cả 2 state — breadcrumb trái (Waiting: V-Intern > Intern Workspace >
+ * Tổng quan; Active: org > project > sprint), search phải, h-16.
  */
 export function InternWorkspace({
   previewState = null,
@@ -154,10 +158,7 @@ export function InternWorkspace({
         )}
       >
         <InternTopbar
-          variant={isWaiting ? "waiting" : "default"}
-          breadcrumb={
-            state.status === "active" ? buildBreadcrumb(state) : []
-          }
+          breadcrumb={buildBreadcrumb(state)}
           searchPlaceholder={state.searchPlaceholder}
           user={state.user}
           menuOpen={menuOpen}
@@ -236,7 +237,7 @@ export function InternWorkspace({
            * grid 2 cột bên trong tự phân bổ — desktop không scroll body. */
           <main
             id="intern-main-content"
-            className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-4 sm:px-6 sm:py-5 xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2.5 2xl:px-8"
+            className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-4 sm:px-6 sm:py-5 xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8"
           >
             <EmptyInternWorkspace state={state} />
           </main>
@@ -251,7 +252,11 @@ function cnJoin(...parts: Array<string | false | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
-/** Breadcrumb theo state (active: org > project > sprint; waiting: không dùng). */
+/**
+ * Breadcrumb theo state, cùng ngôn ngữ shell với Instructor Workspace:
+ * - Waiting: V-Intern > Intern Workspace > Tổng quan (current = mục nav active).
+ * - Active: V-Intern > org > project > sprint hiện tại.
+ */
 function buildBreadcrumb(state: InternWorkspaceState) {
   if (state.status === "active") {
     const { org, project, sprint } = state.assignment.breadcrumb;
@@ -261,5 +266,8 @@ function buildBreadcrumb(state: InternWorkspaceState) {
       { id: "sprint", label: sprint, current: true },
     ];
   }
-  return [{ id: "workspace", label: "Intern Workspace", current: true }];
+  return [
+    { id: "workspace", label: "Intern Workspace", href: "/intern" },
+    { id: "overview", label: "Tổng quan", current: true },
+  ];
 }

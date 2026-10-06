@@ -60,19 +60,13 @@ export function EmptyInternWorkspace({
           </p>
         </header>
 
-        {/* Welcome card — compact, mascot lớn neo đáy trái (reference) */}
+        {/* Welcome card — compact, mascot lớn neo đáy trái. Round 3: panel
+            dashboard sạch theo design system Instructor (thẻ trắng, border
+            mảnh, không gradient landing-page/decorative blur). */}
         <section
           aria-labelledby="intern-welcome"
-          className="relative shrink-0 overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:p-6 xl:h-[var(--iw-welcome-h)] xl:py-0 xl:pl-6 xl:pr-5"
+          className="relative shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-r from-blue-50 via-white to-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:p-6 xl:h-[var(--iw-welcome-h)] xl:py-0 xl:pl-6 xl:pr-5"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-10 -top-14 hidden size-44 rounded-full bg-blue-100/60 blur-2xl sm:block"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-16 right-24 hidden size-40 rounded-full border-[14px] border-white/50 blur-[2px] sm:block"
-          />
           <div className="relative flex flex-wrap items-center gap-x-5 gap-y-4 xl:h-full xl:flex-nowrap xl:items-stretch xl:gap-x-7">
             {/* Mascot — asset có sẵn trong repo (nền đã trong suốt), thuần trang trí.
                 Desktop: lớn hơn hẳn, neo đáy card như reference. */}
@@ -83,7 +77,7 @@ export function EmptyInternWorkspace({
                 width={136}
                 height={181}
                 priority
-                className="h-28 w-auto drop-shadow-[0_10px_18px_rgba(37,99,235,0.18)] sm:h-32 xl:h-[var(--iw-mascot-h)]"
+                className="h-28 w-auto drop-shadow-[0_10px_18px_rgba(37,99,235,0.14)] sm:h-32 xl:h-[var(--iw-mascot-h)]"
               />
             </span>
             <div className="min-w-0 flex-1 xl:flex xl:flex-col xl:justify-center xl:py-2">

@@ -106,24 +106,28 @@ export function CardLinkAction({ label }: { label: string }) {
   );
 }
 
-/** Nút hành động chính (ví dụ "Xem Sprint Board"). Visual-only. */
+/**
+ * Nút hành động chính. Round 3: cùng hệ nút với Instructor (px-3.5 py-2,
+ * text 13px, rounded-lg, shadow mảnh) để hai workspace cùng một visual
+ * language — trước đây h-10 px-4 text-sm khiến Waiting "như app khác".
+ */
 export function PrimaryAction({ children }: { children: ReactNode }) {
   return (
     <button
       type="button"
-      className="inline-flex h-10 items-center gap-1.5 whitespace-nowrap rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-brand px-3.5 py-2 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
     >
       {children}
     </button>
   );
 }
 
-/** Nút hành động phụ viền (ví dụ "Nộp PR", "Xem hướng dẫn"). Visual-only. */
+/** Nút hành động phụ viền — cùng geometry với PrimaryAction (Instructor). */
 export function OutlineAction({ children }: { children: ReactNode }) {
   return (
     <button
       type="button"
-      className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+      className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
     >
       {children}
     </button>
