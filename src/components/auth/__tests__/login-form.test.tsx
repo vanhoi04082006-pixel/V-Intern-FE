@@ -14,6 +14,12 @@ vi.mock("@/lib/auth/auth-service", () => ({
   login: vi.fn(),
 }));
 
+vi.mock("@/lib/api/workspace", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api/workspace")>()),
+  getWorkspace: vi.fn(
+    async () => (await import("@/test/nest-fixtures")).waiting,
+  ),
+}));
 const mockLogin = vi.mocked(login);
 
 async function fillAndSubmit(
@@ -21,11 +27,11 @@ async function fillAndSubmit(
   {
     identifier = "sv@vintern.vn",
     password = "matkhau123",
-  }: { identifier?: string; password?: string } = {}
+  }: { identifier?: string; password?: string } = {},
 ) {
   await user.type(
     screen.getByLabelText("Email hoặc tên đăng nhập"),
-    identifier
+    identifier,
   );
   await user.type(screen.getByLabelText("Mật khẩu"), password);
   await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
@@ -40,19 +46,20 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     expect(
-      screen.getByLabelText("Email hoặc tên đăng nhập")
+      screen.getByLabelText("Email hoặc tên đăng nhập"),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Mật khẩu")).toBeInTheDocument();
     expect(screen.getByLabelText("Ghi nhớ đăng nhập")).toBeChecked();
     expect(
-      screen.getByRole("link", { name: "Quên mật khẩu?" })
+      screen.getByRole("link", { name: "Quên mật khẩu?" }),
     ).toHaveAttribute("href", "/forgot-password");
     expect(
-      screen.getByRole("button", { name: "Tiếp tục với Google" })
+      screen.getByRole("button", { name: "Tiếp tục với Google" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: "Đăng ký ngay" })
-    ).toHaveAttribute("href", "/register");
+    expect(screen.getByRole("link", { name: "Đăng ký ngay" })).toHaveAttribute(
+      "href",
+      "/register",
+    );
   });
 
   it("bắt buộc nhập: submit rỗng → lỗi inline tiếng Việt ở 2 trường, focus vào trường đầu", async () => {
@@ -62,13 +69,11 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
     expect(
-      screen.getByText("Vui lòng nhập email hoặc tên đăng nhập.")
+      screen.getByText("Vui lòng nhập email hoặc tên đăng nhập."),
     ).toBeInTheDocument();
     expect(screen.getByText("Vui lòng nhập mật khẩu.")).toBeInTheDocument();
     expect(mockLogin).not.toHaveBeenCalled();
-    expect(
-      screen.getByLabelText("Email hoặc tên đăng nhập")
-    ).toHaveFocus();
+    expect(screen.getByLabelText("Email hoặc tên đăng nhập")).toHaveFocus();
   });
 
   it("mật khẩu có nút hiện/ẩn với aria-label tiếng Việt", async () => {
@@ -81,9 +86,10 @@ describe("LoginForm", () => {
 
     await user.click(toggle);
     expect(passwordInput).toHaveAttribute("type", "text");
-    expect(
-      screen.getByRole("button", { name: "Ẩn mật khẩu" })
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Ẩn mật khẩu" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
     await user.click(screen.getByRole("button", { name: "Ẩn mật khẩu" }));
     expect(passwordInput).toHaveAttribute("type", "password");
@@ -101,7 +107,7 @@ describe("LoginForm", () => {
 
     expect(mockLogin).toHaveBeenCalledTimes(1);
     expect(
-      screen.getByRole("button", { name: /Đang đăng nhập\.\.\./ })
+      screen.getByRole("button", { name: /Đang đăng nhập\.\.\./ }),
     ).toBeDisabled();
   });
 
@@ -117,11 +123,9 @@ describe("LoginForm", () => {
     await fillAndSubmit(user);
 
     const alert = await screen.findByRole("alert");
-    expect(alert).toHaveTextContent(
-      "Email hoặc mật khẩu không chính xác."
-    );
+    expect(alert).toHaveTextContent("Email hoặc mật khẩu không chính xác.");
     expect(
-      screen.queryByRole("button", { name: "Thử lại" })
+      screen.queryByRole("button", { name: "Thử lại" }),
     ).not.toBeInTheDocument();
   });
 
@@ -138,11 +142,9 @@ describe("LoginForm", () => {
 
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent(
-      "Không thể kết nối đến hệ thống. Vui lòng thử lại sau."
+      "Không thể kết nối đến hệ thống. Vui lòng thử lại sau.",
     );
-    expect(
-      screen.getByRole("button", { name: "Thử lại" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Thử lại" }));
     await waitFor(() => {
@@ -163,11 +165,9 @@ describe("LoginForm", () => {
 
     const alert = await screen.findByRole("status");
     expect(alert).toHaveTextContent(
-      "Tính năng đăng nhập chưa được kết nối với hệ thống."
+      "Tính năng đăng nhập chưa được kết nối với hệ thống.",
     );
-    expect(
-      screen.queryByText(/đăng nhập thành công/i)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/đăng nhập thành công/i)).not.toBeInTheDocument();
   });
 
   it("đăng nhập thành công → chuyển hướng theo role (admin → /admin)", async () => {
@@ -191,21 +191,21 @@ describe("LoginForm", () => {
     });
   });
 
-  it("đăng nhập thành công với role teacher → chuyển hướng /instructor", async () => {
+  it("đăng nhập thành công với role instructor → chuyển hướng /instructor", async () => {
     const user = userEvent.setup();
     mockLogin.mockResolvedValue({
       ok: true,
       user: {
         id: "user-2",
-        email: "teacher@vintern.local",
+        email: "instructor@vintern.local",
         displayName: "V-Intern Teacher",
-        roles: ["teacher"],
+        roles: ["instructor"],
         permissions: ["auth.me.read"],
       },
     });
     render(<LoginForm />);
 
-    await fillAndSubmit(user, { identifier: "teacher@vintern.local" });
+    await fillAndSubmit(user, { identifier: "instructor@vintern.local" });
 
     await waitFor(() => {
       expect(replace).toHaveBeenCalledWith("/instructor");
@@ -251,7 +251,7 @@ describe("LoginForm", () => {
   it("previewState=success (dev-only) → hiển thị trạng thái thành công, không redirect", () => {
     render(<LoginForm previewState="success" />);
     expect(screen.getByRole("status")).toHaveTextContent(
-      "Đăng nhập thành công."
+      "Đăng nhập thành công.",
     );
     expect(replace).not.toHaveBeenCalled();
   });

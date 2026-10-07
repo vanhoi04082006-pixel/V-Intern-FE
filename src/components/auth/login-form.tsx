@@ -10,7 +10,8 @@ import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
 import { login } from "@/lib/auth/auth-service";
-import { getWorkspacePathForUser } from "@/lib/auth/role-landing";
+import { resolveLoginLanding } from "@/lib/auth/landing";
+import { errorMessage } from "@/lib/auth/api-client";
 import { validateLogin } from "@/lib/auth/validation";
 import type { LoginFieldErrors } from "@/lib/auth/validation";
 import { cn } from "@/lib/utils";
@@ -57,11 +58,9 @@ export function LoginForm({ previewState }: LoginFormProps) {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [errors, setErrors] = useState<LoginFieldErrors>({});
-  const [status, setStatus] = useState<LoginFormStatus>(
-    previewState ?? "idle"
-  );
+  const [status, setStatus] = useState<LoginFormStatus>(previewState ?? "idle");
   const [statusMessage, setStatusMessage] = useState(
-    previewState ? PREVIEW_MESSAGES[previewState] : ""
+    previewState ? PREVIEW_MESSAGES[previewState] : "",
   );
   const [googleNotice, setGoogleNotice] = useState(false);
 
@@ -95,7 +94,9 @@ export function LoginForm({ previewState }: LoginFormProps) {
       setStatus("validation-error");
       setStatusMessage("Vui lòng kiểm tra lại các trường đã đánh dấu.");
       setGoogleNotice(false);
-      focusField(fieldErrors.identifier ? "login-identifier" : "login-password");
+      focusField(
+        fieldErrors.identifier ? "login-identifier" : "login-password",
+      );
       return;
     }
 
@@ -112,9 +113,14 @@ export function LoginForm({ previewState }: LoginFormProps) {
     if (result.ok) {
       setStatus("success");
       setStatusMessage("Đăng nhập thành công.");
-      // Đích đến sau đăng nhập theo role (admin → /admin, teacher →
+      // Đích đến sau đăng nhập theo role (admin → /admin, instructor →
       // /instructor). `replace` để nút Back không quay lại form đã dùng.
-      router.replace(getWorkspacePathForUser(result.user));
+      try {
+        router.replace(await resolveLoginLanding(result.user));
+      } catch (error) {
+        setStatus("system-error");
+        setStatusMessage(errorMessage(error));
+      }
       return;
     }
 
@@ -259,7 +265,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
           className={cn(
             "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors",
             "hover:bg-[#0A57CB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-80"
+            "disabled:cursor-not-allowed disabled:opacity-80",
           )}
         >
           {isSubmitting ? (

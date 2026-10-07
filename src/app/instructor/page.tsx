@@ -1,19 +1,10 @@
-import type { Metadata } from "next";
-
 import { WorkspaceGuard } from "@/components/auth/workspace-guard";
-import { InstructorWorkspace } from "@/components/instructor/instructor-workspace";
+import { RoleWorkspaceEntry } from "@/components/auth/role-workspace-entry";
 import { PROTECTED_ROUTES } from "@/lib/auth/role-landing";
-
-export const metadata: Metadata = {
-  title: "Instructor Workspace | V-Intern",
-  description:
-    "Không gian làm việc giảng viên trên V-Intern: phiên thực tập, sprint & burndown, hiệu suất sinh viên, review pull request và đánh giá AI.",
-};
-
-export default function InstructorPage() {
+export default function Page() {
   return (
     <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/instructor"]}>
-      <InstructorWorkspace />
+      <RoleWorkspaceEntry role="instructor" />
     </WorkspaceGuard>
   );
 }

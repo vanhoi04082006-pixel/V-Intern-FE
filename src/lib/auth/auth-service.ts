@@ -17,8 +17,18 @@
  * - Không lộ thông tin nhạy cảm/raw nội bộ server ra UI.
  */
 
-import { ApiError, apiFetch, isApiConfigured } from "@/lib/auth/api-client";
-import { clearSession, getAccessToken, setSession } from "@/lib/auth/session";
+import {
+  ApiError,
+  apiFetch,
+  isApiConfigured,
+  errorMessage,
+} from "@/lib/auth/api-client";
+import {
+  clearSession,
+  getAccessToken,
+  getSessionGeneration,
+  setSession,
+} from "@/lib/auth/session";
 import type { SessionUser } from "@/lib/auth/session";
 import { EMAIL_PATTERN } from "@/lib/auth/validation";
 
@@ -61,7 +71,7 @@ export type LoginResult = { ok: true; user: SessionUser } | AuthFailure;
 export type AuthResult = { ok: true } | AuthFailure;
 
 const NOT_CONNECTED_MESSAGE =
-  "Tính năng đăng nhập chưa được kết nối với hệ thống.";
+  "Chưa cấu hình NEXT_PUBLIC_API_BASE_URL để kết nối hệ thống.";
 const GENERIC_AUTH_ERROR = "Email hoặc mật khẩu không chính xác.";
 const SYSTEM_ERROR_MESSAGE =
   "Không thể kết nối đến hệ thống. Vui lòng thử lại sau.";
@@ -125,6 +135,8 @@ function toAuthError(error: unknown): AuthFailure {
         message: "Mật khẩu quá dài (tối đa 72 ký tự).",
       };
     }
+    if (error.statusCode === 403)
+      return { ok: false, kind: "auth-error", message: errorMessage(error) };
     if (error.statusCode >= 400 && error.statusCode < 500) {
       // BE cố ý không phân biệt email tồn tại hay không → generic.
       return { ok: false, kind: "auth-error", message: GENERIC_AUTH_ERROR };
@@ -134,7 +146,7 @@ function toAuthError(error: unknown): AuthFailure {
 }
 
 export async function login(
-  credentials: LoginCredentials
+  credentials: LoginCredentials,
 ): Promise<LoginResult> {
   if (!isApiConfigured()) {
     return {
@@ -178,11 +190,12 @@ export async function login(
  * Luôn xóa session local kể cả khi gọi BE thất bại (best-effort).
  */
 export async function logout(): Promise<void> {
+  clearSession();
   if (isApiConfigured()) {
     try {
       await apiFetch("/auth/logout", { method: "POST" });
     } catch {
-      // Logout best-effort: session local vẫn bị xóa bên dưới.
+      // Session local đã bị xóa; cookie HttpOnly cần backend khả dụng để thu hồi.
     }
   }
   clearSession();
@@ -194,54 +207,77 @@ export async function logout(): Promise<void> {
  * nhập lại mật khẩu. Không bao giờ đọc cookie bằng JavaScript.
  * Trả `null` khi không có cookie hợp lệ.
  */
-export async function refreshSession(): Promise<SessionUser | null> {
-  if (!isApiConfigured()) return null;
-  let data: unknown;
-  try {
-    data = await apiFetch("/auth/refresh", { method: "POST" });
-  } catch {
-    clearSession();
-    return null;
-  }
-  const parsed = parseLoginSuccessBody(data);
-  if (!parsed) {
-    clearSession();
-    return null;
-  }
-  setSession(parsed.accessToken, parsed.user);
-  return parsed.user;
-}
-
-/**
- * Lấy principal hiện tại (`GET /api/v1/auth/me`, Bearer token).
- * Tự refresh một lần khi access token hết hạn (401); trả `null` khi không
- * còn session hợp lệ. Không phát minh trang/route nào để dùng hàm này.
- */
-export async function fetchCurrentUser(): Promise<SessionUser | null> {
-  const token = getAccessToken();
-  if (!isApiConfigured() || !token) return null;
-  try {
-    const user = (await apiFetch("/auth/me", { token })) as unknown;
-    if (!isSessionUser(user)) {
-      // 200 nhưng body không đúng contract: không thể xác thực session đang
-      // giữ → fail-closed (xóa) thay vì giữ session mâu thuẫn (null user +
-      // token còn sống). Caller đọc null là là "không có session".
+let refreshInFlight: Promise<SessionUser | null> | null = null;
+export function refreshSession(): Promise<SessionUser | null> {
+  if (refreshInFlight) return refreshInFlight;
+  const generation = getSessionGeneration();
+  refreshInFlight = (async () => {
+    let data: unknown;
+    try {
+      data = await apiFetch("/auth/refresh", { method: "POST" });
+    } catch (error) {
       clearSession();
-      return null;
+      if (
+        error instanceof ApiError &&
+        (error.statusCode === 401 || error.statusCode === 403)
+      )
+        return null;
+      throw error;
     }
-    setSession(token, user);
-    return user;
-  } catch (error) {
-    if (error instanceof ApiError && error.statusCode === 401) {
-      return refreshSession();
+    if (generation !== getSessionGeneration()) return null;
+    const parsed = parseLoginSuccessBody(data);
+    if (!parsed) {
+      clearSession();
+      throw new ApiError(
+        0,
+        "INVALID_RESPONSE",
+        "Phản hồi phiên đăng nhập không hợp lệ.",
+      );
     }
-    return null;
-  }
+    if (generation !== getSessionGeneration()) return null;
+    setSession(parsed.accessToken, parsed.user);
+    return parsed.user;
+  })().finally(() => {
+    refreshInFlight = null;
+  });
+  return refreshInFlight;
 }
-
-export async function register(
-  _payload: RegisterPayload
-): Promise<AuthResult> {
+export async function fetchCurrentUser(): Promise<SessionUser | null> {
+  const generation = getSessionGeneration();
+  if (!getAccessToken() && !(await refreshSession())) return null;
+  let token = getAccessToken();
+  let user: unknown;
+  try {
+    user = await apiFetch("/auth/me", { token });
+  } catch (error) {
+    if (generation !== getSessionGeneration()) return null;
+    if (!(error instanceof ApiError) || error.statusCode !== 401) throw error;
+    if (!(await refreshSession())) return null;
+    token = getAccessToken();
+    try {
+      user = await apiFetch("/auth/me", { token });
+    } catch (retryError) {
+      if (generation !== getSessionGeneration()) return null;
+      if (retryError instanceof ApiError && retryError.statusCode === 401) {
+        clearSession();
+        return null;
+      }
+      throw retryError;
+    }
+  }
+  if (generation !== getSessionGeneration()) return null;
+  if (!isSessionUser(user) || !token) {
+    clearSession();
+    throw new ApiError(
+      0,
+      "INVALID_RESPONSE",
+      "Phản hồi danh tính không hợp lệ.",
+    );
+  }
+  setSession(token, user);
+  return user;
+}
+export async function register(_payload: RegisterPayload): Promise<AuthResult> {
   void _payload;
   // Module 1 chưa có endpoint đăng ký công khai (chỉ admin tạo user qua
   // POST /users). Giữ trung thực, không giả thành công.
@@ -252,7 +288,9 @@ export async function register(
   };
 }
 
-export async function requestPasswordReset(_email: string): Promise<AuthResult> {
+export async function requestPasswordReset(
+  _email: string,
+): Promise<AuthResult> {
   void _email;
   // Module 1 chưa có endpoint quên/đặt lại mật khẩu.
   return {

@@ -1,155 +1,87 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { WorkspaceGuard } from "@/components/auth/workspace-guard";
-import { refreshSession } from "@/lib/auth/auth-service";
-import { PROTECTED_ROUTES } from "@/lib/auth/role-landing";
-import { clearSession, setSession } from "@/lib/auth/session";
-
+import { LogoutButton } from "@/components/auth/logout-button";
+import { clearSession, setSession, getSessionUser } from "@/lib/auth/session";
+import { principal } from "@/test/nest-fixtures";
+import { ApiError } from "@/lib/auth/api-client";
+import { fetchCurrentUser } from "@/lib/auth/auth-service";
+import userEvent from "@testing-library/user-event";
 const replace = vi.fn();
-
-const routerStub = { replace, push: vi.fn(), refresh: vi.fn() };
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => routerStub,
+const router = { replace };
+vi.mock("next/navigation", () => ({ useRouter: () => router }));
+vi.mock("@/lib/auth/auth-service", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/auth/auth-service")>()),
+  fetchCurrentUser: vi.fn(),
 }));
-
-vi.mock("@/lib/auth/auth-service", () => ({
-  refreshSession: vi.fn(),
-}));
-
-const mockRefresh = vi.mocked(refreshSession);
-
-const ADMIN_USER = {
-  id: "u1",
-  email: "admin@vintern.local",
-  displayName: "Admin",
-  roles: ["admin"],
-  permissions: [],
-};
-
-function ProtectedContent() {
-  return <p>Nội dung admin</p>;
-}
-
-describe("WorkspaceGuard", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    clearSession();
-    mockRefresh.mockResolvedValue(null);
+const fetchUser = vi.mocked(fetchCurrentUser);
+const roles = ["intern"];
+beforeEach(() => {
+  clearSession();
+  vi.clearAllMocks();
+  fetchUser.mockResolvedValue(principal);
+  setSession("token", principal);
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
+describe("backend principal guard", () => {
+  it("unauthenticated protected route redirects to login", async () => {
+    fetchUser.mockResolvedValue(null);
+    render(<WorkspaceGuard allowedRoles={roles}>private</WorkspaceGuard>);
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
+    expect(screen.queryByText("private")).not.toBeInTheDocument();
   });
-
-  it("chưa đăng nhập (không cookie) → chuyển hướng /login, không render nội dung", async () => {
-    render(
-      <WorkspaceGuard allowedRoles={["admin"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
-    );
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/login");
-    });
-    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
+  it("fresh principal allows the role", async () => {
+    render(<WorkspaceGuard allowedRoles={roles}>private</WorkspaceGuard>);
+    expect(await screen.findByText("private")).toBeInTheDocument();
   });
-
-  it("session trong bộ nhớ đủ role → render nội dung, KHÔNG gọi refresh", async () => {
-    setSession("token", ADMIN_USER);
-
+  it.each([
+    ["admin", "/admin"],
+    ["instructor", "/instructor"],
+  ])("wrong role %s redirects without leaking children", async (role, path) => {
+    fetchUser.mockResolvedValue({ ...principal, roles: [role] });
+    render(<WorkspaceGuard allowedRoles={roles}>private</WorkspaceGuard>);
+    await waitFor(() => expect(replace).toHaveBeenCalledWith(path));
+    expect(screen.queryByText("private")).not.toBeInTheDocument();
+  });
+  it("does not trust stale in-memory role", async () => {
+    setSession("token", { ...principal, roles: ["admin"] });
+    fetchUser.mockResolvedValue(principal);
     render(
-      <WorkspaceGuard allowedRoles={["admin"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
+      <WorkspaceGuard allowedRoles={["admin"]}>admin-private</WorkspaceGuard>,
     );
-
-    expect(await screen.findByText("Nội dung admin")).toBeInTheDocument();
-    expect(mockRefresh).not.toHaveBeenCalled();
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/intern"));
+    expect(screen.queryByText("admin-private")).not.toBeInTheDocument();
+  });
+  it("network failure is Error rather than unauthenticated redirect", async () => {
+    fetchUser.mockRejectedValue(new ApiError(0, "NETWORK_ERROR", "offline"));
+    render(<WorkspaceGuard allowedRoles={roles}>private</WorkspaceGuard>);
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
     expect(replace).not.toHaveBeenCalled();
   });
-
-  it("reload trang → khôi phục phiên bằng refresh cookie rồi render nội dung", async () => {
-    mockRefresh.mockResolvedValue(ADMIN_USER);
-
-    render(
-      <WorkspaceGuard allowedRoles={["admin"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
-    );
-
-    expect(await screen.findByText("Nội dung admin")).toBeInTheDocument();
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(replace).not.toHaveBeenCalled();
+  it("session invalidation removes content and redirects", async () => {
+    render(<WorkspaceGuard allowedRoles={roles}>private</WorkspaceGuard>);
+    await screen.findByText("private");
+    const { act } = await import("@testing-library/react");
+    act(() => clearSession());
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
+    expect(screen.queryByText("private")).not.toBeInTheDocument();
   });
-
-  it("sai role → chuyển hướng về workspace đúng của user, không render nội dung", async () => {
-    setSession("token", { ...ADMIN_USER, roles: ["teacher"] });
-
-    render(
-      <WorkspaceGuard allowedRoles={["admin"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
+  it("logout calls backend, clears state, redirects", async () => {
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8080/api/v1");
+    const fetcher = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetcher);
+    render(<LogoutButton />);
+    await userEvent.click(screen.getByRole("button", { name: "Đăng xuất" }));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
+    expect(getSessionUser()).toBeNull();
+    expect(fetcher).toHaveBeenCalledWith(
+      "http://localhost:8080/api/v1/auth/logout",
+      expect.objectContaining({ method: "POST", credentials: "include" }),
     );
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/instructor");
-    });
-    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
-  });
-
-  it("intern mở /intern đủ role → render nội dung", async () => {
-    setSession("token", { ...ADMIN_USER, roles: ["intern"] });
-
-    render(
-      <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/intern"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
-    );
-
-    expect(await screen.findByText("Nội dung admin")).toBeInTheDocument();
-    expect(replace).not.toHaveBeenCalled();
-  });
-
-  it("admin mở /intern → chuyển hướng về /admin, không render nội dung intern", async () => {
-    setSession("token", ADMIN_USER);
-
-    render(
-      <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/intern"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
-    );
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/admin");
-    });
-    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
-  });
-
-  it("teacher mở /intern → chuyển hướng về /instructor", async () => {
-    setSession("token", { ...ADMIN_USER, roles: ["teacher"] });
-
-    render(
-      <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/intern"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
-    );
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/instructor");
-    });
-    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
-  });
-
-  it("hiển thị trạng thái đang kiểm tra trước khi xác thực xong", async () => {
-    // Refresh chưa xong → guard phải giữ trạng thái checking, không lộ nội dung.
-    mockRefresh.mockReturnValue(new Promise(() => {}));
-
-    render(
-      <WorkspaceGuard allowedRoles={["admin"]}>
-        <ProtectedContent />
-      </WorkspaceGuard>
-    );
-
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Đang kiểm tra phiên đăng nhập..."
-    );
-    expect(screen.queryByText("Nội dung admin")).not.toBeInTheDocument();
   });
 });

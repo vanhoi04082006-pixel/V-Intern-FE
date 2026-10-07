@@ -10,7 +10,7 @@ import {
 } from "@/lib/auth/auth-service";
 import { clearSession } from "@/lib/auth/session";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "http://localhost:8080/api/v1";
 
 function jsonResponse(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
@@ -55,7 +55,7 @@ describe("auth-service (nối BE Module 1)", () => {
     expect(result).toEqual({
       ok: false,
       kind: "not-connected",
-      message: expect.stringContaining("chưa được kết nối"),
+      message: expect.stringContaining("NEXT_PUBLIC_API_BASE_URL"),
     });
     expect(fetchSpy).not.toHaveBeenCalled();
   });
@@ -89,11 +89,11 @@ describe("auth-service (nối BE Module 1)", () => {
       string,
       RequestInit,
     ];
-    expect(url).toBe(`${API_BASE}/api/v1/auth/login`);
+    expect(url).toBe(`${API_BASE}/auth/login`);
     expect(init.method).toBe("POST");
     expect(init.credentials).toBe("include");
     expect((init.headers as Record<string, string>)["Content-Type"]).toBe(
-      "application/json"
+      "application/json",
     );
     expect(JSON.parse(init.body as string)).toEqual({
       email: "admin@vintern.local",
@@ -108,7 +108,7 @@ describe("auth-service (nối BE Module 1)", () => {
   it("response sai shape → system-error, không lưu session", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => jsonResponse(200, { tokenType: "Bearer" }))
+      vi.fn(async () => jsonResponse(200, { tokenType: "Bearer" })),
     );
 
     const result = await login(VALID_CREDENTIALS);
@@ -124,7 +124,10 @@ describe("auth-service (nối BE Module 1)", () => {
   it.each([["null", null]])(
     "login 200/%s → system-error, không throw, không lưu session",
     async (_label, body) => {
-      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(200, body)));
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => jsonResponse(200, body)),
+      );
 
       const result = await login(VALID_CREDENTIALS);
 
@@ -134,24 +137,24 @@ describe("auth-service (nối BE Module 1)", () => {
         message: "Không thể kết nối đến hệ thống. Vui lòng thử lại sau.",
       });
       expect(getSessionUser()).toBeNull();
-    }
+    },
   );
 
   it.each([
     ["primitive", "ok-string"],
     ["array", [{ accessToken: "x", user: LOGIN_SUCCESS_BODY.user }]],
-  ])(
-    "login 200/%s → system-error, không lưu session",
-    async (_label, body) => {
-      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(200, body)));
+  ])("login 200/%s → system-error, không lưu session", async (_label, body) => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse(200, body)),
+    );
 
-      const result = await login(VALID_CREDENTIALS);
+    const result = await login(VALID_CREDENTIALS);
 
-      expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.kind).toBe("system-error");
-      expect(getSessionUser()).toBeNull();
-    }
-  );
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.kind).toBe("system-error");
+    expect(getSessionUser()).toBeNull();
+  });
 
   it("login từ chối roles/permissions chứa phần tử không phải string", async () => {
     vi.stubGlobal(
@@ -160,8 +163,8 @@ describe("auth-service (nối BE Module 1)", () => {
         jsonResponse(200, {
           ...LOGIN_SUCCESS_BODY,
           user: { ...LOGIN_SUCCESS_BODY.user, roles: ["admin", 123] },
-        })
-      )
+        }),
+      ),
     );
 
     const result = await login(VALID_CREDENTIALS);
@@ -180,12 +183,14 @@ describe("auth-service (nối BE Module 1)", () => {
         if (url.endsWith("/auth/login"))
           return jsonResponse(200, LOGIN_SUCCESS_BODY);
         return jsonResponse(200, null);
-      })
+      }),
     );
 
     await login(VALID_CREDENTIALS);
     expect(getSessionUser()).not.toBeNull();
-    expect(await refreshSession()).toBeNull();
+    await expect(refreshSession()).rejects.toMatchObject({
+      code: "INVALID_RESPONSE",
+    });
     expect(getSessionUser()).toBeNull();
   });
 
@@ -197,8 +202,8 @@ describe("auth-service (nối BE Module 1)", () => {
           statusCode: 401,
           code: "INVALID_CREDENTIALS",
           message: "Email or password is incorrect.",
-        })
-      )
+        }),
+      ),
     );
 
     const result = await login({
@@ -223,8 +228,8 @@ describe("auth-service (nối BE Module 1)", () => {
           statusCode: 429,
           code: "LOGIN_RATE_LIMITED",
           message: "Too many login attempts.",
-        })
-      )
+        }),
+      ),
     );
 
     const result = await login(VALID_CREDENTIALS);
@@ -241,7 +246,7 @@ describe("auth-service (nối BE Module 1)", () => {
       "fetch",
       vi.fn(async () => {
         throw new TypeError("fetch failed");
-      })
+      }),
     );
 
     const result = await login(VALID_CREDENTIALS);
@@ -264,12 +269,12 @@ describe("auth-service (nối BE Module 1)", () => {
       string,
       RequestInit,
     ];
-    expect(url).toBe(`${API_BASE}/api/v1/auth/refresh`);
+    expect(url).toBe(`${API_BASE}/auth/refresh`);
     expect(init.method).toBe("POST");
     expect(init.credentials).toBe("include");
     expect(init.body).toBeUndefined();
     expect(init.headers as Record<string, string>).not.toHaveProperty(
-      "Content-Type"
+      "Content-Type",
     );
     expect(getSessionUser()?.email).toBe("admin@vintern.local");
   });
@@ -282,8 +287,8 @@ describe("auth-service (nối BE Module 1)", () => {
           statusCode: 401,
           code: "INVALID_REFRESH_TOKEN",
           message: "Refresh token is invalid or expired.",
-        })
-      )
+        }),
+      ),
     );
 
     expect(await refreshSession()).toBeNull();
@@ -296,13 +301,14 @@ describe("auth-service (nối BE Module 1)", () => {
         string,
         RequestInit,
       ];
-      if (url.endsWith("/auth/login")) return jsonResponse(200, LOGIN_SUCCESS_BODY);
-      expect(url).toBe(`${API_BASE}/api/v1/auth/me`);
+      if (url.endsWith("/auth/login"))
+        return jsonResponse(200, LOGIN_SUCCESS_BODY);
+      expect(url).toBe(`${API_BASE}/auth/me`);
       expect((init.headers as Record<string, string>).Authorization).toBe(
-        "Bearer test-access-token"
+        "Bearer test-access-token",
       );
       expect(init.headers as Record<string, string>).not.toHaveProperty(
-        "Content-Type"
+        "Content-Type",
       );
       return jsonResponse(200, LOGIN_SUCCESS_BODY.user);
     });
@@ -314,7 +320,7 @@ describe("auth-service (nối BE Module 1)", () => {
     expect(user?.email).toBe("admin@vintern.local");
   });
 
-  it("me 401 → refresh đúng một lần, user lấy từ response refresh (không gọi lại /me)", async () => {
+  it("me 401 → refresh một lần và retry /me", async () => {
     const refreshedBody = {
       ...LOGIN_SUCCESS_BODY,
       accessToken: "rotated-token",
@@ -326,6 +332,11 @@ describe("auth-service (nối BE Module 1)", () => {
         calls.push(url);
         if (url.endsWith("/auth/login"))
           return jsonResponse(200, LOGIN_SUCCESS_BODY);
+        if (
+          url.endsWith("/auth/me") &&
+          calls.filter((x) => x.endsWith("/auth/me")).length > 1
+        )
+          return jsonResponse(200, refreshedBody.user);
         if (url.endsWith("/auth/me"))
           return jsonResponse(401, {
             statusCode: 401,
@@ -333,7 +344,7 @@ describe("auth-service (nối BE Module 1)", () => {
             message: "A valid bearer access token is required.",
           });
         return jsonResponse(200, refreshedBody);
-      })
+      }),
     );
 
     await login(VALID_CREDENTIALS);
@@ -341,9 +352,10 @@ describe("auth-service (nối BE Module 1)", () => {
 
     expect(user?.email).toBe("admin@vintern.local");
     expect(calls).toEqual([
-      `${API_BASE}/api/v1/auth/login`,
-      `${API_BASE}/api/v1/auth/me`,
-      `${API_BASE}/api/v1/auth/refresh`,
+      `${API_BASE}/auth/login`,
+      `${API_BASE}/auth/me`,
+      `${API_BASE}/auth/refresh`,
+      `${API_BASE}/auth/me`,
     ]);
   });
 
@@ -354,13 +366,15 @@ describe("auth-service (nối BE Module 1)", () => {
         if (url.endsWith("/auth/login"))
           return jsonResponse(200, LOGIN_SUCCESS_BODY);
         return jsonResponse(200, { unexpected: "shape" });
-      })
+      }),
     );
 
     await login(VALID_CREDENTIALS);
     expect(getSessionUser()).not.toBeNull();
 
-    expect(await fetchCurrentUser()).toBeNull();
+    await expect(fetchCurrentUser()).rejects.toMatchObject({
+      code: "INVALID_RESPONSE",
+    });
     expect(getSessionUser()).toBeNull();
   });
 
@@ -381,11 +395,11 @@ describe("auth-service (nối BE Module 1)", () => {
       string,
       RequestInit,
     ];
-    expect(url).toBe(`${API_BASE}/api/v1/auth/logout`);
+    expect(url).toBe(`${API_BASE}/auth/logout`);
     expect(init.method).toBe("POST");
     expect(init.credentials).toBe("include");
     expect(init.headers as Record<string, string>).not.toHaveProperty(
-      "Content-Type"
+      "Content-Type",
     );
 
     // BE lỗi mạng khi logout → session local vẫn bị xóa.
@@ -397,6 +411,46 @@ describe("auth-service (nối BE Module 1)", () => {
     expect(getSessionUser()).toBeNull();
   });
 
+  it("logout chặn /me đang chạy khôi phục phiên đã xóa", async () => {
+    let resolveMe!: (response: Response) => void;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.endsWith("/auth/login"))
+          return Promise.resolve(jsonResponse(200, LOGIN_SUCCESS_BODY));
+        if (url.endsWith("/auth/me"))
+          return new Promise<Response>((resolve) => {
+            resolveMe = resolve;
+          });
+        return Promise.resolve(new Response(null, { status: 204 }));
+      }),
+    );
+    await login(VALID_CREDENTIALS);
+    const pending = fetchCurrentUser();
+    await logout();
+    resolveMe(jsonResponse(200, LOGIN_SUCCESS_BODY.user));
+    expect(await pending).toBeNull();
+    expect(getSessionUser()).toBeNull();
+  });
+
+  it("logout xóa phiên ngay khi backend chưa trả lời", async () => {
+    let resolveLogout!: (response: Response) => void;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.endsWith("/auth/login"))
+          return Promise.resolve(jsonResponse(200, LOGIN_SUCCESS_BODY));
+        return new Promise<Response>((resolve) => {
+          resolveLogout = resolve;
+        });
+      }),
+    );
+    await login(VALID_CREDENTIALS);
+    const pending = logout();
+    expect(getSessionUser()).toBeNull();
+    resolveLogout(new Response(null, { status: 204 }));
+    await pending;
+  });
   it("register giữ not-connected trung thực (BE không có endpoint public)", async () => {
     const fetchSpy = vi.fn();
     vi.stubGlobal("fetch", fetchSpy);
