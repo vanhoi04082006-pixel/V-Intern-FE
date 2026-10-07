@@ -1,0 +1,301 @@
+{
+  "authority": "TEST CONTRACT ONLY — production FE with intercepted API, not live Nest/SQL",
+  "results": [
+    {
+      "name": "Waiting desktop: preview cannot override backend",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "Waiting mobile: responsive and drawer keyboard",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "Active entry uses API assignment, sprint, task",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "recruitment_required routing",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "recruitment_in_progress routing",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/questions",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "recruitment_failed routing",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "admin login landing and logout",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/login",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/auth/logout",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "name": "instructor login landing and logout",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/login",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/auth/logout",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "name": "Unauthenticated preview cannot bypass guard",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "name": "Backend 503 has explicit error, no demo",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "Recruitment role, answers, submit, backend score",
+      "status": "PASS",
+      "calls": [
+        {
+          "endpoint": "/auth/refresh",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/auth/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/role",
+          "method": "PATCH"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/questions",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/answers/question-1",
+          "method": "PUT"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/questions",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/answers/question-2",
+          "method": "PUT"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/questions",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/submit",
+          "method": "POST"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/intern/me/workspace",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me",
+          "method": "GET"
+        },
+        {
+          "endpoint": "/recruitment/me/interviews/interview-1/questions",
+          "method": "GET"
+        }
+      ]
+    }
+  ],
+  "passed": 11,
+  "failed": 0
+}
