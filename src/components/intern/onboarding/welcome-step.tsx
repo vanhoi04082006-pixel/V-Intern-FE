@@ -12,13 +12,9 @@ import {
   WELCOME_INFO_ITEMS,
   WELCOME_INFO_QUESTION,
   WELCOME_SUBTITLE,
-} from "./data/recruitment-mock-data";
+} from "./recruitment-presentation";
 import { HorizontalStepper } from "./onboarding-stepper";
-import {
-  IconTile,
-  NoteCard,
-  StepBadge,
-} from "./onboarding-primitives";
+import { IconTile, NoteCard, StepBadge } from "./onboarding-primitives";
 
 /**
  * Màn 1 — Welcome (Bước 1/4): tiêu đề chào mừng lớn, stepper ngang 4 bước,

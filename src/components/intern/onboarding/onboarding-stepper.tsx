@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-import { ONBOARDING_STEPS } from "./data/recruitment-mock-data";
+import { ONBOARDING_STEPS } from "./recruitment-presentation";
 
 /**
  * Stepper dùng chung cho Onboarding (4 bước):
@@ -19,7 +19,7 @@ export type OnboardingStepState = "completed" | "active" | "pending";
 
 function stateForPosition(
   position: number,
-  activeStep: number
+  activeStep: number,
 ): OnboardingStepState {
   if (position < activeStep) return "completed";
   if (position === activeStep) return "active";
@@ -38,9 +38,10 @@ function StepCircle({
       aria-hidden="true"
       className={cn(
         "grid size-8 shrink-0 place-items-center rounded-full border text-sm font-bold transition-colors",
-        state === "completed" && "border-emerald-200 bg-emerald-50 text-emerald-600",
+        state === "completed" &&
+          "border-emerald-200 bg-emerald-50 text-emerald-600",
         state === "active" && "border-brand bg-brand text-white shadow-sm",
-        state === "pending" && "border-slate-200 bg-white text-slate-400"
+        state === "pending" && "border-slate-200 bg-white text-slate-400",
       )}
     >
       {state === "completed" ? <Check className="size-4" /> : position}
@@ -63,7 +64,7 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
                 "flex min-w-0 flex-1 items-center gap-2.5 rounded-xl border px-3 py-2.5",
                 state === "active" && "border-brand/30 bg-blue-50/60",
                 state === "completed" && "border-slate-200 bg-white",
-                state === "pending" && "border-slate-100 bg-slate-50/60"
+                state === "pending" && "border-slate-100 bg-slate-50/60",
               )}
             >
               <StepCircle state={state} position={position} />
@@ -71,7 +72,7 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "block truncate text-[13px] font-bold",
-                    state === "pending" ? "text-slate-400" : "text-navy"
+                    state === "pending" ? "text-slate-400" : "text-navy",
                   )}
                 >
                   {step.label}
@@ -79,7 +80,7 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "hidden truncate text-xs sm:block",
-                    state === "active" ? "text-brand" : "text-slate-400"
+                    state === "active" ? "text-brand" : "text-slate-400",
                   )}
                 >
                   {step.description}
@@ -113,7 +114,7 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
                   aria-hidden="true"
                   className={cn(
                     "absolute left-4 top-9 h-[calc(100%-1.75rem)] w-px",
-                    state === "completed" ? "bg-emerald-300" : "bg-slate-200"
+                    state === "completed" ? "bg-emerald-300" : "bg-slate-200",
                   )}
                 />
               ) : null}
@@ -122,7 +123,7 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "block text-sm font-bold leading-tight",
-                    state === "pending" ? "text-slate-400" : "text-navy"
+                    state === "pending" ? "text-slate-400" : "text-navy",
                   )}
                 >
                   {step.label}
@@ -130,7 +131,7 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "mt-0.5 block text-xs leading-tight",
-                    state === "active" ? "text-brand" : "text-slate-400"
+                    state === "active" ? "text-brand" : "text-slate-400",
                   )}
                 >
                   {step.description}
@@ -167,7 +168,7 @@ export function MobileStepbar({ activeStep }: { activeStep: number }) {
                 "size-2 rounded-full",
                 state === "completed" && "bg-emerald-400",
                 state === "active" && "bg-brand",
-                state === "pending" && "bg-slate-200"
+                state === "pending" && "bg-slate-200",
               )}
             />
           );

@@ -28,18 +28,26 @@ export function RecentActivityCard({
       icon={History}
       tone="blue"
       title="Hoạt động gần đây"
-      actions={<CardLinkAction label={actionLabel} />}
+      actions={actionLabel ? <CardLinkAction label={actionLabel} /> : undefined}
       className={className}
       headerClassName="xl:px-4 xl:py-2"
       bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
     >
+      {activities.length === 0 && (
+        <p className="text-sm text-slate-500">
+          Chưa có hoạt động được ghi nhận.
+        </p>
+      )}
       <ol className="flex flex-col">
         {activities.map((item, index) => {
           const toneStyle = INTERN_TONES[item.tone];
           const isDone = item.tone === "green";
 
           return (
-            <li key={item.id} className="relative flex gap-3.5 pb-[var(--iw-act-pb)] last:pb-0">
+            <li
+              key={item.id}
+              className="relative flex gap-3.5 pb-[var(--iw-act-pb)] last:pb-0"
+            >
               {index < activities.length - 1 ? (
                 <span
                   aria-hidden="true"
@@ -50,7 +58,7 @@ export function RecentActivityCard({
                 aria-hidden="true"
                 className={cn(
                   "z-10 grid size-7 shrink-0 place-items-center rounded-full",
-                  toneStyle.tile
+                  toneStyle.tile,
                 )}
               >
                 {isDone ? (

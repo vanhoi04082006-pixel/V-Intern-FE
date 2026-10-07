@@ -1,130 +1,191 @@
 "use client";
-
 import {
   createContext,
   useCallback,
   useContext,
-  useMemo,
+  useEffect,
   useState,
+  type ReactNode,
 } from "react";
-import type { ReactNode } from "react";
-
+import { usePathname, useRouter } from "next/navigation";
 import {
-  DEFAULT_ROLE_ID,
-  INTERVIEW_QUESTIONS,
-  INTERVIEW_SEED_ANSWERS,
-} from "./data/recruitment-mock-data";
-import type { RoleId } from "./data/recruitment-mock-data";
-
-/**
- * Mock recruitment state dùng chung cho 4 route onboarding (in-memory,
- * qua client context ở layout — sống qua điều hướng SPA giữa các route con,
- * reset khi reload trang).
- *
- * MOCK-ONLY, có chủ đích:
- * - KHÔNG persistence (localStorage/sessionStorage/cookie) — không được phép
- *   phát minh trạng thái tuyển dụng bền vững khi BE chưa có API.
- * - KHÔNG fetch — đây là điểm nối duy nhất cần thay bằng API thật sau này:
- *   selectRole/submitAnswer/continueWithRole sẽ trở thành mutation calls.
- * - Câu trả lời ghi nhận ngay khi submit và tự chuyển sang câu kế tiếp;
- *   hết câu 8 → isInterviewCompleted = true (UI hiển thị CTA xem kết quả).
- */
-
-export interface RecruitmentFlowState {
-  selectedRoleId: RoleId;
-  selectRole: (id: RoleId) => void;
-  /** Answers đã ghi nhận theo question id (mock seed gồm q1–q2). */
-  answers: Readonly<Record<string, string>>;
-  /** Index (0-based) câu hỏi hiện tại trong INTERVIEW_QUESTIONS. */
-  currentQuestionIndex: number;
-  isInterviewCompleted: boolean;
-  /** Ghi nhận câu trả lời hiện tại rồi tự advance; hết câu → completed. */
-  submitAnswer: (text: string) => void;
-  /**
-   * CTA "Tiếp tục với {vai trò đề xuất}" ở Result (fail): đổi vai trò đang
-   * chọn sang vai trò đề xuất + reset vòng phỏng vấn. CHỈ đổi mock state
-   * phía client — không tạo bất kỳ persist/assignment nào phía server.
-   */
-  continueWithRole: (id: RoleId) => void;
+  recruitmentApi,
+  type Interview,
+  type RecruitmentProfile,
+} from "@/lib/api/recruitment";
+import {
+  getWorkspace,
+  lifecyclePath,
+  type RecruitmentRole,
+} from "@/lib/api/workspace";
+import { ApiError, errorMessage } from "@/lib/auth/api-client";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+interface Flow {
+  profile: RecruitmentProfile;
+  interview: Interview | null;
+  busy: boolean;
+  notice: string | null;
+  reload: () => Promise<void>;
+  selectRole: (role: RecruitmentRole) => Promise<boolean>;
+  start: () => Promise<boolean>;
+  saveAnswer: (questionId: string, text: string) => Promise<boolean>;
+  submit: () => Promise<boolean>;
+  retryEvaluation: () => Promise<boolean>;
 }
-
-const RecruitmentFlowContext = createContext<RecruitmentFlowState | null>(null);
-
-/** Index câu hỏi hiện tại mặc định (0-based): câu 3/8 theo reference. */
-const INTERVIEW_ANSWERED_SEED_INDEX = 2;
-
+const Context = createContext<Flow | null>(null);
 export function RecruitmentProvider({ children }: { children: ReactNode }) {
-  const [selectedRoleId, setSelectedRoleId] = useState<RoleId>(DEFAULT_ROLE_ID);
-  const [answers, setAnswers] = useState<Record<string, string>>(
-    () => ({ ...INTERVIEW_SEED_ANSWERS })
-  );
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(
-    // Mock story theo reference: Q1–Q2 đã trả lời, đang ở câu 3/8.
-    INTERVIEW_ANSWERED_SEED_INDEX
-  );
-  const [isInterviewCompleted, setIsInterviewCompleted] = useState(false);
-
-  const selectRole = useCallback((id: RoleId) => {
-    setSelectedRoleId(id);
-  }, []);
-
-  const submitAnswer = useCallback(
-    (text: string) => {
-      const question = INTERVIEW_QUESTIONS[currentQuestionIndex];
-      if (!question) return;
-      setAnswers((prev) => ({ ...prev, [question.id]: text }));
-      if (currentQuestionIndex >= INTERVIEW_QUESTIONS.length - 1) {
-        setIsInterviewCompleted(true);
-      } else {
-        setCurrentQuestionIndex((index) =>
-          Math.min(index + 1, INTERVIEW_QUESTIONS.length - 1)
-        );
+  const router = useRouter();
+  const pathname = usePathname();
+  const [profile, setProfile] = useState<RecruitmentProfile | null>(null);
+  const [interview, setInterview] = useState<Interview | null>(null);
+  const [loadedPath, setLoadedPath] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>();
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const load = useCallback(
+    async (signal?: AbortSignal) => {
+      const [workspace, next] = await Promise.all([
+        getWorkspace(signal),
+        recruitmentApi.me(signal),
+      ]);
+      const detail = next.currentInterviewSessionId
+        ? await recruitmentApi.questions(next.currentInterviewSessionId, signal)
+        : null;
+      if (signal?.aborted) return;
+      const target = lifecyclePath(workspace);
+      const required = workspace.status === "recruitment_required";
+      const viewingResult =
+        pathname === "/intern/onboarding/result" && next.status === "passed";
+      const allowed = required
+        ? pathname === "/intern/onboarding" ||
+          pathname === "/intern/onboarding/role"
+        : pathname === target || viewingResult;
+      if (!allowed) {
+        router.replace(target);
+        return;
       }
+      setProfile(next);
+      setInterview(detail);
+      setLoadedPath(pathname);
+      setLoading(false);
     },
-    [currentQuestionIndex]
+    [pathname, router],
   );
-
-  const continueWithRole = useCallback((id: RoleId) => {
-    setSelectedRoleId(id);
-    setAnswers({});
-    setCurrentQuestionIndex(0);
-    setIsInterviewCompleted(false);
-  }, []);
-
-  const value = useMemo<RecruitmentFlowState>(
-    () => ({
-      selectedRoleId,
-      selectRole,
-      answers,
-      currentQuestionIndex,
-      isInterviewCompleted,
-      submitAnswer,
-      continueWithRole,
-    }),
-    [
-      selectedRoleId,
-      selectRole,
-      answers,
-      currentQuestionIndex,
-      isInterviewCompleted,
-      submitAnswer,
-      continueWithRole,
-    ]
-  );
-
+  useEffect(() => {
+    const controller = new AbortController();
+    void Promise.resolve()
+      .then(() => load(controller.signal))
+      .catch((e) => {
+        if (!controller.signal.aborted) {
+          setError(e);
+          setLoading(false);
+        }
+      });
+    return () => controller.abort();
+  }, [load, attempt]);
+  const reload = async () => {
+    setLoading(true);
+    setError(undefined);
+    try {
+      await load();
+    } catch (e) {
+      setError(e);
+      setLoading(false);
+    }
+  };
+  async function mutate(action: () => Promise<void>): Promise<boolean> {
+    if (busy) return false;
+    setBusy(true);
+    setNotice(null);
+    try {
+      await action();
+      return true;
+    } catch (e) {
+      setNotice(errorMessage(e));
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+  const selectRole = (role: RecruitmentRole) =>
+    mutate(async () => {
+      setProfile(await recruitmentApi.selectRole(role));
+    });
+  const start = () =>
+    mutate(async () => {
+      const next = await recruitmentApi.start();
+      setInterview(next);
+      setProfile(await recruitmentApi.me());
+      router.replace("/intern/onboarding/interview");
+    });
+  const saveAnswer = (id: string, text: string) =>
+    mutate(async () => {
+      if (!interview)
+        throw new ApiError(
+          409,
+          "NO_INTERVIEW",
+          "Phiên phỏng vấn chưa bắt đầu.",
+        );
+      await recruitmentApi.saveAnswer(interview.session.id, id, text);
+      setInterview(await recruitmentApi.questions(interview.session.id));
+    });
+  const evaluate = (retry: boolean) =>
+    mutate(async () => {
+      if (!interview)
+        throw new ApiError(
+          409,
+          "NO_INTERVIEW",
+          "Phiên phỏng vấn chưa bắt đầu.",
+        );
+      const next = await (retry
+        ? recruitmentApi.retryEvaluation(interview.session.id)
+        : recruitmentApi.submit(interview.session.id));
+      setInterview({ ...interview, session: next.session });
+      setProfile(await recruitmentApi.me());
+      if (next.errorCode)
+        setNotice(
+          errorMessage(
+            new ApiError(503, next.errorCode, "Đánh giá chưa khả dụng."),
+          ),
+        );
+      router.replace("/intern/onboarding/result");
+    });
+  if (error)
+    return (
+      <ErrorState
+        error={error}
+        onRetry={() => {
+          setError(undefined);
+          setLoading(true);
+          setAttempt((x) => x + 1);
+        }}
+      />
+    );
+  if (loading || !profile || loadedPath !== pathname)
+    return <LoadingState label="Đang tải trạng thái tuyển dụng..." />;
   return (
-    <RecruitmentFlowContext.Provider value={value}>
+    <Context.Provider
+      value={{
+        profile,
+        interview,
+        busy,
+        notice,
+        reload,
+        selectRole,
+        start,
+        saveAnswer,
+        submit: () => evaluate(false),
+        retryEvaluation: () => evaluate(true),
+      }}
+    >
       {children}
-    </RecruitmentFlowContext.Provider>
+    </Context.Provider>
   );
 }
-
-export function useRecruitmentFlow(): RecruitmentFlowState {
-  const context = useContext(RecruitmentFlowContext);
-  if (!context) {
-    throw new Error(
-      "useRecruitmentFlow phải dùng bên trong RecruitmentProvider (layout onboarding)."
-    );
-  }
+export function useRecruitmentFlow(): Flow {
+  const context = useContext(Context);
+  if (!context) throw new Error("RecruitmentProvider is required");
   return context;
 }

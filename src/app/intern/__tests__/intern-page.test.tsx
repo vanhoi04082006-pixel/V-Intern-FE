@@ -1,203 +1,129 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-
+import userEvent from "@testing-library/user-event";
 import InternPage from "@/app/intern/page";
-import { refreshSession } from "@/lib/auth/auth-service";
+import { active, waiting, blocked, principal } from "@/test/nest-fixtures";
 import { clearSession, setSession } from "@/lib/auth/session";
-
-/**
- * Test trang /intern — phân nhánh auth theo `_preview`:
- *
- * - DEVELOPMENT + `_preview=empty|active` (giá trị CHÍNH XÁC): render
- *   Intern Workspace TRỰC TIẾP, KHÔNG mount WorkspaceGuard — review UI
- *   không cần Backend. Chứng minh bằng: refreshSession được mock thành
- *   promise không bao giờ resolve (guard nếu mount sẽ kẹt ở "checking",
- *   nội dung không bao giờ xuất hiện) + không redirect + không đụng auth.
- * - Mọi trường hợp khác (dev không/không hợp lệ preview, production có
- *   preview, production không preview) → đi qua WorkspaceGuard THẬT như
- *   trước: chưa đăng nhập → /login. Production KHÔNG bao giờ bypass.
- *
- * Bypass được enforce tại `parseInternPreviewParam` (dev + giá trị hợp lệ)
- * — case helper đã cover trong intern-workspace.test.tsx; ở đây chốt hành
- * vi PHÂN NHÁNH của page. Guard tổng quát đã cover ở workspace-guard.test.tsx.
- */
-
+import type { InternWorkspace } from "@/lib/api/workspace";
 const replace = vi.fn();
-const routerStub = { replace, push: vi.fn(), refresh: vi.fn() };
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => routerStub,
-}));
-
-vi.mock("@/lib/auth/auth-service", () => ({
-  refreshSession: vi.fn(),
-}));
-
-const mockRefresh = vi.mocked(refreshSession);
-
-const INTERN_USER = {
-  id: "u1",
-  email: "intern@vintern.local",
-  displayName: "Nguyễn Văn A",
-  roles: ["intern"],
-  permissions: [],
-};
-
-type SearchParams = { [key: string]: string | string[] | undefined };
-
-/** Gọi page (server component async) với searchParams giả rồi render JSX. */
-async function renderInternPage(params: SearchParams) {
-  const ui = await InternPage({ searchParams: Promise.resolve(params) });
-  return render(ui);
-}
-
-describe("InternPage — dev preview render không cần auth (KHÔNG Backend)", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    clearSession();
-    // Guard nếu (sai) được mount sẽ gọi refresh — promise treo vĩnh viễn
-    // để bất kỳ lộ trình qua guard nào cũng kẹt "checking" và fail test.
-    mockRefresh.mockReturnValue(new Promise(() => {}));
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
-  it("dev + ?_preview=empty → Waiting State render NGAY, không refresh, không redirect", async () => {
-    vi.stubEnv("NODE_ENV", "development");
-
-    await renderInternPage({ _preview: "empty" });
-
-    // Nội dung Waiting xuất hiện NGAY — guard không được mount.
-    expect(
-      screen.getByRole("heading", { level: 1, name: "Intern Workspace" })
-    ).toBeInTheDocument();
-    expect(screen.getByText("Xin chào, Nguyễn Văn A 👋")).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Chưa có dự án được phân công" })
-    ).toBeInTheDocument();
-    expect(screen.getByText("Chờ phân công")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("region", { name: "Task Board" })
-    ).not.toBeInTheDocument();
-
-    // Không đụng auth: không gọi refresh (BE), không redirect, không
-    // trạng thái checking của guard.
-    expect(mockRefresh).not.toHaveBeenCalled();
-    expect(replace).not.toHaveBeenCalled();
-    expect(
-      screen.queryByText("Đang kiểm tra phiên đăng nhập...")
-    ).not.toBeInTheDocument();
-  });
-
-  it("dev + ?_preview=active → Active Workspace render NGAY, không refresh, không redirect", async () => {
-    vi.stubEnv("NODE_ENV", "development");
-
-    await renderInternPage({ _preview: "active" });
-
-    expect(
-      screen.getByRole("heading", { level: 1, name: "Intern Workspace" })
-    ).toBeInTheDocument();
-    expect(screen.getByRole("region", { name: "Task Board" })).toBeInTheDocument();
-    expect(
-      screen.queryByRole("heading", { name: "Chưa có dự án được phân công" })
-    ).not.toBeInTheDocument();
-
-    expect(mockRefresh).not.toHaveBeenCalled();
-    expect(replace).not.toHaveBeenCalled();
-  });
+const router = { replace };
+vi.mock("next/navigation", () => ({ useRouter: () => router }));
+const json = (data: unknown, status = 200) =>
+  new Response(JSON.stringify(data), { status });
+let workspace: InternWorkspace;
+let backendStatus: number;
+beforeEach(() => {
+  clearSession();
+  setSession("token", principal);
+  workspace = waiting;
+  backendStatus = 200;
+  replace.mockClear();
+  vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8080/api/v1");
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) =>
+      url.endsWith("/auth/me")
+        ? json(principal)
+        : json(workspace, backendStatus),
+    ),
+  );
 });
-
-describe("InternPage — mọi trường hợp khác đều qua WorkspaceGuard như cũ", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    clearSession();
-    // Không đăng nhập + BE không có → refresh trả null → redirect /login.
-    mockRefresh.mockResolvedValue(null);
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
-  it("dev + không có preview → guard giữ nguyên: refresh rồi /login, không lộ workspace", async () => {
-    vi.stubEnv("NODE_ENV", "development");
-
-    await renderInternPage({});
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/login");
-    });
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+  clearSession();
+});
+describe("Intern API integration", () => {
+  it("Waiting renders six real rows, no invented project, sprint, task, or notifications", async () => {
+    const { container } = render(<InternPage />);
     expect(
-      screen.queryByRole("heading", { level: 1, name: "Intern Workspace" })
-    ).not.toBeInTheDocument();
-  });
-
-  it("dev + preview KHÔNG hợp lệ (hack/true/array) → không bypass, vẫn /login", async () => {
-    vi.stubEnv("NODE_ENV", "development");
-
-    for (const value of ["hack", "true", ["empty"], ["hack"]] as (
-      | string
-      | string[]
-    )[]) {
-      replace.mockClear();
-      mockRefresh.mockClear();
-
-      await renderInternPage({ _preview: value });
-
-      await waitFor(() => {
-        expect(replace).toHaveBeenCalledWith("/login");
-      });
-      expect(mockRefresh).toHaveBeenCalledTimes(1);
-      expect(
-        screen.queryByRole("heading", { level: 1, name: "Intern Workspace" })
-      ).not.toBeInTheDocument();
-    }
-  });
-
-  it("production + ?_preview=empty → KHÔNG bypass: vẫn qua guard về /login", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-
-    await renderInternPage({ _preview: "empty" });
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/login");
-    });
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(
-      screen.queryByText("Xin chào, Nguyễn Văn A 👋")
+      screen.queryByText("Chưa có dự án được phân công"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("heading", { name: "Chưa có dự án được phân công" })
-    ).not.toBeInTheDocument();
-  });
-
-  it("production + ?_preview=active → KHÔNG bypass: vẫn qua guard về /login", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-
-    await renderInternPage({ _preview: "active" });
-
-    await waitFor(() => {
-      expect(replace).toHaveBeenCalledWith("/login");
-    });
-    expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(
-      screen.queryByRole("region", { name: "Task Board" })
-    ).not.toBeInTheDocument();
-  });
-
-  it("dev + đủ role intern (không preview) → guard vẫn cho render như cũ", async () => {
-    vi.stubEnv("NODE_ENV", "development");
-    setSession("token", INTERN_USER);
-
-    await renderInternPage({});
-
-    // Guard xác thực session trong bộ nhớ → render workspace (default ACTIVE).
-    expect(
-      await screen.findByRole("region", { name: "Task Board" })
+      await screen.findByText("Chưa có dự án được phân công"),
     ).toBeInTheDocument();
-    expect(replace).not.toHaveBeenCalled();
+    const rows = container.querySelectorAll(
+      "section[aria-labelledby=thong-tin-thuc-tap] dl > div",
+    );
+    expect(rows).toHaveLength(6);
+    expect(screen.getByText("Backend Developer")).toBeInTheDocument();
+    expect(screen.getAllByText("Chưa phân công")).toHaveLength(2);
+    expect(screen.getAllByText("Chưa có")).toHaveLength(2);
+    expect(
+      screen.getByRole("button", { name: "Công việc của tôi" }),
+    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Sprint Board" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Dự án" })).toBeDisabled();
+    expect(screen.queryByText("E-commerce Platform")).not.toBeInTheDocument();
+    expect(screen.queryByText("Dữ liệu mẫu")).not.toBeInTheDocument();
+  });
+  it("Active uses assignment, sprint, seven tasks and focused task from API", async () => {
+    workspace = active;
+    render(<InternPage />);
+    expect(await screen.findByText("Dự án từ API")).toBeInTheDocument();
+    expect(screen.getByText("Phiên từ API")).toBeInTheDocument();
+    expect(screen.getByText("SPR-REAL · Sprint từ API")).toBeInTheDocument();
+    expect(screen.getByText("TASK-REAL · Task từ API")).toBeInTheDocument();
+    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Chưa có dự án được phân công"),
+    ).not.toBeInTheDocument();
+  });
+  it.each([
+    "recruitment_required",
+    "recruitment_in_progress",
+    "recruitment_failed",
+  ] as const)("%s never flashes Waiting or Active", async (status) => {
+    workspace = blocked(status);
+    render(<InternPage />);
+    await waitFor(() => expect(replace).toHaveBeenCalled());
+    expect(
+      screen.queryByText("Chưa có dự án được phân công"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Tổng quan Task")).not.toBeInTheDocument();
+  });
+  it.each([403, 404, 409, 500, 503])(
+    "HTTP %s renders Error without demo",
+    async (status) => {
+      backendStatus = status;
+      render(<InternPage />);
+      expect(await screen.findByRole("alert")).toBeInTheDocument();
+      expect(screen.queryByText("Dữ liệu mẫu")).not.toBeInTheDocument();
+    },
+  );
+  it("offline shows Error and retry", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
+    render(<InternPage />);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Không thể kết nối",
+    );
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeInTheDocument();
+  });
+  it("missing config shows explicit configuration error", async () => {
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "");
+    render(<InternPage />);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "NEXT_PUBLIC_API_BASE_URL",
+    );
+  });
+  it("reload re-resolves a newly active assignment", async () => {
+    render(<InternPage />);
+    await screen.findByText("Chưa có dự án được phân công");
+    workspace = active;
+    await userEvent.click(
+      screen.getByRole("button", { name: "Tải lại trạng thái" }),
+    );
+    expect(await screen.findByText("Dự án từ API")).toBeInTheDocument();
+  });
+  it("mobile drawer supports focus, Escape and focus restoration", async () => {
+    render(<InternPage />);
+    await screen.findByText("Chưa có dự án được phân công");
+    const user = userEvent.setup();
+    const opener = screen.getByRole("button", { name: "Mở menu điều hướng" });
+    await user.click(opener);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
   });
 });

@@ -1,160 +1,178 @@
 "use client";
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  BadgeCheck,
-  CircleAlert,
-  FileSearch,
-  RefreshCcw,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-
-import type {
-  RecruitmentResultData,
-  RoleId,
-} from "./data/recruitment-mock-data";
-import { HiredRoleCard, NextStepsCard, ResultNotesCard } from "./next-steps-card";
-import {
-  RecruiterFeedback,
-  RoleRecommendation,
-} from "./recruiter-feedback";
 import { useRecruitmentFlow } from "./recruitment-provider";
-import { ScoreBreakdown } from "./score-breakdown";
-
-/**
- * Màn 4 — Kết quả tuyển dụng (Bước 4/4), DÙNG CHUNG cho Đạt/Chưa đạt:
- * pass/fail là 2 DATA STATE của cùng một screen (không phải 2 route).
- *
- * COMPOSITION desktop theo reference 4A/4B — dashboard 1 viewport:
- * - KHÔNG render stepper ngang trong main (trước đây bị duplicate với
- *   stepper dọc của shell — đã bỏ; vị trí bước chỉ nằm ở rail trái).
- * - Cột chính: hero compact (không-card) → score card → nhận xét AI →
- *   hàng CTA (luôn visible trong viewport).
- * - Rail phải bắt đầu ngay đỉnh content:
- *   + Pass: Bước tiếp theo → Vị trí đã tuyển dụng → Lưu ý.
- *   + Fail: Đề xuất từ AI Recruiter (card compact, KHÔNG full-width
- *     dưới main như bản cũ) → Bước tiếp theo → Lưu ý.
- * - CTA chính "Tiếp tục với {vai trò đề xuất}" nằm ở hàng CTA chính
- *   (giống reference), không nhân bản trong card đề xuất.
- *
- * CTA "Vào Workspace" giữ production đích /intern — hành vi Workspace
- * (empty/active) do trạng thái phân công thật quyết định, không force.
- */
-export function RecruitmentResult({
-  result,
-}: {
-  result: RecruitmentResultData;
-}) {
+import { RECRUITMENT_ROLES } from "./recruitment-presentation";
+import { roleLabel } from "@/lib/api/workspace";
+export function RecruitmentResult() {
   const router = useRouter();
-  const { continueWithRole } = useRecruitmentFlow();
-
-  // Fail luôn có vai trò đề xuất (buildRecruitmentResult đảm bảo) — const
-  // để TS narrow, tránh non-null assertion trong JSX.
-  const suggestedRole = result.passed ? null : result.suggestedRole;
-
-  function handleContinueWithRole(roleId: RoleId) {
-    // Cập nhật CHỈ mock recruitment state (đổi vai trò + reset phỏng vấn)
-    // rồi đưa user về bước Chọn vị trí — không persist, không gọi API.
-    continueWithRole(roleId);
-    router.push("/intern/onboarding/role");
-  }
-
+  const {
+    profile,
+    interview,
+    busy,
+    notice,
+    retryEvaluation,
+    selectRole,
+    reload,
+  } = useRecruitmentFlow();
+  const result =
+    profile.status === "passed" || profile.status === "failed"
+      ? profile.result
+      : null;
+  const retryRole = RECRUITMENT_ROLES.find(
+    (r) => r.id === (result?.recommendedRole ?? profile.selectedRole),
+  );
+  const canRetake = profile.attemptsRemaining > 0 && !profile.nextEligibleAt;
   return (
-    <div
-      aria-labelledby="result-heading"
-      className="grid min-w-0 grid-cols-1 gap-4 lg:min-h-0 xl:grid-cols-[minmax(0,1fr)_320px]"
-    >
-      {/* Cột chính */}
-      <div className="flex min-w-0 flex-col gap-4">
-        {/* Hero compact không-card: icon + headline + subtitle (có vai trò) */}
-        <header className="flex items-start gap-3.5">
-          <span
-            aria-hidden="true"
-            className={cn(
-              "grid size-12 shrink-0 place-items-center rounded-2xl",
-              result.passed ? "bg-emerald-100" : "bg-amber-100"
-            )}
-          >
-            {result.passed ? (
-              <BadgeCheck className="size-7 text-emerald-600" />
-            ) : (
-              <CircleAlert className="size-7 text-amber-600" />
-            )}
-          </span>
-          <div className="min-w-0">
-            <h1
-              id="result-heading"
-              className="text-2xl font-extrabold tracking-tight text-navy sm:text-[28px]"
-            >
-              {result.headline}
-            </h1>
-            <p className="mt-1 max-w-[640px] text-sm leading-relaxed text-slate-600">
-              {result.subtitle}
-            </p>
-          </div>
-        </header>
-
-        <ScoreBreakdown result={result} />
-        <RecruiterFeedback result={result} />
-
-        {/* Hàng CTA — luôn trong viewport desktop, compact */}
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/intern/onboarding/interview"
-            className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
-          >
-            <FileSearch className="size-4" aria-hidden="true" />
-            Xem chi tiết bài làm
-          </Link>
-          {result.passed ? (
-            <Link
-              href="/intern"
-              className="ml-auto inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
-            >
-              Vào Workspace
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/intern/onboarding/role"
-                className="inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-slate-600 transition-colors hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+    <div>
+      <h1 className="text-3xl font-extrabold text-navy">Kết quả tuyển dụng</h1>
+      {notice && (
+        <p
+          role="alert"
+          className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+        >
+          {notice}
+        </p>
+      )}
+      {result ? (
+        <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="space-y-5">
+            <section className="rounded-xl border border-slate-200 bg-white p-6">
+              <h2
+                className={`text-2xl font-bold ${result.decision === "passed" ? "text-emerald-700" : "text-amber-700"}`}
               >
-                <RefreshCcw className="size-4" aria-hidden="true" />
-                Xem lại tiêu chí đánh giá
-              </Link>
-              {suggestedRole ? (
+                {result.decision === "passed"
+                  ? "Bạn đã trúng tuyển"
+                  : "Chưa đạt yêu cầu tuyển dụng"}
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Vị trí:{" "}
+                {profile.selectedRoleLabel ?? roleLabel(profile.selectedRole)}
+              </p>
+              <dl className="mt-5 grid grid-cols-3 gap-3">
+                {[
+                  { label: "Technical", score: result.technicalScore },
+                  { label: "Soft Skill", score: result.softSkillScore },
+                  { label: "Overall", score: result.overallScore },
+                ].map((item) => (
+                  <div key={item.label}>
+                    <dt className="text-sm text-slate-500">{item.label}</dt>
+                    <dd className="mt-1 text-2xl font-bold text-navy">
+                      {item.score.toFixed(1)}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+            <section className="rounded-xl border border-slate-200 bg-white p-6">
+              <h2 className="text-lg font-bold">Nhận xét từ AI Recruiter</h2>
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">
+                {result.feedback}
+              </p>
+              {result.strengths.length > 0 && (
+                <>
+                  <h3 className="mt-4 font-semibold">Điểm mạnh</h3>
+                  <ul className="mt-2 list-disc pl-5 text-sm">
+                    {result.strengths.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {result.weaknesses.length > 0 && (
+                <>
+                  <h3 className="mt-4 font-semibold">Cần cải thiện</h3>
+                  <ul className="mt-2 list-disc pl-5 text-sm">
+                    {result.weaknesses.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {result.criteria.map((c) => (
+                <p key={c.code} className="mt-3 text-sm">
+                  {c.code}: {c.score} · {c.feedback}
+                </p>
+              ))}
+            </section>
+          </div>
+          <aside className="rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="font-bold">Bước tiếp theo</h2>
+            {result.decision === "passed" ? (
+              <>
+                <p className="mt-3 text-sm text-slate-600">
+                  Vào Workspace để xem trạng thái phân công mới nhất.
+                </p>
+                <Link
+                  href="/intern"
+                  className="mt-4 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Vào Workspace
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="mt-3 text-sm">
+                  Số lần còn lại: {profile.attemptsRemaining}
+                </p>
+                {profile.nextEligibleAt && (
+                  <p className="mt-3 text-sm">
+                    Có thể thử lại sau:{" "}
+                    {new Date(profile.nextEligibleAt).toLocaleString("vi-VN")}
+                  </p>
+                )}
+                {result.recommendedRole && (
+                  <p className="mt-3 text-sm">
+                    Vị trí được đề xuất: {roleLabel(result.recommendedRole)}
+                  </p>
+                )}
                 <button
                   type="button"
-                  onClick={() => handleContinueWithRole(suggestedRole.id)}
-                  className="ml-auto inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+                  disabled={busy || !canRetake || !retryRole}
+                  onClick={async () => {
+                    if (retryRole && (await selectRole(retryRole.id)))
+                      router.replace("/intern/onboarding/role");
+                  }}
+                  className="mt-4 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
                 >
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                  Tiếp tục với {suggestedRole.label}
+                  Thử lại tuyển dụng
                 </button>
-              ) : null}
-            </>
-          )}
+              </>
+            )}
+          </aside>
         </div>
-        <p className="text-xs leading-relaxed text-slate-400">
-          {result.passed
-            ? "Sau khi vào Workspace, bạn sẽ ở trạng thái chờ giảng viên phân công Project và Internship Session."
-            : "Tiếp tục với vai trò đề xuất sẽ đưa bạn về bước Chọn vị trí — chỉ đổi mock state trong phiên này."}
-        </p>
-      </div>
-
-      {/* Rail phải — bắt đầu ngay đỉnh content theo reference */}
-      <aside
-        aria-label="Thông tin kết quả và bước tiếp theo"
-        className="flex min-w-0 flex-col gap-3 lg:min-h-0"
+      ) : (
+        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
+          <h2 className="text-lg font-bold">
+            {interview?.session.status === "evaluation_failed"
+              ? "Đánh giá chưa khả dụng"
+              : "Chưa có kết quả tuyển dụng"}
+          </h2>
+          <p className="mt-3 text-sm text-slate-500">
+            {interview?.session.status === "evaluation_failed"
+              ? "Hệ thống chưa thể hoàn tất đánh giá. Câu trả lời đã nộp được giữ lại."
+              : "Hệ thống đang xử lý trạng thái tuyển dụng của bạn."}
+          </p>
+          {interview?.session.status === "evaluation_failed" && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void retryEvaluation()}
+              className="mt-4 rounded-lg bg-brand px-4 py-2 text-white"
+            >
+              Thử lại đánh giá
+            </button>
+          )}
+        </section>
+      )}
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => void reload()}
+        className="mt-5 rounded-lg border border-slate-200 px-4 py-2 text-sm"
       >
-        {!result.passed ? <RoleRecommendation result={result} /> : null}
-        <NextStepsCard steps={result.nextSteps} />
-        {result.passed ? <HiredRoleCard result={result} /> : null}
-        <ResultNotesCard result={result} />
-      </aside>
+        Tải lại trạng thái
+      </button>
     </div>
   );
 }

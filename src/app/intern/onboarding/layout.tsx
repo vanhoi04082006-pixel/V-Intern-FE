@@ -7,8 +7,8 @@ import { RecruitmentProvider } from "@/components/intern/onboarding/recruitment-
  * Layout chung của Intern Onboarding flow (/intern/onboarding/*):
  * 1. `InternOnboardingGuard` — tái sử dụng WorkspaceGuard thật, chặn role
  *    `intern` cho MỌI route con (welcome/role/interview/result).
- * 2. `RecruitmentProvider` — mock recruitment state in-memory dùng chung
- *    giữa 4 route con khi điều hướng SPA (reset khi reload — mock-only).
+ * 2. `RecruitmentProvider` — tải recruitment/workspace từ Nest dùng chung
+ *    giữa các route con; reload khôi phục bằng dữ liệu backend.
  *
  * Không đụng layout/auth của /intern hiện có — onboarding tách riêng.
  */

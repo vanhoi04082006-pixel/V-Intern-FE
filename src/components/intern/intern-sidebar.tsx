@@ -5,9 +5,8 @@ import { Logo } from "@/components/v-intern/logo";
 import {
   INTERN_BOTTOM_NAV,
   INTERN_OVERVIEW_NAV_ID,
-  type InternNavGroup,
-  type InternNavItem,
-} from "./data/intern-mock-data";
+} from "./workspace-presentation";
+import type { InternNavGroup, InternNavItem } from "./data/intern-mock-data";
 
 /**
  * Sidebar của Intern Workspace — presentational, dựng từ MỘT nav model
@@ -37,7 +36,9 @@ function NavItem({
   active?: boolean;
   onNavigate?: () => void;
 }) {
-  const icon = <item.icon className="size-[18px] shrink-0" aria-hidden="true" />;
+  const icon = (
+    <item.icon className="size-[18px] shrink-0" aria-hidden="true" />
+  );
 
   if (active) {
     return (
@@ -66,7 +67,7 @@ function NavItem({
         className={cn(
           itemBase,
           "cursor-not-allowed text-slate-300",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
         )}
       >
         {icon}
@@ -79,7 +80,10 @@ function NavItem({
     <button
       type="button"
       onClick={onNavigate}
-      className={cn(itemBase, "text-slate-600 hover:bg-slate-100 hover:text-navy")}
+      className={cn(
+        itemBase,
+        "text-slate-600 hover:bg-slate-100 hover:text-navy",
+      )}
     >
       {icon}
       {item.label}

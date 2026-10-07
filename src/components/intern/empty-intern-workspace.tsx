@@ -1,12 +1,9 @@
+"use client";
+import Link from "next/link";
 import Image from "next/image";
 import { BookOpen, FileText, Info, Send } from "lucide-react";
 
-import {
-  OutlineAction,
-  PrimaryAction,
-  SectionCard,
-  StatusBadge,
-} from "./intern-primitives";
+import { SectionCard, StatusBadge } from "./intern-primitives";
 import { InternshipInfoCard } from "./internship-info-card";
 import { NextProcessCard } from "./next-process-card";
 import { RecentActivityCard } from "./recent-activity";
@@ -40,8 +37,10 @@ import type { InternWorkspaceState } from "./data/intern-mock-data";
  */
 export function EmptyInternWorkspace({
   state,
+  onReload,
 }: {
   state: Extract<InternWorkspaceState, { status: "unassigned" }>;
+  onReload?: () => void;
 }) {
   const { welcome, emptyCard, infoRows, nextSteps, recentActivities, notes } =
     state;
@@ -165,14 +164,21 @@ export function EmptyInternWorkspace({
             {emptyCard.description}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 xl:mt-3 xl:gap-2.5">
-            <PrimaryAction>
+            <Link
+              href="/intern/onboarding/result"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-[13px] font-semibold text-white"
+            >
               <FileText className="size-4" aria-hidden="true" />
               {emptyCard.primaryAction}
-            </PrimaryAction>
-            <OutlineAction>
+            </Link>
+            <button
+              type="button"
+              onClick={onReload}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-[13px] font-semibold text-slate-700"
+            >
               <BookOpen className="size-4" aria-hidden="true" />
               {emptyCard.secondaryAction}
-            </OutlineAction>
+            </button>
           </div>
         </section>
 

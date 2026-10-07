@@ -1,6 +1,6 @@
 "use client";
 
-import type { RecruitmentRole } from "./data/recruitment-mock-data";
+import type { RecruitmentRole } from "./recruitment-presentation";
 import { TagPill } from "./onboarding-primitives";
 
 /**

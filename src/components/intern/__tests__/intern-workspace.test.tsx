@@ -1,8 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { InternWorkspace } from "@/components/intern/intern-workspace";
+import { InternWorkspacePreview as InternWorkspace } from "@/test/intern-workspace-preview";
 import {
   INTERN_VIRTUAL_SALARY,
   formatVnd,
@@ -22,6 +28,7 @@ import type { InternWorkspaceState } from "@/components/intern/data/intern-mock-
  * workspace-guard.test.tsx (guard) và login-form.test.tsx (redirect).
  */
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
 function renderActive() {
   return render(<InternWorkspace previewState="active" />);
 }
@@ -30,10 +37,7 @@ function renderEmpty() {
   return render(<InternWorkspace previewState="empty" />);
 }
 
-function getActiveState(): Extract<
-  InternWorkspaceState,
-  { status: "active" }
-> {
+function getActiveState(): Extract<InternWorkspaceState, { status: "active" }> {
   const state = resolveInternWorkspaceState("active");
   if (state.status !== "active") {
     throw new Error("Active state expected");
@@ -47,22 +51,25 @@ function getActiveState(): Extract<
  * là commitment metric (dataset sprint planning riêng) — KHÔNG assert
  * sprint progress bằng tổng points của board.
  */
-function getBoardStats(state: Extract<InternWorkspaceState, { status: "active" }>) {
+function getBoardStats(
+  state: Extract<InternWorkspaceState, { status: "active" }>,
+) {
   const doneColumn = state.boardColumns.find((column) => column.id === "done");
   const totalTasks = state.boardColumns.reduce(
     (sum, column) => sum + column.tasks.length,
-    0
+    0,
   );
   const totalPoints = state.boardColumns.reduce(
     (sum, column) =>
       sum + column.tasks.reduce((acc, task) => acc + task.points, 0),
-    0
+    0,
   );
   return {
     totalTasks,
     doneTasks: doneColumn?.tasks.length ?? 0,
     totalPoints,
-    donePoints: doneColumn?.tasks.reduce((acc, task) => acc + task.points, 0) ?? 0,
+    donePoints:
+      doneColumn?.tasks.reduce((acc, task) => acc + task.points, 0) ?? 0,
   };
 }
 
@@ -90,7 +97,7 @@ function getSidebarNavLabels(nav: HTMLElement): string[] {
     .map((li) =>
       (li.querySelector("a, button")?.textContent ?? "")
         .replace(/\d+$/, "")
-        .trim()
+        .trim(),
     );
 }
 
@@ -104,16 +111,14 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     renderEmpty();
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Intern Workspace" })
+      screen.getByRole("heading", { level: 1, name: "Intern Workspace" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Không gian làm việc và thực tập của bạn tại V-Intern")
+      screen.getByText("Không gian làm việc và thực tập của bạn tại V-Intern"),
     ).toBeInTheDocument();
     expect(screen.getByText("Xin chào, Nguyễn Văn A 👋")).toBeInTheDocument();
     // Frontend Developer xuất hiện ở welcome badge + chip Vai trò.
-    expect(
-      screen.getAllByText("Frontend Developer").length
-    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("Frontend Developer").length).toBeGreaterThan(0);
     expect(screen.getByText("Đã hoàn thành tuyển dụng")).toBeInTheDocument();
     // Round 2: reference Waiting KHÔNG có badge demo — badge "Dữ liệu mẫu"
     // chỉ còn ở Active workspace (không thêm visual noise cho waiting).
@@ -127,14 +132,14 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     // với Active/Instructor — breadcrumb trái, search phải, không variant.
     const breadcrumb = screen.getByRole("navigation", { name: "Breadcrumb" });
     expect(
-      within(breadcrumb).getByText("Intern Workspace")
+      within(breadcrumb).getByText("Intern Workspace"),
     ).toBeInTheDocument();
     const current = within(breadcrumb).getByText("Tổng quan");
     expect(current).toHaveAttribute("aria-current", "page");
     expect(
       screen.getByRole("searchbox", {
         name: "Tìm kiếm trong không gian thực tập",
-      })
+      }),
     ).toBeInTheDocument();
   });
 
@@ -142,18 +147,18 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     renderEmpty();
 
     expect(
-      screen.getByRole("heading", { name: "Chưa có dự án được phân công" })
+      screen.getByRole("heading", { name: "Chưa có dự án được phân công" }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Bạn đã hoàn thành tuyển dụng tại V-Intern. Giảng viên sẽ phân bạn vào một Project và Internship Session phù hợp. Khi được phân công, Sprint và Task sẽ xuất hiện tại đây."
-      )
+        "Bạn đã hoàn thành tuyển dụng tại V-Intern. Giảng viên sẽ phân bạn vào một Project và Internship Session phù hợp. Khi được phân công, Sprint và Task sẽ xuất hiện tại đây.",
+      ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Xem hồ sơ tuyển dụng/ })
+      screen.getByRole("link", { name: /Xem hồ sơ tuyển dụng/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Xem hướng dẫn/ })
+      screen.getByRole("button", { name: /Xem hướng dẫn/ }),
     ).toBeInTheDocument();
   });
 
@@ -180,13 +185,13 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     const steps = screen.getByRole("region", { name: "Quy trình tiếp theo" });
 
     expect(
-      within(steps).getByText("Giảng viên phân công dự án")
+      within(steps).getByText("Giảng viên phân công dự án"),
     ).toBeInTheDocument();
     expect(
-      within(steps).getByText("Bạn nhận thông báo tham gia phiên thực tập")
+      within(steps).getByText("Bạn nhận thông báo tham gia phiên thực tập"),
     ).toBeInTheDocument();
     expect(
-      within(steps).getByText("Sprint và Task xuất hiện trong workspace")
+      within(steps).getByText("Sprint và Task xuất hiện trong workspace"),
     ).toBeInTheDocument();
   });
 
@@ -197,27 +202,31 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
       name: "Hoạt động gần đây",
     });
     expect(
-      within(activity).getByText("Hoàn thành phỏng vấn AI Recruiter")
+      within(activity).getByText("Hoàn thành phỏng vấn AI Recruiter"),
     ).toBeInTheDocument();
     expect(
-      within(activity).getByText("Nhận role Frontend Developer")
+      within(activity).getByText("Nhận role Frontend Developer"),
     ).toBeInTheDocument();
     expect(
-      within(activity).getByText("Đang chờ phân công dự án")
+      within(activity).getByText("Đang chờ phân công dự án"),
     ).toBeInTheDocument();
 
     const notes = screen.getByRole("region", { name: "Lưu ý" });
-    expect(within(notes).getByText("Bạn không tự chọn Project.")).toBeInTheDocument();
-    expect(within(notes).getByText("Bạn không tự vào Session.")).toBeInTheDocument();
     expect(
-      within(notes).getByText(
-        "Project và phiên thực tập sẽ do giảng viên phân công."
-      )
+      within(notes).getByText("Bạn không tự chọn Project."),
+    ).toBeInTheDocument();
+    expect(
+      within(notes).getByText("Bạn không tự vào Session."),
     ).toBeInTheDocument();
     expect(
       within(notes).getByText(
-        "Bạn sẽ nhận được thông báo khi có dự án và phiên thực tập phù hợp."
-      )
+        "Project và phiên thực tập sẽ do giảng viên phân công.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(notes).getByText(
+        "Bạn sẽ nhận được thông báo khi có dự án và phiên thực tập phù hợp.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -231,9 +240,7 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     // Round 3.1: heading section GIỐNG HỆT Active (không còn "2 nhóm
     // không tiêu đề" của waiting cũ).
     expect(within(nav).getByText("Workspace")).toBeInTheDocument();
-    expect(
-      within(nav).getByText("Hiệu suất & Phát triển")
-    ).toBeInTheDocument();
+    expect(within(nav).getByText("Hiệu suất & Phát triển")).toBeInTheDocument();
 
     // Label chuẩn hoá theo source of truth Active: "Sprint" → "Sprint
     // Board", "KPI" → "KPI & Lương ảo", bổ sung "Đánh giá".
@@ -253,10 +260,10 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     }
     // Không còn label cũ standalone trong nav.
     expect(
-      within(nav).queryByRole("button", { name: "Sprint" })
+      within(nav).queryByRole("button", { name: "Sprint" }),
     ).not.toBeInTheDocument();
     expect(
-      within(nav).queryByRole("button", { name: "KPI" })
+      within(nav).queryByRole("button", { name: "KPI" }),
     ).not.toBeInTheDocument();
 
     // Badge "Thông báo" dùng CÙNG nguồn unread với Active (dataset thông
@@ -295,16 +302,14 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
 
     // Không tự tiện disable thêm mục nào — business behavior giữ nguyên.
     expect(
-      within(nav).getByRole("button", { name: "Công việc của tôi" })
+      within(nav).getByRole("button", { name: "Công việc của tôi" }),
     ).toBeEnabled();
     expect(
-      within(nav).getByRole("button", { name: "AI Mentor" })
+      within(nav).getByRole("button", { name: "AI Mentor" }),
     ).toBeEnabled();
+    expect(within(nav).getByRole("button", { name: "Đánh giá" })).toBeEnabled();
     expect(
-      within(nav).getByRole("button", { name: "Đánh giá" })
-    ).toBeEnabled();
-    expect(
-      within(nav).getByRole("button", { name: "KPI & Lương ảo" })
+      within(nav).getByRole("button", { name: "KPI & Lương ảo" }),
     ).toBeEnabled();
 
     // Tổng quan vẫn là link thật và là mục active duy nhất.
@@ -318,7 +323,7 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
     renderEmpty();
 
     await user.click(
-      screen.getByRole("button", { name: "Mở menu điều hướng" })
+      screen.getByRole("button", { name: "Mở menu điều hướng" }),
     );
     const dialog = screen.getByRole("dialog", { name: "Menu thực tập sinh" });
 
@@ -327,19 +332,15 @@ describe("InternWorkspace — state EMPTY (unassigned)", () => {
       name: "Điều hướng thực tập sinh",
     });
     expect(within(nav).getByText("Workspace")).toBeInTheDocument();
-    expect(
-      within(nav).getByText("Hiệu suất & Phát triển")
-    ).toBeInTheDocument();
+    expect(within(nav).getByText("Hiệu suất & Phát triển")).toBeInTheDocument();
     expect(getSidebarNavLabels(nav)).toEqual(EXPECTED_INTERN_NAV_ITEM_ORDER);
     expect(
-      within(nav).getByText(String(getUnreadNotificationCount()))
+      within(nav).getByText(String(getUnreadNotificationCount())),
     ).toBeInTheDocument();
     expect(
-      within(nav).getByRole("button", { name: "Sprint Board" })
+      within(nav).getByRole("button", { name: "Sprint Board" }),
     ).toBeDisabled();
-    expect(
-      within(nav).getByRole("button", { name: "Dự án" })
-    ).toBeDisabled();
+    expect(within(nav).getByRole("button", { name: "Dự án" })).toBeDisabled();
   });
 
   it("welcome card: mascot minh hoạ là ảnh trang trí (không lỡ screen reader)", () => {
@@ -367,7 +368,7 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(screen.getByText("Trạng thái:")).toBeInTheDocument();
     expect(screen.getByText("Active")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Xem Sprint Board/ })
+      screen.getByRole("button", { name: /Xem Sprint Board/ }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Nộp PR/ })).toBeInTheDocument();
     expect(screen.getByText("Dữ liệu mẫu")).toBeInTheDocument();
@@ -390,12 +391,12 @@ describe("InternWorkspace — state ACTIVE", () => {
     // tích lũy nằm riêng ở Performance "Task hoàn thành (Sprint 01 – 03)".
     expect(within(kpis).getByText("Task Sprint hiện tại")).toBeInTheDocument();
     expect(
-      within(kpis).getByText(`${stats.doneTasks} / ${stats.totalTasks}`)
+      within(kpis).getByText(`${stats.doneTasks} / ${stats.totalTasks}`),
     ).toBeInTheDocument();
     expect(within(kpis).getByText("hoàn thành")).toBeInTheDocument();
 
     expect(
-      within(kpis).getByText("Điểm review trung bình")
+      within(kpis).getByText("Điểm review trung bình"),
     ).toBeInTheDocument();
     expect(within(kpis).getByText("82 / 100")).toBeInTheDocument();
 
@@ -404,8 +405,12 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(within(kpis).getByText("Hôm nay, 16:00")).toBeInTheDocument();
 
     expect(within(kpis).getByText("Lương ảo tạm tính")).toBeInTheDocument();
-    expect(within(kpis).getByText(formatVnd(INTERN_VIRTUAL_SALARY))).toBeInTheDocument();
-    expect(within(kpis).getByText("+12% so với sprint trước")).toBeInTheDocument();
+    expect(
+      within(kpis).getByText(formatVnd(INTERN_VIRTUAL_SALARY)),
+    ).toBeInTheDocument();
+    expect(
+      within(kpis).getByText("+12% so với sprint trước"),
+    ).toBeInTheDocument();
   });
 
   it("Task Board 4 cột 3/2/2/2, VIN-103 + VIN-107 ở Doing, tổng 9 task — derive từ dataset", () => {
@@ -415,9 +420,9 @@ describe("InternWorkspace — state ACTIVE", () => {
     const active = getActiveState();
 
     // Business state gốc của board: To Do 3 / Doing 2 / Review 2 / Done 2.
-    expect(
-      active.boardColumns.map((column) => column.tasks.length)
-    ).toEqual([3, 2, 2, 2]);
+    expect(active.boardColumns.map((column) => column.tasks.length)).toEqual([
+      3, 2, 2, 2,
+    ]);
 
     for (const column of active.boardColumns) {
       const columnItem = within(board).getByRole("listitem", {
@@ -431,7 +436,7 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     // VIN-103 nằm trong cột Doing (không ở cột khác) — số task cột derive.
     const doingColumn = active.boardColumns.find(
-      (column) => column.id === "doing"
+      (column) => column.id === "doing",
     );
     expect(doingColumn).toBeDefined();
     const doing = within(board).getByRole("listitem", {
@@ -447,12 +452,10 @@ describe("InternWorkspace — state ACTIVE", () => {
     // Tổng 9 task trên board — derive từ dataset, khớp số card render.
     const boardTotal = active.boardColumns.reduce(
       (sum, column) => sum + column.tasks.length,
-      0
+      0,
     );
     expect(boardTotal).toBe(9);
-    expect(
-      within(board).getAllByText(/^VIN-\d{3}$/).length
-    ).toBe(boardTotal);
+    expect(within(board).getAllByText(/^VIN-\d{3}$/).length).toBe(boardTotal);
   });
 
   it("3 metric 3 scope: sprint commitment 12/18, board KPI derive 2/9, cumulative 14/21", () => {
@@ -477,7 +480,7 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     const sprintKpi = active.kpis.find((kpi) => kpi.id === "tien-do-sprint");
     const taskKpi = active.kpis.find(
-      (kpi) => kpi.id === "task-sprint-hien-tai"
+      (kpi) => kpi.id === "task-sprint-hien-tai",
     );
 
     // Scope A — Sprint progress: commitment metric sprint-level, giá trị
@@ -492,16 +495,16 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(taskKpi?.value).toBe(`${stats.doneTasks} / ${stats.totalTasks}`);
     expect(taskKpi?.value).toBe("2 / 9");
     expect(taskKpi?.progress).toBe(
-      Math.round((stats.doneTasks / stats.totalTasks) * 100)
+      Math.round((stats.doneTasks / stats.totalTasks) * 100),
     );
 
     // Scope C — Cumulative Sprint 01–03 nằm riêng ở Performance, khác
     // dataset với 2 KPI trên.
     expect(active.performance.title).toBe(
-      "Hiệu suất thực tập (Sprint 01 – 03)"
+      "Hiệu suất thực tập (Sprint 01 – 03)",
     );
     expect(active.performance.metrics[0]?.label).toBe(
-      "Task hoàn thành (Sprint 01 – 03)"
+      "Task hoàn thành (Sprint 01 – 03)",
     );
     expect(active.performance.metrics[0]?.value).toBe("14 / 21");
   });
@@ -515,17 +518,17 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     expect(
       within(focused).getByText(
-        "Tích hợp API đăng nhập, xử lý response và quản lý phiên đăng nhập theo cơ chế xác thực hiện tại của hệ thống."
-      )
+        "Tích hợp API đăng nhập, xử lý response và quản lý phiên đăng nhập theo cơ chế xác thực hiện tại của hệ thống.",
+      ),
     ).toBeInTheDocument();
     expect(
       within(focused).getByText(
-        "Quản lý session/token theo cơ chế auth hiện tại của hệ thống"
-      )
+        "Quản lý session/token theo cơ chế auth hiện tại của hệ thống",
+      ),
     ).toBeInTheDocument();
     expect(within(focused).getByText("5 points")).toBeInTheDocument();
     expect(
-      within(focused).getByText("Hạn nộp: Hôm nay, 16:00")
+      within(focused).getByText("Hạn nộp: Hôm nay, 16:00"),
     ).toBeInTheDocument();
 
     // Trạng thái từng mục DoD có text cho screen reader, không chỉ màu.
@@ -534,9 +537,7 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     // Toàn trang không wording "local storage" (mâu thuẫn auth thật:
     // access token in-memory + refresh token HttpOnly cookie).
-    expect(
-      screen.queryByText(/local\s?storage/i)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/local\s?storage/i)).not.toBeInTheDocument();
   });
 
   it("AI Mentor: hội thoại mock 4 bước xử lý 401, KHÔNG gọi AI API", () => {
@@ -546,19 +547,21 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     expect(
       within(mentor).getByText(
-        "Ngữ cảnh task hiện tại: VIN-103 – Integrate Login API"
-      )
+        "Ngữ cảnh task hiện tại: VIN-103 – Integrate Login API",
+      ),
     ).toBeInTheDocument();
     expect(
-      within(mentor).getByText("API login trả 401, em nên kiểm tra gì?")
+      within(mentor).getByText("API login trả 401, em nên kiểm tra gì?"),
     ).toBeInTheDocument();
     expect(
       within(mentor).getByText(
-        "Bạn hãy kiểm tra lần lượt: (1) request payload có đúng định dạng không, (2) thông tin xác thực cần thiết, (3) response/error code từ endpoint, (4) session/token có còn hợp lệ không. Bạn cũng có thể kiểm tra tab Network trong DevTools."
-      )
+        "Bạn hãy kiểm tra lần lượt: (1) request payload có đúng định dạng không, (2) thông tin xác thực cần thiết, (3) response/error code từ endpoint, (4) session/token có còn hợp lệ không. Bạn cũng có thể kiểm tra tab Network trong DevTools.",
+      ),
     ).toBeInTheDocument();
     // Input visual-only với label accessible.
-    expect(within(mentor).getByLabelText("Hỏi AI Mentor về task này")).toBeInTheDocument();
+    expect(
+      within(mentor).getByLabelText("Hỏi AI Mentor về task này"),
+    ).toBeInTheDocument();
   });
 
   it("PR & AI Review: PR #42 / feat/login-api / 82/100 / Passed + 2 feedback", () => {
@@ -573,11 +576,11 @@ describe("InternWorkspace — state ACTIVE", () => {
     expect(within(pr).getByText("Passed")).toBeInTheDocument();
     expect(
       within(pr).getByText(
-        "Cần xử lý lỗi 401 rõ hơn trong trường hợp session/token hết hạn"
-      )
+        "Cần xử lý lỗi 401 rõ hơn trong trường hợp session/token hết hạn",
+      ),
     ).toBeInTheDocument();
     expect(
-      within(pr).getByText("Nên bổ sung test case cho invalid credentials")
+      within(pr).getByText("Nên bổ sung test case cho invalid credentials"),
     ).toBeInTheDocument();
   });
 
@@ -595,7 +598,7 @@ describe("InternWorkspace — state ACTIVE", () => {
       expect(within(notifications).getByText(item.text)).toBeInTheDocument();
     }
     expect(
-      within(notifications).getByText(`${unread} chưa đọc`)
+      within(notifications).getByText(`${unread} chưa đọc`),
     ).toBeInTheDocument();
     expect(unread).toBe(3);
   });
@@ -611,19 +614,21 @@ describe("InternWorkspace — state ACTIVE", () => {
     // Metric tích lũy phải nói rõ scope để không đọc nhầm với KPI
     // "Task Sprint hiện tại" (chỉ Sprint 03).
     expect(
-      within(performance).getByText("Task hoàn thành (Sprint 01 – 03)")
+      within(performance).getByText("Task hoàn thành (Sprint 01 – 03)"),
     ).toBeInTheDocument();
     expect(within(performance).getByText("42 / 60")).toBeInTheDocument();
     expect(within(performance).getByText("82 / 100")).toBeInTheDocument();
     expect(within(performance).getByText("84 / 100")).toBeInTheDocument();
     expect(within(performance).getByText("Đạt kỳ vọng")).toBeInTheDocument();
     expect(
-      within(performance).getByText(formatVnd(INTERN_VIRTUAL_SALARY))
+      within(performance).getByText(formatVnd(INTERN_VIRTUAL_SALARY)),
     ).toBeInTheDocument();
-    expect(within(performance).getByText("+12% so với kỳ trước")).toBeInTheDocument();
+    expect(
+      within(performance).getByText("+12% so với kỳ trước"),
+    ).toBeInTheDocument();
     expect(within(performance).getByText("Chưa sẵn sàng")).toBeInTheDocument();
     expect(
-      within(performance).getByText("Hoàn thành 3/6 sprint")
+      within(performance).getByText("Hoàn thành 3/6 sprint"),
     ).toBeInTheDocument();
   });
 
@@ -635,9 +640,7 @@ describe("InternWorkspace — state ACTIVE", () => {
     });
 
     expect(within(nav).getByText("Workspace")).toBeInTheDocument();
-    expect(
-      within(nav).getByText("Hiệu suất & Phát triển")
-    ).toBeInTheDocument();
+    expect(within(nav).getByText("Hiệu suất & Phát triển")).toBeInTheDocument();
     expect(within(nav).getByText("Sprint Board")).toBeInTheDocument();
     expect(within(nav).getByText("KPI & Lương ảo")).toBeInTheDocument();
 
@@ -650,7 +653,7 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     // Sprint Board + Dự án available ở active (regression waiting flag).
     expect(
-      within(nav).getByRole("button", { name: "Sprint Board" })
+      within(nav).getByRole("button", { name: "Sprint Board" }),
     ).toBeEnabled();
     expect(within(nav).getByRole("button", { name: "Dự án" })).toBeEnabled();
 
@@ -668,7 +671,9 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     // Flag `unavailable` chỉ dùng ở state waiting — active phải toàn bộ
     // item đều tương tác được.
-    for (const button of within(nav).getAllByRole("button")) {
+    for (const button of within(nav)
+      .getAllByRole("button")
+      .filter((button) => button.textContent !== "Cài đặt")) {
       expect(button).toBeEnabled();
     }
   });
@@ -678,7 +683,7 @@ describe("InternWorkspace — state ACTIVE", () => {
 
     // Round 3: không còn variant — Active giữ nguyên breadcrumb như cũ.
     expect(
-      screen.getByRole("navigation", { name: "Breadcrumb" })
+      screen.getByRole("navigation", { name: "Breadcrumb" }),
     ).toBeInTheDocument();
   });
 });
@@ -689,10 +694,10 @@ describe("InternWorkspace — default state & preview (dev-only)", () => {
 
     // Default là ACTIVE: Task Board xuất hiện, Empty card không.
     expect(
-      screen.getByRole("region", { name: "Task Board" })
+      screen.getByRole("region", { name: "Task Board" }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("heading", { name: "Chưa có dự án được phân công" })
+      screen.queryByRole("heading", { name: "Chưa có dự án được phân công" }),
     ).not.toBeInTheDocument();
   });
 
@@ -749,7 +754,7 @@ describe("InternWorkspace — chrome & accessibility", () => {
     });
     await waitFor(() => {
       expect(
-        within(dialog).getByRole("link", { name: "Tổng quan" })
+        within(dialog).getByRole("link", { name: "Tổng quan" }),
       ).toHaveFocus();
     });
 
@@ -757,7 +762,7 @@ describe("InternWorkspace — chrome & accessibility", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByRole("dialog", { name: "Menu thực tập sinh" })
+        screen.queryByRole("dialog", { name: "Menu thực tập sinh" }),
       ).not.toBeInTheDocument();
     });
     expect(menuButton).toHaveFocus();

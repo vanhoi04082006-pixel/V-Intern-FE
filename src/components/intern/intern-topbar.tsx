@@ -1,6 +1,14 @@
 import Link from "next/link";
 import type { Ref } from "react";
-import { Bell, ChevronDown, ChevronRight, Home, Menu, Search } from "lucide-react";
+import {
+  Bell,
+  ChevronDown,
+  ChevronRight,
+  Home,
+  Menu,
+  Search,
+} from "lucide-react";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { cn } from "@/lib/utils";
 
 import type { InternWorkspaceUser } from "./data/intern-mock-data";
@@ -39,7 +47,7 @@ export function InternTopbar({
     <header
       className={cn(
         "sticky top-0 z-30 border-b border-slate-200 bg-white",
-        className
+        className,
       )}
     >
       <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
@@ -111,26 +119,26 @@ export function InternTopbar({
           <button
             type="button"
             aria-label={
-              typeof user.notificationBadge === "number"
+              typeof user.notificationBadge === "number" &&
+              user.notificationBadge > 0
                 ? `Thông báo, có ${user.notificationBadge} thông báo chưa đọc`
                 : "Thông báo"
             }
             className="relative grid size-10 shrink-0 place-items-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
           >
             <Bell className="size-5" aria-hidden="true" />
-            {typeof user.notificationBadge === "number" ? (
+            {typeof user.notificationBadge === "number" &&
+            user.notificationBadge > 0 ? (
               <span className="absolute right-1 top-1 grid size-4 place-items-center rounded-full bg-red-500 text-[10px] font-bold leading-none text-white ring-2 ring-white">
                 {user.notificationBadge}
               </span>
-            ) : (
-              <span
-                aria-hidden="true"
-                className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500 ring-2 ring-white"
-              />
-            )}
+            ) : null}
           </button>
 
-          <span aria-hidden="true" className="hidden h-6 w-px bg-slate-200 sm:block" />
+          <span
+            aria-hidden="true"
+            className="hidden h-6 w-px bg-slate-200 sm:block"
+          />
 
           <button
             type="button"
@@ -156,6 +164,7 @@ export function InternTopbar({
               aria-hidden="true"
             />
           </button>
+          <LogoutButton />
         </div>
       </div>
     </header>
