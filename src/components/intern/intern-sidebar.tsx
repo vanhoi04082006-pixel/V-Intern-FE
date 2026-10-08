@@ -76,6 +76,21 @@ function NavItem({
     );
   }
 
+  if (item.href)
+    return (
+      <Link
+        href={item.href}
+        onClick={onNavigate}
+        className={cn(
+          itemBase,
+          "text-slate-600 hover:bg-slate-100 hover:text-navy",
+        )}
+      >
+        {icon}
+        {item.label}
+      </Link>
+    );
+
   return (
     <button
       type="button"

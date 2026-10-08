@@ -28,7 +28,7 @@ export const INTERN_BOTTOM_NAV: InternNavItem = {
   icon: Settings,
   unavailable: true,
 };
-export function workspaceNav(): InternNavGroup[] {
+export function workspaceNav(active = false): InternNavGroup[] {
   return [
     {
       id: "workspace",
@@ -46,7 +46,16 @@ export function workspaceNav(): InternNavGroup[] {
           { id: "project", label: "Dự án", icon: FolderKanban },
           { id: "mentor", label: "AI Mentor", icon: Bot },
           { id: "notifications", label: "Thông báo", icon: Bell },
-        ].map((item) => ({ ...item, unavailable: true })),
+        ].map((item) => ({
+          ...item,
+          href:
+            active && ["work", "sprint", "project"].includes(item.id)
+              ? `/intern/${item.id}`
+              : undefined,
+          unavailable: !(
+            active && ["work", "sprint", "project"].includes(item.id)
+          ),
+        })),
       ],
     },
     {

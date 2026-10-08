@@ -102,7 +102,7 @@ export function InternWorkspace() {
         Bỏ qua tới nội dung chính
       </a>
       <InternSidebar
-        groups={workspaceNav()}
+        groups={workspaceNav(!waiting)}
         className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-[240px] lg:border-r lg:border-slate-200"
       />
       {menuOpen && (
@@ -120,7 +120,7 @@ export function InternWorkspace() {
             className="absolute inset-0 bg-slate-900/50"
           />
           <InternSidebar
-            groups={workspaceNav()}
+            groups={workspaceNav(!waiting)}
             className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] border-r border-slate-200 shadow-xl"
             onNavigate={() => setMenuOpen(false)}
           />
