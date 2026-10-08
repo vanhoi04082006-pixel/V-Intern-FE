@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   archiveConversation,
   createConversation,
@@ -19,6 +19,7 @@ import {
   Panel,
 } from "./primitives";
 export function Mentor() {
+  const creating = useRef(false);
   const [page, setPage] = useState(1),
     [status, setStatus] = useState<"active" | "archived">("active"),
     [selected, setSelected] = useState<string>(),
@@ -31,6 +32,8 @@ export function Mentor() {
     ),
   );
   async function create() {
+    if (creating.current) return;
+    creating.current = true;
     setBusy(true);
     setError(undefined);
     try {
@@ -42,6 +45,7 @@ export function Mentor() {
     } catch (e) {
       setError(e);
     } finally {
+      creating.current = false;
       setBusy(false);
     }
   }
@@ -125,6 +129,7 @@ export function Mentor() {
   );
 }
 function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
+  const mutationPending = useRef(false);
   const detail = useResource(
     useCallback((signal: AbortSignal) => getConversation(id, signal), [id]),
   );
@@ -132,6 +137,8 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
   async function send() {
+    if (mutationPending.current || !content.trim()) return;
+    mutationPending.current = true;
     setBusy(true);
     setError(undefined);
     try {
@@ -144,10 +151,13 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
       detail.reload();
       onChanged();
     } finally {
+      mutationPending.current = false;
       setBusy(false);
     }
   }
   async function archive() {
+    if (mutationPending.current) return;
+    mutationPending.current = true;
     setBusy(true);
     setError(undefined);
     try {
@@ -157,6 +167,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
     } catch (e) {
       setError(e);
     } finally {
+      mutationPending.current = false;
       setBusy(false);
     }
   }
