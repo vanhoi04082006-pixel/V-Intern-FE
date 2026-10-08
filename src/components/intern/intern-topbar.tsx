@@ -18,12 +18,7 @@ import type { InternWorkspaceUser } from "./data/intern-mock-data";
  * Thuần presentational — drawer mobile điều khiển qua props bởi workspace.
  * Dùng initials placeholder cho avatar (yêu cầu: không pull ảnh ngoài).
  *
- * Round 3 (đồng bộ design system với Instructor Workspace): MỘT composition
- * duy nhất cho cả Waiting lẫn Active — breadcrumb bên trái, cụm search +
- * thông báo + profile bên phải, cao h-16 như Instructor/Admin. Không còn
- * variant riêng cho Waiting (trước đó search trái + bỏ breadcrumb khiến
- * Waiting "như một app khác"); breadcrumb của Waiting do workspace truyền
- * vào: V-Intern > Intern Workspace > Tổng quan.
+ * Waiting follows R01: search left, account/actions right; Active retains breadcrumb.
  */
 export function InternTopbar({
   className,
@@ -33,8 +28,10 @@ export function InternTopbar({
   menuOpen,
   onOpenMenu,
   menuButtonRef,
+  waiting = false,
 }: {
   className?: string;
+  waiting?: boolean;
   breadcrumb: { id: string; label: string; href?: string; current?: boolean }[];
   searchPlaceholder: string;
   user: InternWorkspaceUser;
@@ -62,45 +59,60 @@ export function InternTopbar({
           <Menu className="size-5" aria-hidden="true" />
         </button>
 
-        <nav aria-label="Breadcrumb" className="hidden min-w-0 md:block">
-          <ol className="flex items-center gap-1.5 text-[13px]">
-            <li>
-              <Link
-                href="/"
-                className="flex items-center gap-1.5 rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-              >
-                <Home className="size-4" aria-hidden="true" />
-                V-Intern
-              </Link>
-            </li>
-            {breadcrumb.map((crumb) => (
-              <li key={crumb.id} className="flex min-w-0 items-center gap-1.5">
-                <ChevronRight
-                  className="size-3.5 shrink-0 text-slate-300"
-                  aria-hidden="true"
-                />
-                {crumb.current ? (
-                  <span
-                    aria-current="page"
-                    className="truncate px-1 font-semibold text-navy"
-                  >
-                    {crumb.label}
-                  </span>
-                ) : (
-                  <Link
-                    href={crumb.href ?? "/intern"}
-                    className="truncate rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                  >
-                    {crumb.label}
-                  </Link>
-                )}
+        {!waiting && (
+          <nav aria-label="Breadcrumb" className="hidden min-w-0 md:block">
+            <ol className="flex items-center gap-1.5 text-[13px]">
+              <li>
+                <Link
+                  href="/"
+                  className="flex items-center gap-1.5 rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                >
+                  <Home className="size-4" aria-hidden="true" />
+                  V-Intern
+                </Link>
               </li>
-            ))}
-          </ol>
-        </nav>
+              {breadcrumb.map((crumb) => (
+                <li
+                  key={crumb.id}
+                  className="flex min-w-0 items-center gap-1.5"
+                >
+                  <ChevronRight
+                    className="size-3.5 shrink-0 text-slate-300"
+                    aria-hidden="true"
+                  />
+                  {crumb.current ? (
+                    <span
+                      aria-current="page"
+                      className="truncate px-1 font-semibold text-navy"
+                    >
+                      {crumb.label}
+                    </span>
+                  ) : (
+                    <Link
+                      href={crumb.href ?? "/intern"}
+                      className="truncate rounded-md px-1 py-0.5 text-slate-500 transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                    >
+                      {crumb.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          <div className="hidden h-10 w-[320px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[360px]">
+        <div
+          className={cn(
+            "ml-auto flex items-center gap-2 sm:gap-3",
+            waiting && "w-full justify-end",
+          )}
+        >
+          <div
+            className={cn(
+              "hidden h-10 w-[320px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[360px]",
+              waiting && "mr-auto",
+            )}
+          >
             <Search
               className="size-4 shrink-0 text-slate-400"
               aria-hidden="true"

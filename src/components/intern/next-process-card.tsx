@@ -30,9 +30,9 @@ export function NextProcessCard({
       headerClassName="xl:px-4 xl:py-2"
       bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
     >
-      {/* Desktop: ol cao full body, từng bước flex-1 → connector dọc kéo
-          dài theo, 3 bước phân bổ đều và luôn hiển thị cùng lúc. */}
-      <ol className="relative flex flex-col gap-[var(--iw-step-gap)] xl:h-full">
+      {/* Desktop: nhịp bước cố định theo R01; connector dọc nối số.
+          Ba bước hiển thị cùng lúc, không giãn kín chiều cao card. */}
+      <ol className="relative flex flex-col gap-[var(--iw-step-gap)] xl:gap-8">
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
           // Reference: bước 1 (sắp tới) đậm màu blue, các bước sau trung tính.
@@ -41,25 +41,28 @@ export function NextProcessCard({
           return (
             <li
               key={step.order}
-              className="relative flex gap-3.5 xl:min-h-0 xl:flex-1"
+              className="relative flex gap-3.5 xl:min-h-0 xl:min-h-16"
             >
               {/*
                 Đường nối dọc giữa các bước — chỉ vẽ khi không phải bước cuối,
                 chạy từ dưới số hiện tại xuống đầu mục kế tiếp.
               */}
-              <span aria-hidden="true" className="relative flex flex-col items-center">
+              <span
+                aria-hidden="true"
+                className="relative flex flex-col items-center"
+              >
                 <span
                   className={cn(
                     "grid size-7 shrink-0 place-items-center rounded-full text-[13px] font-bold",
                     isNextUp
                       ? "bg-brand text-white shadow-sm"
-                      : "bg-slate-100 text-slate-500"
+                      : "bg-slate-100 text-slate-500",
                   )}
                 >
                   {step.order}
                 </span>
                 {!isLast ? (
-                  <span className="mt-1 w-px flex-1 bg-slate-200" />
+                  <span className="absolute top-8 -bottom-8 w-px bg-slate-200" />
                 ) : null}
               </span>
               <div className="min-w-0 pb-0.5">

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, FileText, Info, Send } from "lucide-react";
+import { BookOpen, FileText, Info } from "lucide-react";
 
 import { SectionCard, StatusBadge } from "./intern-primitives";
 import { InternshipInfoCard } from "./internship-info-card";
@@ -69,14 +69,17 @@ export function EmptyInternWorkspace({
           <div className="relative flex flex-wrap items-center gap-x-5 gap-y-4 xl:h-full xl:flex-nowrap xl:items-stretch xl:gap-x-7">
             {/* Mascot — asset có sẵn trong repo (nền đã trong suốt), thuần trang trí.
                 Desktop: lớn hơn hẳn, neo đáy card như reference. */}
-            <span aria-hidden="true" className="shrink-0 xl:flex xl:items-end">
+            <span
+              aria-hidden="true"
+              className="shrink-0 xl:relative xl:h-full xl:w-[160px]"
+            >
               <Image
                 src="/images/student-mascot-v2.png"
                 alt=""
                 width={136}
                 height={181}
                 priority
-                className="h-28 w-auto drop-shadow-[0_10px_18px_rgba(37,99,235,0.14)] sm:h-32 xl:h-[var(--iw-mascot-h)]"
+                className="h-28 w-auto drop-shadow-[0_10px_18px_rgba(37,99,235,0.14)] sm:h-32 xl:absolute xl:left-0 xl:top-2 xl:h-[calc(var(--iw-welcome-h)*1.55)] xl:max-w-none"
               />
             </span>
             <div className="min-w-0 flex-1 xl:flex xl:flex-col xl:justify-center xl:py-2">
@@ -116,44 +119,100 @@ export function EmptyInternWorkspace({
           aria-labelledby="intern-empty-assignment"
           className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-10 text-center shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:px-8 xl:px-6 xl:py-4"
         >
-          {/* Minh hoạ thuần CSS/SVG: khung trình duyệt + mã nguồn + hộp mở +
-              máy bay giấy bay ra cùng đường nối nét đứt (theo reference) —
-              desktop chiếm nhiều presence hơn (reference: minh hoạ to). */}
-          <div
+          {/* R01: browser, open blue box and paper plane; decorative only. */}
+          <svg
             aria-hidden="true"
-            className="relative mb-6 xl:mb-3 xl:h-[var(--iw-illu-h)]"
+            viewBox="0 0 400 180"
+            fill="none"
+            className="mb-5 h-36 w-[min(100%,360px)] xl:mb-3 xl:h-[var(--iw-illu-h)]"
           >
-            <svg
-              viewBox="0 0 110 70"
-              fill="none"
-              className="absolute -right-16 -top-8 hidden h-[70px] w-[110px] sm:block xl:-right-12 xl:top-0"
-            >
-              <path
-                d="M6 66 C 34 62, 62 48, 88 16"
-                stroke="#93C5FD"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray="1 8"
-              />
-            </svg>
-            <Send className="absolute -right-[72px] -top-11 hidden size-6 -rotate-12 fill-blue-100 text-brand sm:block xl:-right-14 xl:top-0 xl:size-7" />
-            <div className="flex h-24 w-52 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm xl:h-full xl:w-[var(--iw-win-w)]">
-              <div className="flex items-center gap-1 border-b border-slate-100 bg-slate-50 px-2.5 py-1.5">
-                <span className="size-1.5 rounded-full bg-slate-300" />
-                <span className="size-1.5 rounded-full bg-slate-300" />
-                <span className="size-1.5 rounded-full bg-slate-300" />
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <span className="font-mono text-lg font-bold text-brand xl:text-xl">
-                  {"</>"}
-                </span>
-              </div>
-            </div>
-            <div className="absolute -bottom-3 -right-6 flex h-12 w-16 items-end justify-center rounded-b-lg border-x border-b border-slate-200 bg-blue-50 [clip-path:polygon(0_0,100%_0,78%_100%,22%_100%)] xl:-bottom-2 xl:-right-7 xl:h-11 xl:w-[4.25rem]">
-              <span className="mb-2 size-1.5 rounded-full bg-brand/50" />
-            </div>
-          </div>
-
+            <defs>
+              <linearGradient
+                id="waiting-window"
+                x1="125"
+                y1="30"
+                x2="260"
+                y2="155"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#DCE9FF" />
+                <stop offset="1" stopColor="#F6F9FF" />
+              </linearGradient>
+              <linearGradient
+                id="waiting-box"
+                x1="230"
+                y1="108"
+                x2="312"
+                y2="168"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#92BAFF" />
+                <stop offset="1" stopColor="#397BEE" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M40 149C10 125 41 105 63 107C30 66 78 45 112 70C113 16 195 11 207 44C253 9 282 35 280 69C325 44 360 76 342 110C385 99 385 166 345 166H62C46 167 35 157 40 149Z"
+              fill="#EFF5FF"
+            />
+            <circle cx="51" cy="105" r="7" fill="#E0EDFF" />
+            <circle cx="358" cy="143" r="10" fill="#E4EEFF" />
+            <rect
+              x="112"
+              y="30"
+              width="151"
+              height="122"
+              rx="9"
+              fill="url(#waiting-window)"
+            />
+            <path
+              d="M112 40A10 10 0 0 1 122 30H253A10 10 0 0 1 263 40V48H112Z"
+              fill="#D0E1FF"
+            />
+            <circle cx="126" cy="39" r="3" fill="#6099FA" />
+            <circle cx="137" cy="39" r="3" fill="#6099FA" />
+            <circle cx="148" cy="39" r="3" fill="#6099FA" />
+            <rect
+              x="122"
+              y="49"
+              width="131"
+              height="93"
+              rx="4"
+              fill="#FBFDFF"
+            />
+            <path
+              d="m176 78-15 13 15 13m26-26 15 13-15 13m-9-30-10 34"
+              stroke="#8AB4FF"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M98 72C47 85 54 126 107 140M267 80C318 82 338 49 359 29"
+              stroke="#9BBEFF"
+              strokeWidth="2.5"
+              strokeDasharray="5 7"
+              strokeLinecap="round"
+            />
+            <path d="m344 22 38-10-17 31-5-15-16-6Z" fill="#80ADFF" />
+            <path d="m360 28 22-16-17 31-5-15Z" fill="#4D8BEF" />
+            <path
+              d="m67 143-12-21 24 12-7-27 25 39"
+              stroke="#D4E5FF"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+            <path d="M231 111H310V168H231Z" fill="url(#waiting-box)" />
+            <path d="M270 111H310V168H270Z" fill="#609BF9" />
+            <path d="m231 111 39 0-14 23-42-1 17-22Z" fill="#92BBFF" />
+            <path d="m270 111 40 0 18 23-42 0-16-23Z" fill="#A8CBFF" />
+            <path d="M270 112V168" stroke="#3D7FEA" strokeOpacity=".35" />
+            <path
+              d="M38 169H362"
+              stroke="#E2ECFD"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
           <h2
             id="intern-empty-assignment"
             className="text-xl font-bold tracking-tight text-navy sm:text-2xl xl:text-[length:var(--iw-h2)]"

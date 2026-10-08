@@ -131,6 +131,7 @@ export function InternWorkspace() {
         className={`flex min-h-dvh flex-col lg:pl-[240px] ${waiting ? "xl:h-dvh xl:min-h-0" : ""}`}
       >
         <InternTopbar
+          waiting={waiting}
           breadcrumb={[
             { id: "workspace", label: "Intern Workspace", href: "/intern" },
             { id: "overview", label: "Tổng quan", current: true },
