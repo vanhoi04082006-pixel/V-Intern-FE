@@ -28,6 +28,7 @@ import {
   getAccessToken,
   getSessionGeneration,
   setSession,
+  setLogoutPending,
 } from "@/lib/auth/session";
 import type { SessionUser } from "@/lib/auth/session";
 import { EMAIL_PATTERN } from "@/lib/auth/validation";
@@ -190,17 +191,20 @@ export async function login(
  * Luôn xóa session local kể cả khi gọi BE thất bại (best-effort).
  */
 export async function logout(): Promise<void> {
+  setLogoutPending(true);
   clearSession();
-  if (isApiConfigured()) {
-    try {
-      await apiFetch("/auth/logout", { method: "POST" });
-    } catch {
-      // Session local đã bị xóa; cookie HttpOnly cần backend khả dụng để thu hồi.
+  try {
+    if (isApiConfigured()) {
+      try {
+        await apiFetch("/auth/logout", { method: "POST" });
+      } catch {
+        // Offline: memory stays cleared; server cookie revocation is best-effort.
+      }
     }
+  } finally {
+    setLogoutPending(false);
   }
-  clearSession();
 }
-
 /**
  * Khôi phục session sau reload: dùng refresh cookie (HttpOnly, trình duyệt
  * tự gửi nhờ `credentials: "include"`) để lấy access token mới mà không cần

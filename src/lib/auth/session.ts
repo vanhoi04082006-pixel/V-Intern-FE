@@ -8,6 +8,7 @@ export interface SessionUser {
 }
 let state: { accessToken: string; user: SessionUser } | null = null;
 let generation = 0;
+let logoutPending = false;
 const listeners = new Set<() => void>();
 export function setSession(accessToken: string, user: SessionUser): void {
   state = { accessToken, user };
@@ -32,4 +33,13 @@ export function subscribeSession(listener: () => void): () => void {
   return () => {
     listeners.delete(listener);
   };
+}
+
+/** Hide private UI immediately; navigate only after cookie revocation request settles. */
+export function isLogoutPending(): boolean {
+  return logoutPending;
+}
+export function setLogoutPending(pending: boolean): void {
+  logoutPending = pending;
+  listeners.forEach((fn) => fn());
 }

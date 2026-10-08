@@ -69,6 +69,35 @@ describe("backend principal guard", () => {
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
     expect(screen.queryByText("private")).not.toBeInTheDocument();
   });
+  it("hides private content immediately but waits for server logout before redirect", async () => {
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8080/api/v1");
+    let finish!: (response: Response) => void;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        () =>
+          new Promise<Response>((resolve) => {
+            finish = resolve;
+          }),
+      ),
+    );
+    render(
+      <WorkspaceGuard allowedRoles={roles}>
+        <p>private</p>
+        <LogoutButton />
+      </WorkspaceGuard>,
+    );
+    await screen.findByText("private");
+    await userEvent.click(screen.getByRole("button", { name: "Đăng xuất" }));
+    expect(getSessionUser()).toBeNull();
+    expect(screen.queryByText("private")).not.toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
+    const { act } = await import("@testing-library/react");
+    await act(async () => {
+      finish(new Response(null, { status: 204 }));
+    });
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
+  });
   it("logout calls backend, clears state, redirects", async () => {
     vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8080/api/v1");
     const fetcher = vi

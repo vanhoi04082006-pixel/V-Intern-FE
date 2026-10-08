@@ -2,7 +2,11 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { fetchCurrentUser } from "@/lib/auth/auth-service";
-import { getSessionUser, subscribeSession } from "@/lib/auth/session";
+import {
+  getSessionUser,
+  subscribeSession,
+  isLogoutPending,
+} from "@/lib/auth/session";
 import {
   getWorkspacePathForUser,
   hasAllowedRole,
@@ -28,6 +32,7 @@ export function WorkspaceGuard({
       .then((user) => {
         if (cancelled) return;
         if (!user) {
+          if (isLogoutPending()) return;
           router.replace("/login");
           return;
         }
@@ -45,14 +50,13 @@ export function WorkspaceGuard({
     };
   }, [allowedRoles, router, attempt]);
   useEffect(() => {
-    if (state.kind !== "allowed") return;
     return subscribeSession(() => {
       if (!getSessionUser()) {
         setState({ kind: "checking" });
-        router.replace("/login");
+        if (!isLogoutPending()) router.replace("/login");
       }
     });
-  }, [state.kind, router]);
+  }, [router]);
   if (state.kind === "error")
     return (
       <ErrorState
