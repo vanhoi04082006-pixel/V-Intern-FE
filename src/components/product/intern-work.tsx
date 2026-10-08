@@ -12,6 +12,7 @@ import {
   nextOwnStatus,
   statusLabels,
   taskStatuses,
+  priorities,
   updateOwnTask,
   type Task,
 } from "@/lib/api/work";
@@ -91,7 +92,7 @@ export function InternWork() {
             }}
           >
             <option value="">Tất cả ưu tiên</option>
-            {["low", "medium", "high", "urgent"].map((s) => (
+            {priorities.map((s) => (
               <option key={s}>{s}</option>
             ))}
           </select>

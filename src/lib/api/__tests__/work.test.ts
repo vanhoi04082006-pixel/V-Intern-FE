@@ -24,6 +24,12 @@ const task = {
   version: 1,
 };
 describe("Nest work boundary", () => {
+  it("accepts the real critical priority and rejects legacy urgent", () => {
+    expect(parseTask({ ...task, priority: "critical" }).priority).toBe(
+      "critical",
+    );
+    expect(() => parseTask({ ...task, priority: "urgent" })).toThrow();
+  });
   beforeEach(() => vi.clearAllMocks());
   it("parses nullable actual task fields", () =>
     expect(parseTask(task)).toEqual(task));

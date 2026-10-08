@@ -16,7 +16,7 @@ export const statusLabels: Record<TaskStatus, string> = {
   review: "Chờ duyệt",
   done: "Hoàn thành",
 };
-const priorities = ["low", "medium", "high", "urgent"] as const;
+export const priorities = ["low", "medium", "high", "critical"] as const;
 export function parseBoardTask(value: unknown) {
   const v = record(value);
   return {
