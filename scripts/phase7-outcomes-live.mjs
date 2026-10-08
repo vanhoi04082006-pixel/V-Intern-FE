@@ -226,6 +226,66 @@ try {
   });
   await page.goto(base + "/intern/notifications");
   await page.getByRole("heading", { name: "Thông báo", exact: true }).waitFor();
+  const [readAll] = await Promise.all([
+    page.waitForResponse(
+      (r) =>
+        r.url().endsWith("/notifications/read-all") &&
+        r.request().method() === "POST",
+    ),
+    page.getByRole("button", { name: "Đánh dấu tất cả đã đọc" }).click(),
+  ]);
+  assert.equal(readAll.status(), 200);
+  assert.equal(
+    (
+      await ds.query(
+        "SELECT COUNT(*) n FROM notifications WHERE userId=@0 AND readAt IS NULL",
+        [fixture.userId],
+      )
+    )[0].n,
+    0,
+  );
+  const preference = page.getByRole("checkbox", {
+    name: "Nhiệm vụ",
+    exact: true,
+  });
+  await preference.waitFor();
+  const [preferenceResponse] = await Promise.all([
+    page.waitForResponse(
+      (r) =>
+        r.url().endsWith("/notifications/preferences") &&
+        r.request().method() === "PUT",
+    ),
+    preference.uncheck(),
+  ]);
+  assert.equal(preferenceResponse.status(), 200);
+  assert.equal(
+    Boolean(
+      (
+        await ds.query(
+          "SELECT enabled FROM notification_preferences WHERE userId=@0 AND category='task'",
+          [fixture.userId],
+        )
+      )[0].enabled,
+    ),
+    false,
+  );
+  await page.reload();
+  await page.getByRole("checkbox", { name: "Nhiệm vụ", exact: true }).waitFor();
+  assert.equal(
+    await page
+      .getByRole("checkbox", { name: "Nhiệm vụ", exact: true })
+      .isChecked(),
+    false,
+  );
+  // Restore fixture defaults through the same real browser contract.
+  await Promise.all([
+    page.waitForResponse(
+      (r) =>
+        r.url().endsWith("/notifications/preferences") &&
+        r.request().method() === "PUT",
+    ),
+    page.getByRole("checkbox", { name: "Nhiệm vụ", exact: true }).check(),
+  ]);
   await shot(page, "intern-notifications");
   await page.goto(base + "/intern/recommendations");
   await page.getByRole("button", { name: /Cập nhật/ }).click();

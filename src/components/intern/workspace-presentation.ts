@@ -63,6 +63,12 @@ export function workspaceNav(active = false): InternNavGroup[] {
         { id: "evaluations", label: "Đánh giá", icon: ClipboardCheck },
         { id: "kpi", label: "KPI & Lương ảo", icon: ChartColumn },
         { id: "certificates", label: "Chứng nhận", icon: Award },
+        ...(active
+          ? [
+              { id: "performance", label: "Hiệu suất", icon: ChartColumn },
+              { id: "recommendations", label: "Gợi ý phát triển", icon: Bot },
+            ]
+          : []),
       ].map((item) => ({
         ...item,
         href: active ? `/intern/${item.id}` : undefined,

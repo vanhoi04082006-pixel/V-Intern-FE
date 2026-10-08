@@ -2,7 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Bot, CalendarDays, FolderKanban, LayoutDashboard, ListTodo, Settings, Sparkles, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Bot,
+  CalendarDays,
+  FolderKanban,
+  LayoutDashboard,
+  ListTodo,
+  Settings,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
@@ -17,124 +27,69 @@ const SIDEBAR_ITEMS = [
   { label: "Cài đặt", icon: Settings, active: false },
 ];
 
-const KANBAN_COLUMNS = [
-  {
-    title: "Cần làm",
-    dot: "bg-red-500",
-    tasks: [
-      { code: "PRO-100", name: "Tích hợp API đăng nhập", due: "Còn 2 ngày" },
-      { code: "PRO-104", name: "Kiểm tra form", due: "Còn 3 ngày" },
-      { code: "PRO-108", name: "Xử lý lỗi", due: "Còn 5 ngày" },
-    ],
-  },
-  {
-    title: "Đang làm",
-    dot: "bg-blue-500",
-    tasks: [
-      { code: "PRO-102", name: "Thiết lập dự án", due: "Hạn ngày mai" },
-      { code: "PRO-105", name: "Component UI", due: "Còn 4 ngày" },
-    ],
-  },
-  {
-    title: "Chờ đánh giá",
-    dot: "bg-amber-500",
-    tasks: [
-      { code: "PRO-101", name: "Luồng đăng ký", due: "Còn 2 ngày" },
-      { code: "PRO-107", name: "Tích hợp thanh toán", due: "Còn 6 ngày" },
-    ],
-  },
-];
-
-const PROGRESS_BARS = [
-  { height: "h-3", color: "bg-blue-200" },
-  { height: "h-5", color: "bg-blue-400" },
-  { height: "h-4", color: "bg-teal-300" },
-  { height: "h-7", color: "bg-blue-500" },
-  { height: "h-5", color: "bg-teal-400" },
-  { height: "h-8", color: "bg-blue-600" },
-  { height: "h-6", color: "bg-blue-300" },
-];
-
-function DashboardMockup() {
+function DashboardOverview() {
   return (
     <div className="overflow-hidden rounded-2xl bg-white shadow-2xl shadow-blue-900/10 ring-1 ring-slate-900/5">
       <div className="flex">
-        {/* Sidebar */}
-        <aside className="hidden w-44 shrink-0 flex-col gap-1 bg-navy p-4 md:flex" aria-hidden="true">
+        <aside
+          className="hidden w-44 shrink-0 flex-col gap-1 bg-navy p-4 md:flex"
+          aria-hidden="true"
+        >
           <div className="mb-4 px-1">
             <Logo inverse className="text-sm" />
           </div>
           {SIDEBAR_ITEMS.map((item) => (
             <span
               key={item.label}
-              className={
-                item.active
-                  ? "flex items-center gap-2.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm"
-                  : "flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300/80 transition-colors hover:bg-white/10 hover:text-white"
-              }
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300"
             >
               <item.icon className="h-3.5 w-3.5" />
               {item.label}
             </span>
           ))}
         </aside>
-
-        {/* Main area */}
-        <div className="min-w-0 flex-1 bg-[#F7F9FE] p-4 sm:p-5">
-          <p className="truncate text-sm font-bold text-navy sm:text-base">
-            Chào buổi sáng, Nguyễn Văn A 👋
+        <div className="min-w-0 flex-1 bg-[#F7F9FE] p-5">
+          <p className="text-base font-bold text-navy">
+            Không gian thực tập của bạn
           </p>
-          <p className="mt-0.5 truncate text-[11px] text-slate-500 sm:text-xs">
-            Lập trình viên Frontend · Thực tập sinh · Sprint 02
+          <p className="mt-2 text-xs leading-relaxed text-slate-500">
+            Đăng nhập để xem dự án, Sprint và nhiệm vụ được phân công.
           </p>
-
-          <div className="mt-4">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
-              <span>Tiến độ Sprint</span>
-              <span className="text-blue-600">70%</span>
-            </div>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-blue-100">
-              <div className="h-full w-[70%] rounded-full bg-gradient-to-r from-blue-500 to-blue-600" />
-            </div>
-          </div>
-
-          {/* Mini kanban — horizontally scrollable on small screens */}
-          <div className="mt-4 overflow-x-auto pb-1">
-            <div className="grid min-w-[420px] grid-cols-3 gap-2.5 md:min-w-0">
-              {KANBAN_COLUMNS.map((column) => (
-                <div
-                  key={column.title}
-                  className="rounded-xl border border-slate-200/80 bg-white/70 p-2"
-                >
-                  <div className="mb-2 flex items-center gap-1.5 px-0.5">
-                    <span className={`h-2 w-2 shrink-0 rounded-full ${column.dot}`} />
-                    <span className="text-[11px] font-semibold text-slate-700">
-                      {column.title}
-                    </span>
-                    <span className="ml-auto text-[10px] font-medium text-slate-400">
-                      {column.tasks.length}
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    {column.tasks.map((task) => (
-                      <div
-                        key={task.code}
-                        className="rounded-lg border border-slate-200/80 bg-white p-2 shadow-sm"
-                      >
-                        <span className="text-[10px] font-bold text-blue-600">
-                          {task.code}
-                        </span>
-                        <p className="mt-0.5 text-[11px] font-medium leading-snug text-slate-800">
-                          {task.name}
-                        </p>
-                        <p className="mt-1 text-[10px] text-slate-400">{task.due}</p>
-                      </div>
-                    ))}
-                  </div>
+          <div className="mt-5 space-y-3">
+            {[
+              {
+                title: "Dự án & Sprint",
+                text: "Theo dõi mục tiêu và công việc được giao",
+                icon: FolderKanban,
+              },
+              {
+                title: "Nhiệm vụ",
+                text: "Cập nhật tiến độ, trao đổi và gửi duyệt",
+                icon: ListTodo,
+              },
+              {
+                title: "AI Mentor",
+                text: "Nhận hướng dẫn tham khảo khi cần hỗ trợ",
+                icon: Bot,
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="flex items-start gap-3 rounded-xl border border-slate-200/80 bg-white p-4"
+              >
+                <item.icon className="h-5 w-5 shrink-0 text-blue-600" />
+                <div>
+                  <strong className="text-xs text-navy">{item.title}</strong>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                    {item.text}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
+          <p className="mt-5 text-xs text-slate-400">
+            Giới thiệu các chức năng · dữ liệu cá nhân hiển thị sau đăng nhập
+          </p>
         </div>
       </div>
     </div>
@@ -199,40 +154,30 @@ export function Hero() {
           </FadeIn>
 
           {/* Right column — dashboard mockup */}
-          <FadeIn className="relative mx-auto w-full max-w-[600px] lg:max-w-none" delay={0.15}>
+          <FadeIn
+            className="relative mx-auto w-full max-w-[600px] lg:max-w-none"
+            delay={0.15}
+          >
             <div className="lg:px-4 lg:py-2">
-              <DashboardMockup />
+              <DashboardOverview />
             </div>
 
             {/* Floating card: Đánh giá AI — nhích lên trên để không che dòng chào */}
             <div className="absolute -top-6 right-0 hidden animate-float items-center gap-3 rounded-2xl bg-white p-3.5 shadow-xl shadow-blue-900/10 ring-1 ring-slate-900/5 sm:flex md:-top-16 md:-right-2">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-100">
-                <Sparkles className="h-5 w-5 text-violet-600" aria-hidden="true" />
+                <Sparkles
+                  className="h-5 w-5 text-violet-600"
+                  aria-hidden="true"
+                />
               </span>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-navy">Đánh giá AI</p>
                 <p className="truncate text-[11px] text-slate-500">
-                  Nhiệm vụ PRO-100 đã được đánh giá
+                  Gợi ý tham khảo theo công việc
                 </p>
-                <p className="text-[11px] font-bold text-blue-600">Điểm: 82/100</p>
-              </div>
-            </div>
-
-            {/* Floating card: Tiến độ của bạn */}
-            <div className="absolute -bottom-8 right-2 hidden animate-float-delayed rounded-2xl bg-white p-4 shadow-xl shadow-blue-900/10 ring-1 ring-slate-900/5 sm:block md:right-6">
-              <p className="text-[11px] font-semibold text-slate-500">
-                Tiến độ của bạn
-              </p>
-              <p className="mt-0.5 text-2xl font-extrabold text-blue-600">
-                82<span className="text-base font-bold text-slate-400">/100</span>
-              </p>
-              <div className="mt-2 flex h-8 items-end gap-1" aria-hidden="true">
-                {PROGRESS_BARS.map((bar, index) => (
-                  <span
-                    key={index}
-                    className={`w-1.5 rounded-full ${bar.height} ${bar.color}`}
-                  />
-                ))}
+                <p className="text-[11px] font-bold text-blue-600">
+                  Giảng viên chốt điểm chính thức
+                </p>
               </div>
             </div>
 

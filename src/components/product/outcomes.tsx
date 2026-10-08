@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useResource } from "@/lib/api/use-resource";
 import { ApiError } from "@/lib/auth/api-client";
 import { getSessionUser } from "@/lib/auth/session";
@@ -14,6 +15,9 @@ import {
   getKpis,
   getLedger,
   getNotifications,
+  notificationLinkForRole,
+  getNotificationPreferences,
+  setNotificationPreference,
   getPerformance,
   getRecommendations,
   getSalary,
@@ -49,7 +53,9 @@ function Resource<T>({
 }
 export function Metrics({ values }: { values: [string, number | null][] }) {
   return (
-    <dl className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <dl
+      className={`grid gap-3 sm:grid-cols-2 ${values.length === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}
+    >
       {values.map(([name, value]) => (
         <div
           key={name}
@@ -526,6 +532,11 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
   );
 }
 export function Notifications() {
+  const role = usePathname().split("/")[1];
+  const [preferencePending, setPreferencePending] = useState<{
+    category: string;
+    enabled: boolean;
+  }>();
   const [page, setPage] = useState(1),
     [unread, setUnread] = useState(false),
     [busy, setBusy] = useState(false),
@@ -536,6 +547,23 @@ export function Notifications() {
       [page, unread],
     ),
   );
+  const preferences = useResource(
+    useCallback(
+      (signal: AbortSignal) => getNotificationPreferences(signal),
+      [],
+    ),
+  );
+  const preferenceLabels = {
+    system: "Hệ thống",
+    task: "Nhiệm vụ",
+    session: "Phiên thực tập",
+    evaluation: "Đánh giá",
+    announcement: "Thông báo chung",
+    recruitment: "Tuyển dụng",
+    kpi: "KPI",
+    salary: "Lương ảo",
+    certificate: "Chứng nhận",
+  };
   async function read(id?: string) {
     setBusy(true);
     setError(undefined);
@@ -581,39 +609,44 @@ export function Notifications() {
             <>
               {data.items.length ? (
                 <div className="space-y-3">
-                  {data.items.map((n) => (
-                    <article
-                      key={n.id}
-                      className={`rounded-lg border p-4 ${n.readAt ? "border-slate-100" : "border-blue-200 bg-blue-50/50"}`}
-                    >
-                      <h3 className="font-semibold text-navy">{n.title}</h3>
-                      <p className="mt-2 whitespace-pre-wrap text-sm">
-                        {n.body}
-                      </p>
-                      <time className="mt-2 block text-xs text-slate-400">
-                        {new Date(n.createdAt).toLocaleString("vi-VN")}
-                      </time>
-                      <div className="mt-3 flex gap-3">
-                        {n.linkUrl && (
-                          <Link
-                            href={n.linkUrl}
-                            className="text-sm text-blue-600"
-                          >
-                            Mở nội dung
-                          </Link>
-                        )}
-                        {!n.readAt && (
-                          <button
-                            disabled={busy}
-                            onClick={() => void read(n.id)}
-                            className="text-sm text-blue-600"
-                          >
-                            Đã đọc
-                          </button>
-                        )}
-                      </div>
-                    </article>
-                  ))}
+                  {data.items
+                    .map((n) => ({
+                      ...n,
+                      linkUrl: notificationLinkForRole(n.linkUrl, role),
+                    }))
+                    .map((n) => (
+                      <article
+                        key={n.id}
+                        className={`rounded-lg border p-4 ${n.readAt ? "border-slate-100" : "border-blue-200 bg-blue-50/50"}`}
+                      >
+                        <h3 className="font-semibold text-navy">{n.title}</h3>
+                        <p className="mt-2 whitespace-pre-wrap text-sm">
+                          {n.body}
+                        </p>
+                        <time className="mt-2 block text-xs text-slate-400">
+                          {new Date(n.createdAt).toLocaleString("vi-VN")}
+                        </time>
+                        <div className="mt-3 flex gap-3">
+                          {n.linkUrl && (
+                            <Link
+                              href={n.linkUrl}
+                              className="text-sm text-blue-600"
+                            >
+                              Mở nội dung
+                            </Link>
+                          )}
+                          {!n.readAt && (
+                            <button
+                              disabled={busy}
+                              onClick={() => void read(n.id)}
+                              className="text-sm text-blue-600"
+                            >
+                              Đã đọc
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    ))}
                 </div>
               ) : (
                 <Empty>Chưa có thông báo phù hợp.</Empty>
@@ -623,6 +656,48 @@ export function Notifications() {
           )}
         </Resource>
       </Panel>
+      <div className="mt-5">
+        <Panel title="Tùy chọn nhận thông báo">
+          <Resource resource={preferences}>
+            {(data) => (
+              <div className="grid gap-3 sm:grid-cols-3">
+                {data.map((p) => (
+                  <label
+                    key={p.category}
+                    className="flex items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={
+                        preferencePending?.category === p.category
+                          ? preferencePending.enabled
+                          : p.enabled
+                      }
+                      disabled={busy}
+                      onChange={async (e) => {
+                        const enabled = e.target.checked;
+                        setPreferencePending({ category: p.category, enabled });
+                        setBusy(true);
+                        setError(undefined);
+                        try {
+                          await setNotificationPreference(p.category, enabled);
+                          preferences.reload();
+                        } catch (e) {
+                          setError(e);
+                        } finally {
+                          setBusy(false);
+                          setPreferencePending(undefined);
+                        }
+                      }}
+                    />
+                    {preferenceLabels[p.category]}
+                  </label>
+                ))}
+              </div>
+            )}
+          </Resource>
+        </Panel>
+      </div>
     </>
   );
 }

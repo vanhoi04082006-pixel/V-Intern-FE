@@ -176,6 +176,80 @@ export function parseNotification(value: unknown) {
     createdAt: string(v.createdAt),
   };
 }
+export function notificationLinkForRole(
+  value: string | null,
+  role: string,
+): string | null {
+  const link = safeNotificationLink(value);
+  if (!link) return null;
+  if (role === "instructor" && /^\/intern\/work\//.test(link))
+    return "/instructor/sprints";
+  if (role === "admin" && /^\/intern\/work\//.test(link)) return "/admin/tasks";
+  if (role === "instructor" && link === "/intern/project")
+    return "/instructor/projects";
+  if (role === "instructor" && link === "/intern/sprint")
+    return "/instructor/sprints";
+  const routes: Record<string, readonly string[]> = {
+    intern: [
+      "",
+      "work",
+      "sprint",
+      "project",
+      "mentor",
+      "evaluations",
+      "performance",
+      "kpi",
+      "virtual-salary",
+      "certificates",
+      "notifications",
+      "recommendations",
+      "profile",
+    ],
+    instructor: [
+      "",
+      "classes",
+      "sessions",
+      "projects",
+      "sprints",
+      "evaluations",
+      "performance",
+      "reports",
+      "notifications",
+      "profile",
+    ],
+    admin: [
+      "",
+      "users",
+      "roles",
+      "groups",
+      "catalogs",
+      "settings",
+      "audit",
+      "activity",
+      "services",
+      "tasks",
+      "logs",
+      "notifications",
+      "profile",
+    ],
+  };
+  const [prefix, section = "", id, ...rest] = link
+    .split("?")[0]
+    .slice(1)
+    .split("/");
+  if (prefix !== role || !routes[role]?.includes(section) || rest.length)
+    return null;
+  if (
+    id &&
+    !(
+      role === "intern" &&
+      ["work", "evaluations", "kpi", "certificates"].includes(section)
+    ) &&
+    !(role === "instructor" && section === "sessions")
+  )
+    return null;
+  return link;
+}
 export function parseRecommendations(value: unknown) {
   const v = record(value),
     data = record(v.recommendations);
@@ -268,6 +342,37 @@ export const markNotification = (id: string) =>
 export const markAllNotifications = () =>
   request("/notifications/read-all", (x) => number(record(x).updated), {
     method: "POST",
+  });
+export const notificationCategories = [
+  "system",
+  "task",
+  "session",
+  "evaluation",
+  "announcement",
+  "recruitment",
+  "kpi",
+  "salary",
+  "certificate",
+] as const;
+export type NotificationCategory = (typeof notificationCategories)[number];
+export function parsePreferences(value: unknown) {
+  return array(record(value).preferences, (x) => {
+    const p = record(x);
+    return {
+      category: oneOf(p.category, notificationCategories),
+      enabled: boolean(p.enabled),
+    };
+  });
+}
+export const getNotificationPreferences = (signal?: AbortSignal) =>
+  request("/notifications/preferences", parsePreferences, { signal });
+export const setNotificationPreference = (
+  category: NotificationCategory,
+  enabled: boolean,
+) =>
+  request("/notifications/preferences", parsePreferences, {
+    method: "PUT",
+    body: { category, enabled },
   });
 export const getRecommendations = (signal?: AbortSignal) =>
   request("/intern/me/ai-recommendations", parseRecommendations, { signal });

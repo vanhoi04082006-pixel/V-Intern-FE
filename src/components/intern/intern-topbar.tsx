@@ -128,8 +128,8 @@ export function InternTopbar({
             </kbd>
           </div>
 
-          <button
-            type="button"
+          <Link
+            href="/intern/notifications"
             aria-label={
               typeof user.notificationBadge === "number" &&
               user.notificationBadge > 0
@@ -145,15 +145,15 @@ export function InternTopbar({
                 {user.notificationBadge}
               </span>
             ) : null}
-          </button>
+          </Link>
 
           <span
             aria-hidden="true"
             className="hidden h-6 w-px bg-slate-200 sm:block"
           />
 
-          <button
-            type="button"
+          <Link
+            href="/intern/profile"
             aria-label={`Tài khoản ${user.name}, ${user.roleLabel}`}
             className="flex items-center gap-2.5 rounded-lg p-1.5 pr-2 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
           >
@@ -175,7 +175,7 @@ export function InternTopbar({
               className="hidden size-4 text-slate-400 sm:block"
               aria-hidden="true"
             />
-          </button>
+          </Link>
           <LogoutButton />
         </div>
       </div>

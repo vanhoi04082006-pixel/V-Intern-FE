@@ -5,8 +5,44 @@ import {
   parseVerification,
   parseKpi,
   safeNotificationLink,
+  parsePreferences,
+  notificationLinkForRole,
 } from "../outcomes";
 describe("Outcome truth boundaries", () => {
+  it("maps task notices into the current workspace without crossing role guards", () => {
+    const link = "/intern/tasks/12345678-1234-1234-1234-123456789012";
+    expect(notificationLinkForRole(link, "instructor")).toBe(
+      "/instructor/sprints",
+    );
+    expect(notificationLinkForRole(link, "admin")).toBe("/admin/tasks");
+    expect(notificationLinkForRole("/admin/users", "intern")).toBeNull();
+  });
+  it("rejects allowed-looking paths when the actual workspace route does not exist", () => {
+    expect(
+      notificationLinkForRole("/instructor/work", "instructor"),
+    ).toBeNull();
+    expect(
+      notificationLinkForRole(
+        "/admin/users/12345678-1234-1234-1234-123456789012",
+        "admin",
+      ),
+    ).toBeNull();
+  });
+  it("preserves disabled notification preferences without coercing string booleans", () => {
+    expect(
+      parsePreferences({ preferences: [{ category: "task", enabled: false }] }),
+    ).toEqual([{ category: "task", enabled: false }]);
+    expect(() =>
+      parsePreferences({
+        preferences: [{ category: "task", enabled: "false" }],
+      }),
+    ).toThrow();
+  });
+  it("rejects unknown notification category instead of inventing a preference", () => {
+    expect(() =>
+      parsePreferences({ preferences: [{ category: "fake", enabled: true }] }),
+    ).toThrow();
+  });
   it.each([
     ["/intern/me/certificates", "/intern/certificates"],
     ["/intern/me/kpi", "/intern/kpi"],
