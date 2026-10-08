@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: vanhoi04082006-pixel/V-Intern-BE
-          ref: 31381044d9d3b1b9eeab6baae435fc6a06e6bb3e
+          ref: 32226e70de2fe818d8b011d3ed0a0c5eaf4b9188
           path: V-INTERN-BE
           ssh-key: ${{ secrets.PHASE7_BE_SSH_KEY }}
           persist-credentials: false
@@ -125,6 +125,7 @@ jobs:
           node scripts/phase7-instructor-live.mjs
           node scripts/phase7-admin-live.mjs
           node scripts/phase7-navigation-live.mjs
+          node scripts/phase7-uat-auth-live.mjs
       - name: Upload sanitized browser/SQL evidence
         if: always()
         uses: actions/upload-artifact@v4

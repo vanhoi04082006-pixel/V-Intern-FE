@@ -29,7 +29,9 @@ import {
   getSessionGeneration,
   setSession,
   setLogoutPending,
+  notifyOtherTabs,
 } from "@/lib/auth/session";
+import { withAuthCookieLock } from "@/lib/auth/cookie-coordination";
 import type { SessionUser } from "@/lib/auth/session";
 import { EMAIL_PATTERN } from "@/lib/auth/validation";
 
@@ -167,22 +169,24 @@ export async function login(
   }
 
   let data: unknown;
+  const generation = getSessionGeneration();
   try {
     // Đúng contract: chỉ {email, password}. Không gửi `remember`.
-    data = await apiFetch("/auth/login", {
+    data = await withAuthCookieLock(() => apiFetch("/auth/login", {
       method: "POST",
       body: { email, password: credentials.password },
-    });
+    }));
   } catch (error) {
     return toAuthError(error);
   }
 
   const parsed = parseLoginSuccessBody(data);
-  if (!parsed) {
+  if (!parsed || generation !== getSessionGeneration()) {
     return { ok: false, kind: "system-error", message: SYSTEM_ERROR_MESSAGE };
   }
 
   setSession(parsed.accessToken, parsed.user);
+  notifyOtherTabs("session-changed");
   return { ok: true, user: parsed.user };
 }
 
@@ -193,10 +197,11 @@ export async function login(
 export async function logout(): Promise<void> {
   setLogoutPending(true);
   clearSession();
+  notifyOtherTabs("logout");
   try {
     if (isApiConfigured()) {
       try {
-        await apiFetch("/auth/logout", { method: "POST" });
+        await withAuthCookieLock(() => apiFetch("/auth/logout", { method: "POST" }));
       } catch {
         // Offline: memory stays cleared; server cookie revocation is best-effort.
       }
@@ -215,7 +220,8 @@ let refreshInFlight: Promise<SessionUser | null> | null = null;
 export function refreshSession(): Promise<SessionUser | null> {
   if (refreshInFlight) return refreshInFlight;
   const generation = getSessionGeneration();
-  refreshInFlight = (async () => {
+  refreshInFlight = withAuthCookieLock(async () => {
+    if (generation !== getSessionGeneration()) return null;
     let data: unknown;
     try {
       data = await apiFetch("/auth/refresh", { method: "POST" });
@@ -241,7 +247,7 @@ export function refreshSession(): Promise<SessionUser | null> {
     if (generation !== getSessionGeneration()) return null;
     setSession(parsed.accessToken, parsed.user);
     return parsed.user;
-  })().finally(() => {
+  }).finally(() => {
     refreshInFlight = null;
   });
   return refreshInFlight;

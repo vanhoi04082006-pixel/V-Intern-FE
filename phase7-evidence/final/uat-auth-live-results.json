@@ -1,0 +1,352 @@
+{
+  "results": [
+    {
+      "name": "two tabs restore and reload concurrently without refresh reuse",
+      "status": "PASS"
+    },
+    {
+      "name": "logout clears another open tab and browser back never restores private UI",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid password and unknown account give the same safe error",
+      "status": "PASS"
+    },
+    {
+      "name": "offline login is recoverable without a ghost principal",
+      "status": "PASS"
+    }
+  ],
+  "network": [
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "two tabs restore and reload concurrently without refresh reuse",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/auth/logout",
+      "method": "POST",
+      "status": 204
+    },
+    {
+      "scenario": "logout clears another open tab and browser back never restores private UI",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "invalid password and unknown account give the same safe error",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "invalid password and unknown account give the same safe error",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "offline login is recoverable without a ghost principal",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "offline login is recoverable without a ghost principal",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

@@ -10,6 +10,22 @@ let state: { accessToken: string; user: SessionUser } | null = null;
 let generation = 0;
 let logoutPending = false;
 const listeners = new Set<() => void>();
+let channel: BroadcastChannel | null = null;
+function sessionChannel(): BroadcastChannel | null {
+  if (!channel && typeof window !== "undefined" && window.BroadcastChannel) {
+    channel = new window.BroadcastChannel("vintern-session-events");
+    channel.onmessage = (event: MessageEvent<unknown>) => {
+      if (event.data === "logout" || event.data === "session-changed") {
+        clearSession();
+      }
+    };
+  }
+  return channel;
+}
+/** Send invalidation only. Tokens and principals never cross this channel. */
+export function notifyOtherTabs(event: "logout" | "session-changed"): void {
+  sessionChannel()?.postMessage(event);
+}
 export function setSession(accessToken: string, user: SessionUser): void {
   state = { accessToken, user };
   listeners.forEach((fn) => fn());
@@ -29,6 +45,7 @@ export function clearSession(): void {
   listeners.forEach((fn) => fn());
 }
 export function subscribeSession(listener: () => void): () => void {
+  sessionChannel();
   listeners.add(listener);
   return () => {
     listeners.delete(listener);
