@@ -575,7 +575,7 @@ try {
         await screenshot(page, "uat-empty-" + route + ".png", true);
       }
       instructor.accessToken = (await auth("instructor")).accessToken;
-      intern.accessToken = (await auth(key)).accessToken;
+      intern.accessToken = (await auth("waiting")).accessToken;
       await page.goto("http://localhost:3001/intern");
       await page.getByText(project.name, { exact: true }).waitFor();
       const sprint = await call(instructor.accessToken, "/sprints", "POST", {
