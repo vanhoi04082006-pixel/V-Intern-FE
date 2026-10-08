@@ -378,7 +378,7 @@ try {
       assert.notEqual(before.value, after.value);
       assert.ok(
         await page
-          .getByRole("button", {
+          .getByRole("link", {
             name: "Tài khoản Nguyễn Chờ Phân Công, Intern",
           })
           .count(),
