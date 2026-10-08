@@ -532,11 +532,12 @@ export function AdminRoles() {
             ["Quyền trong lựa chọn", permissions.data.total],
             ["Quyền · trang", permissions.data.items.length],
             ["Vai trò · trang", roles.data.items.length],
+            ["Nhóm quyền · trang", new Set(permissions.data.items.map((p) => p.code.split(".")[0])).size],
           ]}
           note="Quyền theo vai trò đang chọn; không suy ra số người dùng từ chính sách RBAC."
         />
       )}
-      <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,440px)]">
         <Panel title="Vai trò">
           <Result resource={roles}>
             {(r) => (
@@ -550,21 +551,16 @@ export function AdminRoles() {
                 >
                   Tất cả quyền
                 </button>
-                {r.items.map((v) => (
-                  <button
-                    key={v.id}
-                    className={`mb-3 block w-full rounded-lg border p-3 text-left text-sm ${role?.id === v.id ? "border-blue-200 bg-blue-50" : "border-slate-100"}`}
-                    onClick={() => {
-                      setRole(v);
-                      setPage(1);
-                    }}
-                  >
-                    <strong>{v.name}</strong>
-                    <small className="mt-1 block text-slate-400">
-                      {v.code}
-                    </small>
-                  </button>
-                ))}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50"><tr>{["Vai trò", "Mã vai trò", "Mô tả"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
+                    <tbody>{r.items.map(v => <tr key={v.id} className={`border-b border-slate-100 ${role?.id === v.id ? "bg-blue-50" : ""}`}>
+                      <td className="p-3"><button className="font-semibold text-blue-600" aria-label={`${v.name} · ${v.code}`} aria-pressed={role?.id === v.id} onClick={() => { setRole(v); setPage(1); }}>{v.name}</button></td>
+                      <td className="p-3"><Badge>{v.code}</Badge></td>
+                      <td className="p-3 text-slate-500">{v.description ?? "Chưa có mô tả"}</td>
+                    </tr>)}</tbody>
+                  </table>
+                </div>
                 <Pager {...r} onChange={setRolePage} />
               </>
             )}
@@ -657,20 +653,15 @@ export function AdminGroups() {
           {(r) => (
             <>
               {r.items.length ? (
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                  {r.items.map((g) => (
-                    <button
-                      key={g.id}
-                      className="rounded-xl border border-slate-200 p-4 text-left hover:border-blue-300"
-                      onClick={() => setSelected(g)}
-                    >
-                      <small className="text-blue-600">{g.code}</small>
-                      <h3 className="mt-2 font-bold text-navy">{g.name}</h3>
-                      <p className="mt-2 text-sm text-slate-500">
-                        {g.description ?? "Chưa có mô tả"}
-                      </p>
-                    </button>
-                  ))}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50"><tr>{["Nhóm", "Mô tả", "Quản lý"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
+                    <tbody>{r.items.map(g => <tr key={g.id} className="border-b border-slate-100">
+                      <td className="p-3"><button className="text-left font-semibold text-blue-600" onClick={() => setSelected(g)}><span className="block">{g.name}</span><small className="mt-1 block font-normal text-slate-500">{g.code}</small></button></td>
+                      <td className="p-3 text-slate-500">{g.description ?? "Chưa có mô tả"}</td>
+                      <td className="p-3 text-xs text-slate-500">Thành viên · Vai trò</td>
+                    </tr>)}</tbody>
+                  </table>
                 </div>
               ) : (
                 <Empty>Chưa có nhóm.</Empty>

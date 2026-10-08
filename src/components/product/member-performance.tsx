@@ -87,6 +87,33 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
           </button>
         }
       />
+      <div className="mb-5">
+        {rows.loading ? (
+          <LoadingState />
+        ) : rows.error ? (
+          <ErrorState error={rows.error} onRetry={rows.reload} />
+        ) : (
+          <Metrics
+            values={[
+              ["Thành viên", data.length],
+              ["Nhiệm vụ", total],
+              ["Nhiệm vụ hoàn thành", done],
+              [
+                "Hoàn thành (%)",
+                total ? Math.round((done / total) * 1000) / 10 : null,
+              ],
+              [
+                "Điểm trung bình thành viên",
+                scores.length
+                  ? Math.round(
+                      (scores.reduce((a, b) => a + b, 0) / scores.length) * 10,
+                    ) / 10
+                  : null,
+              ],
+            ]}
+          />
+        )}
+      </div>
       <Panel title="Bộ lọc">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <AcademicPicker
@@ -121,33 +148,7 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
           </label>
         </div>
       </Panel>
-      <div className="my-5">
-        {rows.loading ? (
-          <LoadingState />
-        ) : rows.error ? (
-          <ErrorState error={rows.error} onRetry={rows.reload} />
-        ) : (
-          <Metrics
-            values={[
-              ["Thành viên", data.length],
-              ["Nhiệm vụ", total],
-              ["Nhiệm vụ hoàn thành", done],
-              [
-                "Hoàn thành (%)",
-                total ? Math.round((done / total) * 1000) / 10 : null,
-              ],
-              [
-                "Điểm trung bình thành viên",
-                scores.length
-                  ? Math.round(
-                      (scores.reduce((a, b) => a + b, 0) / scores.length) * 10,
-                    ) / 10
-                  : null,
-              ],
-            ]}
-          />
-        )}
-      </div>
+      <div className="mt-5" />
       {!rows.loading && !rows.error && (
         <div className="grid gap-4 xl:grid-cols-[1fr_300px]">
           <Panel title="Kết quả thành viên">
