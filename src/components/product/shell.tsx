@@ -6,6 +6,7 @@ import { Bell, ChevronRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getSessionUser } from "@/lib/auth/session";
+import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 export type ProductRole = "intern" | "instructor" | "admin";
 const menus: Record<ProductRole, [string, string][]> = {
   intern: [
@@ -128,6 +129,7 @@ export function ProductShell({
       </aside>
       <dialog
         ref={dialog}
+        onKeyDown={trapDialogFocus}
         onCancel={(e) => {
           e.preventDefault();
           setOpen(false);

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
+import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 export const buttonClass =
   "inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
 export const inputClass =
@@ -127,6 +128,7 @@ export function Modal({
   return (
     <dialog
       ref={ref}
+      onKeyDown={trapDialogFocus}
       onCancel={(event) => {
         event.preventDefault();
         onClose();
