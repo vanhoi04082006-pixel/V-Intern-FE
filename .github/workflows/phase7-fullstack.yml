@@ -1,7 +1,7 @@
 name: Phase 7 real full-stack release gate
 on:
   push:
-    branches: [feat/full-product-fe-nest-integration]
+    branches: [main, feat/full-product-fe-nest-integration]
   workflow_dispatch:
 permissions:
   contents: read
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: vanhoi04082006-pixel/V-Intern-BE
-          ref: 8c38651bbf18213dee8aff6aab1950616a0be213
+          ref: 6b61b820572bb607b10c139f7b57625dcf5db35b
           path: V-INTERN-BE
           ssh-key: ${{ secrets.PHASE7_BE_SSH_KEY }}
           persist-credentials: false
