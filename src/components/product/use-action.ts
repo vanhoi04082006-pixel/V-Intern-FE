@@ -1,12 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 export function useAction(onSuccess?: () => void) {
+  const inFlight = useRef(false);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
   return {
     busy,
     error,
     async run(action: () => Promise<unknown>) {
+      if (inFlight.current) return false;
+      inFlight.current = true;
       setBusy(true);
       setError(undefined);
       try {
@@ -17,6 +20,7 @@ export function useAction(onSuccess?: () => void) {
         setError(e);
         return false;
       } finally {
+        inFlight.current = false;
         setBusy(false);
       }
     },
