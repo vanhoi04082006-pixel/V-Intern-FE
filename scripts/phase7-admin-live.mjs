@@ -431,8 +431,16 @@ try {
     path: path.join(evidence, "admin-services.png"),
     fullPage: true,
   });
+  const alias = await page.request.get(base + "/admin/logs", {
+    maxRedirects: 0,
+  });
+  assert.equal(alias.status(), 307);
+  assert.equal(alias.headers().location, "/admin/audit");
   await page.goto(base + "/admin/logs");
   await page.waitForURL("**/admin/audit");
+  // Complete the target's real session bootstrap before the next full navigation.
+  await page.getByRole("heading", { name: "Audit log", exact: true }).waitFor();
+  await page.waitForLoadState("networkidle");
   await page.goto(base + "/admin/notifications");
   await page.getByRole("heading", { name: "Thông báo", exact: true }).waitFor();
   await page.goto(base + "/admin/profile");
