@@ -2,6 +2,7 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
+import { managerTransitions, saveManagedTask } from "@/lib/api/management";
 import { useResource } from "@/lib/api/use-resource";
 import {
   addTaskComment,
@@ -115,6 +116,8 @@ export function InternWork() {
                           "Nhiệm vụ",
                           "Trạng thái",
                           "Ưu tiên",
+                          "Sprint",
+                          "Story points",
                           "Tiến độ",
                           "Hạn",
                           "",
@@ -140,6 +143,12 @@ export function InternWork() {
                             <Badge>{statusLabels[task.status]}</Badge>
                           </td>
                           <td className="p-3">{task.priority}</td>
+                          <td className="max-w-48 break-all p-3 text-xs">
+                            {task.sprintId ?? "Chưa có"}
+                          </td>
+                          <td className="p-3">
+                            {task.storyPoints ?? "Chưa có"}
+                          </td>
                           <td className="p-3">
                             <progress
                               aria-label={`Tiến độ ${task.code}`}
@@ -186,28 +195,49 @@ export function InternWork() {
 export function TaskDetail({
   id,
   onUpdated,
+  managed = false,
 }: {
   id: string;
   onUpdated?: () => void;
+  managed?: boolean;
 }) {
   const load = useCallback((signal: AbortSignal) => getTask(id, signal), [id]);
   const task = useResource(load);
-  if (task.loading) return <LoadingState />;
-  if (task.error)
-    return <ErrorState error={task.error} onRetry={task.reload} />;
+  const [mutationError, setMutationError] = useState<unknown>();
   return (
-    task.data && (
-      <TaskContent
-        task={task.data}
-        reload={() => {
-          task.reload();
-          onUpdated?.();
-        }}
-      />
-    )
+    <>
+      {Boolean(mutationError) && <ErrorState error={mutationError} />}
+      {task.loading ? (
+        <LoadingState />
+      ) : task.error ? (
+        <ErrorState error={task.error} onRetry={task.reload} />
+      ) : (
+        task.data && (
+          <TaskContent
+            setMutationError={setMutationError}
+            managed={managed}
+            task={task.data}
+            reload={() => {
+              task.reload();
+              onUpdated?.();
+            }}
+          />
+        )
+      )}
+    </>
   );
 }
-function TaskContent({ task, reload }: { task: Task; reload: () => void }) {
+function TaskContent({
+  task,
+  reload,
+  managed,
+  setMutationError,
+}: {
+  task: Task;
+  reload: () => void;
+  managed: boolean;
+  setMutationError: (error: unknown) => void;
+}) {
   const [progress, setProgress] = useState(task.progress),
     [content, setContent] = useState(""),
     [busy, setBusy] = useState(false),
@@ -229,13 +259,19 @@ function TaskContent({ task, reload }: { task: Task; reload: () => void }) {
   async function update(advance: boolean) {
     setBusy(true);
     setError(undefined);
+    setMutationError(undefined);
     try {
       const status = advance ? nextOwnStatus(task.status) : null;
-      await updateOwnTask(task.id, { progress, ...(status ? { status } : {}) });
+      await updateOwnTask(task.id, {
+        expectedVersion: task.version,
+        progress,
+        ...(status ? { status } : {}),
+      });
       reload();
     } catch (e) {
       setError(e);
       if (e instanceof ApiError && e.statusCode === 409) {
+        setMutationError(e);
         reload();
         history.reload();
       }
@@ -256,6 +292,23 @@ function TaskContent({ task, reload }: { task: Task; reload: () => void }) {
       setBusy(false);
     }
   }
+  async function manage(status: typeof task.status) {
+    setBusy(true);
+    setError(undefined);
+    setMutationError(undefined);
+    try {
+      await saveManagedTask(task.id, { status, expectedVersion: task.version });
+      reload();
+    } catch (e) {
+      setError(e);
+      if (e instanceof ApiError && e.statusCode === 409) {
+        setMutationError(e);
+        reload();
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
   const next = nextOwnStatus(task.status);
   return (
     <div className="space-y-5">
@@ -270,6 +323,26 @@ function TaskContent({ task, reload }: { task: Task; reload: () => void }) {
           <Badge>{statusLabels[task.status]}</Badge>
           <Badge>{task.priority}</Badge>
         </div>
+        <dl className="mt-4 grid gap-3 rounded-lg bg-slate-50 p-3 text-sm sm:grid-cols-3">
+          <div>
+            <dt className="text-slate-500">Sprint</dt>
+            <dd className="mt-1 break-all text-xs">
+              {task.sprintId ?? "Chưa có"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-slate-500">Story points</dt>
+            <dd className="mt-1">{task.storyPoints ?? "Chưa có"}</dd>
+          </div>
+          <div>
+            <dt className="text-slate-500">Hạn hoàn thành</dt>
+            <dd className="mt-1">
+              {task.dueDate
+                ? new Date(task.dueDate).toLocaleDateString("vi-VN")
+                : "Chưa có"}
+            </dd>
+          </div>
+        </dl>
       </div>
       {Boolean(error) && (
         <p
@@ -279,28 +352,32 @@ function TaskContent({ task, reload }: { task: Task; reload: () => void }) {
           {errorMessage(error)}
         </p>
       )}
-      <label className="block text-sm">
-        Tiến độ: {progress}%
-        <input
-          aria-label="Tiến độ nhiệm vụ"
-          className="mt-2 w-full accent-blue-600"
-          type="range"
-          min={0}
-          max={100}
-          value={progress}
-          onChange={(e) => setProgress(Number(e.target.value))}
-          disabled={busy || task.status === "done"}
-        />
-      </label>
+      {!managed && (
+        <label className="block text-sm">
+          Tiến độ: {progress}%
+          <input
+            aria-label="Tiến độ nhiệm vụ"
+            className="mt-2 w-full accent-blue-600"
+            type="range"
+            min={0}
+            max={100}
+            value={progress}
+            onChange={(e) => setProgress(Number(e.target.value))}
+            disabled={busy || task.status === "done"}
+          />
+        </label>
+      )}
       <div className="flex flex-wrap gap-2">
-        <button
-          className={buttonClass}
-          disabled={busy || task.status === "done"}
-          onClick={() => void update(false)}
-        >
-          Lưu tiến độ
-        </button>
-        {next && (
+        {!managed && (
+          <button
+            className={buttonClass}
+            disabled={busy || task.status === "done"}
+            onClick={() => void update(false)}
+          >
+            Lưu tiến độ
+          </button>
+        )}
+        {!managed && next && (
           <button
             className={buttonClass}
             disabled={busy}
@@ -309,6 +386,21 @@ function TaskContent({ task, reload }: { task: Task; reload: () => void }) {
             Chuyển sang {statusLabels[next]}
           </button>
         )}
+        {managed &&
+          managerTransitions(task.status).map((status) => (
+            <button
+              key={status}
+              className={buttonClass}
+              disabled={busy}
+              onClick={() => void manage(status)}
+            >
+              {status === "done"
+                ? "Duyệt hoàn thành"
+                : status === "doing" && task.status === "review"
+                  ? "Yêu cầu làm lại"
+                  : `Chuyển sang ${statusLabels[status]}`}
+            </button>
+          ))}
       </div>
       <Panel title="Bình luận">
         {comments.loading ? (

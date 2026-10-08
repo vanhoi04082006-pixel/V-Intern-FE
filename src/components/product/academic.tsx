@@ -16,6 +16,8 @@ import {
   Panel,
 } from "./primitives";
 import { AcademicPicker } from "./academic-picker";
+import { InstructorPicker } from "./instructor-picker";
+import { CollectionMetrics, CollectionAside } from "./collection-insights";
 const labels = {
   classes: "Lớp học",
   sessions: "Phiên thực tập",
@@ -49,111 +51,157 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
           </button>
         }
       />
-      <Panel title="Danh sách">
-        <div className="mb-4 grid gap-3 sm:grid-cols-2">
-          <input
-            className={inputClass}
-            aria-label="Tìm mã hoặc tên"
-            placeholder="Tìm mã hoặc tên..."
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setPage(1);
-            }}
-          />
-          <select
-            className={inputClass}
-            aria-label="Trạng thái"
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Tất cả trạng thái</option>
-            {api.academicStatuses[kind].map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
-        </div>
-        {data.loading ? (
-          <LoadingState />
-        ) : data.error ? (
-          <ErrorState error={data.error} onRetry={data.reload} />
-        ) : (
-          data.data && (
-            <>
-              <div className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
-                {data.data.total} bản ghi phù hợp bộ lọc
-              </div>
-              {data.data.items.length ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50">
-                      <tr>
-                        {[
-                          "Mã / Tên",
-                          "Trạng thái",
-                          "Bắt đầu",
-                          "Kết thúc",
-                          "",
-                        ].map((x) => (
-                          <th key={x} className="p-3">
-                            {x}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.data.items.map((x) => (
-                        <tr key={x.id} className="border-b border-slate-100">
-                          <td className="p-3">
-                            <strong className="block">{x.name}</strong>
-                            <span className="text-xs text-slate-400">
-                              {x.code}
-                            </span>
-                            {x.technologies.length > 0 && (
-                              <p className="mt-1 text-xs">
-                                {x.technologies.join(" · ")}
-                              </p>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            <Badge>{x.status}</Badge>
-                          </td>
-                          <td className="p-3 whitespace-nowrap">
-                            {x.startDate
-                              ? new Date(x.startDate).toLocaleDateString(
-                                  "vi-VN",
-                                )
-                              : "Chưa có"}
-                          </td>
-                          <td className="p-3 whitespace-nowrap">
-                            {x.endDate
-                              ? new Date(x.endDate).toLocaleDateString("vi-VN")
-                              : "Chưa có"}
-                          </td>
-                          <td className="p-3">
-                            <button
-                              className="font-semibold text-blue-600"
-                              onClick={() => setSelected(x.id)}
-                            >
-                              Chi tiết {x.code}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+      {!data.loading && !data.error && data.data && (
+        <CollectionMetrics
+          values={[
+            ["Kết quả bộ lọc", data.data.total],
+            ["Trên trang hiện tại", data.data.items.length],
+            [
+              "Đang hoạt động · trang",
+              data.data.items.filter((x) => x.status === "active").length,
+            ],
+            [
+              "Đã hoàn tất · trang",
+              data.data.items.filter((x) => x.status === "completed").length,
+            ],
+            [
+              "Chưa bắt đầu · trang",
+              data.data.items.filter(
+                (x) => x.status === "upcoming" || x.status === "draft",
+              ).length,
+            ],
+          ]}
+          note="Tổng số theo bộ lọc; các thống kê trạng thái dùng trang hiện tại. Lịch học và chuyên cần chưa được Backend cung cấp."
+        />
+      )}
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <Panel title="Danh sách">
+          <div className="mb-4 grid gap-3 sm:grid-cols-2">
+            <input
+              className={inputClass}
+              aria-label="Tìm mã hoặc tên"
+              placeholder="Tìm mã hoặc tên..."
+              value={q}
+              onChange={(e) => {
+                setQ(e.target.value);
+                setPage(1);
+              }}
+            />
+            <select
+              className={inputClass}
+              aria-label="Trạng thái"
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">Tất cả trạng thái</option>
+              {api.academicStatuses[kind].map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          {data.loading ? (
+            <LoadingState />
+          ) : data.error ? (
+            <ErrorState error={data.error} onRetry={data.reload} />
+          ) : (
+            data.data && (
+              <>
+                <div className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+                  {data.data.total} bản ghi phù hợp bộ lọc
                 </div>
-              ) : (
-                <Empty>Chưa có dữ liệu phù hợp.</Empty>
-              )}
-              <Pager {...data.data} onChange={setPage} />
-            </>
-          )
+                {data.data.items.length ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          {[
+                            "Mã / Tên",
+                            "Trạng thái",
+                            "Bắt đầu",
+                            "Kết thúc",
+                            "",
+                          ].map((x) => (
+                            <th key={x} className="p-3">
+                              {x}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.data.items.map((x) => (
+                          <tr key={x.id} className="border-b border-slate-100">
+                            <td className="p-3">
+                              <strong className="block">{x.name}</strong>
+                              <span className="text-xs text-slate-400">
+                                {x.code}
+                              </span>
+                              {x.technologies.length > 0 && (
+                                <p className="mt-1 text-xs">
+                                  {x.technologies.join(" · ")}
+                                </p>
+                              )}
+                            </td>
+                            <td className="p-3">
+                              <Badge>{x.status}</Badge>
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              {x.startDate
+                                ? new Date(x.startDate).toLocaleDateString(
+                                    "vi-VN",
+                                  )
+                                : "Chưa có"}
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              {x.endDate
+                                ? new Date(x.endDate).toLocaleDateString(
+                                    "vi-VN",
+                                  )
+                                : "Chưa có"}
+                            </td>
+                            <td className="p-3">
+                              <button
+                                className="font-semibold text-blue-600"
+                                onClick={() => setSelected(x.id)}
+                              >
+                                Chi tiết {x.code}
+                              </button>
+                              {kind === "sessions" && (
+                                <Link
+                                  className="mt-2 block text-xs text-blue-600"
+                                  href={`/instructor/sessions/${x.id}`}
+                                >
+                                  Mở trang phiên →
+                                </Link>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <Empty>Chưa có dữ liệu phù hợp.</Empty>
+                )}
+                <Pager {...data.data} onChange={setPage} />
+              </>
+            )
+          )}
+        </Panel>
+        {!data.loading && !data.error && data.data && (
+          <CollectionAside
+            rows={data.data.items}
+            links={[
+              ["/instructor/sessions", "Phiên thực tập"],
+              ["/instructor/projects", "Thư viện dự án"],
+              ["/instructor/sprints", "Sprint & Task"],
+              ["/instructor/reports", "Báo cáo"],
+            ]}
+          />
         )}
-      </Panel>
+      </div>
       {create && (
         <Modal title={`Tạo ${labels[kind]}`} onClose={() => setCreate(false)}>
           <AcademicForm
@@ -305,12 +353,11 @@ function AcademicForm({
               </select>
             </label>
           </div>
-          <p className="text-sm text-slate-500">
-            Mentor:{" "}
-            {initial?.mentorId && initial.mentorId !== getSessionUser()?.id
-              ? initial.mentorId
-              : "Tài khoản của bạn"}
-          </p>
+          <InstructorPicker
+            label="Mentor dự án"
+            value={form.mentorId}
+            onChange={(value) => setForm({ ...form, mentorId: value })}
+          />
         </>
       )}
       {kind === "classes" && (
@@ -321,29 +368,38 @@ function AcademicForm({
           onChange={(value) => setForm({ ...form, sessionId: value })}
         />
       )}
+      {kind === "sessions" && (
+        <InstructorPicker
+          label="Giảng viên phụ trách"
+          value={form.leadInstructorId}
+          onChange={(value) => setForm({ ...form, leadInstructorId: value })}
+        />
+      )}
       <button className={buttonClass} disabled={busy}>
         {busy ? "Đang lưu..." : "Lưu"}
       </button>
     </form>
   );
 }
-function AcademicDetail({
+export function AcademicDetail({
   kind,
   id,
   onClose,
   onChanged,
+  embedded = false,
 }: {
   kind: api.AcademicKind;
   id: string;
   onClose: () => void;
   onChanged: () => void;
+  embedded?: boolean;
 }) {
   const entity = useResource(
     useCallback((s: AbortSignal) => api.getAcademic(kind, id, s), [kind, id]),
   );
   const [edit, setEdit] = useState(false);
-  return (
-    <Modal title={`Chi tiết ${labels[kind]}`} onClose={onClose}>
+  const content = (
+    <>
       {entity.loading ? (
         <LoadingState />
       ) : entity.error ? (
@@ -381,6 +437,13 @@ function AcademicDetail({
           </div>
         )
       )}
+    </>
+  );
+  return embedded ? (
+    <Panel title={`Chi tiết ${labels[kind]}`}>{content}</Panel>
+  ) : (
+    <Modal title={`Chi tiết ${labels[kind]}`} onClose={onClose}>
+      {content}
     </Modal>
   );
 }
@@ -604,6 +667,7 @@ function SessionExtras({ id }: { id: string }) {
       useCallback((s: AbortSignal) => api.getMilestones(id, s), [id]),
     );
   const [title, setTitle] = useState(""),
+    [instructorId, setInstructorId] = useState(""),
     [due, setDue] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
@@ -624,6 +688,20 @@ function SessionExtras({ id }: { id: string }) {
     <>
       {Boolean(error) && <ErrorState error={error} />}
       <Panel title="Giảng viên">
+        <div className="mb-4 space-y-3">
+          <InstructorPicker
+            label="Giảng viên phiên"
+            value={instructorId}
+            onChange={setInstructorId}
+          />
+          <button
+            className={buttonClass}
+            disabled={busy || !instructorId}
+            onClick={() => void act(() => api.addInstructor(id, instructorId))}
+          >
+            Thêm giảng viên đã chọn
+          </button>
+        </div>
         {instructors.loading ? (
           <LoadingState />
         ) : instructors.error ? (

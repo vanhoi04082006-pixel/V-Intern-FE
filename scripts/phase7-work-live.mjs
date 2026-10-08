@@ -71,6 +71,7 @@ try {
       projectId: workspace.assignment.project.id,
       sprintId: workspace.currentSprint.id,
       assigneeId: intern.user.id,
+      storyPoints: 5,
     });
   const context = await browser.newContext({
       viewport: { width: 1440, height: 900 },
@@ -93,6 +94,48 @@ try {
   await page
     .getByRole("button", { name: `${task.code} · ${task.title}`, exact: true })
     .click();
+  // A second real client of the owner updates after the browser loaded its version.
+  await page
+    .getByRole("button", { name: "Lưu tiến độ", exact: true })
+    .waitFor();
+  const freshOwner = await auth("waiting");
+  await call(freshOwner.accessToken, `/tasks/${task.id}/my`, "PATCH", {
+    progress: 37,
+    expectedVersion: task.version,
+  });
+  const [conflict] = await Promise.all([
+    page.waitForResponse(
+      (r) =>
+        r.url().endsWith(`/tasks/${task.id}/my`) &&
+        r.request().method() === "PATCH",
+    ),
+    page.getByRole("button", { name: "Lưu tiến độ", exact: true }).click(),
+  ]);
+  assert.equal(conflict.status(), 409);
+  await page
+    .getByRole("alert")
+    .filter({ hasText: "Trạng thái đã thay đổi" })
+    .waitFor();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('input[aria-label="Tiến độ nhiệm vụ"]')?.value ===
+      "37",
+  );
+  assert.equal(
+    (await ds.query("SELECT progress FROM tasks WHERE id=@0", [task.id]))[0]
+      .progress,
+    37,
+  );
+  const [retry] = await Promise.all([
+    page.waitForResponse(
+      (r) =>
+        r.url().endsWith(`/tasks/${task.id}/my`) &&
+        r.request().method() === "PATCH",
+    ),
+    page.getByRole("button", { name: "Lưu tiến độ", exact: true }).click(),
+  ]);
+  assert.equal(retry.status(), 200);
+  await page.getByRole("button", { name: "Chuyển sang Đang làm" }).waitFor();
   await page.getByRole("button", { name: "Chuyển sang Đang làm" }).click();
   await page.getByRole("button", { name: "Chuyển sang Chờ duyệt" }).waitFor();
   await page.getByLabel("Bình luận mới").fill(`Bình luận live ${tag}`);
@@ -135,7 +178,7 @@ try {
   assert.deepEqual(errors, []);
   await context.close();
   results.push({
-    name: "Own task transitions/comments/history, Sprint board, Project trace",
+    name: "Real concurrent 409/refetch/retry without overwrite; own task transitions/comments/history, Sprint/Project SQL trace",
     status: "PASS",
     taskId: task.id,
     sqlTrace: rows[0],

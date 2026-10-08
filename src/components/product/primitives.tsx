@@ -107,10 +107,12 @@ export function Modal({
   title,
   onClose,
   children,
+  wide = false,
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  wide?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -130,7 +132,7 @@ export function Modal({
         onClose();
       }}
       aria-label={title}
-      className="fixed inset-0 m-auto max-h-[90dvh] w-[min(760px,calc(100%-24px))] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-xl backdrop:bg-slate-900/50"
+      className={`fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-xl backdrop:bg-slate-900/50`}
     >
       <div className="mb-5 flex items-center justify-between gap-3">
         <h2 className="text-xl font-bold text-navy">{title}</h2>

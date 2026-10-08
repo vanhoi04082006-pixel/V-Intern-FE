@@ -144,6 +144,16 @@ export function parseMember(value: unknown) {
     email: string(v.email),
   };
 }
+export const instructorOptions = (
+  page: number,
+  q: string,
+  signal?: AbortSignal,
+) =>
+  request(
+    `/sessions/instructor-options?${new URLSearchParams({ page: String(page), pageSize: "10", ...(q ? { q } : {}) })}`,
+    (x) => parsePage(x, parseMember),
+    { signal },
+  );
 export const getMembers = (
   kind: AcademicKind,
   id: string,

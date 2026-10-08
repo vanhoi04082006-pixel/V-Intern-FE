@@ -130,7 +130,12 @@ export const addTaskComment = (id: string, content: string) =>
   });
 export const updateOwnTask = (
   id: string,
-  body: { status?: TaskStatus; progress?: number; reason?: string },
+  body: {
+    status?: TaskStatus;
+    progress?: number;
+    reason?: string;
+    expectedVersion?: number;
+  },
 ) =>
   request(`/tasks/${encodeURIComponent(id)}/my`, parseTask, {
     method: "PATCH",
