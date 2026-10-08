@@ -1,0 +1,439 @@
+{
+  "results": [
+    {
+      "name": "Browser class/session/project create/edit/member/milestone with SQL trace",
+      "status": "PASS"
+    },
+    {
+      "name": "Instructor browser assignment unassigned→active matches SQL",
+      "status": "PASS"
+    },
+    {
+      "name": "Instructor mobile/no console failures",
+      "status": "PASS"
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/instructors",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/milestones",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/milestones",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/instructors",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/instructors",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/instructors",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/milestones",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/milestones",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/milestones",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/instructors",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272/milestones/A50E567E-4817-44C7-A8CA-0D112575A99B",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/F6538EAC-1EEB-40B5-8806-702ADDC67F8D",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/F6538EAC-1EEB-40B5-8806-702ADDC67F8D/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/F6538EAC-1EEB-40B5-8806-702ADDC67F8D",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/F6538EAC-1EEB-40B5-8806-702ADDC67F8D",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/F6538EAC-1EEB-40B5-8806-702ADDC67F8D/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568/members",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes/EA42AF96-52B8-482A-86EA-FE6CBCA05568/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/469A5F19-20FB-4D85-BF33-7DD652102272",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/F6538EAC-1EEB-40B5-8806-702ADDC67F8D",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/assignments",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "interception": false
+}

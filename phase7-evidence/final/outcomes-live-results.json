@@ -1,0 +1,361 @@
+{
+  "results": [
+    {
+      "name": "Mentor persistence, private ownership, timeout, archive",
+      "status": "PASS"
+    },
+    {
+      "name": "SQL official score80 overrides advisory95; KPI provenance; salary ledger sum",
+      "status": "PASS",
+      "officialScore": 80,
+      "kpi": 94,
+      "balance": 9400000
+    },
+    {
+      "name": "Real PDF, certificate ownership, anonymous public whitelist, revocation",
+      "status": "PASS"
+    },
+    {
+      "name": "Notifications/recommendations/profile real responses, mobile overflow",
+      "status": "PASS"
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/372C2CA9-CC9D-437C-8B02-F9D7857F7A46",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/372C2CA9-CC9D-437C-8B02-F9D7857F7A46/messages",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/372C2CA9-CC9D-437C-8B02-F9D7857F7A46",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/3A815673-FE46-408F-9277-73791A6FBFF6",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/3A815673-FE46-408F-9277-73791A6FBFF6/messages",
+      "method": "POST",
+      "status": 503
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/3A815673-FE46-408F-9277-73791A6FBFF6",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/3A815673-FE46-408F-9277-73791A6FBFF6/archive",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/3A815673-FE46-408F-9277-73791A6FBFF6",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/evaluations/C748EBAF-0CC5-42DE-8B78-821B659F0C01",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/performance",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/kpi/36B90E51-0A3E-43E4-A683-76744A1261EB",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates/F2F9E644-BC9C-41A8-A187-38B65DC3EA81",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates/F2F9E644-BC9C-41A8-A187-38B65DC3EA81/pdf",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates/F2F9E644-BC9C-41A8-A187-38B65DC3EA81",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-recommendations",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-recommendations/refresh",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-recommendations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/kpi",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "interception": false
+}

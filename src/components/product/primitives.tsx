@@ -84,6 +84,7 @@ export function Pager({
       </span>
       <div className="flex gap-2">
         <button
+          type="button"
           className={buttonClass}
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
@@ -91,6 +92,7 @@ export function Pager({
           Trước
         </button>
         <button
+          type="button"
           className={buttonClass}
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}

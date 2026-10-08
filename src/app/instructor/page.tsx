@@ -1,10 +1,4 @@
-import { WorkspaceGuard } from "@/components/auth/workspace-guard";
-import { RoleWorkspaceEntry } from "@/components/auth/role-workspace-entry";
-import { PROTECTED_ROUTES } from "@/lib/auth/role-landing";
+import { InstructorOverview } from "@/components/product/academic";
 export default function Page() {
-  return (
-    <WorkspaceGuard allowedRoles={PROTECTED_ROUTES["/instructor"]}>
-      <RoleWorkspaceEntry role="instructor" />
-    </WorkspaceGuard>
-  );
+  return <InstructorOverview />;
 }

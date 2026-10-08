@@ -118,6 +118,7 @@ jobs:
           node scripts/phase7-work-live.mjs
           node scripts/phase7-outcomes-fixture.mjs
           node scripts/phase7-outcomes-live.mjs
+          node scripts/phase7-academic-live.mjs
       - name: Upload sanitized browser/SQL evidence
         if: always()
         uses: actions/upload-artifact@v4
