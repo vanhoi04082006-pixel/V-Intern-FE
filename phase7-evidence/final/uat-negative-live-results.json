@@ -1,0 +1,325 @@
+{
+  "results": [
+    {
+      "name": "unauthenticated management",
+      "status": "PASS",
+      "httpStatus": 401,
+      "code": "UNAUTHENTICATED"
+    },
+    {
+      "name": "Intern denied Admin users",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "PERMISSION_DENIED"
+    },
+    {
+      "name": "Intern denied project creation",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "PERMISSION_DENIED"
+    },
+    {
+      "name": "Intern denied evaluation finalize",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "PERMISSION_DENIED"
+    },
+    {
+      "name": "Instructor denied Admin revision",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "EVALUATION_SCOPE_FORBIDDEN"
+    },
+    {
+      "name": "foreign evaluation 404-safe",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "EVALUATION_NOT_FOUND"
+    },
+    {
+      "name": "foreign KPI 404-safe",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "KPI_RESULT_NOT_FOUND"
+    },
+    {
+      "name": "foreign certificate 404-safe",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "CERTIFICATE_NOT_FOUND"
+    },
+    {
+      "name": "foreign private PDF 404-safe",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "CERTIFICATE_NOT_FOUND"
+    },
+    {
+      "name": "foreign salary permission protected",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "PERMISSION_DENIED"
+    },
+    {
+      "name": "owner creates UAT conversation",
+      "status": "PASS",
+      "httpStatus": 201
+    },
+    {
+      "name": "foreign conversation read 404-safe",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "AI_MENTOR_CONVERSATION_NOT_FOUND"
+    },
+    {
+      "name": "foreign conversation send 404-safe",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "AI_MENTOR_CONVERSATION_NOT_FOUND"
+    },
+    {
+      "name": "AI acting-user overposting rejected",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "oversized AI input rejected",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "Instructor B created through dev API",
+      "status": "PASS",
+      "httpStatus": 201
+    },
+    {
+      "name": "foreign Instructor evaluation",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "EVALUATION_SCOPE_FORBIDDEN"
+    },
+    {
+      "name": "foreign Instructor performance",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "PERFORMANCE_SCOPE_FORBIDDEN"
+    },
+    {
+      "name": "foreign Instructor cycle criteria",
+      "status": "PASS",
+      "httpStatus": 403,
+      "code": "EVALUATION_SCOPE_FORBIDDEN"
+    },
+    {
+      "name": "malformed UUID",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "BAD_REQUEST"
+    },
+    {
+      "name": "invalid enum",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "invalid pagination /users?pageSize=100000",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "invalid pagination /groups?page=-1",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "invalid pagination /catalogs/types?pageSize=NaN",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "account overposting rejected",
+      "status": "PASS",
+      "httpStatus": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "name": "unknown public certificate",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "CERTIFICATE_VERIFICATION_NOT_FOUND"
+    },
+    {
+      "name": "malformed public code fails safely",
+      "status": "PASS",
+      "httpStatus": 404,
+      "code": "CERTIFICATE_VERIFICATION_NOT_FOUND"
+    },
+    {
+      "name": "real revoked certificate verification",
+      "status": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "name": "public response has no private IDs or scores",
+      "status": "PASS",
+      "keys": [
+        "valid",
+        "status",
+        "certificateNumber",
+        "holderName",
+        "role",
+        "projectName",
+        "issuedAt",
+        "revokedAt"
+      ]
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 401
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "POST",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/evaluations/A0B80BB3-20AD-4F13-AD76-4A21895D2F19/finalize",
+      "method": "POST",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/evaluations/A0B80BB3-20AD-4F13-AD76-4A21895D2F19/revisions",
+      "method": "POST",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/evaluations/A0B80BB3-20AD-4F13-AD76-4A21895D2F19",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/kpi/37E9FA7B-1F9C-4D24-B3DB-BF9D20F1F349",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates/6DC93475-7015-4076-BF0D-5E161B00C999",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates/6DC93475-7015-4076-BF0D-5E161B00C999/pdf",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/virtual-salary/users/A5CF11B1-2833-4C7D-A92E-931A203FEE99/balance",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/27E4344B-87CC-4F00-8880-3FE4B2D3267A",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/27E4344B-87CC-4F00-8880-3FE4B2D3267A/messages",
+      "method": "POST",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/27E4344B-87CC-4F00-8880-3FE4B2D3267A/messages",
+      "method": "POST",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/27E4344B-87CC-4F00-8880-3FE4B2D3267A/messages",
+      "method": "POST",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/evaluations/A0B80BB3-20AD-4F13-AD76-4A21895D2F19",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/performance/interns/A5CF11B1-2833-4C7D-A92E-931A203FEE99",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/evaluation-cycles/21DC0E22-EDD6-4F60-954B-D282B3888073/criteria",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users/not-a-uuid",
+      "method": "GET",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users/A5CF11B1-2833-4C7D-A92E-931A203FEE99/status",
+      "method": "PATCH",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/types",
+      "method": "GET",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "POST",
+      "status": 400
+    },
+    {
+      "url": "http://localhost:8080/api/v1/certificates/verify/unknown-UAT-code",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/certificates/verify/%3Cscript%3E",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/certificates/verify/zXE1KowW0Q2RhHrWj_7_2hbEeYmQqWx3",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

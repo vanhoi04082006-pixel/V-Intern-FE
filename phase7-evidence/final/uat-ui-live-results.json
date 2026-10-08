@@ -1,0 +1,773 @@
+{
+  "results": [
+    {
+      "name": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "status": "PASS",
+      "detail": {
+        "email": "uat-ui-muzcba0g@phase715.test",
+        "sqlRows": 1,
+        "createRequests": 1,
+        "duplicateStatus": 409,
+        "keyboardFocus": "contained/restored",
+        "xss": "text only"
+      }
+    },
+    {
+      "name": "Intern AI rapid double-send persists one user question",
+      "status": "PASS",
+      "detail": {
+        "conversationId": "D3C7A2C8-E928-4611-AE23-EC649A396370",
+        "messageRequests": 1
+      }
+    },
+    {
+      "name": "admin tablet routes, labels and mobile drawer",
+      "status": "PASS",
+      "detail": {
+        "tabletRoutes": [
+          "users",
+          "groups",
+          "roles",
+          "catalogs",
+          "audit",
+          "settings"
+        ],
+        "mobileDrawer": "keyboard contained, Escape and focus return"
+      }
+    },
+    {
+      "name": "instructor tablet routes, labels and mobile drawer",
+      "status": "PASS",
+      "detail": {
+        "tabletRoutes": [
+          "classes",
+          "sessions",
+          "projects",
+          "sprints",
+          "evaluations",
+          "reports"
+        ],
+        "mobileDrawer": "keyboard contained, Escape and focus return"
+      }
+    },
+    {
+      "name": "intern tablet routes, labels and mobile drawer",
+      "status": "PASS",
+      "detail": {
+        "tabletRoutes": [
+          "work",
+          "sprint",
+          "project",
+          "mentor",
+          "kpi",
+          "certificates"
+        ],
+        "mobileDrawer": "keyboard contained, Escape and focus return"
+      }
+    }
+  ],
+  "network": [
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Admin keyboard modal, invalid form, double submit, duplicate email and XSS text",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/D3C7A2C8-E928-4611-AE23-EC649A396370",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/D3C7A2C8-E928-4611-AE23-EC649A396370/messages",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations/D3C7A2C8-E928-4611-AE23-EC649A396370",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "Intern AI rapid double-send persists one user question",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/permissions",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/permissions",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/catalogs/items",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/catalogs/types",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/audit-logs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "admin tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/settings",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/classes",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/sessions",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/performance/interns",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/classes",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/sessions",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/sprints",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/evaluation-cycles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/evaluations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/sessions",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "instructor tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/performance/interns",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/tasks",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/sprint/board",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/project",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/kpi",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "scenario": "intern tablet routes, labels and mobile drawer",
+      "url": "http://localhost:8080/api/v1/intern/me/certificates",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

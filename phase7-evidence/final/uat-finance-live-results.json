@@ -1,0 +1,360 @@
+{
+  "results": [
+    {
+      "name": "KPI exact renormalization SQL/API/FE",
+      "status": "PASS",
+      "delivery": 80,
+      "quality": 90,
+      "timeliness": null,
+      "finalScore": 83.8
+    },
+    {
+      "name": "Salary bonus/penalty/reversal SQL/API/FE and reload",
+      "status": "PASS",
+      "trace": [
+        {
+          "sql": 8380000,
+          "nest": 8380000,
+          "rendered": "8.380.000"
+        },
+        {
+          "sql": 8680000,
+          "nest": 8680000,
+          "rendered": "8.680.000"
+        },
+        {
+          "sql": 8180000,
+          "nest": 8180000,
+          "rendered": "8.180.000"
+        }
+      ]
+    },
+    {
+      "name": "Concurrent salary regeneration has one earning",
+      "status": "PASS",
+      "earningRows": 1
+    },
+    {
+      "name": "UTC exact from-inclusive/to-exclusive task-createdAt boundary",
+      "status": "PASS",
+      "taskCreatedAt": "2026-10-08T06:47:38.515Z",
+      "completedAt": "2026-10-08T06:47:38.828Z",
+      "included": 1,
+      "excluded": 0
+    }
+  ],
+  "network": [
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/intern/me/kpi/263A0A60-3408-40FB-8369-D6849F477EE7",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/kpi/263A0A60-3408-40FB-8369-D6849F477EE7",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/virtual-salary/adjustments",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/virtual-salary/adjustments",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/virtual-salary/adjustments",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/virtual-salary/adjustments",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/virtual-salary/generate/2A30BC02-6731-4CA1-9A3C-53146333BEF8",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/virtual-salary/generate/2A30BC02-6731-4CA1-9A3C-53146333BEF8",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/intern/me/performance",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "source": "real-api",
+      "url": "http://localhost:8080/api/v1/intern/me/performance",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

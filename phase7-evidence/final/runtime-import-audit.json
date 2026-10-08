@@ -1,6 +1,6 @@
 {
   "entryCount": 55,
-  "runtimeModuleCount": 136,
+  "runtimeModuleCount": 138,
   "runtimeBusinessMockImports": [],
   "businessRouteHandlers": [],
   "files": [
@@ -135,10 +135,12 @@
     "src/lib/api/workspace.ts",
     "src/lib/auth/api-client.ts",
     "src/lib/auth/auth-service.ts",
+    "src/lib/auth/cookie-coordination.ts",
     "src/lib/auth/landing.ts",
     "src/lib/auth/role-landing.ts",
     "src/lib/auth/session.ts",
     "src/lib/auth/validation.ts",
+    "src/lib/ui/dialog-focus.ts",
     "src/lib/utils.ts"
   ]
 }
