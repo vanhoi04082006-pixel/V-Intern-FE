@@ -1,0 +1,127 @@
+name: Phase 7 real full-stack release gate
+on:
+  push:
+    branches: [feat/full-product-fe-nest-integration]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: phase7-fullstack-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  sql2019:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
+      NODE_ENV: test
+      DB_HOST: localhost
+      DB_PORT: "1433"
+      DB_NAME: VIntern_Phase715_CI
+      E2E_DB_NAME: VIntern_Phase715_CI
+      DB_USERNAME: vintern_ci
+      DB_ENCRYPT: "false"
+      DB_TRUST_SERVER_CERTIFICATE: "true"
+      JWT_EXPIRES_IN: 20s
+      CORS_ORIGINS: http://localhost:3001
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8080/api/v1
+      THROTTLE_AUTH_PER_MIN: "10000"
+      THROTTLE_LIMIT_PER_MIN: "10000"
+      THROTTLE_INTERVIEW_START_PER_MIN: "10000"
+      THROTTLE_INTERVIEW_SUBMIT_PER_MIN: "10000"
+      THROTTLE_EVALUATION_PER_MIN: "10000"
+      THROTTLE_AI_MENTOR_PER_MIN: "10000"
+      THROTTLE_AI_EVALUATION_ASSIST_PER_MIN: "10000"
+      THROTTLE_AI_RECOMMENDATION_PER_MIN: "10000"
+      REQUIRE_SQL2019: "true"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: V-INTERN-FE
+          persist-credentials: false
+      - name: Checkout exact Backend contract SHA (read-only deploy key)
+        uses: actions/checkout@v4
+        with:
+          repository: vanhoi04082006-pixel/V-Intern-BE
+          ref: 7db20c4f03b07ec5efd8fe70448ec21e05aa8b67
+          path: V-INTERN-BE
+          ssh-key: ${{ secrets.PHASE7_BE_SSH_KEY }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            V-INTERN-FE/package-lock.json
+            V-INTERN-BE/package-lock.json
+      - name: FE quality gates
+        working-directory: V-INTERN-FE
+        run: |
+          unset NODE_ENV
+          npm ci
+          npm run lint
+          npm run typecheck
+          npm test
+          npm run build
+          git diff --check
+      - name: Install and build real Nest
+        working-directory: V-INTERN-BE
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+      - name: Generate masked disposable credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          SA_PASSWORD="S3cure!$(openssl rand -hex 16)Aa1"
+          DB_PASSWORD="S3cure!$(openssl rand -hex 16)Aa1"
+          JWT_SECRET="$(openssl rand -hex 32)"
+          LIVE_PASSWORD="S3cure!$(openssl rand -hex 16)Aa1"
+          for value in "$SA_PASSWORD" "$DB_PASSWORD" "$JWT_SECRET" "$LIVE_PASSWORD"; do echo "::add-mask::$value"; done
+          { echo "SA_PASSWORD=$SA_PASSWORD"; echo "DB_PASSWORD=$DB_PASSWORD"; echo "JWT_SECRET=$JWT_SECRET"; echo "LIVE_PASSWORD=$LIVE_PASSWORD"; } >> "$GITHUB_ENV"
+      - name: Boot SQL Server 2019 and poll readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name phase7-sql -e ACCEPT_EULA=Y -e MSSQL_PID=Developer -e MSSQL_SA_PASSWORD="$SA_PASSWORD" -p 1433:1433 mcr.microsoft.com/mssql/server:2019-latest
+          deadline=$((SECONDS+180))
+          until docker exec phase7-sql /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$SA_PASSWORD" -Q 'SELECT 1' >/dev/null 2>&1 || docker exec phase7-sql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" -Q 'SELECT 1' >/dev/null 2>&1; do
+            if [ "$SECONDS" -ge "$deadline" ]; then echo 'SQL startup failed'; exit 1; fi
+            sleep 2
+          done
+      - name: Create disposable database and apply migrations 1–6
+        working-directory: V-INTERN-BE
+        env:
+          DB_ADMIN_USERNAME: sa
+          DB_ADMIN_PASSWORD: ${{ env.SA_PASSWORD }}
+        run: |
+          npm run db:create:e2e
+          npm run migration:run
+          npm run migration:show
+          npm run audit:schema
+      - name: Install browser
+        working-directory: V-INTERN-FE
+        run: npx playwright install --with-deps chrome
+      - name: Boot real Next and Nest with explicit test-only AI override
+        working-directory: V-INTERN-FE
+        run: |
+          node scripts/phase715-nest-harness.mjs > /tmp/phase7-nest.log 2>&1 &
+          NODE_ENV=production npm run start > /tmp/phase7-next.log 2>&1 &
+          node scripts/phase7-runtime-ready.mjs
+      - name: Live auth, recruitment, Waiting, assignment and Active browser gate
+        working-directory: V-INTERN-FE
+        run: |
+          node scripts/phase715-dev-fixtures.mjs
+          node scripts/phase715-live-browser.mjs
+          node scripts/phase7-work-live.mjs
+          node scripts/phase7-outcomes-fixture.mjs
+          node scripts/phase7-outcomes-live.mjs
+      - name: Upload sanitized browser/SQL evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase7-real-sql2019-${{ github.sha }}
+          path: V-INTERN-FE/phase7-evidence/
+          retention-days: 14

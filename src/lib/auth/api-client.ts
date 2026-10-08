@@ -23,13 +23,20 @@ export interface ApiFetchOptions {
   body?: unknown;
   token?: string | null;
   signal?: AbortSignal;
+  responseType?: "json" | "blob";
 }
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 export async function apiFetch(
   path: string,
-  { method = "GET", body, token, signal }: ApiFetchOptions = {},
+  {
+    method = "GET",
+    body,
+    token,
+    signal,
+    responseType = "json",
+  }: ApiFetchOptions = {},
 ): Promise<unknown> {
   const base = getApiBaseUrl();
   if (!base)
@@ -56,6 +63,11 @@ export async function apiFetch(
     throw new ApiError(0, "NETWORK_ERROR", "Không thể kết nối đến hệ thống.");
   }
   if (response.status === 204 && response.ok) return null;
+  if (response.ok && responseType === "blob") {
+    if (!response.headers.get("content-type")?.startsWith("application/pdf"))
+      throw new ApiError(0, "INVALID_RESPONSE", "Expected a PDF response.");
+    return response.blob();
+  }
   let data: unknown = null;
   try {
     data = await response.json();

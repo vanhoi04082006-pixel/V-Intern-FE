@@ -21,28 +21,76 @@ const provider = {
   name: "test",
   model: "phase715-deterministic",
   async generateStructured(request) {
+    if (
+      request.task === "ai-mentor" &&
+      request.input.userMessage === "[phase7-test-timeout]"
+    ) {
+      const { AiProviderTimeoutError } = req(
+        path.join(be, "dist/ai/ai-errors.js"),
+      );
+      throw new AiProviderTimeoutError("Development timeout scenario");
+    }
+    let payload;
+    if (request.task === "ai-mentor")
+      payload = {
+        answer:
+          "Gợi ý development: chia nhiệm vụ thành các bước nhỏ, kiểm tra yêu cầu và trao đổi với giảng viên.",
+        summary: "Lập kế hoạch nhiệm vụ.",
+        followUps: ["Tôi nên bắt đầu thế nào?"],
+      };
+    else if (request.task === "evaluation-assistance")
+      payload = {
+        criterionSuggestions: request.input.evaluationContext.criteria.map(
+          (c) => ({
+            criterionCode: c.code,
+            suggestedScore: 95,
+            evidence: ["Development deterministic evaluation context"],
+            comment: "Gợi ý test, giảng viên giữ quyết định chính thức.",
+          }),
+        ),
+        strengths: ["Phân tích rõ"],
+        improvementAreas: ["Quản lý thời gian"],
+        summary: "AI đề xuất 95, không ghi điểm chính thức.",
+        confidence: 0.8,
+      };
+    else if (request.task === "recommendation")
+      payload = {
+        recommendations: [
+          {
+            type: "delivery_improvement",
+            priority: "medium",
+            title: "Lập kế hoạch công việc",
+            reason: "Xem xét số nhiệm vụ được giao.",
+            actions: ["Chia nhiệm vụ thành các bước nhỏ."],
+            evidenceMetricCodes: ["totalTaskCount"],
+          },
+        ],
+        summary: "Khuyến nghị test từ dữ liệu nhiệm vụ.",
+      };
     const failed = request.input.role === "qa";
-    const data = request.validate({
-      technicalScore: failed ? 58 : 85,
-      softSkillScore: 72,
-      criteria: [
-        {
-          code: "integration",
-          score: failed ? 58 : 85,
-          feedback: "Development TestAIProvider evaluation.",
-        },
-      ],
-      strengths: failed ? [] : ["Concrete reasoning"],
-      weaknesses: failed ? ["Needs technical practice"] : [],
-      feedback: failed
-        ? "Development interview needs improvement."
-        : "Development interview passed.",
-      recommendedRole: "backend",
-      // Deliberately contradictory fields prove Nest computes decision/overall.
-      overallScore: 0,
-      decision: "failed",
-      passed: false,
-    });
+    const data = request.validate(
+      payload ?? {
+        technicalScore: failed ? 58 : 85,
+        softSkillScore: 72,
+        criteria: [
+          {
+            code: "integration",
+            score: failed ? 58 : 85,
+            feedback: "Development TestAIProvider evaluation.",
+          },
+        ],
+        strengths: failed ? [] : ["Concrete reasoning"],
+        weaknesses: failed ? ["Needs technical practice"] : [],
+        feedback: failed
+          ? "Development interview needs improvement."
+          : "Development interview passed.",
+        recommendedRole: "backend",
+        // Deliberately contradictory fields prove Nest computes decision/overall.
+        overallScore: 0,
+        decision: "failed",
+        passed: false,
+      },
+    );
     return {
       data,
       provider: this.name,

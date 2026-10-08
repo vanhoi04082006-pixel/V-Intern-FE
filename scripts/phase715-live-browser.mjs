@@ -144,6 +144,12 @@ try {
         "SELECT name FROM migrations ORDER BY timestamp",
       );
       assert.equal(migrations.length, 6);
+      if (process.env.REQUIRE_SQL2019 === "true")
+        assert.equal(
+          sql[0].majorVersion,
+          15,
+          "Final full-stack release gate requires real SQL Server 2019 engine",
+        );
       return {
         sql: sql[0],
         migrations: migrations.map((m) => m.name),

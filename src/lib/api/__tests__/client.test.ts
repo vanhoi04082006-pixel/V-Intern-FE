@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Blob as FetchBlob } from "node:buffer";
 import { apiFetch, ApiError } from "@/lib/auth/api-client";
 import { request } from "@/lib/api/client";
 import { clearSession, getAccessToken, setSession } from "@/lib/auth/session";
@@ -20,6 +21,38 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe("Nest HTTP boundary", () => {
+  it("downloads a real PDF blob using the same credentialed transport", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response("%PDF-1.7 test", {
+            headers: { "content-type": "application/pdf" },
+          }),
+        ),
+    );
+    const result = await apiFetch("/intern/me/certificates/id/pdf", {
+      responseType: "blob",
+    });
+    expect(result).toBeInstanceOf(FetchBlob);
+    expect(await (result as Blob).text()).toBe("%PDF-1.7 test");
+  });
+  it("rejects a successful HTML error page masquerading as a PDF", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response("<html>Error</html>", {
+            headers: { "content-type": "text/html" },
+          }),
+        ),
+    );
+    await expect(
+      apiFetch("/intern/me/certificates/id/pdf", { responseType: "blob" }),
+    ).rejects.toMatchObject({ code: "INVALID_RESPONSE" });
+  });
   it("uses the complete versioned base and credentials", async () => {
     const fetcher = vi.fn().mockResolvedValue(json(200, { ok: true }));
     vi.stubGlobal("fetch", fetcher);

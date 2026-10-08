@@ -26,7 +26,7 @@ export const INTERN_BOTTOM_NAV: InternNavItem = {
   id: "cai-dat",
   label: "Cài đặt",
   icon: Settings,
-  unavailable: true,
+  href: "/intern/profile",
 };
 export function workspaceNav(active = false): InternNavGroup[] {
   return [
@@ -49,12 +49,10 @@ export function workspaceNav(active = false): InternNavGroup[] {
         ].map((item) => ({
           ...item,
           href:
-            active && ["work", "sprint", "project"].includes(item.id)
+            active || item.id === "notifications"
               ? `/intern/${item.id}`
               : undefined,
-          unavailable: !(
-            active && ["work", "sprint", "project"].includes(item.id)
-          ),
+          unavailable: !active && item.id !== "notifications",
         })),
       ],
     },
@@ -65,7 +63,11 @@ export function workspaceNav(active = false): InternNavGroup[] {
         { id: "evaluations", label: "Đánh giá", icon: ClipboardCheck },
         { id: "kpi", label: "KPI & Lương ảo", icon: ChartColumn },
         { id: "certificates", label: "Chứng nhận", icon: Award },
-      ].map((item) => ({ ...item, unavailable: true })),
+      ].map((item) => ({
+        ...item,
+        href: active ? `/intern/${item.id}` : undefined,
+        unavailable: !active,
+      })),
     },
   ];
 }
