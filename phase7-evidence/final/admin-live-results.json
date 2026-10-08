@@ -1,0 +1,517 @@
+{
+  "results": [
+    {
+      "name": "Admin browser user create/edit/status and SQL truth; no hash in response",
+      "status": "PASS"
+    },
+    {
+      "name": "Admin browser group/member/role assignment and actual RBAC grant matrix",
+      "status": "PASS"
+    },
+    {
+      "name": "Catalog create/edit/status and business setting persisted in SQL",
+      "status": "PASS"
+    },
+    {
+      "name": "Admin task browser create/edit/soft-delete and SQL trace; group membership removal",
+      "status": "PASS"
+    },
+    {
+      "name": "Audit/activity/services/log alias/profile/notifications and real mobile navigation",
+      "status": "PASS"
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&q=admin-created-muz2cl8i%40phase715.test&roleCode=intern",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users/8C009E4B-0F86-45CD-99B8-2C4BDD7FA60B/status",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&q=admin-created-muz2cl8i%40phase715.test&roleCode=intern",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users/8C009E4B-0F86-45CD-99B8-2C4BDD7FA60B",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&q=admin-created-muz2cl8i%40phase715.test&roleCode=intern",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10&q=ui-group-muz2cl8i",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&q=admin-created-muz2cl8i%40phase715.test&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users/8C009E4B-0F86-45CD-99B8-2C4BDD7FA60B",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/members",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10&q=ui-group-muz2cl8i",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users/8C009E4B-0F86-45CD-99B8-2C4BDD7FA60B",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/roles",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10&q=ui-group-muz2cl8i",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/roles",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles/6740C2E0-FE77-4427-B2FA-451B36193FC8/permissions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups/AD7083CD-B6F8-449A-BF95-5107A99AFC77/members/8C009E4B-0F86-45CD-99B8-2C4BDD7FA60B",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10&q=ui-group-muz2cl8i",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/permissions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles/6740C2E0-FE77-4427-B2FA-451B36193FC8/permissions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles/6740C2E0-FE77-4427-B2FA-451B36193FC8/permissions?page=2&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items?page=1&pageSize=10&includeInactive=true",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/types?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/types",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/types?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items?page=1&pageSize=10&typeCode=ui-type-muz2cl8i&includeInactive=true",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items?page=1&pageSize=10&typeCode=ui-type-muz2cl8i&includeInactive=true",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items/6C9FC640-98B5-4425-AEEB-74EFDC693ED5",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items?page=1&pageSize=10&typeCode=ui-type-muz2cl8i&includeInactive=true",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/settings",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/settings",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/settings",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&q=UI-projects-muz1rreb&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/4C5CBAFD-0038-4560-BB1E-D682B16FA549",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/4C5CBAFD-0038-4560-BB1E-D682B16FA549/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?page=1&pageSize=10&search=Admin+task+muz2cl8i",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects/4C5CBAFD-0038-4560-BB1E-D682B16FA549/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/B72E1768-CA22-481C-A6FB-4360F8A5845E",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?page=1&pageSize=10&search=Admin+task+edited+muz2cl8i",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/B72E1768-CA22-481C-A6FB-4360F8A5845E",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10&action=user.created",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/activity-events?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/health",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications/preferences",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "interception": false
+}

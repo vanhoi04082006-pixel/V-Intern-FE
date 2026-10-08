@@ -2,12 +2,12 @@
   "interception": false,
   "results": [
     {
-      "name": "Own task transitions/comments/history, Sprint board, Project trace",
+      "name": "Real concurrent 409/refetch/retry without overwrite; own task transitions/comments/history, Sprint/Project SQL trace",
       "status": "PASS",
-      "taskId": "77486177-CBA1-499B-8D57-A2BDF5E6B366",
+      "taskId": "9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51",
       "sqlTrace": {
         "status": "review",
-        "content": "Bình luận live muyt5w4t"
+        "content": "Bình luận live muz1lc18"
       }
     },
     {
@@ -52,28 +52,48 @@
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/history?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments?page=1&pageSize=20",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/comments?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/history?page=1&pageSize=20",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/my",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/my",
       "method": "PATCH",
+      "status": 409
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?mine=true&page=1&pageSize=10",
+      "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51",
       "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/history?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/my",
+      "method": "PATCH",
       "status": 200
     },
     {
@@ -82,27 +102,57 @@
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/comments?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/history?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments?page=1&pageSize=20",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/comments",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/history?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/my",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?mine=true&page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/history?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments",
       "method": "POST",
       "status": 201
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/comments?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments?page=1&pageSize=20",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/my",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/my",
       "method": "PATCH",
       "status": 200
     },
@@ -112,17 +162,17 @@
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/comments?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/comments?page=1&pageSize=20",
       "method": "GET",
       "status": 200
     },
     {
-      "url": "http://localhost:8080/api/v1/tasks/77486177-CBA1-499B-8D57-A2BDF5E6B366/history?page=1&pageSize=20",
+      "url": "http://localhost:8080/api/v1/tasks/9068CA29-B0B6-4FB7-A849-7AB7EBEFDB51/history?page=1&pageSize=20",
       "method": "GET",
       "status": 200
     },

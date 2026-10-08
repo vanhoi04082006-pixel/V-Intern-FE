@@ -22,7 +22,7 @@
         "preflight": 204,
         "origin": "http://localhost:3001",
         "credentials": true,
-        "swaggerPaths": 114
+        "swaggerPaths": 118
       }
     },
     {
@@ -61,8 +61,8 @@
         "status": "recruitment_in_progress",
         "sessionPersisted": true,
         "answerCount": 1,
-        "timerBefore": 1030,
-        "timerAfter": 1029
+        "timerBefore": 1788,
+        "timerAfter": 1787
       }
     },
     {
@@ -131,14 +131,14 @@
           "total": 1
         },
         "dbTrace": {
-          "projectName": "Dự án SQL Live muysbwvs",
-          "sessionName": "Phiên SQL Live muysbwvs",
-          "taskTitle": "Task SQL Live muysbwvs",
+          "projectName": "Dự án SQL Live muz1js3b",
+          "sessionName": "Phiên SQL Live muz1js3b",
+          "taskTitle": "Task SQL Live muz1js3b",
           "progress": 37
         },
         "sqlTaskCount": 1,
         "comparison": "SQL = Nest API = FE",
-        "assignmentId": "2072AAEE-C8A3-4CF7-BFF3-7DD33527F182"
+        "assignmentId": "7CC39C39-D40C-4B08-B0F9-D0B3A06F986E"
       }
     }
   ],

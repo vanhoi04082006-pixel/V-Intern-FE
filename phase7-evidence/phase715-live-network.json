@@ -20,31 +20,39 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/auth/logout",
-      "method": "POST",
-      "status": 204,
-      "origin": "http://localhost:3001",
-      "credentials": "true"
-    },
-    {
-      "source": "browser",
-      "url": "http://localhost:8080/api/v1/auth/refresh",
-      "method": "POST",
-      "status": 401,
-      "origin": "http://localhost:3001",
-      "credentials": "true"
-    },
-    {
-      "source": "browser",
-      "url": "http://localhost:8080/api/v1/auth/login",
-      "method": "POST",
+      "url": "http://localhost:8080/api/v1/activity-events",
+      "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
       "credentials": "true"
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/auth/me",
+      "url": "http://localhost:8080/api/v1/users",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/roles",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/groups",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/audit-logs",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -76,6 +84,86 @@
     },
     {
       "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/sessions",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/sessions",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/classes",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/projects",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/recruitment/candidates",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/logout",
+      "method": "POST",
+      "status": 204,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 401,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
       "url": "http://localhost:8080/api/v1/intern/me/workspace",
       "method": "GET",
       "status": 200,
@@ -160,7 +248,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/55C329F9-5C3A-41FA-9E2B-405B56929A18/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/AA890BF2-2F46-44CA-BC04-D72F6B8D52C1/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -180,7 +268,7 @@
     },
     {
       "source": "fixture-api",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/55C329F9-5C3A-41FA-9E2B-405B56929A18/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/AA890BF2-2F46-44CA-BC04-D72F6B8D52C1/questions",
       "method": "GET",
       "status": 200
     },
@@ -218,7 +306,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/55C329F9-5C3A-41FA-9E2B-405B56929A18/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/AA890BF2-2F46-44CA-BC04-D72F6B8D52C1/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -226,7 +314,7 @@
     },
     {
       "source": "fixture-api",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/55C329F9-5C3A-41FA-9E2B-405B56929A18/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/AA890BF2-2F46-44CA-BC04-D72F6B8D52C1/questions",
       "method": "GET",
       "status": 200
     },
@@ -272,7 +360,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/FF173045-1CA0-4171-BF7F-0B7379DC910C/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/315F406D-A7D3-415C-8122-40F846D7936D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -418,7 +506,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me",
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -426,7 +514,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "url": "http://localhost:8080/api/v1/recruitment/me",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -474,7 +562,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -482,7 +570,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/7C9FEA58-75D3-4836-845A-AC7646CA7C31",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/4DD83BE3-0389-4EF4-A39E-95FB104F0BEF",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -490,7 +578,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -498,7 +586,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/66A97484-80A5-4649-A4CE-EB484CF5D8AD",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/BF018779-AB39-431E-9521-7DF1D6FD8EEF",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -506,7 +594,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -514,7 +602,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/E1C53F2F-6EF4-48E3-AED6-D69C3A924363",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/AB38FA16-F6EA-4943-9067-9C8DCCCC2399",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -522,7 +610,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -530,7 +618,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/707BB7D3-581E-4882-BE08-6E1FDA500611",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/8DADA1E6-0E57-472B-A4A8-98AB2B44E4D3",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -538,7 +626,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -546,7 +634,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/2C9095FF-7F9F-4E87-987F-E5A04B3F809A",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/4ED10E49-05E1-4EBA-BB26-10A4726EA613",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -554,7 +642,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -562,7 +650,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/1CF991E6-78B6-4662-A69C-9E239970132E",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/0470CB24-935D-4549-B0C5-5DB54CE2FD2A",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -570,7 +658,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -578,7 +666,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/71E38C05-DA43-4D06-BE26-AA2A26520893",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/19DA54B5-8488-469C-BEF3-C29D5E8CFA39",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -586,7 +674,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -594,7 +682,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/answers/742ADAB9-CB0D-41D2-A1DE-281E70365605",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/answers/A1587A17-929A-4156-A4F0-C81D6072D764",
       "method": "PUT",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -602,7 +690,7 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -610,16 +698,8 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/submit",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/submit",
       "method": "POST",
-      "status": 200,
-      "origin": "http://localhost:3001",
-      "credentials": "true"
-    },
-    {
-      "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me",
-      "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
       "credentials": "true"
@@ -642,7 +722,15 @@
     },
     {
       "source": "browser",
-      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/5FE73C85-A43D-4CC7-8BC5-3E304852B7B1/questions",
+      "url": "http://localhost:8080/api/v1/recruitment/me",
+      "method": "GET",
+      "status": 200,
+      "origin": "http://localhost:3001",
+      "credentials": "true"
+    },
+    {
+      "source": "browser",
+      "url": "http://localhost:8080/api/v1/recruitment/me/interviews/650AFE4C-46BA-4E02-B54E-1436F0EA399D/questions",
       "method": "GET",
       "status": 200,
       "origin": "http://localhost:3001",
@@ -756,7 +844,7 @@
     },
     {
       "source": "fixture-api",
-      "url": "http://localhost:8080/api/v1/sprints/548D378F-E7CB-4316-B09B-707A250C8188/status",
+      "url": "http://localhost:8080/api/v1/sprints/1F600010-FB8C-45C3-9523-D352EA27C5EB/status",
       "method": "POST",
       "status": 201
     },
@@ -768,7 +856,7 @@
     },
     {
       "source": "fixture-api",
-      "url": "http://localhost:8080/api/v1/tasks/0325874A-07F5-4CD9-A5FA-00DC4995AFB2/my",
+      "url": "http://localhost:8080/api/v1/tasks/77EB3800-6291-4E72-8004-6C7CE34E1E36/my",
       "method": "PATCH",
       "status": 200
     },

@@ -1,0 +1,942 @@
+{
+  "results": [
+    {
+      "name": "Foreign certificate 404 UI hides identity; Intern cannot render Admin workspace",
+      "status": "PASS"
+    },
+    {
+      "name": "intern: 13 real routes, desktop/mobile, no JS errors, mobile navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "instructor: 11 real routes, desktop/mobile, no JS errors, mobile navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "admin: 13 real routes, desktop/mobile, no JS errors, mobile navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "Public landing/login/register/forgot/verify routes resolve; unsupported Auth actions remain explicit contract gaps",
+      "status": "PASS"
+    }
+  ],
+  "network": [
+    {
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?mine=true&page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/sprint/board?pageSize=100",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/project",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-mentor/conversations?page=1&pageSize=20&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/evaluations",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/performance",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/kpi",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary/ledger?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/virtual-salary",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/ai-recommendations",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications/preferences",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/certificates/6DC93475-7015-4076-BF0D-5E161B00C999",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/intern/me/workspace",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/FDB05FC3-2E3C-431D-B085-D290FCFCAD16",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/FDB05FC3-2E3C-431D-B085-D290FCFCAD16/members",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/FDB05FC3-2E3C-431D-B085-D290FCFCAD16/instructors",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/FDB05FC3-2E3C-431D-B085-D290FCFCAD16/milestones",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions/instructor-options?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sprints?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/evaluation-cycles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/evaluations?page=1&pageSize=10&evaluatorId=75ABB3FC-A370-4C7F-94C0-9BA6039268B5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/performance/interns?",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/performance/interns?",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications/preferences",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/classes?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/sessions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/projects?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/recruitment/candidates?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/activity-events?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/permissions?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/items?page=1&pageSize=10&includeInactive=true",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/catalogs/types?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/settings",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/activity-events?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/health",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/tasks?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications/preferences",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/notifications?page=1&pageSize=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10&status=active",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/users?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/activity-events?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/roles?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/groups?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8080/api/v1/audit-logs?page=1&pageSize=10",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "interception": false
+}
