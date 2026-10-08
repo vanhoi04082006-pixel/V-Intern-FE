@@ -32,6 +32,32 @@ async function scenario(name, run) {
   finally { await context.close(); }
 }
 try {
+  await scenario("rapid login submits only one credential request", async context => {
+    const page = await context.newPage(); await page.goto(base + "/login");
+    await page.getByLabel("Email hoặc tên đăng nhập").fill("admin@phase715.test");
+    await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
+    await page.getByRole("button", { name: "Đăng nhập", exact: true }).evaluate(b => { b.click(); b.click(); });
+    await page.waitForURL("**/admin"); await page.waitForLoadState("networkidle");
+    assert.equal(network.filter(r => r.scenario.startsWith("rapid login") && r.url === api + "/auth/login" && r.method === "POST").length, 1);
+  });
+  await scenario("locked account shows safe denial and unlock recovers", async context => {
+    const auth = await fetch(api + "/auth/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: "admin@phase715.test", password: process.env.LIVE_PASSWORD }) });
+    assert.equal(auth.status, 200); const { accessToken } = await auth.json();
+    const headers = { authorization: `Bearer ${accessToken}`, "content-type": "application/json" }, tag = Date.now().toString(36), email = `uat-lock-${tag}@phase715.test`;
+    const created = await fetch(api + "/users", { method: "POST", headers, body: JSON.stringify({ email, username: "uat-lock-" + tag, displayName: "UAT locked account", password: process.env.LIVE_PASSWORD, roleCodes: ["intern"] }) });
+    assert.equal(created.status, 201); const user = await created.json();
+    async function status(value) { const r = await fetch(api + `/users/${user.id}/status`, { method: "PATCH", headers, body: JSON.stringify({ status: value }) }); assert.equal(r.status, 200); }
+    await status("locked");
+    const page = await context.newPage(); await page.goto(base + "/login");
+    await page.getByLabel("Email hoặc tên đăng nhập").fill(email);
+    await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
+    const [denied] = await Promise.all([page.waitForResponse(r => r.url() === api + "/auth/login" && r.request().method() === "POST"), page.getByRole("button", { name: "Đăng nhập", exact: true }).click()]);
+    assert.equal(denied.status(), 403); await page.getByRole("alert").filter({ hasText: /khóa/i }).waitFor();
+    assert.equal(new URL(page.url()).pathname, "/login"); assert.equal((await context.cookies()).filter(c => c.name === "vintern_refresh").length, 0);
+    await status("active");
+    await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+    await page.waitForURL("**/intern/onboarding**"); await page.locator("h1").first().waitFor();
+  });
   await scenario("two tabs restore and reload concurrently without refresh reuse", async context => {
     const first = await context.newPage(); await login(first);
     const networkStart = network.length;

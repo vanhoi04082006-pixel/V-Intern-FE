@@ -220,6 +220,12 @@ describe("auth-service (nối BE Module 1)", () => {
     expect(getSessionUser()).toBeNull();
   });
 
+  it("403 ACCOUNT_LOCKED explains account status without installing a principal", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(403, { code: "ACCOUNT_LOCKED" })));
+    expect(await login(VALID_CREDENTIALS)).toEqual({ ok: false, kind: "auth-error", message: "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên." });
+    expect(getSessionUser()).toBeNull();
+  });
+
   it("429 LOGIN_RATE_LIMITED → auth-error báo chờ 60 giây", async () => {
     vi.stubGlobal(
       "fetch",

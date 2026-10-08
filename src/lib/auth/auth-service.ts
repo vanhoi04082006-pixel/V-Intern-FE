@@ -138,6 +138,8 @@ function toAuthError(error: unknown): AuthFailure {
         message: "Mật khẩu quá dài (tối đa 72 ký tự).",
       };
     }
+    if (error.statusCode === 403 && error.code === "ACCOUNT_LOCKED")
+      return { ok: false, kind: "auth-error", message: "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên." };
     if (error.statusCode === 403)
       return { ok: false, kind: "auth-error", message: errorMessage(error) };
     if (error.statusCode >= 400 && error.statusCode < 500) {

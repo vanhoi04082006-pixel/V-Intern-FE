@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -54,6 +54,7 @@ interface LoginFormProps {
 
 export function LoginForm({ previewState }: LoginFormProps) {
   const router = useRouter();
+  const pendingLogin = useRef(false);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -84,7 +85,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isSubmitting) return;
+    if (pendingLogin.current) return;
 
     const fieldErrors = validateLogin({ identifier, password });
     setErrors(fieldErrors);
@@ -100,32 +101,37 @@ export function LoginForm({ previewState }: LoginFormProps) {
       return;
     }
 
+    pendingLogin.current = true;
     setStatus("submitting");
     setStatusMessage("Đang đăng nhập...");
     setGoogleNotice(false);
 
-    const result = await login({
-      identifier: identifier.trim(),
-      password,
-      remember,
-    });
+    try {
+      const result = await login({
+        identifier: identifier.trim(),
+        password,
+        remember,
+      });
 
-    if (result.ok) {
-      setStatus("success");
-      setStatusMessage("Đăng nhập thành công.");
-      // Đích đến sau đăng nhập theo role (admin → /admin, instructor →
-      // /instructor). `replace` để nút Back không quay lại form đã dùng.
-      try {
-        router.replace(await resolveLoginLanding(result.user));
-      } catch (error) {
-        setStatus("system-error");
-        setStatusMessage(errorMessage(error));
+      if (result.ok) {
+        setStatus("success");
+        setStatusMessage("Đăng nhập thành công.");
+        // Đích đến sau đăng nhập theo role (admin → /admin, instructor →
+        // /instructor). `replace` để nút Back không quay lại form đã dùng.
+        try {
+          router.replace(await resolveLoginLanding(result.user));
+        } catch (error) {
+          setStatus("system-error");
+          setStatusMessage(errorMessage(error));
+        }
+        return;
       }
-      return;
-    }
 
-    setStatus(result.kind);
-    setStatusMessage(result.message);
+      setStatus(result.kind);
+      setStatusMessage(result.message);
+    } finally {
+      pendingLogin.current = false;
+    }
   }
 
   const showErrorAlert =
