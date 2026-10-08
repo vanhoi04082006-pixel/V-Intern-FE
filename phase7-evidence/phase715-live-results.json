@@ -1,0 +1,147 @@
+{
+  "authority": "REAL Next -> REAL Nest AppModule -> REAL SQL; explicit test-only AI override",
+  "interception": false,
+  "results": [
+    {
+      "name": "CORS, original endpoints, migrations and SQL engine",
+      "status": "PASS",
+      "detail": {
+        "sql": {
+          "productVersion": "17.0.1000.7",
+          "majorVersion": 17
+        },
+        "migrations": [
+          "InitPlatformCore1759872000000",
+          "CreateAcademicCoreTables1759958400000",
+          "CreateSprintTaskCoreTables1760044800000",
+          "CreateRecruitmentAiCoreTables1760131200000",
+          "CreateEvaluationKpiSalaryCertificateTables1760217600000",
+          "CreateAiMentorAssistanceRecommendationTables1760304000000"
+        ],
+        "sql2019": false,
+        "preflight": 204,
+        "origin": "http://localhost:3001",
+        "credentials": true,
+        "swaggerPaths": 114
+      }
+    },
+    {
+      "name": "admin login/me/landing/logout and server revocation",
+      "status": "PASS",
+      "detail": {
+        "httpOnly": true,
+        "jsReadable": false,
+        "cookieCleared": true,
+        "refreshReplayStatus": 401,
+        "sqlRevoked": true
+      }
+    },
+    {
+      "name": "instructor login/me/landing/logout and server revocation",
+      "status": "PASS",
+      "detail": {
+        "httpOnly": true,
+        "jsReadable": false,
+        "cookieCleared": true,
+        "refreshReplayStatus": 401,
+        "sqlRevoked": true
+      }
+    },
+    {
+      "name": "recruitment_required resolves before workspace",
+      "status": "PASS",
+      "detail": {
+        "status": "recruitment_required"
+      }
+    },
+    {
+      "name": "in-progress: server timer and persisted answer survive reload",
+      "status": "PASS",
+      "detail": {
+        "status": "recruitment_in_progress",
+        "sessionPersisted": true,
+        "answerCount": 1,
+        "timerBefore": 1030,
+        "timerAfter": 1029
+      }
+    },
+    {
+      "name": "failed result/cooldown are authoritative",
+      "status": "PASS",
+      "detail": {
+        "status": "recruitment_failed",
+        "overall": 62.2,
+        "decision": "failed",
+        "cooldownEnforced": 409
+      }
+    },
+    {
+      "name": "Waiting desktop: DB rows, navigation and real expired-token refresh",
+      "status": "PASS",
+      "detail": {
+        "status": "unassigned",
+        "sixRows": true,
+        "dbProfile": {
+          "status": "passed",
+          "selectedRole": "backend"
+        },
+        "refreshSequence": [
+          401,
+          "refresh",
+          200
+        ],
+        "retries": 1,
+        "principalUnchanged": true
+      }
+    },
+    {
+      "name": "Waiting mobile: live DB, menu keyboard, no overflow",
+      "status": "PASS",
+      "detail": {
+        "viewport": "390x844",
+        "horizontalOverflow": false,
+        "keyboardMenu": true
+      }
+    },
+    {
+      "name": "Live interview answers/submit and backend PASS decision",
+      "status": "PASS",
+      "detail": {
+        "answerCount": 8,
+        "technical": 85,
+        "soft": 72,
+        "overall": 81.1,
+        "decision": "passed",
+        "provider": "test-only override; Nest computes result"
+      }
+    },
+    {
+      "name": "Instructor assignment transitions Waiting to Active; SQL/API/FE trace",
+      "status": "PASS",
+      "detail": {
+        "before": "unassigned",
+        "action": "Instructor POST /assignments",
+        "after": "active",
+        "emptySprintTaskVerified": true,
+        "taskSummary": {
+          "todo": 0,
+          "doing": 1,
+          "review": 0,
+          "done": 0,
+          "total": 1
+        },
+        "dbTrace": {
+          "projectName": "Dự án SQL Live muysbwvs",
+          "sessionName": "Phiên SQL Live muysbwvs",
+          "taskTitle": "Task SQL Live muysbwvs",
+          "progress": 37
+        },
+        "sqlTaskCount": 1,
+        "comparison": "SQL = Nest API = FE",
+        "assignmentId": "2072AAEE-C8A3-4CF7-BFF3-7DD33527F182"
+      }
+    }
+  ],
+  "passed": 10,
+  "failed": 0
+}

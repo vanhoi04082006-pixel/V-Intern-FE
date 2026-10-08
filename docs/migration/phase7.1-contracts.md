@@ -1,5 +1,7 @@
 # Contract tích hợp Phase 7.1
 
+> Các blocker runtime/visual dưới đây là trạng thái lịch sử Phase 7.1. Xem [xác minh live Phase 7.1.5](phase7.1.5-live-verification.md) cho kết quả mới: SQL 2025 thật, live suite PASS, visual ACCEPTABLE; SQL 2019 vẫn chưa xác minh.
+
 Nguồn kiểm chứng: V-INTERN-BE HEAD 102b9afa0998bcb0237a8fed25c5908f4436c6f2. Backend không bị sửa. Không dùng archive làm nguồn contract.
 
 ## Transport và xác thực

@@ -112,4 +112,4 @@ displayName, roles[], permissions[]}}`).
 - [x] Error contract `{statusCode, code, message}` parse đúng (unit test)
 - [x] Not-connected mode: không fetch khi env trống (unit test)
 - [x] Không có `src/app/api/**` nào trong branch này
-- [ ] Kết nối thật tới Nest BE: **BLOCKED — backend local thiếu JWT_SECRET và DB_PASSWORD** (Phase 7.1)
+- [ ] Kết nối thật tới Nest BE: **LIVE VERIFIED trên SQL Server 2025 — gate SQL Server 2019 chưa đạt** (Phase 7.1.5)

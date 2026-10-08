@@ -22,3 +22,16 @@ Production Next.js at localhost:3001. Browser API interception exists only in th
 - Live Nest/SQL: CHƯA KIỂM CHỨNG. Backend startup thiếu JWT_SECRET/DB_PASSWORD.
 - R01: PARTIAL. Mascot, illustration, sidebar/topbar khác reference; visual gate chưa chốt.
 - Release gate / bắt đầu Phase 7.2: NO.
+
+## Phase 7.1.5 — live
+
+- Live suite: 10 PASS / 0 FAIL, real Next → real Nest → real SQL Server, không interception.
+- SQL engine: 17.0.1000.7 (2025), compatibility level 150; không phải SQL Server 2019.
+- Sáu migrations thật; synchronize=false.
+- Full FE regression: 23 suites / 214 tests PASS; 213 tests được giữ và thêm logout race regression.
+- Logout cookie clear/revoke, refresh 401 → một refresh → một retry 200, principal giữ nguyên.
+- SQL/API/FE trace: một task trong project, doing=1, progress=37, project/session/task names khớp.
+- Waiting R01: ACCEPTABLE, không pixel MATCH. Desktop 1440x900, mobile 390x844, không overflow; menu focus/Escape PASS.
+- Chỉ có AUTH/FE_MAPPING logout race và VISUAL fix; không sửa BE source.
+- Release gate vẫn NO vì chưa chạy SQL Server 2019.
+- Evidence live ở phase7.1-live-\*.png, phase715-live-results.json và phase715-live-network.json.
