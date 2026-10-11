@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { AssigneeSelector } from "../assignee-selector";
 
 const page1 = [
@@ -28,7 +28,8 @@ describe("AssigneeSelector", () => {
     expect(screen.queryByRole("navigation", { name: /phân trang/i })).toBeNull();
     fireEvent.change(screen.getByLabelText(/tìm theo tên hoặc email/i), { target: { value: "trần" } });
     expect(await screen.findByText("Trần Thị B")).toBeInTheDocument();
-    expect(screen.queryByText("Nguyễn Văn A")).toBeNull();
+    // Filter applies after the debounce delay.
+    await waitFor(() => expect(screen.queryByText("Nguyễn Văn A")).toBeNull());
   });
   it("matches by email too", async () => {
     const list = mockList([page1]);
@@ -36,6 +37,7 @@ describe("AssigneeSelector", () => {
     expect(await screen.findByText("Nguyễn Văn A")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText(/tìm theo tên hoặc email/i), { target: { value: "b@x.edu" } });
     expect(await screen.findByText("Trần Thị B")).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Nguyễn Văn A")).toBeNull());
   });
   it("fetches further pages progressively when nothing matches yet", async () => {
     const list = mockList([page1, page2]);
@@ -72,5 +74,34 @@ describe("AssigneeSelector", () => {
     expect(await screen.findAllByText("Nguyễn Văn A")).toHaveLength(2);
     fireEvent.click(screen.getByRole("checkbox", { name: /nguyễn văn a/i }));
     expect(onChange).toHaveBeenCalledWith([]);
+  });
+  it("debounces search input before applying the filter", async () => {
+    const list = mockList([page1]);
+    render(<AssigneeSelector value="" onChange={vi.fn()} listCandidates={list} />);
+    expect(await screen.findByText("Nguyễn Văn A")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/tìm theo tên hoặc email/i), { target: { value: "trần" } });
+    // Debounce pending: previous results still visible.
+    expect(screen.getByText("Nguyễn Văn A")).toBeInTheDocument();
+    // After the debounce delay the filter applies with no extra server fetch.
+    expect(await screen.findByText("Trần Thị B")).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Nguyễn Văn A")).toBeNull());
+    expect(list).toHaveBeenCalledTimes(1);
+  });
+  it("loads the next un-fetched page once and ignores rapid double clicks", async () => {
+    const pages = Array.from({ length: 12 }, (_, i) => [
+      { userId: `u${i + 1}`, displayName: `Sinh viên ${i + 1}`, email: `s${i + 1}@x.edu`, status: "passed" },
+    ]);
+    const list = mockList(pages);
+    render(<AssigneeSelector value="" onChange={vi.fn()} listCandidates={list} />);
+    expect(await screen.findByText("Sinh viên 1")).toBeInTheDocument();
+    expect(await screen.findByText("Sinh viên 10")).toBeInTheDocument();
+    const more = await screen.findByRole("button", { name: /tải thêm/i });
+    fireEvent.click(more);
+    fireEvent.click(more);
+    expect(await screen.findByText("Sinh viên 11")).toBeInTheDocument();
+    const page11Calls = list.mock.calls.filter(([p]) => p === 11);
+    expect(page11Calls).toHaveLength(1);
+    // No duplicate rows after the paged fetch.
+    expect(screen.getAllByText("Sinh viên 11")).toHaveLength(1);
   });
 });

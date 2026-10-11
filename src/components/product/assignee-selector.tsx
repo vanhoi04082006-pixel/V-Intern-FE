@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { listCandidates as defaultList } from "@/lib/api/academic";
 import { errorMessage } from "@/lib/auth/api-client";
@@ -24,6 +24,7 @@ type ListFn = (
 }>;
 
 const PAGE_CAP = 10;
+const SEARCH_DEBOUNCE_MS = 150;
 
 const statusLabels: Record<string, string> = {
   passed: "Đạt tuyển dụng",
@@ -68,10 +69,22 @@ export function AssigneeSelector({
   const [error, setError] = useState<unknown>(null);
   const [active, setActive] = useState(0);
   const [reloadKey, setReloadKey] = useState(0);
+  const [nextPage, setNextPage] = useState(2);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  // Sync guard: state updates don't flush between two clicks in the same tick.
+  const loadingMoreRef = useRef(false);
 
-  const q = query.trim().toLocaleLowerCase("vi");
+  // Debounce search input so typing never hammers render/filter churn;
+  // the input stays immediate, only the applied filter lags slightly.
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query.trim().toLocaleLowerCase("vi")), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  const q = debouncedQuery;
   // Load once on open (progressively up to the cap); typing only filters
-  // client-side, so searching never hammers the server or needs paging UI.
+  // client-side through a short debounce, so searching never hammers the
+  // server or needs paging UI.
   useEffect(() => {
     let cancelled = false;
     const ctrl = new AbortController();
@@ -93,7 +106,10 @@ export function AssigneeSelector({
           setLoaded([...acc]);
           setTotal(grand);
           if (page >= totalPages || page >= PAGE_CAP) {
+            // PAGE_CAP only bounds the automatic progressive load;
+            // explicit "Tải thêm" clicks may continue past it.
             setPagesLeft(page < totalPages);
+            setNextPage(page + 1);
             break;
           }
           page += 1;
@@ -116,17 +132,23 @@ export function AssigneeSelector({
   }, [reloadKey]);
 
   async function loadMore() {
+    if (loadingMoreRef.current) return;
+    loadingMoreRef.current = true;
     setLoadingMore(true);
     setError(null);
     try {
-      const nextPage = Math.floor(loaded.length / 20) + 1;
       const r = await listCandidates(nextPage);
-      setLoaded((old) => [...old, ...r.items]);
+      setLoaded((old) => {
+        const seen = new Set(old.map((x) => x.userId));
+        return [...old, ...r.items.filter((x) => !seen.has(x.userId))];
+      });
       setTotal(r.total);
-      setPagesLeft(nextPage < r.totalPages && nextPage < PAGE_CAP);
+      setPagesLeft(nextPage < r.totalPages);
+      setNextPage((p) => p + 1);
     } catch (e) {
       setError(e);
     } finally {
+      loadingMoreRef.current = false;
       setLoadingMore(false);
     }
   }
