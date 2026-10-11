@@ -41,7 +41,19 @@ describe("ActivateButton", () => {
   it("ignores rapid double clicks and shows backend errors", async () => {
     const activate = vi.fn(async () => {
       throw new Error("PROJECT_CAPACITY_FULL");
-    });
+  it("activates a planned sprint through the transition", async () => {
+    const transition = vi.fn(async () => ({ status: "active" }));
+    const patch = vi.fn();
+    const onChanged = vi.fn();
+    render(
+      <ActivateButton kind="sprints" id="s1" status="planned" onChanged={onChanged} deps={{ patch, transition }} />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /kích hoạt/i }));
+    await waitFor(() => expect(transition).toHaveBeenCalledWith("s1", "active"));
+    expect(patch).not.toHaveBeenCalled();
+    expect(onChanged).toHaveBeenCalled();
+  });
+});
     render(
       <ActivateButton kind="projects" id="p1" status="draft" onChanged={vi.fn()} deps={{ patch: activate }} />,
     );
