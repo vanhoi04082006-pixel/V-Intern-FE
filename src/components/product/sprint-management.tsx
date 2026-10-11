@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useState } from "react";
+import { Users, Layers, CalendarDays, Clock } from "lucide-react";
 import {
   listSprints,
   saveSprint,
@@ -23,6 +24,7 @@ import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
 import { TaskDetail } from "./intern-work";
 import { CollectionMetrics } from "./collection-insights";
+import { SprintOverview } from './sprint-overview';
 import {
   Badge,
   buttonClass,
@@ -30,9 +32,24 @@ import {
   inputClass,
   Modal,
   PageTitle,
+  PageMeta,
   Pager,
   Panel,
+  StatusDot,
 } from "./primitives";
+import { Person } from "./identity";
+import { RowMenu } from "./instructor-dashboard";
+import { ActivateButton } from "./instructor-onboarding";
+
+export function TaskStatusPill({ status }: { status: string }) {
+  const tone = status === "done" ? "green" : status === "review" ? "amber" : status === "doing" ? "blue" : "gray";
+  return <StatusDot tone={tone as "green"}>{statusLabels[status as keyof typeof statusLabels] ?? status}</StatusDot>;
+}
+export function PriorityBadge({ priority }: { priority: string }) {
+  const label = ({ low: "Thấp", medium: "Trung bình", high: "Cao", critical: "Khẩn cấp" } as Record<string, string>)[priority] ?? priority;
+  const tone = priority === "high" || priority === "critical" ? "red" : priority === "medium" ? "amber" : "gray";
+  return <StatusDot tone={tone as "green"}>{label}</StatusDot>;
+}
 export function SprintManagement() {
   const [page, setPage] = useState(1),
     [projectId, setProjectId] = useState(""),
@@ -45,19 +62,20 @@ export function SprintManagement() {
       [page, projectId, status],
     ),
   );
+  const [focus,setFocus] = useState('');
+  const focused = rows.data?.items.find(s=>s.id===focus) ?? rows.data?.items.find(s=>s.status==='active') ?? rows.data?.items[0];
   return (
     <>
-      <PageTitle
-        title="Sprint & Task"
-        subtitle="Quản lý chu kỳ, giao việc và duyệt kết quả thực tế"
-        action={
-          <button className={buttonClass} onClick={() => setCreate(true)}>
-            Tạo Sprint
-          </button>
-        }
-      />
-      <Panel title="Các Sprint">
-        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+      <PageTitle title="Sprint & Task" />
+      <PageMeta items={[
+        { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
+        { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
+        { icon: CalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
+        { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
+      ]} />
+      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-sm font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="text-sm font-semibold text-blue-600" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
+      <Panel title="Các Sprint" action={<button className={buttonClass} onClick={() => setCreate(true)}>Tạo Sprint</button>}>
+        <div className="mb-4 grid items-start gap-3 sm:grid-cols-2">
           <AcademicPicker
             kind="projects"
             label="Dự án Sprint"
@@ -92,30 +110,38 @@ export function SprintManagement() {
               {rows.data.items.length ? (
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   {rows.data.items.map((s) => (
-                    <button
+                    <div
                       key={s.id}
-                      onClick={() => setSelected(s)}
-                      className="rounded-xl border border-slate-200 p-4 text-left hover:border-blue-300"
+                      className="rounded-xl border border-slate-200 p-4 hover:border-blue-300"
                     >
-                      <div className="mb-3 flex justify-between gap-2">
-                        <span className="text-xs text-slate-400">{s.code}</span>
-                        <Badge>{s.status}</Badge>
+                      <button
+                        onClick={() => setSelected(s)}
+                        className="block w-full text-left"
+                        aria-label={`Cài đặt Sprint ${s.code}`}
+                      >
+                        <div className="mb-3 flex justify-between gap-2">
+                          <span className="text-xs text-slate-400">{s.code}</span>
+                          <Badge>{s.status}</Badge>
+                        </div>
+                        <h3 className="font-bold text-navy">{s.name}</h3>
+                        <p className="mt-2 text-sm text-slate-500">
+                          {s.goal ?? "Chưa có mục tiêu"}
+                        </p>
+                        <p className="mt-3 text-xs text-slate-400">
+                          {new Date(s.startDate).toLocaleDateString("vi-VN")} –{" "}
+                          {new Date(s.endDate).toLocaleDateString("vi-VN")}
+                        </p>
+                      </button>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <ActivateButton kind="sprints" id={s.id} status={s.status} onChanged={rows.reload} />
                       </div>
-                      <h3 className="font-bold text-navy">{s.name}</h3>
-                      <p className="mt-2 text-sm text-slate-500">
-                        {s.goal ?? "Chưa có mục tiêu"}
-                      </p>
-                      <p className="mt-3 text-xs text-slate-400">
-                        {new Date(s.startDate).toLocaleDateString("vi-VN")} –{" "}
-                        {new Date(s.endDate).toLocaleDateString("vi-VN")}
-                      </p>
-                    </button>
+                    </div>
                   ))}
                 </div>
               ) : (
                 <Empty>Chưa có Sprint phù hợp.</Empty>
               )}
-              <Pager {...rows.data} onChange={setPage} />
+              <Pager {...rows.data} unit="sprint" onChange={setPage} />
             </>
           )
         )}
@@ -382,6 +408,7 @@ export function TaskManagement({
 }) {
   const [page, setPage] = useState(1),
     [status, setStatus] = useState(""),
+    [priority, setPriority] = useState(""),
     [search, setSearch] = useState(""),
     [create, setCreate] = useState(false),
     [detail, setDetail] = useState<string>(),
@@ -396,13 +423,21 @@ export function TaskManagement({
             ...(projectId ? { projectId } : {}),
             ...(sprintId ? { sprintId } : {}),
             ...(status ? { status } : {}),
+            ...(priority ? { priority } : {}),
             ...(search ? { search } : {}),
           }),
           s,
         ),
-      [page, projectId, sprintId, status, search],
+      [page, projectId, sprintId, status, priority, search],
     ),
   );
+  const members = useResource(
+    useCallback(
+      (s: AbortSignal) => (projectId ? getMembers("projects", projectId, s) : Promise.resolve([] as { userId: string; displayName: string }[])),
+      [projectId],
+    ),
+  );
+  const memberName = (id: string | null) => members.data?.find(m => m.userId === id)?.displayName ?? "Chưa phân công";
   const reload = () => {
       tasks.reload();
       onUpdated?.();
@@ -411,7 +446,7 @@ export function TaskManagement({
   return (
     <>
       <Panel
-        title="Nhiệm vụ"
+        title="Danh sách task"
         action={
           <button className={buttonClass} onClick={() => setCreate(true)}>
             Tạo nhiệm vụ
@@ -419,10 +454,10 @@ export function TaskManagement({
         }
       >
         {Boolean(action.error) && <ErrorState error={action.error} />}
-        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+        <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <input
             aria-label="Tìm nhiệm vụ quản lý"
-            placeholder="Tìm mã hoặc tên..."
+            placeholder="Tìm kiếm task, mô tả, sinh viên..."
             className={inputClass}
             value={search}
             onChange={(e) => {
@@ -446,6 +481,21 @@ export function TaskManagement({
               </option>
             ))}
           </select>
+          <select
+            aria-label="Ưu tiên nhiệm vụ quản lý"
+            className={inputClass}
+            value={priority}
+            onChange={(e) => {
+              setPriority(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">Tất cả ưu tiên</option>
+            <option value="low">Thấp</option>
+            <option value="medium">Trung bình</option>
+            <option value="high">Cao</option>
+            <option value="critical">Khẩn cấp</option>
+          </select>
         </div>
         {tasks.loading ? (
           <LoadingState />
@@ -455,53 +505,35 @@ export function TaskManagement({
           tasks.data && (
             <>
               {tasks.data.items.length ? (
-                <div className="space-y-2">
-                  {tasks.data.items.map((t) => (
-                    <article
+                <div className="overflow-x-auto"><table className="w-full min-w-[860px] text-left text-xs"><thead className="bg-slate-50"><tr>{['#','Task','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>
+                  {tasks.data.items.map((t, i) => (
+                    <tr
                       key={t.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-100 p-3"
+                      className="border-b border-slate-100"
                     >
-                      <div>
+                      <td className="p-3 text-slate-500">{(page - 1) * 10 + i + 1}</td>
+                      <td className="max-w-52 p-3">
                         <button
-                          className="text-left text-sm font-semibold text-blue-600"
+                          className="block text-left text-sm font-semibold text-blue-600"
                           onClick={() => setDetail(t.id)}
                         >
-                          {t.code} · {t.title}
+                          {t.code}
                         </button>
-                        <p className="mt-1 text-xs text-slate-400">
-                          {statusLabels[t.status]} · {t.priority} ·{" "}
-                          {t.storyPoints ?? "Chưa có"} points · {t.progress}%
-                        </p>
-                      </div>
-                      <div className="flex gap-3 text-sm">
-                        <button
-                          className="text-blue-600"
-                          onClick={() => setEdit(t)}
-                        >
-                          Sửa nhiệm vụ
-                        </button>
-                        <button
-                          className="text-red-600"
-                          disabled={action.busy}
-                          onClick={() => {
-                            if (
-                              window.confirm(
-                                `Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`,
-                              )
-                            )
-                              void action.run(() => deleteTask(t.id));
-                          }}
-                        >
-                          Xóa
-                        </button>
-                      </div>
-                    </article>
+                        <span className="mt-1 line-clamp-1 block text-[11px] text-navy">{t.title}</span>
+                      </td>
+                      <td className="max-w-40 p-3"><Person name={memberName(t.assigneeId)} /></td>
+                      <td className="p-3"><TaskStatusPill status={t.status} /></td>
+                      <td className="p-3"><PriorityBadge priority={t.priority} /></td>
+                      <td className="p-3 whitespace-nowrap">{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
+                      <td className="p-3"><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
+                      <td className="whitespace-nowrap p-3"><button className="rounded border border-blue-100 px-2 py-1 text-blue-600" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
+                    </tr>
                   ))}
-                </div>
+                </tbody></table></div>
               ) : (
                 <Empty>Chưa có nhiệm vụ phù hợp.</Empty>
               )}
-              <Pager {...tasks.data} onChange={setPage} />
+              <Pager {...tasks.data} unit="task" onChange={setPage} />
             </>
           )
         )}
