@@ -26,6 +26,7 @@ import { InstructorPicker } from "./instructor-picker";
 import { ProjectChanges } from "./project-changes";
 import { AcademicMetrics, AcademicInsights } from "./academic-insights";
 import { ClassOperations } from './class-operations';
+import { AssigneeSelector } from "./assignee-selector";
 import { RowMenu } from './instructor-dashboard';
 import { ActivateButton } from './instructor-onboarding';
 const statusNames:Record<string,string>={active:"Đang hoạt động",upcoming:"Sắp bắt đầu",paused:"Tạm dừng",recruiting:"Đang tuyển",draft:"Bản nháp",ending:"Sắp kết thúc",completed:"Hoàn thành",cancelled:"Đã hủy",archived:"Đã lưu trữ"};
@@ -552,7 +553,6 @@ export function AssignmentForm({
   const [internId, setInternId] = useState(""),
     [projectId, setProjectId] = useState(fixedProject ?? ""),
     [sessionId, setSessionId] = useState(fixedSession ?? ""),
-    [page, setPage] = useState(1),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>(),
     [success, setSuccess] = useState(false);
@@ -591,11 +591,9 @@ export function AssignmentForm({
           void assign();
         }}
       >
-        <CandidateSelect
+        <AssigneeSelector
           value={internId}
-          onChange={setInternId}
-          page={page}
-          setPage={setPage}
+          onChange={(v) => setInternId(Array.isArray(v) ? v[0] ?? "" : v)}
         />
         {!fixedProject && (
           <AcademicPicker
