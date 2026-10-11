@@ -49,12 +49,15 @@ export function AssigneeSelector({
   multiple = false,
   listCandidates = defaultList,
   label = "Chọn sinh viên",
+  onSelectionChange,
 }: {
   value: string | string[];
   onChange: (value: string | string[]) => void;
   multiple?: boolean;
   listCandidates?: ListFn;
   label?: string;
+  /** Optional display-name lookup for the current selection. */
+  onSelectionChange?: (selected: { userId: string; name: string }[]) => void;
 }) {
   const [query, setQuery] = useState("");
   const [loaded, setLoaded] = useState<AssigneeCandidate[]>([]);
@@ -135,8 +138,14 @@ export function AssigneeSelector({
     if (multiple) {
       const next = selected.includes(id) ? selected.filter((v) => v !== id) : [...selected, id];
       onChange(next);
+      onSelectionChange?.(next.map((userId) => {
+        const c = loaded.find((x) => x.userId === userId);
+        return { userId, name: c?.displayName ?? c?.email ?? userId.slice(0, 8) };
+      }));
     } else {
       onChange(id);
+      const c = loaded.find((x) => x.userId === id);
+      onSelectionChange?.([{ userId: id, name: c?.displayName ?? c?.email ?? id.slice(0, 8) }]);
     }
   }
 
