@@ -330,15 +330,15 @@ export function SetupWizard({
               <label className="block text-sm">Tên phiên<input required maxLength={256} className={`${inputClass} mt-1`} value={sName} onChange={(e) => { setTouched(true); setSName(e.target.value); }} /></label>
               <label className="block text-sm">Mô tả<textarea rows={2} maxLength={2000} className={`${inputClass} mt-1`} value={sDesc} onChange={(e) => { setTouched(true); setSDesc(e.target.value); }} /></label>
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm">Bắt đầu<input type="datetime-local" className={`${inputClass} mt-1`} value={sStart} onChange={(e) => { setTouched(true); setSStart(e.target.value); }} /></label>
-                <label className="block text-sm">Kết thúc<input type="datetime-local" className={`${inputClass} mt-1`} value={sEnd} onChange={(e) => { setTouched(true); setSEnd(e.target.value); }} /></label>
+                <label className="block text-sm">Bắt đầu<input required type="datetime-local" className={`${inputClass} mt-1`} value={sStart} onChange={(e) => { setTouched(true); setSStart(e.target.value); }} /></label>
+                <label className="block text-sm">Kết thúc<input required type="datetime-local" className={`${inputClass} mt-1`} value={sEnd} onChange={(e) => { setTouched(true); setSEnd(e.target.value); }} /></label>
               </div>
             </>
           ) : (
             <AcademicPicker kind="sessions" label="Phiên thực tập" value={sessionId} onChange={(v) => { setTouched(true); setSessionId(v); }} />
           )}
           <div className="flex justify-end gap-2">
-            <button className={buttonClass} disabled={busy || (sessionMode === "new" ? !sCode.trim() || !sName.trim() : !sessionId)} onClick={() => void submitSession()}>
+            <button className={buttonClass} disabled={busy || (sessionMode === "new" ? !sCode.trim() || !sName.trim() || !sStart || !sEnd : !sessionId)} onClick={() => void submitSession()}>
               {busy ? "Đang lưu…" : <>Tiếp tục <ArrowRight size={15} className="inline" /></>}
             </button>
           </div>

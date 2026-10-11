@@ -88,6 +88,8 @@ beforeEach(() => {
 async function fillSession() {
   fireEvent.change(screen.getByLabelText(/mã phiên/i), { target: { value: "SS-WZ-01" } });
   fireEvent.change(screen.getByLabelText(/tên phiên/i), { target: { value: "Phiên wizard" } });
+  fireEvent.change(screen.getByLabelText(/bắt đầu/i), { target: { value: "2026-11-01T00:00" } });
+  fireEvent.change(screen.getByLabelText(/kết thúc/i), { target: { value: "2026-12-31T00:00" } });
   fireEvent.click(screen.getByRole("button", { name: /tiếp tục/i }));
   await waitFor(() => expect(saveAcademicMock).toHaveBeenCalledTimes(1));
 }
@@ -184,6 +186,8 @@ describe("SetupWizard", () => {
     render(<SetupWizard onClose={vi.fn()} onFinished={vi.fn()} />);
     fireEvent.change(screen.getByLabelText(/mã phiên/i), { target: { value: "SS-WZ-09" } });
     fireEvent.change(screen.getByLabelText(/tên phiên/i), { target: { value: "Phiên wizard 9" } });
+    fireEvent.change(screen.getByLabelText(/bắt đầu/i), { target: { value: "2026-11-01T00:00" } });
+    fireEvent.change(screen.getByLabelText(/kết thúc/i), { target: { value: "2026-12-31T00:00" } });
     const next = screen.getByRole("button", { name: /tiếp tục/i });
     fireEvent.click(next);
     fireEvent.click(next);
