@@ -172,15 +172,23 @@ export function SprintManagement() {
     </>
   );
 }
-function SprintForm({
+export function SprintForm({
   sprint,
+  fixedProjectId,
+  fixedProjectName,
+  fixedSessionId,
+  fixedSessionName,
   onSaved,
 }: {
   sprint?: Sprint;
+  fixedProjectId?: string;
+  fixedProjectName?: string;
+  fixedSessionId?: string;
+  fixedSessionName?: string;
   onSaved: () => void;
 }) {
-  const [projectId, setProjectId] = useState(sprint?.projectId ?? ""),
-    [sessionId, setSessionId] = useState(sprint?.sessionId ?? ""),
+  const [projectId, setProjectId] = useState(fixedProjectId ?? sprint?.projectId ?? ""),
+    [sessionId, setSessionId] = useState(fixedSessionId ?? sprint?.sessionId ?? ""),
     action = useAction(onSaved);
   return (
     <form
@@ -213,20 +221,32 @@ function SprintForm({
             Mã Sprint
             <input required name="code" maxLength={64} className={inputClass} />
           </label>
-          <AcademicPicker
-            kind="projects"
-            label="Dự án"
-            required
-            assignable
-            value={projectId}
-            onChange={setProjectId}
-          />
-          <AcademicPicker
-            kind="sessions"
-            label="Phiên"
-            value={sessionId}
-            onChange={setSessionId}
-          />
+          {fixedProjectId ? (
+            <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">
+              Dự án: <strong>{fixedProjectName ?? fixedProjectId}</strong> — đã kế thừa, không cần chọn lại.
+            </p>
+          ) : (
+            <AcademicPicker
+              kind="projects"
+              label="Dự án"
+              required
+              assignable
+              value={projectId}
+              onChange={setProjectId}
+            />
+          )}
+          {fixedSessionId ? (
+            <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">
+              Phiên: <strong>{fixedSessionName ?? fixedSessionId}</strong> — đã kế thừa, không cần chọn lại.
+            </p>
+          ) : (
+            <AcademicPicker
+              kind="sessions"
+              label="Phiên"
+              value={sessionId}
+              onChange={setSessionId}
+            />
+          )}
         </>
       )}
       {[
@@ -566,7 +586,7 @@ export function TaskManagement({
     </>
   );
 }
-function TaskForm({
+export function TaskForm({
   task,
   projectId: initialProjectId,
   sprintId,

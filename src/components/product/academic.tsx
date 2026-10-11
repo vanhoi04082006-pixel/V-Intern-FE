@@ -29,6 +29,7 @@ import { ClassOperations } from './class-operations';
 import { AssigneeSelector } from "./assignee-selector";
 import { RowMenu } from './instructor-dashboard';
 import { ActivateButton } from './instructor-onboarding';
+import { SprintForm } from "./sprint-management";
 const statusNames:Record<string,string>={active:"Đang hoạt động",upcoming:"Sắp bắt đầu",paused:"Tạm dừng",recruiting:"Đang tuyển",draft:"Bản nháp",ending:"Sắp kết thúc",completed:"Hoàn thành",cancelled:"Đã hủy",archived:"Đã lưu trữ"};
 export function AcademicStatus({ status }: { status: string }) {
   const tone = status === "active" || status === "recruiting" ? "green" : status === "paused" || status === "ending" || status === "draft" ? "amber" : status === "upcoming" ? "blue" : status === "cancelled" || status === "archived" ? "red" : "gray";
@@ -365,6 +366,7 @@ export function AcademicDetail({
     useCallback((s: AbortSignal) => api.getAcademic(kind, id, s), [kind, id]),
   );
   const [edit, setEdit] = useState(false);
+  const [sprintOpen, setSprintOpen] = useState(false);
   const content = (
     <>
       {entity.loading ? (
@@ -378,11 +380,16 @@ export function AcademicDetail({
             <p className="text-sm">
               {entity.data.description ?? "Chưa có mô tả."}
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Badge>{entity.data.status}</Badge>
               <button className={buttonClass} onClick={() => setEdit(!edit)}>
                 {edit ? "Đóng chỉnh sửa" : "Chỉnh sửa"}
               </button>
+              {kind === "projects" && (
+                <button className="rounded-md border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50" onClick={() => setSprintOpen(true)}>
+                  Tạo Sprint
+                </button>
+              )}
             </div>
             {edit && (
               <AcademicForm
@@ -402,6 +409,11 @@ export function AcademicDetail({
               fixedProject={kind === "projects" ? id : undefined}
               fixedSession={kind === "sessions" ? id : undefined}
             />
+            {kind === "projects" && sprintOpen && entity.data && (
+              <Modal title={`Tạo Sprint cho ${entity.data.code}`} onClose={() => setSprintOpen(false)}>
+                <SprintForm fixedProjectId={id} fixedProjectName={`${entity.data.name} · ${entity.data.code}`} onSaved={() => { setSprintOpen(false); onChanged(); }} />
+              </Modal>
+            )}
           </div>
         )
       )}
