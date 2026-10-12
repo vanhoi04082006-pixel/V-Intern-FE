@@ -32,7 +32,17 @@ export interface PlannedSprint {
   tasks: PlannedTask[];
 }
 
-export interface PlanDetail extends PlanSummary {
+export interface PlanDetail {
+  planId: string;
+  projectId: string;
+  sessionId: string;
+  templateVersion: number | null;
+  status: string;
+  createdAt: string;
+  /** Counts come from the LIST shape; the detail endpoint omits them. */
+  sprintCount: number | null;
+  taskCount: number | null;
+  hasDraft: boolean;
   draft: { sprints: PlannedSprint[] } | null;
   warnings: Array<{ taskTitle: string; message: string }>;
   error: unknown;
@@ -90,7 +100,15 @@ export function parsePlanDetail(value: unknown): PlanDetail {
   const v = record(value);
   const d = v.draft === null || v.draft === undefined ? null : record(v.draft);
   return {
-    ...parsePlanSummary(v),
+    planId: string(v.planId),
+    projectId: string(v.projectId),
+    sessionId: string(v.sessionId),
+    templateVersion: optNum(v.templateVersion),
+    status: string(v.status),
+    createdAt: string(v.createdAt),
+    sprintCount: optNum(v.sprintCount),
+    taskCount: optNum(v.taskCount),
+    hasDraft: v.hasDraft === true,
     draft: d ? { sprints: array(d.sprints, parsePlannedSprint) } : null,
     warnings: Array.isArray(v.warnings)
       ? v.warnings.map((w) => {
