@@ -236,6 +236,7 @@ function SetupBody({
               <MemberSelector
                 sessionId={sessionId}
                 projectId={project.id}
+                slots={slots}
                 onChanged={onChanged}
                 deps={selectorDeps}
               />

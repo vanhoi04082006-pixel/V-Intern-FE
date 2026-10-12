@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { MemberSelector, ineligibilityReason } from "../member-selector";
+import { MemberSelector, ineligibilityReason, openRolesFor, slotRemaining } from "../member-selector";
+
+const slots = [
+  { roleCode: "frontend", requiredCount: 1, filledCount: 0 },
+  { roleCode: "backend", requiredCount: 1, filledCount: 0 },
+];
 
 const alice = {
   userId: "u1", displayName: "SV A", email: "a@x.edu", status: "passed",
@@ -23,6 +28,18 @@ function deps(over: Record<string, unknown> = {}) {
   };
 }
 
+describe("slot helpers (M4)", () => {
+  it("computes remaining capacity without going negative", () => {
+    expect(slotRemaining({ requiredCount: 2, filledCount: 0 })).toBe(2);
+    expect(slotRemaining({ requiredCount: 1, filledCount: 3 })).toBe(0);
+  });
+  it("offers open roles and prefers the recruited role", () => {
+    expect(openRolesFor(alice, slots)).toEqual(["frontend", "backend"]);
+    expect(openRolesFor(alice, [{ ...slots[0], filledCount: 1 }, slots[1]])).toEqual(["backend"]);
+    expect(openRolesFor(alice, [])).toEqual([]);
+  });
+});
+
 describe("ineligibilityReason (M4)", () => {
   it("passes eligible interns and explains the rest", () => {
     expect(ineligibilityReason(alice)).toBeNull();
@@ -34,7 +51,7 @@ describe("ineligibilityReason (M4)", () => {
 describe("MemberSelector (M4)", () => {
   it("searches server-side with scores and disables ineligible add", async () => {
     const d = deps();
-    render(<MemberSelector sessionId="s1" projectId="p1" deps={d} />);
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
     expect(screen.getByText(/Overall 81/)).toBeInTheDocument();
     expect(d.search).toHaveBeenCalledTimes(1);
@@ -47,7 +64,7 @@ describe("MemberSelector (M4)", () => {
   });
   it("debounces typing into a single refetch", async () => {
     const d = deps();
-    render(<MemberSelector sessionId="s1" projectId="p1" deps={d} />);
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
     const input = screen.getByLabelText(/tìm sinh viên/i);
     fireEvent.change(input, { target: { value: "x" } });
@@ -56,25 +73,50 @@ describe("MemberSelector (M4)", () => {
   });
   it("expands interview detail on demand", async () => {
     const d = deps();
-    render(<MemberSelector sessionId="s1" projectId="p1" deps={d} />);
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("button", { name: "Chi tiết" })[0]);
     expect(await screen.findByText(/scores/)).toBeInTheDocument();
     expect(d.detail).toHaveBeenCalledWith("u1");
   });
-  it("adds an intern and notifies the parent", async () => {
+  it("assigns with the recruited role slot so slots count the member", async () => {
     const d = deps();
     const changed = vi.fn();
-    render(<MemberSelector sessionId="s1" projectId="p1" onChanged={changed} deps={d} />);
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} onChanged={changed} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
+    // The role picker defaults to the recruited role when that slot is open.
+    const picker = screen.getByLabelText("Vai trò cho SV A") as HTMLSelectElement;
+    expect(picker.value).toBe("frontend");
     fireEvent.click(screen.getAllByRole("button", { name: "Thêm" })[0]);
     expect(await screen.findByText(/đã phân công SV A/i)).toBeInTheDocument();
-    expect(d.assign).toHaveBeenCalledWith({ internId: "u1", projectId: "p1", sessionId: "s1" });
+    expect(d.assign).toHaveBeenCalledWith({ internId: "u1", projectId: "p1", sessionId: "s1", role: "frontend" });
     expect(changed).toHaveBeenCalled();
+  });
+  it("honours a manually chosen role slot", async () => {
+    const d = deps();
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
+    expect(await screen.findByText("SV A")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Vai trò cho SV A"), { target: { value: "backend" } });
+    fireEvent.click(screen.getAllByRole("button", { name: "Thêm" })[0]);
+    expect(await screen.findByText(/đã phân công SV A/i)).toBeInTheDocument();
+    expect(d.assign).toHaveBeenCalledWith({ internId: "u1", projectId: "p1", sessionId: "s1", role: "backend" });
+  });
+  it("blocks add when no slot remains and explains it", async () => {
+    const full = [
+      { roleCode: "frontend", requiredCount: 1, filledCount: 1 },
+      { roleCode: "backend", requiredCount: 1, filledCount: 1 },
+    ];
+    const d = deps();
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={full} deps={d} />);
+    expect(await screen.findByText("SV A")).toBeInTheDocument();
+    const addButtons = screen.getAllByRole("button", { name: "Thêm" });
+    expect(addButtons[0]).toBeDisabled();
+    expect(addButtons[0].getAttribute("title")).toMatch(/không còn slot vai trò/i);
+    expect(d.assign).not.toHaveBeenCalled();
   });
   it("removes an assigned intern through the active assignment", async () => {
     const d = deps({ listAssignments: vi.fn(async () => [{ id: "as1", internId: "u1", status: "active" }]) });
-    render(<MemberSelector sessionId="s1" projectId="p1" deps={d} />);
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Gỡ" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Gỡ" }));

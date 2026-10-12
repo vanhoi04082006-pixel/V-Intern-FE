@@ -357,6 +357,8 @@ export const assignIntern = (body: {
   internId: string;
   projectId: string;
   sessionId: string;
+  /** Role slot to fill; BE enforces the slot cap and records project membership. */
+  role?: string;
 }) =>
   request("/assignments", (x) => string(record(x).id), {
     method: "POST",

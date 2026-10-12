@@ -21,6 +21,23 @@ export function ineligibilityReason(c: Candidate): string | null {
   return null;
 }
 
+/** Slot capacity left for a role (never negative). */
+export function slotRemaining(slot: { requiredCount: number; filledCount: number }): number {
+  return Math.max(0, slot.requiredCount - slot.filledCount);
+}
+
+/** Roles the team can still fill, most-matching-recruitment first. */
+export function openRolesFor(
+  candidate: Candidate,
+  slots: Array<{ roleCode: string; requiredCount: number; filledCount: number }>,
+): string[] {
+  const open = slots.filter((s) => slotRemaining(s) > 0).map((s) => s.roleCode);
+  if (candidate.selectedRole && open.includes(candidate.selectedRole)) {
+    return [candidate.selectedRole, ...open.filter((r) => r !== candidate.selectedRole)];
+  }
+  return open;
+}
+
 export interface SelectorDeps {
   search: typeof searchCandidates;
   detail: typeof getCandidateDetail;
@@ -37,11 +54,13 @@ export interface SelectorDeps {
 export function MemberSelector({
   sessionId,
   projectId,
+  slots,
   onChanged,
   deps,
 }: {
   sessionId: string;
   projectId: string;
+  slots: Array<{ roleCode: string; requiredCount: number; filledCount: number }>;
   onChanged?: () => void;
   deps?: Partial<SelectorDeps>;
 }) {
@@ -63,6 +82,8 @@ export function MemberSelector({
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [assignmentsRevision, setAssignmentsRevision] = useState(0);
+  // Per-candidate role choice (which open slot this intern fills).
+  const [rolePick, setRolePick] = useState<Record<string, string>>({});
   const action = useAction(() => {
     setAssignmentsRevision((r) => r + 1);
     onChanged?.();
@@ -114,7 +135,13 @@ export function MemberSelector({
 
   async function add(c: Candidate) {
     setNotice(null);
-    const ok = await action.run(() => assignFn({ internId: c.userId, projectId, sessionId }));
+    const open = openRolesFor(c, slots);
+    if (open.length === 0) {
+      setNotice("Không còn slot vai trò nào trống — không thể phân công thêm.");
+      return;
+    }
+    const role = rolePick[c.userId] ?? open[0];
+    const ok = await action.run(() => assignFn({ internId: c.userId, projectId, sessionId, role }));
     if (ok) setNotice(`Đã phân công ${c.displayName ?? c.email ?? c.userId}.`);
   }
 
@@ -180,6 +207,26 @@ export function MemberSelector({
                         {c.result ? ` · Overall ${c.result.overallScore} (T${c.result.technicalScore}/S${c.result.softSkillScore})` : ""}
                       </p>
                       {reason && <p className="mt-1 text-[11px] text-amber-700">{reason}</p>}
+                      {!reason && !added && (
+                        <label className="mt-1 block text-[11px] text-slate-500">
+                          Vai trò trong đội
+                          <select
+                            aria-label={`Vai trò cho ${c.displayName ?? c.userId}`}
+                            className="mt-0.5 block rounded border border-slate-200 px-1.5 py-0.5 text-[11px]"
+                            value={rolePick[c.userId] ?? openRolesFor(c, slots)[0] ?? ""}
+                            onChange={(e) => setRolePick((prev) => ({ ...prev, [c.userId]: e.target.value }))}
+                            disabled={openRolesFor(c, slots).length === 0}
+                          >
+                            {openRolesFor(c, slots).length === 0 ? (
+                              <option value="">Hết slot</option>
+                            ) : (
+                              openRolesFor(c, slots).map((r) => (
+                                <option key={r} value={r}>{r}</option>
+                              ))
+                            )}
+                          </select>
+                        </label>
+                      )}
                       {expanded === c.userId && (
                         <div className="mt-2 rounded bg-slate-50 p-2 text-[11px] text-slate-600">
                           {detail ? (
@@ -212,8 +259,8 @@ export function MemberSelector({
                       ) : (
                         <button
                           type="button"
-                          disabled={action.busy || reason !== null}
-                          title={reason ?? "Phân công vào phiên"}
+                          disabled={action.busy || reason !== null || openRolesFor(c, slots).length === 0}
+                          title={reason ?? (openRolesFor(c, slots).length === 0 ? "Không còn slot vai trò trống" : "Phân công vào phiên")}
                           className={`${buttonClass} px-2 py-1 text-[11px] disabled:opacity-50`}
                           onClick={() => void add(c)}
                         >
