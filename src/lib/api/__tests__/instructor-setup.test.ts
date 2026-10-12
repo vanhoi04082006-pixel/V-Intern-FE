@@ -91,6 +91,9 @@ describe("canActivate", () => {
     ["sessions", "upcoming", true],
     ["sessions", "active", false],
     ["sessions", "completed", false],
+    // CT-002: BE machine forbids ending→active and sessions have no paused state.
+    ["sessions", "ending", false],
+    ["sessions", "paused", false],
     ["sprints", "planned", true],
     ["sprints", "active", false],
     ["sprints", "completed", false],

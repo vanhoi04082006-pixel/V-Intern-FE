@@ -103,7 +103,9 @@ export function canActivate(kind: ActivatableKind, status: string): boolean {
   if (status === "active" || status === "archived" || status === "cancelled" || status === "completed") return false;
   if (kind === "sprints") return status === "planned";
   if (kind === "projects") return status === "draft" || status === "recruiting" || status === "paused";
-  return status === "upcoming" || status === "paused" || status === "ending";
+  // CT-002: sessions machine only allows upcoming→active; ending→completed,
+  // and sessions have no paused state — never offer other transitions.
+  return status === "upcoming";
 }
 
 export type { AcademicKind };

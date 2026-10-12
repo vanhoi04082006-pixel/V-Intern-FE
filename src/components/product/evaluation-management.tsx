@@ -7,6 +7,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
+import { Can } from "@/components/auth/can";
 import { CollectionMetrics } from "./collection-insights";
 import {
   Badge,
@@ -843,17 +844,21 @@ function ScoreEditor({
           Gợi ý không ghi vào điểm chính thức. Hãy kiểm tra chứng cứ và tự chấm
           điểm.
         </p>
-        <button
-          className={buttonClass}
-          disabled={action.busy}
-          onClick={() =>
-            void action.run(async () =>
-              setSuggestion(await api.suggestEvaluation(e.id)),
-            )
-          }
-        >
-          Yêu cầu gợi ý AI
-        </button>
+        {/* CT-004: AI suggestions require ai.evaluation.assist (plus draft/submitted
+            state enforced server-side). Hide the affordance instead of a surprise 403. */}
+        <Can perm="ai.evaluation.assist">
+          <button
+            className={buttonClass}
+            disabled={action.busy}
+            onClick={() =>
+              void action.run(async () =>
+                setSuggestion(await api.suggestEvaluation(e.id)),
+              )
+            }
+          >
+            Yêu cầu gợi ý AI
+          </button>
+        </Can>
         {suggestion && (
           <div className="mt-4 space-y-3 text-sm">
             <p>{suggestion.summary}</p>
