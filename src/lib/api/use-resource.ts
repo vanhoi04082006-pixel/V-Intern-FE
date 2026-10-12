@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-/** Callers provide a stable callback. Abort on navigation/filter change; never retain another resource's data. */
+/**
+ * Callers provide a stable callback. Abort on navigation/filter change; never
+ * retain another resource's data. Reloads of the SAME resource keep the last
+ * payload visible (stale-while-revalidate) so consumers do not unmount their
+ * children — e.g. an in-flight action notice would otherwise be discarded.
+ */
 export function useResource<T>(load: (signal: AbortSignal) => Promise<T>) {
   const [state, setState] = useState<{
     source?: typeof load;
@@ -23,10 +28,18 @@ export function useResource<T>(load: (signal: AbortSignal) => Promise<T>) {
       });
     return () => controller.abort();
   }, [load, revision]);
+  // Same resource but a newer revision → keep data, mark loading.
+  // A different resource → never reuse its payload.
+  const sameResource = state.source === load;
   const current =
-    state.source === load && state.revision === revision
+    sameResource && state.revision === revision
       ? state
-      : { loading: true };
+      : {
+          ...state,
+          data: sameResource ? state.data : undefined,
+          error: sameResource ? state.error : undefined,
+          loading: true,
+        };
   return {
     data: current.data,
     error: current.error,

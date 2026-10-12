@@ -230,8 +230,7 @@ export function MemberSelector({
             page={results.data.page}
             totalPages={results.data.totalPages}
             total={results.data.total}
-            unit="ứng viên"
-            onChange={setPage}
+            onChange={(p: number) => setPage(p)}
           />
           <p className="text-[11px] text-slate-400">
             Backend kiểm tra eligibility khi lưu; ứng viên chưa đạt sẽ bị từ chối với mã lỗi rõ ràng.

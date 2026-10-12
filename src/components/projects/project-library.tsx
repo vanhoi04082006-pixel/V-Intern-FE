@@ -101,7 +101,7 @@ export function ProjectLibrary({
               </li>
             ))}
           </ul>
-          <Pager page={data.data.page} totalPages={data.data.totalPages} total={data.data.total} unit="mẫu" onChange={setPage} />
+          <Pager page={data.data.page} totalPages={data.data.totalPages} total={data.data.total} onChange={(p: number) => setPage(p)} />
         </>
       )}
       <p className="text-[11px] text-slate-400">Dữ liệu thật từ Project Library (phiên bản mẫu được quản lý tập trung).</p>

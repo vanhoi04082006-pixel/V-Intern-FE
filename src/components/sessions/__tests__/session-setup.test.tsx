@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { SessionSetup, assessTeam } from "../session-setup";
 
 const session = { code: "SS-1", name: "K48", status: "upcoming", startDate: "2026-11-01", endDate: "2026-12-31" };
@@ -57,6 +57,31 @@ describe("SessionSetup (M3)", () => {
       />,
     );
     expect(await screen.findByText(/chưa gắn project/i)).toBeInTheDocument();
+  });
+  it("keeps action notices across parent reloads (no unmount on refresh)", async () => {
+    const alice = { userId: "u1", displayName: "SV A", email: "a@x.edu", status: "passed", selectedRole: "frontend", attemptCount: 1, recruitedAt: null, hasActiveAssignment: false, activeProjectId: null, result: null };
+    let calls = 0;
+    const selDeps = {
+      search: vi.fn(async () => ({ items: [alice], total: 1, page: 1, pageSize: 10, totalPages: 1 })),
+      detail: vi.fn(async () => ({})),
+      assign: vi.fn(async () => "as1"),
+      cancel: vi.fn(async () => "as1"),
+      listAssignments: vi.fn(async () => []),
+    };
+    const getMembers = vi.fn(async () => {
+      calls += 1;
+      return calls === 1 ? [] : [{ userId: "u1", displayName: "SV A", email: "a@x.edu" }];
+    });
+    render(<SessionSetup sessionId="s1" projectId="p1" selectorDeps={selDeps} deps={{ ...deps, getMembers }} />);
+    expect(await screen.findByText(/Setup: K48/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/tìm sinh viên/i), { target: { value: "sv" } });
+    // Wait for the selector row itself (slot holders also contain "SV A").
+    expect(await screen.findByText(/Role: frontend/)).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: "Thêm" })[0]);
+    // Notice survives the parent reload triggered by onChanged, and the
+    // refreshed member list arrives in the same tree.
+    expect(await screen.findByText(/đã phân công SV A/i)).toBeInTheDocument();
+    expect((await screen.findAllByText("SV A")).length).toBeGreaterThanOrEqual(1);
   });
   it("notes non-upcoming sessions and shows their AI plans", async () => {
     const planDeps = {

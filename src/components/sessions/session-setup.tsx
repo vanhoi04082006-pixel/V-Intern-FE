@@ -7,13 +7,43 @@ import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { getAcademic, getMembers, getProjectSlots, transitionSession, type SlotInfo } from "@/lib/api/academic";
 import { getTemplateContext } from "@/lib/api/templates";
-import { MemberSelector } from "./member-selector";
+import { MemberSelector, type SelectorDeps } from "./member-selector";
 import { AiPlanPanel, type PlanDeps } from "./ai-plan";
 
 export interface RequiredRole {
   code: string;
   title: string | null;
   countMin: number;
+}
+
+export interface SetupSession {
+  code: string;
+  name: string;
+  status: string;
+  startDate: string | null;
+  endDate: string | null;
+}
+
+export interface SetupProject {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+}
+
+export interface SetupMember {
+  userId: string;
+  displayName: string;
+  email: string;
+}
+
+export interface SetupData {
+  session: SetupSession;
+  project: SetupProject | null;
+  slots: SlotInfo[];
+  members: SetupMember[];
+  definition: Record<string, unknown> | null;
+  templateVersion: number | null;
 }
 
 export interface TeamAssessment {
@@ -49,10 +79,10 @@ function roleDetailsOf(definition: Record<string, unknown>): RequiredRole[] {
 }
 
 export interface SetupDeps {
-  getSession: (id: string, signal?: AbortSignal) => Promise<{ code: string; name: string; status: string; startDate: string | null; endDate: string | null }>;
-  getProject: (id: string, signal?: AbortSignal) => Promise<{ code: string; name: string; status: string }>;
+  getSession: (id: string, signal?: AbortSignal) => Promise<SetupSession>;
+  getProject: (id: string, signal?: AbortSignal) => Promise<SetupProject>;
   getSlots: typeof getProjectSlots;
-  getMembers: (sessionId: string, signal?: AbortSignal) => Promise<Array<{ userId: string; displayName: string; email: string }>>;
+  getMembers: (sessionId: string, signal?: AbortSignal) => Promise<SetupMember[]>;
   getContext: typeof getTemplateContext;
 }
 
@@ -66,11 +96,13 @@ export function SessionSetup({
   projectId,
   deps,
   planDeps,
+  selectorDeps,
 }: {
   sessionId: string;
   projectId: string | null;
   deps?: Partial<SetupDeps>;
   planDeps?: Partial<PlanDeps>;
+  selectorDeps?: Partial<SelectorDeps>;
 }) {
   const d: SetupDeps = {
     getSession: (id, signal) => getAcademic("sessions", id, signal),
@@ -82,9 +114,14 @@ export function SessionSetup({
   };
   const data = useResource(
     useCallback(
-      async (signal: AbortSignal) => {
+      async (signal: AbortSignal): Promise<SetupData> => {
         const session = await d.getSession(sessionId, signal);
-        if (!projectId) return { session, project: null, slots: [], members: [], definition: null, templateVersion: null as number | null };
+        if (!projectId) {
+          return {
+            session, project: null, slots: [], members: [],
+            definition: null, templateVersion: null,
+          } as SetupData;
+        }
         const [project, slots, members, context] = await Promise.all([
           d.getProject(projectId, signal),
           d.getSlots(projectId, signal),
@@ -105,9 +142,14 @@ export function SessionSetup({
     ),
   );
 
-  if (data.loading) return <p role="status" className="p-4 text-sm text-slate-500">Đang tải phiên setup...</p>;
-  if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
-  return <SetupBody sessionId={sessionId} projectId={projectId} data={data.data} onChanged={data.reload} planDeps={planDeps} />;
+  // Stale-while-revalidate: keep showing current data while reloading so child
+  // state (e.g. action notices in MemberSelector) survives parent refreshes.
+  // Unmounting on every reload would silently discard them.
+  if (!data.data) {
+    if (data.loading) return <p role="status" className="p-4 text-sm text-slate-500">Đang tải phiên setup...</p>;
+    return <ErrorState error={data.error} onRetry={data.reload} />;
+  }
+  return <SetupBody sessionId={sessionId} projectId={projectId} data={data.data} onChanged={data.reload} planDeps={planDeps} selectorDeps={selectorDeps} refreshing={data.loading} />;
 }
 
 function SetupBody({
@@ -116,19 +158,16 @@ function SetupBody({
   data,
   onChanged,
   planDeps,
+  selectorDeps,
+  refreshing,
 }: {
   sessionId: string;
   projectId: string | null;
-  data: {
-    session: { code: string; name: string; status: string; startDate: string | null; endDate: string | null };
-    project: { id: string; code: string; name: string; status: string } | null;
-    slots: SlotInfo[];
-    members: Array<{ userId: string; displayName: string; email: string }>;
-    definition: Record<string, unknown> | null;
-    templateVersion: number | null;
-  };
+  data: SetupData;
   onChanged: () => void;
   planDeps?: Partial<PlanDeps>;
+  selectorDeps?: Partial<SelectorDeps>;
+  refreshing?: boolean;
 }) {
   const { session, project, slots, members, definition, templateVersion } = data;
   const required = definition ? roleDetailsOf(definition) : [];
@@ -142,6 +181,7 @@ function SetupBody({
         subtitle={`${session.code} · ${session.status}${templateVersion !== null ? ` · template v${templateVersion}` : ""}`}
         action={<Link className="text-xs font-semibold text-blue-600 hover:underline" href="/instructor/sessions">← Phiên thực tập</Link>}
       />
+      {refreshing && <p role="status" className="text-[11px] text-slate-400">Đang cập nhật dữ liệu...</p>}
       {!projectId || !project ? (
         <Empty>
           Phiên chưa gắn project. Hãy mở trang này từ nút “Khởi tạo phiên thực tập” của một Project Template.
@@ -197,6 +237,7 @@ function SetupBody({
                 sessionId={sessionId}
                 projectId={project.id}
                 onChanged={onChanged}
+                deps={selectorDeps}
               />
             </Panel>
           )}

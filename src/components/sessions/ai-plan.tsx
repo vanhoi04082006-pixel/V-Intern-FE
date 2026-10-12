@@ -66,7 +66,7 @@ export function AiPlanPanel({
       [get, currentId, revision],
     ),
   );
-  const plan: PlanDetail | null = detail.data;
+  const plan: PlanDetail | null = detail.data ?? null;
 
   async function regenerate() {
     setNotice(null);

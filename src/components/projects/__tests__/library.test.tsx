@@ -74,8 +74,8 @@ describe("TemplateDetail (M2)", () => {
     fireEvent.click(screen.getByRole("button", { name: /khởi tạo phiên thực tập/i }));
     await screen.findByText(/đã tạo phiên thực tập/i);
     expect(start).toHaveBeenCalledTimes(1);
-    const firstRequestId = start.mock.calls[0][1].requestId;
-    expect(typeof firstRequestId).toBe("string");
+    const firstCall = start.mock.calls[0] as Array<{ requestId?: unknown }> | undefined;
+    expect(typeof firstCall?.[1]?.requestId).toBe("string");
     expect(screen.getByRole("link", { name: /mở session setup/i }).getAttribute("href")).toBe(
       "/instructor/sessions/s1/setup?project=p1",
     );

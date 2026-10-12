@@ -49,10 +49,12 @@ describe("AiPlanPanel (M5)", () => {
     fireEvent.click(screen.getByRole("button", { name: /xác nhận & publish/i }));
     expect(await screen.findByText(/đã publish Sprint\/Task/i)).toBeInTheDocument();
     expect(d.confirm).toHaveBeenCalledTimes(1);
-    const body = d.confirm.mock.calls[0][0];
-    expect(body.projectId).toBe("p1");
-    expect(body.planId).toBe("pl1");
-    expect(typeof body.requestId).toBe("string");
+    const body = (d.confirm.mock.calls as unknown as Array<[unknown]>)[0]?.[0] as
+      | { projectId: string; planId: string; requestId: unknown }
+      | undefined;
+    expect(body?.projectId).toBe("p1");
+    expect(body?.planId).toBe("pl1");
+    expect(typeof body?.requestId).toBe("string");
     expect(published).toHaveBeenCalled();
   });
   it("shows failure with retry and regenerates", async () => {
