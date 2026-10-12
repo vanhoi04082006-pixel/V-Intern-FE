@@ -2,10 +2,13 @@
 import Link from "next/link";
 import { useCallback } from "react";
 import { ErrorState } from "@/components/shared/data-state";
-import { Empty, PageTitle, Panel } from "@/components/product/primitives";
+import { Empty, PageTitle, Panel, buttonClass } from "@/components/product/primitives";
+import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
-import { getAcademic, getMembers, getProjectSlots, type SlotInfo } from "@/lib/api/academic";
+import { getAcademic, getMembers, getProjectSlots, transitionSession, type SlotInfo } from "@/lib/api/academic";
 import { getTemplateContext } from "@/lib/api/templates";
+import { MemberSelector } from "./member-selector";
+import { AiPlanPanel, type PlanDeps } from "./ai-plan";
 
 export interface RequiredRole {
   code: string;
@@ -62,10 +65,12 @@ export function SessionSetup({
   sessionId,
   projectId,
   deps,
+  planDeps,
 }: {
   sessionId: string;
   projectId: string | null;
   deps?: Partial<SetupDeps>;
+  planDeps?: Partial<PlanDeps>;
 }) {
   const d: SetupDeps = {
     getSession: (id, signal) => getAcademic("sessions", id, signal),
@@ -102,9 +107,33 @@ export function SessionSetup({
 
   if (data.loading) return <p role="status" className="p-4 text-sm text-slate-500">Đang tải phiên setup...</p>;
   if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
-  const { session, project, slots, members, definition, templateVersion } = data.data;
+  return <SetupBody sessionId={sessionId} projectId={projectId} data={data.data} onChanged={data.reload} planDeps={planDeps} />;
+}
+
+function SetupBody({
+  sessionId,
+  projectId,
+  data,
+  onChanged,
+  planDeps,
+}: {
+  sessionId: string;
+  projectId: string | null;
+  data: {
+    session: { code: string; name: string; status: string; startDate: string | null; endDate: string | null };
+    project: { id: string; code: string; name: string; status: string } | null;
+    slots: SlotInfo[];
+    members: Array<{ userId: string; displayName: string; email: string }>;
+    definition: Record<string, unknown> | null;
+    templateVersion: number | null;
+  };
+  onChanged: () => void;
+  planDeps?: Partial<PlanDeps>;
+}) {
+  const { session, project, slots, members, definition, templateVersion } = data;
   const required = definition ? roleDetailsOf(definition) : [];
   const assessment = assessTeam(slots, required, members.length);
+  const startAction = useAction(onChanged);
 
   return (
     <div className="space-y-4">
@@ -162,19 +191,45 @@ export function SessionSetup({
               </ul>
             )}
           </Panel>
-          <Panel title="Sẵn sàng Start">
+          {session.status === "upcoming" && (
+            <Panel title="Thêm sinh viên">
+              <MemberSelector
+                sessionId={sessionId}
+                projectId={project.id}
+                onChanged={onChanged}
+              />
+            </Panel>
+          )}
+          <Panel title="Start Session">
             {session.status !== "upcoming" ? (
-              <p role="status" className="text-sm text-slate-500">Phiên đang ở trạng thái {session.status} — setup chỉ áp dụng cho phiên upcoming.</p>
-            ) : assessment.ready ? (
-              <p role="status" className="text-sm font-medium text-emerald-700">Đội hình đã đủ điều kiện — sẵn sàng Start Session ở bước tiếp theo.</p>
-            ) : assessment.missing.length > 0 ? (
-              <ul className="space-y-1 text-sm text-amber-700">
-                {assessment.missing.map((m) => (
-                  <li key={m.roleCode}>Thiếu {m.need - m.have} {m.roleCode} (đang có {m.have}/{m.need}).</li>
-                ))}
-              </ul>
+              <div className="space-y-3">
+                <p role="status" className="text-sm text-slate-500">Phiên đang ở trạng thái {session.status}.</p>
+                {project && <AiPlanPanel sessionId={sessionId} projectId={project.id} onPublished={onChanged} deps={planDeps} />}
+              </div>
             ) : (
-              <p role="status" className="text-sm text-amber-700">Chưa có thành viên nào — hãy thêm sinh viên trước khi Start.</p>
+              <div className="space-y-2">
+                {assessment.ready ? (
+                  <p role="status" className="text-sm font-medium text-emerald-700">Đội hình đã đủ điều kiện.</p>
+                ) : assessment.missing.length > 0 ? (
+                  <ul className="space-y-1 text-sm text-amber-700">
+                    {assessment.missing.map((m) => (
+                      <li key={m.roleCode}>Thiếu {m.need - m.have} {m.roleCode} (đang có {m.have}/{m.need}).</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p role="status" className="text-sm text-amber-700">Chưa có thành viên nào — hãy thêm sinh viên trước khi Start.</p>
+                )}
+                <button
+                  type="button"
+                  disabled={startAction.busy}
+                  className={buttonClass}
+                  onClick={() => void startAction.run(() => transitionSession(sessionId, "active"))}
+                >
+                  {startAction.busy ? "Đang start..." : "Start Session"}
+                </button>
+                {Boolean(startAction.error) && <ErrorState error={startAction.error} />}
+                <p className="text-[11px] text-slate-400">Start chuyển phiên sang active, validate đội hình ở Backend rồi tự kích hoạt AI lập kế hoạch.</p>
+              </div>
             )}
           </Panel>
         </>

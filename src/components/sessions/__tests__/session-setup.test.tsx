@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { SessionSetup, assessTeam } from "../session-setup";
 
 const session = { code: "SS-1", name: "K48", status: "upcoming", startDate: "2026-11-01", endDate: "2026-12-31" };
-const project = { code: "PRJ-1", name: "Shop", status: "active" };
+const project = { id: "p1", code: "PRJ-1", name: "Shop", status: "active" };
 const slots = [
   { roleCode: "frontend", requiredCount: 1, filledCount: 1, members: [{ userId: "u1", displayName: "SV A" }] },
   { roleCode: "backend", requiredCount: 1, filledCount: 0, members: [] },
@@ -58,14 +58,39 @@ describe("SessionSetup (M3)", () => {
     );
     expect(await screen.findByText(/chưa gắn project/i)).toBeInTheDocument();
   });
-  it("notes non-upcoming sessions", async () => {
+  it("notes non-upcoming sessions and shows their AI plans", async () => {
+    const planDeps = {
+      list: vi.fn(async () => []),
+      get: vi.fn(),
+      generate: vi.fn(),
+      confirm: vi.fn(),
+    };
     render(
       <SessionSetup
         sessionId="s1"
         projectId="p1"
+        planDeps={planDeps}
         deps={{ ...deps, getSession: vi.fn(async () => ({ ...session, status: "active" })) }}
       />,
     );
-    expect(await screen.findByText(/chỉ áp dụng cho phiên upcoming/i)).toBeInTheDocument();
+    expect(await screen.findByText(/đang ở trạng thái active/i)).toBeInTheDocument();
+    expect(planDeps.list).toHaveBeenCalled();
+  });
+  it("starts the session when the team is ready", async () => {
+    const full = {
+      ...deps,
+      getSlots: vi.fn(async () => [
+        { roleCode: "frontend", requiredCount: 1, filledCount: 1, members: [] },
+        { roleCode: "backend", requiredCount: 1, filledCount: 1, members: [] },
+      ]),
+      getMembers: vi.fn(async () => [
+        { userId: "u1", displayName: "SV A", email: "a@x.edu" },
+        { userId: "u2", displayName: "SV B", email: "b@x.edu" },
+      ]),
+    };
+    render(<SessionSetup sessionId="s1" projectId="p1" deps={full} />);
+    const btn = await screen.findByRole("button", { name: /start session/i });
+    expect(screen.getByText(/đội hình đã đủ điều kiện/i)).toBeInTheDocument();
+    expect(btn).toBeEnabled();
   });
 });

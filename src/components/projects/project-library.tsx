@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
-import { Empty, PageTitle, Pager, Panel, buttonClass, inputClass } from "@/components/product/primitives";
+import { Empty, PageTitle, Pager, Panel, inputClass } from "@/components/product/primitives";
 import { useResource } from "@/lib/api/use-resource";
 import { listTemplates, type TemplateQuery, type TemplateSummary } from "@/lib/api/templates";
 
