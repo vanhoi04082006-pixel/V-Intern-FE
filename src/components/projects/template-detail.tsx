@@ -177,7 +177,7 @@ export function TemplateDetail({
               {started.deduped ? "Phiên đã tồn tại (không tạo trùng)." : "Đã tạo phiên thực tập."}
             </p>
             <p>
-              <Link className="font-semibold text-blue-600 hover:underline" href={`/instructor/sessions/${started.sessionId}`}>
+              <Link className="font-semibold text-blue-600 hover:underline" href={`/instructor/sessions/${started.sessionId}/setup?project=${started.projectId}`}>
                 Mở Session Setup →
               </Link>
             </p>

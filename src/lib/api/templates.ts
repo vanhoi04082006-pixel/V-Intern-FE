@@ -127,6 +127,12 @@ export const listTemplates = (q: TemplateQuery, signal?: AbortSignal) => {
 export const getTemplate = (id: string, signal?: AbortSignal) =>
   request(`/project-templates/${encodeURIComponent(id)}`, parseTemplateDetail, { signal });
 
+export const getTemplateContext = (projectId: string, signal?: AbortSignal) =>
+  request(`/projects/${encodeURIComponent(projectId)}/template-context`, (v) => {
+    const r = record(v);
+    return { definition: record(r.definition), templateVersion: number(r.templateVersion) };
+  }, { signal });
+
 export const startTemplateSession = (
   id: string,
   body: { name: string; startDate: string; endDate: string; requestId?: string },

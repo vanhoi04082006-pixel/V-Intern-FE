@@ -77,7 +77,7 @@ describe("TemplateDetail (M2)", () => {
     const firstRequestId = start.mock.calls[0][1].requestId;
     expect(typeof firstRequestId).toBe("string");
     expect(screen.getByRole("link", { name: /mở session setup/i }).getAttribute("href")).toBe(
-      "/instructor/sessions/s1",
+      "/instructor/sessions/s1/setup?project=p1",
     );
   });
   it("refuses archived templates", async () => {

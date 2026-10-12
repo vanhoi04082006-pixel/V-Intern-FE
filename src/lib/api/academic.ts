@@ -116,6 +116,27 @@ export const listAcademic = (
     (x) => parsePage(x, parseAcademic),
     { signal },
   );
+export function parseSlot(value: unknown) {
+  const v = record(value);
+  return {
+    roleCode: string(v.roleCode),
+    requiredCount: number(v.requiredCount),
+    filledCount: number(v.filledCount),
+    members: Array.isArray(v.members)
+      ? v.members.map((m) => {
+          const r = record(m);
+          return { userId: string(r.userId), displayName: nullable(r.displayName, string) };
+        })
+      : [],
+  };
+}
+export type SlotInfo = ReturnType<typeof parseSlot>;
+
+export const getProjectSlots = (projectId: string, signal?: AbortSignal) =>
+  request(`/projects/${encodeURIComponent(projectId)}/slots`, (x) => array(record(x).slots, parseSlot), {
+    signal,
+  });
+
 export const getAcademic = (
   kind: AcademicKind,
   id: string,
