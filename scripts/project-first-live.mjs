@@ -77,7 +77,8 @@ try {
   stage = "create-session";
   const startDate = new Date(Date.now() + 86400000).toISOString().slice(0, 10), endDate = new Date(Date.now() + 29 * 86400000).toISOString().slice(0, 10);
   await page.getByLabel("Tên phiên", { exact: true }).fill(`Project-first ${tag}`); await page.getByLabel("Ngày bắt đầu").fill(startDate); await page.getByLabel("Ngày kết thúc").fill(startDate);
-  await page.getByRole("button", { name: "Khởi tạo phiên thực tập", exact: true }).click(); await expect(page.getByRole("alert")).toHaveText("Ngày kết thúc phải sau ngày bắt đầu.");
+  await page.getByRole("button", { name: "Khởi tạo phiên thực tập", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: /^Ngày kết thúc phải sau ngày bắt đầu\.$/ })).toHaveText("Ngày kết thúc phải sau ngày bắt đầu.");
   await page.getByLabel("Ngày kết thúc").fill(endDate);
   const creation = page.waitForResponse(r => r.url().toLowerCase().endsWith(`/project-templates/${template.id}/start`.toLowerCase()) && r.request().method() === "POST");
   await page.getByRole("button", { name: "Khởi tạo phiên thực tập", exact: true }).evaluate(b => { b.click(); b.click(); });
