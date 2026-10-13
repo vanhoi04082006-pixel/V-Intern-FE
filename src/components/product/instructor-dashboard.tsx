@@ -12,8 +12,6 @@ import { Person } from "./identity";
 import { TaskDetail } from "./intern-work";
 import { Burndown } from './sprint-overview';
 import { ImportedReviews } from './imported-reviews';
-import { InstructorSetupPanel } from './instructor-onboarding';
-import { SetupWizard } from './setup-wizard';
 
 const date = (value: string) => new Date(value).toLocaleDateString("vi-VN");
 const percentage = (done: number, total: number) => total ? Math.round(done / total * 100) : 0;
@@ -21,7 +19,7 @@ const percentage = (done: number, total: number) => total ? Math.round(done / to
 
 export function InstructorDashboard() {
   const resource = useResource(useCallback((s: AbortSignal) => getInstructorDashboard(s), []));
-  const [assign, setAssign] = useState(false), [selectedSprint, setSelectedSprint] = useState(""), [reviewTask, setReviewTask] = useState(""), [wizard, setWizard] = useState(false);
+  const [assign, setAssign] = useState(false), [selectedSprint, setSelectedSprint] = useState(""), [reviewTask, setReviewTask] = useState("");
   if (resource.loading) return <LoadingState />;
   if (resource.error) return <ErrorState error={resource.error} onRetry={resource.reload} />;
   if (!resource.data) return null;
@@ -35,7 +33,7 @@ export function InstructorDashboard() {
     { icon: Clock, label: "Task / PR chờ duyệt", value: m.reviewCount.toLocaleString("vi-VN"), sub: `${m.overdueCount} task quá hạn`, subTone: "text-red-600" },
   ];
   return <div className="instructor-overview">
-    <PageTitle title="Instructor Workspace" subtitle="Theo dõi và quản lý chương trình thực tập" action={<button className={buttonClass} onClick={() => setWizard(true)}><Rocket size={16} /> Khởi tạo đợt thực tập</button>} />
+    <PageTitle title="Instructor Workspace" subtitle="Theo dõi và quản lý chương trình thực tập" action={<Link className={buttonClass} href="/instructor/projects"><Rocket size={16} /> Khởi tạo phiên từ thư viện</Link>} />
     <PageMeta items={[
       { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
       { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
@@ -44,7 +42,6 @@ export function InstructorDashboard() {
       { icon: Clock, label: "Cập nhật lúc", value: new Date(d.generatedAt).toLocaleString("vi-VN") },
     ]} />
     <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{cards.map((c, i) => <MetricCard key={c.label} icon={c.icon} label={c.label} index={i} value={c.value} sub={c.sub} subTone={c.subTone ?? "text-slate-500"} />)}</div>
-    <div className="mb-4"><InstructorSetupPanel input={{ sessionCount: m.sessionCount, internCount: m.internCount, sprintCount: d.sprints.length, taskCount: m.taskCount }} onSetup={() => setWizard(true)} /></div>
     <div className="grid items-start gap-3 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
       <Panel title="Phiên thực tập đang hoạt động" action={<span className="flex items-center gap-3"><Link href="/instructor/sessions" className="text-xs text-blue-600">Xem tất cả phiên →</Link><Link href="/instructor/sessions" className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"><Plus size={14} />Tạo phiên mới</Link></span>}>
         {!d.sessions.length ? <Empty>Chưa có phiên trong phạm vi quản lý.</Empty> : <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-left text-xs"><thead className="bg-[#f0f5fa]"><tr>{["Phiên", "Project", "Số sinh viên", "Tiến độ", "Trạng thái", "Thời gian", "Hành động"].map((h) => <th className="px-2 py-2 font-medium" key={h}>{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{d.sessions.map((s) => <tr key={s.id}><td className="max-w-52 px-2 py-2"><strong className="block text-blue-600">{s.code}</strong><span className="mt-1 line-clamp-1 block text-[10px] text-slate-500">{s.name}</span></td><td className="max-w-36 px-2 py-2"><span className="block font-semibold text-navy">{s.projectName ?? "Chưa có dự án"}</span></td><td className="px-2 py-2"><AvatarStack count={s.memberCount} /></td><td className="min-w-28 px-2 py-2"><ProgressBar value={percentage(s.doneCount, s.taskCount)} /></td><td className="px-2 py-2"><SessionStatus status={s.status} /></td><td className="whitespace-nowrap px-2 py-2 text-[11px]">{date(s.startDate)}<br />{date(s.endDate)}</td><td className="whitespace-nowrap px-2 py-2"><Link href={`/instructor/sessions/${s.id}`} className="rounded border border-blue-100 px-2 py-1 text-blue-600">Xem chi tiết</Link> <RowMenu label={`Thao tác phiên ${s.code}`} href={`/instructor/sessions/${s.id}`} /></td></tr>)}</tbody></table></div>}
@@ -66,7 +63,6 @@ export function InstructorDashboard() {
       <Panel title="Hoạt động gần đây" action={<Link href="/admin/activity" className="text-xs text-blue-600">Xem tất cả →</Link>}><ul aria-label="Hoạt động gần đây" tabIndex={0} className="max-h-44 space-y-3 overflow-y-auto pr-2 focus-visible:outline-2 focus-visible:outline-blue-600">{d.activity.map((a) => <li key={a.id} className="flex gap-3 text-xs"><span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-500" /><div className="min-w-0 flex-1"><p className="text-navy">{a.summary ?? a.action}</p><p className="mt-1 text-[10px] text-slate-400">{a.displayName}</p></div><time className="shrink-0 text-[10px] text-slate-400">{new Date(a.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}</time></li>)}</ul></Panel></div>
     </div>
     <div className="mt-4"><ImportedReviews /></div>
-    {wizard && <SetupWizard onClose={() => setWizard(false)} onFinished={() => { setWizard(false); resource.reload(); }} />}
     {reviewTask && <Modal wide title="Chi tiết bài nộp & đánh giá" onClose={() => setReviewTask("")}><TaskDetail id={reviewTask} managed onUpdated={resource.reload} /></Modal>}
     {assign && <Modal title="Phân công thực tập" onClose={() => { setAssign(false); resource.reload(); }}><AssignmentForm /></Modal>}
   </div>;

@@ -1,4 +1,4 @@
-import { InstructorOverview } from "@/components/product/academic";
+import { InstructorHome } from "@/components/sessions/instructor-home";
 export default function Page() {
-  return <InstructorOverview />;
+  return <InstructorHome />;
 }

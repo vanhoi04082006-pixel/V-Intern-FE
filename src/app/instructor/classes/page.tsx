@@ -1,4 +1,4 @@
-import { AcademicList } from "@/components/product/academic";
+import { redirect } from "next/navigation";
 export default function Page() {
-  return <AcademicList kind="classes" />;
+  redirect("/instructor/projects");
 }
