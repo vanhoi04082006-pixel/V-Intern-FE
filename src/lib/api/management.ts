@@ -299,8 +299,8 @@ export const listPerformance = (query: URLSearchParams, signal?: AbortSignal) =>
     (x) => array(record(x).items, parsePerformanceMember),
     { signal },
   );
-export const getMemberPerformance = (id: string, signal?: AbortSignal) =>
-  request(`/performance/interns/${encodeURIComponent(id)}`, parsePerformance, {
+export const getMemberPerformance = (id: string, signal?: AbortSignal, scope = "") =>
+  request(`/performance/interns/${encodeURIComponent(id)}${scope ? `?${scope}` : ""}`, parsePerformance, {
     signal,
   });
 export const getMemberRecommendations = (id: string, signal?: AbortSignal) =>
