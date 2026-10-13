@@ -44,7 +44,8 @@ try {
     await call(key, "/recruitment/me/role", "PATCH", { role: key.startsWith("frontend") ? "frontend" : "backend" });
     const interview = await call(key, "/recruitment/me/interviews", "POST", {}, 201);
     for (const q of interview.questions) await call(key, `/recruitment/me/interviews/${interview.session.id}/answers/${q.id}`, "PUT", { answerText: "Controlled contract answer: clarify requirements, implement with tests and verify persisted results." });
-    assert.equal((await call(key, `/recruitment/me/interviews/${interview.session.id}/submit`, "POST", {}, 201)).result.decision, "passed");
+    // The idempotent submit endpoint explicitly returns HTTP 200, not Nest's POST default.
+    assert.equal((await call(key, `/recruitment/me/interviews/${interview.session.id}/submit`, "POST", {}, 200)).result.decision, "passed");
   }
   const definition = {
     name: "Project-first CI Store", description: "Real database template for the reviewed Project-first browser contract.", difficulty: "intermediate", techStack: ["React", "NestJS", "SQL Server"], roles: ["frontend", "backend"], modules: ["Catalog", "Cart"],
