@@ -1,9 +1,10 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
 import { Empty, Pager, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
+import { Can } from "@/components/auth/can";
 import { errorMessage } from "@/lib/auth/api-client";
 import {
   assignIntern,
@@ -26,16 +27,12 @@ export function slotRemaining(slot: { requiredCount: number; filledCount: number
   return Math.max(0, slot.requiredCount - slot.filledCount);
 }
 
-/** Roles the team can still fill, most-matching-recruitment first. */
+/** Only unfilled slots matching the passed recruitment role are assignable. */
 export function openRolesFor(
   candidate: Candidate,
   slots: Array<{ roleCode: string; requiredCount: number; filledCount: number }>,
 ): string[] {
-  const open = slots.filter((s) => slotRemaining(s) > 0).map((s) => s.roleCode);
-  if (candidate.selectedRole && open.includes(candidate.selectedRole)) {
-    return [candidate.selectedRole, ...open.filter((r) => r !== candidate.selectedRole)];
-  }
-  return open;
+  return slots.filter(s => slotRemaining(s) > 0 && s.roleCode === candidate.selectedRole).map(s => s.roleCode);
 }
 
 export interface SelectorDeps {
@@ -80,6 +77,8 @@ export function MemberSelector({
   const [page, setPage] = useState(1);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null);
+  const detailRequest = useRef(0);
+  useEffect(() => () => { detailRequest.current += 1; }, [sessionId]);
   const [notice, setNotice] = useState<string | null>(null);
   const [assignmentsRevision, setAssignmentsRevision] = useState(0);
   // Per-candidate role choice (which open slot this intern fills).
@@ -114,11 +113,12 @@ export function MemberSelector({
     ),
   );
   const assigned = useResource(
-    useCallback((signal: AbortSignal) => listFn(sessionId, signal), [listFn, sessionId, assignmentsRevision]),
+    useCallback((signal: AbortSignal) => listFn(sessionId, signal), [listFn, sessionId]), assignmentsRevision,
   );
   const assignedIds = new Set((assigned.data ?? []).map((a) => a.internId.toLowerCase()));
 
   async function toggleDetail(c: Candidate) {
+    const request = ++detailRequest.current;
     if (expanded === c.userId) {
       setExpanded(null);
       setDetail(null);
@@ -127,9 +127,10 @@ export function MemberSelector({
     setExpanded(c.userId);
     setDetail(null);
     try {
-      setDetail(await getDetail(c.userId));
+      const result = await getDetail(c.userId);
+      if (detailRequest.current === request) setDetail(result);
     } catch (e) {
-      setDetail({ error: errorMessage(e) });
+      if (detailRequest.current === request) setDetail({ error: errorMessage(e) });
     }
   }
 
@@ -137,7 +138,7 @@ export function MemberSelector({
     setNotice(null);
     const open = openRolesFor(c, slots);
     if (open.length === 0) {
-      setNotice("Không còn slot vai trò nào trống — không thể phân công thêm.");
+      setNotice("Không còn slot trống phù hợp với vai trò đã phỏng vấn.");
       return;
     }
     const role = rolePick[c.userId] ?? open[0];
@@ -147,14 +148,18 @@ export function MemberSelector({
 
   async function remove(internId: string, displayName: string | null) {
     setNotice(null);
-    const list = await listFn(sessionId);
-    const row = list.find((a) => a.internId.toLowerCase() === internId.toLowerCase() && a.status === "active");
-    if (!row) {
-      setNotice("Không tìm thấy assignment đang hoạt động để gỡ.");
-      return;
-    }
-    const ok = await action.run(() => cancelFn(row.id));
-    if (ok) setNotice(`Đã gỡ ${displayName ?? internId.slice(0, 8)} khỏi phiên.`);
+    let removed = false;
+    const ok = await action.run(async () => {
+      const list = await listFn(sessionId);
+      const row = list.find((a) => a.internId.toLowerCase() === internId.toLowerCase() && a.status === "active");
+      if (!row) {
+        setNotice("Không tìm thấy assignment đang hoạt động để gỡ.");
+        return;
+      }
+      await cancelFn(row.id);
+      removed = true;
+    });
+    if (ok && removed) setNotice(`Đã gỡ ${displayName ?? internId.slice(0, 8)} khỏi phiên.`);
   }
 
   return (
@@ -247,7 +252,7 @@ export function MemberSelector({
                       >
                         {expanded === c.userId ? "Ẩn" : "Chi tiết"}
                       </button>
-                      {added ? (
+                      <Can perm="assignments.manage">{added ? (
                         <button
                           type="button"
                           disabled={action.busy}
@@ -266,7 +271,7 @@ export function MemberSelector({
                         >
                           Thêm
                         </button>
-                      )}
+                      )}</Can>
                     </div>
                   </div>
                 </li>

@@ -1,6 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SessionSetup, assessTeam } from "../session-setup";
+import { clearSession, setSession } from "@/lib/auth/session";
+const instructor = { id: "instructor1", displayName: "Instructor", email: "instructor@test.local", roles: ["instructor"], permissions: ["sessions.view", "sessions.manage", "projects.manage", "assignments.view", "assignments.manage", "recruitment.view", "sprints.manage"] };
+beforeEach(() => setSession("test-token", instructor));
+afterEach(clearSession);
 
 const session = { code: "SS-1", name: "K48", status: "upcoming", startDate: "2026-11-01", endDate: "2026-12-31" };
 const project = { id: "p1", code: "PRJ-1", name: "Shop", status: "active" };
@@ -39,6 +43,21 @@ describe("assessTeam (M3)", () => {
 });
 
 describe("SessionSetup (M3)", () => {
+  it("keeps session details visible without offering unauthorized Start or assignment", async () => {
+    setSession("test-token", { ...instructor, permissions: ["sessions.view"] });
+    render(<SessionSetup sessionId="s1" projectId="p1" deps={deps} />);
+    await screen.findByText(/Setup: K48/);
+    expect(screen.queryByRole("button", { name: /start session/i })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/tìm sinh viên/i)).not.toBeInTheDocument();
+  });
+  it("does not fetch or mount AI plans without sprints.manage", async () => {
+    setSession("test-token", { ...instructor, permissions: ["sessions.view"] });
+    const planDeps = { list: vi.fn(async () => []), get: vi.fn(), generate: vi.fn(), confirm: vi.fn() };
+    render(<SessionSetup sessionId="s1" projectId="p1" planDeps={planDeps} deps={{ ...deps, getSession: vi.fn(async () => ({ ...session, status: "active" })) }} />);
+    await screen.findByText(/đang ở trạng thái active/i);
+    expect(screen.queryByText("Kế hoạch AI")).not.toBeInTheDocument();
+    expect(planDeps.list).not.toHaveBeenCalled();
+  });
   it("renders template context, slots with holders, members and readiness", async () => {
     render(<SessionSetup sessionId="s1" projectId="p1" deps={deps} />);
     expect(await screen.findByText(/Setup: K48/)).toBeInTheDocument();
@@ -72,7 +91,8 @@ describe("SessionSetup (M3)", () => {
       calls += 1;
       return calls === 1 ? [] : [{ userId: "u1", displayName: "SV A", email: "a@x.edu" }];
     });
-    render(<SessionSetup sessionId="s1" projectId="p1" selectorDeps={selDeps} deps={{ ...deps, getMembers }} />);
+    const getSlots = vi.fn().mockResolvedValueOnce([{ ...slots[0], filledCount: 0, members: [] }, slots[1]]).mockResolvedValue(slots);
+    render(<SessionSetup sessionId="s1" projectId="p1" selectorDeps={selDeps} deps={{ ...deps, getMembers, getSlots }} />);
     expect(await screen.findByText(/Setup: K48/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText(/tìm sinh viên/i), { target: { value: "sv" } });
     // Wait for the selector row itself (slot holders also contain "SV A").

@@ -9,6 +9,7 @@ import { getAcademic, getMembers, getProjectSlots, transitionSession, type SlotI
 import { getTemplateContext } from "@/lib/api/templates";
 import { MemberSelector, type SelectorDeps } from "./member-selector";
 import { AiPlanPanel, type PlanDeps } from "./ai-plan";
+import { Can } from "@/components/auth/can";
 
 export interface RequiredRole {
   code: string;
@@ -232,7 +233,7 @@ function SetupBody({
             )}
           </Panel>
           {session.status === "upcoming" && (
-            <Panel title="Thêm sinh viên">
+            <Can perm={["assignments.manage", "assignments.view", "recruitment.view"]}><Panel title="Thêm sinh viên">
               <MemberSelector
                 sessionId={sessionId}
                 projectId={project.id}
@@ -240,13 +241,13 @@ function SetupBody({
                 onChanged={onChanged}
                 deps={selectorDeps}
               />
-            </Panel>
+            </Panel></Can>
           )}
           <Panel title="Start Session">
             {session.status !== "upcoming" ? (
               <div className="space-y-3">
                 <p role="status" className="text-sm text-slate-500">Phiên đang ở trạng thái {session.status}.</p>
-                {project && <AiPlanPanel sessionId={sessionId} projectId={project.id} onPublished={onChanged} deps={planDeps} />}
+                {project && <Can perm="sprints.manage"><AiPlanPanel autoPlanning={session.status === 'active'} sessionId={sessionId} projectId={project.id} onPublished={onChanged} deps={planDeps} /></Can>}
               </div>
             ) : (
               <div className="space-y-2">
@@ -261,14 +262,14 @@ function SetupBody({
                 ) : (
                   <p role="status" className="text-sm text-amber-700">Chưa có thành viên nào — hãy thêm sinh viên trước khi Start.</p>
                 )}
-                <button
+                <Can perm="sessions.manage"><button
                   type="button"
                   disabled={startAction.busy}
                   className={buttonClass}
                   onClick={() => void startAction.run(() => transitionSession(sessionId, "active"))}
                 >
                   {startAction.busy ? "Đang start..." : "Start Session"}
-                </button>
+                </button></Can>
                 {Boolean(startAction.error) && <ErrorState error={startAction.error} />}
                 <p className="text-[11px] text-slate-400">Start chuyển phiên sang active, validate đội hình ở Backend rồi tự kích hoạt AI lập kế hoạch.</p>
               </div>

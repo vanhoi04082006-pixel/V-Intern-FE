@@ -1,5 +1,5 @@
 import { request } from "./client";
-import { array, nullable, number, record, string } from "./parse";
+import { array, number, record, string } from "./parse";
 
 export interface PlanSummary {
   planId: string;
@@ -14,6 +14,7 @@ export interface PlanSummary {
 }
 
 export interface PlannedTask {
+  acceptanceCriteria?: string[];
   title: string;
   description: string | null;
   priority: string;
@@ -81,6 +82,7 @@ export function parsePlannedTask(value: unknown): PlannedTask {
     dueDate: optStr(v.dueDate),
     suggestedRole: optStr(v.suggestedRole),
     assigneeId: optStr(v.assigneeId),
+    acceptanceCriteria: v.acceptanceCriteria === undefined ? [] : array(v.acceptanceCriteria, string),
   };
 }
 
@@ -135,6 +137,7 @@ export const generatePlan = (body: {
   sprintCount?: number;
   startDate?: string;
   requestId?: string;
+  regenerate?: boolean;
 }) =>
   request("/ai-generations/plans/generate", (v) => {
     const r = record(v);

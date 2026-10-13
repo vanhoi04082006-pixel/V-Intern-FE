@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
 import { PageTitle, Panel, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
+import { Can } from "@/components/auth/can";
 import { useResource } from "@/lib/api/use-resource";
 import {
   getTemplate,
@@ -168,7 +169,7 @@ export function TemplateDetail({
           </ul>
         )}
       </Section>
-      <Panel title="Khởi tạo phiên thực tập">
+      <Can perm={["projects.manage", "sessions.manage", "tasks.manage"]}><Panel title="Khởi tạo phiên thực tập">
         {t.status === "archived" ? (
           <p role="status" className="text-sm text-slate-500">Mẫu đã lưu trữ — không thể khởi tạo phiên mới.</p>
         ) : started ? (
@@ -212,7 +213,7 @@ export function TemplateDetail({
             <p className="text-[11px] text-slate-400">Chống tạo trùng: mỗi lần bấm dùng một mã yêu cầu ổn định; bấm lại không tạo phiên thứ hai.</p>
           </div>
         )}
-      </Panel>
+      </Panel></Can>
     </div>
   );
 }

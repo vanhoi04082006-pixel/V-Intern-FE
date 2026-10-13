@@ -1,9 +1,10 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
 import { Empty, Panel, buttonClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
+import { PlanEditor } from "./plan-editor";
 import {
   confirmPlan,
   generatePlan,
@@ -25,16 +26,22 @@ export interface PlanDeps {
  * regenerate, confirm/publish. Confirm uses a stable requestId per plan so
  * retries never duplicate sprints/tasks.
  */
-export function AiPlanPanel({
+export function AiPlanPanel(props: Parameters<typeof AiPlanWorkspace>[0]) {
+  return <AiPlanWorkspace key={`${props.projectId}:${props.sessionId}`} {...props} />;
+}
+
+function AiPlanWorkspace({
   sessionId,
   projectId,
   onPublished,
   deps,
+  autoPlanning = false,
 }: {
   sessionId: string;
   projectId: string;
   onPublished?: () => void;
   deps?: Partial<PlanDeps>;
+  autoPlanning?: boolean;
 }) {
   const {
     list = listPlans,
@@ -46,34 +53,50 @@ export function AiPlanPanel({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [confirmRequestId, setConfirmRequestId] = useState(() => crypto.randomUUID());
   const [notice, setNotice] = useState<string | null>(null);
+  const [edited, setEdited] = useState<{ planId: string; draft: NonNullable<PlanDetail["draft"]> } | null>(null);
   const action = useAction();
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   const plans = useResource(
-    useCallback((signal: AbortSignal) => list(sessionId, signal), [list, sessionId, revision]),
+    useCallback((signal: AbortSignal) => list(sessionId, signal), [list, sessionId]), revision,
   );
   const items: PlanSummary[] = plans.data ?? [];
   const generating = items.some((p) => p.status === "generating");
   useEffect(() => {
-    if (!generating) return;
+    if (!generating && !(autoPlanning && items.length === 0)) return;
     const t = setInterval(() => setRevision((r) => r + 1), 4000);
     return () => clearInterval(t);
-  }, [generating]);
+  }, [generating, autoPlanning, items.length]);
 
-  const currentId = selectedId ?? items[0]?.planId ?? null;
+  // Prefer the newest plan that actually carries a draft; publish bookkeeping
+  // rows never own the view.
+  const currentId =
+    selectedId ?? items.find((p) => p.hasDraft)?.planId ?? items[0]?.planId ?? null;
   const detail = useResource(
     useCallback(
       (signal: AbortSignal) => (currentId ? get(currentId, signal) : Promise.resolve(null)),
-      [get, currentId, revision],
+      [get, currentId],
     ),
+    revision,
   );
   const plan: PlanDetail | null = detail.data ?? null;
 
   async function regenerate() {
     setNotice(null);
-    const ok = await action.run(() => generate({ projectId, sessionId }));
-    if (ok) {
+    // useAction reports success only — capture the created plan through an
+    // outer binding so the in-flight plan renders immediately.
+    let created: { planId: string } | null = null;
+    const ok = await action.run(async () => {
+      created = await generate({ projectId, sessionId, ...(plan?.status === 'ready' ? { regenerate: true } : {}) });
+    });
+    if (mounted.current && ok && created) {
+      const done: { planId: string } = created;
+      setSelectedId(done.planId);
       setRevision((r) => r + 1);
-      setSelectedId(null);
       setConfirmRequestId(crypto.randomUUID());
     }
   }
@@ -82,9 +105,9 @@ export function AiPlanPanel({
     if (!plan?.draft) return;
     setNotice(null);
     const ok = await action.run(() =>
-      confirm({ projectId, sessionId, draft: plan.draft, requestId: confirmRequestId, planId: plan.planId }),
+      confirm({ projectId, sessionId, draft: edited?.planId === plan.planId ? edited.draft : plan.draft, requestId: confirmRequestId, planId: plan.planId }),
     );
-    if (ok) {
+    if (mounted.current && ok) {
       setNotice("Đã publish Sprint/Task từ kế hoạch.");
       setRevision((r) => r + 1);
       onPublished?.();
@@ -98,7 +121,11 @@ export function AiPlanPanel({
       ) : plans.error ? (
         <ErrorState error={plans.error} onRetry={plans.reload} />
       ) : items.length === 0 ? (
-        <Empty>Chưa có kế hoạch AI cho phiên này. Nhấn Start Session để hệ thống tự lập kế hoạch.</Empty>
+        <div className="space-y-3">
+          <Empty>Chưa có kế hoạch AI cho phiên này. Nhấn Start Session để hệ thống tự lập kế hoạch.</Empty>
+          {autoPlanning && <><p className="text-xs text-slate-500">Nếu quá trình tự động chưa bắt đầu, bạn có thể yêu cầu tạo kế hoạch. Backend sẽ dùng lại yêu cầu đang chạy.</p><button className={buttonClass} disabled={action.busy} onClick={() => void regenerate()}>{action.busy ? 'Đang yêu cầu…' : 'Tạo kế hoạch AI'}</button></>}
+          {Boolean(action.error) && <ErrorState error={action.error} />}
+        </div>
       ) : (
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -114,7 +141,7 @@ export function AiPlanPanel({
                 </option>
               ))}
             </select>
-            <button type="button" disabled={action.busy} className="rounded border border-slate-200 px-2 py-1 text-xs" onClick={() => void regenerate()}>
+            <button type="button" disabled={action.busy || generating || plan?.status === 'confirmed'} className="rounded border border-slate-200 px-2 py-1 text-xs" onClick={() => void regenerate()}>
               {action.busy ? "..." : "Tạo lại"}
             </button>
           </div>
@@ -130,6 +157,8 @@ export function AiPlanPanel({
             </div>
           ) : plan?.draft ? (
             <div className="space-y-3">
+              {plan.status === 'ready' && <button type="button" disabled={action.busy} className="text-sm font-semibold text-blue-600" onClick={() => setEdited({ planId: plan.planId, draft: structuredClone(plan.draft!) })}>Chỉnh sửa bản nháp</button>}
+              {edited?.planId === plan.planId && plan.status === 'ready' && <PlanEditor projectId={projectId} draft={edited.draft} disabled={action.busy} onChange={(draft) => setEdited({ planId: plan.planId, draft })} />}
               {plan.warnings.length > 0 && (
                 <ul className="space-y-1 rounded bg-amber-50 p-2 text-[11px] text-amber-700">
                   {plan.warnings.map((w, i) => (

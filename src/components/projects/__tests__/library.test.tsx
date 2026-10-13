@@ -1,7 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ProjectLibrary } from "../project-library";
 import { TemplateDetail } from "../template-detail";
+import { clearSession, setSession } from "@/lib/auth/session";
+const instructor = { id: "instructor1", displayName: "Instructor", email: "instructor@test.local", roles: ["instructor"], permissions: ["projects.manage", "sessions.manage", "tasks.manage"] };
+beforeEach(() => setSession("test-token", instructor));
+afterEach(clearSession);
 
 const tpl = {
   id: "11111111-1111-4111-8111-111111111111",
@@ -63,6 +67,14 @@ describe("TemplateDetail (M2)", () => {
     expect(await screen.findByText("Sell")).toBeInTheDocument();
     expect(screen.getByText(/Kỹ năng bắt buộc: React/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /khởi tạo phiên thực tập/i })).toBeInTheDocument();
+  });
+  it.each(["projects.manage", "sessions.manage", "tasks.manage"])("hides create session when missing required %s grant", async missing => {
+    setSession("test-token", { ...instructor, permissions: instructor.permissions.filter(permission => permission !== missing) });
+    const start = vi.fn();
+    render(<TemplateDetail id={tpl.id} get={vi.fn(async () => detail)} start={start} />);
+    await screen.findByText("Sell");
+    expect(screen.queryByRole("button", { name: /khởi tạo phiên thực tập/i })).not.toBeInTheDocument();
+    expect(start).not.toHaveBeenCalled();
   });
   it("starts a session with one stable request id across retries", async () => {
     const start = vi.fn(async () => ({ id: "r1", projectId: "p1", sessionId: "s1", templateVersion: 2, deduped: false }));

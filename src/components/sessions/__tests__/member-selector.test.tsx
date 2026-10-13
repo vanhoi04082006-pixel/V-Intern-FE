@@ -1,6 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { MemberSelector, ineligibilityReason, openRolesFor, slotRemaining } from "../member-selector";
+import { clearSession, setSession } from "@/lib/auth/session";
+const instructor = { id: "instructor1", displayName: "Instructor", email: "instructor@test.local", roles: ["instructor"], permissions: ["assignments.view", "assignments.manage", "recruitment.view"] };
+beforeEach(() => setSession("test-token", instructor));
+afterEach(clearSession);
 
 const slots = [
   { roleCode: "frontend", requiredCount: 1, filledCount: 0 },
@@ -33,9 +37,9 @@ describe("slot helpers (M4)", () => {
     expect(slotRemaining({ requiredCount: 2, filledCount: 0 })).toBe(2);
     expect(slotRemaining({ requiredCount: 1, filledCount: 3 })).toBe(0);
   });
-  it("offers open roles and prefers the recruited role", () => {
-    expect(openRolesFor(alice, slots)).toEqual(["frontend", "backend"]);
-    expect(openRolesFor(alice, [{ ...slots[0], filledCount: 1 }, slots[1]])).toEqual(["backend"]);
+  it("only offers open slots matching the passed interview role", () => {
+    expect(openRolesFor(alice, slots)).toEqual(["frontend"]);
+    expect(openRolesFor(alice, [{ ...slots[0], filledCount: 1 }, slots[1]])).toEqual([]);
     expect(openRolesFor(alice, [])).toEqual([]);
   });
 });
@@ -49,6 +53,34 @@ describe("ineligibilityReason (M4)", () => {
 });
 
 describe("MemberSelector (M4)", () => {
+  it("hides assignment mutations when the instructor lacks manage permission", async () => {
+    setSession("test-token", { ...instructor, permissions: ["assignments.view"] });
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={deps()} />);
+    await screen.findByText("SV A");
+    expect(screen.queryAllByRole("button", { name: "Thêm" })).toHaveLength(0);
+    expect(screen.queryAllByRole("button", { name: "Gỡ" })).toHaveLength(0);
+  });
+  it("keeps the latest candidate detail when responses finish out of order", async () => {
+    let resolveAlice!: (value: Record<string, unknown>) => void;
+    const d = deps({ detail: vi.fn((id: string) => id === "u1" ? new Promise<Record<string, unknown>>(resolve => { resolveAlice = resolve; }) : Promise.resolve({ candidate: "Bob interview" })) });
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
+    await screen.findByText("SV A");
+    fireEvent.click(screen.getAllByRole("button", { name: "Chi tiết" })[0]);
+    fireEvent.click(screen.getAllByRole("button", { name: "Chi tiết" })[0]);
+    await screen.findByText(/Bob interview/);
+    await act(async () => resolveAlice({ candidate: "Alice interview" }));
+    expect(screen.getByText(/Bob interview/)).toBeInTheDocument();
+    expect(screen.queryByText(/Alice interview/)).not.toBeInTheDocument();
+  });
+  it("reports a failed removal preflight and leaves the assignment intact", async () => {
+    const listAssignments = vi.fn().mockResolvedValueOnce([{ id: "as1", internId: "u1", status: "active" }]).mockRejectedValue(new Error("offline"));
+    const d = deps({ listAssignments });
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Gỡ" }));
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(d.cancel).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Gỡ" })).toBeEnabled();
+  });
   it("searches server-side with scores and disables ineligible add", async () => {
     const d = deps();
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
@@ -92,14 +124,14 @@ describe("MemberSelector (M4)", () => {
     expect(d.assign).toHaveBeenCalledWith({ internId: "u1", projectId: "p1", sessionId: "s1", role: "frontend" });
     expect(changed).toHaveBeenCalled();
   });
-  it("honours a manually chosen role slot", async () => {
+  it("does not offer incompatible roles even when another slot is open", async () => {
     const d = deps();
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Vai trò cho SV A"), { target: { value: "backend" } });
+    expect(screen.getByLabelText("Vai trò cho SV A").querySelector('option[value="backend"]')).toBeNull();
     fireEvent.click(screen.getAllByRole("button", { name: "Thêm" })[0]);
     expect(await screen.findByText(/đã phân công SV A/i)).toBeInTheDocument();
-    expect(d.assign).toHaveBeenCalledWith({ internId: "u1", projectId: "p1", sessionId: "s1", role: "backend" });
+    expect(d.assign).toHaveBeenCalledWith({ internId: "u1", projectId: "p1", sessionId: "s1", role: "frontend" });
   });
   it("blocks add when no slot remains and explains it", async () => {
     const full = [
