@@ -64,8 +64,23 @@ try {
   assert.equal(await page.getByRole("link", { name: /^(Lớp học|Class|Attendance|Điểm danh)$/ }).count(), 0);
   assert.equal(await page.getByText(/Quick Setup|Dữ liệu mẫu|Mock QA/).count(), 0);
   await page.goto(base + "/instructor/classes"); await page.waitForURL("**/instructor/projects"); await expect(page.getByRole("heading", { name: "Thư viện dự án", exact: true })).toBeVisible();
-  await page.getByLabel("Lọc theo nhóm").fill(`pf-${tag}`); await expect(page.getByText(/10 bản ghi/)).toBeVisible();
-  await page.getByRole("button", { name: "Sau", exact: true }).click(); await expect(page.getByText(/Trang\s+2\s*\/\s*2/)).toBeVisible();
+  // Wait for this run's debounced search, not a possibly identical count from the initial list.
+  const filtered = page.waitForResponse(r => {
+    const url = new URL(r.url());
+    return url.pathname === "/api/v1/project-templates" && url.searchParams.get("search") === `PFCI-${tag}` && url.searchParams.get("category") === `pf-${tag}`;
+  });
+  await page.getByLabel("Lọc theo nhóm").fill(`pf-${tag}`);
+  await page.getByLabel("Tìm project mẫu").fill(`PFCI-${tag}`);
+  assert.equal((await (await filtered).json()).total, 10);
+  await expect(page.getByText(/10 bản ghi/)).toBeVisible();
+  const nextPage = page.waitForResponse(r => {
+    const url = new URL(r.url());
+    return url.pathname === "/api/v1/project-templates" && url.searchParams.get("search") === `PFCI-${tag}` && url.searchParams.get("category") === `pf-${tag}` && url.searchParams.get("page") === "2";
+  });
+  await page.getByRole("button", { name: "Sau", exact: true }).click();
+  const nextPageResult = await (await nextPage).json();
+  assert.equal(nextPageResult.page, 2); assert.equal(nextPageResult.totalPages, 2);
+  await expect(page.getByText(/Trang\s+2\s*\/\s*2/)).toBeVisible();
   await page.getByLabel("Lọc theo độ khó").selectOption("advanced"); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
   await page.getByLabel("Lọc theo độ khó").selectOption(""); await page.getByLabel("Tìm project mẫu").fill(template.code); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
   const templateCard = page.locator("li").filter({ hasText: template.code });
