@@ -1,4 +1,4 @@
-import { AcademicList } from "@/components/product/academic";
+import { SessionList } from "@/components/sessions/session-list";
 export default function Page() {
-  return <AcademicList kind="sessions" />;
+  return <SessionList />;
 }
