@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import fs from "node:fs";
 import { buildTestSprintPlan } from "../project-first-provider.mjs";
 
 const context = () => ({
@@ -32,5 +33,15 @@ test("different session dates and member IDs cannot reuse another fixture's plan
 test("missing or invalid real context fails instead of producing fake success", () => {
   for (const input of [{}, { ...context(), members: [] }, { ...context(), session: { startDate: "invalid", endDate: "2030-01-29" } }]) {
     assert.throws(() => buildTestSprintPlan(input));
+  }
+});
+test("workflow names isolate runs while retaining the backend's required CI safety token", () => {
+  const yaml = fs.readFileSync(new URL("../../.github/workflows/phase7-fullstack.yml", import.meta.url), "utf8");
+  const names = [...yaml.matchAll(/^\s+(?:DB_NAME|E2E_DB_NAME): (.+)$/gm)].map(match => match[1].trim());
+  assert.equal(names.length, 2);
+  assert.equal(names[0], names[1]);
+  for (const name of names) {
+    assert.match(name, /^VIntern_Phase715_CI_/);
+    assert.ok(name.includes("${{ github.run_id }}") && name.includes("${{ github.run_attempt }}"));
   }
 });

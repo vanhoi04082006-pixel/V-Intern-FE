@@ -21,8 +21,8 @@ jobs:
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
-      DB_NAME: VIntern_Phase715_${{ github.run_id }}_${{ github.run_attempt }}
-      E2E_DB_NAME: VIntern_Phase715_${{ github.run_id }}_${{ github.run_attempt }}
+      DB_NAME: VIntern_Phase715_CI_${{ github.run_id }}_${{ github.run_attempt }}
+      E2E_DB_NAME: VIntern_Phase715_CI_${{ github.run_id }}_${{ github.run_attempt }}
       DB_USERNAME: vintern_ci
       DB_ENCRYPT: "false"
       DB_TRUST_SERVER_CERTIFICATE: "true"
