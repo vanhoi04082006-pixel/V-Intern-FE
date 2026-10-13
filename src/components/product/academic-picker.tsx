@@ -16,6 +16,8 @@ export function AcademicPicker({
   onChange,
   required = false,
   assignable = false,
+  compact = false,
+  projectId,
 }: {
   kind: AcademicKind;
   label: string;
@@ -23,6 +25,8 @@ export function AcademicPicker({
   onChange: (value: string) => void;
   required?: boolean;
   assignable?: boolean;
+  compact?: boolean;
+  projectId?: string;
 }) {
   const [page, setPage] = useState(1),
     [q, setQ] = useState("");
@@ -35,8 +39,9 @@ export function AcademicPicker({
           q,
           assignable && kind === "projects" ? "active" : "",
           s,
+          kind === "sessions" && projectId ? { projectId } : {},
         ),
-      [kind, page, q, assignable],
+      [kind, page, q, assignable, projectId],
     ),
   );
   const selected = useResource(
@@ -54,7 +59,7 @@ export function AcademicPicker({
         ["upcoming", "active"].includes(row.status),
     ) ?? [];
   return (
-    <div className="space-y-2">
+    <div className={compact ? "space-y-1" : "space-y-2"}>
       <label className="block text-sm">
         {label}
         <input

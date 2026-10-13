@@ -30,10 +30,14 @@ export function sessionTransitions(status: string): string[] {
 export function parseAcademic(value: unknown) {
   const v = record(value);
   return {
-    id: string(v.id),
+    id: string(v.id).toLowerCase(),
     code: string(v.code),
     name: string(v.name),
     status: string(v.status),
+    meetingSchedule: v.meetingSchedule == null ? null : string(v.meetingSchedule),
+    meetingLocation: v.meetingLocation == null ? null : string(v.meetingLocation),
+    progress: v.progress == null ? null : number(v.progress),
+    domainCategory: v.domainCategory == null ? null : string(v.domainCategory),
     description: nullable(v.description, string),
     startDate: nullable(v.startDate, string),
     endDate: nullable(v.endDate, string),
@@ -110,9 +114,10 @@ export const listAcademic = (
   q = "",
   status = "",
   signal?: AbortSignal,
+  filters: Record<string, string> = {},
 ) =>
   request(
-    `/${kind}?${new URLSearchParams({ page: String(page), pageSize: "10", ...(q ? { q } : {}), ...(status ? { status } : {}) })}`,
+    `/${kind}?${new URLSearchParams({ page: String(page), pageSize: "10", ...(q ? { q } : {}), ...(status ? { status } : {}), ...Object.fromEntries(Object.entries(filters).filter(([, value]) => value)) })}`,
     (x) => parsePage(x, parseAcademic),
     { signal },
   );
@@ -364,3 +369,9 @@ export const assignIntern = (body: {
     method: "POST",
     body,
   });
+export const getAcademicSummaries = (kind: AcademicKind, ids: string, signal?: AbortSignal) => request(`/dashboard/academic?kind=${kind}&ids=${encodeURIComponent(ids)}`, value => array(record(value).items, x => {
+  const v=record(x);
+  return {id:string(v.id),responsibleName:nullable(v.responsibleName,string),sessionName:nullable(v.sessionName,string),memberCount:number(v.memberCount),taskCount:nullable(v.taskCount,number),doneCount:nullable(v.doneCount,number)};
+}), {signal});
+
+export const getProjectFilterOptions = (signal?:AbortSignal) => request('/projects/filter-options',value=>{const v=record(value);return {domains:array(v.domains,string),technologies:array(v.technologies,string)};},{signal});

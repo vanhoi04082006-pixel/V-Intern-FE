@@ -1,5 +1,5 @@
 import { request } from "./client";
-import { array, number, parsePage, record, string } from "./parse";
+import { array, nullable, number, parsePage, record, string } from "./parse";
 
 /**
  * Optional DTO fields may be ABSENT (undefined) or explicit null — unlike
@@ -147,3 +147,11 @@ export const startTemplateSession = (
       deduped: r.deduped === true,
     };
   }, { method: "POST", body });
+export function parseChange(v: unknown) { const r = record(v); return { id:string(r.id),title:string(r.title),description:string(r.description),reason:string(r.reason),status:string(r.status),taskId:nullable(r.taskId,string),createdAt:string(r.createdAt) }; }
+export const listChanges = (id: string,signal?: AbortSignal) => request(`/projects/${id}/changes`,v => array(v,parseChange),{ signal });
+export const proposeChange = (id: string,body: { title:string;description:string;reason:string }) => request(`/projects/${id}/changes`,record,{ method:'POST',body });
+export const applyChange = (id: string) => request(`/project-changes/${id}/apply`,record,{ method:'POST' });
+export const getTaskSpec = (id: string, signal?: AbortSignal) => request(`/tasks/${encodeURIComponent(id)}/spec`, (v) => nullable(v, (raw) => {
+  const s = record(raw);
+  return { requirements: string(s.requirements), role: string(s.role), dod: array(s.dod, string), documentation: string(s.documentation), rubricVersion: string(s.rubricVersion) };
+}), { signal });
