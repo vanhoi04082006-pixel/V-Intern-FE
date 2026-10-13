@@ -71,7 +71,8 @@ try {
   });
   await page.getByLabel("Lọc theo nhóm").fill(`pf-${tag}`);
   await page.getByLabel("Tìm project mẫu").fill(`PFCI-${tag}`);
-  assert.equal((await (await filtered).json()).total, 10);
+  const filteredResponse = await filtered; assert.equal(filteredResponse.status(), 200);
+  assert.equal((await filteredResponse.json()).meta.total, 10);
   await expect(page.getByText(/10 bản ghi/)).toBeVisible();
   const nextPage = page.waitForResponse(r => {
     const url = new URL(r.url());
@@ -79,7 +80,7 @@ try {
   });
   await page.getByRole("button", { name: "Sau", exact: true }).click();
   const nextPageResult = await (await nextPage).json();
-  assert.equal(nextPageResult.page, 2); assert.equal(nextPageResult.totalPages, 2);
+  assert.equal(nextPageResult.meta.page, 2); assert.equal(nextPageResult.meta.totalPages, 2);
   await expect(page.getByText(/Trang\s+2\s*\/\s*2/)).toBeVisible();
   await page.getByLabel("Lọc theo độ khó").selectOption("advanced"); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
   await page.getByLabel("Lọc theo độ khó").selectOption(""); await page.getByLabel("Tìm project mẫu").fill(template.code); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
@@ -173,7 +174,19 @@ try {
   stage = "session-delivery";
   await page.goto(`${base}/instructor/sessions/${created.sessionId}`); await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible(); await expect(page.getByText("Catalog search", { exact: true })).toBeVisible(); await expect(page.getByRole("heading", { name: `Task (${before.tasks})`, exact: true })).toBeVisible();
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`); await page.getByRole("link", { name: "Contract Sprint 1", exact: true }).click(); await expect(page.getByText(/Contract Sprint 1/).first()).toBeVisible();
-  await page.goto(`${base}/instructor/tasks/${edited.id}`); await expect(page.getByText(description, { exact: true }).first()).toBeVisible(); await expect(page.getByText(criteria[0], { exact: true })).toBeVisible();
+  await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`);
+  await page.getByRole("button", { name: "Task", exact: true }).click();
+  const scopedTasks = page.waitForResponse(r => {
+    const url = new URL(r.url());
+    return url.pathname === "/api/v1/tasks" && url.searchParams.get("projectId")?.toLowerCase() === created.projectId.toLowerCase() && url.searchParams.get("sessionId")?.toLowerCase() === created.sessionId.toLowerCase() && url.searchParams.get("search") === edited.title && url.searchParams.get("status") === "todo";
+  });
+  await page.getByLabel("Tìm Task", { exact: true }).fill(edited.title);
+  await page.getByLabel("Trạng thái", { exact: true }).selectOption("todo");
+  const scopedTaskResult = await (await scopedTasks).json();
+  assert.ok(scopedTaskResult.data.some(t => t.id.toLowerCase() === edited.id.toLowerCase()));
+  assert.ok(scopedTaskResult.data.every(t => t.projectId.toLowerCase() === created.projectId.toLowerCase() && t.status === "todo"));
+  await page.locator(`a[href="/instructor/tasks/${edited.id}" i]`).click();
+  await expect(page.getByText(description, { exact: true }).first()).toBeVisible(); await expect(page.getByText(criteria[0], { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto(base + "/instructor/classes"); await page.waitForURL("**/instructor/projects"); await expect(page.getByRole("heading", { name: "Thư viện dự án", exact: true })).toBeVisible();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)); assert.equal((await ds.query("SELECT COUNT(*) n FROM sys.tables WHERE name IN ('classes','class_members','class_attendance')"))[0].n, 3); assert.deepEqual(errors, []);
   await page.screenshot({ path: `${evidence}/project-first-mobile.png`, fullPage: true });
