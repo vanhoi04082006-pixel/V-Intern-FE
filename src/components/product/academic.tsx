@@ -1,6 +1,8 @@
 "use client";
 import { useCallback, useState } from "react";
 import Link from "next/link";
+import { Users, Layers, CalendarDays, Clock, BookOpen, Database } from "lucide-react";
+import { Person, exportCsv } from "./identity";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import * as api from "@/lib/api/academic";
@@ -12,18 +14,35 @@ import {
   inputClass,
   Modal,
   PageTitle,
+  PageMeta,
   Pager,
   Panel,
+  StatusDot,
+  AvatarStack,
+  ProgressBar,
 } from "./primitives";
 import { AcademicPicker } from "./academic-picker";
 import { InstructorPicker } from "./instructor-picker";
-import { CollectionMetrics, CollectionAside } from "./collection-insights";
+import { ProjectChanges } from "./project-changes";
+import { AcademicMetrics, AcademicInsights } from "./academic-insights";
+import { ClassOperations } from './class-operations';
+import { AssigneeSelector } from "./assignee-selector";
+import { RowMenu } from './instructor-dashboard';
+import { ActivateButton } from './instructor-onboarding';
+import { SprintForm } from "./sprint-management";
+const statusNames:Record<string,string>={active:"Đang hoạt động",upcoming:"Sắp bắt đầu",paused:"Tạm dừng",recruiting:"Đang tuyển",draft:"Bản nháp",ending:"Sắp kết thúc",completed:"Hoàn thành",cancelled:"Đã hủy",archived:"Đã lưu trữ"};
+export function AcademicStatus({ status }: { status: string }) {
+  const tone = status === "active" || status === "recruiting" ? "green" : status === "paused" || status === "ending" || status === "draft" ? "amber" : status === "upcoming" ? "blue" : status === "cancelled" || status === "archived" ? "red" : "gray";
+  return <StatusDot tone={tone as "green"}>{statusNames[status] ?? status}</StatusDot>;
+}
 const labels = {
   classes: "Lớp học",
   sessions: "Phiên thực tập",
   projects: "Thư viện dự án",
 };
 export function AcademicList({ kind }: { kind: api.AcademicKind }) {
+  const [revision,setRevision] = useState(0);
+  const [sessionId,setSessionId] = useState(''),[projectId,setProjectId] = useState(''),[leadInstructorId,setLeadInstructorId] = useState(''),[domainCategory,setDomainCategory] = useState(''),[technology,setTechnology] = useState('');
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
     [status, setStatus] = useState(""),
@@ -31,52 +50,41 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
     [create, setCreate] = useState(false);
   const data = useResource(
     useCallback(
-      (signal: AbortSignal) => api.listAcademic(kind, page, q, status, signal),
-      [kind, page, q, status],
+      (signal: AbortSignal) => api.listAcademic(kind, page, q, status, signal,{
+        ...(kind==='classes'&&sessionId?{sessionId}:{}),...(kind==='sessions'&&projectId?{projectId}:{}),...(kind!=='projects'&&leadInstructorId?{leadInstructorId}:{}),...(kind==='projects'&&domainCategory?{domainCategory}:{}),...(kind==='projects'&&technology?{technology}:{})
+      }),
+      [kind, page, q, status,sessionId,projectId,leadInstructorId,domainCategory,technology],
     ),
   );
+  const projectOptions = useResource(useCallback((signal:AbortSignal)=>kind==='projects'?api.getProjectFilterOptions(signal):Promise.resolve({domains:[],technologies:[]}),[kind]));
+  const ids = data.data?.items.map(x=>x.id).join(',') ?? '';
+  const summaries = useResource(useCallback((signal: AbortSignal) => ids ? api.getAcademicSummaries(kind,ids,signal) : Promise.resolve([]), [kind,ids]));
   return (
     <>
       <PageTitle
         title={labels[kind]}
-        subtitle="Quản lý chương trình thực tập"
-        action={
-          <button className={buttonClass} onClick={() => setCreate(true)}>
-            Tạo{" "}
-            {kind === "classes"
-              ? "lớp"
-              : kind === "sessions"
-                ? "phiên"
-                : "dự án"}
-          </button>
-        }
+        subtitle={kind === "classes" ? "Quản lý lớp học, phân công giảng viên, theo dõi sĩ số và hoạt động học tập của sinh viên." : undefined}
       />
-      {!data.loading && !data.error && data.data && (
-        <CollectionMetrics
-          values={[
-            ["Kết quả bộ lọc", data.data.total],
-            ["Trên trang hiện tại", data.data.items.length],
-            [
-              "Đang hoạt động · trang",
-              data.data.items.filter((x) => x.status === "active").length,
-            ],
-            [
-              "Đã hoàn tất · trang",
-              data.data.items.filter((x) => x.status === "completed").length,
-            ],
-            [
-              "Chưa bắt đầu · trang",
-              data.data.items.filter(
-                (x) => x.status === "upcoming" || x.status === "draft",
-              ).length,
-            ],
-          ]}
-          note="Tổng số theo bộ lọc; các thống kê trạng thái dùng trang hiện tại. Lịch học và chuyên cần chưa được Backend cung cấp."
-        />
-      )}
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
-        <Panel title="Danh sách">
-          <div className="mb-4 grid gap-3 sm:grid-cols-2">
+      {kind !== "classes" && <PageMeta items={kind === "sessions"
+        ? [
+          { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
+          { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
+          { icon: CalendarDays, label: "Học kỳ hiện tại", value: data.data?.items[0]?.code ?? "Chưa có" },
+          { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
+        ]
+        : [
+          { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
+          { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
+          { icon: BookOpen, label: "Kho hiện tại", value: `${data.data?.total ?? 0} dự án` },
+          { icon: Database, label: "Danh mục", value: `${projectOptions.data?.domains.length ?? 0} lĩnh vực` },
+          { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
+        ]} />}
+      <AcademicMetrics key={kind+':'+revision+':'+data.data?.total} kind={kind}/>
+      <div className="grid items-start gap-3 xl:grid-cols-[minmax(0,2.5fr)_minmax(340px,1fr)]">
+        <div className="min-w-0">
+        <Panel title={`Danh sách ${labels[kind].toLowerCase()}`} action={<span className="flex items-center gap-2"><button className="rounded-md border border-blue-100 px-3 py-2 text-xs text-blue-600 hover:bg-blue-50" disabled={!data.data?.items.length} onClick={()=>exportCsv(kind+".csv",["Mã","Tên","Trạng thái"],(data.data?.items??[]).map(x=>[x.code,x.name,x.status]))}>Xuất trang</button><button className={buttonClass} onClick={() => setCreate(true)}>+ Tạo {kind === "classes" ? "lớp học" : kind === "sessions" ? "phiên mới" : "project mới"}</button></span>}>
+          {Boolean(summaries.error) && <ErrorState error={summaries.error} onRetry={summaries.reload}/>}
+          <div className="mb-4 grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <input
               className={inputClass}
               aria-label="Tìm mã hoặc tên"
@@ -98,10 +106,15 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
             >
               <option value="">Tất cả trạng thái</option>
               {api.academicStatuses[kind].map((s) => (
-                <option key={s}>{s}</option>
+                <option key={s} value={s}>{statusNames[s]??({beginner:"Thấp",intermediate:"Trung bình",advanced:"Cao"} as Record<string,string>)[s]??s}</option>
               ))}
             </select>
+            {kind==='classes'&&<AcademicPicker compact kind="sessions" label="Lọc phiên thực tập" value={sessionId} onChange={v=>{setSessionId(v);setPage(1);}}/>}
+            {kind==='sessions'&&<AcademicPicker compact kind="projects" label="Lọc dự án" value={projectId} onChange={v=>{setProjectId(v);setPage(1);}}/>}
+            {kind!=='projects'&&<InstructorPicker compact label="Lọc giảng viên" value={leadInstructorId} onChange={v=>{setLeadInstructorId(v);setPage(1);}}/>}
+            {kind==='projects'&&<><select aria-label="Lĩnh vực dự án" className={inputClass} value={domainCategory} onChange={e=>{setDomainCategory(e.target.value);setPage(1);}}><option value="">Tất cả lĩnh vực</option>{projectOptions.data?.domains.map(v=><option key={v} value={v}>{v}</option>)}</select><select aria-label="Công nghệ dự án" className={inputClass} value={technology} onChange={e=>{setTechnology(e.target.value);setPage(1);}}><option value="">Tất cả công nghệ</option>{projectOptions.data?.technologies.map(v=><option key={v} value={v}>{v}</option>)}</select></>}
           </div>
+          {Boolean(projectOptions.error)&&<ErrorState error={projectOptions.error} onRetry={projectOptions.reload}/>}
           {data.loading ? (
             <LoadingState />
           ) : data.error ? (
@@ -109,99 +122,44 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
           ) : (
             data.data && (
               <>
-                <div className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
-                  {data.data.total} bản ghi phù hợp bộ lọc
-                </div>
                 {data.data.items.length ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
+                    <table className="academic-table w-full text-left text-sm">
+                      <colgroup>{(kind==='classes'?[70,145,85,48,100,90,100,125,90]:kind==='projects'?[95,175,85,120,55,100,85,90]:[120,170,55,130,85,85,85,100,90]).map((width,i)=><col key={i} style={{width}}/>)}</colgroup>
                       <thead className="bg-slate-50">
                         <tr>
-                          {[
-                            "Mã / Tên",
-                            "Trạng thái",
-                            "Bắt đầu",
-                            "Kết thúc",
-                            "",
-                          ].map((x) => (
-                            <th key={x} className="p-3">
-                              {x}
-                            </th>
-                          ))}
+                          {(kind === 'projects' ? ['Mã dự án','Tên dự án','Lĩnh vực','Công nghệ','Sinh viên','Trạng thái','Độ khó','Hành động'] : kind === 'classes' ? ['Mã lớp','Tên lớp','Phiên thực tập','Sinh viên','Lịch học','Tiến độ','Trạng thái','Giảng viên phụ trách','Hành động'] : ['Mã phiên','Tên phiên','Sinh viên','Giảng viên phụ trách','Ngày bắt đầu','Ngày kết thúc','Tiến độ','Trạng thái','Hành động']).map(label=><th key={label} className="p-3">{label}</th>)}
                         </tr>
                       </thead>
                       <tbody>
-                        {data.data.items.map((x) => (
-                          <tr key={x.id} className="border-b border-slate-100">
-                            <td className="p-3">
-                              <strong className="block">{x.name}</strong>
-                              <span className="text-xs text-slate-400">
-                                {x.code}
-                              </span>
-                              {x.technologies.length > 0 && (
-                                <p className="mt-1 text-xs">
-                                  {x.technologies.join(" · ")}
-                                </p>
-                              )}
-                            </td>
-                            <td className="p-3">
-                              <Badge>{x.status}</Badge>
-                            </td>
-                            <td className="p-3 whitespace-nowrap">
-                              {x.startDate
-                                ? new Date(x.startDate).toLocaleDateString(
-                                    "vi-VN",
-                                  )
-                                : "Chưa có"}
-                            </td>
-                            <td className="p-3 whitespace-nowrap">
-                              {x.endDate
-                                ? new Date(x.endDate).toLocaleDateString(
-                                    "vi-VN",
-                                  )
-                                : "Chưa có"}
-                            </td>
-                            <td className="p-3">
-                              <button
-                                className="font-semibold text-blue-600"
-                                onClick={() => setSelected(x.id)}
-                              >
-                                Chi tiết {x.code}
-                              </button>
-                              {kind === "sessions" && (
-                                <Link
-                                  className="mt-2 block text-xs text-blue-600"
-                                  href={`/instructor/sessions/${x.id}`}
-                                >
-                                  Mở trang phiên →
-                                </Link>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
+                        {data.data.items.map((x) => {
+                          const summary=summaries.data?.find(s=>s.id===x.id);
+                          const members=<td className="p-3"><AvatarStack count={summary?.memberCount ?? 0} /></td>;
+                          const responsible=<td className="p-3">{summary?.responsibleName?<Person name={summary.responsibleName}/>:<span className="text-slate-400">Chưa phân công</span>}</td>;
+                          const date=(value:string|null)=>value?new Date(value).toLocaleDateString('vi-VN'):'Chưa có';
+                          return <tr key={x.id} className="border-b border-blue-50">
+                            <td className="p-3 font-semibold whitespace-nowrap text-blue-600">{x.code}</td>
+                            <td className="p-3"><strong className="block text-navy">{x.name}</strong>{x.description&&<p className="mt-1 max-w-36 truncate text-[10px] text-slate-500" title={x.description}>{x.description}</p>}</td>
+                            {kind==='projects'?<><td className="p-3"><Badge>{x.domainCategory??'Chưa phân loại'}</Badge></td><td className="p-3 text-xs">{x.technologies.join(', ')||'Chưa có'}</td>{members}<td className="p-3"><AcademicStatus status={x.status} /></td><td className="p-3"><Badge>{{beginner:'Thấp',intermediate:'Trung bình',advanced:'Cao'}[x.difficulty??'']??'Chưa có'}</Badge></td></>:kind==='classes'?<><td className="p-3 text-blue-600">{summary?.sessionName??'Chưa gắn phiên'}</td>{members}<td className="p-3 whitespace-nowrap">{x.meetingSchedule??'Chưa có lịch'}<span className="mt-1 block text-[10px] text-slate-500">{x.meetingLocation}</span></td><td className="p-3"><ProgressBar value={x.progress} label={`${x.progress}%`} /></td><td className="p-3"><AcademicStatus status={x.status} /></td>{responsible}</>:<>{members}{responsible}<td className="p-3 whitespace-nowrap">{date(x.startDate)}</td><td className="p-3 whitespace-nowrap">{date(x.endDate)}</td><td className="p-3">{summary?.taskCount?<ProgressBar value={Math.round((summary.doneCount??0)/summary.taskCount*100)} />:<span className="text-[10px] text-slate-400">Chưa có task</span>}</td><td className="p-3"><AcademicStatus status={x.status} /></td></>}
+                            <td className="whitespace-nowrap p-3"><button className="rounded border border-blue-100 px-2.5 py-1 text-xs text-blue-600 hover:bg-blue-50" aria-label={`Chi tiết ${x.code}`} onClick={()=>setSelected(x.id)}>Xem chi tiết</button> {(kind==='sessions'||kind==='projects')&&<ActivateButton kind={kind} id={x.id} status={x.status} onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}} />} <RowMenu label={`Thao tác ${x.code}`} onOpen={()=>setSelected(x.id)} />{kind==='sessions'&&<Link className="mt-2 block text-[10px] text-blue-600" href={`/instructor/sessions/${x.id}`}>Mở phiên →</Link>}</td>
+                          </tr>;
+                        })}
                       </tbody>
                     </table>
                   </div>
                 ) : (
                   <Empty>Chưa có dữ liệu phù hợp.</Empty>
                 )}
-                <Pager {...data.data} onChange={setPage} />
+                <Pager {...data.data} unit={kind === "classes" ? "lớp học" : kind === "sessions" ? "phiên" : "dự án"} onChange={setPage} />
               </>
             )
           )}
         </Panel>
-        {!data.loading && !data.error && data.data && (
-          <CollectionAside
-            rows={data.data.items}
-            links={[
-              ["/instructor/sessions", "Phiên thực tập"],
-              ["/instructor/projects", "Thư viện dự án"],
-              ["/instructor/sprints", "Sprint & Task"],
-              ["/instructor/reports", "Báo cáo"],
-            ]}
-          />
-        )}
+        {kind === 'classes' && <ClassOperations key={revision} />}
+        </div>
+        <AcademicInsights key={kind+':'+revision+':'+data.data?.total} kind={kind}/>
       </div>
+      <AcademicBottom kind={kind} items={data.data?.items ?? []} summaries={summaries.data ?? []} onOpen={setSelected} />
       {create && (
         <Modal title={`Tạo ${labels[kind]}`} onClose={() => setCreate(false)}>
           <AcademicForm
@@ -209,6 +167,7 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
             onSaved={() => {
               setCreate(false);
               data.reload();
+              setRevision(r=>r+1);
             }}
           />
         </Modal>
@@ -219,7 +178,7 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
           kind={kind}
           id={selected}
           onClose={() => setSelected(undefined)}
-          onChanged={data.reload}
+          onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}}
         />
       )}
     </>
@@ -235,6 +194,9 @@ function AcademicForm({
   onSaved: () => void;
 }) {
   const [form, setForm] = useState<Record<string, string>>({
+      meetingSchedule: initial?.meetingSchedule ?? "",
+      meetingLocation: initial?.meetingLocation ?? "",
+      progress: String(initial?.progress ?? 0),
       code: initial?.code ?? "",
       name: initial?.name ?? "",
       description: initial?.description ?? "",
@@ -243,6 +205,7 @@ function AcademicForm({
       endDate: initial?.endDate?.slice(0, 16) ?? "",
       leadInstructorId: initial?.leadInstructorId ?? getSessionUser()?.id ?? "",
       mentorId: initial?.mentorId ?? getSessionUser()?.id ?? "",
+      domainCategory: initial?.domainCategory ?? "",
       technologies: initial?.technologies.join(", ") ?? "",
       capacity: initial?.capacity?.toString() ?? "",
       difficulty: initial?.difficulty ?? "beginner",
@@ -264,6 +227,9 @@ function AcademicForm({
         type={type}
         required={required}
         maxLength={max}
+        min={key === "progress" ? 0 : undefined}
+        max={key === "progress" ? 100 : undefined}
+        step={key === "progress" ? 1 : undefined}
         value={form[key] ?? ""}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
       />
@@ -306,6 +272,7 @@ function AcademicForm({
           kind === "sessions",
         )}
       </div>
+      {kind === "classes" && <div className="grid gap-3 sm:grid-cols-3">{field("meetingSchedule", "Lịch học", "text", false, 128)}{field("meetingLocation", "Địa điểm / Hình thức học", "text", false, 128)}{field("progress", "Tiến độ (%)", "number", true)}</div>}
       <label className="block text-sm">
         Mô tả
         <textarea
@@ -329,13 +296,14 @@ function AcademicForm({
             ? [initial.status, ...api.sessionTransitions(initial.status)]
             : api.academicStatuses[kind]
           ).map((s) => (
-            <option key={s}>{s}</option>
+            <option key={s} value={s}>{statusNames[s]??({beginner:"Thấp",intermediate:"Trung bình",advanced:"Cao"} as Record<string,string>)[s]??s}</option>
           ))}
         </select>
       </label>
       {kind === "projects" && (
         <>
           <div className="grid gap-4 sm:grid-cols-2">
+            {field("domainCategory", "Lĩnh vực", "text", false, 128)}
             {field("technologies", "Công nghệ (phân cách bằng dấu phẩy)")}
             {field("capacity", "Sức chứa", "number")}
             <label className="block text-sm">
@@ -348,7 +316,7 @@ function AcademicForm({
                 }
               >
                 {["beginner", "intermediate", "advanced"].map((s) => (
-                  <option key={s}>{s}</option>
+                  <option key={s} value={s}>{statusNames[s]??({beginner:"Thấp",intermediate:"Trung bình",advanced:"Cao"} as Record<string,string>)[s]??s}</option>
                 ))}
               </select>
             </label>
@@ -368,7 +336,7 @@ function AcademicForm({
           onChange={(value) => setForm({ ...form, sessionId: value })}
         />
       )}
-      {kind === "sessions" && (
+      {(kind === "sessions" || kind === "classes") && (
         <InstructorPicker
           label="Giảng viên phụ trách"
           value={form.leadInstructorId}
@@ -398,6 +366,7 @@ export function AcademicDetail({
     useCallback((s: AbortSignal) => api.getAcademic(kind, id, s), [kind, id]),
   );
   const [edit, setEdit] = useState(false);
+  const [sprintOpen, setSprintOpen] = useState(false);
   const content = (
     <>
       {entity.loading ? (
@@ -411,11 +380,16 @@ export function AcademicDetail({
             <p className="text-sm">
               {entity.data.description ?? "Chưa có mô tả."}
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Badge>{entity.data.status}</Badge>
               <button className={buttonClass} onClick={() => setEdit(!edit)}>
                 {edit ? "Đóng chỉnh sửa" : "Chỉnh sửa"}
               </button>
+              {kind === "projects" && (
+                <button className="rounded-md border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50" onClick={() => setSprintOpen(true)}>
+                  Tạo Sprint
+                </button>
+              )}
             </div>
             {edit && (
               <AcademicForm
@@ -428,12 +402,18 @@ export function AcademicDetail({
                 }}
               />
             )}
-            <Members kind={kind} id={id} />
+            <Members kind={kind} id={id} onChanged={onChanged} />
             {kind === "sessions" && <SessionExtras id={id} />}
+            {kind === "projects" && <ProjectChanges id={id} />}
             <AssignmentForm
               fixedProject={kind === "projects" ? id : undefined}
               fixedSession={kind === "sessions" ? id : undefined}
             />
+            {kind === "projects" && sprintOpen && entity.data && (
+              <Modal title={`Tạo Sprint cho ${entity.data.code}`} onClose={() => setSprintOpen(false)}>
+                <SprintForm fixedProjectId={id} fixedProjectName={`${entity.data.name} · ${entity.data.code}`} onSaved={() => { setSprintOpen(false); onChanged(); }} />
+              </Modal>
+            )}
           </div>
         )
       )}
@@ -494,7 +474,7 @@ function CandidateSelect({
     </>
   );
 }
-function Members({ kind, id }: { kind: api.AcademicKind; id: string }) {
+function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; onChanged: () => void }) {
   const members = useResource(
     useCallback((s: AbortSignal) => api.getMembers(kind, id, s), [kind, id]),
   );
@@ -508,6 +488,7 @@ function Members({ kind, id }: { kind: api.AcademicKind; id: string }) {
     try {
       await fn();
       members.reload();
+      onChanged();
       setUserId("");
     } catch (e) {
       setError(e);
@@ -584,7 +565,6 @@ export function AssignmentForm({
   const [internId, setInternId] = useState(""),
     [projectId, setProjectId] = useState(fixedProject ?? ""),
     [sessionId, setSessionId] = useState(fixedSession ?? ""),
-    [page, setPage] = useState(1),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>(),
     [success, setSuccess] = useState(false);
@@ -623,11 +603,9 @@ export function AssignmentForm({
           void assign();
         }}
       >
-        <CandidateSelect
+        <AssigneeSelector
           value={internId}
-          onChange={setInternId}
-          page={page}
-          setPage={setPage}
+          onChange={(v) => setInternId(Array.isArray(v) ? v[0] ?? "" : v)}
         />
         {!fixedProject && (
           <AcademicPicker
@@ -763,7 +741,7 @@ function SessionExtras({ id }: { id: string }) {
                 }
               >
                 {["pending", "in_progress", "completed"].map((s) => (
-                  <option key={s}>{s}</option>
+                  <option key={s} value={s}>{statusNames[s]??({beginner:"Thấp",intermediate:"Trung bình",advanced:"Cao"} as Record<string,string>)[s]??s}</option>
                 ))}
               </select>
               <button
@@ -821,6 +799,28 @@ function SessionExtras({ id }: { id: string }) {
       </Panel>
     </>
   );
+}
+function AcademicBottom({ kind, items, summaries, onOpen }: { kind: api.AcademicKind; items: api.AcademicEntity[]; summaries: { id: string; responsibleName: string | null; sessionName: string | null; memberCount: number; taskCount: number | null; doneCount: number | null }[]; onOpen: (id: string) => void }) {
+  if (kind === "classes") {
+    const rows = items.map(x => {
+      const s = summaries.find(v => v.id === x.id);
+      const rate = s?.taskCount ? Math.round((s.doneCount ?? 0) / s.taskCount * 100) : 0;
+      return { x, members: s?.memberCount ?? 0, rate };
+    }).sort((a, b) => b.rate - a.rate).slice(0, 5);
+    return <div className="mt-3"><Panel title="Hiệu quả lớp học (Top 5)" action={<span className="text-xs text-slate-500">Theo tỷ lệ hoàn thành</span>}>
+      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-[#f0f5fa]"><tr>{["#", "Mã lớp", "Tên lớp", "Sinh viên", "Tỷ lệ HT", "Xu hướng"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{rows.map(({ x, members, rate }, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-blue-600">{x.code}</td><td className="px-2 py-2 text-navy">{x.name}</td><td className="px-2 py-2">{members}</td><td className="px-2 py-2"><ProgressBar value={rate} /></td><td className="px-2 py-2 text-slate-500">—</td></tr>)}</tbody></table></div> : <Empty>Chưa có dữ liệu lớp học.</Empty>}
+    </Panel></div>;
+  }
+  if (kind === "sessions") {
+    const rows = items.filter(x => x.status === "ending" || (x.status === "active" && (summaries.find(s => s.id === x.id)?.taskCount ?? 0) === 0)).slice(0, 5);
+    return <div className="mt-3"><Panel title="Cảnh báo & phiên cần chú ý" action={<Link href="/instructor/sessions" className="text-xs text-blue-600">Xem tất cả →</Link>}>
+      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-[#f0f5fa]"><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{rows.map((x, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-blue-600">{x.code}</td><td className="px-2 py-2">{x.status === "ending" ? "Sắp kết thúc" : "Chưa có task"}</td><td className="px-2 py-2"><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className="whitespace-nowrap px-2 py-2">{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className="px-2 py-2"><button className="rounded border border-blue-100 px-2 py-1 text-blue-600" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
+    </Panel></div>;
+  }
+  const rows = items.map(x => ({ x, members: summaries.find(s => s.id === x.id)?.memberCount ?? 0 })).sort((a, b) => b.members - a.members).slice(0, 3);
+  return <div className="mt-3"><Panel title="Project nổi bật" action={<Link href="/instructor/projects" className="text-xs text-blue-600">Xem tất cả →</Link>}>
+    {rows.length ? <div className="grid gap-3 md:grid-cols-3">{rows.map(({ x, members }) => <article key={x.id} className="rounded-md border border-blue-100 p-3"><p className="mb-2 inline-block rounded bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">Nổi bật</p><h3 className="text-sm font-bold text-navy">{x.name}</h3>{x.description && <p className="mt-1 line-clamp-2 text-[11px] text-slate-500">{x.description}</p>}<p className="mt-2 text-[11px] text-slate-500">{members} sinh viên · {x.technologies.join(", ") || "Chưa có công nghệ"}</p><button className="mt-3 w-full rounded-md border border-blue-100 py-1.5 text-xs text-blue-600 hover:bg-blue-50" onClick={() => onOpen(x.id)}>Xem chi tiết</button></article>)}</div> : <Empty>Chưa có dự án nổi bật.</Empty>}
+  </Panel></div>;
 }
 function OverviewCount({ kind }: { kind: api.AcademicKind }) {
   const data = useResource(

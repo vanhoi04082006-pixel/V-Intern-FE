@@ -8,10 +8,12 @@ export function InstructorPicker({
   label,
   value,
   onChange,
+  compact = false,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  compact?: boolean;
 }) {
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
@@ -19,7 +21,7 @@ export function InstructorPicker({
       useCallback((s: AbortSignal) => instructorOptions(page, q, s), [page, q]),
     );
   return (
-    <div className="space-y-2">
+    <div className={compact ? "space-y-1" : "space-y-2"}>
       <label className="block text-sm">
         {label}
         <input

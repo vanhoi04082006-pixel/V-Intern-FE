@@ -23,6 +23,8 @@ export function parseBoardTask(value: unknown) {
     id: string(v.id),
     code: string(v.code),
     title: string(v.title),
+    description: v.description == null ? null : string(v.description),
+    storyPoints: v.storyPoints == null ? null : number(v.storyPoints),
     status: oneOf(v.status, taskStatuses),
     priority: oneOf(v.priority, priorities),
     progress: number(v.progress),

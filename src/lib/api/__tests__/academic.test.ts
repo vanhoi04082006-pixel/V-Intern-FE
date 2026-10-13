@@ -17,6 +17,9 @@ describe("Academic Nest boundaries", () => {
   };
   it("preserves null dates instead of inventing a calendar", () =>
     expect(parseAcademic(entity).startDate).toBeNull());
+  it('canonicalizes SQL Server UUID casing so a selected session is not duplicated in pickers', () => {
+    expect(parseAcademic({ ...entity, id: 'A03E2D75-9B50-47EB-9EE9-BF2136573AA8' }).id).toBe('a03e2d75-9b50-47eb-9ee9-bf2136573aa8');
+  });
   it("rejects missing identity", () =>
     expect(() => parseAcademic({ ...entity, id: undefined })).toThrow());
   it("keeps failed candidates selectable only with their authoritative status", () =>

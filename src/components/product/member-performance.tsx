@@ -19,9 +19,10 @@ import {
   buttonClass,
   inputClass,
 } from "./primitives";
-export function MemberPerformance({ reports = false }: { reports?: boolean }) {
-  const [projectId, setProjectId] = useState(""),
-    [sessionId, setSessionId] = useState(""),
+export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "" }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string }) {
+  const [projectId, setProjectId] = useState(initialProjectId),
+    [sessionId, setSessionId] = useState(initialSessionId),
+    [search, setSearch] = useState(""),
     [from, setFrom] = useState(""),
     [to, setTo] = useState(""),
     [selected, setSelected] = useState<string>();
@@ -34,10 +35,11 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
             ...(sessionId ? { sessionId } : {}),
             ...(from ? { from } : {}),
             ...(to ? { to } : {}),
+            ...(search ? { q: search } : {}),
           }),
           signal,
         ),
-      [projectId, sessionId, from, to],
+      [projectId, sessionId, from, to, search],
     ),
   );
   const data = rows.data ?? [],
@@ -120,12 +122,13 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
             kind="projects"
             label="Dự án báo cáo"
             value={projectId}
-            onChange={setProjectId}
+            onChange={id => { setProjectId(id); setSessionId(""); }}
           />
           <AcademicPicker
             kind="sessions"
             label="Phiên báo cáo"
             value={sessionId}
+            projectId={projectId}
             onChange={setSessionId}
           />
           <label className="text-sm">
@@ -147,6 +150,7 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
             />
           </label>
         </div>
+        <label className="mt-4 block text-sm">Tìm sinh viên<input className={inputClass} value={search} onChange={e => setSearch(e.target.value)} /></label>
       </Panel>
       <div className="mt-5" />
       {!rows.loading && !rows.error && (
@@ -227,7 +231,7 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
                 </p>
               </div>
             </Panel>
-            <Panel title="Thành viên nổi bật · Top 5">
+            <Panel title="Thành viên nổi bật · Top 10">
               <ol className="space-y-3">
                 {data
                   .filter((m) => m.averageEvaluationScore !== null)
@@ -237,7 +241,7 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
                         (a.averageEvaluationScore ?? 0) ||
                       a.userId.localeCompare(b.userId),
                   )
-                  .slice(0, 5)
+                  .slice(0, 10)
                   .map((m, i) => (
                     <li
                       key={m.userId}
@@ -269,15 +273,15 @@ export function MemberPerformance({ reports = false }: { reports?: boolean }) {
           title="Chi tiết hiệu suất"
           onClose={() => setSelected(undefined)}
         >
-          <MemberDetail id={selected} />
+          <MemberDetail id={selected} scope={new URLSearchParams({ ...(projectId ? { projectId } : {}), ...(sessionId ? { sessionId } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}) }).toString()} />
         </Modal>
       )}
     </>
   );
 }
-function MemberDetail({ id }: { id: string }) {
+function MemberDetail({ id, scope }: { id: string; scope: string }) {
   const metrics = useResource(
-    useCallback((s: AbortSignal) => getMemberPerformance(id, s), [id]),
+    useCallback((s: AbortSignal) => getMemberPerformance(id, s, scope), [id, scope]),
   );
   const ai = useResource(
     useCallback((s: AbortSignal) => getMemberRecommendations(id, s), [id]),

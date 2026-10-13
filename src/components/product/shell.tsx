@@ -25,7 +25,6 @@ const menus: Record<ProductRole, [string, string][]> = {
   ],
   instructor: [
     ["", "Tổng quan"],
-    ["classes", "Lớp học"],
     ["sessions", "Phiên thực tập"],
     ["projects", "Thư viện dự án"],
     ["sprints", "Sprint & Task"],

@@ -30,10 +30,14 @@ export function sessionTransitions(status: string): string[] {
 export function parseAcademic(value: unknown) {
   const v = record(value);
   return {
-    id: string(v.id),
+    id: string(v.id).toLowerCase(),
     code: string(v.code),
     name: string(v.name),
     status: string(v.status),
+    meetingSchedule: v.meetingSchedule == null ? null : string(v.meetingSchedule),
+    meetingLocation: v.meetingLocation == null ? null : string(v.meetingLocation),
+    progress: v.progress == null ? null : number(v.progress),
+    domainCategory: v.domainCategory == null ? null : string(v.domainCategory),
     description: nullable(v.description, string),
     startDate: nullable(v.startDate, string),
     endDate: nullable(v.endDate, string),
@@ -110,12 +114,41 @@ export const listAcademic = (
   q = "",
   status = "",
   signal?: AbortSignal,
+  filters: Record<string, string> = {},
 ) =>
   request(
-    `/${kind}?${new URLSearchParams({ page: String(page), pageSize: "10", ...(q ? { q } : {}), ...(status ? { status } : {}) })}`,
+    `/${kind}?${new URLSearchParams({ page: String(page), pageSize: "10", ...(q ? { q } : {}), ...(status ? { status } : {}), ...Object.fromEntries(Object.entries(filters).filter(([, value]) => value)) })}`,
     (x) => parsePage(x, parseAcademic),
     { signal },
   );
+export function parseSlot(value: unknown) {
+  const v = record(value);
+  return {
+    roleCode: string(v.roleCode),
+    requiredCount: number(v.requiredCount),
+    filledCount: number(v.filledCount),
+    members: Array.isArray(v.members)
+      ? v.members.map((m) => {
+          const r = record(m);
+          return { userId: string(r.userId), displayName: nullable(r.displayName, string) };
+        })
+      : [],
+  };
+}
+export type SlotInfo = ReturnType<typeof parseSlot>;
+
+export const getProjectSlots = (projectId: string, signal?: AbortSignal) =>
+  request(`/projects/${encodeURIComponent(projectId)}/slots`, (x) => array(record(x).slots, parseSlot), {
+    signal,
+  });
+
+/** M5 Start Session: explicit status transition (preconditions enforced server-side). */
+export const transitionSession = (id: string, status: string) =>
+  request(`/sessions/${encodeURIComponent(id)}`, parseAcademic, {
+    method: "PATCH",
+    body: { status },
+  });
+
 export const getAcademic = (
   kind: AcademicKind,
   id: string,
@@ -130,6 +163,104 @@ export const saveAcademic = (
     method: id ? "PATCH" : "POST",
     body: academicBody(kind, form, Boolean(id)),
   });
+export interface CandidateResult {
+  overallScore: number | null;
+  technicalScore: number | null;
+  softSkillScore: number | null;
+  decision: string | null;
+  evaluatedAt: string | null;
+}
+
+export interface Candidate {
+  userId: string;
+  displayName: string | null;
+  email: string | null;
+  status: string;
+  selectedRole: string | null;
+  attemptCount: number;
+  recruitedAt: string | null;
+  hasActiveAssignment: boolean;
+  activeProjectId: string | null;
+  result: CandidateResult | null;
+}
+
+export function parseCandidate(value: unknown): Candidate {
+  const c = record(value);
+  const num = (v: unknown): number | null => (v === null || v === undefined ? null : number(v));
+  const r = c.result === null || c.result === undefined ? null : record(c.result);
+  return {
+    userId: string(c.userId),
+    displayName: nullable(c.displayName, string),
+    email: nullable(c.email, string),
+    status: string(c.status),
+    selectedRole: nullable(c.selectedRole, string),
+    attemptCount: typeof c.attemptCount === "number" ? c.attemptCount : 0,
+    recruitedAt: nullable(c.recruitedAt, string),
+    hasActiveAssignment: c.hasActiveAssignment === true,
+    activeProjectId: nullable(c.activeProjectId, string),
+    result: r
+      ? {
+          overallScore: num(r.overallScore),
+          technicalScore: num(r.technicalScore),
+          softSkillScore: num(r.softSkillScore),
+          decision: r.decision === null || r.decision === undefined ? null : string(r.decision),
+          evaluatedAt: nullable(r.evaluatedAt, string),
+        }
+      : null,
+  };
+}
+
+export interface CandidateQuery {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  role?: string;
+  eligibility?: string;
+  status?: string;
+  sort?: string;
+}
+
+/** M4 server-side candidate search — never fetch-all-filter-local. */
+export const searchCandidates = (q: CandidateQuery, signal?: AbortSignal) => {
+  const params = new URLSearchParams({
+    page: String(q.page ?? 1),
+    pageSize: String(q.pageSize ?? 20),
+  });
+  if (q.search) params.set("search", q.search);
+  if (q.role) params.set("role", q.role);
+  if (q.eligibility) params.set("eligibility", q.eligibility);
+  if (q.status) params.set("status", q.status);
+  if (q.sort) params.set("sort", q.sort);
+  return request(`/recruitment/candidates?${params.toString()}`, (x) => {
+    const v = record(x);
+    return {
+      items: array(v.items, parseCandidate),
+      total: number(v.total),
+      page: q.page ?? 1,
+      pageSize: q.pageSize ?? 20,
+      totalPages: Math.ceil(number(v.total) / (q.pageSize ?? 20)),
+    };
+  }, { signal });
+};
+
+export const getCandidateDetail = (userId: string, signal?: AbortSignal) =>
+  request(`/recruitment/candidates/${encodeURIComponent(userId)}`, (x) => record(x), { signal });
+
+export const listSessionAssignments = (sessionId: string, signal?: AbortSignal) =>
+  request(`/assignments?${new URLSearchParams({ sessionId, status: "active", page: "1", pageSize: "100" })}`, (x) => {
+    const v = record(x);
+    const items = Array.isArray(v.items) ? v.items : array(v.data, (i) => i);
+    return items.map((i) => {
+      const r = record(i);
+      return { id: string(r.id), internId: string(r.internId), status: string(r.status) };
+    });
+  }, { signal });
+
+export const cancelAssignment = (id: string) =>
+  request(`/assignments/${encodeURIComponent(id)}/cancel`, (x) => string(record(x).id), {
+    method: "POST",
+  });
+
 export const listCandidates = (page: number, signal?: AbortSignal) =>
   request(
     `/recruitment/candidates?page=${page}&pageSize=20`,
@@ -231,8 +362,16 @@ export const assignIntern = (body: {
   internId: string;
   projectId: string;
   sessionId: string;
+  /** Role slot to fill; BE enforces the slot cap and records project membership. */
+  role?: string;
 }) =>
   request("/assignments", (x) => string(record(x).id), {
     method: "POST",
     body,
   });
+export const getAcademicSummaries = (kind: AcademicKind, ids: string, signal?: AbortSignal) => request(`/dashboard/academic?kind=${kind}&ids=${encodeURIComponent(ids)}`, value => array(record(value).items, x => {
+  const v=record(x);
+  return {id:string(v.id),responsibleName:nullable(v.responsibleName,string),sessionName:nullable(v.sessionName,string),memberCount:number(v.memberCount),taskCount:nullable(v.taskCount,number),doneCount:nullable(v.doneCount,number)};
+}), {signal});
+
+export const getProjectFilterOptions = (signal?:AbortSignal) => request('/projects/filter-options',value=>{const v=record(value);return {domains:array(v.domains,string),technologies:array(v.technologies,string)};},{signal});

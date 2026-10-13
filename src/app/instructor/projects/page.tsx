@@ -1,4 +1,4 @@
-import { AcademicList } from "@/components/product/academic";
+import { ProjectLibrary } from "@/components/projects/project-library";
 export default function Page() {
-  return <AcademicList kind="projects" />;
+  return <ProjectLibrary />;
 }

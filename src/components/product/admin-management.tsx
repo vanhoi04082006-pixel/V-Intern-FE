@@ -16,6 +16,7 @@ import {
   Panel,
 } from "./primitives";
 import { useAction } from "./use-action";
+import { Can } from "@/components/auth/can";
 import { Metrics } from "./outcomes";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
 function Result<T>({
@@ -221,9 +222,11 @@ export function AdminUsers() {
         title="Quản lý người dùng"
         subtitle="Danh sách và trạng thái tài khoản từ cơ sở dữ liệu"
         action={
-          <button className={buttonClass} onClick={() => setCreate(true)}>
-            Tạo người dùng
-          </button>
+          <Can perm="users.create">
+            <button className={buttonClass} onClick={() => setCreate(true)}>
+              Tạo người dùng
+            </button>
+          </Can>
         }
       />
       {!users.loading && !users.error && users.data && (
@@ -944,9 +947,11 @@ function GroupRoleForm({
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <RoleChoices value={selected} onChange={setSelected} />
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu vai trò nhóm
-      </button>
+      <Can perm="groups.manage">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu vai trò nhóm
+        </button>
+      </Can>
     </form>
   );
 }

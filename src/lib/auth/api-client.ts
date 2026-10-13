@@ -23,7 +23,7 @@ export interface ApiFetchOptions {
   body?: unknown;
   token?: string | null;
   signal?: AbortSignal;
-  responseType?: "json" | "blob";
+  responseType?: "json" | "blob" | "xlsx";
 }
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -63,9 +63,10 @@ export async function apiFetch(
     throw new ApiError(0, "NETWORK_ERROR", "Không thể kết nối đến hệ thống.");
   }
   if (response.status === 204 && response.ok) return null;
-  if (response.ok && responseType === "blob") {
-    if (!response.headers.get("content-type")?.startsWith("application/pdf"))
-      throw new ApiError(0, "INVALID_RESPONSE", "Expected a PDF response.");
+  if (response.ok && (responseType === "blob" || responseType === "xlsx")) {
+    const expected = responseType === "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/pdf";
+    if (response.headers.get("content-type")?.split(';')[0].trim().toLowerCase() !== expected)
+      throw new ApiError(0, "INVALID_RESPONSE", "Unexpected download response type.");
     return response.blob();
   }
   let data: unknown = null;
@@ -97,6 +98,18 @@ export function errorMessage(error: unknown): string {
   if (error.code === "API_CONFIG_MISSING") return error.message;
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
+  const workflowErrors: Record<string, string> = {
+    INTERVIEW_ROLE_MISMATCH: "Vai trò phân công phải khớp vai trò đã đạt phỏng vấn.",
+    INTERN_NOT_RECRUITED: "Sinh viên phải đang hoạt động và đạt tuyển dụng cho vai trò được phân công.",
+    ASSIGNMENT_CONFLICT: "Sinh viên đang có phân công hoạt động. Hãy chọn sinh viên còn trống.",
+    ROLE_SLOT_FULL: "Vai trò này đã đủ thành viên. Vui lòng tải lại đội hình.",
+    SESSION_TEAM_INCOMPLETE: "Chưa đủ thành viên cho các vai trò bắt buộc.",
+    SESSION_SNAPSHOT_INVALID: "Bản chụp dự án không hợp lệ. Cần sửa dữ liệu phiên trước khi Start.",
+    PLAN_ALREADY_PUBLISHED: "Phiên này đã có kế hoạch được publish. Vui lòng tải lại.",
+    GENERATION_DESCRIPTION_REQUIRED: "Bổ sung mô tả cho từng Task trong bản nháp trước khi publish.",
+    GENERATION_ACCEPTANCE_CRITERIA_REQUIRED: "Bổ sung tiêu chí chấp nhận cho từng Task trước khi publish.",
+  };
+  if (workflowErrors[error.code]) return workflowErrors[error.code];
   switch (error.statusCode) {
     case 0:
       return "Không thể kết nối đến hệ thống. Vui lòng kiểm tra kết nối và thử lại.";
