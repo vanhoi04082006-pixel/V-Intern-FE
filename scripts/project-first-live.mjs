@@ -25,7 +25,7 @@ async function call(persona, endpoint, method = "GET", body, status = 200, code)
   const r = await fetch(api + endpoint, { method, headers: { authorization: `Bearer ${auth.token}`, ...(body !== undefined ? { "content-type": "application/json" } : {}) }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(15000) });
   const data = r.status === 204 ? null : await r.json();
   network.push({ source: "api", endpoint, method, status: r.status });
-  assert.equal(r.status, status, `${endpoint}: ${data?.code ?? ""}`); if (code) assert.equal(data.code, code);
+  assert.equal(r.status, status, `${endpoint}: ${data?.code ?? ""} ${JSON.stringify(data?.message ?? "")}`); if (code) assert.equal(data.code, code);
   return data;
 }
 const browser = await chromium.launch({ channel: "chrome", headless: true });
@@ -36,8 +36,8 @@ let stage = "fixtures";
 try {
   assert.equal(await ds.showMigrations(), false);
   for (const [key, role, name] of [["frontend", "intern", "CI Frontend One"], ["frontend2", "intern", "CI Frontend Two"], ["frontendExtra", "intern", "CI Frontend Capacity"], ["backend", "intern", "CI Backend"], ["invalid", "intern", "CI Unpassed"], ["foreign", "instructor", "CI Foreign Instructor"]]) {
-    const email = `${key}-${tag}@projectfirst.test`;
-    const u = await call("admin", "/users", "POST", { email, username: `${key}-${tag}`, displayName: name, password: process.env.LIVE_PASSWORD, roleCodes: [role] }, 201);
+    const username = `${key}-${tag}`.toLowerCase(), email = `${username}@projectfirst.test`;
+    const u = await call("admin", "/users", "POST", { email, username, displayName: name, password: process.env.LIVE_PASSWORD, roleCodes: [role] }, 201);
     users[key] = { id: u.id.toLowerCase(), email, name };
   }
   for (const key of ["frontend", "frontend2", "frontendExtra", "backend"]) {
