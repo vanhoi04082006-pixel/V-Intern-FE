@@ -21,10 +21,7 @@ const { chromium } = await import(
   browser = await chromium.launch({ channel: "chrome", headless: true }),
   ds = req(path.join(be, "dist/database/data-source.js")).default;
 await ds.initialize();
-const fixture = JSON.parse(
-    fs.readFileSync("../phase7-local/outcomes.json", "utf8"),
-  ),
-  api = "http://localhost:8080/api/v1",
+const api = "http://localhost:8080/api/v1",
   base = "http://localhost:3001",
   tag = Date.now().toString(36),
   evidence = path.resolve("phase7-evidence/final"),
@@ -96,16 +93,16 @@ try {
   let dialog = page.getByRole("dialog");
   await dialog.getByLabel("Mã kỳ").fill("UI-EVAL-" + tag);
   await dialog.getByLabel("Tên kỳ").fill("Đánh giá browser " + tag);
-  await dialog.getByLabel("Tìm dự án đánh giá").fill("UI-projects-");
+  await dialog.getByLabel("Tìm dự án đánh giá").fill(academic.projectCode);
   await dialog
     .getByLabel("Dự án đánh giá", { exact: true })
     .selectOption(academic.projects);
-  await dialog.getByLabel("Tìm phiên đánh giá").fill("UI-sessions-");
+  await dialog.getByLabel("Tìm phiên đánh giá").fill(academic.sessionCode);
   await dialog
     .getByLabel("Phiên đánh giá", { exact: true })
     .selectOption(academic.sessions);
-  await dialog.getByLabel("Bắt đầu", { exact: true }).fill("2026-10-01T00:00");
-  await dialog.getByLabel("Kết thúc", { exact: true }).fill("2026-10-31T23:59");
+  await dialog.getByLabel("Bắt đầu", { exact: true }).fill(academic.startDate + "T00:00");
+  await dialog.getByLabel("Kết thúc", { exact: true }).fill(academic.endDate + "T00:00");
   const cycle = await mutation(page, "/evaluation-cycles", "POST", () =>
     dialog.getByRole("button", { name: "Lưu kỳ đánh giá" }).click(),
   );
@@ -121,7 +118,7 @@ try {
     dialog.getByRole("button", { name: "Chuyển kỳ sang open" }).click(),
   );
   await page.getByRole("button", { name: "Tạo đánh giá", exact: true }).click();
-  await page.getByLabel("Intern đánh giá").selectOption(fixture.userId);
+  await page.getByLabel("Intern đánh giá").selectOption(academic.graduateId);
   const evaluation = await mutation(page, "/evaluations", "POST", () =>
     page.getByRole("button", { name: "Tạo bản nháp" }).click(),
   );
@@ -181,135 +178,51 @@ try {
     status: "PASS",
   });
   await dialog.getByRole("button", { name: "Đóng", exact: true }).click();
-  await page.goto(base + "/instructor/sprints");
-  await page.getByRole("button", { name: "Tạo Sprint", exact: true }).click();
-  dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Mã Sprint", { exact: true }).fill("UI-SP-" + tag);
-  await dialog
-    .getByLabel("Tên Sprint", { exact: true })
-    .fill("Sprint browser " + tag);
-  await dialog.getByLabel("Tìm dự án", { exact: true }).fill("UI-projects-");
-  await dialog
-    .getByLabel("Dự án", { exact: true })
-    .selectOption(academic.projects);
-  await dialog.getByLabel("Tìm phiên", { exact: true }).fill("UI-sessions-");
-  await dialog
-    .getByLabel("Phiên", { exact: true })
-    .selectOption(academic.sessions);
-  await dialog.getByLabel("Bắt đầu (UTC)").fill("2026-10-01T00:00");
-  await dialog.getByLabel("Kết thúc (UTC)").fill("2026-10-31T23:59");
-  const sprint = await mutation(page, "/sprints", "POST", () =>
-    dialog.getByRole("button", { name: "Lưu Sprint" }).click(),
-  );
-  await page
-    .getByRole("button", { name: new RegExp("Sprint browser " + tag) })
-    .click();
-  dialog = page.getByRole("dialog");
-  await mutation(page, `/sprints/${sprint.id}/status`, "POST", () =>
-    dialog.getByRole("button", { name: "Chuyển Sprint sang active" }).click(),
-  );
-  await dialog.getByRole("button", { name: "Tạo nhiệm vụ" }).click();
-  const taskDialog = page.getByRole("dialog", {
-    name: "Tạo nhiệm vụ",
-    exact: true,
-  });
-  await taskDialog.getByLabel("Tên nhiệm vụ").fill("Task browser " + tag);
-  await taskDialog
-    .getByLabel("Mô tả nhiệm vụ")
-    .fill("Tạo từ Instructor real API");
-  await taskDialog.getByLabel("Mức ưu tiên").selectOption("critical");
-  await taskDialog.getByLabel("Story points").fill("5");
-  await taskDialog.getByLabel("Người thực hiện").selectOption(fixture.userId);
-  const task = await mutation(page, "/tasks", "POST", () =>
-    taskDialog.getByRole("button", { name: "Lưu nhiệm vụ" }).click(),
-  );
-  assert.equal(task.priority, "critical");
-  await call(fixture.email, `/tasks/${task.id}/my`, "PATCH", {
-    status: "doing",
-    progress: 30,
-    expectedVersion: task.version,
-  });
-  const latest = await call(fixture.email, `/tasks/${task.id}`);
-  await call(fixture.email, `/tasks/${task.id}/my`, "PATCH", {
-    status: "review",
-    progress: 90,
-    expectedVersion: latest.version,
-  });
-  await page.reload();
-  await page
-    .getByRole("button", { name: new RegExp("Sprint browser " + tag) })
-    .click();
-  dialog = page.getByRole("dialog", {
-    name: "Sprint browser " + tag,
-    exact: true,
-  });
-  await dialog
-    .getByRole("button", { name: task.code + " · " + task.title, exact: true })
-    .click();
-  const detail = page.getByRole("dialog", {
-    name: "Chi tiết nhiệm vụ",
-    exact: true,
-  });
-  await mutation(
-    page,
-    `/tasks/${task.id}`,
-    "PATCH",
-    () => detail.getByRole("button", { name: "Duyệt hoàn thành" }).click(),
-    200,
-  );
-  await detail.getByText("Hoàn thành", { exact: true }).first().waitFor();
-  sql = await ds.query(
-    "SELECT status, progress, priority FROM tasks WHERE id=@0",
-    [task.id],
-  );
-  assert.equal(sql[0].status, "done");
-  assert.equal(Number(sql[0].progress), 100);
-  assert.equal(sql[0].priority, "critical");
-  await detail.getByRole("button", { name: "Đóng", exact: true }).click();
-  await page.screenshot({
-    path: path.join(evidence, "instructor-sprint-board.png"),
-    fullPage: true,
-  });
-  results.push({
-    name: "Browser Sprint create/activate, task assign, Intern submit, Instructor approve and SQL truth",
-    status: "PASS",
-  });
-  await page.goto(base + "/instructor/performance");
-  await page.getByRole("heading", { name: "Kết quả thành viên" }).waitFor();
-  const download = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Xuất CSV" }).click();
-  assert.equal(
-    (await download).suggestedFilename(),
-    "v-intern-performance.csv",
-  );
-  await page.screenshot({
-    path: path.join(evidence, "instructor-performance.png"),
-    fullPage: true,
-  });
-  await page.goto(base + "/instructor/reports");
-  await page.getByRole("heading", { name: "Báo cáo tổng hợp" }).waitFor();
+  // Delivery now comes from the reviewed AI plan, not manual Sprint/Task seeding.
+  const task = await call(academic.graduateEmail, `/tasks/${academic.taskId}`);
+  await call(academic.graduateEmail, `/tasks/${task.id}/my`, "PATCH", { status: "doing", progress: 30, expectedVersion: task.version });
+  const doing = await call(academic.graduateEmail, `/tasks/${task.id}`);
+  await call(academic.graduateEmail, `/tasks/${task.id}/my`, "PATCH", { status: "review", progress: 90, expectedVersion: doing.version });
+  await page.goto(`${base}/instructor/tasks/${task.id}`);
+  await page.getByRole("button", { name: "Duyệt hoàn thành", exact: true }).click();
+  await page.getByText("Hoàn thành", { exact: true }).first().waitFor();
+  const sqlTask = (await ds.query("SELECT status,progress FROM tasks WHERE id=@0", [task.id]))[0];
+  assert.equal(sqlTask.status, "done"); assert.equal(Number(sqlTask.progress), 100);
+  results.push({ name: "AI-published task: owner submit/review, Instructor approval and SQL done", status: "PASS" });
+  await page.goto(`${base}/instructor/performance?projectId=${academic.projects}&sessionId=${academic.sessions}`);
+  await page.getByRole("heading", { name: "Thành viên nổi bật · Top 10", exact: true }).waitFor();
+  const top = page.locator("section").filter({ has: page.getByRole("heading", { name: "Thành viên nổi bật · Top 10", exact: true }) });
+  await top.getByText("80", { exact: true }).waitFor();
+  const download = page.waitForEvent("download"); await page.getByRole("button", { name: "Xuất CSV", exact: true }).click();
+  assert.equal((await download).suggestedFilename(), "v-intern-performance.csv");
+  await page.goto(`${base}/instructor/reports?projectId=${academic.projects}&sessionId=${academic.sessions}`);
+  await page.getByRole("heading", { name: "Báo cáo phiên thực tập", exact: true }).waitFor();
+  await page.getByLabel("Tên báo cáo", { exact: true }).fill(`Project-first report ${tag}`);
+  const report = await mutation(page, "/reports", "POST", () => page.getByRole("button", { name: "Tạo và lưu báo cáo", exact: true }).click());
+  await page.getByRole("heading", { name: `Project-first report ${tag}`, exact: true }).waitFor();
+  assert.equal(report.snapshot.scope.sessionId.toLowerCase(), academic.sessions.toLowerCase());
+  assert.ok(report.snapshot.members.some(m => m.userId.toLowerCase() === academic.graduateId.toLowerCase() && m.averageEvaluationScore === 80));
+  for (const format of ["PDF", "XLSX", "CSV"]) {
+    const downloaded = page.waitForEvent("download"); await page.getByRole("button", { name: `Tải ${format}`, exact: true }).click();
+    const file = await (await downloaded).path(), bytes = fs.readFileSync(file);
+    if (format === "PDF") assert.equal(bytes.subarray(0, 4).toString(), "%PDF");
+    else if (format === "XLSX") assert.equal(bytes.subarray(0, 2).toString(), "PK");
+    else assert.ok(bytes.toString().includes("Project-first report"));
+  }
+  const foreignAuth = await fetch(api + "/auth/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: academic.foreignEmail, password: process.env.LIVE_PASSWORD }) });
+  assert.equal(foreignAuth.status, 200); const foreignToken = (await foreignAuth.json()).accessToken;
+  for (const suffix of ["", "/pdf", "/xlsx"]) {
+    const r = await fetch(api + `/reports/${report.id}${suffix}`, { headers: { authorization: `Bearer ${foreignToken}` }, signal: AbortSignal.timeout(10000) });
+    assert.equal(r.status, 404); assert.match(r.headers.get("content-type"), /application\/json/);
+  }
   await page.setViewportSize({ width: 390, height: 844 });
-  assert.ok(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth + 1,
-    ),
-  );
-  await page.screenshot({
-    path: path.join(evidence, "instructor-reports-mobile.png"),
-    fullPage: true,
-  });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+  await page.screenshot({ path: path.join(evidence, "instructor-reports-mobile.png"), fullPage: true });
   assert.deepEqual(errors, []);
-  results.push({
-    name: "Scoped performance/report CSV and responsive browser without JS errors",
-    status: "PASS",
-  });
+  results.push({ name: "Finalized scoped Top10, persisted report, PDF/XLSX/CSV content and foreign ownership", status: "PASS" });
   await context.close();
 } finally {
-  fs.writeFileSync(
-    path.join(evidence, "instructor-live-results.json"),
-    JSON.stringify({ results, network, interception: false }, null, 2),
-  );
-  await ds.destroy();
-  await browser.close();
+  fs.writeFileSync(path.join(evidence, "instructor-live-results.json"), JSON.stringify({ results, network, interception: false }, null, 2));
+  await ds.destroy(); await browser.close();
 }
 console.log(JSON.stringify({ passed: results.length, results }));

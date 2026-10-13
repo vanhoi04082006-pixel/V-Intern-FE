@@ -99,6 +99,10 @@ try {
       for (const route of (role === "admin" ? ["groups", "roles"] : role === "instructor" ? ["reports"] : [])) {
         await page.setViewportSize({ width: 1440, height: 900 });
         await page.goto(`${base}/${role}/${route}`); await ready(page);
+        if (role === "instructor" && route === "classes") {
+          await page.waitForURL("**/instructor/projects");
+          await page.getByRole("heading", { name: "Thư viện dự án", exact: true }).waitFor();
+        }
         await page.screenshot({ path: path.join(evidence, `uat-desktop-${role}-${route}.png`), fullPage: true });
       }
       await page.setViewportSize({ width: 1024, height: 768 });

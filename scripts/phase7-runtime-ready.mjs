@@ -4,8 +4,8 @@ const deadline = Date.now() + 60000;
 let ready = false;
 while (Date.now() < deadline) {
   try {
-    const api = await fetch("http://localhost:8080/api/v1/health"),
-      fe = await fetch("http://localhost:3001/login");
+    const api = await fetch("http://localhost:8080/api/v1/health", { signal: AbortSignal.timeout(3000) }),
+      fe = await fetch("http://localhost:3001/login", { signal: AbortSignal.timeout(3000) });
     const health = await api.json();
     if (
       api.ok &&

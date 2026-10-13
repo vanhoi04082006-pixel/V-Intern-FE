@@ -1,4 +1,6 @@
-/** Instructor CRUD/assignment browser verification against real Nest and SQL. */
+/** Historical pre-Project-first journey; retired from CI in favor of project-first-live.mjs.
+ * Assertion replacements are documented in docs/testing/project-first-fullstack-gate.md.
+ */
 import path from "node:path";
 import fs from "node:fs";
 import assert from "node:assert/strict";
