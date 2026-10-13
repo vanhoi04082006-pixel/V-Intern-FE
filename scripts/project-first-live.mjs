@@ -35,12 +35,12 @@ page.on("response", r => { if (r.url().startsWith(api)) network.push({ source: "
 let stage = "fixtures";
 try {
   assert.equal(await ds.showMigrations(), false);
-  for (const [key, role, name] of [["frontend", "intern", "CI Frontend One"], ["frontend2", "intern", "CI Frontend Two"], ["backend", "intern", "CI Backend"], ["invalid", "intern", "CI Unpassed"], ["foreign", "instructor", "CI Foreign Instructor"]]) {
+  for (const [key, role, name] of [["frontend", "intern", "CI Frontend One"], ["frontend2", "intern", "CI Frontend Two"], ["frontendExtra", "intern", "CI Frontend Capacity"], ["backend", "intern", "CI Backend"], ["invalid", "intern", "CI Unpassed"], ["foreign", "instructor", "CI Foreign Instructor"]]) {
     const email = `${key}-${tag}@projectfirst.test`;
     const u = await call("admin", "/users", "POST", { email, username: `${key}-${tag}`, displayName: name, password: process.env.LIVE_PASSWORD, roleCodes: [role] }, 201);
     users[key] = { id: u.id.toLowerCase(), email, name };
   }
-  for (const key of ["frontend", "frontend2", "backend"]) {
+  for (const key of ["frontend", "frontend2", "frontendExtra", "backend"]) {
     await call(key, "/recruitment/me/role", "PATCH", { role: key.startsWith("frontend") ? "frontend" : "backend" });
     const interview = await call(key, "/recruitment/me/interviews", "POST", {}, 201);
     for (const q of interview.questions) await call(key, `/recruitment/me/interviews/${interview.session.id}/answers/${q.id}`, "PUT", { answerText: "Controlled contract answer: clarify requirements, implement with tests and verify persisted results." });
@@ -108,6 +108,13 @@ try {
     await expect(page.getByText(`Đã phân công ${users[key].name}.`, { exact: true })).toBeVisible();
   }
   await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible();
+  // A fourth genuinely passed, available candidate cannot overfill a frontend role slot.
+  await page.getByLabel("Lọc theo role", { exact: true }).selectOption("frontend");
+  await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users.frontendExtra.email);
+  const extraCandidate = page.locator("li").filter({ hasText: users.frontendExtra.email });
+  await expect(extraCandidate.getByText(/Recruitment: passed/)).toBeVisible();
+  await expect(extraCandidate.getByRole("button", { name: "Thêm", exact: true })).toBeDisabled();
+  await call("instructor", "/assignments", "POST", assignment("frontendExtra"), 409, "ROLE_SLOT_FULL");
   await call("instructor", "/assignments", "POST", { ...assignment("frontend"), projectId: second.projectId, sessionId: second.sessionId }, 409, "ASSIGNMENT_CONFLICT");
   results.push({ name: "Version pin/create replay; real PASS recruitment/role slots, reject/conflict and nonstale detail", status: "PASS" });
   stage = "start-draft-publish";
