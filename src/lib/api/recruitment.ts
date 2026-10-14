@@ -212,3 +212,16 @@ export function remainingSeconds(
     ? null
     : Math.max(0, session.secondsRemaining - Math.floor(elapsedMs / 1000));
 }
+
+export function parseConversation(value: unknown) {
+  const v = p.record(value);
+  return {
+    session: parseInterviewSession(v.session), answeredCount: p.number(v.answeredCount),
+    messages: p.array(v.messages, item => { const m = p.record(item); return { role: p.oneOf(m.role, ["assistant", "user"]), questionId: p.string(m.questionId), position: p.number(m.position), content: p.string(m.content) }; }),
+    currentQuestion: p.nullable(v.currentQuestion, item => { const q = p.record(item); return { id: p.string(q.id), position: p.number(q.position), phase: p.string(q.phase), status: p.oneOf(q.status, ["generating", "ready", "failed", "not_started"]), errorCode: p.nullable(q.errorCode, p.string) }; }),
+  };
+}
+export const conversationView = (id: string, signal?: AbortSignal) => request(`${sessionPath(id)}/conversation`, parseConversation, { signal });
+export const conversationNext = (id: string) => request(`${sessionPath(id)}/conversation/next`, parseConversation, { method: "POST" });
+
+export const conversationClarify = (id: string) => request(`${sessionPath(id)}/conversation/clarify`, parseConversation, { method: "POST" });

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { remainingSeconds, type InterviewSession } from "@/lib/api/recruitment";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import { roleLabel } from "@/lib/api/workspace";
+import { ConversationInterview } from "./conversation-interview";
 function InterviewCountdown({ session }: { session: InterviewSession }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -27,6 +28,7 @@ export function InterviewStep() {
     profile,
     interview,
     busy,
+    evaluating,
     notice,
     saveAnswer,
     submit,
@@ -35,6 +37,17 @@ export function InterviewStep() {
   } = useRecruitmentFlow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  if (evaluating) return (
+    <section className="mx-auto max-w-xl rounded-2xl border border-blue-100 bg-white p-10 text-center shadow-sm" aria-busy="true">
+      <div role="status" aria-label="AI đang chấm bài" aria-live="polite">
+        <span aria-hidden="true" className="mx-auto mb-6 block size-12 rounded-full border-4 border-blue-100 border-t-brand motion-safe:animate-spin" />
+        <h1 className="text-2xl font-bold text-navy">Đã kết thúc phỏng vấn</h1>
+        <p className="mt-3 text-slate-600">AI đang đánh giá câu trả lời. Vui lòng chờ kết quả.</p>
+      </div>
+      <button disabled className="mt-6 rounded-lg bg-brand px-5 py-3 text-white opacity-60">Đang chấm bài…</button>
+      <button disabled className="ml-3 mt-3 rounded-lg border p-3 opacity-60">Tải lại trạng thái</button>
+    </section>
+  );
   if (!interview)
     return (
       <div>
@@ -52,6 +65,7 @@ export function InterviewStep() {
         {notice && <p role="alert">{notice}</p>}
       </div>
     );
+  if (interview.session.questionCount === 10) return <ConversationInterview key={interview.session.id} />;
   const { session, questions } = interview;
   const question =
     questions.find((q) => q.id === selectedId) ??

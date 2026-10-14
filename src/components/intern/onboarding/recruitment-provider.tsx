@@ -24,6 +24,7 @@ interface Flow {
   profile: RecruitmentProfile;
   interview: Interview | null;
   busy: boolean;
+  evaluating: boolean;
   notice: string | null;
   reload: () => Promise<void>;
   selectRole: (role: RecruitmentRole) => Promise<boolean>;
@@ -42,6 +43,7 @@ export function RecruitmentProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>();
   const [busy, setBusy] = useState(false);
+  const [evaluating, setEvaluating] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const load = useCallback(
@@ -131,8 +133,10 @@ export function RecruitmentProvider({ children }: { children: ReactNode }) {
       await recruitmentApi.saveAnswer(interview.session.id, id, text);
       setInterview(await recruitmentApi.questions(interview.session.id));
     });
-  const evaluate = (retry: boolean) =>
-    mutate(async () => {
+  const evaluate = async (retry: boolean) => {
+    if (busy) return false;
+    setEvaluating(true);
+    try { return await mutate(async () => {
       if (!interview)
         throw new ApiError(
           409,
@@ -151,7 +155,8 @@ export function RecruitmentProvider({ children }: { children: ReactNode }) {
           ),
         );
       router.replace("/intern/onboarding/result");
-    });
+    }); } finally { setEvaluating(false); }
+  };
   if (error)
     return (
       <ErrorState
@@ -171,6 +176,7 @@ export function RecruitmentProvider({ children }: { children: ReactNode }) {
         profile,
         interview,
         busy,
+        evaluating,
         notice,
         reload,
         selectRole,
