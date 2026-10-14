@@ -143,7 +143,12 @@ try {
       const migrations = await ds.query(
         "SELECT name FROM migrations ORDER BY timestamp",
       );
-      assert.equal(migrations.length, 6);
+      assert.equal(await ds.showMigrations(), false, "Product migrations must have no pending entries");
+      assert.deepEqual(
+        migrations.map(m => m.name).sort(),
+        ds.migrations.map(m => m.name ?? m.constructor.name).sort(),
+        "Applied history must match the pinned backend's configured migrations",
+      );
       if (process.env.REQUIRE_SQL2019 === "true")
         assert.equal(
           sql[0].majorVersion,

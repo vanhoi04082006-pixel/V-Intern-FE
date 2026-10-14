@@ -1,6 +1,7 @@
 /** DEVELOPMENT TEST HARNESS ONLY. Real AppModule/SQL; only AI provider overridden. */
 import path from "node:path";
 import { createRequire } from "node:module";
+import { buildTestSprintPlan } from "./project-first-provider.mjs";
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE");
 const req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -31,7 +32,9 @@ const provider = {
       throw new AiProviderTimeoutError("Development timeout scenario");
     }
     let payload;
-    if (request.task === "ai-mentor")
+    if (request.task === "sprint-plan")
+      payload = buildTestSprintPlan(request.input);
+    else if (request.task === "ai-mentor")
       payload = {
         answer:
           "Gợi ý development: chia nhiệm vụ thành các bước nhỏ, kiểm tra yêu cầu và trao đổi với giảng viên.",

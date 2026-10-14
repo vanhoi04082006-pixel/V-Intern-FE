@@ -104,6 +104,10 @@ try {
       await page.setViewportSize({ width: 1024, height: 768 });
       for (const route of routes) {
         await page.goto(`${base}/${role}/${route}`); await ready(page);
+        if (role === "instructor" && route === "classes") {
+          await page.waitForURL("**/instructor/projects");
+          await page.getByRole("heading", { name: "Thư viện dự án", exact: true }).waitFor();
+        }
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, `${role}/${route} tablet overflow`);
         assert.equal(await page.locator('[role="alert"]').filter({ hasText: /Không thể|không hợp lệ|không có quyền/ }).count(), 0);
         await page.screenshot({ path: path.join(evidence, `uat-tablet-${role}-${route}.png`), fullPage: true });

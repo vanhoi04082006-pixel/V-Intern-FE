@@ -357,7 +357,10 @@ try {
     dialog.getByRole("button", { name: "Lưu nhiệm vụ" }).click(),
   );
   await page.getByLabel("Tìm nhiệm vụ quản lý").fill("Admin task " + tag);
-  await page.getByRole("button", { name: "Sửa nhiệm vụ", exact: true }).click();
+  const taskRow = page.getByRole("row").filter({ has: page.getByRole("button", { name: task.code, exact: true }) });
+  await taskRow.getByText("Admin task " + tag, { exact: true }).waitFor();
+  await taskRow.getByLabel(`Thao tác ${task.code}`, { exact: true }).click();
+  await taskRow.getByRole("button", { name: "Sửa nhiệm vụ", exact: true }).click();
   dialog = page.getByRole("dialog");
   await dialog
     .getByLabel("Tên nhiệm vụ", { exact: true })
@@ -376,22 +379,18 @@ try {
   await page
     .getByLabel("Tìm nhiệm vụ quản lý")
     .fill("Admin task edited " + tag);
-  await page
-    .getByRole("button", {
-      name: `${task.code} · Admin task edited ${tag}`,
-      exact: true,
-    })
-    .waitFor();
+  await taskRow.getByText(`Admin task edited ${tag}`, { exact: true }).waitFor();
   await page.screenshot({
     path: path.join(evidence, "admin-tasks.png"),
     fullPage: true,
   });
   page.once("dialog", (d) => d.accept());
+  await taskRow.getByLabel(`Thao tác ${task.code}`, { exact: true }).click();
   await mutate(
     page,
     `/tasks/${task.id}`,
     "DELETE",
-    () => page.getByRole("button", { name: "Xóa", exact: true }).click(),
+    () => taskRow.getByRole("button", { name: "Xóa nhiệm vụ", exact: true }).click(),
     200,
   );
   assert.ok(

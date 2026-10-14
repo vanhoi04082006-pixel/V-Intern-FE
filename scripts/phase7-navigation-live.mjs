@@ -110,6 +110,10 @@ try {
     for (const route of routes[role]) {
       console.log(JSON.stringify({ checking: `${role}/${route}` }));
       await page.goto(`${base}/${role}${route ? "/" + route : ""}`);
+      if (role === "instructor" && route === "classes") {
+        await page.waitForURL("**/instructor/projects");
+        await page.getByRole("heading", { name: "Thư viện dự án", exact: true }).waitFor();
+      }
       if (route === "logs") await page.waitForURL("**/admin/audit");
       try {
         await ready(page);
