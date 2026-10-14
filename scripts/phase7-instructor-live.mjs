@@ -122,7 +122,8 @@ try {
   await page.getByRole("button", { name: "Tạo đánh giá", exact: true }).click();
   const internSelect = page.getByLabel("Intern đánh giá");
   const internOption = internSelect.locator(`option[value="${academic.graduateId}" i]`);
-  await internOption.waitFor();
+  // Native option nodes are attached but hidden while the select popup is closed.
+  await internOption.waitFor({ state: "attached" });
   const internValue = await internOption.getAttribute("value");
   assert.equal(internValue.toLowerCase(), academic.graduateId.toLowerCase());
   await internSelect.selectOption(internValue);
