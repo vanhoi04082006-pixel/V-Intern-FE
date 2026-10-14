@@ -300,6 +300,13 @@ describe("auth-service (nối BE Module 1)", () => {
     expect(await refreshSession()).toBeNull();
     expect(getSessionUser()).toBeNull();
   });
+  it("refresh 429 giữ danh tính hiện tại và trả lỗi để UI thử lại", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(200, LOGIN_SUCCESS_BODY)));
+    await login(VALID_CREDENTIALS);
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(429, { code: "THROTTLED", message: "Please retry later" })));
+    await expect(refreshSession()).rejects.toMatchObject({ statusCode: 429 });
+    expect(getSessionUser()?.id).toBe(LOGIN_SUCCESS_BODY.user.id);
+  });
 
   it("me → GET kèm Authorization Bearer", async () => {
     const fetchSpy = vi.fn(async () => {

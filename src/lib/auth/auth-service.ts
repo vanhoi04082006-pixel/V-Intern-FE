@@ -228,12 +228,13 @@ export function refreshSession(): Promise<SessionUser | null> {
     try {
       data = await apiFetch("/auth/refresh", { method: "POST" });
     } catch (error) {
-      clearSession();
       if (
         error instanceof ApiError &&
         (error.statusCode === 401 || error.statusCode === 403)
-      )
+      ) {
+        clearSession();
         return null;
+      }
       throw error;
     }
     if (generation !== getSessionGeneration()) return null;
