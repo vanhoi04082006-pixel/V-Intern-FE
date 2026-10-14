@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, ChevronRight, Menu, X } from "lucide-react";
+import { Bell, ChevronRight, Menu, X, Home, Layers, FolderKanban, KanbanSquare, ClipboardCheck, ChartNoAxesCombined, FileText, Share2, Github, UserRound, Users, Shield, Settings, Activity, GraduationCap } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getSessionUser } from "@/lib/auth/session";
@@ -31,6 +31,8 @@ const menus: Record<ProductRole, [string, string][]> = {
     ["evaluations", "Đánh giá AI"],
     ["performance", "Hiệu suất thành viên"],
     ["reports", "Báo cáo"],
+    ["sharing", "Chia sẻ dữ liệu"],
+    ["github", "Kết nối GitHub"],
     ["notifications", "Thông báo"],
     ["profile", "Hồ sơ"],
   ],
@@ -49,6 +51,7 @@ const menus: Record<ProductRole, [string, string][]> = {
     ["profile", "Hồ sơ"],
   ],
 };
+const navIcons: Record<string, typeof Home> = { "": Home, sessions: Layers, projects: FolderKanban, sprints: KanbanSquare, evaluations: ClipboardCheck, performance: ChartNoAxesCombined, reports: FileText, sharing: Share2, github: Github, notifications: Bell, profile: UserRound, users: Users, roles: Shield, groups: Users, catalogs: Layers, settings: Settings, services: Activity, activity: Activity, audit: FileText, tasks: KanbanSquare };
 export function ProductShell({
   role,
   children,
@@ -66,6 +69,13 @@ export function ProductShell({
     if (open) dialog.current?.showModal();
     else dialog.current?.close();
   }, [open]);
+  useEffect(() => {
+    const breakpoint = window.matchMedia?.("(min-width: 1024px)");
+    if (!breakpoint) return;
+    const closeOnDesktop = () => { if (breakpoint.matches) setOpen(false); };
+    breakpoint.addEventListener("change", closeOnDesktop);
+    return () => breakpoint.removeEventListener("change", closeOnDesktop);
+  }, []);
   const navigation = (
     <>
       <div className="mb-6 border-b border-slate-100 px-3 pb-5">
@@ -84,6 +94,8 @@ export function ProductShell({
       <nav aria-label="Điều hướng workspace" className="space-y-1">
         {menus[role].map(([key, label]) => {
           const href = `/${role}${key ? `/${key}` : ""}`;
+          const current = path === href || Boolean(key && path.startsWith(href + "/"));
+          const Icon = navIcons[key] ?? Layers;
           const unavailable =
             role === "intern" &&
             !activeAssignment &&
@@ -101,14 +113,15 @@ export function ProductShell({
               key={key}
               href={href}
               onClick={() => setOpen(false)}
-              aria-current={path === href ? "page" : undefined}
-              className={`block rounded-lg px-3 py-2.5 text-sm font-medium ${path === href ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"}`}
+              aria-current={current ? "page" : undefined}
+              className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-blue-600 ${current ? "bg-blue-50 font-semibold text-blue-700 ring-1 ring-inset ring-blue-100" : "text-slate-600 hover:bg-slate-50 hover:text-navy"}`}
             >
-              {label}
+              <Icon size={18} aria-hidden="true" />{label}
             </Link>
           );
         })}
       </nav>
+      <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/60 p-4"><GraduationCap className="mb-2 text-blue-600" size={22} aria-hidden="true" /><p className="text-xs font-semibold text-navy">Học qua dự án thực tế</p><p className="mt-1 text-xs leading-5 text-slate-500">Từng bước học tập, phản hồi và tiến bộ đều được ghi nhận.</p></div>
     </>
   );
   const title =
@@ -116,7 +129,7 @@ export function ProductShell({
       ([key]) => path === `/${role}${key ? `/${key}` : ""}`,
     )?.[1] ?? "Chi tiết";
   return (
-    <div className="min-h-dvh bg-[#f5f8fd] text-slate-700">
+    <div className="min-h-dvh bg-[#f4f6fb] text-slate-700">
       <a
         href="#product-content"
         className="sr-only focus:not-sr-only focus:fixed focus:z-50 focus:bg-white focus:p-3"
@@ -146,7 +159,7 @@ export function ProductShell({
         {navigation}
       </dialog>
       <div className="lg:pl-[240px]">
-        <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 bg-white px-4 py-3 sm:px-6">
+        <header className="sticky top-0 z-30 flex min-h-[72px] flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 bg-white/95 px-4 py-3 backdrop-blur-sm sm:px-6">
           <div className="flex items-center gap-2 text-sm">
             <button
               aria-label="Mở menu"

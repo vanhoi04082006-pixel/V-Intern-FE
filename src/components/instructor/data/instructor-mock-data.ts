@@ -14,13 +14,10 @@ import {
   Layers,
   ListChecks,
   ListTodo,
-  Plus,
-  Rocket,
   ScanSearch,
   Settings,
   Sparkles,
   Star,
-  UserPlus,
   Users,
 } from "lucide-react";
 
@@ -619,24 +616,6 @@ export const TASK_OVERVIEW: TaskOverviewCell[] = [
     icon: CircleCheck,
     tone: "green",
   },
-];
-
-/* ----------------------------- Thiết lập nhanh ---------------------------- */
-
-export interface InstructorQuickAction {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  tone: InstructorTone;
-}
-
-export const INSTRUCTOR_QUICK_ACTIONS: InstructorQuickAction[] = [
-  { id: "bat-dau-phien", label: "Bắt đầu phiên", icon: Rocket, tone: "blue" },
-  { id: "tao-task-moi", label: "Tạo task mới", icon: Plus, tone: "green" },
-  { id: "chon-project", label: "Chọn project", icon: FolderKanban, tone: "violet" },
-  { id: "giao-viec", label: "Giao việc", icon: UserPlus, tone: "amber" },
-  { id: "danh-gia-ai", label: "Đánh giá AI", icon: Star, tone: "sky" },
-  { id: "xuat-bao-cao", label: "Xuất báo cáo", icon: FileText, tone: "green" },
 ];
 
 /* ---------------------------- Hoạt động gần đây --------------------------- */

@@ -7,7 +7,6 @@ import { FlaskConical } from "lucide-react";
 import { InstructorActivityCard } from "./instructor-activity-card";
 import { InstructorKpiCard } from "./instructor-kpi-card";
 import { InstructorPrReviewCard } from "./instructor-pr-review-card";
-import { InstructorQuickSettingsCard } from "./instructor-quick-settings-card";
 import { InstructorSessionsCard } from "./instructor-sessions-card";
 import { InstructorSidebar } from "./instructor-sidebar";
 import { InstructorSprintBurndownCard } from "./instructor-sprint-burndown-card";
@@ -34,7 +33,7 @@ const DRAWER_FOCUSABLE_SELECTOR =
  *   - Hàng 1: 5 KPI.
  *   - Hàng 2: Phiên thực tập (rộng) + Sprint & Burndown.
  *   - Hàng 3: Hiệu suất sinh viên (Top 5) + Review PR.
- *   - Hàng 4: Tổng quan Task + Thiết lập nhanh + Hoạt động gần đây.
+ *   - Hàng 4: Tổng quan Task + Hoạt động gần đây.
  * - Tablet/mobile: sidebar vào drawer, mọi card xếp 1 cột, bảng scroll
  *   ngang trong container, không overflow trang.
  *
@@ -196,13 +195,10 @@ export function InstructorWorkspace() {
             </div>
           </div>
 
-          {/* Hàng 4: tổng quan task + thiết lập nhanh + hoạt động gần đây */}
-          <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-[1fr_1.2fr_1.2fr]">
+          {/* Hàng 4: tổng quan task và hoạt động gần đây */}
+          <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-2">
             <div className="min-w-0">
               <InstructorTaskOverviewCard />
-            </div>
-            <div className="min-w-0">
-              <InstructorQuickSettingsCard />
             </div>
             <div className="min-w-0 lg:col-span-2 xl:col-span-1">
               <InstructorActivityCard />

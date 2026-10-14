@@ -69,9 +69,7 @@ export function SprintOverview({id, activeCount}: {id:string; activeCount?: numb
         <Panel title="Review & PR cần xử lý" action={<a href="#sprint-task-list" className="text-xs text-blue-600">Xem tất cả →</a>}>
           {reviewTasks.length?<ul className="space-y-2">{reviewTasks.map(t=><li key={t.id} className="flex items-center gap-2 rounded-md border border-blue-50 p-2 text-xs"><div className="min-w-0 flex-1"><strong className="block text-blue-600">{t.code}</strong><span className="mt-0.5 line-clamp-1 block text-navy">{t.title}</span></div><TaskStatusPill status="review" /><button className="rounded border border-blue-100 px-2 py-1 text-blue-600" onClick={()=>setTask(t.id)}>Xem</button></li>)}</ul>:<Empty>Không có task chờ review.</Empty>}
         </Panel>
-        <Panel title="Thiết lập nhanh">
-          <div className="grid grid-cols-2 gap-2">{[{href:"/instructor/sprints",label:"Tạo sprint mới"},{href:"#sprint-task-list",label:"Tạo task mới"},{href:"/instructor/projects",label:"Giao việc"},{href:"/instructor/reports",label:"Xuất báo cáo"}].map(l=><Link key={l.label} href={l.href} className="rounded-md border border-blue-100 px-3 py-3 text-center text-xs text-blue-600 hover:bg-blue-50">{l.label}</Link>)}</div>
-        </Panel>
+
       </div>
     </div>
     {dropping&&<LoadingState/>}

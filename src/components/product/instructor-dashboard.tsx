@@ -1,12 +1,11 @@
 "use client";
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { CalendarDays, Users, CheckCircle2, Star, Clock, Layers, Plus, UserPlus, ArrowRight, Play, FolderKanban, ClipboardCheck, Download, Rocket } from "lucide-react";
+import { CalendarDays, Users, CheckCircle2, Star, Clock, Layers, Plus, ArrowRight, FolderKanban, Rocket } from "lucide-react";
 import { getInstructorDashboard } from "@/lib/api/dashboard";
 import { getBoard } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { AssignmentForm } from "./academic";
 import { Badge, Empty, inputClass, Modal, PageTitle, PageMeta, MetricCard, Panel, StatusDot, AvatarStack, ProgressBar, buttonClass } from "./primitives";
 import { Person } from "./identity";
 import { TaskDetail } from "./intern-work";
@@ -19,7 +18,7 @@ const percentage = (done: number, total: number) => total ? Math.round(done / to
 
 export function InstructorDashboard() {
   const resource = useResource(useCallback((s: AbortSignal) => getInstructorDashboard(s), []));
-  const [assign, setAssign] = useState(false), [selectedSprint, setSelectedSprint] = useState(""), [reviewTask, setReviewTask] = useState("");
+  const [selectedSprint, setSelectedSprint] = useState(""), [reviewTask, setReviewTask] = useState("");
   if (resource.loading) return <LoadingState />;
   if (resource.error) return <ErrorState error={resource.error} onRetry={resource.reload} />;
   if (!resource.data) return null;
@@ -59,12 +58,11 @@ export function InstructorDashboard() {
       <Panel title="Tổng quan Task (Tất cả phiên)">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[["To Do", m.todoCount, `${m.overdueCount} task quá hạn`], ["Doing", m.doingCount, "Đang thực hiện"], ["Review", m.reviewCount, `${m.reviewCount} đang chờ review`], ["Done", m.doneCount, `${doneRate}% hoàn thành`]].map(([label, count, sub]) => <Link href="/instructor/sprints" key={label} className="rounded-md border border-blue-100 bg-slate-50/50 p-3"><span className="block text-xs font-semibold text-navy">{label}</span><strong className="mt-1 block text-xl text-navy">{count}</strong><span className="mt-1 block text-[10px] text-slate-500">{sub}</span></Link>)}</div>
       </Panel>
-      <div className="grid min-w-0 items-start gap-3 2xl:grid-cols-2"><Panel title="Thiết lập nhanh" action={<Link href="/instructor/sessions" className="text-xs text-blue-600">Xem thêm →</Link>}><div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{[{ href: "/instructor/sessions", label: "Bắt đầu phiên", icon: Play }, { href: "/instructor/sprints", label: "Tạo task mới", icon: Plus }, { href: "/instructor/projects", label: "Chọn project", icon: FolderKanban }, { label: "Giao việc", icon: UserPlus, modal: true }, { href: "/instructor/evaluations", label: "Đánh giá AI", icon: ClipboardCheck }, { href: "/instructor/reports", label: "Xuất báo cáo", icon: Download }].map(({ href, label, icon: Icon, modal }) => modal ? <button key={label} className="flex flex-col items-center gap-1 rounded-md border border-blue-100 px-2 py-3 text-[11px] font-medium text-navy hover:bg-blue-50" onClick={() => setAssign(true)}><Icon size={20} className="text-blue-600" />{label}</button> : <Link key={label} href={href!} className="flex flex-col items-center gap-1 rounded-md border border-blue-100 px-2 py-3 text-center text-[11px] font-medium text-navy hover:bg-blue-50"><Icon size={20} className="text-blue-600" />{label}</Link>)}</div></Panel>
+      <div className="grid min-w-0 items-start gap-3 2xl:grid-cols-2">
       <Panel title="Hoạt động gần đây" action={<Link href="/admin/activity" className="text-xs text-blue-600">Xem tất cả →</Link>}><ul aria-label="Hoạt động gần đây" tabIndex={0} className="max-h-44 space-y-3 overflow-y-auto pr-2 focus-visible:outline-2 focus-visible:outline-blue-600">{d.activity.map((a) => <li key={a.id} className="flex gap-3 text-xs"><span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-500" /><div className="min-w-0 flex-1"><p className="text-navy">{a.summary ?? a.action}</p><p className="mt-1 text-[10px] text-slate-400">{a.displayName}</p></div><time className="shrink-0 text-[10px] text-slate-400">{new Date(a.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}</time></li>)}</ul></Panel></div>
     </div>
     <div className="mt-4"><ImportedReviews /></div>
     {reviewTask && <Modal wide title="Chi tiết bài nộp & đánh giá" onClose={() => setReviewTask("")}><TaskDetail id={reviewTask} managed onUpdated={resource.reload} /></Modal>}
-    {assign && <Modal title="Phân công thực tập" onClose={() => { setAssign(false); resource.reload(); }}><AssignmentForm /></Modal>}
   </div>;
 }
 

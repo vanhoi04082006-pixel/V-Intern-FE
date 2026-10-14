@@ -1,11 +1,9 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
-  BellRing,
   CalendarDays,
   ClipboardList,
   Clock,
-  CloudUpload,
   Code2,
   Crown,
   Database,
@@ -13,7 +11,6 @@ import {
   GraduationCap,
   Home,
   ListTree,
-  LockKeyhole,
   MemoryStick,
   Server,
   Settings,
@@ -357,22 +354,4 @@ export const SYSTEM_ALERTS: SystemAlert[] = [
   { id: "w2", time: "10:15", message: "Dung lượng lưu trữ đạt 85%", severity: "warning" },
   { id: "w3", time: "08:30", message: "Phát hiện nhiều lần đăng nhập thất bại", severity: "warning" },
   { id: "w4", time: "15/05", message: "Dịch vụ Gemini API phản hồi chậm", severity: "notice" },
-];
-
-/* ----------------------------- Quick settings ---------------------------- */
-
-export interface QuickSettingItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  tone: ToneKey;
-}
-
-export const QUICK_SETTINGS: QuickSettingItem[] = [
-  { id: "danh-muc", title: "Danh mục dùng chung", description: "Quản lý các danh mục hệ thống", icon: Database, tone: "blue" },
-  { id: "vai-tro-quyen", title: "Vai trò & quyền", description: "Cấu hình RBAC cho hệ thống", icon: ShieldCheck, tone: "green" },
-  { id: "bao-mat", title: "Bảo mật hệ thống", description: "Chính sách bảo mật & xác thực", icon: LockKeyhole, tone: "red" },
-  { id: "thong-bao", title: "Thông báo hệ thống", description: "Cấu hình email, in-app notification", icon: BellRing, tone: "amber" },
-  { id: "sao-luu", title: "Sao lưu & khôi phục", description: "Quản lý dữ liệu và lịch sao lưu", icon: CloudUpload, tone: "violet" },
 ];
