@@ -1,4 +1,6 @@
 "use client";
+import { SessionRepositoryCard } from '@/components/product/github-connection';
+import { getSessionUser } from '@/lib/auth/session';
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
@@ -99,6 +101,7 @@ export function SessionOverview({
         <Link href={`/instructor/performance?sessionId=${sessionId}&projectId=${projectId}`}>Hiệu suất</Link>
         <Link href={`/instructor/reports?sessionId=${sessionId}&projectId=${projectId}`}>Báo cáo</Link>
       </nav>}
+      <SessionRepositoryCard sessionId={sessionId} manage={session.leadInstructorId?.toLowerCase() === getSessionUser()?.id.toLowerCase()} />
       <Panel title={`Thành viên (${session.members.length})`}>
         {session.members.length ? <ul className="space-y-1 text-sm">{session.members.map((m) => <li key={m.userId}>{m.displayName} · {m.email}</li>)}</ul> : <Empty>Chưa có thành viên.</Empty>}
       </Panel>
