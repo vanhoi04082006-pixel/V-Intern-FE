@@ -4,24 +4,11 @@ import { Logo } from "@/components/v-intern/logo";
 
 import {
   INTERN_BOTTOM_NAV,
-  INTERN_OVERVIEW_NAV_ID,
 } from "./workspace-presentation";
 import type { InternNavGroup, InternNavItem } from "./data/intern-mock-data";
 
-/**
- * Sidebar của Intern Workspace — presentational, dựng từ MỘT nav model
- * dùng chung (data/intern-mock-data.ts → INTERN_NAV_SECTIONS +
- * buildInternNavGroups): cả 2 state render cùng section heading
- * ("Workspace" / "Hiệu suất & Phát triển"), cùng label/icon/thứ tự — chỉ
- * khác availability (waiting: Sprint Board/Dự án disabled muted).
- * Desktop: nằm cố định bên trái (cha điều khiển positioning qua className).
- * Mobile: render trong drawer của InternWorkspace với CÙNG groups — không
- * có list mobile riêng, onNavigate đóng drawer.
- *
- * Giống Admin/Instructor Workspace: chỉ "Tổng quan" là link thật tới route
- * hiện có (/intern); các mục còn lại là section chưa implement — render bằng
- * button trung tính để không giả link dẫn tới route 404. Tách biệt hoàn toàn
- * khỏi admin/instructor sidebar (không import chéo).
+/** Shared desktop/drawer navigation. InternShell supplies route availability
+ * from the current workspace lifecycle; unavailable items have no destination.
  */
 
 const itemBase =
@@ -115,11 +102,13 @@ export function InternSidebar({
   groups,
   className,
   onNavigate,
+  currentPath = "/intern",
 }: {
   groups: InternNavGroup[];
   className?: string;
   /** Gọi sau khi user tương tác với một mục (dùng để đóng drawer mobile) */
   onNavigate?: () => void;
+  currentPath?: string;
 }) {
   return (
     <aside className={cn("flex min-h-0 flex-col bg-white", className)}>
@@ -150,7 +139,7 @@ export function InternSidebar({
                   <li key={item.id}>
                     <NavItem
                       item={item}
-                      active={item.id === INTERN_OVERVIEW_NAV_ID}
+                      active={!item.unavailable && Boolean(item.href) && (currentPath === item.href || (item.href !== "/intern" && currentPath.startsWith(`${item.href}/`)))}
                       onNavigate={onNavigate}
                     />
                   </li>
@@ -161,7 +150,7 @@ export function InternSidebar({
         </div>
 
         <div className="mt-2 shrink-0 border-t border-slate-100 pt-3">
-          <NavItem item={INTERN_BOTTOM_NAV} onNavigate={onNavigate} />
+          <NavItem item={INTERN_BOTTOM_NAV} active={currentPath === INTERN_BOTTOM_NAV.href} onNavigate={onNavigate} />
         </div>
       </nav>
     </aside>

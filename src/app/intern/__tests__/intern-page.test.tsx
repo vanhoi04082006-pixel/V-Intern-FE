@@ -7,7 +7,7 @@ import { clearSession, setSession } from "@/lib/auth/session";
 import type { InternWorkspace } from "@/lib/api/workspace";
 const replace = vi.fn();
 const router = { replace };
-vi.mock("next/navigation", () => ({ useRouter: () => router }));
+vi.mock("next/navigation", () => ({ useRouter: () => router, usePathname: () => "/intern" }));
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status });
 let workspace: InternWorkspace;

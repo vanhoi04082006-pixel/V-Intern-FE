@@ -46,13 +46,14 @@ export function workspaceNav(active = false): InternNavGroup[] {
           { id: "project", label: "Dự án", icon: FolderKanban },
           { id: "mentor", label: "AI Mentor", icon: Bot },
           { id: "notifications", label: "Thông báo", icon: Bell },
+          { id: "github", label: "GitHub", icon: CodeXml },
         ].map((item) => ({
           ...item,
           href:
-            active || item.id === "notifications"
+            active || ["notifications", "github"].includes(item.id)
               ? `/intern/${item.id}`
               : undefined,
-          unavailable: !active && item.id !== "notifications",
+          unavailable: !active && !["notifications", "github"].includes(item.id),
         })),
       ],
     },
