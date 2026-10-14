@@ -70,12 +70,14 @@ async function mutation(page, suffix, method, click, status = 201) {
   assert.equal(r.status(), status, `${suffix}: ${await r.text()}`);
   return r.json();
 }
+let failurePage;
 try {
   const context = await browser.newContext({
       viewport: { width: 1440, height: 1000 },
     }),
     page = await context.newPage(),
     errors = [];
+  failurePage = page;
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("response", (r) => {
     if (r.url().startsWith(api))
@@ -118,7 +120,12 @@ try {
     dialog.getByRole("button", { name: "Chuyển kỳ sang open" }).click(),
   );
   await page.getByRole("button", { name: "Tạo đánh giá", exact: true }).click();
-  await page.getByLabel("Intern đánh giá").selectOption(academic.graduateId);
+  const internSelect = page.getByLabel("Intern đánh giá");
+  const internOption = internSelect.locator(`option[value="${academic.graduateId}" i]`);
+  await internOption.waitFor();
+  const internValue = await internOption.getAttribute("value");
+  assert.equal(internValue.toLowerCase(), academic.graduateId.toLowerCase());
+  await internSelect.selectOption(internValue);
   const evaluation = await mutation(page, "/evaluations", "POST", () =>
     page.getByRole("button", { name: "Tạo bản nháp" }).click(),
   );
@@ -221,6 +228,10 @@ try {
   assert.deepEqual(errors, []);
   results.push({ name: "Finalized scoped Top10, persisted report, PDF/XLSX/CSV content and foreign ownership", status: "PASS" });
   await context.close();
+} catch (error) {
+  results.push({ name: "Instructor authority/delivery/report gate", status: "FAIL", error: String(error) });
+  await failurePage?.screenshot({ path: path.join(evidence, "instructor-failure.png"), fullPage: true }).catch(() => undefined);
+  throw error;
 } finally {
   fs.writeFileSync(path.join(evidence, "instructor-live-results.json"), JSON.stringify({ results, network, interception: false }, null, 2));
   await ds.destroy(); await browser.close();
