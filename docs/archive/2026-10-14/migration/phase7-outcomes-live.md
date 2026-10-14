@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Mentor and outcomes live slice
 
 Mentor uses own conversation APIs with persisted user/assistant messages, explicit archive, pagination, and an honest AI503 state. The UI warns that the question may already have been saved before retrying. AI is advisory; no automatic score writes occur.

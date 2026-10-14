@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Contract tích hợp Phase 7.1
 
 > Các blocker runtime/visual dưới đây là trạng thái lịch sử Phase 7.1. Xem [xác minh live Phase 7.1.5](phase7.1.5-live-verification.md) cho kết quả mới: SQL 2025 thật, live suite PASS, visual ACCEPTABLE; SQL 2019 vẫn chưa xác minh.

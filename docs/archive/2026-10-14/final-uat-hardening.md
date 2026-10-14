@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Final UAT hardening
 
 ## UAT-AUTH-002 — HIGH, fixed

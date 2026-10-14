@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Instructor academic integration
 
 Classes, sessions and projects use real Nest pagination, filters, create/update, detail and member endpoints. Sessions expose instructors and milestones. Project technologies/difficulty/capacity are actual fields. Assignment uses the recruitment candidate API and the transactional `/assignments` contract. Search/pagination keeps all project/session options reachable rather than silently limiting selectors to the first ten records.

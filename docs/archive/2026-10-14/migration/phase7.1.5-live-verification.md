@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Phase 7.1.5 — xác minh live
 
 ## Môi trường và giới hạn release

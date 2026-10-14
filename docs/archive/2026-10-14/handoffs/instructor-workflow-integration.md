@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Instructor workflow — durable FE integration
 
 Updated 2026-10-13 Asia/Bangkok. PR target approved by the owner: origin/main.

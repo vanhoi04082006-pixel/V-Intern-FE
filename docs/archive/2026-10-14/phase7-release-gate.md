@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Phase 7 — kiểm chứng full-stack
 
 Browser gọi trực tiếp `http://localhost:8080/api/v1` từ Next.js `http://localhost:3001`. Không có interception, MSW hoặc business backend trong Next. Access token ở memory; refresh qua cookie HttpOnly. Nest/TypeORM/SQL quyết định quyền, trạng thái, điểm chính thức, KPI, sổ lương ảo và chứng nhận.

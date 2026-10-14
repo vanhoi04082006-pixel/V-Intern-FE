@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Phase 7 full product contracts
 
 Backend SHA baseline: `102b9afa0998bcb0237a8fed25c5908f4436c6f2`. FE imports no legacy runtime API or authentication implementation from archive.

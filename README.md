@@ -1,67 +1,70 @@
-# V-Intern Frontend
+# V-INTERN Frontend
 
-Landing page của **V-Intern** — nền tảng thực tập ảo ứng dụng AI, mô phỏng môi
-trường làm việc thực tế giúp sinh viên trải nghiệm quy trình phát triển phần
-mềm chuyên nghiệp, kết nối sinh viên - giảng viên - doanh nghiệp.
+Next.js 16.3.8 App Router, React 19, TypeScript và Tailwind CSS 4. Giao diện tiếng Việt cho tuyển dụng bằng chat, không gian sinh viên, quản lý phiên giảng viên và quản trị. Browser gọi Nest API thật; frontend không quyết định điểm, quyền hay kết quả task.
 
-Đây là **repository frontend standalone** (Next.js App Router). Source nằm ngay
-tại root của repo.
+## Chạy local
 
-## Yêu cầu
+Yêu cầu Node.js 22+ và BE đã chạy/migrate.
 
-- **Node.js 22+**
-- **npm** (package manager duy nhất của repo — dùng `package-lock.json`)
+~~~powershell
+npm ci
+Copy-Item .env.example .env.local
+# NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
+npm run dev
+~~~
 
-## Cài đặt
+Mở http://localhost:3001. Đăng nhập bằng email được admin tạo. Không có password/token trong repository. Access token chỉ ở memory; browser gửi refresh cookie HttpOnly khi cần. Khi đổi API base, khởi động lại Next.
 
-```bash
-npm install   # hoặc: npm ci (khi đã có package-lock.json)
-```
+## Lệnh
 
-## Environment variables
+| Lệnh | Mục đích |
+|---|---|
+| npm run dev | Next dev, cổng 3001 |
+| npm run typecheck | TypeScript |
+| npm run lint | ESLint / React hooks |
+| npm test | Vitest + Testing Library |
+| npm run build / npm start | Build / chạy production, cổng 3001 |
 
-Copy `.env.example` thành `.env` và điền giá trị nếu cần. Hiện tại:
+Không chạy hai Next dev trong cùng checkout vì dùng chung .next. Đọc AGENTS.md và tài liệu Next bundled trước khi sửa API framework.
 
-| Biến | Bắt buộc | Mô tả |
-| --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | Không | Base URL của backend V-Intern. Chưa có contract → để trống; form newsletter sẽ hiển thị trạng thái "chưa kết nối". |
+## Luồng và route
 
-## Chạy dự án
+| Khu vực | Route chính | Nguồn dữ liệu |
+|---|---|---|
+| Tuyển dụng | /intern/onboarding/* | Recruitment/workspace API |
+| Sinh viên chờ phân công | /intern, notifications, profile, github | Lifecycle BE; shell chung |
+| Công việc | /intern/work, sprint, project | Own tasks/specs/history/submissions |
+| Hỗ trợ học tập | /intern/mentor, recommendations | Hội thoại và khuyến nghị AI có ngữ cảnh |
+| Kết quả | /intern/performance, kpi, virtual-salary, certificates | Số liệu đã lưu/finalize |
+| Giảng viên | /instructor/projects, sessions, sprints | Thư viện → phiên → đội hình → Start → draft → publish |
+| Review/báo cáo | /instructor/performance, evaluations, reports | Quyền và số liệu thuộc phạm vi quản lý |
+| Chia sẻ/GitHub | /instructor/sharing, github | Consent / OAuth theo tài khoản |
+| Admin | /admin/* | Users, RBAC, groups, catalogs, settings, services, audit |
 
-```bash
-npm run dev   # dev server ở http://localhost:3001
-```
+BE trả lifecycle; route cần assignment không mount nội dung hoặc gọi API học tập khi chưa được giao dự án. Sinh viên đã đạt nhấn thông báo vẫn dùng InternShell chờ phân công. Kanban có bốn cột, ưu tiên, phân trang; thay đổi task làm mới cả cột và số lượng.
 
-> Frontend chạy ở **port 3001** — port 3000 được dành cho backend V-Intern.
+Phỏng vấn mới là hội thoại từng câu, có thời gian server, retry, giải thích lại, bỏ qua có xác nhận và trạng thái AI đang chấm. Không hiển thị câu hỏi tương lai hoặc đáp án mẫu. Khi AI lỗi, bài làm được giữ để thử lại. AI code review hiện bằng chứng/SHA/giới hạn và điểm đề xuất; giảng viên mới xác nhận task.
 
-## Kiểm tra chất lượng
+## Cấu trúc
 
-```bash
-npm run lint        # ESLint (flat config Next.js + TypeScript)
-npm run typecheck   # tsc --noEmit (strict)
-npm run test        # Vitest + Testing Library (run một lần)
-npm run test:watch  # Vitest watch mode
-npm run build       # production build
-npm run start       # chạy build ở port 3001
-```
+~~~text
+src/app                           Route/layout App Router
+src/components/auth              Form, session/role guard
+src/components/intern            Shell, lifecycle và tuyển dụng
+src/components/sessions          Project-first workflow, đội hình/draft/publish
+src/components/product           Task, mentor, report, admin; primitives dùng chung
+src/components/shared            Loading/error/empty state
+src/lib/api                      Adapter + parse/validate dữ liệu unknown từ BE
+src/lib/auth                     Transport, session memory, cookie coordination
+src/lib/ui                       Focus/accessibility helpers
+~~~
 
-## Cấu trúc chính
+Components mock/reference chỉ phục vụ fixture/presentation test; route thật phải lấy dữ liệu qua lib/api. Không nhập mock dataset vào route production hoặc thay error/empty bằng số liệu giả. Các khối Thiết lập nhanh đã được gỡ; thao tác nghiệp vụ vẫn ở trang tương ứng.
 
-```text
-src/
-├── app/                 # App Router: layout, page (landing), globals.css
-├── components/v-intern/ # Component của landing page
-└── lib/                 # Utility (cn, ...)
-```
+## Giao diện và kiểm thử
 
-## Git workflow
+Panel, nút, input và navigation dùng cùng primitive để giữ độ tương phản, khoảng cách, focus và responsive. Drawer hỗ trợ Escape/Tab và đóng khi chuyển sang desktop. Tìm kiếm topbar tìm trang được phép; tìm task nằm trong trang công việc. Hiệu ứng tuân thủ prefers-reduced-motion.
 
-```text
-main                        # stable / release — không commit trực tiếp
-└── develop                 # integration branch của team FE — không commit trực tiếp
-      └── feat/* fix/* chore/*   # branch cho từng task
-```
+[Kiến trúc](docs/ARCHITECTURE.md) · [API/lifecycle](docs/API-CONTRACTS.md) · [UI](docs/UI-SYSTEM.md) · [Kiểm thử](docs/TESTING.md). Hướng dẫn toàn hệ thống ở README của workspace bên ngoài.
 
-- Tạo branch từ `develop`: `git switch -c feat/<ten-task> develop`
-- Mọi thay đổi vào repo qua **Pull Request → `develop`** (CI phải xanh).
-- `develop → main` chỉ qua release PR sau khi QA.
+GitHub cần BE cấu hình OAuth; Gmail không cấp quyền tạo repository. Đăng ký công khai, Google login và quên mật khẩu chưa có API thật; giao diện phải thông báo chưa hỗ trợ, không giả thành công.

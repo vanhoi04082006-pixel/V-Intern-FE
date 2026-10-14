@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # Raw Snapshot Inventory — `archive/full-product-sandbox-ff026a3`
 
 > **Purpose:** Machine-readable classification of every changed file family in the raw

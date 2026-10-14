@@ -1,3 +1,5 @@
+> Tài liệu lịch sử, lưu để truy vết. Không dùng làm hướng dẫn hoặc bằng chứng cho bản hiện hành. Xem README của repository và docs hiện tại.
+
 # FE ↔ NestJS Backend Integration Strategy (Phase 1)
 
 > Cập nhật Phase 7.1: FE đã nối auth, recruitment và workspace theo source Nest. Live end-to-end còn BLOCKED bởi cấu hình backend local; xem [contract Phase 7.1](phase7.1-contracts.md).
