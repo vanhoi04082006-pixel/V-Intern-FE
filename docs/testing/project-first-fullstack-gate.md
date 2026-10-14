@@ -17,6 +17,7 @@ Audit baseline FE e0e5a89fbb219c025ec080803415268517e473cf / BE33940ac626bd1d788
 | Reports is Báo cáo tổng hợp / CSV-only metrics | Persisted scoped Session report, PDF/XLSX/CSV MIME+content checks, owner/foreign boundaries |
 | Old instructor evaluation-assistance95/official80 and delivery transitions | Preserve advisory-vs-finalized authority and owned task review transitions using the new published Session; Performance finalized ranking |
 | Instructor classes route in desktop/mobile/tablet navigation | Redirect assertion plus current Session/Library/Sprint/Performance/Reports routes and responsive/no-console checks |
+| Admin Task has inline edit/delete and combined code/title button | Open the exact task row's actions menu; retain create/edit/soft-delete assertions and SQL title/deletedAt verification |
 | fixed DB name and implicit script order/state | Per-run+attempt disposable DB; sequential declared dependencies; newly unique Project-first actors/templates; no published delivery seeding |
 | Evidence only after late browser stages | Always capture migration/readiness/startup logs, bounded browser failure screenshots, SQL/API summaries; explicit process/container cleanup |
 
