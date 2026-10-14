@@ -62,7 +62,7 @@ export const archiveConversation = (id: string) =>
   request(`${base}/${encodeURIComponent(id)}/archive`, parseConversation, {
     method: "POST",
   });
-export const sendMentorMessage = (id: string, content: string) =>
+export const sendMentorMessage = (id: string, content: string, taskId?: string) =>
   request(
     `${base}/${encodeURIComponent(id)}/messages`,
     (value) => {
@@ -75,5 +75,5 @@ export const sendMentorMessage = (id: string, content: string) =>
         followUps: array(v.followUps, string),
       };
     },
-    { method: "POST", body: { content } },
+    { method: "POST", body: { content, ...(taskId ? { taskId } : {}) } },
   );

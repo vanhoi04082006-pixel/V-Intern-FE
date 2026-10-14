@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { SessionSetup, assessTeam } from "../session-setup";
 import { clearSession, setSession } from "@/lib/auth/session";
 const instructor = { id: "instructor1", displayName: "Instructor", email: "instructor@test.local", roles: ["instructor"], permissions: ["sessions.view", "sessions.manage", "projects.manage", "assignments.view", "assignments.manage", "recruitment.view", "sprints.manage"] };
@@ -119,7 +119,7 @@ describe("SessionSetup (M3)", () => {
       />,
     );
     expect(await screen.findByText(/đang ở trạng thái active/i)).toBeInTheDocument();
-    expect(planDeps.list).toHaveBeenCalled();
+    await waitFor(() => expect(planDeps.list).toHaveBeenCalled());
   });
   it("starts the session when the team is ready", async () => {
     const full = {

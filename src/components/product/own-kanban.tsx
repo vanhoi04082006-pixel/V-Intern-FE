@@ -1,0 +1,154 @@
+"use client";
+import { useCallback, useState } from "react";
+import { Flag, Clock, ChevronRight } from "lucide-react";
+import {
+  listTasks,
+  statusLabels,
+  taskStatuses,
+  type TaskStatus,
+} from "@/lib/api/work";
+import { useResource } from "@/lib/api/use-resource";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Empty } from "./primitives";
+
+const tones: Record<TaskStatus, string> = {
+  todo: "border-t-slate-400",
+  doing: "border-t-blue-500",
+  review: "border-t-amber-500",
+  done: "border-t-emerald-500",
+};
+export function OwnKanban({
+  search,
+  priority,
+  onOpen,
+  revision = 0,
+}: {
+  search: string;
+  priority: string;
+  onOpen: (id: string) => void;
+  revision?: number;
+}) {
+  return (
+    <div className="mt-4 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {taskStatuses.map((status) => (
+        <KanbanColumn
+          key={`${status}-${search}-${priority}`}
+          status={status}
+          search={search}
+          priority={priority}
+          revision={revision}
+          onOpen={onOpen}
+        />
+      ))}
+    </div>
+  );
+}
+function KanbanColumn({
+  status,
+  search,
+  priority,
+  onOpen,
+  revision,
+}: {
+  status: TaskStatus;
+  search: string;
+  priority: string;
+  onOpen: (id: string) => void;
+  revision: number;
+}) {
+  const [page, setPage] = useState(1);
+  const data = useResource(
+    useCallback(
+      (signal: AbortSignal) => {
+        // Mutation revision invalidates this column without resetting its page.
+        void revision;
+        return listTasks(
+          new URLSearchParams({
+            mine: "true",
+            status,
+            ...(search.trim() ? { search: search.trim() } : {}),
+            ...(priority ? { priority } : {}),
+            sortBy: "priority",
+            sortOrder: "DESC",
+            page: String(page),
+            pageSize: "8",
+          }),
+          signal,
+        );
+      },
+      [status, search, priority, page, revision],
+    ),
+  );
+  return (
+    <section
+      aria-label={statusLabels[status]}
+      className={`min-w-0 rounded-2xl border border-t-4 border-slate-200 bg-slate-50/70 p-3 ${tones[status]}`}
+    >
+      <header className="mb-4 flex items-center justify-between">
+        <h2 className="text-sm font-bold text-navy">{statusLabels[status]}</h2>
+        <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600">
+          {data.data?.total ?? "…"}
+        </span>
+      </header>
+      {data.loading ? (
+        <LoadingState />
+      ) : data.error ? (
+        <ErrorState error={data.error} onRetry={data.reload} />
+      ) : !data.data?.items.length ? (
+        <Empty>Chưa có công việc.</Empty>
+      ) : (
+        <div className="space-y-3">
+          {data.data.items.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => onOpen(t.id)}
+              className="group w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-blue-700">{t.code}</span>
+                <span
+                  className={`inline-flex items-center gap-1 ${t.priority === "critical" || t.priority === "high" ? "text-rose-700" : "text-slate-500"}`}
+                >
+                  <Flag size={12} />
+                  {t.priority}
+                </span>
+              </div>
+              <p className="my-3 text-sm font-semibold leading-6 text-navy">
+                {t.title}
+              </p>
+              <div className="h-1 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-blue-500"
+                  style={{ width: `${t.progress}%` }}
+                />
+              </div>
+              <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
+                <Clock size={12} />
+                {t.dueDate
+                  ? new Date(t.dueDate).toLocaleDateString("vi-VN")
+                  : "Chưa có hạn"}
+                <ChevronRight size={14} className="ml-auto text-blue-500" />
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+      {data.data && data.data.totalPages > 1 && (
+        <div className="mt-4 flex justify-between text-xs">
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+            Trước
+          </button>
+          <span>
+            {page}/{data.data.totalPages}
+          </span>
+          <button
+            disabled={page >= data.data.totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Sau
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}

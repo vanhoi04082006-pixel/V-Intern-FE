@@ -1,4 +1,7 @@
 "use client";
+import { OwnKanban } from "./own-kanban";
+import { CodeSubmissions } from "./code-submissions";
+import { TaskSpec } from "./task-spec";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
@@ -34,6 +37,8 @@ export function InternWork() {
     [priority, setPriority] = useState(""),
     [search, setSearch] = useState("");
   const [detail, setDetail] = useState<string>();
+  const [view, setView] = useState<"list" | "board">("list");
+  const [revision, setRevision] = useState(0);
   const load = useCallback(
     (signal: AbortSignal) => {
       const query = new URLSearchParams({
@@ -55,7 +60,8 @@ export function InternWork() {
         title="Công việc của tôi"
         subtitle="Nhiệm vụ được giao · trạng thái cập nhật từ hệ thống"
       />
-      <Panel title="Danh sách nhiệm vụ">
+      <div role="group" aria-label="Cách xem công việc" className="mb-4 inline-flex rounded-xl border border-slate-200 bg-white p-1"><button aria-pressed={view === "list"} onClick={() => setView("list")} className={`rounded-lg px-4 py-2 text-sm ${view === "list" ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500"}`}>Danh sách</button><button aria-pressed={view === "board"} onClick={() => setView("board")} className={`rounded-lg px-4 py-2 text-sm ${view === "board" ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500"}`}>Bảng Kanban</button></div>
+      <Panel title="Lọc công việc">
         <div className="mb-4 grid gap-3 sm:grid-cols-3">
           <input
             aria-label="Tìm nhiệm vụ"
@@ -67,7 +73,7 @@ export function InternWork() {
               setPage(1);
             }}
           />
-          <select
+          {view === "list" && <select
             aria-label="Trạng thái nhiệm vụ"
             className={inputClass}
             value={status}
@@ -82,7 +88,7 @@ export function InternWork() {
                 {statusLabels[s]}
               </option>
             ))}
-          </select>
+          </select>}
           <select
             aria-label="Ưu tiên"
             className={inputClass}
@@ -98,6 +104,8 @@ export function InternWork() {
             ))}
           </select>
         </div>
+      </Panel>
+      {view === "board" ? <OwnKanban search={search} priority={priority} onOpen={setDetail} revision={revision} /> : <Panel title="Danh sách nhiệm vụ">
         {tasks.loading ? (
           <LoadingState />
         ) : tasks.error ? (
@@ -183,10 +191,10 @@ export function InternWork() {
             </>
           )
         )}
-      </Panel>
+      </Panel>}
       {detail && (
         <Modal title="Chi tiết nhiệm vụ" onClose={() => setDetail(undefined)}>
-          <TaskDetail id={detail} onUpdated={tasks.reload} />
+          <TaskDetail id={detail} onUpdated={() => { tasks.reload(); setRevision(v => v + 1); }} />
         </Modal>
       )}
     </>
@@ -377,7 +385,7 @@ function TaskContent({
             Lưu tiến độ
           </button>
         )}
-        {!managed && next && (
+        {!managed && next && next !== "review" && (
           <button
             className={buttonClass}
             disabled={busy}
@@ -387,7 +395,7 @@ function TaskContent({
           </button>
         )}
         {managed &&
-          managerTransitions(task.status).map((status) => (
+          managerTransitions(task.status).filter(status => status !== "done" && !(task.status === "review" && status === "doing")).map((status) => (
             <button
               key={status}
               className={buttonClass}
@@ -402,6 +410,8 @@ function TaskContent({
             </button>
           ))}
       </div>
+      <TaskSpec id={task.id} />
+      <CodeSubmissions task={task} managed={managed} onUpdated={reload} />
       <Panel title="Bình luận">
         {comments.loading ? (
           <LoadingState />

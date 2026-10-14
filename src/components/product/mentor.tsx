@@ -1,4 +1,5 @@
 "use client";
+import { listTasks } from "@/lib/api/work";
 import { useCallback, useRef, useState } from "react";
 import {
   archiveConversation,
@@ -129,6 +130,9 @@ export function Mentor() {
   );
 }
 function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
+  const [taskId, setTaskId] = useState("");
+  const [taskSearch, setTaskSearch] = useState("");
+  const ownTasks = useResource(useCallback((signal: AbortSignal) => listTasks(new URLSearchParams({ mine: "true", pageSize: "100", ...(taskSearch.trim() ? { search: taskSearch.trim() } : {}) }), signal), [taskSearch]));
   const mutationPending = useRef(false);
   const detail = useResource(
     useCallback((signal: AbortSignal) => getConversation(id, signal), [id]),
@@ -142,7 +146,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
     setBusy(true);
     setError(undefined);
     try {
-      await sendMentorMessage(id, content.trim());
+      await sendMentorMessage(id, content.trim(), taskId || undefined);
       setContent("");
       detail.reload();
       onChanged();
@@ -246,6 +250,9 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                   void send();
                 }}
               >
+                <label className="block text-sm font-medium">Tìm công việc đang hỏi<input className={inputClass} value={taskSearch} onChange={e => setTaskSearch(e.target.value)} placeholder="Mã hoặc tên task" /></label>
+                <label className="block text-sm font-medium">Ngữ cảnh công việc<select className={inputClass} value={taskId} onChange={e => setTaskId(e.target.value)} disabled={busy}><option value="">Hỏi chung về kỳ thực tập</option>{ownTasks.data?.items.map(t => <option key={t.id} value={t.id}>{t.code} · {t.title}</option>)}</select></label>
+                {Boolean(ownTasks.error) && <ErrorState error={ownTasks.error} onRetry={ownTasks.reload} />}
                 <label className="block text-sm font-medium">
                   Câu hỏi của bạn
                   <textarea
