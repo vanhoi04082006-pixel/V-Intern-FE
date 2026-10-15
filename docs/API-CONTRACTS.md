@@ -1,5 +1,7 @@
 # API và lifecycle frontend
 
+Task detail giữ tên/code sprint đã validate và ưu tiên tiếng Việt. `/tasks/:id/spec` phục vụ hiển thị dependency status; `/tasks/:id/spec/source` xuất raw snapshot để operator seal runner, không dùng thay display API. Notification chỉ chấp nhận route nội bộ đúng vai trò, giữ nguyên task ID kể cả GUID viết hoa; mark-read không đổi trạng thái nghiệp vụ. AI review lưu kết luận gốc, UI ghép thêm trạng thái bài nộp để không hiện chờ duyệt sau quyết định cuối.
+
 Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentials:include và Bearer access token khi cần. Refresh cookie HttpOnly; access token ở memory. Adapter kiểm tra field/type/nullable; response sai không render như dữ liệu hợp lệ.
 
 | Nhóm adapter | Hành vi |

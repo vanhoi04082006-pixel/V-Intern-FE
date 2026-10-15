@@ -1,5 +1,7 @@
 # V-INTERN Frontend
 
+Nghiệm thu16/10 đã chạy giao diện nộp PR GitHub thật, AI/runner review và giảng viên duyệt; xem [bằng chứng](../docs/GITHUB-LIVE-ACCEPTANCE.md). Bộ kiểm thử hiện66files/476tests; typecheck/lint/build đạt. Deep-link thông báo xử lý GUID viết hoa và đúng task theo vai trò; điểm AI và quyết định giảng viên hiển thị riêng.
+
 Next.js 16.3.8 App Router, React 19, TypeScript và Tailwind CSS 4. Giao diện tiếng Việt cho tuyển dụng bằng chat, không gian sinh viên, quản lý phiên giảng viên và quản trị. Browser gọi Nest API thật; frontend không quyết định điểm, quyền hay kết quả task.
 
 ## Chạy local
