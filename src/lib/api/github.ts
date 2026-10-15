@@ -45,6 +45,8 @@ function parseRepository(value: unknown) {
         url: p.nullable(r.url, p.string),
         status: p.oneOf(r.status, ["provisioning", "ready", "failed"]),
         errorCode: p.nullable(r.errorCode, p.string),
+        webhookStatus: r.webhookStatus === undefined ? 'not_configured' : p.oneOf(r.webhookStatus, ['not_configured', 'configuring', 'ready', 'failed']),
+        webhookUpdatedAt: p.nullable(r.webhookUpdatedAt ?? null, p.string),
       };
     }),
     members: p.array(v.members, (item) => {
@@ -61,3 +63,11 @@ export const provisionRepository = (id: string) =>
   });
 export const inviteRepositoryMembers = (id: string) =>
   request(`/sessions/${id}/github/invite`, p.record, { method: "POST" });
+export const configureGithubWebhook = (id: string) => request(`/sessions/${encodeURIComponent(id)}/github/webhook`, parseRepository, { method: 'POST' });
+export const githubRepositoryActivity = (id: string, page: number, signal?: AbortSignal) => request(`/sessions/${encodeURIComponent(id)}/github/activity?page=${page}&pageSize=5`, value => {
+  const v = p.record(value);
+  return { total: p.number(v.total), items: p.array(v.items, item => {
+    const e = p.record(item);
+    return { id: p.string(e.id), eventType: p.string(e.eventType), action: p.string(e.action), headSha: p.nullable(e.headSha, p.string), pullNumber: p.nullable(e.pullNumber, p.number), branch: p.nullable(e.branch, p.string), receivedAt: p.string(e.receivedAt) };
+  }) };
+}, { signal });

@@ -227,6 +227,7 @@ function SubmissionReview({
         </a>
       </div>
       <p className="my-3 whitespace-pre-wrap text-sm">{submission.summary}</p>
+      {submission.observedHeadSha && submission.observedHeadSha.toLowerCase() !== submission.headSha?.toLowerCase() && <div role="status" className="my-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"><p className="font-semibold">GitHub ghi nhận code thay đổi sau khi nộp bài.</p><p className="mt-1">Hãy kiểm tra commit, rút bài và nộp lại khi cần. Giảng viên sẽ kiểm tra SHA hiện tại trước khi duyệt.</p><p className="mt-2 break-all font-mono text-xs">Commit được ghi nhận: {submission.observedHeadSha}</p></div>}
       {submission.headSha && (
         <p className="break-all font-mono text-xs text-slate-500">
           Commit được nộp: {submission.headSha}

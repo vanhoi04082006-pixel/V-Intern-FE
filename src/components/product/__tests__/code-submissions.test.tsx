@@ -55,6 +55,13 @@ beforeEach(() => {
 });
 
 describe("instructor AI rubric handoff", () => {
+  it('shows a changed-source observation without replacing the submitted commit', async () => {
+    api.listSubmissions.mockResolvedValue([{ ...submission, observedHeadSha: 'b'.repeat(40), sourceChangedAt: '2026-10-15T01:00:00Z' }]);
+    api.listCodeReviews.mockResolvedValue([]);
+    render(<CodeSubmissions task={task} managed onUpdated={vi.fn()} />);
+    expect(await screen.findByText('GitHub ghi nhận code thay đổi sau khi nộp bài.')).toBeInTheDocument();
+    expect(screen.getByText('Commit được nộp: abcdef')).toBeInTheDocument();
+  });
   it("initializes the confirmation form from the asynchronously loaded AI rubric", async () => {
     api.listCodeReviews.mockResolvedValue([
       {

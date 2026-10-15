@@ -7,7 +7,7 @@ Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentia
 | workspace/recruitment | Lifecycle, profile, own session, conversation next/clarify, answer, submit/retry |
 | templates/sessions | Library/detail/create run, eligible members, Start, plan history/publish |
 | work/submissions | Own tasks/specs/comments/history, nộp/rút bài, AI review và rubric cuối |
-| github | Trạng thái kết nối, authorize redirect, repo/provision/invitation |
+| github | Trạng thái kết nối, authorize redirect, repo/provision/invitation, webhook setup và activity phân trang |
 | sharing | Xin xem, approve/deny/revoke, snapshot chỉ đọc |
 | mentor | Own conversation/history, selected own taskId |
 | reports/performance | Scope quản lý, phân trang, PDF/XLSX |
