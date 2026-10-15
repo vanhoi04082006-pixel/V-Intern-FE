@@ -21,7 +21,7 @@ export function validateLogin(values: LoginValues): LoginFieldErrors {
   const errors: LoginFieldErrors = {};
 
   if (!values.identifier.trim()) {
-    errors.identifier = "Vui lòng nhập email hoặc tên đăng nhập.";
+    errors.identifier = "Vui lòng nhập email.";
   }
   if (!values.password) {
     errors.password = "Vui lòng nhập mật khẩu.";

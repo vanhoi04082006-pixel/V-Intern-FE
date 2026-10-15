@@ -186,13 +186,13 @@ export function LoginForm({ previewState }: LoginFormProps) {
         <div className="space-y-4">
           <AuthField
             id="login-identifier"
-            label="Email hoặc tên đăng nhập"
+            label="Email"
             icon={Mail}
             type="text"
             name="identifier"
             inputMode="email"
             autoComplete="username"
-            placeholder="Nhập email hoặc tên đăng nhập"
+            placeholder="Nhập email"
             value={identifier}
             error={errors.identifier}
             disabled={isSubmitting}

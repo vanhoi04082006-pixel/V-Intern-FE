@@ -30,7 +30,7 @@ async function fillAndSubmit(
   }: { identifier?: string; password?: string } = {},
 ) {
   await user.type(
-    screen.getByLabelText("Email hoặc tên đăng nhập"),
+    screen.getByLabelText("Email"),
     identifier,
   );
   await user.type(screen.getByLabelText("Mật khẩu"), password);
@@ -46,7 +46,7 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     expect(
-      screen.getByLabelText("Email hoặc tên đăng nhập"),
+      screen.getByLabelText("Email"),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Mật khẩu")).toBeInTheDocument();
     expect(screen.getByLabelText("Ghi nhớ đăng nhập")).toBeChecked();
@@ -69,11 +69,11 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
     expect(
-      screen.getByText("Vui lòng nhập email hoặc tên đăng nhập."),
+      screen.getByText("Vui lòng nhập email."),
     ).toBeInTheDocument();
     expect(screen.getByText("Vui lòng nhập mật khẩu.")).toBeInTheDocument();
     expect(mockLogin).not.toHaveBeenCalled();
-    expect(screen.getByLabelText("Email hoặc tên đăng nhập")).toHaveFocus();
+    expect(screen.getByLabelText("Email")).toHaveFocus();
   });
 
   it("mật khẩu có nút hiện/ẩn với aria-label tiếng Việt", async () => {
