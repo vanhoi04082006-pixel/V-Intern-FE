@@ -73,4 +73,4 @@ Panel, nút, input và navigation dùng cùng primitive để giữ độ tươn
 
 [Kiến trúc](docs/ARCHITECTURE.md) · [API/lifecycle](docs/API-CONTRACTS.md) · [UI](docs/UI-SYSTEM.md) · [Kiểm thử](docs/TESTING.md). Hướng dẫn toàn hệ thống ở README của workspace bên ngoài.
 
-GitHub cần BE cấu hình OAuth; Gmail không cấp quyền tạo repository. Đăng ký công khai, Google login và quên mật khẩu chưa có API thật; giao diện phải thông báo chưa hỗ trợ, không giả thành công.
+Đăng ký sinh viên nối `/auth/register`, yêu cầu checkbox điều khoản và đăng nhập riêng sau khi tạo tài khoản; backend chỉ gán role intern, bắt đầu ở tuyển dụng. GitHub cần BE cấu hình OAuth; Gmail không cấp quyền tạo repository. Google login và quên mật khẩu chưa có tích hợp thật; giao diện thông báo chưa hỗ trợ, không giả thành công.

@@ -464,22 +464,31 @@ describe("auth-service (nối BE Module 1)", () => {
     resolveLogout(new Response(null, { status: 204 }));
     await pending;
   });
-  it("register giữ not-connected trung thực (BE không có endpoint public)", async () => {
-    const fetchSpy = vi.fn();
+  it("register calls the intern-only endpoint and does not invent a session", async () => {
+    const fetchSpy = vi.fn(async () => jsonResponse(201, { registered: true }));
     vi.stubGlobal("fetch", fetchSpy);
 
     const result = await register({
       fullName: "New Intern",
       email: "new.intern@vintern.local",
       password: "ChangeMe_2026!",
+      acceptedTerms: true,
     });
 
-    expect(result).toEqual({
-      ok: false,
-      kind: "not-connected",
-      message: expect.stringContaining("chưa được kết nối"),
-    });
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result).toEqual({ ok: true });
+    expect(fetchSpy).toHaveBeenCalledWith(API_BASE + '/auth/register', expect.objectContaining({ method: 'POST' }));
+    expect(getSessionUser()).toBeNull();
+  });
+
+  it.each([[409, 'REGISTRATION_CONFLICT', 'Email này đã được sử dụng'], [403, 'REGISTRATION_CLOSED', 'tạm dừng đăng ký'], [429, 'RATE_LIMITED', 'quá nhiều lần']])('maps registration HTTP %s safely', async (status, code, expected) => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(Number(status), { code, message: 'internal detail must stay private' })));
+    const result = await register({ fullName: 'New Intern', email: 'intern@test.invalid', password: 'Valid-123!', acceptedTerms: true });
+    expect(result.ok).toBe(false); if (!result.ok) { expect(result.message).toContain(expected); expect(result.message).not.toContain('internal detail'); }
+  });
+
+  it('does not show signup success for an invalid successful response', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(201, { registered: false })));
+    expect(await register({ fullName: 'New Intern', email: 'intern@test.invalid', password: 'Valid-123!', acceptedTerms: true })).toMatchObject({ ok: false, kind: 'system-error' });
   });
 
   it("forgot-password giữ not-connected trung thực (BE không có endpoint)", async () => {

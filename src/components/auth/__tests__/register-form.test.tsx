@@ -147,6 +147,7 @@ describe("RegisterForm", () => {
     expect(
       await screen.findByRole("heading", { name: "Đăng ký thành công" })
     ).toBeInTheDocument();
+    expect(mockRegister).toHaveBeenCalledWith({ fullName: VALID.fullName, email: VALID.email, password: VALID.password, acceptedTerms: true });
     expect(
       screen.getByText(/Tài khoản của bạn đã được tạo\./)
     ).toBeInTheDocument();
