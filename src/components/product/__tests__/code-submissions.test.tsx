@@ -55,6 +55,16 @@ beforeEach(() => {
 });
 
 describe("instructor AI rubric handoff", () => {
+  it('shows signed execution timing and failed criteria alongside the AI review', async () => {
+    api.listCodeReviews.mockResolvedValue([{ id: 'review-tests', status: 'needs_changes', result: { rubric, summary: 'Fix input validation.', score: 70, findings: [], limitations: [] }, model: 'test-model', headSha: 'abcdef', inputHash: 'hash', errorCode: null,
+      evidence: { complete: true, warnings: [], tests: { status: 'completed', passed: 1, failed: 1, summary: 'One acceptance check failed.', executionTimeMs: 1234, score: 50, checks: [
+        { name: 'Create valid note', passed: true, log: 'Acceptance behavior verified.' }, { name: 'Reject empty title', passed: false, log: 'Expected acceptance behavior was not satisfied.' },
+      ] } } }]);
+    render(<CodeSubmissions task={task} managed onUpdated={vi.fn()} />);
+    expect(await screen.findByText('Thực thi: 1.23 giây · Điểm test: 50/100')).toBeInTheDocument();
+    expect(screen.getByText('Chưa đạt · Reject empty title')).toBeInTheDocument();
+    expect(screen.getByText('Expected acceptance behavior was not satisfied.')).toBeInTheDocument();
+  });
   it('shows a changed-source observation without replacing the submitted commit', async () => {
     api.listSubmissions.mockResolvedValue([{ ...submission, observedHeadSha: 'b'.repeat(40), sourceChangedAt: '2026-10-15T01:00:00Z' }]);
     api.listCodeReviews.mockResolvedValue([]);

@@ -106,6 +106,9 @@ function parseCodeReviews(value: unknown) {
                 passed: p.number(tests.passed),
                 failed: p.number(tests.failed),
                 summary: p.string(tests.summary),
+                executionTimeMs: p.nullable(tests.executionTimeMs ?? null, p.number),
+                score: p.nullable(tests.score ?? null, p.number),
+                checks: tests.checks === undefined ? [] : p.array(tests.checks, raw => { const c = p.record(raw); return { name: p.string(c.name), passed: p.boolean(c.passed), log: p.string(c.log) }; }),
               }
             : null,
         };

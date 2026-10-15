@@ -383,6 +383,8 @@ function AiCodeReview({
                 {review.evidence.tests?.failed ?? 0} failed
               </p>
               <p>{review.evidence.tests?.summary}</p>
+              {review.evidence.tests?.executionTimeMs != null && <p>Thực thi: {(review.evidence.tests.executionTimeMs / 1000).toFixed(2)} giây · Điểm test: {review.evidence.tests.score}/100</p>}
+              {Boolean(review.evidence.tests?.checks.length) && <ul className="space-y-1">{review.evidence.tests!.checks.map((check, i) => <li key={i} className={check.passed ? 'text-emerald-700' : 'text-rose-700'}>{check.passed ? 'Đạt' : 'Chưa đạt'} · {check.name}<span className="block text-xs text-slate-500">{check.log}</span></li>)}</ul>}
               {review.evidence.warnings.map((v, i) => (
                 <p key={i}>{v}</p>
               ))}

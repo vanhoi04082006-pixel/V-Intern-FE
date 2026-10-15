@@ -24,6 +24,8 @@ Admin có route questions/ai/templates/sessions/performance/reports, dùng cùng
 
 API không trả đáp án mẫu/rubric tuyển dụng. Điểm AI code review là đề xuất, kèm evidence/limitations; task Done cần quyết định đã lưu từ BE. UI không gọi merge PR hoặc nhận trường passed từ model làm authority.
 
+Evidence trustedTests mới có executionTimeMs, score và checks tên/kết quả/log do runner ký và BE kiểm tra. UI hiển thị thời gian, điểm test và từng tiêu chí đạt/chưa đạt cạnh kết luận AI. Bản ghi cũ không có nhóm chi tiết vẫn parse được, không tự điền số đo.
+
 Conversation currentQuestion.kind là main hoặc follow_up. Câu phụ lưu qua PUT /recruitment/me/interviews/:id/follow-ups/:questionId; câu chính tiếp tục dùng /answers. Gửi xong tải lại conversation/next, không tự tăng chỉ số lượt. GET /recruitment/me/interviews phân trang lịch sử kết quả của principal. Điểm tiếng Anh riêng có thể null ở kết quả cũ.
 
 Planning giữ key ổn định, dependsOn, parentKey, expectedOutput, estimatedHours, skillTags, complexity và milestones khi sửa/chuyển task. Khi publish, backend ánh xạ key sang UUID và xác nhận lại quan hệ/deadline. Task spec trả danh sách phụ thuộc đã được scope theo project, có code/title/status để trình bày. Không tự suy Done hoặc bỏ chặn khi chỉ thay đổi UI.
