@@ -1,10 +1,13 @@
-# Kiểm chứng frontend ngày14/10/2026
+# Kiểm chứng frontend — 15/10/2026
 
-- Vitest:57files/430tests đạt; typecheck, lint và production build đạt.
-- Regressions: passed-unassigned route gate, pending AI, chat recovery, delayed AI rubric initialization, Kanban refresh và không gửi empty search400.
-- Chrome thật ở1440px/390px: ba roles trên runtime sạch, refresh cookie qua reload; không page errors/API5xx. Passed-unassigned notifications giữ shell chờ, direct mentor không mount chat. Assigned own tasks/board/detail/spec/submission area, tìm trang, drawer Escape/focus/desktop resize đạt.
-- Browser learning fixture dùng SQL/backend thật8081 qua URL forwarding; không mock response. Dữ liệu nghiệm thu không nằm trong ba tài khoản trắng.
+Vitest66files/467tests đạt; typecheck, lint và production build đạt. Đăng nhập ghi Email đúng API; signup gửi request thật/consent, chỉ mở login sau khi backend xác nhận tạo intern.
 
-Backend cùng bộ thay đổi:460unit và174SQL integration tests đạt. Live OAuth repo/invitation/PR và isolated runner chưa được nghiệm thu do thiếu cấu hình ngoài. UI báo tình trạng thiếu cấu hình; không thay bằng điểm hoặc repo giả.
+Hồi quy gồm PASS chưa assignment, khóa task/Mentor, own outcomes sau placement, chat/follow-up/reload/pending, Kanban refresh, rubric AI sau tải dữ liệu, eligibility/roster removal, blueprint/planner metadata, report filters/snapshot, admin bank/template/policy và signed runner details.
 
-Workflow full-stack đang pin BE baseline cũ; khi phát hành cần commit BE mới tương thích và chạy gate lại. Xem TESTING.md và tài liệu VERIFICATION ở workspace cha để biết phạm vi/môi trường và fixture provider thật.
+Chrome với HTTP/Nest/SQL thật ở1440/820/390px: student waiting/notifications; instructor blueprint/performance/detail/report; admin bank/policy/template/session/report; thêm/gỡ thành viên và lifecycle; worker status; certificate/PDF/public verify; signup→login→onboarding. Không sửa API response. Fixtures tách khỏi tài khoản trắng; chỉ tính pass sau nội dung thật đã render, không tính loading/login như private page.
+
+Artifacts ở workspace manual-runtime/*-master-browser.json và ảnh cùng prefix. Các luồng/viewport đã chạy không có page errors/body overflow. Runtime import audit hiện71route entries/216modules, không có mock-data/test/server-business imports hoặc Next business route handlers. UI kết quả AI không auto Done/merge. Report/certificate hiển thị snapshot thật, không bịa số đo/điểm cho dữ liệu cũ.
+
+BE hiện70suites/542unit tests và25suites/225SQL tests đạt trên DB mới, schema31. Gemini/Docker có chứng cứ riêng; chưa live repo/PR từ hai danh tính GitHub. Full-stack workflow ghim BE baseline lịch sử; cần SHA BE đã review và có trên remote cùng run CI mới trước phát hành. Không dùng pin cũ chứng minh contract hiện hành.
+
+[Cách chạy test](TESTING.md) · [Bằng chứng hệ thống](../../docs/VERIFICATION.md) · [API](API-CONTRACTS.md).

@@ -13,7 +13,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ~~~
 
-Mở http://localhost:3001. Đăng nhập bằng email được admin tạo. Không có password/token trong repository. Access token chỉ ở memory; browser gửi refresh cookie HttpOnly khi cần. Khi đổi API base, khởi động lại Next.
+Mở http://localhost:3001. Sinh viên có thể đăng ký khi server mở signup; giảng viên/admin dùng tài khoản được quản trị cấp. Đăng nhập bằng email. Không có password/token trong repository. Access token chỉ ở memory; browser gửi refresh cookie HttpOnly khi cần. Khi đổi API base, khởi động lại Next.
 
 ## Lệnh
 
