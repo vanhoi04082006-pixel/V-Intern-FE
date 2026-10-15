@@ -113,6 +113,8 @@ describe("Outcome truth boundaries", () => {
       holderName: "Nguyễn A",
       role: "backend",
       projectName: "P",
+      sessionName: "Session A",
+      completedAt: "2026-10-15T08:00:00.000Z",
       issuedAt: "date",
       email: "private@example.test",
       userId: "secret",
@@ -121,6 +123,8 @@ describe("Outcome truth boundaries", () => {
     expect(parsed).not.toHaveProperty("email");
     expect(parsed).not.toHaveProperty("userId");
     expect(parsed).not.toHaveProperty("overallScore");
+    expect(parsed.sessionName).toBe('Session A');
+    expect(parsed.completedAt).toBe('2026-10-15T08:00:00.000Z');
   });
   it("rejects inconsistent revoked certificate", () =>
     expect(() =>

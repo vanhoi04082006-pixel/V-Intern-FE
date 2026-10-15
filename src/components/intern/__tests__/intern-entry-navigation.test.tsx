@@ -5,7 +5,7 @@ import { InternWorkspace } from "../intern-workspace";
 import { active, principal, waiting } from "@/test/nest-fixtures";
 import { clearSession, setSession } from "@/lib/auth/session";
 let path = "/intern/notifications";
-let workspace = waiting;
+let workspace: typeof waiting & { hasAssignmentHistory?: boolean } = waiting;
 const router = { replace: vi.fn(), push: vi.fn() };
 vi.mock("next/navigation", () => ({
   usePathname: () => path,
@@ -100,5 +100,18 @@ describe("one lifecycle-aware intern shell", () => {
     expect(
       within(nav).getByRole("link", { name: "Công việc của tôi" }),
     ).toHaveAttribute("aria-current", "page");
+  });
+  it.each(['certificates', 'certificates/cert-id', 'evaluations', 'performance', 'kpi', 'virtual-salary'])('retains own historical %s after the active placement ends', async route => {
+    workspace = { ...waiting, hasAssignmentHistory: true }; path = `/intern/${route}`;
+    render(<InternEntry><h1>Historical outcome</h1></InternEntry>);
+    await screen.findByText('Historical outcome');
+    expect(screen.getByRole('link', { name: 'Chứng nhận' })).toHaveAttribute('href', '/intern/certificates');
+    expect(screen.getByRole('button', { name: 'AI Mentor' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Công việc của tôi' })).toBeDisabled();
+  });
+  it.each(['mentor', 'work/task-id', 'sprint', 'project', 'recommendations'])('history never mounts assignment-dependent %s content', async route => {
+    workspace = { ...waiting, hasAssignmentHistory: true }; path = `/intern/${route}`;
+    const content = vi.fn(() => <div>Protected child</div>); render(<InternEntry>{content}</InternEntry>);
+    await screen.findByRole('heading', { name: 'Đang chờ phân công' }); expect(content).not.toHaveBeenCalled();
   });
 });

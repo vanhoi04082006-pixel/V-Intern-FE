@@ -16,6 +16,8 @@ Lỗi 401 xóa phiên và yêu cầu đăng nhập;403 từ chối quyền;409 r
 
 Sinh viên đã passed nhưng chưa assignment chỉ dùng route chờ, notifications, profile và github. requireAssignment là gate trước mount, không phải bảo mật duy nhất: API BE vẫn xác thực sở hữu. Sau assignment phải lấy workspace mới; không tự đặt active trong local state.
 
+Ngoại lệ lịch sử có căn cứ: workspace trả hasAssignmentHistory từ EXISTS assignment của chính sinh viên. Khi không còn active nhưng đã có lịch sử, các trang own evaluations/performance/KPI/salary/certificates và route chi tiết vẫn đọc được. Task/sprint/project/Mentor/recommendations không mount. Người chưa từng được phân công giữ waiting gọn; các API own vẫn kiểm tra principal, flag không cấp quyền backend. Chứng nhận hiển thị project/session/completedAt từ snapshot; verify công khai không trả dữ liệu nội bộ, revoked ẩn thông tin người nhận.
+
 Performance directory dùng `items,total,page,pageSize` (10 mặc định), xếp hạng/tìm kiếm ở server. Bộ chọn evaluation cũng phân trang. Student detail lấy `/performance/interns/:id/detail` với scope, task page và trend sáu tháng UTC từ history. Report schema2 đọc thêm task/sprint/review/timeline và cảnh báo có căn cứ; parser giữ tương thích snapshot cũ. Filter tạo report có sprintId/studentId, reset khi đổi project/session; file xuất phản ánh snapshot, không sửa số liệu hiện tại.
 
 Admin có route questions/ai/templates/sessions/performance/reports, dùng cùng API đã kiểm tra quyền. Template editor giữ definition đầy đủ, gửi expectedVersion; archive/restore giữ snapshot. Link drill-down lấy basePath của workspace. ErrorState chỉ hiện details DTO đã giới hạn cho VALIDATION_ERROR400/422; không hiện chi tiết lỗi server.

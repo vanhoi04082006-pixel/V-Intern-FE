@@ -40,7 +40,7 @@ function InternGate({
   requireAssignment: boolean;
 }) {
   const pathname = usePathname();
-  const assignmentRequired = requireAssignment || !["/intern", "/intern/notifications", "/intern/profile", "/intern/github"].includes(pathname);
+  const historyRoute = ['evaluations', 'performance', 'kpi', 'virtual-salary', 'certificates'].some(route => pathname === `/intern/${route}` || pathname.startsWith(`/intern/${route}/`));
   const workspace = useResource(
     useCallback((signal: AbortSignal) => getWorkspace(signal), []),
   );
@@ -50,8 +50,10 @@ function InternGate({
   if (!workspace.data) return null;
   const data = workspace.data,
     target = lifecyclePath(data);
+  const outcomesAvailable = data.status === 'active' || Boolean(data.hasAssignmentHistory);
+  const assignmentRequired = requireAssignment || !(historyRoute && outcomesAvailable) && !["/intern", "/intern/notifications", "/intern/profile", "/intern/github"].includes(pathname);
   return (
-    <InternShell active={data.status === "active"}>
+    <InternShell active={data.status === "active"} outcomesAvailable={outcomesAvailable}>
       {target !== "/intern" ? (
         <Panel title="Tuyển dụng">
           <p className="text-sm">

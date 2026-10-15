@@ -11,10 +11,12 @@ export function InternShell({
   active,
   children,
   compact = false,
+  outcomesAvailable = active,
 }: {
   active: boolean;
   children: ReactNode;
   compact?: boolean;
+  outcomesAvailable?: boolean;
 }) {
   const pathname = usePathname();
   const user = getSessionUser();
@@ -22,8 +24,8 @@ export function InternShell({
   const drawer = useRef<HTMLDivElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const waiting = !active;
-  const groups = workspaceNav(active).filter(
-    (group) => active || group.id === "workspace",
+  const groups = workspaceNav(active, outcomesAvailable).filter(
+    (group) => active || outcomesAvailable || group.id === "workspace",
   );
   const title =
     groups

@@ -22,6 +22,7 @@ export interface AssignmentResource {
   status: string;
 }
 export interface InternWorkspace {
+  hasAssignmentHistory?: boolean;
   status: (typeof WORKSPACE_STATUSES)[number];
   assignment: {
     id: string;
@@ -74,6 +75,7 @@ export function parseWorkspace(value: unknown): InternWorkspace {
   const t = p.record(v.taskSummary);
   const result: InternWorkspace = {
     status: p.oneOf(v.status, WORKSPACE_STATUSES),
+    hasAssignmentHistory: v.hasAssignmentHistory === undefined ? false : p.boolean(v.hasAssignmentHistory),
     assignment: p.nullable(v.assignment, (x) => {
       const a = p.record(x);
       return {

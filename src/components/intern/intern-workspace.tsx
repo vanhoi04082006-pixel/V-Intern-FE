@@ -48,7 +48,7 @@ export function InternWorkspace() {
   if (!user) return <LoadingState label="Đang kiểm tra phiên đăng nhập..." />;
   const waiting = data.status === "unassigned";
   return (
-    <InternShell active={!waiting}>
+    <InternShell active={!waiting} outcomesAvailable={!waiting || Boolean(data.hasAssignmentHistory)}>
       {waiting ? <EmptyInternWorkspace state={waitingPresentation(data, user)} onReload={reload} recruitment={<WaitingRecruitmentSummary />} /> : <ActiveEntry workspace={data} />}
     </InternShell>
   );

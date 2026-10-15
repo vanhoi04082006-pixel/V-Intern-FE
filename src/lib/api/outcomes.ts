@@ -113,6 +113,9 @@ export function parseCertificate(value: unknown) {
     verificationCode: string(v.verificationCode),
     status: oneOf(v.status, ["issued", "revoked"]),
     issuedAt: string(v.issuedAt),
+    completedAt: nullable(v.completedAt ?? null, string),
+    projectName: nullable(v.projectNameSnapshot ?? null, string),
+    sessionName: nullable(v.sessionNameSnapshot ?? null, string),
     revokedAt: nullable(v.revokedAt, string),
     revokeReason: nullable(v.revokeReason, string),
     policyCode: string(v.policyCode),
@@ -131,6 +134,8 @@ export function parseVerification(value: unknown) {
     holderName: nullable(v.holderName, string),
     role: nullable(v.role, string),
     projectName: nullable(v.projectName, string),
+    sessionName: nullable(v.sessionName ?? null, string),
+    completedAt: nullable(v.completedAt ?? null, string),
     issuedAt: string(v.issuedAt),
     revokedAt: v.revokedAt === undefined ? null : nullable(v.revokedAt, string),
   };
