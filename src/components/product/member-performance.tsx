@@ -1,9 +1,8 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/lib/auth/api-client";
 import {
   listPerformance,
-  getMemberPerformance,
   getMemberRecommendations,
   csvCell,
 } from "@/lib/api/management";
@@ -11,6 +10,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
 import { Metrics } from "./outcomes";
+import { StudentPerformanceDetail } from './student-performance-detail';
 import {
   PageTitle,
   Panel,
@@ -18,6 +18,7 @@ import {
   Modal,
   buttonClass,
   inputClass,
+  Pager,
 } from "./primitives";
 export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "" }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string }) {
   const [projectId, setProjectId] = useState(initialProjectId),
@@ -26,23 +27,26 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
     [from, setFrom] = useState(""),
     [to, setTo] = useState(""),
     [selected, setSelected] = useState<string>();
+  const [page, setPage] = useState(1), [debounced, setDebounced] = useState('');
+  useEffect(() => { const timer = setTimeout(() => { setDebounced(search.trim()); setPage(1); }, 300); return () => clearTimeout(timer); }, [search]);
   const rows = useResource(
     useCallback(
       (signal: AbortSignal) =>
         listPerformance(
           new URLSearchParams({
+            page: String(page), pageSize: '10',
             ...(projectId ? { projectId } : {}),
             ...(sessionId ? { sessionId } : {}),
             ...(from ? { from } : {}),
             ...(to ? { to } : {}),
-            ...(search ? { q: search } : {}),
+            ...(debounced ? { q: debounced } : {}),
           }),
           signal,
         ),
-      [projectId, sessionId, from, to, search],
+      [projectId, sessionId, from, to, debounced, page],
     ),
   );
-  const data = rows.data ?? [],
+  const data = rows.data?.items ?? [],
     total = data.reduce((n, m) => n + m.totalTaskCount, 0),
     done = data.reduce((n, m) => n + m.completedTaskCount, 0),
     scores = data.flatMap((m) =>
@@ -85,7 +89,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
             onClick={download}
             disabled={rows.loading || Boolean(rows.error) || !data.length}
           >
-            Xuất CSV
+            Xuất CSV trang này
           </button>
         }
       />
@@ -97,7 +101,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
         ) : (
           <Metrics
             values={[
-              ["Thành viên", data.length],
+              ["Thành viên trong trang", data.length],
               ["Nhiệm vụ", total],
               ["Nhiệm vụ hoàn thành", done],
               [
@@ -122,14 +126,14 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
             kind="projects"
             label="Dự án báo cáo"
             value={projectId}
-            onChange={id => { setProjectId(id); setSessionId(""); }}
+            onChange={id => { setPage(1); setProjectId(id); setSessionId(""); }}
           />
           <AcademicPicker
             kind="sessions"
             label="Phiên báo cáo"
             value={sessionId}
             projectId={projectId}
-            onChange={setSessionId}
+            onChange={id => { setPage(1); setSessionId(id); }}
           />
           <label className="text-sm">
             Từ ngày
@@ -137,7 +141,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
               className={inputClass}
               type="date"
               value={from}
-              onChange={(e) => setFrom(e.target.value)}
+              onChange={(e) => { setPage(1); setFrom(e.target.value); }}
             />
           </label>
           <label className="text-sm">
@@ -146,7 +150,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
               className={inputClass}
               type="date"
               value={to}
-              onChange={(e) => setTo(e.target.value)}
+              onChange={(e) => { setPage(1); setTo(e.target.value); }}
             />
           </label>
         </div>
@@ -155,7 +159,8 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
       <div className="mt-5" />
       {!rows.loading && !rows.error && (
         <div className="grid gap-4 xl:grid-cols-[1fr_300px]">
-          <Panel title="Kết quả thành viên">
+          <Panel title={page === 1 && !debounced ? 'Top 10 sinh viên hiệu suất tốt nhất' : 'Kết quả tìm kiếm & xếp hạng'}>
+            <p className="mb-3 text-xs text-slate-500">Ưu tiên tỷ lệ task hoàn thành, điểm đánh giá đã chốt, ít task trễ và khối lượng công việc. Các chỉ số tổng hợp bên trên chỉ tính trang hiện tại.</p>
             {!data.length ? (
               <Empty>Chưa có thành viên hoặc dữ liệu trong bộ lọc này.</Empty>
             ) : (
@@ -205,6 +210,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
                 </table>
               </div>
             )}
+            {rows.data && <Pager page={page} total={rows.data.total} totalPages={Math.ceil(rows.data.total / rows.data.pageSize)} onChange={setPage} unit="sinh viên" />}
           </Panel>
           <div className="space-y-4">
             <Panel title="Phân bố hoàn thành">
@@ -231,38 +237,29 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
                 </p>
               </div>
             </Panel>
-            <Panel title="Thành viên nổi bật · Top 10">
+            <Panel title="Thứ hạng trong bộ lọc">
               <ol className="space-y-3">
-                {data
-                  .filter((m) => m.averageEvaluationScore !== null)
-                  .sort(
-                    (a, b) =>
-                      (b.averageEvaluationScore ?? 0) -
-                        (a.averageEvaluationScore ?? 0) ||
-                      a.userId.localeCompare(b.userId),
-                  )
-                  .slice(0, 10)
-                  .map((m, i) => (
+                {data.map((m, i) => (
                     <li
                       key={m.userId}
                       className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 text-sm"
                     >
-                      <span className="font-bold text-blue-600">{i + 1}</span>
+                      <span className="font-bold text-blue-600">{m.rank ?? ((page - 1) * 10 + i + 1)}</span>
                       <button
                         className="min-w-0 flex-1 truncate text-left font-semibold"
                         onClick={() => setSelected(m.userId)}
                       >
                         {m.displayName ?? m.userId}
                       </button>
-                      <strong>{m.averageEvaluationScore}</strong>
+                      <strong>{m.taskCompletionRate === null ? '—' : `${m.taskCompletionRate}%`}</strong>
                     </li>
                   ))}
               </ol>
-              {!scores.length && (
-                <Empty>Chưa có đánh giá đã chốt để xếp hạng.</Empty>
+              {!data.length && (
+                <Empty>Chưa có dữ liệu phù hợp để xếp hạng.</Empty>
               )}
               <p className="mt-3 text-xs text-slate-500">
-                Theo điểm trung bình đánh giá đã chốt, trong bộ lọc hiện tại.
+                Thứ tự từ backend; sinh viên chưa có task giữ tỷ lệ chưa đo được.
               </p>
             </Panel>
           </div>
@@ -280,32 +277,12 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
   );
 }
 function MemberDetail({ id, scope }: { id: string; scope: string }) {
-  const metrics = useResource(
-    useCallback((s: AbortSignal) => getMemberPerformance(id, s, scope), [id, scope]),
-  );
   const ai = useResource(
     useCallback((s: AbortSignal) => getMemberRecommendations(id, s), [id]),
   );
   return (
     <div className="space-y-5">
-      {metrics.loading ? (
-        <LoadingState />
-      ) : metrics.error ? (
-        <ErrorState error={metrics.error} onRetry={metrics.reload} />
-      ) : (
-        metrics.data && (
-          <Metrics
-            values={[
-              ["Nhiệm vụ", metrics.data.totalTaskCount],
-              ["Hoàn thành", metrics.data.completedTaskCount],
-              ["Đúng hạn (%)", metrics.data.onTimeCompletionRate],
-              ["Quá hạn", metrics.data.overdueOpenTaskCount],
-              ["Điểm đánh giá", metrics.data.averageEvaluationScore],
-              ["Story points hoàn thành", metrics.data.completedStoryPoints],
-            ]}
-          />
-        )
-      )}
+      <StudentPerformanceDetail key={`${id}:${scope}`} id={id} scope={scope} />
       <Panel title="Khuyến nghị AI">
         {ai.loading ? (
           <LoadingState />

@@ -10,7 +10,7 @@ export function CandidateInterviewSummary({ detail }: { detail: Record<string, u
     {[['Điểm mạnh & kỹ năng', result.strengths], ['Cần cải thiện', result.weaknesses]].map(([label, value]) => <div key={String(label)}><h4 className="font-semibold">{String(label)}</h4><ul className="mt-1 list-inside list-disc">{texts(value).map((s, i) => <li key={i}>{s}</li>)}</ul></div>)}
     {Array.isArray(result.criteria) && <dl className="grid gap-2 sm:grid-cols-2">{result.criteria.map((value, i) => {
       const c = object(value);
-      return typeof c.code === 'string' && typeof c.score === 'number' ? <div key={i} className="rounded-lg border border-slate-200 bg-white p-3"><dt className="font-semibold">{labels[c.code] ?? c.code}: {c.score}/100</dt><dd className="mt-1 text-slate-500">{typeof c.feedback === 'string' ? c.feedback : ''}</dd></div> : null;
+      return typeof c.code === 'string' && typeof c.score === 'number' ? <div key={i} className="rounded-lg border border-slate-200 bg-white p-3"><dt className="font-semibold">{labels[c.code] ?? `Tiêu chí ${i + 1}`}: {c.score}/100</dt><dd className="mt-1 text-slate-500">{typeof c.feedback === 'string' ? c.feedback : ''}</dd></div> : null;
     })}</dl>}
     {typeof result.evaluatedAt === 'string' && <p className="text-xs text-slate-500">Đánh giá lúc {new Date(result.evaluatedAt).toLocaleString('vi-VN')}</p>}
   </div>;

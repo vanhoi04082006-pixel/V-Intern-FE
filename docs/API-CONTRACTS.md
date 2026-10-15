@@ -16,6 +16,8 @@ Lỗi 401 xóa phiên và yêu cầu đăng nhập;403 từ chối quyền;409 r
 
 Sinh viên đã passed nhưng chưa assignment chỉ dùng route chờ, notifications, profile và github. requireAssignment là gate trước mount, không phải bảo mật duy nhất: API BE vẫn xác thực sở hữu. Sau assignment phải lấy workspace mới; không tự đặt active trong local state.
 
+Performance directory dùng `items,total,page,pageSize` (10 mặc định), xếp hạng/tìm kiếm ở server. Bộ chọn evaluation cũng phân trang. Student detail lấy `/performance/interns/:id/detail` với scope, task page và trend sáu tháng UTC từ history. Report schema2 đọc thêm task/sprint/review/timeline và cảnh báo có căn cứ; parser giữ tương thích snapshot cũ. Filter tạo report có sprintId/studentId, reset khi đổi project/session; file xuất phản ánh snapshot, không sửa số liệu hiện tại.
+
 API không trả đáp án mẫu/rubric tuyển dụng. Điểm AI code review là đề xuất, kèm evidence/limitations; task Done cần quyết định đã lưu từ BE. UI không gọi merge PR hoặc nhận trường passed từ model làm authority.
 
 Conversation currentQuestion.kind là main hoặc follow_up. Câu phụ lưu qua PUT /recruitment/me/interviews/:id/follow-ups/:questionId; câu chính tiếp tục dùng /answers. Gửi xong tải lại conversation/next, không tự tăng chỉ số lượt. GET /recruitment/me/interviews phân trang lịch sử kết quả của principal. Điểm tiếng Anh riêng có thể null ở kết quả cũ.
