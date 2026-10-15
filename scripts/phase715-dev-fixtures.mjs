@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
+import { answerTestInterview } from "./project-first-provider.mjs";
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE"),
   req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -102,21 +103,10 @@ try {
         "/recruitment/me/interviews",
         "POST",
       );
-      for (const question of key === "progress"
-        ? interview.questions.slice(0, 1)
-        : interview.questions)
-        await call(
-          user.accessToken,
-          "/recruitment/me/interviews/" +
-            interview.session.id +
-            "/answers/" +
-            question.id,
-          "PUT",
-          {
-            answerText:
-              "Controlled development answer saved through the real recruitment API and SQL transaction.",
-          },
-        );
+      if (interview.session.questionCount !== 10) throw new Error('Current chat contract requires ten main questions');
+      await answerTestInterview((...args) => call(user.accessToken, ...args), interview,
+        'Controlled development answer saved through the real recruitment API and SQL transaction.',
+        key === 'progress' ? 1 : interview.session.questionCount);
       if (key !== "progress")
         await call(
           user.accessToken,

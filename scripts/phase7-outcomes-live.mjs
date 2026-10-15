@@ -50,7 +50,7 @@ async function call(email, url, method = "GET", body) {
 }
 async function login(page) {
   await page.goto(base + "/login");
-  await page.getByLabel("Email hoặc tên đăng nhập").fill(fixture.email);
+  await page.getByLabel("Email", { exact: true }).fill(fixture.email);
   await page
     .getByLabel("Mật khẩu", { exact: true })
     .fill(process.env.LIVE_PASSWORD);

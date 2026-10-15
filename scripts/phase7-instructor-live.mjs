@@ -53,7 +53,7 @@ const academic = JSON.parse(
 const instructor = "instructor@phase715.test";
 async function login(page, email) {
   await page.goto(base + "/login");
-  await page.getByLabel("Email hoặc tên đăng nhập").fill(email);
+  await page.getByLabel("Email", { exact: true }).fill(email);
   await page
     .getByLabel("Mật khẩu", { exact: true })
     .fill(process.env.LIVE_PASSWORD);

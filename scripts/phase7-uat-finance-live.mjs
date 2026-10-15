@@ -33,7 +33,7 @@ async function balance(expected) {
   return { sql: Number(sql[0].balance), nest: Number(value.balance), rendered: expected.toLocaleString("vi-VN") };
 }
 try {
-  await page.goto(base + "/login"); await page.getByLabel("Email hoặc tên đăng nhập").fill(f.email); await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
+  await page.goto(base + "/login"); await page.getByLabel("Email", { exact: true }).fill(f.email); await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
   await page.getByRole("button", { name: "Đăng nhập", exact: true }).click(); await page.waitForURL("**/intern");
   const kpi = await call("intern", "/intern/me/kpi/" + f.kpiResultId);
   const sqlKpi = await ds.query("SELECT finalScore FROM kpi_results WHERE id=@0", [f.kpiResultId]);

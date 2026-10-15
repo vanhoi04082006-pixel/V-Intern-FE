@@ -58,7 +58,7 @@ const auth = (key) =>
 async function login(page, key, target) {
   await page.goto("http://localhost:3001/login");
   await page
-    .getByLabel("Email hoặc tên đăng nhập")
+    .getByLabel("Email", { exact: true })
     .fill(key + "@phase715.test");
   await page
     .getByLabel("Mật khẩu", { exact: true })
@@ -478,22 +478,22 @@ try {
         .getByRole("button", { name: "Bắt đầu phỏng vấn", exact: true })
         .click();
       await page.waitForURL("**/intern/onboarding/interview");
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 10; i++) {
         await page
-          .getByLabel("Câu trả lời của bạn")
+          .getByLabel("Tin nhắn của bạn")
           .fill(
             "Live browser answer with concrete implementation reasoning and testable examples " +
               i,
           );
         await page
-          .getByRole("button", { name: "Lưu câu trả lời", exact: true })
+          .getByRole("button", { name: "Gửi câu trả lời", exact: true })
           .click();
         await page
-          .getByText(i + 1 + "/8 câu đã lưu", { exact: false })
+          .getByText(i + 1 + "/10 câu ·", { exact: false })
           .waitFor();
       }
       await page
-        .getByRole("button", { name: "Nộp bài phỏng vấn", exact: true })
+        .getByRole("button", { name: "Kết thúc và chờ kết quả", exact: true })
         .click();
       await page.waitForURL("**/intern/onboarding/result");
       await page.getByText("81.1", { exact: false }).first().waitFor();
@@ -503,7 +503,7 @@ try {
       assert.equal(profile.result.decision, "passed");
       assert.equal(profile.result.overallScore, 81.1);
       return {
-        answerCount: 8,
+        answerCount: 10,
         technical: 85,
         soft: 72,
         overall: 81.1,

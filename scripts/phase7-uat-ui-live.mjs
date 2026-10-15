@@ -14,7 +14,7 @@ fs.mkdirSync(evidence, { recursive: true });
 const results = [], network = [];
 async function login(page, role) {
   await page.goto(base + "/login");
-  await page.getByLabel("Email hoặc tên đăng nhập").fill((role === "intern" ? "waiting" : role) + "@phase715.test");
+  await page.getByLabel("Email", { exact: true }).fill((role === "intern" ? "waiting" : role) + "@phase715.test");
   await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
   await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
   await page.waitForURL("**/" + role); await page.locator("h1").waitFor();

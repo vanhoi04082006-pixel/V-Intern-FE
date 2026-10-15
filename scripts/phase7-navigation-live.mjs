@@ -82,7 +82,7 @@ async function ready(page) {
 async function login(page, role) {
   await page.goto(base + "/login");
   await page
-    .getByLabel("Email hoặc tên đăng nhập")
+    .getByLabel("Email", { exact: true })
     .fill(`${role === "intern" ? "waiting" : role}@phase715.test`);
   await page
     .getByLabel("Mật khẩu", { exact: true })

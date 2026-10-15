@@ -1,7 +1,7 @@
 /** DEVELOPMENT TEST HARNESS ONLY. Real AppModule/SQL; only AI provider overridden. */
 import path from "node:path";
 import { createRequire } from "node:module";
-import { buildTestSprintPlan } from "./project-first-provider.mjs";
+import { buildTestSprintPlan, buildTestInterviewPayload } from "./project-first-provider.mjs";
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE");
 const req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -70,30 +70,7 @@ const provider = {
         ],
         summary: "Khuyến nghị test từ dữ liệu nhiệm vụ.",
       };
-    const failed = request.input.role === "qa";
-    const data = request.validate(
-      payload ?? {
-        technicalScore: failed ? 58 : 85,
-        softSkillScore: 72,
-        criteria: [
-          {
-            code: "integration",
-            score: failed ? 58 : 85,
-            feedback: "Development TestAIProvider evaluation.",
-          },
-        ],
-        strengths: failed ? [] : ["Concrete reasoning"],
-        weaknesses: failed ? ["Needs technical practice"] : [],
-        feedback: failed
-          ? "Development interview needs improvement."
-          : "Development interview passed.",
-        recommendedRole: "backend",
-        // Deliberately contradictory fields prove Nest computes decision/overall.
-        overallScore: 0,
-        decision: "failed",
-        passed: false,
-      },
-    );
+    const data = request.validate(payload ?? buildTestInterviewPayload(request));
     return {
       data,
       provider: this.name,

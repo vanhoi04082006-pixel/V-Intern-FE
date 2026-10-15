@@ -51,7 +51,7 @@ async function auth(key) {
 async function login(page, key) {
   await page.goto("http://localhost:3001/login");
   await page
-    .getByLabel("Email hoặc tên đăng nhập")
+    .getByLabel("Email", { exact: true })
     .fill(`${key}@phase715.test`);
   await page
     .getByLabel("Mật khẩu", { exact: true })

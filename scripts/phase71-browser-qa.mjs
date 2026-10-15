@@ -247,7 +247,7 @@ try {
       { role, url: "/login" },
       async (page, calls) => {
         await page
-          .getByLabel("Email hoặc tên đăng nhập")
+          .getByLabel("Email", { exact: true })
           .fill(role + "@test.local");
         await page
           .getByLabel("Mật khẩu", { exact: true })
