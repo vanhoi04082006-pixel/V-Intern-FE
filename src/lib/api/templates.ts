@@ -17,6 +17,7 @@ export interface TemplateRoleDetail {
   countMax: number | null;
   requiredSkills: string[];
   recommendedSkills: string[];
+  responsibilities: string[];
   level: string | null;
 }
 
@@ -59,6 +60,7 @@ export function parseRoleDetail(value: unknown) {
     countMax: opt(v.countMax, number),
     requiredSkills: strArr(v.requiredSkills),
     recommendedSkills: strArr(v.recommendedSkills),
+    responsibilities: strArr(v.responsibilities),
     level: opt(v.level, string),
   };
 }

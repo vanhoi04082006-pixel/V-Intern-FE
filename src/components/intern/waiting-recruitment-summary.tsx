@@ -38,7 +38,7 @@ export function WaitingRecruitmentSummary() {
           <div><h3 className="font-semibold text-navy">Kỹ năng & điểm mạnh</h3>{result.strengths.length ? <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-600">{result.strengths.map(s => <li key={s}>{s}</li>)}</ul> : <p className="mt-2 text-sm text-slate-500">Chưa có nhận xét kỹ năng.</p>}</div>
           <div><h3 className="font-semibold text-navy">Định hướng cải thiện</h3>{result.weaknesses.length ? <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-600">{result.weaknesses.map(s => <li key={s}>{s}</li>)}</ul> : <p className="mt-2 text-sm text-slate-500">Chưa có đề xuất cải thiện.</p>}</div>
         </div>
-        {result.criteria.length > 0 && <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{result.criteria.map(c => <div key={c.code} className="rounded-xl border border-slate-200 p-3"><dt className="text-sm font-semibold">{criterionLabels[c.code] ?? c.code}: {c.score}/100</dt><dd className="mt-1 text-sm text-slate-500">{c.feedback}</dd></div>)}</dl>}
+        {result.criteria.length > 0 && <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{result.criteria.map((c, index) => <div key={c.code} className="rounded-xl border border-slate-200 p-3"><dt className="text-sm font-semibold">{criterionLabels[c.code] ?? `Tiêu chí ${index + 1}`}: {c.score}/100</dt><dd className="mt-1 text-sm text-slate-500">{c.feedback}</dd></div>)}</dl>}
       </> : <Empty>Kết quả chưa sẵn sàng. Hãy tải lại để đồng bộ trạng thái.</Empty>}
     </Panel>
     <Panel title="Lịch sử phỏng vấn" action={<Link className="text-sm font-semibold text-blue-600" href="/intern/onboarding/result">Xem kết quả tuyển dụng</Link>}>

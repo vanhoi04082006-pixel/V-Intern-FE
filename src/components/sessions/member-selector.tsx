@@ -75,7 +75,6 @@ export function MemberSelector({
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [role, setRole] = useState("");
-  const [availability, setAvailability] = useState("available");
   const [page, setPage] = useState(1);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null);
@@ -107,12 +106,13 @@ export function MemberSelector({
             pageSize: 10,
             search: debounced || undefined,
             role: role || undefined,
-            eligibility: availability === "all" ? undefined : "available",
+            eligibility: "available",
           },
           signal,
         ),
-      [search, page, debounced, role, availability],
+      [search, page, debounced, role],
     ),
+    assignmentsRevision,
   );
   const assigned = useResource(
     useCallback((signal: AbortSignal) => listFn(sessionId, signal), [listFn, sessionId]), assignmentsRevision,
@@ -182,11 +182,8 @@ export function MemberSelector({
           <option value="qa">QA</option>
           <option value="business_analyst">Business Analyst</option>
         </select>
-        <select aria-label="Lọc theo availability" className={inputClass} value={availability} onChange={(e) => { setAvailability(e.target.value); setPage(1); }}>
-          <option value="available">Còn trống</option>
-          <option value="all">Tất cả</option>
-        </select>
       </div>
+      <p className="text-xs text-slate-500">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
       {notice && (
         <p role="status" className="rounded bg-emerald-50 p-2 text-xs text-emerald-700">{notice}</p>
       )}

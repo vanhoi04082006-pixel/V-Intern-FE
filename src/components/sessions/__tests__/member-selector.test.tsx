@@ -88,6 +88,8 @@ describe("MemberSelector (M4)", () => {
     expect(screen.getByText(/Tổng điểm 81/)).toBeInTheDocument();
     expect(screen.getByText(/Tiếng Anh 74/)).toBeInTheDocument();
     expect(d.search).toHaveBeenCalledTimes(1);
+    expect(d.search).toHaveBeenCalledWith(expect.objectContaining({ eligibility: 'available' }), expect.any(AbortSignal));
+    expect(screen.queryByLabelText('Lọc theo availability')).toBeNull();
     // Eligible Alice has an enabled add; failed Bob keeps a disabled one with reason.
     const addButtons = screen.getAllByRole("button", { name: "Thêm" });
     expect(addButtons).toHaveLength(2);

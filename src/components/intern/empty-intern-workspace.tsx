@@ -277,10 +277,10 @@ export function EmptyInternWorkspace({
           title — Thông tin thực tập + Quy trình tiếp theo vừa đủ viewport */}
       <aside
         aria-label="Thông tin thực tập và quy trình tiếp theo"
-        className="flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-[var(--iw-gap)]"
+        className={`flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-[var(--iw-gap)]${recruitment ? ' self-start' : ''}`}
       >
         <InternshipInfoCard rows={infoRows} className="xl:shrink-0" />
-        <NextProcessCard steps={nextSteps} className="xl:min-h-0 xl:flex-1" />
+        <NextProcessCard steps={nextSteps} className={recruitment ? 'xl:min-h-0' : 'xl:min-h-0 xl:flex-1'} />
       </aside>
     </div>
   );
