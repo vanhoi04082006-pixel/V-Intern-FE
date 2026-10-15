@@ -18,6 +18,6 @@ function AiConfigurationForm({ config, onSaved }: { config: ReturnType<typeof pa
     <label className="block text-sm">Gemini model ID<input className={inputClass} required pattern="gemini[a-z0-9._-]+" maxLength={106} value={policy.model} onChange={e => setPolicy({ ...policy, model: e.target.value })} /></label>
     <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm">Timeout mỗi lần gọi (ms)<input className={inputClass} type="number" required min={10000} max={180000} value={policy.timeoutMs} onChange={e => setPolicy({ ...policy, timeoutMs: Number(e.target.value) })} /></label><label className="text-sm">Số retry lỗi tạm thời<input className={inputClass} type="number" required min={0} max={3} value={policy.maxRetries} onChange={e => setPolicy({ ...policy, maxRetries: Number(e.target.value) })} /></label></div>
     <p className="text-xs text-slate-500">Không retry lỗi credential/permission. Structured output sai chỉ được sửa một lần ở các module có schema repair; không bỏ qua validation hoặc tự tạo điểm đạt.</p>
-    {Boolean(action.error) && <ErrorState error={action.error} />}<button className={buttonClass} disabled={action.busy}>{action.busy ? 'Đang lưu…' : 'Lưu cấu hình AI'}</button>
+    {Boolean(action.error) && <ErrorState title="Không thể lưu thay đổi" error={action.error} />}<button className={buttonClass} disabled={action.busy}>{action.busy ? 'Đang lưu…' : 'Lưu cấu hình AI'}</button>
   </form></Panel>;
 }

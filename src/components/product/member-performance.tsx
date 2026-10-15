@@ -20,7 +20,7 @@ import {
   inputClass,
   Pager,
 } from "./primitives";
-export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "" }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string }) {
+export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "", basePath = '/instructor' }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string; basePath?: '/instructor' | '/admin' }) {
   const [projectId, setProjectId] = useState(initialProjectId),
     [sessionId, setSessionId] = useState(initialSessionId),
     [search, setSearch] = useState(""),
@@ -270,19 +270,19 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
           title="Chi tiết hiệu suất"
           onClose={() => setSelected(undefined)}
         >
-          <MemberDetail id={selected} scope={new URLSearchParams({ ...(projectId ? { projectId } : {}), ...(sessionId ? { sessionId } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}) }).toString()} />
+          <MemberDetail basePath={basePath} id={selected} scope={new URLSearchParams({ ...(projectId ? { projectId } : {}), ...(sessionId ? { sessionId } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}) }).toString()} />
         </Modal>
       )}
     </>
   );
 }
-function MemberDetail({ id, scope }: { id: string; scope: string }) {
+function MemberDetail({ id, scope, basePath }: { id: string; scope: string; basePath: '/instructor' | '/admin' }) {
   const ai = useResource(
     useCallback((s: AbortSignal) => getMemberRecommendations(id, s), [id]),
   );
   return (
     <div className="space-y-5">
-      <StudentPerformanceDetail key={`${id}:${scope}`} id={id} scope={scope} />
+      <StudentPerformanceDetail key={`${id}:${scope}`} id={id} scope={scope} basePath={basePath} />
       <Panel title="Khuyến nghị AI">
         {ai.loading ? (
           <LoadingState />

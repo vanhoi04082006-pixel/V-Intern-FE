@@ -88,4 +88,11 @@ describe("SessionOverview (M6)", () => {
     expect((await screen.findByRole('link', { name: 'FE' })).getAttribute('href')).toBe('/instructor/tasks/t1');
     expect(screen.getByRole('link', { name: 'Sprint 1' }).getAttribute('href')).toBe('/instructor/sprints/sp1');
   });
+  it('keeps admin drill-down inside admin routes and does not mount the instructor planning action', async () => {
+    render(<SessionOverview sessionId="s1" deps={deps()} basePath="/admin" />);
+    expect((await screen.findByRole('link', { name: 'FE' })).getAttribute('href')).toBe('/admin/tasks/t1');
+    expect(screen.getByRole('link', { name: 'Sprint & Task' }).getAttribute('href')).toContain('/admin/sprints?');
+    expect(screen.queryByRole('link', { name: 'Đội hình & thiết lập' })).toBeNull();
+    expect(screen.getAllByRole('link').some(link => link.getAttribute('href')?.startsWith('/instructor/'))).toBe(false);
+  });
 });

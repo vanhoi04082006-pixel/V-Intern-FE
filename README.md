@@ -39,6 +39,8 @@ Không chạy hai Next dev trong cùng checkout vì dùng chung .next. Đọc AG
 | Giảng viên | /instructor/projects, sessions, sprints | Thư viện → phiên → đội hình → Start → draft → publish |
 | Review/báo cáo | /instructor/performance, evaluations, reports | Quyền và số liệu thuộc phạm vi quản lý |
 | Chia sẻ/GitHub | /instructor/sharing, github | Consent / OAuth theo tài khoản |
+| Quản trị học tập | /admin/templates, questions, sessions, performance, reports | Definition có version, bank riêng tư, scope admin ở backend |
+| Vận hành | /admin/ai, services | Policy model/timeout/retry thật; chỉ báo cấu hình integration, không giả kết nối |
 | Admin | /admin/* | Users, RBAC, groups, catalogs, settings, services, audit |
 
 BE trả lifecycle; route cần assignment không mount nội dung hoặc gọi API học tập khi chưa được giao dự án. Sinh viên đã đạt nhấn thông báo vẫn dùng InternShell chờ phân công. Kanban có bốn cột, ưu tiên, phân trang; thay đổi task làm mới cả cột và số lượng.

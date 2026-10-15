@@ -27,9 +27,11 @@ export interface DetailDeps {
 export function SessionOverview({
   sessionId,
   deps,
+  basePath = '/instructor',
 }: {
   sessionId: string;
   deps?: Partial<DetailDeps>;
+  basePath?: '/instructor' | '/admin';
 }) {
   const { getSession = getSessionDetail, listSprints: loadSprints = listSprints, listTasks: loadTasks = listTasks, listPlans: loadPlans = listPlans } = deps ?? {};
 
@@ -68,7 +70,7 @@ export function SessionOverview({
         title={session.name}
         subtitle={`${session.code} · ${session.status}${session.startDate ? ` · ${session.startDate.slice(0, 10)} → ${session.endDate?.slice(0, 10) ?? ""}` : ""}`}
         action={
-          <Link className="text-xs font-semibold text-blue-600 hover:underline" href="/instructor/sessions">
+          <Link className="text-xs font-semibold text-blue-600 hover:underline" href={`${basePath}/sessions`}>
             ← Danh sách phiên
           </Link>
         }
@@ -96,10 +98,10 @@ export function SessionOverview({
       </div>
 
       {projectId && <nav aria-label="Quản lý phiên" className="flex flex-wrap gap-4 text-sm font-semibold text-blue-600">
-        <Link href={`/instructor/sessions/${sessionId}/setup?project=${projectId}`}>Đội hình & thiết lập</Link>
-        <Link href={`/instructor/sprints?sessionId=${sessionId}&projectId=${projectId}`}>Sprint & Task</Link>
-        <Link href={`/instructor/performance?sessionId=${sessionId}&projectId=${projectId}`}>Hiệu suất</Link>
-        <Link href={`/instructor/reports?sessionId=${sessionId}&projectId=${projectId}`}>Báo cáo</Link>
+        {basePath === '/instructor' && <Link href={`/instructor/sessions/${sessionId}/setup?project=${projectId}`}>Đội hình & thiết lập</Link>}
+        <Link href={`${basePath}/sprints?sessionId=${sessionId}&projectId=${projectId}`}>Sprint & Task</Link>
+        <Link href={`${basePath}/performance?sessionId=${sessionId}&projectId=${projectId}`}>Hiệu suất</Link>
+        <Link href={`${basePath}/reports?sessionId=${sessionId}&projectId=${projectId}`}>Báo cáo</Link>
       </nav>}
       <SessionRepositoryCard sessionId={sessionId} manage={session.leadInstructorId?.toLowerCase() === getSessionUser()?.id.toLowerCase()} />
       <Panel title={`Thành viên (${session.members.length})`}>
@@ -114,7 +116,7 @@ export function SessionOverview({
         })}
       </Panel>}
       <Panel title="Mốc thời gian">{session.milestones.length ? <ul className="space-y-2 text-sm">{session.milestones.map((m) => <li key={m.id}>{m.title} · {m.dueDate?.slice(0, 10) ?? 'Chưa có hạn'} · {m.status}</li>)}</ul> : <Empty>Chưa có mốc thời gian.</Empty>}</Panel>
-      {projectId && <Can perm="sprints.manage"><AiPlanPanel autoPlanning={session.status === 'active'} sessionId={sessionId} projectId={projectId} onPublished={() => { data.reload(); delivery.reload(); plans.reload(); }} /></Can>}
+      {projectId && basePath === '/instructor' && <Can perm="sprints.manage"><AiPlanPanel autoPlanning={session.status === 'active'} sessionId={sessionId} projectId={projectId} onPublished={() => { data.reload(); delivery.reload(); plans.reload(); }} /></Can>}
       {delivery.error ? <ErrorState error={delivery.error} onRetry={delivery.reload} /> : null}
       {delivery.loading && <p role="status">Đang tải Sprint/Task...</p>}
 
@@ -128,7 +130,7 @@ export function SessionOverview({
               return (
                 <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-100 p-2">
                   <div>
-                    <Link className="text-sm font-semibold text-blue-600 hover:underline" href={`/instructor/sprints/${s.id}`}>
+                    <Link className="text-sm font-semibold text-blue-600 hover:underline" href={`${basePath}/sprints/${s.id}`}>
                       {s.name}
                     </Link>
                     <p className="text-[11px] text-slate-500">{s.code} · {s.goal ?? "—"}</p>
@@ -165,7 +167,7 @@ export function SessionOverview({
                 {tasks.map((t) => (
                   <tr key={t.id} className="border-t border-slate-50">
                     <td className="py-1.5 pr-3">
-                      <Link className="font-semibold text-blue-600 hover:underline" href={`/instructor/tasks/${t.id}`}>
+                      <Link className="font-semibold text-blue-600 hover:underline" href={`${basePath}/tasks/${t.id}`}>
                         {t.title}
                       </Link>
                       <span className="ml-1 text-slate-400">{t.code}</span>

@@ -15,9 +15,15 @@ import { academicStatuses } from "@/lib/api/academic";
 export function SessionList({
   list = listSessionOverview,
   embedded = false,
+  basePath = '/instructor',
+  onManage,
+  refreshKey,
 }: {
   list?: (q: SessionListQuery, signal?: AbortSignal) => ReturnType<typeof listSessionOverview>;
   embedded?: boolean;
+  basePath?: '/instructor' | '/admin';
+  onManage?: (id: string) => void;
+  refreshKey?: number;
 }) {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
@@ -37,13 +43,14 @@ export function SessionList({
         list({ page, pageSize: 10, q: debounced || undefined, status: status || undefined }, signal),
       [list, page, debounced, status],
     ),
+    refreshKey,
   );
 
   return (
     <div className="space-y-4">
       {embedded ? <h2 className="text-xl font-semibold">Phiên thực tập của bạn</h2> : <PageTitle
         title="Phiên thực tập"
-        subtitle="Tất cả phiên của bạn — quản lý từ Project Library tới báo cáo"
+        subtitle={basePath === '/admin' ? 'Các phiên trong hệ thống, đội hình và tiến độ được lưu tại backend' : 'Tất cả phiên của bạn — quản lý từ Project Library tới báo cáo'}
       />}
       <div className="flex flex-wrap gap-2">
         <input
@@ -88,10 +95,11 @@ export function SessionList({
                     {" · "}{s.memberCount} thành viên · {s.sprintCount} sprints · {s.taskDone}/{s.taskTotal} tasks ({s.taskPercent}%)
                   </p>
                   <div className="mt-2 flex gap-3 text-xs font-semibold">
-                    <Link className="text-blue-600 hover:underline" href={`/instructor/sessions/${s.id}`}>
+                    <Link className="text-blue-600 hover:underline" href={`${basePath}/sessions/${s.id}`}>
                       Chi tiết →
                     </Link>
-                    {s.status === "upcoming" && s.project && (
+                    {onManage && <button className="text-blue-600 hover:underline" onClick={() => onManage(s.id)}>Quản trị thông tin</button>}
+                    {basePath === '/instructor' && s.status === "upcoming" && s.project && (
                       <Link className="text-emerald-600 hover:underline" href={`/instructor/sessions/${s.id}/setup?project=${s.project.id}`}>
                         Setup →
                       </Link>

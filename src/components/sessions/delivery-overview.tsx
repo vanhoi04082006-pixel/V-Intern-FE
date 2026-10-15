@@ -9,7 +9,7 @@ import { listMemberOptions, listSprints, listTasks, taskStatuses } from "@/lib/a
 import { statusLabels } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 
-export function DeliveryOverview({ initialProjectId = "", initialSessionId = "" }: { initialProjectId?: string; initialSessionId?: string }) {
+export function DeliveryOverview({ initialProjectId = "", initialSessionId = "", basePath = '/instructor' }: { initialProjectId?: string; initialSessionId?: string; basePath?: '/instructor' | '/admin' }) {
   const [kind, setKind] = useState<"sprints" | "tasks">("sprints");
   const [projectId, setProject] = useState(initialProjectId);
   const [sessionId, setSession] = useState(initialSessionId);
@@ -52,8 +52,8 @@ export function DeliveryOverview({ initialProjectId = "", initialSessionId = "" 
       </div>
       {resource.loading && <LoadingState />}{Boolean(resource.error) && <ErrorState error={resource.error} onRetry={resource.reload} />}
       {data && data.items.length === 0 && <Empty />}
-      {kind === "sprints" && sprints.data?.items.map(s => <article key={s.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><Link className="font-semibold text-blue-700 hover:underline" href={`/instructor/sprints/${s.id}`}>{s.name}</Link><p className="text-sm text-slate-500">{s.code} · {s.status} · {s.endDate?.slice(0, 10) ?? "Chưa có hạn"}</p></div>{s.sessionId && <Link className="text-sm text-blue-700" href={`/instructor/sessions/${s.sessionId}`}>Xem phiên</Link>}</article>)}
-      {kind === "tasks" && tasks.data?.items.map(t => <article key={t.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><Link className="font-semibold text-blue-700 hover:underline" href={`/instructor/tasks/${t.id}`}>{t.title}</Link><p className="text-sm text-slate-500">{t.code} · {statusLabels[t.status]} · {t.priority} · {t.dueDate?.slice(0, 10) ?? "Chưa có hạn"}</p></div>{t.sprintId && <Link className="text-sm text-blue-700" href={`/instructor/sprints/${t.sprintId}`}>Xem Sprint</Link>}</article>)}
+      {kind === "sprints" && sprints.data?.items.map(s => <article key={s.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><Link className="font-semibold text-blue-700 hover:underline" href={`${basePath}/sprints/${s.id}`}>{s.name}</Link><p className="text-sm text-slate-500">{s.code} · {s.status} · {s.endDate?.slice(0, 10) ?? "Chưa có hạn"}</p></div>{s.sessionId && <Link className="text-sm text-blue-700" href={`${basePath}/sessions/${s.sessionId}`}>Xem phiên</Link>}</article>)}
+      {kind === "tasks" && tasks.data?.items.map(t => <article key={t.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><Link className="font-semibold text-blue-700 hover:underline" href={`${basePath}/tasks/${t.id}`}>{t.title}</Link><p className="text-sm text-slate-500">{t.code} · {statusLabels[t.status]} · {t.priority} · {t.dueDate?.slice(0, 10) ?? "Chưa có hạn"}</p></div>{t.sprintId && <Link className="text-sm text-blue-700" href={`${basePath}/sprints/${t.sprintId}`}>Xem Sprint</Link>}</article>)}
       {data && <Pager {...data} onChange={setPage} />}
     </Panel>
   </div>;

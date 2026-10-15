@@ -252,8 +252,8 @@ export const searchCandidates = (q: CandidateQuery, signal?: AbortSignal) => {
 export const getCandidateDetail = (userId: string, signal?: AbortSignal) =>
   request(`/recruitment/candidates/${encodeURIComponent(userId)}`, (x) => record(x), { signal });
 
-export const listSessionAssignments = (sessionId: string, signal?: AbortSignal) =>
-  request(`/assignments?${new URLSearchParams({ sessionId, status: "active", page: "1", pageSize: "100" })}`, (x) => {
+export const listSessionAssignments = (sessionId: string, signal?: AbortSignal, internId?: string) =>
+  request(`/assignments?${new URLSearchParams({ sessionId, status: "active", page: "1", pageSize: internId ? '1' : '100', ...(internId ? { internId } : {}) })}`, (x) => {
     const v = record(x);
     const items = Array.isArray(v.items) ? v.items : array(v.data, (i) => i);
     return items.map((i) => {

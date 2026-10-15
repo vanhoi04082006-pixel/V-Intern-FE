@@ -128,6 +128,8 @@ export const listTemplates = (q: TemplateQuery, signal?: AbortSignal) => {
 
 export const getTemplate = (id: string, signal?: AbortSignal) =>
   request(`/project-templates/${encodeURIComponent(id)}`, parseTemplateDetail, { signal });
+export const saveTemplateDefinition = (definition: Record<string, unknown>, current?: { id: string; version: number }) => request(`/project-templates${current ? '/' + encodeURIComponent(current.id) : ''}`, raw => { const v = record(raw); return { id: string(v.id), version: number(v.version) }; }, { method: current ? 'PATCH' : 'POST', body: current ? { definition, expectedVersion: current.version } : definition });
+export const setTemplateStatus = (template: { id: string; version: number }, status: 'active' | 'archived') => request(`/project-templates/${encodeURIComponent(template.id)}`, parseTemplateSummary, { method: 'PATCH', body: { status, expectedVersion: template.version } });
 
 export const getTemplateContext = (projectId: string, signal?: AbortSignal) =>
   request(`/projects/${encodeURIComponent(projectId)}/template-context`, (v) => {

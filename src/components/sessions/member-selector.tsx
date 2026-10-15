@@ -56,12 +56,14 @@ export function MemberSelector({
   slots,
   onChanged,
   deps,
+  members = [],
 }: {
   sessionId: string;
   projectId: string;
   slots: Array<{ roleCode: string; requiredCount: number; filledCount: number }>;
   onChanged?: () => void;
   deps?: Partial<SelectorDeps>;
+  members?: Array<{ userId: string; displayName: string; email: string }>;
 }) {
   // Destructure with stable module-level defaults: the `deps` object itself must
   // NOT be a useCallback dependency (new identity every render → refetch loop).
@@ -152,7 +154,7 @@ export function MemberSelector({
     setNotice(null);
     let removed = false;
     const ok = await action.run(async () => {
-      const list = await listFn(sessionId);
+      const list = await listFn(sessionId, undefined, internId);
       const row = list.find((a) => a.internId.toLowerCase() === internId.toLowerCase() && a.status === "active");
       if (!row) {
         setNotice("Không tìm thấy assignment đang hoạt động để gỡ.");
@@ -166,6 +168,7 @@ export function MemberSelector({
 
   return (
     <div className="space-y-3">
+      {members.length > 0 && <section aria-label="Thành viên đã phân công" className="rounded-xl border border-blue-100 bg-blue-50/30 p-3"><h3 className="mb-2 text-sm font-semibold">Đội hình hiện tại</h3><ul className="space-y-2">{members.map(member => <li key={member.userId} className="flex flex-wrap items-center justify-between gap-2 text-sm"><div className="min-w-0"><strong>{member.displayName}</strong><p className="break-all text-xs text-slate-500">{member.email}</p></div><Can perm="assignments.manage"><button type="button" aria-label={`Gỡ ${member.displayName} khỏi phiên`} className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 disabled:opacity-50" disabled={action.busy} onClick={() => void remove(member.userId, member.displayName)}>Gỡ khỏi phiên</button></Can></li>)}</ul></section>}
       <div className="flex flex-wrap gap-2">
         <input
           aria-label="Tìm sinh viên"

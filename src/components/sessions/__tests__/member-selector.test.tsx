@@ -53,6 +53,14 @@ describe("ineligibilityReason (M4)", () => {
 });
 
 describe("MemberSelector (M4)", () => {
+  it('removes a roster member even when the eligible search correctly excludes assigned students', async () => {
+    const d = deps({ search: vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 10, totalPages: 0 })), listAssignments: vi.fn(async () => [{ id: 'assigned-one', internId: 'u1', status: 'active' }]) });
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} members={[{ userId: 'u1', displayName: 'SV A', email: 'a@x.edu' }]} />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Gỡ SV A khỏi phiên' }));
+    await screen.findByText(/Đã gỡ SV A/);
+    expect(d.listAssignments).toHaveBeenCalledWith('s1', undefined, 'u1');
+    expect(d.cancel).toHaveBeenCalledWith('assigned-one');
+  });
   it("hides assignment mutations when the instructor lacks manage permission", async () => {
     setSession("test-token", { ...instructor, permissions: ["assignments.view"] });
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={deps()} />);

@@ -18,6 +18,8 @@ Sinh viên đã passed nhưng chưa assignment chỉ dùng route chờ, notifica
 
 Performance directory dùng `items,total,page,pageSize` (10 mặc định), xếp hạng/tìm kiếm ở server. Bộ chọn evaluation cũng phân trang. Student detail lấy `/performance/interns/:id/detail` với scope, task page và trend sáu tháng UTC từ history. Report schema2 đọc thêm task/sprint/review/timeline và cảnh báo có căn cứ; parser giữ tương thích snapshot cũ. Filter tạo report có sprintId/studentId, reset khi đổi project/session; file xuất phản ánh snapshot, không sửa số liệu hiện tại.
 
+Admin có route questions/ai/templates/sessions/performance/reports, dùng cùng API đã kiểm tra quyền. Template editor giữ definition đầy đủ, gửi expectedVersion; archive/restore giữ snapshot. Link drill-down lấy basePath của workspace. ErrorState chỉ hiện details DTO đã giới hạn cho VALIDATION_ERROR400/422; không hiện chi tiết lỗi server.
+
 API không trả đáp án mẫu/rubric tuyển dụng. Điểm AI code review là đề xuất, kèm evidence/limitations; task Done cần quyết định đã lưu từ BE. UI không gọi merge PR hoặc nhận trường passed từ model làm authority.
 
 Conversation currentQuestion.kind là main hoặc follow_up. Câu phụ lưu qua PUT /recruitment/me/interviews/:id/follow-ups/:questionId; câu chính tiếp tục dùng /answers. Gửi xong tải lại conversation/next, không tự tăng chỉ số lượt. GET /recruitment/me/interviews phân trang lịch sử kết quả của principal. Điểm tiếng Anh riêng có thể null ở kết quả cũ.
