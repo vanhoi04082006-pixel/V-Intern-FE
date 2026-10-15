@@ -17,3 +17,7 @@ Lỗi 401 xóa phiên và yêu cầu đăng nhập;403 từ chối quyền;409 r
 Sinh viên đã passed nhưng chưa assignment chỉ dùng route chờ, notifications, profile và github. requireAssignment là gate trước mount, không phải bảo mật duy nhất: API BE vẫn xác thực sở hữu. Sau assignment phải lấy workspace mới; không tự đặt active trong local state.
 
 API không trả đáp án mẫu/rubric tuyển dụng. Điểm AI code review là đề xuất, kèm evidence/limitations; task Done cần quyết định đã lưu từ BE. UI không gọi merge PR hoặc nhận trường passed từ model làm authority.
+
+Conversation currentQuestion.kind là main hoặc follow_up. Câu phụ lưu qua PUT /recruitment/me/interviews/:id/follow-ups/:questionId; câu chính tiếp tục dùng /answers. Gửi xong tải lại conversation/next, không tự tăng chỉ số lượt. GET /recruitment/me/interviews phân trang lịch sử kết quả của principal. Điểm tiếng Anh riêng có thể null ở kết quả cũ.
+
+Planning giữ key ổn định, dependsOn, parentKey, expectedOutput, estimatedHours, skillTags, complexity và milestones khi sửa/chuyển task. Khi publish, backend ánh xạ key sang UUID và xác nhận lại quan hệ/deadline. Task spec trả danh sách phụ thuộc đã được scope theo project, có code/title/status để trình bày. Không tự suy Done hoặc bỏ chặn khi chỉ thay đổi UI.

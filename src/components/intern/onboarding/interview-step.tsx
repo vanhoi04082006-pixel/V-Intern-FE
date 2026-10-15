@@ -42,7 +42,7 @@ export function InterviewStep() {
       <div role="status" aria-label="AI đang chấm bài" aria-live="polite">
         <span aria-hidden="true" className="mx-auto mb-6 block size-12 rounded-full border-4 border-blue-100 border-t-brand motion-safe:animate-spin" />
         <h1 className="text-2xl font-bold text-navy">Đã kết thúc phỏng vấn</h1>
-        <p className="mt-3 text-slate-600">AI đang đánh giá câu trả lời. Vui lòng chờ kết quả.</p>
+        <p className="mt-3 text-slate-600">Buổi phỏng vấn đã kết thúc. Vui lòng chờ hệ thống đánh giá kết quả.</p>
       </div>
       <button disabled className="mt-6 rounded-lg bg-brand px-5 py-3 text-white opacity-60">Đang chấm bài…</button>
       <button disabled className="ml-3 mt-3 rounded-lg border p-3 opacity-60">Tải lại trạng thái</button>

@@ -164,6 +164,9 @@ export const saveAcademic = (
     body: academicBody(kind, form, Boolean(id)),
   });
 export interface CandidateResult {
+  englishScore?: number | null;
+  strengths?: string[];
+  weaknesses?: string[];
   overallScore: number | null;
   technicalScore: number | null;
   softSkillScore: number | null;
@@ -203,6 +206,9 @@ export function parseCandidate(value: unknown): Candidate {
           overallScore: num(r.overallScore),
           technicalScore: num(r.technicalScore),
           softSkillScore: num(r.softSkillScore),
+          englishScore: num(r.englishScore),
+          strengths: r.strengths === undefined ? [] : array(r.strengths, string),
+          weaknesses: r.weaknesses === undefined ? [] : array(r.weaknesses, string),
           decision: r.decision === null || r.decision === undefined ? null : string(r.decision),
           evaluatedAt: nullable(r.evaluatedAt, string),
         }

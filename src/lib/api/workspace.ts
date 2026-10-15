@@ -3,6 +3,7 @@ import * as p from "./parse";
 export const ROLE_LABELS = {
   frontend: "Frontend Developer",
   backend: "Backend Developer",
+  fullstack: "Fullstack Developer",
   qa: "QA Tester",
   business_analyst: "Business Analyst",
 } as const;

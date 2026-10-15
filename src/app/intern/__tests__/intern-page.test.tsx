@@ -12,6 +12,8 @@ const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status });
 let workspace: InternWorkspace;
 let backendStatus: number;
+const waitingTitle = 'Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án';
+const profile = { status: 'passed', selectedRole: 'backend', selectedRoleLabel: 'Backend Developer', attemptNumber: 1, attemptsRemaining: 2, nextEligibleAt: null, currentInterviewSessionId: null, recruitedAt: '2026-10-15T00:00:00Z', result: null };
 beforeEach(() => {
   clearSession();
   setSession("token", principal);
@@ -24,6 +26,8 @@ beforeEach(() => {
     vi.fn(async (url: string) =>
       url.endsWith("/auth/me")
         ? json(principal)
+        : url.endsWith('/recruitment/me') ? json(profile)
+        : url.includes('/recruitment/me/interviews?') ? json({ items: [], total: 0 })
         : json(workspace, backendStatus),
     ),
   );
@@ -40,13 +44,13 @@ describe("Intern API integration", () => {
       screen.queryByText("Chưa có dự án được phân công"),
     ).not.toBeInTheDocument();
     expect(
-      await screen.findByText("Chưa có dự án được phân công"),
+      await screen.findByText(waitingTitle),
     ).toBeInTheDocument();
     const rows = container.querySelectorAll(
       "section[aria-labelledby=thong-tin-thuc-tap] dl > div",
     );
     expect(rows).toHaveLength(6);
-    expect(screen.getByText("Backend Developer")).toBeInTheDocument();
+    expect(screen.getAllByText("Backend Developer").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Chưa phân công")).toHaveLength(2);
     expect(screen.getAllByText("Chưa có")).toHaveLength(2);
     expect(
@@ -108,7 +112,7 @@ describe("Intern API integration", () => {
   });
   it("reload re-resolves a newly active assignment", async () => {
     render(<InternPage />);
-    await screen.findByText("Chưa có dự án được phân công");
+    await screen.findByText(waitingTitle);
     workspace = active;
     await userEvent.click(
       screen.getByRole("button", { name: "Tải lại trạng thái" }),
@@ -117,7 +121,7 @@ describe("Intern API integration", () => {
   });
   it("mobile drawer supports focus, Escape and focus restoration", async () => {
     render(<InternPage />);
-    await screen.findByText("Chưa có dự án được phân công");
+    await screen.findByText(waitingTitle);
     const user = userEvent.setup();
     const opener = screen.getByRole("button", { name: "Mở menu điều hướng" });
     await user.click(opener);

@@ -96,7 +96,7 @@ describe("SessionSetup (M3)", () => {
     expect(await screen.findByText(/Setup: K48/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText(/tìm sinh viên/i), { target: { value: "sv" } });
     // Wait for the selector row itself (slot holders also contain "SV A").
-    expect(await screen.findByText(/Role: frontend/)).toBeInTheDocument();
+    expect(await screen.findByText(/Frontend Developer · Đã đậu phỏng vấn/)).toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("button", { name: "Thêm" })[0]);
     // Notice survives the parent reload triggered by onChanged, and the
     // refreshed member list arrives in the same tree.

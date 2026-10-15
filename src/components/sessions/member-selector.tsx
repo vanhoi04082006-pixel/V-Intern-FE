@@ -6,6 +6,8 @@ import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { Can } from "@/components/auth/can";
 import { errorMessage } from "@/lib/auth/api-client";
+import { roleLabel } from '@/lib/api/workspace';
+import { CandidateInterviewSummary } from './candidate-interview-summary';
 import {
   assignIntern,
   cancelAssignment,
@@ -176,9 +178,9 @@ export function MemberSelector({
           <option value="">Mọi role</option>
           <option value="frontend">Frontend</option>
           <option value="backend">Backend</option>
+          <option value="fullstack">Fullstack</option>
           <option value="qa">QA</option>
           <option value="business_analyst">Business Analyst</option>
-          <option value="devops">DevOps</option>
         </select>
         <select aria-label="Lọc theo availability" className={inputClass} value={availability} onChange={(e) => { setAvailability(e.target.value); setPage(1); }}>
           <option value="available">Còn trống</option>
@@ -208,9 +210,11 @@ export function MemberSelector({
                       <p className="text-sm font-semibold text-slate-800">{c.displayName ?? "Chưa có tên"}</p>
                       <p className="truncate text-[11px] text-slate-500">{c.email ?? "Chưa có email"}</p>
                       <p className="mt-1 text-[11px] text-slate-500">
-                        Role: {c.selectedRole ?? "—"} · Recruitment: {c.status}
-                        {c.result ? ` · Overall ${c.result.overallScore} (T${c.result.technicalScore}/S${c.result.softSkillScore})` : ""}
+                        {roleLabel(c.selectedRole)} · {c.status === 'passed' ? 'Đã đậu phỏng vấn' : 'Chưa đủ điều kiện'}
+                        {c.result ? ` · Tổng điểm ${c.result.overallScore} · Chuyên môn ${c.result.technicalScore} · Tiếng Anh ${c.result.englishScore ?? 'Chưa có điểm riêng'}` : ''}
                       </p>
+                      {Boolean(c.result?.strengths?.length) && <p className="mt-2 text-xs text-slate-600">Kỹ năng: {c.result!.strengths!.join(' · ')}</p>}
+                      {Boolean(c.result?.weaknesses?.length) && <p className="mt-1 text-xs text-slate-500">Cần cải thiện: {c.result!.weaknesses!.join(' · ')}</p>}
                       {reason && <p className="mt-1 text-[11px] text-amber-700">{reason}</p>}
                       {!reason && !added && (
                         <label className="mt-1 block text-[11px] text-slate-500">
@@ -235,9 +239,7 @@ export function MemberSelector({
                       {expanded === c.userId && (
                         <div className="mt-2 rounded bg-slate-50 p-2 text-[11px] text-slate-600">
                           {detail ? (
-                            <pre className="max-h-40 overflow-auto whitespace-pre-wrap">
-                              {JSON.stringify(detail, null, 1).slice(0, 2000)}
-                            </pre>
+                            <CandidateInterviewSummary detail={detail} />
                           ) : (
                             "Đang tải chi tiết phỏng vấn..."
                           )}
@@ -284,9 +286,7 @@ export function MemberSelector({
             total={results.data.total}
             onChange={(p: number) => setPage(p)}
           />
-          <p className="text-[11px] text-slate-400">
-            Backend kiểm tra eligibility khi lưu; ứng viên chưa đạt sẽ bị từ chối với mã lỗi rõ ràng.
-          </p>
+          <p className="text-xs text-slate-500">Chỉ sinh viên đã đậu, còn trống và phù hợp vai trò trong đội mới được phân công.</p>
         </>
       )}
     </div>

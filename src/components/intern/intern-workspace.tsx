@@ -11,6 +11,7 @@ import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { EmptyInternWorkspace } from "./empty-intern-workspace";
 import { ActiveEntry } from "./active-entry";
 import { InternShell } from "./intern-shell";
+import { WaitingRecruitmentSummary } from './waiting-recruitment-summary';
 import {
   waitingPresentation,
 } from "./workspace-presentation";
@@ -47,8 +48,8 @@ export function InternWorkspace() {
   if (!user) return <LoadingState label="Đang kiểm tra phiên đăng nhập..." />;
   const waiting = data.status === "unassigned";
   return (
-    <InternShell active={!waiting} compact={waiting}>
-      {waiting ? <EmptyInternWorkspace state={waitingPresentation(data, user)} onReload={reload} /> : <ActiveEntry workspace={data} />}
+    <InternShell active={!waiting}>
+      {waiting ? <EmptyInternWorkspace state={waitingPresentation(data, user)} onReload={reload} recruitment={<WaitingRecruitmentSummary />} /> : <ActiveEntry workspace={data} />}
     </InternShell>
   );
 }

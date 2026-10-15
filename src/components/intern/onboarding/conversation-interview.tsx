@@ -6,6 +6,7 @@ import {
   conversationView,
   conversationClarify,
   remainingSeconds,
+  recruitmentApi,
 } from "@/lib/api/recruitment";
 import { errorMessage } from "@/lib/auth/api-client";
 import { useRecruitmentFlow } from "./recruitment-provider";
@@ -96,7 +97,10 @@ export function ConversationInterview() {
     setWorking(true);
     setError("");
     try {
-      if (await saveAnswer(chat.currentQuestion.id, text)) {
+      const saved = chat.currentQuestion.kind === 'follow_up'
+        ? (await recruitmentApi.saveFollowUp(sessionId, chat.currentQuestion.id, text)).saved
+        : await saveAnswer(chat.currentQuestion.id, text);
+      if (saved) {
         setDraft("");
         setChat(await conversationNext(sessionId));
       }
@@ -139,7 +143,7 @@ export function ConversationInterview() {
           </h1>
           <p className="mt-1 text-sm text-slate-600">
             {chat?.answeredCount ?? 0}/{interview!.session.questionCount} câu ·{" "}
-            {current ? phaseLabels[current.phase] : "Kết thúc hội thoại"}
+            {current?.kind === 'follow_up' ? 'Câu hỏi phụ theo câu trả lời của bạn' : current ? phaseLabels[current.phase] : "Kết thúc hội thoại"}
           </p>
         </div>
         {active && chat?.session.expiresAt && (
@@ -224,13 +228,13 @@ export function ConversationInterview() {
                   : "Tiếp tục hội thoại"}
               </button>
             )}
-            <button
+            {current.kind !== 'follow_up' && <button
               disabled={disabled || expired}
               onClick={() => void clarify()}
               className="mb-3 text-sm text-blue-700 disabled:opacity-40"
             >
               Giải thích lại câu hỏi
-            </button>
+            </button>}
             <form
               onSubmit={(e) => {
                 e.preventDefault();

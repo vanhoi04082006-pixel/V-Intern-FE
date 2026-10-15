@@ -61,6 +61,8 @@ src/lib/ui                       Focus/accessibility helpers
 
 Components mock/reference chỉ phục vụ fixture/presentation test; route thật phải lấy dữ liệu qua lib/api. Không nhập mock dataset vào route production hoặc thay error/empty bằng số liệu giả. Các khối Thiết lập nhanh đã được gỡ; thao tác nghiệp vụ vẫn ở trang tương ứng.
 
+Luồng tuyển dụng hiện có 10 câu chính và tối đa 2 câu phụ thích ứng, phục hồi theo backend. Sinh viên đã đậu nhưng chưa được phân công thấy điểm, kỹ năng, lịch sử và thông báo trong cùng workspace. Fullstack là vai trò tuyển dụng riêng. Giảng viên xem chi tiết phỏng vấn và sửa kế hoạch có milestone, phụ thuộc, task con, đầu ra và ước lượng trước publish.
+
 ## Giao diện và kiểm thử
 
 Panel, nút, input và navigation dùng cùng primitive để giữ độ tương phản, khoảng cách, focus và responsive. Drawer hỗ trợ Escape/Tab và đóng khi chuyển sang desktop. Tìm kiếm topbar tìm trang được phép; tìm task nằm trong trang công việc. Hiệu ứng tuân thủ prefers-reduced-motion.

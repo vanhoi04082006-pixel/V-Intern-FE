@@ -153,5 +153,12 @@ export const proposeChange = (id: string,body: { title:string;description:string
 export const applyChange = (id: string) => request(`/project-changes/${id}/apply`,record,{ method:'POST' });
 export const getTaskSpec = (id: string, signal?: AbortSignal) => request(`/tasks/${encodeURIComponent(id)}/spec`, (v) => nullable(v, (raw) => {
   const s = record(raw);
-  return { requirements: string(s.requirements), role: string(s.role), dod: array(s.dod, string), documentation: string(s.documentation), rubricVersion: string(s.rubricVersion) };
+  return { requirements: string(s.requirements), role: string(s.role), dod: array(s.dod, string), documentation: string(s.documentation), rubricVersion: string(s.rubricVersion),
+    expectedOutput: s.expectedOutput == null ? null : string(s.expectedOutput),
+    estimatedHours: s.estimatedHours == null ? null : number(s.estimatedHours),
+    skillTags: s.skillTags === undefined ? [] : array(s.skillTags, string),
+    complexity: s.complexity === undefined ? null : string(s.complexity),
+    blocked: s.blocked === true,
+    dependencies: s.dependencies === undefined ? [] : array(s.dependencies, item => { const d = record(item); return { taskId: string(d.taskId), code: string(d.code), title: string(d.title), status: string(d.status) }; }),
+  };
 }), { signal });
