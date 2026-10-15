@@ -19,6 +19,7 @@ import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { Metrics } from "./outcomes";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
+import { AdminSystemStatus } from '@/components/admin/system-status';
 function Result<T>({
   resource: r,
   children,
@@ -1740,6 +1741,7 @@ export function AdminServices() {
           </>
         )}
       </Result>
+      <AdminSystemStatus />
     </>
   );
 }

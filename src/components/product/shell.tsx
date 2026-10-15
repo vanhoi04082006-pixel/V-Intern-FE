@@ -42,6 +42,8 @@ const menus: Record<ProductRole, [string, string][]> = {
     ["roles", "Vai trò & quyền"],
     ["groups", "Nhóm người dùng"],
     ["catalogs", "Danh mục dùng chung"],
+    ["questions", "Ngân hàng câu hỏi"],
+    ["ai", "Cấu hình AI"],
     ["settings", "Cài đặt hệ thống"],
     ["services", "Trạng thái dịch vụ"],
     ["activity", "Hoạt động gần đây"],
