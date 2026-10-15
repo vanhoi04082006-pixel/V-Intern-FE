@@ -164,7 +164,7 @@ export function safeNotificationLink(value: string | null): string | null {
       : oldDetail[1] === "assignments"
         ? "/intern/project"
         : "/intern/sprint";
-  return /^\/(intern|instructor|admin)(\/(work|sprint|project|mentor|evaluations|performance|kpi|virtual-salary|certificates|notifications|recommendations|profile|classes|sessions|projects|sprints|reports|users|roles|groups|catalogs|settings|audit|activity|services|tasks|logs)(\/[a-f0-9-]{36})?|\/onboarding\/(role|interview|result))?(\?[a-zA-Z0-9=&_-]*)?$/.test(
+  return /^\/(intern|instructor|admin)(\/(work|sprint|project|mentor|evaluations|performance|kpi|virtual-salary|certificates|notifications|recommendations|profile|classes|sessions|projects|sprints|reports|users|roles|groups|catalogs|settings|audit|activity|services|tasks|logs|sharing|github|templates|questions|ai)(\/[a-fA-F0-9-]{36})?|\/onboarding\/(role|interview|result))?(\?[a-zA-Z0-9=&_-]*)?$/.test(
     value,
   )
     ? value
@@ -187,9 +187,10 @@ export function notificationLinkForRole(
 ): string | null {
   const link = safeNotificationLink(value);
   if (!link) return null;
+  if (role === 'intern' && link.startsWith('/intern/onboarding/')) return link;
   if (role === "instructor" && /^\/intern\/work\//.test(link))
-    return "/instructor/sprints";
-  if (role === "admin" && /^\/intern\/work\//.test(link)) return "/admin/tasks";
+    return link.replace(/^\/intern\/work\//, '/instructor/tasks/');
+  if (role === "admin" && /^\/intern\/work\//.test(link)) return link.replace(/^\/intern\/work\//, '/admin/tasks/');
   if (role === "instructor" && link === "/intern/project")
     return "/instructor/projects";
   if (role === "instructor" && link === "/intern/sprint")
@@ -221,6 +222,7 @@ export function notificationLinkForRole(
       "reports",
       "notifications",
       "profile",
+      "tasks", "sharing", "github",
     ],
     admin: [
       "",
@@ -236,6 +238,7 @@ export function notificationLinkForRole(
       "logs",
       "notifications",
       "profile",
+      "templates", "questions", "ai", "sessions", "sprints", "performance", "reports",
     ],
   };
   const [prefix, section = "", id, ...rest] = link
@@ -244,15 +247,12 @@ export function notificationLinkForRole(
     .split("/");
   if (prefix !== role || !routes[role]?.includes(section) || rest.length)
     return null;
-  if (
-    id &&
-    !(
-      role === "intern" &&
-      ["work", "evaluations", "kpi", "certificates"].includes(section)
-    ) &&
-    !(role === "instructor" && section === "sessions")
-  )
-    return null;
+  const detailRoutes: Record<string, readonly string[]> = {
+    intern: ['work', 'evaluations', 'kpi', 'certificates'],
+    instructor: ['tasks', 'sessions', 'projects', 'sprints'],
+    admin: ['tasks', 'sessions', 'sprints'],
+  };
+  if (id && !detailRoutes[role]?.includes(section)) return null;
   return link;
 }
 export function parseRecommendations(value: unknown) {

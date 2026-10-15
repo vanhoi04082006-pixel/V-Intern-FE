@@ -642,10 +642,11 @@ export function Notifications() {
                           {!n.readAt && (
                             <button
                               disabled={busy}
+                              aria-label={`Đánh dấu đã đọc: ${n.title}`}
                               onClick={() => void read(n.id)}
                               className="text-sm text-blue-600"
                             >
-                              Đã đọc
+                              Đánh dấu đã đọc
                             </button>
                           )}
                         </div>

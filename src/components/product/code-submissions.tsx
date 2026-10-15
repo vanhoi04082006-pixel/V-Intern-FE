@@ -334,7 +334,10 @@ function AiCodeReview({
       ) : review ? (
         <>
           <p role="status" className="font-semibold text-navy">
-            {aiStatuses[review.status]}
+            {review.status === "awaiting_instructor" &&
+            submission.status !== "submitted"
+              ? `AI đề xuất đạt · ${statuses[submission.status]}`
+              : aiStatuses[review.status]}
           </p>
           {review.result && (
             <>

@@ -17,6 +17,7 @@ import {
   statusLabels,
   taskStatuses,
   priorities,
+  priorityLabels,
   updateOwnTask,
   type Task,
 } from "@/lib/api/work";
@@ -329,13 +330,13 @@ function TaskContent({
         </p>
         <div className="mt-3 flex gap-2">
           <Badge>{statusLabels[task.status]}</Badge>
-          <Badge>{task.priority}</Badge>
+          <Badge>{priorityLabels[task.priority]}</Badge>
         </div>
         <dl className="mt-4 grid gap-3 rounded-lg bg-slate-50 p-3 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-slate-500">Sprint</dt>
             <dd className="mt-1 break-all text-xs">
-              {task.sprintId ?? "Chưa có"}
+              {task.sprint ? `${task.sprint.code} · ${task.sprint.name}` : task.sprintId ? 'Đã phân sprint' : 'Chưa có'}
             </dd>
           </div>
           <div>

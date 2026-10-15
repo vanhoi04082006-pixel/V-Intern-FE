@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { CodeSubmissions } from "../code-submissions";
 import type { Task } from "@/lib/api/work";
 
@@ -55,6 +56,15 @@ beforeEach(() => {
 });
 
 describe("instructor AI rubric handoff", () => {
+  it("shows the completed instructor decision without leaving AI approval pending", async () => {
+    api.listSubmissions.mockResolvedValue([{ ...submission, status: "approved", score: 90.5, feedback: "Reviewed and approved." }]);
+    api.listCodeReviews.mockResolvedValue([{ id: "review-approved", status: "awaiting_instructor", result: { rubric, summary: "Requirements met.", score: 98, findings: [], limitations: [] }, model: "test-model", headSha: "abcdef", inputHash: "hash", evidence: null, errorCode: null }]);
+    render(<CodeSubmissions task={{ ...task, status: "done" }} managed onUpdated={vi.fn()} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Xem đánh giá và bằng chứng" }));
+    expect(await screen.findByText("AI đề xuất đạt · Giảng viên đã duyệt")).toBeInTheDocument();
+    expect(screen.queryByText("AI đề xuất đạt · Chờ giảng viên xác nhận")).not.toBeInTheDocument();
+    expect(screen.queryByRole("spinbutton", { name: "Chức năng" })).not.toBeInTheDocument();
+  });
   it('shows signed execution timing and failed criteria alongside the AI review', async () => {
     api.listCodeReviews.mockResolvedValue([{ id: 'review-tests', status: 'needs_changes', result: { rubric, summary: 'Fix input validation.', score: 70, findings: [], limitations: [] }, model: 'test-model', headSha: 'abcdef', inputHash: 'hash', errorCode: null,
       evidence: { complete: true, warnings: [], tests: { status: 'completed', passed: 1, failed: 1, summary: 'One acceptance check failed.', executionTimeMs: 1234, score: 50, checks: [

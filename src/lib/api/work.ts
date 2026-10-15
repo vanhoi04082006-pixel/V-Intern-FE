@@ -17,6 +17,7 @@ export const statusLabels: Record<TaskStatus, string> = {
   done: "Hoàn thành",
 };
 export const priorities = ["low", "medium", "high", "critical"] as const;
+export const priorityLabels = { low: 'Thấp', medium: 'Trung bình', high: 'Cao', critical: 'Khẩn cấp' } as const;
 export function parseBoardTask(value: unknown) {
   const v = record(value);
   return {
@@ -34,6 +35,7 @@ export function parseBoardTask(value: unknown) {
 }
 export function parseTask(value: unknown) {
   const v = record(value);
+  const sprint = v.sprint == null ? null : record(v.sprint);
   return {
     ...parseBoardTask(v),
     description: nullable(v.description, string),
@@ -41,6 +43,7 @@ export function parseTask(value: unknown) {
     sprintId: nullable(v.sprintId, string),
     storyPoints: nullable(v.storyPoints, number),
     version: number(v.version),
+    ...(sprint ? { sprint: { id: string(sprint.id), code: string(sprint.code), name: string(sprint.name), status: string(sprint.status) } } : {}),
   };
 }
 export type Task = ReturnType<typeof parseTask>;

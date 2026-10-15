@@ -33,6 +33,11 @@ describe("Nest work boundary", () => {
   beforeEach(() => vi.clearAllMocks());
   it("parses nullable actual task fields", () =>
     expect(parseTask(task)).toEqual(task));
+  it('preserves scoped sprint display data instead of forcing the UI to show its UUID', () => {
+    const sprint = { id: 's', code: 'SP-1', name: 'Nền tảng ghi chú', status: 'active' };
+    expect(parseTask({ ...task, sprintId: 's', sprint }).sprint).toEqual(sprint);
+    expect(() => parseTask({ ...task, sprint: { ...sprint, name: 123 } })).toThrow();
+  });
   it("rejects legacy/invalid task status", () =>
     expect(() => parseTask({ ...task, status: "in_progress" })).toThrow());
   it("rejects invented progress", () =>
