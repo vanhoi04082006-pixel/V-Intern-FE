@@ -128,9 +128,8 @@ export function ConversationInterview() {
   const active = chat?.session.status === "in_progress";
   const current = chat?.currentQuestion;
   const disabled = busy || working || !active || current?.status !== "ready";
-  const expired = Boolean(
-    chat && remainingSeconds(chat.session, elapsed) === 0,
-  );
+  const remaining = chat ? remainingSeconds(chat.session, elapsed) : null;
+  const expired = remaining === 0;
   return (
     <section className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
       <header className="flex flex-wrap items-center gap-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white p-5">
@@ -146,11 +145,11 @@ export function ConversationInterview() {
             {current?.kind === 'follow_up' ? 'Câu hỏi phụ theo câu trả lời của bạn' : current ? phaseLabels[current.phase] : "Kết thúc hội thoại"}
           </p>
         </div>
-        {active && chat?.session.expiresAt && (
-          <p className="text-xs text-slate-500">
-            Hạn gửi:{" "}
-            {new Date(chat.session.expiresAt).toLocaleTimeString("vi-VN")}
-          </p>
+        {active && (
+          <div className="space-y-1 text-xs text-slate-500">
+            {remaining !== null && <p>Thời gian còn lại: <span role="timer" aria-label="Thời gian còn lại" className="font-semibold tabular-nums text-navy">{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span></p>}
+            {chat?.session.expiresAt && <p>Hạn gửi: {new Date(chat.session.expiresAt).toLocaleTimeString("vi-VN")}</p>}
+          </div>
         )}
       </header>
       <div className="h-1 bg-slate-100">

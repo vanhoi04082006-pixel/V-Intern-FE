@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { ConversationInterview } from "../conversation-interview";
 
 const mocks = vi.hoisted(() => ({
@@ -71,6 +71,19 @@ beforeEach(() => {
 });
 
 describe("conversation recovery", () => {
+  it('shows and updates the countdown from the server-provided remaining time', async () => {
+    vi.useFakeTimers();
+    const payload = conversation('in_progress');
+    payload.currentQuestion.status = 'ready';
+    mocks.view.mockResolvedValue(payload);
+    const view = render(<ConversationInterview />);
+    try {
+      await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+      expect(screen.getByLabelText('Thời gian còn lại')).toHaveTextContent('10:00');
+      await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+      expect(screen.getByLabelText('Thời gian còn lại')).toHaveTextContent('9:59');
+    } finally { view.unmount(); vi.useRealTimers(); }
+  });
   it.each(["expired", "cancelled"] as const)(
     "allows restarting a server-confirmed %s session and retains its transcript",
     async (status) => {
