@@ -17,7 +17,7 @@ export function buildTestInterviewPayload({ task, input }) {
     technicalScore: failed ? 58 : 85, softSkillScore: 72,
     criteria: ['knowledge','communication','problem_solving','english','confidence','reasoning'].map(code => ({ code, score: failed ? 58 : 82, feedback: 'Development test evidence from the saved answers.' })),
     strengths: failed ? [] : ['Concrete reasoning'], weaknesses: failed ? ['Needs technical practice'] : [],
-    feedback: failed ? 'Development interview needs improvement.' : 'Development interview passed.', recommendedRole: input.role,
+    feedback: `${failed ? 'Development interview needs improvement.' : 'Development interview passed.'} Role: ${input.role}.`, recommendedRole: input.role,
     overallScore: 0, decision: 'failed', passed: false,
   };
 }

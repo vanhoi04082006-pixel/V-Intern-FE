@@ -127,8 +127,9 @@ try {
     assert.equal(detail.displayName, users[key].name); assert.equal(detail.email, users[key].email); assert.equal(detail.result.criteria.length, 6);
     await expect(row.getByRole('heading', { name: 'Điểm mạnh & kỹ năng', exact: true })).toBeVisible();
     await expect(row.getByText('Kiến thức: 82/100', { exact: true })).toBeVisible();
+    await expect(row.getByText(`Development interview passed. Role: ${key}.`, { exact: true })).toBeVisible();
     assert.equal(await page.getByRole('button', { name: 'Ẩn', exact: true }).count(), 1);
-    assert.equal(await page.getByText(users[key === "frontend" ? "backend" : "frontend"].name, { exact: true }).count(), 0);
+    await expect(page.getByText(`Development interview passed. Role: ${key === 'frontend' ? 'backend' : 'frontend'}.`, { exact: true })).toHaveCount(0);
   }
   for (const key of ["frontend", "frontend2", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
