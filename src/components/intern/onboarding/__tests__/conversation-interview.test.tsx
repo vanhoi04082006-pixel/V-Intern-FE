@@ -68,9 +68,31 @@ function conversation(status: "expired" | "cancelled" | "in_progress") {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.attemptsRemaining = 2;
+  const ready = conversation('in_progress');
+  ready.currentQuestion.status = 'ready';
+  mocks.next.mockResolvedValue(ready);
 });
 
 describe("conversation recovery", () => {
+  it('requests the first delivered question automatically after starting an active interview', async () => {
+    const initial = conversation('in_progress');
+    mocks.view.mockResolvedValue(initial);
+    mocks.next.mockResolvedValue({ ...initial, currentQuestion: { ...initial.currentQuestion, status: 'ready' }, messages: [...initial.messages, { questionId: 'q2', role: 'assistant', position: 2, content: 'AI asks the current server question.' }] });
+    render(<ConversationInterview />);
+    expect(await screen.findByText('AI asks the current server question.')).toBeInTheDocument();
+    expect(mocks.next).toHaveBeenCalledExactlyOnceWith('session-1');
+    expect(screen.getByRole('textbox', { name: 'Tin nhắn của bạn' })).toBeEnabled();
+    expect(mocks.saveAnswer).not.toHaveBeenCalled();
+  });
+  it('keeps a failed delivery recoverable without automatically retrying the provider', async () => {
+    const failed = conversation('in_progress');
+    failed.currentQuestion.status = 'failed';
+    mocks.view.mockResolvedValue(failed);
+    render(<ConversationInterview />);
+    expect(await screen.findByRole('button', { name: 'Thử lại câu hỏi' })).toBeEnabled();
+    expect(mocks.next).not.toHaveBeenCalled();
+    expect(screen.getByText('Your persisted answer')).toBeInTheDocument();
+  });
   it('shows and updates the countdown from the server-provided remaining time', async () => {
     vi.useFakeTimers();
     const payload = conversation('in_progress');

@@ -1,6 +1,6 @@
 # Kiểm chứng frontend — 16/10/2026
 
-Vitest66files/477tests đạt. Đăng nhập ghi Email đúng API; signup gửi request thật/consent, chỉ mở login sau khi backend xác nhận tạo intern. Regression mới kiểm tra đồng hồ chat lấy thời gian server và giảm đúng từng giây.
+Vitest66files/479tests đạt. Đăng nhập ghi Email đúng API; signup gửi request thật/consent, chỉ mở login sau khi backend xác nhận tạo intern. Regression kiểm tra đồng hồ chat lấy thời gian server, giảm đúng từng giây, tự mở câu đầu và không tự lặp khi provider thất bại.
 
 Hồi quy gồm PASS chưa assignment, khóa task/Mentor, own outcomes sau placement, chat/follow-up/reload/pending, Kanban refresh, rubric AI sau tải dữ liệu, eligibility/roster removal, blueprint/planner metadata, report filters/snapshot, admin bank/template/policy và signed runner details.
 
@@ -11,5 +11,7 @@ Artifacts ở workspace manual-runtime/*-master-browser.json và ảnh cùng pre
 Nghiệm thu GitHub thật dùng hai danh tính: sinh viên tạo/sửa PR, runner và Gemini chấm; giảng viên nhập rubric riêng, duyệt90.5 và task Done. Student thấy AI98/runner2/2 cùng quyết định giảng viên, không có form duyệt. Đã sửa TaskSpec bị lặp, tên sprint/ưu tiên, deep-link task chứa SQL GUID viết hoa, mark-read và nhãn AI còn chờ sau human approval; có regression. [Bằng chứng](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/LIVE-GITHUB.md).
 
 BE hiện70suites/542unit tests và25suites/225SQL tests đạt, schema31; native SQL2019 backend CI cũng đạt. Full-stack workflow nay ghim BEbcc26f6 đã có trên remote, test provider đúng feature/schema và10câu hội thoại. Kết quả remote gắn với từng commit tại [PR nháp14](https://github.com/vanhoi04082006-pixel/V-Intern-FE/pull/14); không dùng run của pin cũ để chứng minh phiên bản khác.
+
+CI task giữ luồng nộp bài thật qua API/UI và SQL: chặn chuyển thẳng review/done, đóng băng SHA, AI fixture thiếu execution phải inconclusive, duyệt thủ công phải có lý do lưu audit. GitHub HTTP được thay bằng transport chỉ đọc trong database test riêng, từ chối credential thật; không có browser interception. Đây là kiểm thử hợp đồng hệ thống, không thay bằng chứng GitHub/Docker/Gemini thực tế ở trên.
 
 [Cách chạy test](TESTING.md) · [Bằng chứng hệ thống](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/VERIFICATION.md) · [API](API-CONTRACTS.md).

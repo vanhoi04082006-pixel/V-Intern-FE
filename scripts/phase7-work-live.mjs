@@ -137,11 +137,19 @@ try {
   assert.equal(retry.status(), 200);
   await page.getByRole("button", { name: "Chuyển sang Đang làm" }).waitFor();
   await page.getByRole("button", { name: "Chuyển sang Đang làm" }).click();
-  await page.getByRole("button", { name: "Chuyển sang Chờ duyệt" }).waitFor();
+  await page.getByLabel('Link PR, commit hoặc repository').waitFor();
   await page.getByLabel("Bình luận mới").fill(`Bình luận live ${tag}`);
   await page.getByRole("button", { name: "Gửi bình luận" }).click();
   await page.getByText(`Bình luận live ${tag}`, { exact: true }).waitFor();
-  await page.getByRole("button", { name: "Chuyển sang Chờ duyệt" }).click();
+  await page.getByLabel('Link PR, commit hoặc repository').fill('https://github.com/example/legacy-fixture/pull/1');
+  await page.getByLabel('Bạn đã làm gì và kiểm thử thế nào?').fill('Legacy ad-hoc task transport fixture. This case verifies submission persistence only; it does not claim a GitHub source snapshot or execution.');
+  const [submitted] = await Promise.all([
+    page.waitForResponse(r => r.url().endsWith(`/tasks/${task.id}/submissions`) && r.request().method() === 'POST'),
+    page.getByRole('button', { name: 'Nộp code để review', exact: true }).click(),
+  ]);
+  assert.equal(submitted.status(), 201);
+  const submission = await submitted.json();
+  assert.equal(submission.status, 'submitted'); assert.equal(submission.headSha, null);
   await page.getByText("Đang làm → Chờ duyệt", { exact: true }).waitFor();
   assert.equal(
     await page.getByRole("button", { name: "Chuyển sang Hoàn thành" }).count(),

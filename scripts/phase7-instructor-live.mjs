@@ -1,9 +1,10 @@
-/** Real Instructor AI-authority and Sprint/Task browser journey. No interception. */
+/** Real Instructor UI/SQL authority journey. Harness uses explicit external-provider fixtures. */
 import path from "node:path";
 import fs from "node:fs";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
+import { prepareTestRepository } from "./project-first-github.mjs";
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE"),
   req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -28,7 +29,7 @@ const api = "http://localhost:8080/api/v1",
   results = [],
   network = [];
 fs.mkdirSync(evidence, { recursive: true });
-async function call(email, url, method = "GET", body) {
+async function call(email, url, method = "GET", body, expectedStatus) {
   const auth = await fetch(api + "/auth/login", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -44,7 +45,8 @@ async function call(email, url, method = "GET", body) {
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
-  assert.equal(r.ok, true, `${url} ${r.status}`);
+  if (expectedStatus) assert.equal(r.status, expectedStatus, `${url} ${r.status}`);
+  else assert.equal(r.ok, true, `${url} ${r.status}`);
   return r.status === 204 ? null : r.json();
 }
 const academic = JSON.parse(
@@ -190,13 +192,34 @@ try {
   const task = await call(academic.graduateEmail, `/tasks/${academic.taskId}`);
   await call(academic.graduateEmail, `/tasks/${task.id}/my`, "PATCH", { status: "doing", progress: 30, expectedVersion: task.version });
   const doing = await call(academic.graduateEmail, `/tasks/${task.id}`);
-  await call(academic.graduateEmail, `/tasks/${task.id}/my`, "PATCH", { status: "review", progress: 90, expectedVersion: doing.version });
+  const blockedStudent = await call(academic.graduateEmail, `/tasks/${task.id}/my`, "PATCH", { status: "review", progress: 90, expectedVersion: doing.version }, 409);
+  assert.equal(blockedStudent.code, "CODE_SUBMISSION_REQUIRED");
+  const [teacher] = await ds.query('SELECT id FROM users WHERE email=@0', [instructor]);
+  const fixture = await prepareTestRepository(ds, req(path.join(be, 'dist/github/github-security.js')).sealToken, academic.sessions, teacher.id, academic.graduateId, process.env.GITHUB_TOKEN_ENCRYPTION_KEY);
+  const submission = await call(academic.graduateEmail, `/tasks/${task.id}/submissions`, 'POST', { prUrl: fixture.prUrl, summary: 'CI transport fixture: immutable source snapshot, no real GitHub or execution claim.', version: doing.version });
+  assert.equal(submission.status, 'submitted'); assert.equal(submission.headSha, fixture.headSha);
+  const pendingTask = await call(instructor, `/tasks/${task.id}`);
+  assert.equal(pendingTask.status, 'review');
+  const blockedTeacher = await call(instructor, `/tasks/${task.id}`, 'PATCH', { status: 'done', expectedVersion: pendingTask.version }, 409);
+  assert.equal(blockedTeacher.code, 'CODE_SUBMISSION_REQUIRED');
+  const reviews = await call(instructor, `/submissions/${submission.id}/code-reviews`, 'POST');
+  assert.equal(reviews[0].status, 'inconclusive'); assert.equal(reviews[0].headSha, fixture.headSha);
+  const blockedApproval = await call(instructor, `/submissions/${submission.id}/review`, 'POST', { rubric: { functional: 80, quality: 80, testing: 80, errors: 80, security: 80, dod: 80 }, feedback: 'No verified execution; approval requires an explicit audited reason.', taskVersion: pendingTask.version }, 409);
+  assert.equal(blockedApproval.code, 'AI_REVIEW_REQUIRED');
   await page.goto(`${base}/instructor/tasks/${task.id}`);
-  await page.getByRole("button", { name: "Duyệt hoàn thành", exact: true }).click();
+  for (const label of ['Chức năng', 'Chất lượng code', 'Kiểm thử', 'Xử lý lỗi', 'Bảo mật', 'Tiêu chí hoàn thành']) await page.getByRole('spinbutton', { name: label, exact: true }).fill('80');
+  await page.getByLabel('Nhận xét cho sinh viên', { exact: true }).fill('Giảng viên xác nhận điểm thủ công trên fixture CI; AI chỉ tham khảo.');
+  const overrideReason = 'Nghiệm thu luồng chấm thủ công trong CI: transport giả lập không có kiểm thử thực thi độc lập, không công nhận AI đạt.';
+  await page.getByLabel('Lý do chấm thủ công nếu kết quả AI chưa đủ cơ sở (tối thiểu 30 ký tự)', { exact: true }).fill(overrideReason);
+  const approved = await mutation(page, `/submissions/${submission.id}/review`, 'POST', () => page.getByRole('button', { name: 'Lưu kết quả giảng viên', exact: true }).click());
+  assert.equal(approved.status, 'approved'); assert.equal(Number(approved.score), 80);
+  assert.equal(approved.headSha, fixture.headSha); assert.equal(approved.reviewerId.toLowerCase(), teacher.id.toLowerCase());
   await page.getByText("Hoàn thành", { exact: true }).first().waitFor();
   const sqlTask = (await ds.query("SELECT status,progress FROM tasks WHERE id=@0", [task.id]))[0];
   assert.equal(sqlTask.status, "done"); assert.equal(Number(sqlTask.progress), 100);
-  results.push({ name: "AI-published task: owner submit/review, Instructor approval and SQL done", status: "PASS" });
+  const [audit] = await ds.query("SELECT TOP(1) detail FROM audit_logs WHERE targetId=@0 AND action='submission.review' ORDER BY createdAt DESC", [submission.id]);
+  assert.equal(JSON.parse(audit.detail).manualOverrideReason, overrideReason);
+  results.push({ name: "Template submission snapshot, inconclusive AI, direct-transition guards and audited instructor override", status: "PASS", transport: fixture.transport });
   await page.goto(`${base}/instructor/performance?projectId=${academic.projects}&sessionId=${academic.sessions}`);
   await page.getByRole("heading", { name: "Thành viên nổi bật · Top 10", exact: true }).waitFor();
   const top = page.locator("section").filter({ has: page.getByRole("heading", { name: "Thành viên nổi bật · Top 10", exact: true }) });
@@ -234,7 +257,7 @@ try {
   await failurePage?.screenshot({ path: path.join(evidence, "instructor-failure.png"), fullPage: true }).catch(() => undefined);
   throw error;
 } finally {
-  fs.writeFileSync(path.join(evidence, "instructor-live-results.json"), JSON.stringify({ results, network, interception: false }, null, 2));
+  fs.writeFileSync(path.join(evidence, "instructor-live-results.json"), JSON.stringify({ results, network, browserInterception: false, externalProviders: 'Explicit test-only AI and read-only GitHub HTTP boundary; no live-provider or execution acceptance claim' }, null, 2));
   await ds.destroy(); await browser.close();
 }
 console.log(JSON.stringify({ passed: results.length, results }));

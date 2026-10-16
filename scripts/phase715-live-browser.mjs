@@ -478,7 +478,6 @@ try {
         .getByRole("button", { name: "Bắt đầu phỏng vấn", exact: true })
         .click();
       await page.waitForURL("**/intern/onboarding/interview");
-      await page.getByRole('button', { name: 'Tiếp tục hội thoại', exact: true }).click();
       for (let i = 0; i < 10; i++) {
         await page
           .getByLabel("Tin nhắn của bạn")

@@ -77,7 +77,7 @@ export function ConversationInterview() {
   useEffect(() => {
     end.current?.scrollIntoView?.({ block: "nearest" });
   }, [chat?.messages.length]);
-  async function next() {
+  const next = useCallback(async () => {
     if (sending.current) return;
     sending.current = true;
     setWorking(true);
@@ -90,7 +90,13 @@ export function ConversationInterview() {
       sending.current = false;
       setWorking(false);
     }
-  }
+  }, [sessionId]);
+  useEffect(() => {
+    if (chat?.session.status !== 'in_progress' || chat.currentQuestion?.status !== 'not_started') return;
+    let cancelled = false;
+    void Promise.resolve().then(() => { if (!cancelled) void next(); });
+    return () => { cancelled = true; };
+  }, [chat?.session.status, chat?.currentQuestion?.id, chat?.currentQuestion?.status, next]);
   async function send(text: string) {
     if (sending.current || !chat?.currentQuestion || !text.trim()) return;
     sending.current = true;
@@ -146,7 +152,7 @@ export function ConversationInterview() {
           </p>
         </div>
         {active && (
-          <div className="space-y-1 text-xs text-slate-500">
+          <div className="w-full space-y-1 text-xs text-slate-500 sm:w-auto">
             {remaining !== null && <p>Thời gian còn lại: <span role="timer" aria-label="Thời gian còn lại" className="font-semibold tabular-nums text-navy">{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span></p>}
             {chat?.session.expiresAt && <p>Hạn gửi: {new Date(chat.session.expiresAt).toLocaleTimeString("vi-VN")}</p>}
           </div>
