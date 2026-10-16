@@ -1,21 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Caveat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "./fonts/geist.ttf",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  weight: "100 900",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/geistmono.ttf",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "100 900",
+  display: "swap",
+  preload: false,
 });
 
-const caveat = Caveat({
+const caveat = localFont({
+  src: "./fonts/caveat.ttf",
   variable: "--font-caveat",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "400 700",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
