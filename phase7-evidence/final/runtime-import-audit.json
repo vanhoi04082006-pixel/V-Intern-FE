@@ -1,6 +1,6 @@
 {
   "entryCount": 71,
-  "runtimeModuleCount": 216,
+  "runtimeModuleCount": 219,
   "runtimeBusinessMockImports": [],
   "businessRouteHandlers": [],
   "files": [
@@ -170,6 +170,8 @@
     "src/components/sessions/session-overview.tsx",
     "src/components/sessions/session-setup.tsx",
     "src/components/sessions/session-sharing.tsx",
+    "src/components/sessions/session-task-delivery.tsx",
+    "src/components/sessions/session-timeline.tsx",
     "src/components/shared/data-state.tsx",
     "src/components/v-intern/audience-cards.tsx",
     "src/components/v-intern/feature-strip.tsx",
@@ -201,6 +203,7 @@
     "src/lib/api/recruitment.ts",
     "src/lib/api/report-details.ts",
     "src/lib/api/reports.ts",
+    "src/lib/api/session-work.ts",
     "src/lib/api/sessions.ts",
     "src/lib/api/sharing.ts",
     "src/lib/api/student-detail.ts",
