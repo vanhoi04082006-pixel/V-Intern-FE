@@ -36,7 +36,7 @@ test("missing or invalid real context fails instead of producing fake success", 
     assert.throws(() => buildTestSprintPlan(input));
   }
 });
-test("workflow names isolate runs while retaining the backend's required CI safety token", () => {
+test("workflow isolates databases and exposes every ordered business contract as a separate step", () => {
   const yaml = fs.readFileSync(new URL("../../.github/workflows/phase7-fullstack.yml", import.meta.url), "utf8");
   const names = [...yaml.matchAll(/^\s+(?:DB_NAME|E2E_DB_NAME): (.+)$/gm)].map(match => match[1].trim());
   assert.equal(names.length, 2);
@@ -45,4 +45,14 @@ test("workflow names isolate runs while retaining the backend's required CI safe
     assert.match(name, /^VIntern_Phase715_CI_/);
     assert.ok(name.includes("${{ github.run_id }}") && name.includes("${{ github.run_attempt }}"));
   }
+  const contracts = [...yaml.matchAll(/^ {6}- name: (\d{2}) - .+\r?\n {8}working-directory: V-INTERN-FE\r?\n {8}run: node scripts\/([^\s]+\.mjs)$/gm)];
+  assert.deepEqual(contracts.map(match => match[1]), Array.from({ length: 14 }, (_, i) => String(i + 1).padStart(2, '0')));
+  assert.deepEqual(contracts.map(match => match[2]), [
+    'phase715-dev-fixtures.mjs', 'phase715-live-browser.mjs', 'phase7-work-live.mjs',
+    'phase7-outcomes-fixture.mjs', 'phase7-outcomes-live.mjs', 'project-first-live.mjs',
+    'phase7-instructor-live.mjs', 'phase7-admin-live.mjs', 'phase7-navigation-live.mjs',
+    'phase7-uat-auth-live.mjs', 'phase7-uat-ui-live.mjs', 'phase7-uat-negative-live.mjs',
+    'phase7-uat-finance-fixture.mjs', 'phase7-uat-finance-live.mjs',
+  ]);
+  assert.doesNotMatch(yaml, /continue-on-error:\s*true/);
 });

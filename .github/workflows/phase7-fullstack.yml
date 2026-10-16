@@ -17,7 +17,7 @@ jobs:
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
       # Update only through a reviewed compatibility PR; see docs/testing/project-first-fullstack-gate.md.
-      COMPATIBLE_BE_SHA: ebc31add877df7948bee92fa63937090cde0a75b
+      COMPATIBLE_BE_SHA: cf5890cfd885c9ea5b2c9dc3585c0231c20dd538
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
@@ -128,23 +128,48 @@ jobs:
           echo $! > /tmp/phase7-next.pid
           { git rev-parse HEAD; git -C ../V-INTERN-BE rev-parse HEAD; } > phase7-evidence/final/paired-heads.txt
           node scripts/phase7-runtime-ready.mjs
-      - name: Project-first lifecycle and retained auth/admin/intern full-stack contracts
+      - name: 01 - Create disposable application fixtures
         working-directory: V-INTERN-FE
-        run: |
-          node scripts/phase715-dev-fixtures.mjs
-          node scripts/phase715-live-browser.mjs
-          node scripts/phase7-work-live.mjs
-          node scripts/phase7-outcomes-fixture.mjs
-          node scripts/phase7-outcomes-live.mjs
-          node scripts/project-first-live.mjs
-          node scripts/phase7-instructor-live.mjs
-          node scripts/phase7-admin-live.mjs
-          node scripts/phase7-navigation-live.mjs
-          node scripts/phase7-uat-auth-live.mjs
-          node scripts/phase7-uat-ui-live.mjs
-          node scripts/phase7-uat-negative-live.mjs
-          node scripts/phase7-uat-finance-fixture.mjs
-          node scripts/phase7-uat-finance-live.mjs
+        run: node scripts/phase715-dev-fixtures.mjs
+      - name: 02 - Recruitment, interview and authentication
+        working-directory: V-INTERN-FE
+        run: node scripts/phase715-live-browser.mjs
+      - name: 03 - Student work, submissions and concurrency
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-work-live.mjs
+      - name: 04 - Create outcome fixtures
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-outcomes-fixture.mjs
+      - name: 05 - Student outcomes and certificates
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-outcomes-live.mjs
+      - name: 06 - Project library, team, AI draft and publication
+        working-directory: V-INTERN-FE
+        run: node scripts/project-first-live.mjs
+      - name: 07 - Instructor evaluation, review and reports
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-instructor-live.mjs
+      - name: 08 - Administrator workflows
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-admin-live.mjs
+      - name: 09 - Role navigation and routes
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-navigation-live.mjs
+      - name: 10 - Authentication acceptance
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-uat-auth-live.mjs
+      - name: 11 - UI, keyboard and responsive acceptance
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-uat-ui-live.mjs
+      - name: 12 - Negative authorization and isolation
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-uat-negative-live.mjs
+      - name: 13 - Create KPI and salary acceptance fixtures
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-uat-finance-fixture.mjs
+      - name: 14 - KPI, salary and UTC boundary acceptance
+        working-directory: V-INTERN-FE
+        run: node scripts/phase7-uat-finance-live.mjs
       - name: Collect startup and SQL logs
         if: always()
         shell: bash

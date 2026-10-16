@@ -201,7 +201,7 @@ try {
   const pendingTask = await call(instructor, `/tasks/${task.id}`);
   assert.equal(pendingTask.status, 'review');
   const blockedTeacher = await call(instructor, `/tasks/${task.id}`, 'PATCH', { status: 'done', expectedVersion: pendingTask.version }, 409);
-  assert.equal(blockedTeacher.code, 'CODE_SUBMISSION_REQUIRED');
+  assert.equal(blockedTeacher.code, 'SUBMISSION_PENDING_REVIEW');
   const reviews = await call(instructor, `/submissions/${submission.id}/code-reviews`, 'POST');
   assert.equal(reviews[0].status, 'inconclusive'); assert.equal(reviews[0].headSha, fixture.headSha);
   const blockedApproval = await call(instructor, `/submissions/${submission.id}/review`, 'POST', { rubric: { functional: 80, quality: 80, testing: 80, errors: 80, security: 80, dod: 80 }, feedback: 'No verified execution; approval requires an explicit audited reason.', taskVersion: pendingTask.version }, 409);
