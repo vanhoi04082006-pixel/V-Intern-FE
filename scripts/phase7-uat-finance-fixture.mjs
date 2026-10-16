@@ -3,6 +3,7 @@ import path from "node:path";
 import fs from "node:fs";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
+import { answerTestInterview } from './project-first-provider.mjs';
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE"),
   req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -57,16 +58,8 @@ const graduate = await auth("graduate"),
   instructor = await auth("instructor");
 await call("graduate", "/recruitment/me/role", "PATCH", { role: "backend" });
 const interview = await call("graduate", "/recruitment/me/interviews", "POST");
-for (const question of interview.questions)
-  await call(
-    "graduate",
-    `/recruitment/me/interviews/${interview.session.id}/answers/${question.id}`,
-    "PUT",
-    {
-      answerText:
-        "Development integration answer: clarify constraints, break down work, implement with tests and verify the result.",
-    },
-  );
+await answerTestInterview((endpoint, method, body) => call('graduate', endpoint, method, body), interview,
+  'Development integration answer: clarify constraints, break down work, implement with tests and verify the result.');
 const recruitment = await call(
   "graduate",
   `/recruitment/me/interviews/${interview.session.id}/submit`,
