@@ -10,6 +10,11 @@ const row = {
 };
 
 describe("session overview parsers (M6)", () => {
+  it('validates current Sprint and alert counters without inventing missing evidence', () => {
+    const enriched = { ...row, currentSprint: { id: 'sp1', code: 'SP-1', name: 'Build' }, alerts: { overdueTasks: 2, pendingReview: 1, sessionOverdue: true } };
+    expect(parseSessionOverview(enriched)).toMatchObject({ currentSprint: enriched.currentSprint, alerts: enriched.alerts });
+    expect(() => parseSessionOverview({ ...enriched, alerts: { ...enriched.alerts, overdueTasks: 'many' } })).toThrow();
+  });
   it("parses aggregated rows with a project", () => {
     expect(parseSessionOverview(row)).toMatchObject({ id: "s1", memberCount: 2, taskPercent: 25 });
     expect(parseSessionOverview(row).project?.templateVersion).toBe(2);

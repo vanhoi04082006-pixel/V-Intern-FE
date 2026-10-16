@@ -7,6 +7,17 @@ import { useResource } from "@/lib/api/use-resource";
 import { listSessionOverview, type SessionListQuery } from "@/lib/api/sessions";
 import { academicStatuses } from "@/lib/api/academic";
 
+const sortOptions = [
+  { sortBy: 'startDate', sortDirection: 'desc', label: 'Bắt đầu mới nhất' },
+  { sortBy: 'startDate', sortDirection: 'asc', label: 'Bắt đầu cũ nhất' },
+  { sortBy: 'endDate', sortDirection: 'asc', label: 'Kết thúc sớm nhất' },
+  { sortBy: 'endDate', sortDirection: 'desc', label: 'Kết thúc muộn nhất' },
+  { sortBy: 'name', sortDirection: 'asc', label: 'Tên A → Z' },
+  { sortBy: 'name', sortDirection: 'desc', label: 'Tên Z → A' },
+  { sortBy: 'progress', sortDirection: 'asc', label: 'Tiến độ thấp nhất' },
+  { sortBy: 'progress', sortDirection: 'desc', label: 'Tiến độ cao nhất' },
+] as const;
+
 /**
  * Session management list (M6): every session of the instructor with project,
  * members and delivery progress from ONE aggregated endpoint. Server-side
@@ -29,6 +40,7 @@ export function SessionList({
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [status, setStatus] = useState("");
+  const [sort, setSort] = useState<(typeof sortOptions)[number]>(sortOptions[0]);
   useEffect(() => {
     const t = setTimeout(() => {
       setDebounced(query.trim());
@@ -40,8 +52,8 @@ export function SessionList({
   const data = useResource(
     useCallback(
       (signal: AbortSignal) =>
-        list({ page, pageSize: 10, q: debounced || undefined, status: status || undefined }, signal),
-      [list, page, debounced, status],
+        list({ page, pageSize: 10, q: debounced || undefined, status: status || undefined, sortBy: sort.sortBy, sortDirection: sort.sortDirection }, signal),
+      [list, page, debounced, status, sort],
     ),
     refreshKey,
   );
@@ -55,7 +67,7 @@ export function SessionList({
       <div className="flex flex-wrap gap-2">
         <input
           aria-label="Tìm phiên"
-          placeholder="Tìm theo mã hoặc tên..."
+          placeholder="Tìm theo mã, tên phiên hoặc dự án..."
           className={`${inputClass} min-w-52 flex-1`}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -70,6 +82,10 @@ export function SessionList({
           {academicStatuses.sessions.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
+        </select>
+        <select aria-label="Sắp xếp phiên" className={inputClass} value={`${sort.sortBy}:${sort.sortDirection}`}
+          onChange={(e) => { setSort(sortOptions.find(s => `${s.sortBy}:${s.sortDirection}` === e.target.value) ?? sortOptions[0]); setPage(1); }}>
+          {sortOptions.map(s => <option key={`${s.sortBy}:${s.sortDirection}`} value={`${s.sortBy}:${s.sortDirection}`}>{s.label}</option>)}
         </select>
       </div>
       {data.loading ? (
@@ -87,6 +103,12 @@ export function SessionList({
                   <p className="font-mono text-[11px] text-slate-400">
                     {s.code} · {s.startDate.slice(0, 10)} → {s.endDate.slice(0, 10)}
                   </p>
+                  <p className="mt-2 text-xs text-slate-600">Sprint đang chạy: {s.currentSprint?.name ?? 'Chưa có Sprint đang chạy'}</p>
+                  {s.alerts && <div className="mt-2 flex flex-wrap gap-2 text-xs" aria-label="Cảnh báo tiến độ">
+                    {s.alerts.overdueTasks > 0 && <span className="rounded bg-red-50 px-2 py-1 text-red-700">{s.alerts.overdueTasks} task quá hạn</span>}
+                    {s.alerts.pendingReview > 0 && <span className="rounded bg-amber-50 px-2 py-1 text-amber-800">{s.alerts.pendingReview} task chờ duyệt</span>}
+                    {s.alerts.sessionOverdue && <span className="rounded bg-red-50 px-2 py-1 text-red-700">Phiên đã quá ngày kết thúc</span>}
+                  </div>}
                   <p className="mt-1 text-xs text-slate-500">
                     Project: {s.project?.name ?? "—"}
                     {s.project?.templateVersion !== null && s.project?.templateVersion !== undefined

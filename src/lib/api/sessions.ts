@@ -1,5 +1,5 @@
 import { request } from "./client";
-import { array, nullable, number, parsePage, record, string } from "./parse";
+import { array, boolean, nullable, number, parsePage, record, string } from "./parse";
 import { parseAcademic, parseMilestone } from "./academic";
 
 export interface SessionOverviewRow {
@@ -20,11 +20,15 @@ export interface SessionOverviewRow {
   taskTotal: number;
   taskDone: number;
   taskPercent: number;
+  currentSprint?: { id: string; code: string; name: string } | null;
+  alerts?: { overdueTasks: number; pendingReview: number; sessionOverdue: boolean };
 }
 
 export function parseSessionOverview(value: unknown): SessionOverviewRow {
   const v = record(value);
   const p = v.project === null || v.project === undefined ? null : record(v.project);
+  const sprint = v.currentSprint == null ? null : record(v.currentSprint);
+  const alerts = v.alerts === undefined ? null : record(v.alerts);
   return {
     id: string(v.id),
     code: string(v.code),
@@ -45,6 +49,8 @@ export function parseSessionOverview(value: unknown): SessionOverviewRow {
     taskTotal: number(v.taskTotal),
     taskDone: number(v.taskDone),
     taskPercent: number(v.taskPercent),
+    ...(v.currentSprint === undefined ? {} : { currentSprint: sprint ? { id: string(sprint.id), code: string(sprint.code), name: string(sprint.name) } : null }),
+    ...(alerts ? { alerts: { overdueTasks: number(alerts.overdueTasks), pendingReview: number(alerts.pendingReview), sessionOverdue: boolean(alerts.sessionOverdue) } } : {}),
   };
 }
 
@@ -54,6 +60,8 @@ export interface SessionListQuery {
   q?: string;
   status?: string;
   projectId?: string;
+  sortBy?: 'startDate' | 'endDate' | 'name' | 'progress';
+  sortDirection?: 'asc' | 'desc';
 }
 
 /** M6 management overview: one aggregated row per session, server paginated. */
@@ -65,6 +73,8 @@ export const listSessionOverview = (q: SessionListQuery, signal?: AbortSignal) =
   if (q.q) params.set("q", q.q);
   if (q.status) params.set("status", q.status);
   if (q.projectId) params.set("projectId", q.projectId);
+  if (q.sortBy) params.set('sortBy', q.sortBy);
+  if (q.sortDirection) params.set('sortDirection', q.sortDirection);
   return request(`/sessions/overview?${params.toString()}`, (v) => parsePage(v, parseSessionOverview), {
     signal,
   });

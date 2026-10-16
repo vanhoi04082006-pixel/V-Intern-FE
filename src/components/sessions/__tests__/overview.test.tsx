@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { SessionList } from "../session-list";
 import { SessionOverview, type DetailDeps } from "../session-overview";
 
@@ -11,6 +11,19 @@ const overviewRow = {
 };
 
 describe("SessionList (M6)", () => {
+  it('shows active Sprint and backend alerts, and sends sorting to the server', async () => {
+    const list = vi.fn(async () => ({ items: [{ ...overviewRow,
+      currentSprint: { id: 'sp1', code: 'SP-1', name: 'Giao diện' },
+      alerts: { overdueTasks: 2, pendingReview: 1, sessionOverdue: true },
+    }], total: 1, page: 1, pageSize: 10, totalPages: 1 }));
+    render(<SessionList list={list} />);
+    expect(await screen.findByText(/Sprint đang chạy: Giao diện/)).toBeInTheDocument();
+    expect(screen.getByText('2 task quá hạn')).toBeInTheDocument();
+    expect(screen.getByText('1 task chờ duyệt')).toBeInTheDocument();
+    expect(screen.getByText('Phiên đã quá ngày kết thúc')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Sắp xếp phiên'), { target: { value: 'progress:asc' } });
+    await waitFor(() => expect(list).toHaveBeenLastCalledWith(expect.objectContaining({ page: 1, sortBy: 'progress', sortDirection: 'asc' }), expect.any(AbortSignal)));
+  });
   it("renders aggregated rows with progress and detail links", async () => {
     const list = vi.fn(async () => ({ items: [overviewRow], total: 1, page: 1, pageSize: 10, totalPages: 1 }));
     render(<SessionList list={list} />);

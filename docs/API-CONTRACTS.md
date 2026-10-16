@@ -4,6 +4,8 @@ Task detail giữ tên/code sprint đã validate và ưu tiên tiếng Việt. `
 
 Task list cung cấp metadata Sprint và `repository: {status,fullName}|null` của đúng phiên. Kanban dùng dữ liệu đã hydrate của trang, hiển thị Sprint/tiến độ/trạng thái repository mà không gọi task detail hoặc GitHub cho từng thẻ. Parser chỉ nhận `provisioning/ready/failed`; trạng thái không hợp lệ bị từ chối. Response cũ thiếu trường này vẫn đọc được.
 
+Danh sách phiên gửi `sortBy=startDate|endDate|name|progress` và `sortDirection=asc|desc`; đổi sắp xếp/trạng thái/tìm kiếm trở về trang đầu. Backend tìm cả dự án và sắp xếp trước phân trang. UI đọc `currentSprint` và `alerts` từ API; planned không được gọi là đang chạy, cảnh báo chỉ hiện khi có dữ liệu thật. Response cũ không có các trường bổ sung vẫn đọc được.
+
 Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentials:include và Bearer access token khi cần. Refresh cookie HttpOnly; access token ở memory. Adapter kiểm tra field/type/nullable; response sai không render như dữ liệu hợp lệ.
 
 | Nhóm adapter | Hành vi |
