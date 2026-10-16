@@ -36,6 +36,7 @@ export function parseBoardTask(value: unknown) {
 export function parseTask(value: unknown) {
   const v = record(value);
   const sprint = v.sprint == null ? null : record(v.sprint);
+  const repository = v.repository == null ? null : record(v.repository);
   return {
     ...parseBoardTask(v),
     description: nullable(v.description, string),
@@ -44,6 +45,7 @@ export function parseTask(value: unknown) {
     storyPoints: nullable(v.storyPoints, number),
     version: number(v.version),
     ...(sprint ? { sprint: { id: string(sprint.id), code: string(sprint.code), name: string(sprint.name), status: string(sprint.status) } } : {}),
+    ...(v.repository !== undefined ? { repository: repository ? { status: oneOf(repository.status, ['provisioning', 'ready', 'failed'] as const), fullName: string(repository.fullName) } : null } : {}),
   };
 }
 export type Task = ReturnType<typeof parseTask>;

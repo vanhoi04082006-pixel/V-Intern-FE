@@ -71,6 +71,17 @@ beforeEach(() => {
 });
 
 describe("Kanban task mutation synchronization", () => {
+  it('shows actual sprint, progress and repository readiness without fetching per card', async () => {
+    task = { ...task, sprintId: 'sprint-1', sprint: { id: 'sprint-1', code: 'SP-1', name: 'Nền tảng', status: 'active' }, repository: { status: 'ready', fullName: 'teacher/vintern-project' }, progress: 35 } as Task;
+    render(<InternWork />);
+    fireEvent.click(screen.getByRole('button', { name: 'Bảng Kanban' }));
+    const card = await within(screen.getByRole('region', { name: 'Cần làm' })).findByRole('button', { name: /TASK-1/ });
+    expect(within(card).getByText('Sprint: Nền tảng')).toBeInTheDocument();
+    expect(within(card).getByText('35%')).toBeInTheDocument();
+    expect(within(card).getByText('teacher/vintern-project · Sẵn sàng')).toBeInTheDocument();
+    expect(api.getTask).not.toHaveBeenCalled();
+  });
+
   it("moves a card to its new column after starting work in its detail dialog", async () => {
     render(<InternWork />);
     fireEvent.click(screen.getByRole("button", { name: "Bảng Kanban" }));
@@ -99,5 +110,16 @@ describe("Kanban task mutation synchronization", () => {
         { name: /TASK-1/ },
       ),
     ).not.toBeInTheDocument();
+  });
+  it.each([
+    ['provisioning', 'Đang tạo repository'],
+    ['failed', 'Cần giảng viên xử lý'],
+  ] as const)('keeps the %s repository state visible instead of declaring it ready', async (status, label) => {
+    task = { ...task, repository: { status, fullName: 'teacher/vintern-project' } };
+    render(<InternWork />);
+    fireEvent.click(screen.getByRole('button', { name: 'Bảng Kanban' }));
+    const card = await within(screen.getByRole('region', { name: 'Cần làm' })).findByRole('button', { name: /TASK-1/ });
+    expect(within(card).getByText(`teacher/vintern-project · ${label}`)).toBeInTheDocument();
+    expect(within(card).queryByText(/Sẵn sàng/)).toBeNull();
   });
 });

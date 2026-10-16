@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useState } from "react";
-import { Flag, Clock, ChevronRight } from "lucide-react";
+import { Flag, Clock, ChevronRight, GitBranch } from "lucide-react";
 import {
   listTasks,
   statusLabels,
@@ -116,6 +116,14 @@ function KanbanColumn({
               <p className="my-3 text-sm font-semibold leading-6 text-navy">
                 {t.title}
               </p>
+              <p className="mb-2 break-words text-xs text-slate-500">Sprint: {t.sprint?.name ?? 'Chưa gắn Sprint'}</p>
+              <div className="mb-3 flex items-start gap-1.5 text-xs text-slate-600">
+                <GitBranch size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+                <span className="min-w-0 break-words">{t.repository
+                  ? `${t.repository.fullName} · ${{ ready: 'Sẵn sàng', provisioning: 'Đang tạo repository', failed: 'Cần giảng viên xử lý' }[t.repository.status]}`
+                  : 'Chưa có repository cho phiên'}</span>
+              </div>
+              <p className="mb-1 text-right text-xs font-semibold text-slate-600">{t.progress}%</p>
               <div className="h-1 overflow-hidden rounded-full bg-slate-100">
                 <div
                   className="h-full rounded-full bg-blue-500"

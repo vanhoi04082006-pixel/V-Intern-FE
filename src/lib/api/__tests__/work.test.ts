@@ -40,6 +40,11 @@ describe("Nest work boundary", () => {
   });
   it("rejects legacy/invalid task status", () =>
     expect(() => parseTask({ ...task, status: "in_progress" })).toThrow());
+  it('preserves repository state on task cards and rejects unknown provider states', () => {
+    const repository = { status: 'ready', fullName: 'teacher/vintern-project' };
+    expect(parseTask({ ...task, repository }).repository).toEqual(repository);
+    expect(() => parseTask({ ...task, repository: { ...repository, status: 'pretend_ready' } })).toThrow();
+  });
   it("rejects invented progress", () =>
     expect(() => parseTask({ ...task, progress: "70" })).toThrow());
   it("never offers intern approval or rework", () => {
