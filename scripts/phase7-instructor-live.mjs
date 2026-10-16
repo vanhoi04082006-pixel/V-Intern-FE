@@ -122,7 +122,7 @@ try {
     dialog.getByRole("button", { name: "Chuyển kỳ sang open" }).click(),
   );
   await page.getByRole("button", { name: "Tạo đánh giá", exact: true }).click();
-  const internSelect = page.getByLabel("Intern đánh giá");
+  const internSelect = page.getByRole("combobox", { name: /^Intern đánh giá/ });
   const internOption = internSelect.locator(`option[value="${academic.graduateId}" i]`);
   // Native option nodes are attached but hidden while the select popup is closed.
   await internOption.waitFor({ state: "attached" });
