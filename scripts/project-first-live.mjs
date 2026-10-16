@@ -141,7 +141,7 @@ try {
   await page.getByLabel("Lọc theo role", { exact: true }).selectOption("frontend");
   await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users.frontendExtra.email);
   const extraCandidate = page.locator("li").filter({ hasText: users.frontendExtra.email });
-  await expect(extraCandidate.getByText(/Recruitment: passed/)).toBeVisible();
+  await expect(extraCandidate.getByText(/Đã đậu phỏng vấn/)).toBeVisible();
   await expect(extraCandidate.getByRole("button", { name: "Thêm", exact: true })).toBeDisabled();
   await call("instructor", "/assignments", "POST", assignment("frontendExtra"), 409, "ROLE_SLOT_FULL");
   await call("instructor", "/assignments", "POST", { ...assignment("frontend"), projectId: second.projectId, sessionId: second.sessionId }, 409, "ASSIGNMENT_CONFLICT");
