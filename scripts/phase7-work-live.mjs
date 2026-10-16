@@ -200,8 +200,8 @@ try {
   await mp
     .getByRole("heading", { name: "Công việc của tôi", exact: true })
     .waitFor();
-  await mp.getByRole("button", { name: "Mở menu", exact: true }).click();
-  await mp.getByRole("dialog").waitFor();
+  await mp.getByRole("button", { name: "Mở menu điều hướng", exact: true }).click();
+  await mp.getByRole("dialog", { name: "Menu thực tập sinh", exact: true }).waitFor();
   await mp.keyboard.press("Escape");
   assert.equal(await mp.getByRole("dialog").count(), 0);
   assert.equal(

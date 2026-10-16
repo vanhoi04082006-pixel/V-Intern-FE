@@ -113,8 +113,8 @@ try {
         await page.screenshot({ path: path.join(evidence, `uat-tablet-${role}-${route}.png`), fullPage: true });
       }
       await page.setViewportSize({ width: 390, height: 844 });
-      const trigger = page.getByRole("button", { name: "Mở menu", exact: true }); await trigger.click();
-      const drawer = page.getByRole("dialog", { name: "Menu workspace" }); await drawer.waitFor();
+      const trigger = page.getByRole("button", { name: role === 'intern' ? "Mở menu điều hướng" : "Mở menu", exact: true }); await trigger.click();
+      const drawer = page.getByRole("dialog", { name: role === 'intern' ? "Menu thực tập sinh" : "Menu workspace", exact: true }); await drawer.waitFor();
       for (let i = 0; i < 20; i++) { await page.keyboard.press("Tab"); assert.equal(await drawer.evaluate(d => d.contains(document.activeElement)), true, `drawer Tab ${i}: focused ${await page.evaluate(() => document.activeElement?.tagName)}`); }
       await page.keyboard.press("Escape"); await drawer.waitFor({ state: "hidden" });
       assert.equal(await trigger.evaluate(b => document.activeElement === b), true);

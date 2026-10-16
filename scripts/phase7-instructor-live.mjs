@@ -221,10 +221,10 @@ try {
   assert.equal(JSON.parse(audit.detail).manualOverrideReason, overrideReason);
   results.push({ name: "Template submission snapshot, inconclusive AI, direct-transition guards and audited instructor override", status: "PASS", transport: fixture.transport });
   await page.goto(`${base}/instructor/performance?projectId=${academic.projects}&sessionId=${academic.sessions}`);
-  await page.getByRole("heading", { name: "Thành viên nổi bật · Top 10", exact: true }).waitFor();
-  const top = page.locator("section").filter({ has: page.getByRole("heading", { name: "Thành viên nổi bật · Top 10", exact: true }) });
+  await page.getByRole("heading", { name: "Top 10 sinh viên hiệu suất tốt nhất", exact: true }).waitFor();
+  const top = page.locator("section").filter({ has: page.getByRole("heading", { name: "Top 10 sinh viên hiệu suất tốt nhất", exact: true }) });
   await top.getByText("80", { exact: true }).waitFor();
-  const download = page.waitForEvent("download"); await page.getByRole("button", { name: "Xuất CSV", exact: true }).click();
+  const download = page.waitForEvent("download"); await page.getByRole("button", { name: "Xuất CSV trang này", exact: true }).click();
   assert.equal((await download).suggestedFilename(), "v-intern-performance.csv");
   await page.goto(`${base}/instructor/reports?projectId=${academic.projects}&sessionId=${academic.sessions}`);
   await page.getByRole("heading", { name: "Báo cáo phiên thực tập", exact: true }).waitFor();
