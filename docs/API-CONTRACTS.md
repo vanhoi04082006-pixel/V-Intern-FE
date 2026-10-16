@@ -6,6 +6,8 @@ Task list cung cấp metadata Sprint và `repository: {status,fullName}|null` c�
 
 Danh sách phiên gửi `sortBy=startDate|endDate|name|progress` và `sortDirection=asc|desc`; đổi sắp xếp/trạng thái/tìm kiếm trở về trang đầu. Backend tìm cả dự án và sắp xếp trước phân trang. UI đọc `currentSprint` và `alerts` từ API; planned không được gọi là đang chạy, cảnh báo chỉ hiện khi có dữ liệu thật. Response cũ không có các trường bổ sung vẫn đọc được.
 
+Chi tiết phiên dùng `/sessions/:id/work` cho từng trang task và `/sessions/:id/timeline` cho lịch sử theo target. Role lấy từ assignment của phiên. Task có bộ lọc trạng thái/ưu tiên/người nhận và nút lọc theo từng Sprint; nội dung bài nộp giữ SHA/PR và tách đề xuất AI khỏi điểm/quyết định giảng viên. Link source chỉ mở HTTPS GitHub hợp lệ. Mục tiêu/đầu ra trong snapshot đọc cả cấu trúc object và array. Hiệu suất và báo cáo nhúng chỉ tải khi mở, khóa project/session của trang và giữ permission gate; không thay thế kiểm tra quyền backend. Không tự gọi provider, tạo repo hay sửa kết quả khi xem phiên.
+
 Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentials:include và Bearer access token khi cần. Refresh cookie HttpOnly; access token ở memory. Adapter kiểm tra field/type/nullable; response sai không render như dữ liệu hợp lệ.
 
 | Nhóm adapter | Hành vi |

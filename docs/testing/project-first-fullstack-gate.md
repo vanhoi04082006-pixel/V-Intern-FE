@@ -2,7 +2,7 @@
 
 Gate local của thay đổi hiện tại phải dùng FE và BE từ cùng bộ thay đổi: library → tuyển dụng chat10lượt → eligible assignment → Start → AI draft → publish → own tasks/submissions → teacher approval. Xem docs/TESTING.md và README hiện hành.
 
-Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA=cf5890cfd885c9ea5b2c9dc3585c0231c20dd538 của BE đã review/push. Khi thay hợp đồng, commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.
+Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA=5dc79068c2f90cfea3c21afcd727bd0941aed59a của BE đã review/push. Khi thay hợp đồng, commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.
 
 14 kịch bản nghiệp vụ hiện là 14 bước riêng, đánh số 01–14 và giữ nguyên thứ tự phụ thuộc. Bước 06 kiểm tra thư viện/đội hình/AI draft/publish; bước 07 kiểm tra đánh giá/chấm bài/báo cáo của giảng viên. Khi lỗi, mở đúng bước đỏ để đọc assertion và artifact tương ứng; không suy ra mọi lần đỏ cùng nhóm đều cùng một nguyên nhân. Không dùng continue-on-error để bỏ qua lỗi; thu thập log và cleanup vẫn chạy khi thất bại.
 

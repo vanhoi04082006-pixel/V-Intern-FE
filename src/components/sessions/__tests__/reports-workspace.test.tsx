@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
 import { ReportsWorkspace } from "../reports-workspace";
 import { createReport, getSavedReport, listReports, type SavedReport } from "@/lib/api/reports";
@@ -10,6 +10,15 @@ const saved: SavedReport = { id: "r1", title: "Old session report", kind: "progr
 beforeEach(() => {
   vi.mocked(listReports).mockResolvedValue({ items: [], total: 0, counts: [] });
   vi.mocked(getSavedReport).mockResolvedValue(saved);
+});
+it('keeps embedded report creation and history inside its session', async () => {
+  vi.mocked(createReport).mockResolvedValue(saved);
+  render(<ReportsWorkspace initialProjectId="p1" initialSessionId="s1" lockedScope embedded />);
+  await waitFor(() => expect(listReports).toHaveBeenLastCalledWith(1, '', expect.any(AbortSignal), { projectId: 'p1', sessionId: 's1' }));
+  expect(screen.queryByLabelText('Phiên thực tập')).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText('Tên báo cáo'), { target: { value: 'Phiên hiện tại' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Tạo và lưu báo cáo' }));
+  await waitFor(() => expect(createReport).toHaveBeenLastCalledWith(expect.objectContaining({ projectId: 'p1', sessionId: 's1', title: 'Phiên hiện tại' })));
 });
 it("does not select a late saved report after the user switches session scope", async () => {
   let resolveSave!: (value: typeof saved) => void;

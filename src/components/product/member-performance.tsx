@@ -20,7 +20,7 @@ import {
   inputClass,
   Pager,
 } from "./primitives";
-export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "", basePath = '/instructor' }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string; basePath?: '/instructor' | '/admin' }) {
+export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "", basePath = '/instructor', lockedScope = false, embedded = false }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string; basePath?: '/instructor' | '/admin'; lockedScope?: boolean; embedded?: boolean }) {
   const [projectId, setProjectId] = useState(initialProjectId),
     [sessionId, setSessionId] = useState(initialSessionId),
     [search, setSearch] = useState(""),
@@ -80,7 +80,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
   }
   return (
     <>
-      <PageTitle
+      {!embedded && <PageTitle
         title={reports ? "Báo cáo tổng hợp" : "Hiệu suất thành viên"}
         subtitle="Số liệu trong phạm vi quản lý, tính từ nhiệm vụ và đánh giá đã chốt"
         action={
@@ -92,7 +92,7 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
             Xuất CSV trang này
           </button>
         }
-      />
+      />}
       <div className="mb-5">
         {rows.loading ? (
           <LoadingState />
@@ -122,19 +122,19 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
       </div>
       <Panel title="Bộ lọc">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <AcademicPicker
+          {!lockedScope && <AcademicPicker
             kind="projects"
             label="Dự án báo cáo"
             value={projectId}
             onChange={id => { setPage(1); setProjectId(id); setSessionId(""); }}
-          />
-          <AcademicPicker
+          />}
+          {!lockedScope && <AcademicPicker
             kind="sessions"
             label="Phiên báo cáo"
             value={sessionId}
             projectId={projectId}
             onChange={id => { setPage(1); setSessionId(id); }}
-          />
+          />}
           <label className="text-sm">
             Từ ngày
             <input

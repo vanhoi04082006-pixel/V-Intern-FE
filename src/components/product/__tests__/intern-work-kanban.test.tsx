@@ -78,6 +78,8 @@ describe("Kanban task mutation synchronization", () => {
     const card = await within(screen.getByRole('region', { name: 'Cần làm' })).findByRole('button', { name: /TASK-1/ });
     expect(within(card).getByText('Sprint: Nền tảng')).toBeInTheDocument();
     expect(within(card).getByText('35%')).toBeInTheDocument();
+    expect(within(card).getByText('Cao')).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Cao' })).toHaveValue('high');
     expect(within(card).getByText('teacher/vintern-project · Sẵn sàng')).toBeInTheDocument();
     expect(api.getTask).not.toHaveBeenCalled();
   });

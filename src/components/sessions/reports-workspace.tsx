@@ -10,7 +10,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { ReportScopePickers } from './report-scope-pickers';
 import { ReportDetails } from './report-details';
 
-export function ReportsWorkspace({ initialProjectId = "", initialSessionId = "" }: { initialProjectId?: string; initialSessionId?: string }) {
+export function ReportsWorkspace({ initialProjectId = "", initialSessionId = "", lockedScope = false, embedded = false }: { initialProjectId?: string; initialSessionId?: string; lockedScope?: boolean; embedded?: boolean }) {
   const [projectId, setProject] = useState(initialProjectId), [sessionId, setSession] = useState(initialSessionId);
   const [sprintId, setSprint] = useState(''), [studentId, setStudent] = useState('');
   const [page, setPage] = useState(1), [kind, setKind] = useState("");
@@ -43,10 +43,10 @@ export function ReportsWorkspace({ initialProjectId = "", initialSessionId = "" 
     } catch (err) { setError(err); } finally { pending.current = false; setBusy(false); }
   }
   return <div className="space-y-5">
-    <PageTitle title="Báo cáo phiên thực tập" subtitle="Bản chụp tiến độ, đóng góp và điểm đánh giá từ dữ liệu đã lưu." />
-    <Panel title="Dự án và phiên">
+    {!embedded && <PageTitle title="Báo cáo phiên thực tập" subtitle="Bản chụp tiến độ, đóng góp và điểm đánh giá từ dữ liệu đã lưu." />}
+    {!lockedScope && <Panel title="Dự án và phiên">
       <div className="grid gap-4 md:grid-cols-2"><AcademicPicker compact kind="projects" label="Dự án" value={projectId} onChange={id => { changed(); setError(undefined); setProject(id); setSession(""); setSprint(''); setStudent(''); setSelected(""); setPage(1); }} /><AcademicPicker compact kind="sessions" projectId={projectId} label="Phiên thực tập" value={sessionId} onChange={id => { changed(); setError(undefined); setSession(id); setSprint(''); setStudent(''); setSelected(""); setPage(1); }} /></div>
-    </Panel>
+    </Panel>}
     {projectId && sessionId && <Panel title="Phạm vi task trong báo cáo mới"><ReportScopePickers key={`${projectId}:${sessionId}`} projectId={projectId} sessionId={sessionId} sprintId={sprintId} studentId={studentId} onSprint={id => { changed(); setSprint(id); }} onStudent={id => { changed(); setStudent(id); }} /></Panel>}
     <Panel title="Tạo báo cáo">
       <form className="grid gap-3 sm:grid-cols-2" onSubmit={e => { e.preventDefault(); void save(); }}>

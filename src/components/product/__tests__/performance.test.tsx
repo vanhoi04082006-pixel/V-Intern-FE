@@ -9,6 +9,14 @@ vi.mock('@/lib/api/management', async original => ({ ...await original<typeof im
 const member = { userId: 'student1', displayName: 'Sinh viên đầu', totalTaskCount: 4, completedTaskCount: 3, taskCompletionRate: 75, storyPointCompletionRate: null, averageEvaluationScore: null, rank: 1 };
 beforeEach(() => { vi.mocked(listPerformance).mockImplementation(async query => ({ items: [{ ...member, displayName: query.get('q') ? 'Sinh viên tìm thấy' : 'Sinh viên đầu' }], total: 12, page: Number(query.get('page') ?? 1), pageSize: 10 })); });
 describe('server ranked performance', () => {
+  it('keeps embedded performance bound to the session and project', async () => {
+    render(<MemberPerformance initialProjectId="p1" initialSessionId="s1" lockedScope embedded />);
+    await screen.findAllByText('Sinh viên đầu');
+    expect(vi.mocked(listPerformance).mock.lastCall?.[0].get('sessionId')).toBe('s1');
+    expect(vi.mocked(listPerformance).mock.lastCall?.[0].get('projectId')).toBe('p1');
+    expect(screen.queryByText('Hiệu suất thành viên')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Phiên báo cáo')).not.toBeInTheDocument();
+  });
   it('paginates and searches the full server directory without requiring prior grades', async () => {
     render(<MemberPerformance />);
     expect(await screen.findByText('Top 10 sinh viên hiệu suất tốt nhất')).toBeInTheDocument();

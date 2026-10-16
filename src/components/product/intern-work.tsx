@@ -101,7 +101,7 @@ export function InternWork() {
           >
             <option value="">Tất cả ưu tiên</option>
             {priorities.map((s) => (
-              <option key={s}>{s}</option>
+              <option key={s} value={s}>{priorityLabels[s]}</option>
             ))}
           </select>
         </div>

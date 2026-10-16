@@ -4,6 +4,7 @@ import { Flag, Clock, ChevronRight, GitBranch } from "lucide-react";
 import {
   listTasks,
   statusLabels,
+  priorityLabels,
   taskStatuses,
   type TaskStatus,
 } from "@/lib/api/work";
@@ -110,7 +111,7 @@ function KanbanColumn({
                   className={`inline-flex items-center gap-1 ${t.priority === "critical" || t.priority === "high" ? "text-rose-700" : "text-slate-500"}`}
                 >
                   <Flag size={12} />
-                  {t.priority}
+                  {priorityLabels[t.priority]}
                 </span>
               </div>
               <p className="my-3 text-sm font-semibold leading-6 text-navy">

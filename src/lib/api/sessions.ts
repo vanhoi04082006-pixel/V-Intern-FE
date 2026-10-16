@@ -88,7 +88,8 @@ export function parseSessionDetail(value: unknown) {
     projectSnapshot: v.projectSnapshot == null ? null : record(v.projectSnapshot),
     members: array(v.members, (raw) => {
       const m = record(raw);
-      return { userId: string(m.userId), displayName: string(m.displayName), email: string(m.email) };
+      return { userId: string(m.userId), displayName: string(m.displayName), email: string(m.email),
+        role: m.role == null ? null : string(m.role), assignmentStatus: m.assignmentStatus == null ? null : string(m.assignmentStatus) };
     }),
     milestones: array(v.milestones, parseMilestone),
     sprintProgress: array(v.sprintProgress, (raw) => {
