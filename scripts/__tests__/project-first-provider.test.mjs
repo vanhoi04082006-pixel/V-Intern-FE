@@ -10,6 +10,7 @@ const context = () => ({
 test("test provider derives bounded dates and role-fit assignees from actual input", () => {
   const input = context(), plan = buildTestSprintPlan(input);
   assert.equal(plan.sprints.length, 2);
+  assert.deepEqual(plan.milestones, []);
   for (const sprint of plan.sprints) {
     assert.ok(Date.parse(sprint.startDate) >= Date.parse(input.session.startDate));
     assert.ok(Date.parse(sprint.endDate) <= Date.parse(input.session.endDate));
