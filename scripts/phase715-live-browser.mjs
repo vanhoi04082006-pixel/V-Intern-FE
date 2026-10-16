@@ -235,7 +235,7 @@ try {
       assert.equal(
         await page
           .getByRole("heading", {
-            name: "Chưa có dự án được phân công",
+            name: "Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án",
             exact: true,
           })
           .count(),
@@ -314,7 +314,7 @@ try {
       await login(page, "waiting", "/intern");
       await page
         .getByRole("heading", {
-          name: "Chưa có dự án được phân công",
+          name: "Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án",
           exact: true,
         })
         .waitFor();
@@ -362,7 +362,7 @@ try {
         .click();
       await page
         .getByRole("heading", {
-          name: "Chưa có dự án được phân công",
+          name: "Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án",
           exact: true,
         })
         .waitFor();
@@ -409,7 +409,7 @@ try {
       await login(page, "waiting", "/intern");
       await page
         .getByRole("heading", {
-          name: "Chưa có dự án được phân công",
+          name: "Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án",
           exact: true,
         })
         .waitFor();
@@ -478,6 +478,7 @@ try {
         .getByRole("button", { name: "Bắt đầu phỏng vấn", exact: true })
         .click();
       await page.waitForURL("**/intern/onboarding/interview");
+      await page.getByRole('button', { name: 'Tiếp tục hội thoại', exact: true }).click();
       for (let i = 0; i < 10; i++) {
         await page
           .getByLabel("Tin nhắn của bạn")
@@ -518,7 +519,7 @@ try {
       await login(page, "waiting", "/intern");
       await page
         .getByRole("heading", {
-          name: "Chưa có dự án được phân công",
+          name: "Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án",
           exact: true,
         })
         .waitFor();

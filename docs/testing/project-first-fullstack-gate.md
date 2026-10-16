@@ -2,7 +2,11 @@
 
 Gate local của thay đổi hiện tại phải dùng FE và BE từ cùng bộ thay đổi: library → tuyển dụng chat10lượt → eligible assignment → Start → AI draft → publish → own tasks/submissions → teacher approval. Xem docs/TESTING.md và README hiện hành.
 
-Workflow `.github/workflows/phase7-fullstack.yml` hiện ghim COMPATIBLE_BE_SHA cho baseline đã review trước đây. Pin này là quyết định reproducibility, không chứng minh feature GitHub/chat mới đã được kiểm tra. Khi phát hành hai repo, commit/push BE đã review trước, cập nhật pin FE bằng đúng SHA tương thích và chạy lại toàn gate; không dùng main/latest thay commit cố định.
+Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA=bcc26f6b422c92b7f700139e0ea3ba76c567da9f của BE đã review/push. Khi thay hợp đồng, commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.
+
+Harness không trả evaluation làm fallback cho feature khác. Next/clarify/follow-up có schema riêng, evaluator đủ sáu chiều; fixture gửi đáp án theo câu hiện tại và chặn trạng thái chưa ready. Node contract tests kiểm tra follow-up và missing evidence. Browser dùng nhãn Email hiện hành, bắt đầu hội thoại qua nút thật và hoàn thành10câu. Deadline/countdown dùng thời gian server; refresh giữ transcript và quyền truy cập.
+
+Workflow chỉ dùng contents:read và persist-credentials:false theo [checkout](https://github.com/actions/checkout) và [permissions](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions). Deploy key đọc BE đã có phục vụ hai repo private; credential AI/GitHub ứng dụng không nạp vào job. Audit production chặn high/critical; [finding dev/upstream chưa vá](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/DEPENDENCIES.md) được review riêng.
 
 Test chỉ override AI trong môi trường test và database dùng một lần. Phải dùng đúng feature/schema, không trả scoring cho mọi lời gọi. Không giảm migration count hoặc giữ assertion8câu khi start hiện dùng10câu tuần tự. Migrate registry hiện hành và kiểm tra pending=false, sanitized prompt policy, ownership, version/conflict và trạng thái backend.
 
