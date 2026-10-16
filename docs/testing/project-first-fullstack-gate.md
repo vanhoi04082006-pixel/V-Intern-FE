@@ -2,7 +2,7 @@
 
 Gate local của thay đổi hiện tại phải dùng FE và BE từ cùng bộ thay đổi: library → tuyển dụng chat10lượt → eligible assignment → Start → AI draft → publish → own tasks/submissions → teacher approval. Xem docs/TESTING.md và README hiện hành.
 
-Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA=bcc26f6b422c92b7f700139e0ea3ba76c567da9f của BE đã review/push. Khi thay hợp đồng, commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.
+Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA=ebc31add877df7948bee92fa63937090cde0a75b của BE đã review/push. Khi thay hợp đồng, commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.
 
 Harness không trả evaluation làm fallback cho feature khác. Next/clarify/follow-up có schema riêng, evaluator đủ sáu chiều; fixture gửi đáp án theo câu hiện tại và chặn trạng thái chưa ready. Node contract tests kiểm tra follow-up và missing evidence. Browser dùng nhãn Email hiện hành, chờ câu hỏi tự xuất hiện rồi hoàn thành10câu. Deadline/countdown dùng thời gian server; refresh giữ transcript và quyền truy cập.
 

@@ -120,9 +120,15 @@ try {
   stage = "eligible-team";
   for (const key of ["frontend", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
-    const row = page.locator("li").filter({ hasText: users[key].email }); await row.getByRole("button", { name: "Chi tiết", exact: true }).click();
-    await expect(row.locator("pre")).toContainText(users[key].name);
-    assert.equal((await page.locator("pre").allTextContents()).some(text => text.includes(users[key === "frontend" ? "backend" : "frontend"].name)), false);
+    const row = page.locator("li").filter({ hasText: users[key].email });
+    const [response] = await Promise.all([page.waitForResponse(r => r.url().toLowerCase().endsWith(`/recruitment/candidates/${users[key].id.toLowerCase()}`) && r.request().method() === 'GET'), row.getByRole("button", { name: "Chi tiết", exact: true }).click()]);
+    assert.equal(response.status(), 200);
+    const detail = await response.json();
+    assert.equal(detail.displayName, users[key].name); assert.equal(detail.email, users[key].email); assert.equal(detail.result.criteria.length, 6);
+    await expect(row.getByRole('heading', { name: 'Điểm mạnh & kỹ năng', exact: true })).toBeVisible();
+    await expect(row.getByText('Kiến thức: 82/100', { exact: true })).toBeVisible();
+    assert.equal(await page.getByRole('button', { name: 'Ẩn', exact: true }).count(), 1);
+    assert.equal(await page.getByText(users[key === "frontend" ? "backend" : "frontend"].name, { exact: true }).count(), 0);
   }
   for (const key of ["frontend", "frontend2", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
