@@ -17,7 +17,7 @@ jobs:
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
       # Update only through a reviewed compatibility PR; see docs/testing/project-first-fullstack-gate.md.
-      COMPATIBLE_BE_SHA: deb097eebd68a972d4db1ee398af73b84479f2b2
+      COMPATIBLE_BE_SHA: edc3f1204528a87005c8e0d5215e233e11b6a907
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
