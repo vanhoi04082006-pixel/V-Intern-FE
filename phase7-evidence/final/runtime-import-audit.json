@@ -1,6 +1,6 @@
 {
   "entryCount": 71,
-  "runtimeModuleCount": 219,
+  "runtimeModuleCount": 220,
   "runtimeBusinessMockImports": [],
   "businessRouteHandlers": [],
   "files": [
@@ -172,6 +172,7 @@
     "src/components/sessions/session-sharing.tsx",
     "src/components/sessions/session-task-delivery.tsx",
     "src/components/sessions/session-timeline.tsx",
+    "src/components/sessions/sprint-workspace.tsx",
     "src/components/shared/data-state.tsx",
     "src/components/v-intern/audience-cards.tsx",
     "src/components/v-intern/feature-strip.tsx",
