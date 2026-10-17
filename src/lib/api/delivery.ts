@@ -52,6 +52,7 @@ export const listSprints = (q: SprintQuery, signal?: AbortSignal) => {
   Object.entries(q).forEach(([key, value]) => { if (typeof value === "string" && value) params.set(key, value); });
   return request(`/sprints?${params.toString()}`, (v) => parsePage(v, parseSprint), { signal });
 };
+export const getSprint = (id: string, signal?: AbortSignal) => request(`/sprints/${encodeURIComponent(id)}`, parseSprint, { signal });
 
 export interface TaskQuery {
   page?: number;

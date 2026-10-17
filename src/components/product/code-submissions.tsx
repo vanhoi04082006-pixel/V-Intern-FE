@@ -233,6 +233,7 @@ function SubmissionReview({
           Commit được nộp: {submission.headSha}
         </p>
       )}
+      {submission.sourceRef && <p className="mt-2 break-all font-mono text-xs text-slate-500">{submission.sourceKind === 'pull' ? `Pull request #${submission.sourceRef}` : `${submission.sourceKind === 'branch' ? 'Nhánh' : submission.sourceKind === 'commit' ? 'Commit/ref' : 'Ref nguồn'}: ${submission.sourceRef}`}</p>}
       {submission.score !== null && (
         <p className="mt-3 text-sm font-semibold">
           Điểm giảng viên: {submission.score}/100 · {submission.feedback}

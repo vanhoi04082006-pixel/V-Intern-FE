@@ -12,20 +12,22 @@ import { TaskDetail } from './intern-work';
 import { TaskStatusPill, PriorityBadge } from './sprint-management';
 import { DropColumn, canManageDrop, draggableTask } from './kanban-dnd';
 import { saveManagedTask } from '@/lib/api/management';
+import { Can } from '@/components/auth/can';
 const labels={todo:'To Do',doing:'Doing',review:'Review',done:'Done'};
 const colors={todo:'bg-slate-100',doing:'bg-blue-50',review:'bg-amber-50',done:'bg-emerald-50'};
-export function SprintOverview({id, activeCount}: {id:string; activeCount?: number}) {
-  const board=useResource(useCallback((s:AbortSignal)=>getBoard(id,s),[id])),[task,setTask]=useState('');
+export function SprintOverview({id, activeCount, revision, onUpdated, onManage}: {id:string; activeCount?: number; revision?: number; onUpdated?: () => void; onManage?: () => void}) {
+  const board=useResource(useCallback((s:AbortSignal)=>getBoard(id,s),[id]), revision),[task,setTask]=useState('');
   const [now]=useState(()=>Date.now());
   const [dropError,setDropError]=useState<unknown>(null);
   const [dropping,setDropping]=useState(false);
   async function dropTask(taskId:string,to:(typeof b.columns)[number]['status']) {
     if(dropping)return;setDropping(true);setDropError(null);
-    try{await saveManagedTask(taskId,{status:to});board.reload();}catch(e){setDropError(e);}finally{setDropping(false);}
+    try{await saveManagedTask(taskId,{status:to});reload();}catch(e){setDropError(e);}finally{setDropping(false);}
   }
+  function reload() { board.reload(); onUpdated?.(); }
   if(board.loading)return <LoadingState/>;if(board.error)return <ErrorState error={board.error} onRetry={board.reload}/>;if(!board.data)return null;
   const b=board.data,done=b.columns.find(c=>c.status==='done')?.count??0,review=b.columns.find(c=>c.status==='review')?.count??0;
-  const overdue=b.columns.flatMap(c=>c.status==='done'?[]:c.tasks).filter(t=>t.dueDate&&Date.parse(t.dueDate)<now).length;
+  const overdue=b.overdueOpenTaskCount;
   const remain=Math.max(0,Math.ceil((Date.parse(b.sprint.endDate)-now)/86400000));
   const reviewTasks=b.columns.find(c=>c.status==='review')?.tasks.filter((_,i)=>i<4)??[];
   return <>
@@ -34,10 +36,10 @@ export function SprintOverview({id, activeCount}: {id:string; activeCount?: numb
       <MetricCard icon={ClipboardList} label="Task tổng" index={1} value={b.total} sub="Trong Sprint đang chọn" />
       <MetricCard icon={CheckCircle2} label="Task hoàn thành" index={2} value={done} sub={`${b.total?Math.round(done/b.total*100):0}% Sprint đang chọn`} />
       <MetricCard icon={Clock} label="Task / PR chờ duyệt" index={3} value={review} sub="Đang ở trạng thái Review" />
-      <MetricCard icon={AlertTriangle} label="Task quá hạn" index={4} value={overdue} sub="Quá hạn nộp" subTone="text-red-600" />
+      <MetricCard icon={AlertTriangle} label="Task quá hạn" index={4} value={overdue ?? 'Chưa đo được'} sub="Tổng hợp toàn Sprint từ backend" subTone="text-red-600" />
     </div>
     <div className="mb-5 grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-      <Panel title="Bảng Sprint hiện tại" action={<span className="flex items-center gap-3"><Link href="#sprint-task-list" className="text-xs text-blue-600">Xem tất cả task →</Link><a href="#sprint-task-list" className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"><Plus size={14} />Tạo task mới</a></span>}>
+      <Panel title="Bảng Sprint hiện tại" action={<span className="flex flex-wrap items-center gap-3"><Link href="#sprint-task-list" className="text-xs text-blue-600">Xem tất cả task →</Link><Can perm="tasks.manage"><a href={onManage ? '#sprint-task-management' : '#sprint-task-list'} onClick={onManage} className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"><Plus size={14} />{onManage ? 'Quản lý task' : 'Tạo task mới'}</a></Can></span>}>
         <p className="mb-4 text-sm text-slate-500">{b.sprint.code} · {b.sprint.name}</p>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {b.columns.map(c=><section key={c.status} className={`min-w-0 rounded-lg p-3 ${colors[c.status]}`}>
@@ -74,7 +76,7 @@ export function SprintOverview({id, activeCount}: {id:string; activeCount?: numb
     </div>
     {dropping&&<LoadingState/>}
     {Boolean(dropError)&&<ErrorState error={dropError} onRetry={()=>{setDropError(null);board.reload();}}/>}
-    {task&&<Modal title="Chi tiết nhiệm vụ" onClose={()=>setTask('')}><TaskDetail id={task} managed onUpdated={board.reload}/></Modal>}
+    {task&&<Modal title="Chi tiết nhiệm vụ" onClose={()=>setTask('')}><TaskDetail id={task} managed onUpdated={reload}/></Modal>}
   </>;
 }
 export function Burndown({id,compact=false}: {id:string;compact?:boolean}) {

@@ -16,6 +16,7 @@ import {
   statusLabels,
   taskStatuses,
   priorities,
+  priorityLabels,
   type Task,
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
@@ -457,7 +458,7 @@ export function TaskManagement({
       [projectId],
     ),
   );
-  const memberName = (id: string | null) => members.data?.find(m => m.userId === id)?.displayName ?? "Chưa phân công";
+  const memberName = (id: string | null) => id ? members.data?.find(m => m.userId.toLowerCase() === id.toLowerCase())?.displayName ?? 'Đã phân công' : 'Chưa phân công';
   const reload = () => {
       tasks.reload();
       onUpdated?.();
@@ -477,7 +478,7 @@ export function TaskManagement({
         <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <input
             aria-label="Tìm nhiệm vụ quản lý"
-            placeholder="Tìm kiếm task, mô tả, sinh viên..."
+            placeholder="Tìm theo mã hoặc tên task..."
             className={inputClass}
             value={search}
             onChange={(e) => {
@@ -677,7 +678,7 @@ export function TaskForm({
         defaultValue={task?.priority ?? "medium"}
       >
         {priorities.map((p) => (
-          <option key={p}>{p}</option>
+          <option key={p} value={p}>{priorityLabels[p]}</option>
         ))}
       </select>
       <label className="block text-sm">

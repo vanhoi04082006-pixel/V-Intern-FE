@@ -7,6 +7,7 @@ import {
   updateOwnTask,
 } from "../work";
 import { request } from "../client";
+import { listSubmissions } from '../submissions';
 vi.mock("../client", () => ({ request: vi.fn() }));
 const task = {
   id: "t",
@@ -24,6 +25,20 @@ const task = {
   version: 1,
 };
 describe("Nest work boundary", () => {
+  it('validates the stored submission source ref without inventing one for legacy rows', () => {
+    listSubmissions('t');
+    const parse = vi.mocked(request).mock.calls[0][1];
+    const sub = { id: 'sub1', taskId: 't', internId: 'u', prUrl: 'https://github.com/owner/repo/pull/1', summary: 'Ready', status: 'submitted', score: null, feedback: null, headSha: null, submittedAt: '2026-10-16' };
+    expect(parse([{ ...sub, sourceKind: 'branch', sourceRef: 'feature/notes' }])).toMatchObject([{ sourceKind: 'branch', sourceRef: 'feature/notes' }]);
+    expect(parse([sub])).toEqual([expect.not.objectContaining({ sourceRef: expect.anything() })]);
+    expect(() => parse([{ ...sub, sourceRef: 123 }])).toThrow();
+    expect(() => parse([{ ...sub, sourceKind: 'pretend_branch' }])).toThrow();
+  });
+  it('preserves the server-wide overdue count and Sprint context beyond preview pages', () => {
+    const board = { sprint: { id: 'sp1', code: 'SP-1', name: 'Build', status: 'active', projectId: 'p1', sessionId: 's1', goal: 'Ship', description: null, startDate: '2026-10-01', endDate: '2026-10-10' }, total: 102, columns: [], overdueOpenTaskCount: 1 };
+    expect(parseBoard(board)).toMatchObject({ overdueOpenTaskCount: 1, sprint: { sessionId: 's1', goal: 'Ship' } });
+    expect(() => parseBoard({ ...board, overdueOpenTaskCount: 'many' })).toThrow();
+  });
   it("accepts the real critical priority and rejects legacy urgent", () => {
     expect(parseTask({ ...task, priority: "critical" }).priority).toBe(
       "critical",

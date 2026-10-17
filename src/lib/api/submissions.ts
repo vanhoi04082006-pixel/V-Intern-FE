@@ -21,6 +21,8 @@ function parseSubmission(value: unknown) {
     score: p.nullable(v.score, p.number),
     feedback: p.nullable(v.feedback, p.string),
     headSha: p.nullable(v.headSha ?? null, p.string),
+    ...(v.sourceRef === undefined ? {} : { sourceRef: p.nullable(v.sourceRef, p.string) }),
+    ...(v.sourceKind === undefined ? {} : { sourceKind: p.nullable(v.sourceKind, value => p.oneOf(value, ['pull', 'commit', 'branch'])) }),
     ...(v.observedHeadSha === undefined ? {} : { observedHeadSha: p.nullable(v.observedHeadSha, p.string) }),
     ...(v.sourceChangedAt === undefined ? {} : { sourceChangedAt: p.nullable(v.sourceChangedAt, p.string) }),
     submittedAt: p.string(v.submittedAt),

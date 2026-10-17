@@ -82,10 +82,14 @@ export function parseBoard(value: unknown) {
       name: string(s.name),
       status: string(s.status),
       projectId: string(s.projectId),
+      ...(s.sessionId === undefined ? {} : { sessionId: nullable(s.sessionId, string) }),
+      ...(s.goal === undefined ? {} : { goal: nullable(s.goal, string) }),
+      ...(s.description === undefined ? {} : { description: nullable(s.description, string) }),
       startDate: string(s.startDate),
       endDate: string(s.endDate),
     },
     total: number(v.total),
+    ...(v.overdueOpenTaskCount === undefined ? {} : { overdueOpenTaskCount: number(v.overdueOpenTaskCount) }),
     columns: array(v.columns, (value) => {
       const c = record(value);
       return {

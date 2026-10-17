@@ -50,6 +50,17 @@ const rubric = {
   security: 88,
   dod: 94,
 };
+it.each([
+  ['branch', 'feature/notes', 'Nhánh: feature/notes'],
+  ['pull', '1', 'Pull request #1'],
+  ['commit', 'abcdef', 'Commit/ref: abcdef'],
+])('shows a stored %s source without confusing its ref with another kind', async (sourceKind, sourceRef, label) => {
+  api.listSubmissions.mockResolvedValue([{ ...submission, sourceKind, sourceRef }]);
+  api.listCodeReviews.mockResolvedValue([]);
+  render(<CodeSubmissions task={task} managed onUpdated={vi.fn()} />);
+  expect(await screen.findByText(label)).toBeInTheDocument();
+  expect(screen.getByText('Commit được nộp: abcdef')).toBeInTheDocument();
+});
 beforeEach(() => {
   vi.clearAllMocks();
   api.listSubmissions.mockResolvedValue([submission]);
