@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.github
+coverage
+*.log
+.env
+.env.*
+!/.env.example
+manual-runtime
+private
+V-INTERN-BE
+docs

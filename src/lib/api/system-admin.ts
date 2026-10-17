@@ -1,5 +1,20 @@
 import { request } from './client';
 import { array, boolean, nullable, number, record, string } from './parse';
+
+export interface SealedContractIssue { code: string; detail: string }
+export function parseSystemContracts(raw: unknown) {
+  const v = record(raw);
+  const parseOperator = (raw: unknown) => { const o = record(raw); const images = record(o.images); return { version: nullable(o.version, string), reviewer: nullable(o.reviewer, string), sealedAt: nullable(o.sealedAt, string), images: { runtime: nullable(images.runtime, string), tester: nullable(images.tester, string) }, complete: boolean(o.complete) }; };
+  return {
+    checkedAt: string(v.checkedAt),
+    source: string(v.source),
+    valid: boolean(v.valid),
+    error: nullable(v.error, string),
+    contracts: array(v.contracts, raw => { const c = record(raw), op = record(c.operator); return { key: string(c.key), suiteId: nullable(c.suiteId, string), digest: nullable(c.digest, string), status: string(c.status), issues: array(c.issues, raw => { const i = record(raw); return { code: string(i.code), detail: string(i.detail) }; }), operator: parseOperator(op) }; }),
+  };
+}
+export const getSystemContracts = (signal?: AbortSignal) => request('/admin/system/contracts', parseSystemContracts, { signal });
+export const validateSystemContractsDraft = (data: string) => request('/admin/system/contracts/validate', parseSystemContracts, { method: 'POST', body: { data } });
 export function parseAiConfiguration(raw: unknown) { const v = record(raw), policy = record(v.policy); return { policy: { model: string(policy.model), timeoutMs: number(policy.timeoutMs), maxRetries: number(policy.maxRetries), version: number(policy.version) }, source: string(v.source), provider: nullable(v.provider, string), credentialsConfigured: boolean(v.credentialsConfigured), appliesTo: array(v.appliesTo, string) }; }
 export const getAiConfiguration = (signal?: AbortSignal) => request('/admin/ai-configuration', parseAiConfiguration, { signal });
 export const saveAiConfiguration = (policy: ReturnType<typeof parseAiConfiguration>['policy']) => request('/admin/ai-configuration', parseAiConfiguration, { method: 'PUT', body: policy });

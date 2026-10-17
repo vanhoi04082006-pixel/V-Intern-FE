@@ -5,6 +5,7 @@ import { getSystemStatus, listSystemRepositories } from '@/lib/api/system-admin'
 import { useResource } from '@/lib/api/use-resource';
 import { ErrorState, LoadingState } from '@/components/shared/data-state';
 import { Badge, buttonClass, Empty, inputClass, Pager, Panel } from '@/components/product/primitives';
+import { ContractsCard } from '@/components/admin/contracts-card';
 import { Metrics } from '@/components/product/outcomes';
 export function AdminSystemStatus() {
   const state = useResource(useCallback((signal: AbortSignal) => getSystemStatus(signal), []));
@@ -17,8 +18,9 @@ export function AdminSystemStatus() {
       <Link href="/admin/ai" className="inline-block text-sm font-semibold text-blue-700">Cấu hình model và giới hạn AI →</Link>
       <h3 className="font-semibold">Lời gọi AI trong 24 giờ</h3>{data.ai.length ? <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr>{['Tính năng', 'Trạng thái', 'Số lượt', 'Latency TB (ms)'].map(label => <th className="p-2" key={label}>{label}</th>)}</tr></thead><tbody>{data.ai.map(row => <tr key={`${row.feature}:${row.status}`} className="border-t border-slate-100"><td className="p-2">{row.feature}</td><td className="p-2">{row.status}</td><td className="p-2">{row.count}</td><td className="p-2">{row.latency ?? 'Chưa đo'}</td></tr>)}</tbody></table></div> : <Empty>Chưa có lời gọi được ghi nhận trong 24 giờ.</Empty>}
     </div> : null}
-  </Panel><RepositoryStatus /></div>;
+  </Panel><ContractsCard /><RepositoryStatus /></div>;
 }
+
 function RepositoryStatus() {
   const [page, setPage] = useState(1), [query, setQuery] = useState(''), [search, setSearch] = useState(''), [status, setStatus] = useState('');
   useEffect(() => { const timer = setTimeout(() => { setSearch(query.trim()); setPage(1); }, 300); return () => clearTimeout(timer); }, [query]);
