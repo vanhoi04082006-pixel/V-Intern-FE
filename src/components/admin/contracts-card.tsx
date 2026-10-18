@@ -29,7 +29,7 @@ export function ContractsCard() {
   return <Panel title="Hợp đồng chấm điểm đã seal (chỉ đọc)">
     {state.loading ? <LoadingState /> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : data ? (
       <div className="space-y-4">
-        <p className="text-xs text-slate-500">Nguồn: {data.source}. Bản seal không hợp lệ sẽ không được runner dùng để chấm; bản kế thừa thiếu metadata operator cần re-seal theo phiên bản mới (GRADING_CONTRACTS.md).</p>
+        <p className="break-words text-xs text-slate-500">Nguồn: {data.source}. Bản seal không hợp lệ sẽ không được runner dùng để chấm; bản kế thừa thiếu metadata operator cần re-seal theo phiên bản mới (GRADING_CONTRACTS.md).</p>
         {data.error ? (
           <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">JSON seal hiện tại không hợp lệ: {data.error}</p>
         ) : data.contracts.length ? (
@@ -40,9 +40,9 @@ export function ContractsCard() {
                   <strong className="break-all">{c.key}</strong>
                   <Badge>{c.status === 'active' ? (c.operator.complete ? 'active · đầy đủ metadata' : 'active · còn thiếu metadata') : 'invalid'}</Badge>
                 </div>
-                <p className="mt-1 text-slate-600">ID: {c.suiteId ?? '—'} · digest: {c.digest ? `${c.digest.slice(0, 12)}…${c.digest.slice(-8)}` : '—'}</p>
-                <p className="mt-1 text-xs text-slate-500">Phiên bản {c.operator.version ?? '—'} · seal bởi {c.operator.reviewer ?? '—'} · sealedAt {formatDate(c.operator.sealedAt)} · runtime {c.operator.images.runtime ?? '—'} · tester {c.operator.images.tester ?? '—'}</p>
-                {c.issues.length > 0 && <ul className="mt-2 space-y-1">{c.issues.map(i => <li role="alert" className="text-xs text-amber-700" key={`${i.code}:${i.detail.slice(0, 24)}`}><strong>{i.code}</strong> — {i.detail}</li>)}</ul>}
+                <p className="mt-1 break-words text-slate-600">ID: {c.suiteId ?? '—'} · digest: {c.digest ? `${c.digest.slice(0, 12)}…${c.digest.slice(-8)}` : '—'}</p>
+                <p className="mt-1 break-words text-xs text-slate-500">Phiên bản {c.operator.version ?? '—'} · seal bởi {c.operator.reviewer ?? '—'} · sealedAt {formatDate(c.operator.sealedAt)} · runtime {c.operator.images.runtime ?? '—'} · tester {c.operator.images.tester ?? '—'}</p>
+                {c.issues.length > 0 && <ul className="mt-2 space-y-1">{c.issues.map(i => <li role="alert" className="break-words text-xs text-amber-700" key={`${i.code}:${i.detail.slice(0, 24)}`}><strong>{i.code}</strong> — {i.detail}</li>)}</ul>}
               </li>
             ))}
           </ul>

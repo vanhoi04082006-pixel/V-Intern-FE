@@ -1729,7 +1729,7 @@ export function AdminServices() {
               ].map(([name, status, description]) => (
                 <Panel key={name} title={name}>
                   <Badge>{status}</Badge>
-                  <p className="mt-3 text-sm text-slate-500">{description}</p>
+                  <p className="mt-3 break-words text-sm text-slate-500">{description}</p>
                 </Panel>
               ))}
             </div>
