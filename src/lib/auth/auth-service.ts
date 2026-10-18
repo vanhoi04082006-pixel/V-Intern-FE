@@ -6,7 +6,8 @@
  * `POST /api/v1/auth/logout` (204), `GET /api/v1/auth/me`.
  * UI form giữ nguyên — chỉ map `AuthResult` như trước.
  *
- * Chưa có endpoint BE cho: đăng ký công khai, quên/đặt lại mật khẩu,
+ * Đăng ký công khai dùng POST /auth/register và chỉ tạo intern.
+ * Chưa có endpoint BE cho: quên/đặt lại mật khẩu,
  * newsletter, Google OAuth → các hàm đó vẫn trả `not-connected` trung thực,
  * KHÔNG giả thành công. (`POST /users` của BE yêu cầu role `admin`, không
  * phải đăng ký công khai nên không được dùng cho form register.)
@@ -53,6 +54,7 @@ export interface RegisterPayload {
   fullName: string;
   email: string;
   password: string;
+  acceptedTerms: boolean;
 }
 
 export type AuthFailureKind = "auth-error" | "system-error" | "not-connected";
@@ -69,7 +71,7 @@ export type LoginResult = { ok: true; user: SessionUser } | AuthFailure;
 /**
  * Kết quả các thao tác auth khác (register/reset...): success KHÔNG mang
  * user để không bắt các action không liên quan phải khớp contract response
- * của login. Các hàm đó hiện vẫn not-connected (BE chưa có endpoint).
+ * của login. Register xác nhận account đã tạo; các action chưa có tích hợp giữ not-connected.
  */
 export type AuthResult = { ok: true } | AuthFailure;
 
@@ -228,12 +230,13 @@ export function refreshSession(): Promise<SessionUser | null> {
     try {
       data = await apiFetch("/auth/refresh", { method: "POST" });
     } catch (error) {
-      clearSession();
       if (
         error instanceof ApiError &&
         (error.statusCode === 401 || error.statusCode === 403)
-      )
+      ) {
+        clearSession();
         return null;
+      }
       throw error;
     }
     if (generation !== getSessionGeneration()) return null;
@@ -289,15 +292,22 @@ export async function fetchCurrentUser(): Promise<SessionUser | null> {
   setSession(token, user);
   return user;
 }
-export async function register(_payload: RegisterPayload): Promise<AuthResult> {
-  void _payload;
-  // Module 1 chưa có endpoint đăng ký công khai (chỉ admin tạo user qua
-  // POST /users). Giữ trung thực, không giả thành công.
-  return {
-    ok: false,
-    kind: "not-connected",
-    message: "Tính năng đăng ký chưa được kết nối với hệ thống.",
-  };
+export async function register(payload: RegisterPayload): Promise<AuthResult> {
+  if (!isApiConfigured()) return { ok: false, kind: 'not-connected', message: NOT_CONNECTED_MESSAGE };
+  try {
+    const data = await apiFetch('/auth/register', { method: 'POST', body: { fullName: payload.fullName.trim(), email: payload.email.trim().toLowerCase(), password: payload.password, acceptedTerms: payload.acceptedTerms } });
+    if (!data || typeof data !== 'object' || Array.isArray(data) || (data as Record<string, unknown>).registered !== true) return { ok: false, kind: 'system-error', message: SYSTEM_ERROR_MESSAGE };
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      if (error.statusCode === 409) return { ok: false, kind: 'auth-error', message: 'Email này đã được sử dụng. Vui lòng đăng nhập hoặc dùng email khác.' };
+      if (error.code === 'REGISTRATION_CLOSED') return { ok: false, kind: 'auth-error', message: 'Hệ thống đang tạm dừng đăng ký mới. Vui lòng liên hệ quản trị viên.' };
+      if (error.code === 'INVALID_PASSWORD') return { ok: false, kind: 'auth-error', message: 'Mật khẩu quá dài. Vui lòng dùng mật khẩu ngắn hơn.' };
+      if (error.statusCode === 400) return { ok: false, kind: 'auth-error', message: 'Thông tin đăng ký chưa hợp lệ. Vui lòng kiểm tra họ tên, email, mật khẩu và điều khoản.' };
+      if (error.statusCode === 429) return { ok: false, kind: 'auth-error', message: 'Bạn đã thử đăng ký quá nhiều lần. Vui lòng chờ ít nhất 60 giây rồi thử lại.' };
+    }
+    return { ok: false, kind: 'system-error', message: SYSTEM_ERROR_MESSAGE };
+  }
 }
 
 export async function requestPasswordReset(

@@ -6,6 +6,8 @@ import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { Can } from "@/components/auth/can";
 import { errorMessage } from "@/lib/auth/api-client";
+import { roleLabel } from '@/lib/api/workspace';
+import { CandidateInterviewSummary } from './candidate-interview-summary';
 import {
   assignIntern,
   cancelAssignment,
@@ -54,12 +56,14 @@ export function MemberSelector({
   slots,
   onChanged,
   deps,
+  members = [],
 }: {
   sessionId: string;
   projectId: string;
   slots: Array<{ roleCode: string; requiredCount: number; filledCount: number }>;
   onChanged?: () => void;
   deps?: Partial<SelectorDeps>;
+  members?: Array<{ userId: string; displayName: string; email: string }>;
 }) {
   // Destructure with stable module-level defaults: the `deps` object itself must
   // NOT be a useCallback dependency (new identity every render → refetch loop).
@@ -73,7 +77,6 @@ export function MemberSelector({
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [role, setRole] = useState("");
-  const [availability, setAvailability] = useState("available");
   const [page, setPage] = useState(1);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null);
@@ -105,12 +108,13 @@ export function MemberSelector({
             pageSize: 10,
             search: debounced || undefined,
             role: role || undefined,
-            eligibility: availability === "all" ? undefined : "available",
+            eligibility: "available",
           },
           signal,
         ),
-      [search, page, debounced, role, availability],
+      [search, page, debounced, role],
     ),
+    assignmentsRevision,
   );
   const assigned = useResource(
     useCallback((signal: AbortSignal) => listFn(sessionId, signal), [listFn, sessionId]), assignmentsRevision,
@@ -150,7 +154,7 @@ export function MemberSelector({
     setNotice(null);
     let removed = false;
     const ok = await action.run(async () => {
-      const list = await listFn(sessionId);
+      const list = await listFn(sessionId, undefined, internId);
       const row = list.find((a) => a.internId.toLowerCase() === internId.toLowerCase() && a.status === "active");
       if (!row) {
         setNotice("Không tìm thấy assignment đang hoạt động để gỡ.");
@@ -164,6 +168,7 @@ export function MemberSelector({
 
   return (
     <div className="space-y-3">
+      {members.length > 0 && <section aria-label="Thành viên đã phân công" className="rounded-xl border border-blue-100 bg-blue-50/30 p-3"><h3 className="mb-2 text-sm font-semibold">Đội hình hiện tại</h3><ul className="space-y-2">{members.map(member => <li key={member.userId} className="flex flex-wrap items-center justify-between gap-2 text-sm"><div className="min-w-0"><strong>{member.displayName}</strong><p className="break-all text-xs text-slate-500">{member.email}</p></div><Can perm="assignments.manage"><button type="button" aria-label={`Gỡ ${member.displayName} khỏi phiên`} className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 disabled:opacity-50" disabled={action.busy} onClick={() => void remove(member.userId, member.displayName)}>Gỡ khỏi phiên</button></Can></li>)}</ul></section>}
       <div className="flex flex-wrap gap-2">
         <input
           aria-label="Tìm sinh viên"
@@ -176,15 +181,12 @@ export function MemberSelector({
           <option value="">Mọi role</option>
           <option value="frontend">Frontend</option>
           <option value="backend">Backend</option>
+          <option value="fullstack">Fullstack</option>
           <option value="qa">QA</option>
           <option value="business_analyst">Business Analyst</option>
-          <option value="devops">DevOps</option>
-        </select>
-        <select aria-label="Lọc theo availability" className={inputClass} value={availability} onChange={(e) => { setAvailability(e.target.value); setPage(1); }}>
-          <option value="available">Còn trống</option>
-          <option value="all">Tất cả</option>
         </select>
       </div>
+      <p className="text-xs text-slate-500">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
       {notice && (
         <p role="status" className="rounded bg-emerald-50 p-2 text-xs text-emerald-700">{notice}</p>
       )}
@@ -208,9 +210,11 @@ export function MemberSelector({
                       <p className="text-sm font-semibold text-slate-800">{c.displayName ?? "Chưa có tên"}</p>
                       <p className="truncate text-[11px] text-slate-500">{c.email ?? "Chưa có email"}</p>
                       <p className="mt-1 text-[11px] text-slate-500">
-                        Role: {c.selectedRole ?? "—"} · Recruitment: {c.status}
-                        {c.result ? ` · Overall ${c.result.overallScore} (T${c.result.technicalScore}/S${c.result.softSkillScore})` : ""}
+                        {roleLabel(c.selectedRole)} · {c.status === 'passed' ? 'Đã đậu phỏng vấn' : 'Chưa đủ điều kiện'}
+                        {c.result ? ` · Tổng điểm ${c.result.overallScore} · Chuyên môn ${c.result.technicalScore} · Tiếng Anh ${c.result.englishScore ?? 'Chưa có điểm riêng'}` : ''}
                       </p>
+                      {Boolean(c.result?.strengths?.length) && <p className="mt-2 text-xs text-slate-600">Kỹ năng: {c.result!.strengths!.join(' · ')}</p>}
+                      {Boolean(c.result?.weaknesses?.length) && <p className="mt-1 text-xs text-slate-500">Cần cải thiện: {c.result!.weaknesses!.join(' · ')}</p>}
                       {reason && <p className="mt-1 text-[11px] text-amber-700">{reason}</p>}
                       {!reason && !added && (
                         <label className="mt-1 block text-[11px] text-slate-500">
@@ -235,9 +239,7 @@ export function MemberSelector({
                       {expanded === c.userId && (
                         <div className="mt-2 rounded bg-slate-50 p-2 text-[11px] text-slate-600">
                           {detail ? (
-                            <pre className="max-h-40 overflow-auto whitespace-pre-wrap">
-                              {JSON.stringify(detail, null, 1).slice(0, 2000)}
-                            </pre>
+                            <CandidateInterviewSummary detail={detail} />
                           ) : (
                             "Đang tải chi tiết phỏng vấn..."
                           )}
@@ -284,9 +286,7 @@ export function MemberSelector({
             total={results.data.total}
             onChange={(p: number) => setPage(p)}
           />
-          <p className="text-[11px] text-slate-400">
-            Backend kiểm tra eligibility khi lưu; ứng viên chưa đạt sẽ bị từ chối với mã lỗi rõ ràng.
-          </p>
+          <p className="text-xs text-slate-500">Chỉ sinh viên đã đậu, còn trống và phù hợp vai trò trong đội mới được phân công.</p>
         </>
       )}
     </div>

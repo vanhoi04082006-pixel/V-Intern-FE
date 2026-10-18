@@ -45,6 +45,11 @@ export const RECRUITMENT_ROLES: readonly RecruitmentRole[] = [
     tone: "green",
   },
   {
+    id: 'fullstack', label: 'Fullstack Developer',
+    tagline: 'Kết nối giao diện, API và dữ liệu thành một sản phẩm hoàn chỉnh.',
+    tags: ['React', 'API', 'Database'], icon: CodeXml, tone: 'sky',
+  },
+  {
     id: "business_analyst",
     label: "Business Analyst",
     tagline: "Phân tích yêu cầu và kết nối nghiệp vụ với nhóm phát triển.",
@@ -83,7 +88,7 @@ export const WELCOME_INFO_ITEMS = [
   {
     id: "role",
     title: "Chọn vị trí ứng tuyển",
-    description: "Chọn Frontend, Backend, QA Tester hoặc Business Analyst.",
+    description: "Chọn Frontend, Backend, Fullstack, QA Tester hoặc Business Analyst.",
     icon: Target,
     tone: "violet" as const,
   },

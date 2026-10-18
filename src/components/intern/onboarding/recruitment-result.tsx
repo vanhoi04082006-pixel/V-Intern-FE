@@ -35,7 +35,7 @@ export function RecruitmentResult() {
         </p>
       )}
       {result ? (
-        <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="recruitment-result-reveal mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="space-y-5">
             <section className="rounded-xl border border-slate-200 bg-white p-6">
               <h2
@@ -45,6 +45,7 @@ export function RecruitmentResult() {
                   ? "Bạn đã trúng tuyển"
                   : "Chưa đạt yêu cầu tuyển dụng"}
               </h2>
+              {result.decision === 'passed' && <p role="status" className="mt-2 font-semibold text-emerald-700">Chúc mừng! Bạn đã vượt qua phỏng vấn.</p>}
               <p className="mt-2 text-sm text-slate-500">
                 Vị trí:{" "}
                 {profile.selectedRoleLabel ?? roleLabel(profile.selectedRole)}

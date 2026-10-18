@@ -164,6 +164,9 @@ export const saveAcademic = (
     body: academicBody(kind, form, Boolean(id)),
   });
 export interface CandidateResult {
+  englishScore?: number | null;
+  strengths?: string[];
+  weaknesses?: string[];
   overallScore: number | null;
   technicalScore: number | null;
   softSkillScore: number | null;
@@ -203,6 +206,9 @@ export function parseCandidate(value: unknown): Candidate {
           overallScore: num(r.overallScore),
           technicalScore: num(r.technicalScore),
           softSkillScore: num(r.softSkillScore),
+          englishScore: num(r.englishScore),
+          strengths: r.strengths === undefined ? [] : array(r.strengths, string),
+          weaknesses: r.weaknesses === undefined ? [] : array(r.weaknesses, string),
           decision: r.decision === null || r.decision === undefined ? null : string(r.decision),
           evaluatedAt: nullable(r.evaluatedAt, string),
         }
@@ -246,8 +252,8 @@ export const searchCandidates = (q: CandidateQuery, signal?: AbortSignal) => {
 export const getCandidateDetail = (userId: string, signal?: AbortSignal) =>
   request(`/recruitment/candidates/${encodeURIComponent(userId)}`, (x) => record(x), { signal });
 
-export const listSessionAssignments = (sessionId: string, signal?: AbortSignal) =>
-  request(`/assignments?${new URLSearchParams({ sessionId, status: "active", page: "1", pageSize: "100" })}`, (x) => {
+export const listSessionAssignments = (sessionId: string, signal?: AbortSignal, internId?: string) =>
+  request(`/assignments?${new URLSearchParams({ sessionId, status: "active", page: "1", pageSize: internId ? '1' : '100', ...(internId ? { internId } : {}) })}`, (x) => {
     const v = record(x);
     const items = Array.isArray(v.items) ? v.items : array(v.data, (i) => i);
     return items.map((i) => {
@@ -273,6 +279,7 @@ export function parseMember(value: unknown) {
     userId: string(v.userId ?? v.instructorId),
     displayName: string(v.displayName),
     email: string(v.email),
+    ...(v.role === undefined && v.roleInProject === undefined ? {} : { role: nullable(v.role ?? v.roleInProject ?? null, string) }),
   };
 }
 export const instructorOptions = (

@@ -291,12 +291,13 @@ export function parsePerformanceMember(value: unknown) {
     taskCompletionRate: nullable(v.taskCompletionRate, number),
     storyPointCompletionRate: nullable(v.storyPointCompletionRate, number),
     averageEvaluationScore: nullable(v.averageEvaluationScore, number),
+    rank: v.rank === undefined ? null : number(v.rank),
   };
 }
 export const listPerformance = (query: URLSearchParams, signal?: AbortSignal) =>
   request(
     `/performance/interns?${query}`,
-    (x) => array(record(x).items, parsePerformanceMember),
+    (x) => { const v = record(x); return { items: array(v.items, parsePerformanceMember), total: number(v.total), page: number(v.page), pageSize: number(v.pageSize) }; },
     { signal },
   );
 export const getMemberPerformance = (id: string, signal?: AbortSignal, scope = "") =>

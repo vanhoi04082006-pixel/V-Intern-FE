@@ -3,15 +3,15 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { X, type LucideIcon } from "lucide-react";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 export const buttonClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
+  "inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:bg-blue-700 hover:shadow-md active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
 export const inputClass =
-  "w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus-visible:outline-2 focus-visible:outline-blue-600";
+  "w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 shadow-xs transition-[border-color,box-shadow] placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-400 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600";
 export function MetricCard({ icon: Icon, label, value, sub, subTone = 'text-slate-500' }: {
   icon: LucideIcon; label: string; value: ReactNode; sub?: ReactNode; subTone?: string; index?: number;
 }) {
-  return <section className="flex min-w-0 items-center gap-3 rounded-lg border border-blue-100 bg-white p-4">
-    <Icon className="shrink-0 text-blue-600" size={24} aria-hidden="true" />
-    <div><p className="text-xs text-slate-500">{label}</p><p className="text-2xl font-bold text-navy">{value}</p>{sub != null && <p className={`text-xs ${subTone}`}>{sub}</p>}</div>
+  return <section className="flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_12px_-8px_#182c5040] sm:p-5">
+    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-blue-50"><Icon className="text-blue-600" size={21} aria-hidden="true" /></span>
+    <div className="min-w-0"><p className="text-xs font-medium leading-5 text-slate-500">{label}</p><p className="mt-1 break-words text-2xl font-bold tracking-tight text-navy tabular-nums">{value}</p>{sub != null && <p className={`mt-1 text-xs leading-5 ${subTone}`}>{sub}</p>}</div>
   </section>;
 }
 export function Panel({
@@ -24,9 +24,9 @@ export function Panel({
   action?: ReactNode;
 }) {
   return (
-    <section className="min-w-0 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-base font-bold text-[#10164b]">{title}</h2>
+    <section className="min-w-0 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_12px_-8px_#182c5040] sm:p-5">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <h2 className="text-sm font-bold leading-6 text-navy sm:text-base">{title}</h2>
         {action}
       </div>
       {children}
@@ -43,9 +43,9 @@ export function PageTitle({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#10164b] sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-navy sm:text-3xl">
           {title}
         </h1>
         {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}

@@ -240,6 +240,7 @@ function SetupBody({
                 slots={slots}
                 onChanged={onChanged}
                 deps={selectorDeps}
+                members={members}
               />
             </Panel></Can>
           )}

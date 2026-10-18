@@ -12,10 +12,29 @@ describe("Outcome truth boundaries", () => {
   it("maps task notices into the current workspace without crossing role guards", () => {
     const link = "/intern/tasks/12345678-1234-1234-1234-123456789012";
     expect(notificationLinkForRole(link, "instructor")).toBe(
-      "/instructor/sprints",
+      "/instructor/tasks/12345678-1234-1234-1234-123456789012",
     );
-    expect(notificationLinkForRole(link, "admin")).toBe("/admin/tasks");
+    expect(notificationLinkForRole(link, "admin")).toBe("/admin/tasks/12345678-1234-1234-1234-123456789012");
     expect(notificationLinkForRole("/admin/users", "intern")).toBeNull();
+  });
+  it.each(['instructor', 'admin'])('retains the actual %s task deep link while rejecting a foreign workspace', role => {
+    const link = `/${role}/tasks/12345678-1234-1234-1234-123456789012`;
+    expect(notificationLinkForRole(link, role)).toBe(link);
+    expect(notificationLinkForRole(link, 'intern')).toBeNull();
+  });
+  it.each(['intern', 'instructor', 'admin'])('accepts uppercase SQL GUIDs in %s task notifications', role => {
+    const id = 'B2D1F16A-D64E-48BA-853E-82BF28854FF4';
+    const section = role === 'intern' ? 'work' : 'tasks';
+    expect(notificationLinkForRole(`/${role}/${section}/${id}`, role)).toBe(`/${role}/${section}/${id}`);
+  });
+  it('keeps sharing and GitHub events in their existing instructor pages', () => {
+    expect(notificationLinkForRole('/instructor/sharing', 'instructor')).toBe('/instructor/sharing');
+    expect(notificationLinkForRole('/instructor/github', 'instructor')).toBe('/instructor/github');
+    expect(notificationLinkForRole('/instructor/sharing', 'intern')).toBeNull();
+  });
+  it('preserves the own recruitment-result page without crossing workspace guards', () => {
+    expect(notificationLinkForRole('/intern/onboarding/result', 'intern')).toBe('/intern/onboarding/result');
+    expect(notificationLinkForRole('/intern/onboarding/result', 'instructor')).toBeNull();
   });
   it("rejects allowed-looking paths when the actual workspace route does not exist", () => {
     expect(
@@ -113,6 +132,8 @@ describe("Outcome truth boundaries", () => {
       holderName: "Nguyễn A",
       role: "backend",
       projectName: "P",
+      sessionName: "Session A",
+      completedAt: "2026-10-15T08:00:00.000Z",
       issuedAt: "date",
       email: "private@example.test",
       userId: "secret",
@@ -121,6 +142,8 @@ describe("Outcome truth boundaries", () => {
     expect(parsed).not.toHaveProperty("email");
     expect(parsed).not.toHaveProperty("userId");
     expect(parsed).not.toHaveProperty("overallScore");
+    expect(parsed.sessionName).toBe('Session A');
+    expect(parsed.completedAt).toBe('2026-10-15T08:00:00.000Z');
   });
   it("rejects inconsistent revoked certificate", () =>
     expect(() =>

@@ -14,6 +14,13 @@ export interface PlanSummary {
 }
 
 export interface PlannedTask {
+  key?: string;
+  parentKey?: string | null;
+  dependsOn?: string[];
+  expectedOutput?: string | null;
+  estimatedHours?: number | null;
+  skillTags?: string[];
+  complexity?: string;
   acceptanceCriteria?: string[];
   title: string;
   description: string | null;
@@ -32,6 +39,8 @@ export interface PlannedSprint {
   endDate: string;
   tasks: PlannedTask[];
 }
+export interface PlannedMilestone { key: string; title: string; dueDate: string; taskKeys: string[] }
+export interface SprintPlan { sprints: PlannedSprint[]; milestones?: PlannedMilestone[] }
 
 export interface PlanDetail {
   planId: string;
@@ -44,7 +53,7 @@ export interface PlanDetail {
   sprintCount: number | null;
   taskCount: number | null;
   hasDraft: boolean;
-  draft: { sprints: PlannedSprint[] } | null;
+  draft: SprintPlan | null;
   warnings: Array<{ taskTitle: string; message: string }>;
   error: unknown;
   deduped: boolean;
@@ -75,6 +84,10 @@ export function parsePlanSummary(value: unknown): PlanSummary {
 export function parsePlannedTask(value: unknown): PlannedTask {
   const v = record(value);
   return {
+    key: optStr(v.key) ?? undefined, parentKey: optStr(v.parentKey),
+    dependsOn: v.dependsOn === undefined ? [] : array(v.dependsOn, string),
+    expectedOutput: optStr(v.expectedOutput), estimatedHours: optNum(v.estimatedHours),
+    skillTags: v.skillTags === undefined ? [] : array(v.skillTags, string), complexity: optStr(v.complexity) ?? 'beginner',
     title: string(v.title),
     description: optStr(v.description),
     priority: typeof v.priority === "string" ? v.priority : "medium",
@@ -111,7 +124,9 @@ export function parsePlanDetail(value: unknown): PlanDetail {
     sprintCount: optNum(v.sprintCount),
     taskCount: optNum(v.taskCount),
     hasDraft: v.hasDraft === true,
-    draft: d ? { sprints: array(d.sprints, parsePlannedSprint) } : null,
+    draft: d ? { sprints: array(d.sprints, parsePlannedSprint), milestones: d.milestones === undefined ? [] : array(d.milestones, item => {
+      const m = record(item); return { key: string(m.key), title: string(m.title), dueDate: string(m.dueDate), taskKeys: array(m.taskKeys, string) };
+    }) } : null,
     warnings: Array.isArray(v.warnings)
       ? v.warnings.map((w) => {
           const r = record(w);

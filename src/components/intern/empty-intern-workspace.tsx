@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import type { ReactNode } from 'react';
 import Image from "next/image";
 import { BookOpen, FileText, Info } from "lucide-react";
 
@@ -38,9 +39,11 @@ import type { InternWorkspaceState } from "./data/intern-mock-data";
 export function EmptyInternWorkspace({
   state,
   onReload,
+  recruitment,
 }: {
   state: Extract<InternWorkspaceState, { status: "unassigned" }>;
   onReload?: () => void;
+  recruitment?: ReactNode;
 }) {
   const { welcome, emptyCard, infoRows, nextSteps, recentActivities, notes } =
     state;
@@ -115,7 +118,7 @@ export function EmptyInternWorkspace({
 
         {/* Card chính: chưa có dự án được phân công — hàng co giãn, nội dung
             căn giữa; chiếm đúng phần height còn lại của viewport desktop. */}
-        <section
+        {recruitment ? <div className="space-y-3">{recruitment}<button type="button" onClick={onReload} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700">Tải lại trạng thái</button></div> : <section
           aria-labelledby="intern-empty-assignment"
           className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-10 text-center shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:px-8 xl:px-6 xl:py-4"
         >
@@ -239,7 +242,7 @@ export function EmptyInternWorkspace({
               {emptyCard.secondaryAction}
             </button>
           </div>
-        </section>
+        </section>}
 
         {/* Reference: hoạt động rộng hơn lưu ý (~1.6:1) — nằm trong viewport */}
         <div className="grid min-w-0 shrink-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] xl:gap-[var(--iw-gap)]">
@@ -274,10 +277,10 @@ export function EmptyInternWorkspace({
           title — Thông tin thực tập + Quy trình tiếp theo vừa đủ viewport */}
       <aside
         aria-label="Thông tin thực tập và quy trình tiếp theo"
-        className="flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-[var(--iw-gap)]"
+        className={`flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-[var(--iw-gap)]${recruitment ? ' self-start' : ''}`}
       >
         <InternshipInfoCard rows={infoRows} className="xl:shrink-0" />
-        <NextProcessCard steps={nextSteps} className="xl:min-h-0 xl:flex-1" />
+        <NextProcessCard steps={nextSteps} className={recruitment ? 'xl:min-h-0' : 'xl:min-h-0 xl:flex-1'} />
       </aside>
     </div>
   );

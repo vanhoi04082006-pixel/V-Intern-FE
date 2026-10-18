@@ -12,7 +12,7 @@ const results = [], network = [];
 const base = "http://localhost:3001", api = "http://localhost:8080/api/v1";
 async function login(page) {
   await page.goto(base + "/login");
-  await page.getByLabel("Email hoặc tên đăng nhập").fill("admin@phase715.test");
+  await page.getByLabel("Email", { exact: true }).fill("admin@phase715.test");
   await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
   await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
   await page.waitForURL("**/admin");
@@ -34,7 +34,7 @@ async function scenario(name, run) {
 try {
   await scenario("rapid login submits only one credential request", async context => {
     const page = await context.newPage(); await page.goto(base + "/login");
-    await page.getByLabel("Email hoặc tên đăng nhập").fill("admin@phase715.test");
+    await page.getByLabel("Email", { exact: true }).fill("admin@phase715.test");
     await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
     await page.getByRole("button", { name: "Đăng nhập", exact: true }).evaluate(b => { b.click(); b.click(); });
     await page.waitForURL("**/admin"); await page.waitForLoadState("networkidle");
@@ -49,7 +49,7 @@ try {
     async function status(value) { const r = await fetch(api + `/users/${user.id}/status`, { method: "PATCH", headers, body: JSON.stringify({ status: value }) }); assert.equal(r.status, 200); }
     await status("locked");
     const page = await context.newPage(); await page.goto(base + "/login");
-    await page.getByLabel("Email hoặc tên đăng nhập").fill(email);
+    await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
     const [denied] = await Promise.all([page.waitForResponse(r => r.url() === api + "/auth/login" && r.request().method() === "POST"), page.getByRole("button", { name: "Đăng nhập", exact: true }).click()]);
     assert.equal(denied.status(), 403); await page.getByRole("alert").filter({ hasText: /khóa/i }).waitFor();
@@ -85,7 +85,7 @@ try {
     const page = await context.newPage(), messages = [];
     await page.goto(base + "/login");
     for (const email of ["admin@phase715.test", "unknown-uat@phase715.test"]) {
-      await page.getByLabel("Email hoặc tên đăng nhập").fill(email);
+      await page.getByLabel("Email", { exact: true }).fill(email);
       await page.getByLabel("Mật khẩu", { exact: true }).fill("invalid-development-password");
       const [response] = await Promise.all([
         page.waitForResponse(r => r.url() === api + "/auth/login" && r.request().method() === "POST"),
@@ -101,7 +101,7 @@ try {
   });
   await scenario("offline login is recoverable without a ghost principal", async context => {
     const page = await context.newPage(); await page.goto(base + "/login");
-    await page.getByLabel("Email hoặc tên đăng nhập").fill("admin@phase715.test");
+    await page.getByLabel("Email", { exact: true }).fill("admin@phase715.test");
     await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
     await context.setOffline(true);
     await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();

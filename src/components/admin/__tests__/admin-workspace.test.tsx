@@ -170,7 +170,7 @@ describe("AdminWorkspace", () => {
     }
   });
 
-  it("render trạng thái hệ thống, nhật ký, cảnh báo, thiết lập nhanh", () => {
+  it("render trạng thái hệ thống, nhật ký, cảnh báo và gỡ thiết lập nhanh", () => {
     render(<AdminWorkspace />);
 
     expect(
@@ -197,9 +197,9 @@ describe("AdminWorkspace", () => {
     expect(screen.getByText("Tỷ lệ lỗi API tăng cao (5.2%)")).toBeInTheDocument();
 
     expect(
-      screen.getByRole("heading", { name: "Thiết lập nhanh" })
-    ).toBeInTheDocument();
-    expect(screen.getByText("Sao lưu & khôi phục")).toBeInTheDocument();
+      screen.queryByRole("heading", { name: "Thiết lập nhanh" })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Sao lưu & khôi phục")).not.toBeInTheDocument();
   });
 
   it("drawer mobile: mở menu đưa focus vào điều hướng, Escape đóng và trả focus", async () => {

@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, type ReactNode } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   getWorkspace,
   lifecyclePath,
@@ -16,7 +17,7 @@ import {
 } from "@/lib/api/work";
 import { WorkspaceGuard } from "@/components/auth/workspace-guard";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { ProductShell } from "./shell";
+import { InternShell } from "@/components/intern/intern-shell";
 import { Badge, Empty, PageTitle, Panel } from "./primitives";
 export function InternEntry({
   children,
@@ -38,6 +39,8 @@ function InternGate({
   children: ReactNode | ((workspace: InternWorkspace) => ReactNode);
   requireAssignment: boolean;
 }) {
+  const pathname = usePathname();
+  const historyRoute = ['evaluations', 'performance', 'kpi', 'virtual-salary', 'certificates'].some(route => pathname === `/intern/${route}` || pathname.startsWith(`/intern/${route}/`));
   const workspace = useResource(
     useCallback((signal: AbortSignal) => getWorkspace(signal), []),
   );
@@ -47,8 +50,10 @@ function InternGate({
   if (!workspace.data) return null;
   const data = workspace.data,
     target = lifecyclePath(data);
+  const outcomesAvailable = data.status === 'active' || Boolean(data.hasAssignmentHistory);
+  const assignmentRequired = requireAssignment || !(historyRoute && outcomesAvailable) && !["/intern", "/intern/notifications", "/intern/profile", "/intern/github"].includes(pathname);
   return (
-    <ProductShell role="intern" activeAssignment={data.status === "active"}>
+    <InternShell active={data.status === "active"} outcomesAvailable={outcomesAvailable}>
       {target !== "/intern" ? (
         <Panel title="Tuyển dụng">
           <p className="text-sm">
@@ -58,7 +63,7 @@ function InternGate({
             Tiếp tục tuyển dụng
           </Link>
         </Panel>
-      ) : requireAssignment && data.status !== "active" ? (
+      ) : assignmentRequired && data.status !== "active" ? (
         <Panel title="Đang chờ phân công">
           <Empty>Bạn chưa có dự án, Sprint hoặc nhiệm vụ được giao.</Empty>
           <Link className="mt-3 block text-blue-600" href="/intern">
@@ -70,7 +75,7 @@ function InternGate({
       ) : (
         children
       )}
-    </ProductShell>
+    </InternShell>
   );
 }
 export function InternSprint({ workspace }: { workspace: InternWorkspace }) {

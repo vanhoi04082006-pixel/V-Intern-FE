@@ -323,7 +323,7 @@ describe("InstructorWorkspace", () => {
     ).toHaveLength(2);
   });
 
-  it("render Tổng quan Task với 4 trạng thái và Thiết lập nhanh với 6 shortcut", () => {
+  it("render Tổng quan Task với 4 trạng thái và không còn Thiết lập nhanh", () => {
     render(<InstructorWorkspace />);
 
     const taskSection = screen.getByRole("region", {
@@ -345,19 +345,7 @@ describe("InstructorWorkspace", () => {
       expect(within(cell).getByText(note)).toBeInTheDocument();
     }
 
-    const quickSection = screen.getByRole("region", { name: "Thiết lập nhanh" });
-    for (const action of [
-      "Bắt đầu phiên",
-      "Tạo task mới",
-      "Chọn project",
-      "Giao việc",
-      "Đánh giá AI",
-      "Xuất báo cáo",
-    ]) {
-      expect(
-        within(quickSection).getByRole("button", { name: action })
-      ).toBeInTheDocument();
-    }
+    expect(screen.queryByRole("region", { name: "Thiết lập nhanh" })).not.toBeInTheDocument();
   });
 
   it("render Hoạt động gần đây với 5 sự kiện mock", () => {

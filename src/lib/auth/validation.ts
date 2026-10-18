@@ -21,7 +21,7 @@ export function validateLogin(values: LoginValues): LoginFieldErrors {
   const errors: LoginFieldErrors = {};
 
   if (!values.identifier.trim()) {
-    errors.identifier = "Vui lòng nhập email hoặc tên đăng nhập.";
+    errors.identifier = "Vui lòng nhập email.";
   }
   if (!values.password) {
     errors.password = "Vui lòng nhập mật khẩu.";
@@ -51,6 +51,8 @@ export function validateRegister(values: RegisterValues): RegisterFieldErrors {
 
   if (!values.fullName.trim()) {
     errors.fullName = "Vui lòng nhập họ và tên.";
+  } else if (values.fullName.trim().length < 2 || values.fullName.trim().length > 128) {
+    errors.fullName = 'Họ tên cần từ 2 đến 128 ký tự.';
   }
 
   const email = values.email.trim();
@@ -64,6 +66,10 @@ export function validateRegister(values: RegisterValues): RegisterFieldErrors {
     errors.password = "Vui lòng nhập mật khẩu.";
   } else if (values.password.length < PASSWORD_MIN_LENGTH) {
     errors.password = `Mật khẩu phải có ít nhất ${PASSWORD_MIN_LENGTH} ký tự.`;
+  } else if (!values.password.trim()) {
+    errors.password = 'Mật khẩu không được chỉ chứa khoảng trắng.';
+  } else if (new Blob([values.password]).size > 72) {
+    errors.password = 'Mật khẩu quá dài. Vui lòng dùng mật khẩu ngắn hơn.';
   }
 
   if (!values.confirmPassword) {

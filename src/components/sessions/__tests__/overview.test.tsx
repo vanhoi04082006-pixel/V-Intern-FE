@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { SessionList } from "../session-list";
 import { SessionOverview, type DetailDeps } from "../session-overview";
 
@@ -11,6 +11,19 @@ const overviewRow = {
 };
 
 describe("SessionList (M6)", () => {
+  it('shows active Sprint and backend alerts, and sends sorting to the server', async () => {
+    const list = vi.fn(async () => ({ items: [{ ...overviewRow,
+      currentSprint: { id: 'sp1', code: 'SP-1', name: 'Giao diện' },
+      alerts: { overdueTasks: 2, pendingReview: 1, sessionOverdue: true },
+    }], total: 1, page: 1, pageSize: 10, totalPages: 1 }));
+    render(<SessionList list={list} />);
+    expect(await screen.findByText(/Sprint đang chạy: Giao diện/)).toBeInTheDocument();
+    expect(screen.getByText('2 task quá hạn')).toBeInTheDocument();
+    expect(screen.getByText('1 task chờ duyệt')).toBeInTheDocument();
+    expect(screen.getByText('Phiên đã quá ngày kết thúc')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Sắp xếp phiên'), { target: { value: 'progress:asc' } });
+    await waitFor(() => expect(list).toHaveBeenLastCalledWith(expect.objectContaining({ page: 1, sortBy: 'progress', sortDirection: 'asc' }), expect.any(AbortSignal)));
+  });
   it("renders aggregated rows with progress and detail links", async () => {
     const list = vi.fn(async () => ({ items: [overviewRow], total: 1, page: 1, pageSize: 10, totalPages: 1 }));
     render(<SessionList list={list} />);
@@ -71,6 +84,21 @@ describe("SessionOverview (M6)", () => {
     expect(screen.getByText("FE")).toBeInTheDocument();
     expect(screen.getByText(/confirmed/)).toBeInTheDocument();
   });
+  it('shows member role, dependency, immutable source and separate AI/human decisions', async () => {
+    const d = deps();
+    d.getSession = vi.fn(async () => ({ ...session, members: [{ userId: 'u1', displayName: 'Lan', email: 'lan@example.test', role: 'frontend', assignmentStatus: 'active' }], projectSnapshot: { objectives: { business: 'Ghi chú an toàn', learning: ['Kiểm thử API'] }, expectedOutputs: { artifacts: ['README triển khai'] } } })) as unknown as DetailDeps['getSession'];
+    d.listTasks = vi.fn(async () => ({ items: [{ ...tasks[1], delivery: { blocked: true, submission: { id: 'sub1', status: 'approved', prUrl: 'https://github.com/owner/repo/pull/1', headSha: 'a'.repeat(40), submittedAt: '2026-10-01', aiStatus: 'awaiting_instructor', aiScore: 98, aiSummary: 'Đạt tiêu chí', instructorScore: 90.5, instructorFeedback: 'Đã duyệt độc lập' } } }], total: 1, page: 1, pageSize: 20, totalPages: 1 })) as unknown as DetailDeps['listTasks'];
+    render(<SessionOverview sessionId="s1" deps={d} />);
+    expect(await screen.findByText(/Frontend Developer/)).toBeInTheDocument();
+    expect(screen.getByText('Chờ phụ thuộc')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Mở bài nộp trên GitHub' })).toHaveAttribute('href', 'https://github.com/owner/repo/pull/1');
+    expect(screen.getByText(/90.5\/100/)).toBeInTheDocument();
+    expect(screen.getByText('Đã duyệt độc lập')).toBeInTheDocument();
+    expect(screen.getByText('Ghi chú an toàn')).toBeInTheDocument();
+    expect(screen.getByText('README triển khai')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Trạng thái task trong phiên'), { target: { value: 'review' } });
+    await waitFor(() => expect(d.listTasks).toHaveBeenLastCalledWith(expect.objectContaining({ sessionId: 's1', status: 'review', page: 1 }), expect.any(AbortSignal)));
+  });
   it("shows an empty state before any plan is confirmed", async () => {
     const d = deps();
     d.listSprints = vi.fn(async () => ({ items: [], total: 1, page: 1, pageSize: 50, totalPages: 1 }));
@@ -87,5 +115,12 @@ describe("SessionOverview (M6)", () => {
     expect(await screen.findByText('150 hoàn thành (60%)')).toBeInTheDocument();
     expect((await screen.findByRole('link', { name: 'FE' })).getAttribute('href')).toBe('/instructor/tasks/t1');
     expect(screen.getByRole('link', { name: 'Sprint 1' }).getAttribute('href')).toBe('/instructor/sprints/sp1');
+  });
+  it('keeps admin drill-down inside admin routes and does not mount the instructor planning action', async () => {
+    render(<SessionOverview sessionId="s1" deps={deps()} basePath="/admin" />);
+    expect((await screen.findByRole('link', { name: 'FE' })).getAttribute('href')).toBe('/admin/tasks/t1');
+    expect(screen.getByRole('link', { name: 'Sprint & Task' }).getAttribute('href')).toContain('/admin/sprints?');
+    expect(screen.queryByRole('link', { name: 'Đội hình & thiết lập' })).toBeNull();
+    expect(screen.getAllByRole('link').some(link => link.getAttribute('href')?.startsWith('/instructor/'))).toBe(false);
   });
 });

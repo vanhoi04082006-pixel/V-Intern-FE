@@ -17,6 +17,7 @@ export interface TemplateRoleDetail {
   countMax: number | null;
   requiredSkills: string[];
   recommendedSkills: string[];
+  responsibilities: string[];
   level: string | null;
 }
 
@@ -59,6 +60,7 @@ export function parseRoleDetail(value: unknown) {
     countMax: opt(v.countMax, number),
     requiredSkills: strArr(v.requiredSkills),
     recommendedSkills: strArr(v.recommendedSkills),
+    responsibilities: strArr(v.responsibilities),
     level: opt(v.level, string),
   };
 }
@@ -126,6 +128,8 @@ export const listTemplates = (q: TemplateQuery, signal?: AbortSignal) => {
 
 export const getTemplate = (id: string, signal?: AbortSignal) =>
   request(`/project-templates/${encodeURIComponent(id)}`, parseTemplateDetail, { signal });
+export const saveTemplateDefinition = (definition: Record<string, unknown>, current?: { id: string; version: number }) => request(`/project-templates${current ? '/' + encodeURIComponent(current.id) : ''}`, raw => { const v = record(raw); return { id: string(v.id), version: number(v.version) }; }, { method: current ? 'PATCH' : 'POST', body: current ? { definition, expectedVersion: current.version } : definition });
+export const setTemplateStatus = (template: { id: string; version: number }, status: 'active' | 'archived') => request(`/project-templates/${encodeURIComponent(template.id)}`, parseTemplateSummary, { method: 'PATCH', body: { status, expectedVersion: template.version } });
 
 export const getTemplateContext = (projectId: string, signal?: AbortSignal) =>
   request(`/projects/${encodeURIComponent(projectId)}/template-context`, (v) => {
@@ -153,5 +157,12 @@ export const proposeChange = (id: string,body: { title:string;description:string
 export const applyChange = (id: string) => request(`/project-changes/${id}/apply`,record,{ method:'POST' });
 export const getTaskSpec = (id: string, signal?: AbortSignal) => request(`/tasks/${encodeURIComponent(id)}/spec`, (v) => nullable(v, (raw) => {
   const s = record(raw);
-  return { requirements: string(s.requirements), role: string(s.role), dod: array(s.dod, string), documentation: string(s.documentation), rubricVersion: string(s.rubricVersion) };
+  return { requirements: string(s.requirements), role: string(s.role), dod: array(s.dod, string), documentation: string(s.documentation), rubricVersion: string(s.rubricVersion),
+    expectedOutput: s.expectedOutput == null ? null : string(s.expectedOutput),
+    estimatedHours: s.estimatedHours == null ? null : number(s.estimatedHours),
+    skillTags: s.skillTags === undefined ? [] : array(s.skillTags, string),
+    complexity: s.complexity === undefined ? null : string(s.complexity),
+    blocked: s.blocked === true,
+    dependencies: s.dependencies === undefined ? [] : array(s.dependencies, item => { const d = record(item); return { taskId: string(d.taskId), code: string(d.code), title: string(d.title), status: string(d.status) }; }),
+  };
 }), { signal });

@@ -6,6 +6,7 @@ import { randomUUID } from "node:crypto";
 import { readDelivery, assertUnpublished, assertPublishedDelivery, assertReplayDelivery } from "./project-first-delivery.mjs";
 import { createRequire } from "node:module";
 import { chromium, expect } from "@playwright/test";
+import { answerTestInterview } from "./project-first-provider.mjs";
 const be = path.resolve(process.env.LIVE_BE_ROOT), req = createRequire(path.join(be, "package.json"));
 assert.equal(process.env.NODE_ENV, "test");
 assert.match(process.env.DB_NAME ?? "", /^VIntern_Phase715_[A-Za-z0-9_]+$/);
@@ -45,7 +46,9 @@ try {
   for (const key of ["frontend", "frontend2", "frontendExtra", "backend"]) {
     await call(key, "/recruitment/me/role", "PATCH", { role: key.startsWith("frontend") ? "frontend" : "backend" });
     const interview = await call(key, "/recruitment/me/interviews", "POST", {}, 201);
-    for (const q of interview.questions) await call(key, `/recruitment/me/interviews/${interview.session.id}/answers/${q.id}`, "PUT", { answerText: "Controlled contract answer: clarify requirements, implement with tests and verify persisted results." });
+    assert.equal(interview.session.questionCount, 10);
+    await answerTestInterview((endpoint, method, body) => call(key, endpoint, method, body, method === 'POST' ? 201 : 200), interview,
+      'Controlled contract answer: clarify requirements, implement with tests and verify persisted results.');
     // The idempotent submit endpoint explicitly returns HTTP 200, not Nest's POST default.
     assert.equal((await call(key, `/recruitment/me/interviews/${interview.session.id}/submit`, "POST", {}, 200)).result.decision, "passed");
   }
@@ -60,7 +63,7 @@ try {
   for (let i = 0; i < 10; i++) templates.push(await call("instructor", "/project-templates", "POST", { ...definition, name: `${definition.name} ${i}`, code: `PFCI-${tag}-${i}`, category: `pf-${tag}`, difficulty: i === 9 ? "advanced" : "intermediate" }, 201));
   const template = templates[0];
   stage = "entry-library";
-  await page.goto(base + "/login"); await page.getByLabel("Email hoặc tên đăng nhập").fill(users.instructor.email); await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD); await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+  await page.goto(base + "/login"); await page.getByLabel("Email", { exact: true }).fill(users.instructor.email); await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD); await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
   await page.waitForURL("**/instructor"); await expect(page.getByRole("heading", { name: "Workspace giảng viên", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Khởi tạo phiên từ thư viện", exact: true })).toBeVisible();
   assert.equal(await page.getByRole("link", { name: /^(Lớp học|Class|Attendance|Điểm danh)$/ }).count(), 0);
@@ -117,9 +120,16 @@ try {
   stage = "eligible-team";
   for (const key of ["frontend", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
-    const row = page.locator("li").filter({ hasText: users[key].email }); await row.getByRole("button", { name: "Chi tiết", exact: true }).click();
-    await expect(row.locator("pre")).toContainText(users[key].name);
-    assert.equal((await page.locator("pre").allTextContents()).some(text => text.includes(users[key === "frontend" ? "backend" : "frontend"].name)), false);
+    const row = page.locator("li").filter({ hasText: users[key].email });
+    const [response] = await Promise.all([page.waitForResponse(r => r.url().toLowerCase().endsWith(`/recruitment/candidates/${users[key].id.toLowerCase()}`) && r.request().method() === 'GET'), row.getByRole("button", { name: "Chi tiết", exact: true }).click()]);
+    assert.equal(response.status(), 200);
+    const detail = await response.json();
+    assert.equal(detail.displayName, users[key].name); assert.equal(detail.email, users[key].email); assert.equal(detail.result.criteria.length, 6);
+    await expect(row.getByRole('heading', { name: 'Điểm mạnh & kỹ năng', exact: true })).toBeVisible();
+    await expect(row.getByText('Kiến thức: 82/100', { exact: true })).toBeVisible();
+    await expect(row.getByText(`Development interview passed. Role: ${key}.`, { exact: true })).toBeVisible();
+    assert.equal(await page.getByRole('button', { name: 'Ẩn', exact: true }).count(), 1);
+    await expect(page.getByText(`Development interview passed. Role: ${key === 'frontend' ? 'backend' : 'frontend'}.`, { exact: true })).toHaveCount(0);
   }
   for (const key of ["frontend", "frontend2", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
@@ -131,7 +141,7 @@ try {
   await page.getByLabel("Lọc theo role", { exact: true }).selectOption("frontend");
   await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users.frontendExtra.email);
   const extraCandidate = page.locator("li").filter({ hasText: users.frontendExtra.email });
-  await expect(extraCandidate.getByText(/Recruitment: passed/)).toBeVisible();
+  await expect(extraCandidate.getByText(/Đã đậu phỏng vấn/)).toBeVisible();
   await expect(extraCandidate.getByRole("button", { name: "Thêm", exact: true })).toBeDisabled();
   await call("instructor", "/assignments", "POST", assignment("frontendExtra"), 409, "ROLE_SLOT_FULL");
   await call("instructor", "/assignments", "POST", { ...assignment("frontend"), projectId: second.projectId, sessionId: second.sessionId }, 409, "ASSIGNMENT_CONFLICT");

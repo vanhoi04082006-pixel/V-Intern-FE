@@ -390,6 +390,8 @@ export function Certificates({ id }: { id?: string }) {
                   <p className="mt-3 text-sm">
                     Ngày cấp: {new Date(c.issuedAt).toLocaleDateString("vi-VN")}
                   </p>
+                  <p className="mt-2 text-sm">Hoàn thành: {c.completedAt ? new Date(c.completedAt).toLocaleDateString('vi-VN') : 'Chưa ghi nhận ngày hoàn thành'}</p>
+                  {(c.projectName || c.sessionName) && <p className="mt-2 break-words text-sm text-slate-600">{[c.projectName, c.sessionName].filter(Boolean).join(' · ')}</p>}
                   <p className="mt-2 text-xs text-slate-500">
                     {c.policyCode} · phiên bản {c.policyVersion}
                   </p>
@@ -515,6 +517,8 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
                     <dt>Dự án</dt>
                     <dd>{result.projectName ?? "Chưa có"}</dd>
                   </div>
+                  <div><dt>Phiên thực tập</dt><dd>{result.sessionName ?? 'Chưa ghi nhận'}</dd></div>
+                  <div><dt>Ngày hoàn thành</dt><dd>{result.completedAt ? new Date(result.completedAt).toLocaleDateString('vi-VN') : 'Chưa ghi nhận'}</dd></div>
                 </>
               ) : (
                 <p role="status" className="text-red-700">
@@ -638,10 +642,11 @@ export function Notifications() {
                           {!n.readAt && (
                             <button
                               disabled={busy}
+                              aria-label={`Đánh dấu đã đọc: ${n.title}`}
                               onClick={() => void read(n.id)}
                               className="text-sm text-blue-600"
                             >
-                              Đã đọc
+                              Đánh dấu đã đọc
                             </button>
                           )}
                         </div>

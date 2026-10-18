@@ -69,7 +69,7 @@ try {
   });
   await page.goto(base + "/login");
   await page
-    .getByLabel("Email hoặc tên đăng nhập")
+    .getByLabel("Email", { exact: true })
     .fill("instructor@phase715.test");
   await page
     .getByLabel("Mật khẩu", { exact: true })

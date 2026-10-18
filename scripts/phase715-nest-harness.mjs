@@ -1,7 +1,8 @@
-/** DEVELOPMENT TEST HARNESS ONLY. Real AppModule/SQL; only AI provider overridden. */
+/** TEST HARNESS ONLY. Real AppModule/SQL; explicit AI and read-only GitHub HTTP fixtures. */
 import path from "node:path";
 import { createRequire } from "node:module";
-import { buildTestSprintPlan } from "./project-first-provider.mjs";
+import { buildTestSprintPlan, buildTestInterviewPayload } from "./project-first-provider.mjs";
+import { createTestGithubClient } from './project-first-github.mjs';
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE");
 const req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -70,30 +71,12 @@ const provider = {
         ],
         summary: "Khuyến nghị test từ dữ liệu nhiệm vụ.",
       };
-    const failed = request.input.role === "qa";
-    const data = request.validate(
-      payload ?? {
-        technicalScore: failed ? 58 : 85,
-        softSkillScore: 72,
-        criteria: [
-          {
-            code: "integration",
-            score: failed ? 58 : 85,
-            feedback: "Development TestAIProvider evaluation.",
-          },
-        ],
-        strengths: failed ? [] : ["Concrete reasoning"],
-        weaknesses: failed ? ["Needs technical practice"] : [],
-        feedback: failed
-          ? "Development interview needs improvement."
-          : "Development interview passed.",
-        recommendedRole: "backend",
-        // Deliberately contradictory fields prove Nest computes decision/overall.
-        overallScore: 0,
-        decision: "failed",
-        passed: false,
-      },
-    );
+    else if (request.task === 'review_student_code') payload = {
+      rubric: { functional: 90, quality: 90, testing: 90, errors: 90, security: 90, dod: 90 },
+      summary: 'Automated UI/SQL fixture only; instructor must examine evidence and make the final decision.',
+      findings: [], limitations: ['CI transport fixture has no independent execution evidence; this is not a verified passing implementation.'],
+    };
+    const data = request.validate(payload ?? buildTestInterviewPayload(request));
     return {
       data,
       provider: this.name,
@@ -110,6 +93,8 @@ const config = req(path.join(be, "dist/config/configuration.js")).appConfig(
 const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
   .overrideProvider(AI_PROVIDER_TOKEN)
   .useValue(provider)
+  .overrideProvider(req(path.join(be, 'dist/github/github-client.js')).GithubClient)
+  .useFactory({ factory: createTestGithubClient, inject: [req('typeorm').DataSource] })
   .compile();
 const app = moduleRef.createNestApplication({ logger: ["error", "warn"] });
 app.use(req("helmet")());
@@ -142,7 +127,7 @@ SwaggerModule.setup(
 );
 await app.listen(8080);
 console.log(
-  "Real Nest AppModule listening :8080; disposable SQL DB; explicit TestAIProvider override. No production fallback.",
+  "Real Nest AppModule listening :8080; disposable SQL DB; explicit test-only AI and read-only GitHub transport. No production fallback or execution pass fixture.",
 );
 process.on("SIGTERM", () => {
   void app.close().then(() => process.exit());

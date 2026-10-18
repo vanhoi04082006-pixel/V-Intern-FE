@@ -1,5 +1,6 @@
+"use client";
 import Link from "next/link";
-import type { Ref } from "react";
+import { useState, type Ref } from "react";
 import {
   Bell,
   ChevronDown,
@@ -29,6 +30,7 @@ export function InternTopbar({
   onOpenMenu,
   menuButtonRef,
   waiting = false,
+  searchItems = [{ href: "/intern/notifications", label: "Thông báo" }, { href: "/intern/profile", label: "Hồ sơ" }],
 }: {
   className?: string;
   waiting?: boolean;
@@ -39,7 +41,10 @@ export function InternTopbar({
   onOpenMenu?: () => void;
   /** Ref nút mở menu — workspace dùng để trả focus khi drawer đóng */
   menuButtonRef?: Ref<HTMLButtonElement>;
+  searchItems?: { href: string; label: string }[];
 }) {
+  const [query, setQuery] = useState("");
+  const matches = searchItems.filter(item => item.label.toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")));
   return (
     <header
       className={cn(
@@ -109,7 +114,7 @@ export function InternTopbar({
         >
           <div
             className={cn(
-              "hidden h-10 w-[320px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[360px]",
+              "relative hidden h-10 w-[280px] items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 transition-shadow focus-within:ring-2 focus-within:ring-brand/30 lg:flex xl:w-[320px]",
               waiting && "mr-auto",
             )}
           >
@@ -121,11 +126,13 @@ export function InternTopbar({
               type="search"
               aria-label="Tìm kiếm trong không gian thực tập"
               placeholder={searchPlaceholder}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => { if (e.key === "Escape") setQuery(""); }}
+              autoComplete="off"
               className="w-full bg-transparent text-sm text-navy outline-none placeholder:text-slate-400"
             />
-            <kbd className="shrink-0 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[11px] font-medium text-slate-400">
-              ⌘K
-            </kbd>
+            {query.trim() && <nav aria-label="Kết quả tìm trang" className="absolute inset-x-0 top-12 z-40 max-h-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-lg">{matches.length ? matches.map(item => <Link key={item.href} href={item.href} onClick={() => setQuery("")} className="block rounded-lg px-3 py-2 text-sm text-navy hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-blue-600">{item.label}</Link>) : <p role="status" className="p-3 text-sm text-slate-500">Không tìm thấy trang phù hợp.</p>}</nav>}
           </div>
 
           <Link

@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useState } from "react";
 import * as api from "@/lib/api/management";
-import { listPerformance } from "@/lib/api/management";
+import { PerformanceMemberPicker } from './performance-member-picker';
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -594,12 +594,6 @@ function NewEvaluation({
   const [open, setOpen] = useState(false),
     [internId, setInternId] = useState(""),
     action = useAction();
-  const members = useResource(
-    useCallback(
-      (s: AbortSignal) => listPerformance(new URLSearchParams(), s),
-      [],
-    ),
-  );
   return (
     <>
       <button className={buttonClass} onClick={() => setOpen(!open)}>
@@ -618,26 +612,7 @@ function NewEvaluation({
           }}
         >
           {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
-          {members.loading ? (
-            <LoadingState />
-          ) : members.error ? (
-            <ErrorState error={members.error} onRetry={members.reload} />
-          ) : (
-            <select
-              aria-label="Intern đánh giá"
-              required
-              className={inputClass}
-              value={internId}
-              onChange={(e) => setInternId(e.target.value)}
-            >
-              <option value="">Chọn Intern trong phạm vi quản lý</option>
-              {members.data?.map((m) => (
-                <option key={m.userId} value={m.userId}>
-                  {m.displayName ?? m.userId}
-                </option>
-              ))}
-            </select>
-          )}
+          <PerformanceMemberPicker label="Intern đánh giá" required value={internId} onChange={setInternId} />
           <button className={buttonClass} disabled={action.busy || !internId}>
             Tạo bản nháp
           </button>

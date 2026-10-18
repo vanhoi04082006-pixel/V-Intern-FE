@@ -78,7 +78,7 @@ try {
       });
   });
   await page.goto(base + "/login");
-  await page.getByLabel("Email hoặc tên đăng nhập").fill(admin);
+  await page.getByLabel("Email", { exact: true }).fill(admin);
   await page
     .getByLabel("Mật khẩu", { exact: true })
     .fill(process.env.LIVE_PASSWORD);

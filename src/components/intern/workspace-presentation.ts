@@ -28,7 +28,7 @@ export const INTERN_BOTTOM_NAV: InternNavItem = {
   icon: Settings,
   href: "/intern/profile",
 };
-export function workspaceNav(active = false): InternNavGroup[] {
+export function workspaceNav(active = false, outcomesAvailable = active): InternNavGroup[] {
   return [
     {
       id: "workspace",
@@ -46,13 +46,14 @@ export function workspaceNav(active = false): InternNavGroup[] {
           { id: "project", label: "Dự án", icon: FolderKanban },
           { id: "mentor", label: "AI Mentor", icon: Bot },
           { id: "notifications", label: "Thông báo", icon: Bell },
+          { id: "github", label: "GitHub", icon: CodeXml },
         ].map((item) => ({
           ...item,
           href:
-            active || item.id === "notifications"
+            active || ["notifications", "github"].includes(item.id)
               ? `/intern/${item.id}`
               : undefined,
-          unavailable: !active && item.id !== "notifications",
+          unavailable: !active && !["notifications", "github"].includes(item.id),
         })),
       ],
     },
@@ -63,16 +64,16 @@ export function workspaceNav(active = false): InternNavGroup[] {
         { id: "evaluations", label: "Đánh giá", icon: ClipboardCheck },
         { id: "kpi", label: "KPI & Lương ảo", icon: ChartColumn },
         { id: "certificates", label: "Chứng nhận", icon: Award },
-        ...(active
+        ...(outcomesAvailable
           ? [
               { id: "performance", label: "Hiệu suất", icon: ChartColumn },
-              { id: "recommendations", label: "Gợi ý phát triển", icon: Bot },
             ]
           : []),
+        ...(active ? [{ id: "recommendations", label: "Gợi ý phát triển", icon: Bot }] : []),
       ].map((item) => ({
         ...item,
-        href: active ? `/intern/${item.id}` : undefined,
-        unavailable: !active,
+        href: outcomesAvailable ? `/intern/${item.id}` : undefined,
+        unavailable: !outcomesAvailable,
       })),
     },
   ];

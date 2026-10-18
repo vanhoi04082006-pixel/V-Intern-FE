@@ -33,7 +33,9 @@ let evaluationFailed = false;
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status });
 const requests: { url: string; options: RequestInit }[] = [];
+let evaluationWait: Promise<void> | undefined;
 beforeEach(() => {
+  evaluationWait = undefined;
   clearSession();
   setSession("token", principal);
   vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8080/api/v1");
@@ -86,6 +88,7 @@ beforeEach(() => {
         });
       }
       if (url.endsWith("/submit") || url.endsWith("/retry-evaluation")) {
+        await evaluationWait;
         if (evaluationFailed) {
           interview.session.status = "evaluation_failed";
           profile.status = "evaluation_pending";
@@ -122,6 +125,24 @@ function renderFlow(child: React.ReactNode) {
   return render(<RecruitmentProvider>{child}</RecruitmentProvider>);
 }
 describe("Nest recruitment integration", () => {
+  it("shows an honest animated pending state during evaluation, not answer saving or a countdown", async () => {
+    setupInterview();
+    interview.questions.forEach((q) => { q.answered = true; });
+    let finish!: () => void;
+    evaluationWait = new Promise<void>((resolve) => { finish = resolve; });
+    renderFlow(<InterviewStep />);
+    await screen.findByText("Câu hỏi kỹ thuật từ backend");
+    await userEvent.click(screen.getByRole("button", { name: "Nộp bài phỏng vấn" }));
+    try {
+      expect(await screen.findByRole("status", { name: "AI đang chấm bài" })).toBeInTheDocument();
+      expect(screen.queryByLabelText("Thời gian còn lại")).not.toBeInTheDocument();
+      expect(screen.queryByText("Đang lưu...")).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Đang chấm bài…" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Tải lại trạng thái" })).toBeDisabled();
+      expect(requests.filter((r) => r.url.endsWith("/submit"))).toHaveLength(1);
+    } finally { finish(); }
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/intern/onboarding/result"));
+  });
   it("Welcome retains guidance and real next-step link", async () => {
     renderFlow(<WelcomeStep />);
     expect(

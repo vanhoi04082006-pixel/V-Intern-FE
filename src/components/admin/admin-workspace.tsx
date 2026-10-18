@@ -9,7 +9,6 @@ import { ActivityLogCard } from "./activity-log-card";
 import { AdminSidebar } from "./admin-sidebar";
 import { AdminTopbar } from "./admin-topbar";
 import { MetricCard } from "./metric-card";
-import { QuickSettingsCard } from "./quick-settings-card";
 import { RoleSummaryCard } from "./role-summary-card";
 import { SystemAlertsCard } from "./system-alerts-card";
 import { SystemStatusCard } from "./system-status-card";
@@ -184,7 +183,6 @@ export function AdminWorkspace() {
             <div className="min-w-0 space-y-5">
               <SystemStatusCard />
               <ActivityLogCard />
-              <QuickSettingsCard />
             </div>
           </div>
         </main>

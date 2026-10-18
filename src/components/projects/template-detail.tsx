@@ -6,6 +6,7 @@ import { PageTitle, Panel, buttonClass, inputClass } from "@/components/product/
 import { useAction } from "@/components/product/use-action";
 import { Can } from "@/components/auth/can";
 import { useResource } from "@/lib/api/use-resource";
+import { BlueprintArchitecture, BlueprintTask } from './blueprint-architecture';
 import {
   getTemplate,
   parseRoleDetail,
@@ -97,6 +98,7 @@ export function TemplateDetail({
       <Section title="Tổng quan">
         <p className="text-xs text-slate-500">Nhóm: {t.category ?? "—"} · Công nghệ: {(t.techStack ?? []).join(", ") || "—"}</p>
         <p>{typeof def.description === "string" ? def.description : ""}</p>
+        <p className="text-xs text-slate-500">{typeof def.estimatedDurationDays === 'number' ? `Thời lượng: ${def.estimatedDurationDays} ngày · ` : ''}Đội hình gợi ý: {typeof def.recommendedTeamSize === 'number' ? def.recommendedTeamSize : t.teamSize} người{typeof def.slug === 'string' ? ` · ${def.slug}` : ''}</p>
       </Section>
       <Section title="Mục tiêu">
         {typeof objectives.business === "string" && <p><strong>Kinh doanh:</strong> {objectives.business}</p>}
@@ -127,6 +129,7 @@ export function TemplateDetail({
                 </p>
                 {r.requiredSkills.length > 0 && <p className="text-xs">Kỹ năng bắt buộc: {r.requiredSkills.join(", ")}</p>}
                 {r.recommendedSkills.length > 0 && <p className="text-xs text-slate-500">Nên có: {r.recommendedSkills.join(", ")}</p>}
+                {r.responsibilities.length > 0 && <BulletList items={r.responsibilities} empty="" />}
               </li>
             ))}
           </ul>
@@ -141,13 +144,17 @@ export function TemplateDetail({
               <p className="font-semibold">{i + 1}. {String(s.name ?? "")}</p>
               {typeof s.goal === "string" && <p className="text-xs text-slate-500">{s.goal}</p>}
               <p className="text-xs text-slate-400">{Array.isArray(s.tasks) ? s.tasks.length : 0} work packages · {typeof s.durationDays === "number" ? `${s.durationDays} ngày` : ""}</p>
+              {Array.isArray(s.tasks) && <div className="mt-3 space-y-2">{s.tasks.map((task, index) => <BlueprintTask key={index} value={task} />)}</div>}
             </li>
           ))}
         </ul>
       </Section>
+      <BlueprintArchitecture definition={def} />
       <Section title="Kết quả mong đợi & tiêu chí chấp nhận">
         <p><strong>Deliverables:</strong></p>
         <BulletList items={strArr(outputs.deliverables)} empty="—" />
+        <p><strong>Tài liệu & bằng chứng:</strong></p>
+        <BulletList items={strArr(outputs.artifacts)} empty="—" />
         <p><strong>Definition of Done:</strong></p>
         <BulletList items={strArr(acceptance.definitionOfDone)} empty="—" />
         <p><strong>Quality gates:</strong></p>

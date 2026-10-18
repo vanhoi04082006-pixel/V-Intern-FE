@@ -45,5 +45,8 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Production dependency audit (high and critical block release)
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Build
         run: npm run build

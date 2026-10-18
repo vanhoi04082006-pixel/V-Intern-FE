@@ -17,6 +17,7 @@ export const statusLabels: Record<TaskStatus, string> = {
   done: "Hoàn thành",
 };
 export const priorities = ["low", "medium", "high", "critical"] as const;
+export const priorityLabels = { low: 'Thấp', medium: 'Trung bình', high: 'Cao', critical: 'Khẩn cấp' } as const;
 export function parseBoardTask(value: unknown) {
   const v = record(value);
   return {
@@ -34,6 +35,8 @@ export function parseBoardTask(value: unknown) {
 }
 export function parseTask(value: unknown) {
   const v = record(value);
+  const sprint = v.sprint == null ? null : record(v.sprint);
+  const repository = v.repository == null ? null : record(v.repository);
   return {
     ...parseBoardTask(v),
     description: nullable(v.description, string),
@@ -41,6 +44,8 @@ export function parseTask(value: unknown) {
     sprintId: nullable(v.sprintId, string),
     storyPoints: nullable(v.storyPoints, number),
     version: number(v.version),
+    ...(sprint ? { sprint: { id: string(sprint.id), code: string(sprint.code), name: string(sprint.name), status: string(sprint.status) } } : {}),
+    ...(v.repository !== undefined ? { repository: repository ? { status: oneOf(repository.status, ['provisioning', 'ready', 'failed'] as const), fullName: string(repository.fullName) } : null } : {}),
   };
 }
 export type Task = ReturnType<typeof parseTask>;
@@ -77,10 +82,14 @@ export function parseBoard(value: unknown) {
       name: string(s.name),
       status: string(s.status),
       projectId: string(s.projectId),
+      ...(s.sessionId === undefined ? {} : { sessionId: nullable(s.sessionId, string) }),
+      ...(s.goal === undefined ? {} : { goal: nullable(s.goal, string) }),
+      ...(s.description === undefined ? {} : { description: nullable(s.description, string) }),
       startDate: string(s.startDate),
       endDate: string(s.endDate),
     },
     total: number(v.total),
+    ...(v.overdueOpenTaskCount === undefined ? {} : { overdueOpenTaskCount: number(v.overdueOpenTaskCount) }),
     columns: array(v.columns, (value) => {
       const c = record(value);
       return {

@@ -103,11 +103,11 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
       fullName: fullName.trim(),
       email: email.trim(),
       password,
+      acceptedTerms: terms,
     });
 
     if (result.ok) {
-      // Chỉ đạt được khi adapter auth thật trả về thành công
-      // (production hiện tại không bao giờ vào nhánh này).
+      // Signup does not grant a session; the user logs in explicitly.
       setStatus("success");
       setStatusMessage("Đăng ký thành công.");
       return;

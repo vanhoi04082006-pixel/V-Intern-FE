@@ -19,6 +19,7 @@ import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { Metrics } from "./outcomes";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
+import { AdminSystemStatus } from '@/components/admin/system-status';
 function Result<T>({
   resource: r,
   children,
@@ -1728,7 +1729,7 @@ export function AdminServices() {
               ].map(([name, status, description]) => (
                 <Panel key={name} title={name}>
                   <Badge>{status}</Badge>
-                  <p className="mt-3 text-sm text-slate-500">{description}</p>
+                  <p className="mt-3 break-words text-sm text-slate-500">{description}</p>
                 </Panel>
               ))}
             </div>
@@ -1740,6 +1741,7 @@ export function AdminServices() {
           </>
         )}
       </Result>
+      <AdminSystemStatus />
     </>
   );
 }

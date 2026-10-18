@@ -15,7 +15,7 @@ const alice = {
   userId: "u1", displayName: "SV A", email: "a@x.edu", status: "passed",
   selectedRole: "frontend", attemptCount: 1, recruitedAt: "2026-01-01",
   hasActiveAssignment: false, activeProjectId: null,
-  result: { overallScore: 81, technicalScore: 85, softSkillScore: 72, decision: "passed", evaluatedAt: "2026-01-02" },
+  result: { overallScore: 81, technicalScore: 85, softSkillScore: 72, englishScore: 74, strengths: ['React'], weaknesses: ['TypeScript'], decision: "passed", evaluatedAt: "2026-01-02" },
 };
 const bob = {
   ...alice, userId: "u2", displayName: "SV B", email: "b@x.edu", status: "failed", result: null,
@@ -24,7 +24,7 @@ const bob = {
 function deps(over: Record<string, unknown> = {}) {
   return {
     search: vi.fn(async () => ({ items: [alice, bob], total: 2, page: 1, pageSize: 10, totalPages: 1 })),
-    detail: vi.fn(async () => ({ scores: "ok" })),
+    detail: vi.fn(async () => ({ result: { feedback: 'Có nền tảng tốt', strengths: ['React'], weaknesses: ['TypeScript'], criteria: [{ code: 'english', score: 74, feedback: 'Trao đổi rõ ràng' }] } })),
     assign: vi.fn(async () => "assign-1"),
     cancel: vi.fn(async () => "assign-1"),
     listAssignments: vi.fn(async () => []),
@@ -53,6 +53,14 @@ describe("ineligibilityReason (M4)", () => {
 });
 
 describe("MemberSelector (M4)", () => {
+  it('removes a roster member even when the eligible search correctly excludes assigned students', async () => {
+    const d = deps({ search: vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 10, totalPages: 0 })), listAssignments: vi.fn(async () => [{ id: 'assigned-one', internId: 'u1', status: 'active' }]) });
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} members={[{ userId: 'u1', displayName: 'SV A', email: 'a@x.edu' }]} />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Gỡ SV A khỏi phiên' }));
+    await screen.findByText(/Đã gỡ SV A/);
+    expect(d.listAssignments).toHaveBeenCalledWith('s1', undefined, 'u1');
+    expect(d.cancel).toHaveBeenCalledWith('assigned-one');
+  });
   it("hides assignment mutations when the instructor lacks manage permission", async () => {
     setSession("test-token", { ...instructor, permissions: ["assignments.view"] });
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={deps()} />);
@@ -62,13 +70,13 @@ describe("MemberSelector (M4)", () => {
   });
   it("keeps the latest candidate detail when responses finish out of order", async () => {
     let resolveAlice!: (value: Record<string, unknown>) => void;
-    const d = deps({ detail: vi.fn((id: string) => id === "u1" ? new Promise<Record<string, unknown>>(resolve => { resolveAlice = resolve; }) : Promise.resolve({ candidate: "Bob interview" })) });
+    const d = deps({ detail: vi.fn((id: string) => id === "u1" ? new Promise<Record<string, unknown>>(resolve => { resolveAlice = resolve; }) : Promise.resolve({ result: { feedback: "Bob interview" } })) });
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     await screen.findByText("SV A");
     fireEvent.click(screen.getAllByRole("button", { name: "Chi tiết" })[0]);
     fireEvent.click(screen.getAllByRole("button", { name: "Chi tiết" })[0]);
     await screen.findByText(/Bob interview/);
-    await act(async () => resolveAlice({ candidate: "Alice interview" }));
+    await act(async () => resolveAlice({ result: { feedback: "Alice interview" } }));
     expect(screen.getByText(/Bob interview/)).toBeInTheDocument();
     expect(screen.queryByText(/Alice interview/)).not.toBeInTheDocument();
   });
@@ -85,8 +93,11 @@ describe("MemberSelector (M4)", () => {
     const d = deps();
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
-    expect(screen.getByText(/Overall 81/)).toBeInTheDocument();
+    expect(screen.getByText(/Tổng điểm 81/)).toBeInTheDocument();
+    expect(screen.getByText(/Tiếng Anh 74/)).toBeInTheDocument();
     expect(d.search).toHaveBeenCalledTimes(1);
+    expect(d.search).toHaveBeenCalledWith(expect.objectContaining({ eligibility: 'available' }), expect.any(AbortSignal));
+    expect(screen.queryByLabelText('Lọc theo availability')).toBeNull();
     // Eligible Alice has an enabled add; failed Bob keeps a disabled one with reason.
     const addButtons = screen.getAllByRole("button", { name: "Thêm" });
     expect(addButtons).toHaveLength(2);
@@ -108,7 +119,9 @@ describe("MemberSelector (M4)", () => {
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
     expect(await screen.findByText("SV A")).toBeInTheDocument();
     fireEvent.click(screen.getAllByRole("button", { name: "Chi tiết" })[0]);
-    expect(await screen.findByText(/scores/)).toBeInTheDocument();
+    expect(await screen.findByText('Có nền tảng tốt')).toBeInTheDocument();
+    expect(screen.getByText('Trao đổi rõ ràng')).toBeInTheDocument();
+    expect(document.querySelector('pre')).toBeNull();
     expect(d.detail).toHaveBeenCalledWith("u1");
   });
   it("assigns with the recruited role slot so slots count the member", async () => {
