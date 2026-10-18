@@ -1,6 +1,6 @@
 # V-INTERN Frontend
 
-Nghiệm thu16/10 đã chạy giao diện nộp PR GitHub thật, AI/runner review và giảng viên duyệt; xem [bằng chứng](docs/VERIFICATION.md). Bộ kiểm thử hiện68files/492tests. Deep-link thông báo xử lý GUID viết hoa và đúng task theo vai trò; điểm AI và quyết định giảng viên hiển thị riêng. Chat phỏng vấn có đồng hồ đếm ngược từ thời gian server, giữ deadline khi tải lại.
+Kiểm chứng local ngày 18/10/2026: 71 file/495 test đạt sau khi loại bỏ hai workspace mẫu cũ và chuyển các regression cần thiết sang giao diện đang sử dụng; xem [nguồn và phạm vi kiểm chứng](docs/VERIFICATION.md). Nghiệm thu GitHub trước đó đã chạy nộp PR thật, AI/runner review và giảng viên duyệt. Deep-link thông báo xử lý GUID viết hoa và đúng task theo vai trò; điểm AI và quyết định giảng viên hiển thị riêng. Chat phỏng vấn có đồng hồ đếm ngược từ thời gian server, giữ deadline khi tải lại.
 
 Next.js 16.3.8 App Router, React 19, TypeScript và Tailwind CSS 4. Giao diện tiếng Việt cho tuyển dụng bằng chat, không gian sinh viên, quản lý phiên giảng viên và quản trị. Browser gọi Nest API thật; frontend không quyết định điểm, quyền hay kết quả task.
 
