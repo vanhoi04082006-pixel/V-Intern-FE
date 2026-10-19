@@ -339,7 +339,7 @@ export function Empty({
       {description && (
         <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">{description}</p>
       )}
-      {!hasRich && <p className="text-sm text-slate-500">{children ?? "Chưa có dữ liệu."}</p>}
+      {!hasRich && <div className="text-sm text-slate-500">{children ?? "Chưa có dữ liệu."}</div>}
       {hasRich && children}
       {action && <div className="mt-4 flex justify-center gap-2">{action}</div>}
     </div>
