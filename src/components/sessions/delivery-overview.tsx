@@ -6,17 +6,10 @@ import { AcademicPicker } from "@/components/product/academic-picker";
 import { Card, Empty, inputClass, PageTitle, Pager, Panel, StatusDot } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { listMemberOptions, listSprints, listTasks, taskStatuses } from "@/lib/api/delivery";
+import { sprintStatusLabel } from "@/lib/api/sprint-status";
 import { statusLabels } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 
-/** Nhãn tiếng Việt cho trạng thái Sprint; giá trị gốc vẫn là nguồn dữ liệu. */
-const sprintStatusMap: Record<string, { label: string; tone: "blue" | "amber" | "green" | "gray" | "red" }> = {
-  planned: { label: "Đã lên kế hoạch", tone: "gray" },
-  active: { label: "Đang chạy", tone: "blue" },
-  completed: { label: "Đã hoàn thành", tone: "green" },
-  cancelled: { label: "Đã hủy", tone: "red" },
-};
-const sprintStatus = (status: string) => sprintStatusMap[status] ?? { label: status, tone: "gray" as const };
 const taskTone: Record<string, "blue" | "amber" | "green" | "gray" | "red"> = {
   todo: "gray",
   doing: "blue",
@@ -83,7 +76,7 @@ export function DeliveryOverview({ initialProjectId = "", initialSessionId = "",
                       {s.code} · Hạn {s.endDate?.slice(0, 10) ?? "chưa có"}
                     </p>
                   </div>
-                  <StatusDot tone={sprintStatus(s.status).tone}>{sprintStatus(s.status).label}</StatusDot>
+                  <StatusDot tone={sprintStatusLabel(s.status).tone}>{sprintStatusLabel(s.status).label}</StatusDot>
                 </div>
                 {s.sessionId && (
                   <div className="mt-3 border-t border-slate-100 pt-3 text-xs font-semibold">

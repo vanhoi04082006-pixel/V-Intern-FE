@@ -10,7 +10,7 @@ import {
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Empty } from "./primitives";
+import { Empty, InlineAlert } from "./primitives";
 import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
 import { useOwnTaskDrop } from "./use-own-task-drop";
 
@@ -38,8 +38,14 @@ export function OwnKanban({
   return (
     <>
     <p className="mt-4 text-sm text-slate-600">Kéo thẻ từ Cần làm sang Đang làm. Thả sang Chờ duyệt để mở chi tiết và nộp bài; giảng viên duyệt Hoàn thành. Bạn cũng có thể bấm thẻ để cập nhật.</p>
-    {drop.error && <p role="alert" className="mt-2 text-sm text-rose-700">{drop.error}</p>}
-    {drop.busy && <p role="status">Đang cập nhật nhiệm vụ…</p>}
+    {drop.error && (
+      <div className="mt-3">
+        <InlineAlert tone="danger">{drop.error}</InlineAlert>
+      </div>
+    )}
+    {drop.busy && (
+      <p role="status" className="mt-3 text-sm text-slate-500">Đang cập nhật nhiệm vụ…</p>
+    )}
     <div className="mt-4 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
       {taskStatuses.map((status) => (
         <KanbanColumn

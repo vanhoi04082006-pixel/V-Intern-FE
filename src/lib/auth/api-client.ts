@@ -108,7 +108,25 @@ export function errorMessage(error: unknown): string {
     PLAN_ALREADY_PUBLISHED: "Phiên này đã có kế hoạch được publish. Vui lòng tải lại.",
     GENERATION_DESCRIPTION_REQUIRED: "Bổ sung mô tả cho từng Task trong bản nháp trước khi publish.",
     GENERATION_ACCEPTANCE_CRITERIA_REQUIRED: "Bổ sung tiêu chí chấp nhận cho từng Task trước khi publish.",
+    TASK_NOT_OWNED: "Bạn chỉ có thể cập nhật nhiệm vụ được giao cho mình.",
+    TASK_ACCESS_DENIED: "Bạn không có quyền cập nhật nhiệm vụ này.",
+    SUBMISSION_PENDING_REVIEW: "Bài nộp đang chờ giảng viên duyệt. Vui lòng chờ kết quả.",
+    SPRINT_HAS_OPEN_TASKS: "Sprint còn nhiệm vụ chưa hoàn thành. Hãy xử lý hết trước khi kết thúc Sprint.",
+    SPRINT_ACTIVE_EXISTS: "Đang có một Sprint khác hoạt động. Hoàn thành hoặc hủy Sprint đó trước.",
+    AI_RECOMMENDATION_NOT_AVAILABLE: "Chưa có khuyến nghị nào. Bấm “Cập nhật khuyến nghị” để tạo từ chỉ số hiện tại.",
+    AI_PROVIDER_RATE_LIMITED: "Dịch vụ AI đang quá tải. Vui lòng thử lại sau ít phút.",
+    AI_PROVIDER_TIMEOUT: "Dịch vụ AI phản hồi quá lâu. Vui lòng thử lại.",
+    AI_PROVIDER_UNAVAILABLE: "Dịch vụ AI tạm thời không khả dụng. Vui lòng thử lại sau.",
   };
+  if (error.code === "TASK_DEPENDENCIES_PENDING") {
+    const blocked =
+      isRecord(error.details) && Array.isArray(error.details.blockedBy)
+        ? error.details.blockedBy.filter((x): x is string => typeof x === "string")
+        : [];
+    return blocked.length
+      ? `Chưa thể bắt đầu: nhiệm vụ ${blocked.join(", ")} cần được giảng viên xác nhận hoàn thành trước.`
+      : "Các nhiệm vụ phụ thuộc cần được giảng viên xác nhận hoàn thành trước.";
+  }
   if (workflowErrors[error.code]) return workflowErrors[error.code];
   switch (error.statusCode) {
     case 0:

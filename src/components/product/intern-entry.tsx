@@ -15,10 +15,11 @@ import {
   getOwnProject,
   statusLabels,
 } from "@/lib/api/work";
+import { sprintStatusLabel } from "@/lib/api/sprint-status";
 import { WorkspaceGuard } from "@/components/auth/workspace-guard";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { InternShell } from "@/components/intern/intern-shell";
-import { Badge, Empty, PageTitle, Panel } from "./primitives";
+import { Badge, Empty, InlineAlert, PageTitle, Panel, StatusDot } from "./primitives";
 import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
 import { useOwnTaskDrop } from "./use-own-task-drop";
 import { useRouter } from "next/navigation";
@@ -126,11 +127,13 @@ export function SprintBoard({
   return (
     <div className="space-y-4">
       {own && <p className="text-sm text-slate-600">Kéo thả thẻ để bắt đầu công việc. Thả sang Chờ duyệt để mở chi tiết và nộp bài; giảng viên duyệt Hoàn thành. Bấm thẻ để cập nhật bằng bàn phím hoặc trên điện thoại.</p>}
-      {drop.error && <p role="alert" className="text-sm text-rose-700">{drop.error}</p>}
-      {drop.busy && <p role="status">Đang cập nhật nhiệm vụ…</p>}
+      {drop.error && (
+        <InlineAlert tone="danger">{drop.error}</InlineAlert>
+      )}
+      {drop.busy && <p role="status" className="text-sm text-slate-500">Đang cập nhật nhiệm vụ…</p>}
       <Panel title={data.sprint.name}>
-        <div className="flex flex-wrap gap-4 text-sm">
-          <Badge>{data.sprint.status}</Badge>
+        <div className="flex flex-wrap items-center gap-4 text-sm">
+          <StatusDot tone={sprintStatusLabel(data.sprint.status).tone}>{sprintStatusLabel(data.sprint.status).label}</StatusDot>
           <span>
             {done}/{data.total} nhiệm vụ hoàn thành
           </span>
