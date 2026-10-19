@@ -17,7 +17,7 @@ export function AuthTabs({ active }: { active: AuthTabKey }) {
   return (
     <nav
       aria-label="Chuyển giữa đăng nhập và đăng ký"
-      className="mb-3.5 border-b border-[#E8EDF3]"
+      className="mb-3.5 border-b border-slate-200"
     >
       <ul className="flex gap-9">
         {TABS.map((tab) => {

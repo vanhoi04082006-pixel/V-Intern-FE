@@ -12,7 +12,7 @@ const samplePortraits: Record<string, { x: number; y: number }> = {
 export function Person({ name, secondary }: { name: string; secondary?: string }) {
   return <span className="flex min-w-0 items-center gap-2.5">
     <PersonAvatar name={name} />
-    <span className="min-w-0"><strong title={name} className="block truncate text-[12px] font-semibold leading-5 text-[#10164b]">{name}</strong>{secondary && <span className="block text-[10px] leading-4 text-slate-500">{secondary}</span>}</span>
+    <span className="min-w-0"><strong title={name} className="block truncate text-[12px] font-semibold leading-5 text-navy">{name}</strong>{secondary && <span className="block text-[10px] leading-4 text-slate-500">{secondary}</span>}</span>
   </span>;
 }
 export function PersonAvatar({ name }: { name: string }) {

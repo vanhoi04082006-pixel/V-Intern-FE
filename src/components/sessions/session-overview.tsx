@@ -94,19 +94,19 @@ export function SessionOverview({
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Panel title="Sprint">
-          <p className="text-2xl font-bold text-[#10164b]">{session.overview.sprintCount}</p>
+          <p className="text-2xl font-bold text-navy">{session.overview.sprintCount}</p>
           <p className="text-xs text-slate-500">{session.sprintProgress.filter((s) => s.status === "active").length} đang chạy</p>
         </Panel>
         <Panel title="Task">
-          <p className="text-2xl font-bold text-[#10164b]">{totalTasks}</p>
+          <p className="text-2xl font-bold text-navy">{totalTasks}</p>
           <p className="text-xs text-slate-500">{progress.done} hoàn thành ({progress.percent}%)</p>
         </Panel>
         <Panel title="Còn lại">
-          <p className="text-2xl font-bold text-[#10164b]">{totalTasks - progress.done}</p>
+          <p className="text-2xl font-bold text-navy">{totalTasks - progress.done}</p>
           <p className="text-xs text-slate-500">{session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)} chờ duyệt</p>
         </Panel>
         <Panel title="Kế hoạch AI">
-          <p className="text-sm font-semibold text-[#10164b]">
+          <p className="text-sm font-semibold text-navy">
             {plans.loading ? "..." : plans.error ? "không tải được" : plans.data?.[0]?.status ?? "chưa có"}
           </p>
           <p className="text-xs text-slate-500">{plans.data?.length ?? 0} bản kế hoạch</p>

@@ -88,7 +88,7 @@ export function InternShell({
   }, [menuOpen]);
   if (!user) return <LoadingState label="Đang kiểm tra phiên đăng nhập..." />;
   return (
-    <div className="min-h-dvh bg-[#F4F6FB]">
+    <div className="min-h-dvh bg-canvas">
       <a
         href="#intern-main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:bg-white focus:p-3"

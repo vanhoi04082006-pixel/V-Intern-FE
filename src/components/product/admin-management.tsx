@@ -5,19 +5,21 @@ import * as api from "@/lib/api/admin";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Clock, ScrollText, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
 import {
   Badge,
   buttonClass,
   Empty,
   inputClass,
+  MetricCard,
   Modal,
   PageTitle,
   Pager,
   Panel,
+  StatusDot,
 } from "./primitives";
 import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
-import { Metrics } from "./outcomes";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
 import { AdminSystemStatus } from '@/components/admin/system-status';
 function Result<T>({
@@ -55,14 +57,28 @@ export function AdminOverview() {
       />
       <Result resource={counts}>
         {(c) => (
-          <Metrics
-            values={[
-              ["Người dùng", c[0]],
-              ["Nhóm", c[1]],
-              ["Vai trò", c[2]],
-              ["Bản ghi audit", c[3]],
-            ]}
-          />
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              icon={Users}
+              label="Người dùng"
+              value={c[0].toLocaleString("vi-VN")}
+            />
+            <MetricCard
+              icon={UsersRound}
+              label="Nhóm"
+              value={c[1].toLocaleString("vi-VN")}
+            />
+            <MetricCard
+              icon={ShieldCheck}
+              label="Vai trò"
+              value={c[2].toLocaleString("vi-VN")}
+            />
+            <MetricCard
+              icon={ScrollText}
+              label="Bản ghi audit"
+              value={c[3].toLocaleString("vi-VN")}
+            />
+          </div>
         )}
       </Result>
       <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_320px]">
@@ -70,7 +86,7 @@ export function AdminOverview() {
           <AdminActivity compact />
         </div>
         <Panel title="Thao tác quản trị">
-          <div className="space-y-3">
+          <div className="space-y-2">
             {[
               ["users", "Quản lý người dùng"],
               ["groups", "Nhóm và quyền kế thừa"],
@@ -80,10 +96,13 @@ export function AdminOverview() {
             ].map(([href, label]) => (
               <Link
                 key={href}
-                className="block rounded-lg border border-slate-100 p-3 text-sm font-semibold text-blue-600"
+                className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3.5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-200 hover:bg-slate-50 hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
                 href={"/admin/" + href}
               >
-                {label} →
+                {label}
+                <span aria-hidden="true" className="text-slate-300">
+                  →
+                </span>
               </Link>
             ))}
           </div>
@@ -1252,7 +1271,7 @@ function CatalogItemForm({
     </form>
   );
 }
-export function AdminSettings() {
+export function AdminSettings({ embedded = false }: { embedded?: boolean } = {}) {
   const settings = useResource(
       useCallback((s: AbortSignal) => api.getSettings(s), []),
     ),
@@ -1261,15 +1280,17 @@ export function AdminSettings() {
     [create, setCreate] = useState(false);
   return (
     <>
-      <PageTitle
-        title="Cài đặt hệ thống"
-        subtitle="Cấu hình nghiệp vụ được lưu tại Backend"
-        action={
-          <button className={buttonClass} onClick={() => setCreate(true)}>
-            Thêm cấu hình
-          </button>
-        }
-      />
+      {!embedded && (
+        <PageTitle
+          title="Cài đặt hệ thống"
+          subtitle="Cấu hình nghiệp vụ được lưu tại Backend"
+          action={
+            <button className={buttonClass} onClick={() => setCreate(true)}>
+              Thêm cấu hình
+            </button>
+          }
+        />
+      )}
       <Panel title="Cấu hình nghiệp vụ">
         <Result resource={settings}>
           {(r) => (
@@ -1687,6 +1708,22 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
     </>
   );
 }
+function formatUptime(totalSeconds: number) {
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  if (days > 0) return `${days} ngày ${hours} giờ`;
+  if (hours > 0) return `${hours} giờ ${minutes} phút`;
+  return `${minutes} phút`;
+}
+
+function serviceTone(value: string): { tone: "green" | "amber" | "sky" | "red"; label: string } {
+  if (/^ok$/i.test(value)) return { tone: "green", label: "Hoạt động" };
+  if (/^configured$/i.test(value)) return { tone: "sky", label: "Đã cấu hình" };
+  if (/^unconfigured$/i.test(value)) return { tone: "amber", label: "Chưa cấu hình" };
+  return { tone: "red", label: value || "Không xác định" };
+}
+
 export function AdminServices() {
   const health = useResource(
     useCallback((s: AbortSignal) => api.getHealth(s), []),
@@ -1709,12 +1746,19 @@ export function AdminServices() {
       <Result resource={health}>
         {(h) => (
           <>
-            <Metrics
-              values={[
-                ["Database latency (ms)", h.latency],
-                ["Backend uptime (giây)", h.uptimeSeconds],
-              ]}
-            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <MetricCard
+                icon={Timer}
+                label="Độ trễ database"
+                value={`${h.latency.toLocaleString("vi-VN")} ms`}
+              />
+              <MetricCard
+                icon={Clock}
+                label="Backend hoạt động liên tục"
+                value={formatUptime(h.uptimeSeconds)}
+                sub={`${h.uptimeSeconds.toLocaleString("vi-VN")} giây kể từ lần khởi động gần nhất`}
+              />
+            </div>
             <div className="mt-5 grid gap-4 md:grid-cols-3">
               {[
                 ["Nest Backend", h.backend, "Trạng thái API"],
@@ -1726,12 +1770,17 @@ export function AdminServices() {
                     ? `${h.aiProvider} · ${h.aiModel ?? "Chưa cấu hình model"}`
                     : "Chưa cấu hình dịch vụ AI",
                 ],
-              ].map(([name, status, description]) => (
-                <Panel key={name} title={name}>
-                  <Badge>{status}</Badge>
-                  <p className="mt-3 break-words text-sm text-slate-500">{description}</p>
-                </Panel>
-              ))}
+              ].map(([name, status, description]) => {
+                const conf = serviceTone(status);
+                return (
+                  <Panel key={name} title={name}>
+                    <StatusDot tone={conf.tone}>{conf.label}</StatusDot>
+                    <p className="mt-3 break-words text-sm text-slate-500">
+                      {description}
+                    </p>
+                  </Panel>
+                );
+              })}
             </div>
             <p className="mt-5 text-xs text-slate-400">
               Kiểm tra lúc {new Date(h.timestamp).toLocaleString("vi-VN")}. AI

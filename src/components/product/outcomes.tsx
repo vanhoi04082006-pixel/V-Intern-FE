@@ -3,8 +3,9 @@ import { useCallback, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useResource } from "@/lib/api/use-resource";
-import { ApiError } from "@/lib/auth/api-client";
+import { ApiError, errorMessage } from "@/lib/auth/api-client";
 import { getSessionUser } from "@/lib/auth/session";
+import { refreshSession } from "@/lib/auth/auth-service";
 import {
   getCertificate,
   getCertificatePdf,
@@ -31,10 +32,13 @@ import {
   Badge,
   buttonClass,
   Empty,
+  Field,
+  InlineAlert,
   inputClass,
   PageTitle,
   Pager,
   Panel,
+  StatusDot,
 } from "./primitives";
 function Resource<T>({
   resource,
@@ -59,11 +63,13 @@ export function Metrics({ values }: { values: [string, number | null][] }) {
       {values.map(([name, value]) => (
         <div
           key={name}
-          className="rounded-xl border border-slate-200 bg-white p-5"
+          className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-colors hover:border-slate-300"
         >
-          <dt className="text-sm text-slate-500">{name}</dt>
+          <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            {name}
+          </dt>
           <dd
-            className={`mt-3 text-2xl font-bold ${value === null ? "text-slate-400" : "text-navy"}`}
+            className={`mt-2.5 text-2xl font-bold tracking-tight tabular-nums ${value === null ? "text-slate-400" : "text-navy"}`}
           >
             {value === null ? "Chưa đo được" : value.toLocaleString("vi-VN")}
           </dd>
@@ -459,77 +465,113 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
     }
   }
   return (
-    <main className="mx-auto min-h-dvh max-w-2xl p-6 sm:pt-20">
-      <Link href="/" className="font-bold text-blue-600">
+    <main className="mx-auto min-h-dvh max-w-2xl px-5 py-10 sm:pt-16">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 rounded text-[15px] font-bold text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+      >
         V-Intern
       </Link>
       <div className="mt-8">
         <PageTitle
           title="Xác minh chứng nhận"
-          subtitle="Tra cứu bằng mã xác minh trên chứng nhận"
+          subtitle="Nhập mã xác minh in trên chứng nhận để kiểm tra hiệu lực — kết quả đọc trực tiếp từ hệ thống."
         />
       </div>
-      <Panel title="Mã xác minh">
+      <Panel title="Tra cứu theo mã">
         <form
-          className="space-y-3"
+          className="space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             void verify();
           }}
         >
-          <label className="block text-sm">
-            Mã xác minh
+          <Field
+            label="Mã xác minh"
+            htmlFor="verify-code"
+            required
+            hint="Tối đa 128 ký tự; mã nằm ở góc chứng nhận hoặc trong email cấp chứng nhận."
+          >
             <input
+              id="verify-code"
               required
               maxLength={128}
               value={code}
+              placeholder="Dán mã xác minh"
               onChange={(e) => setCode(e.target.value)}
-              className={`${inputClass} mt-2`}
+              className={inputClass}
             />
-          </label>
+          </Field>
           <button disabled={busy || !code.trim()} className={buttonClass}>
             {busy ? "Đang xác minh..." : "Xác minh"}
           </button>
         </form>
       </Panel>
-      {Boolean(error) && <ErrorState error={error} />}{" "}
+      {Boolean(error) && (
+        <div className="mt-4">
+          <ErrorState title="Không thể xác minh" error={error} />
+        </div>
+      )}
       {result && (
         <div className="mt-4">
-          <Panel
-            title={result.valid ? "Chứng nhận hợp lệ" : "Chứng nhận đã thu hồi"}
-          >
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt>Số chứng nhận</dt>
-                <dd className="font-semibold">{result.certificateNumber}</dd>
+          {result.valid ? (
+            <Panel title="Chứng nhận hợp lệ">
+              <div className="mb-4">
+                <StatusDot tone="green">Còn hiệu lực</StatusDot>
               </div>
-              {result.valid ? (
-                <>
-                  <div>
-                    <dt>Người nhận</dt>
-                    <dd>{result.holderName ?? "Chưa có"}</dd>
-                  </div>
-                  <div>
-                    <dt>Vai trò</dt>
-                    <dd>{result.role ?? "Chưa có"}</dd>
-                  </div>
-                  <div>
-                    <dt>Dự án</dt>
-                    <dd>{result.projectName ?? "Chưa có"}</dd>
-                  </div>
-                  <div><dt>Phiên thực tập</dt><dd>{result.sessionName ?? 'Chưa ghi nhận'}</dd></div>
-                  <div><dt>Ngày hoàn thành</dt><dd>{result.completedAt ? new Date(result.completedAt).toLocaleDateString('vi-VN') : 'Chưa ghi nhận'}</dd></div>
-                </>
-              ) : (
-                <p role="status" className="text-red-700">
-                  Chứng nhận không còn hiệu lực. Ngày thu hồi:{" "}
-                  {result.revokedAt
-                    ? new Date(result.revokedAt).toLocaleDateString("vi-VN")
-                    : "Chưa có"}
-                </p>
-              )}
-            </dl>
-          </Panel>
+              <dl className="grid gap-3 text-sm sm:grid-cols-2">
+                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                  <dt className="text-xs text-slate-500">Số chứng nhận</dt>
+                  <dd className="mt-1 font-semibold text-navy">
+                    {result.certificateNumber}
+                  </dd>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                  <dt className="text-xs text-slate-500">Người nhận</dt>
+                  <dd className="mt-1 font-semibold text-navy">
+                    {result.holderName ?? "Chưa có"}
+                  </dd>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                  <dt className="text-xs text-slate-500">Vai trò</dt>
+                  <dd className="mt-1 text-navy">{result.role ?? "Chưa có"}</dd>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                  <dt className="text-xs text-slate-500">Dự án</dt>
+                  <dd className="mt-1 text-navy">{result.projectName ?? "Chưa có"}</dd>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                  <dt className="text-xs text-slate-500">Phiên thực tập</dt>
+                  <dd className="mt-1 text-navy">
+                    {result.sessionName ?? "Chưa ghi nhận"}
+                  </dd>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+                  <dt className="text-xs text-slate-500">Ngày hoàn thành</dt>
+                  <dd className="mt-1 text-navy">
+                    {result.completedAt
+                      ? new Date(result.completedAt).toLocaleDateString("vi-VN")
+                      : "Chưa ghi nhận"}
+                  </dd>
+                </div>
+              </dl>
+            </Panel>
+          ) : (
+            <Panel title="Chứng nhận đã thu hồi">
+              <div className="mb-4">
+                <StatusDot tone="red">Không còn hiệu lực</StatusDot>
+              </div>
+              <p role="status" className="text-sm leading-6 text-rose-700">
+                Chứng nhận không còn hiệu lực. Ngày thu hồi:{" "}
+                {result.revokedAt
+                  ? new Date(result.revokedAt).toLocaleDateString("vi-VN")
+                  : "Chưa có"}
+              </p>
+              <p className="mt-2 text-sm text-slate-500">
+                Số chứng nhận: {result.certificateNumber}
+              </p>
+            </Panel>
+          )}
         </div>
       )}
     </main>
@@ -585,6 +627,7 @@ export function Notifications() {
     <>
       <PageTitle
         title="Thông báo"
+        subtitle="Cập nhật mới nhất từ phiên thực tập, nhiệm vụ, đánh giá và hệ thống"
         action={
           <button
             disabled={busy}
@@ -595,16 +638,17 @@ export function Notifications() {
           </button>
         }
       />
-      <label className="mb-4 flex gap-2 text-sm">
+      <label className="mb-4 inline-flex cursor-pointer select-none items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 shadow-xs transition-colors hover:border-slate-300 focus-within:ring-2 focus-within:ring-blue-600/30">
         <input
           type="checkbox"
+          className="size-4 accent-blue-600"
           checked={unread}
           onChange={(e) => {
             setUnread(e.target.checked);
             setPage(1);
           }}
         />
-        Chỉ chưa đọc
+        Chỉ hiện chưa đọc
       </label>
       {Boolean(error) && <ErrorState error={error} />}
       <Panel title="Thông báo của bạn">
@@ -621,34 +665,42 @@ export function Notifications() {
                     .map((n) => (
                       <article
                         key={n.id}
-                        className={`rounded-lg border p-4 ${n.readAt ? "border-slate-100" : "border-blue-200 bg-blue-50/50"}`}
+                        className={`rounded-2xl border p-4 transition-colors ${n.readAt ? "border-slate-200/70 bg-white" : "border-blue-200 bg-blue-50/50"}`}
                       >
-                        <h3 className="font-semibold text-navy">{n.title}</h3>
-                        <p className="mt-2 whitespace-pre-wrap text-sm">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-semibold text-navy">{n.title}</h3>
+                          {!n.readAt && <StatusDot tone="sky">Chưa đọc</StatusDot>}
+                        </div>
+                        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">
                           {n.body}
                         </p>
-                        <time className="mt-2 block text-xs text-slate-400">
-                          {new Date(n.createdAt).toLocaleString("vi-VN")}
-                        </time>
-                        <div className="mt-3 flex gap-3">
-                          {n.linkUrl && (
-                            <Link
-                              href={n.linkUrl}
-                              className="text-sm text-blue-600"
-                            >
-                              Mở nội dung
-                            </Link>
-                          )}
-                          {!n.readAt && (
-                            <button
-                              disabled={busy}
-                              aria-label={`Đánh dấu đã đọc: ${n.title}`}
-                              onClick={() => void read(n.id)}
-                              className="text-sm text-blue-600"
-                            >
-                              Đánh dấu đã đọc
-                            </button>
-                          )}
+                        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                          <time
+                            className="text-xs text-slate-400"
+                            dateTime={n.createdAt}
+                          >
+                            {new Date(n.createdAt).toLocaleString("vi-VN")}
+                          </time>
+                          <div className="flex flex-wrap gap-3">
+                            {n.linkUrl && (
+                              <Link
+                                href={n.linkUrl}
+                                className="rounded text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                              >
+                                Mở nội dung
+                              </Link>
+                            )}
+                            {!n.readAt && (
+                              <button
+                                disabled={busy}
+                                aria-label={`Đánh dấu đã đọc: ${n.title}`}
+                                onClick={() => void read(n.id)}
+                                className="rounded text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 disabled:opacity-50"
+                              >
+                                Đánh dấu đã đọc
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </article>
                     ))}
@@ -669,10 +721,11 @@ export function Notifications() {
                 {data.map((p) => (
                   <label
                     key={p.category}
-                    className="flex items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm"
+                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200/70 p-3.5 text-sm transition-colors hover:border-slate-300"
                   >
                     <input
                       type="checkbox"
+                      className="size-4 accent-blue-600"
                       checked={
                         preferencePending?.category === p.category
                           ? preferencePending.enabled
@@ -778,26 +831,81 @@ export function Recommendations() {
   );
 }
 export function Profile() {
-  const user = getSessionUser();
+  const [user, setUser] = useState(() => getSessionUser());
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    tone: "success" | "danger";
+    text: string;
+  } | null>(null);
+
+  async function refresh() {
+    setBusy(true);
+    setFeedback(null);
+    try {
+      const next = await refreshSession();
+      if (!next) {
+        setFeedback({
+          tone: "danger",
+          text: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+        });
+      } else {
+        setUser(next);
+        setFeedback({
+          tone: "success",
+          text: "Đã cập nhật thông tin tài khoản từ hệ thống.",
+        });
+      }
+    } catch (cause) {
+      setFeedback({ tone: "danger", text: errorMessage(cause) });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <>
       <PageTitle
         title="Hồ sơ"
         subtitle="Thông tin tài khoản được xác minh từ hệ thống"
+        action={
+          <button
+            type="button"
+            className={buttonClass}
+            disabled={busy}
+            onClick={() => void refresh()}
+          >
+            {busy ? "Đang làm mới..." : "Làm mới"}
+          </button>
+        }
       />
+      {feedback && (
+        <div className="mb-4">
+          <InlineAlert tone={feedback.tone}>{feedback.text}</InlineAlert>
+        </div>
+      )}
       <Panel title="Tài khoản">
-        <dl className="space-y-4 text-sm">
-          <div>
-            <dt className="text-slate-500">Họ tên</dt>
-            <dd className="mt-1 font-semibold">{user?.displayName}</dd>
+        <dl className="grid gap-3 text-sm sm:grid-cols-2">
+          <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Họ tên
+            </dt>
+            <dd className="mt-1.5 font-semibold text-navy">
+              {user?.displayName ?? "—"}
+            </dd>
           </div>
-          <div>
-            <dt className="text-slate-500">Email</dt>
-            <dd className="mt-1 break-all">{user?.email}</dd>
+          <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Email
+            </dt>
+            <dd className="mt-1.5 break-all text-navy">{user?.email ?? "—"}</dd>
           </div>
-          <div>
-            <dt className="text-slate-500">Vai trò</dt>
-            <dd className="mt-1">{user?.roles.join(", ")}</dd>
+          <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4 sm:col-span-2">
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Vai trò
+            </dt>
+            <dd className="mt-1.5 text-navy">
+              {user?.roles.length ? user.roles.join(", ") : "Chưa gán vai trò"}
+            </dd>
           </div>
         </dl>
         <p className="mt-5 text-sm text-slate-500">

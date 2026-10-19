@@ -39,7 +39,7 @@ export function OnboardingShell({
   return (
     <div
       className={cn(
-        "flex min-h-dvh flex-col bg-[#F4F6FB]",
+        "flex min-h-dvh flex-col bg-canvas",
         isSidebar && "lg:h-dvh lg:min-h-0 lg:overflow-hidden"
       )}
     >
