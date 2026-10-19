@@ -1,3 +1,11 @@
+# Tài khoản repository chung của Admin — local 19/10/2026
+
+Frontend 71 file/504 test đạt, 0 lỗi/0 bỏ qua; typecheck, lint và build đạt tại `b7a7266`. Nguồn: `manual-runtime/private/central-repo-fe-unit-20261019.json` cùng các log `central-repo-fe-*` trong workspace gốc. Hai regression mới kiểm tra chọn tài khoản chung, tải lại trạng thái và lỗi API; giữ nguyên kiểm thử Kanban/Sprint.
+
+Trình duyệt local đã xác nhận trang Admin hiển thị kết nối GitHub và cấu hình repository chung từ API thật. Giảng viên/sinh viên chỉ liên kết danh tính. Người dùng xác nhận `buivanhoi12345678`; GitHub đang chờ duyệt `public_repo`, nên chưa tuyên bố đã tạo repo hoặc mời thành viên thực tế. Ảnh: `manual-runtime/central-repository-admin-20261019.png` và `central-repository-github-consent-20261019.png`.
+
+Gate SQL độc lập đạt 25 suite/237 test, 0 lỗi/0 bỏ qua, tại source BE `824be89`, kết thúc 05:30:34 UTC ngày 19/10. Readiness 05:31:10 UTC xác nhận FE3001/API8080/API8081 trả 200 và ba tài khoản gốc đăng nhập đúng identity/vai trò. Báo cáo tổng hợp: `manual-runtime/central-repository-verification-20261019.json`. Các số 502/497/495 bên dưới là checkpoint lịch sử trước bản này; production và remote CI ngoài phạm vi local hiện tại.
+
 # Kiểm chứng frontend — local 19/10/2026
 
 Đợt bổ sung kéo thả Kanban: **71 file/502 test đạt, 0 thất bại, 0 bỏ qua**; 9 test tập trung Kanban đạt. Nguồn `manual-runtime/private/kanban-dnd-unit-20261019.json` và log `kanban-dnd-green-20261019.log`. Build, typecheck, lint và diff check đạt; local FE3001 và API8080/8081 trả200. Bằng chứng tổng hợp: `manual-runtime/kanban-dnd-verification-20261019.json`.
