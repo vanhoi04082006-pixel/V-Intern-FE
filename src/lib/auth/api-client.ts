@@ -116,7 +116,7 @@ export function errorMessage(error: unknown): string {
     AI_RECOMMENDATION_NOT_AVAILABLE: "Chưa có khuyến nghị nào. Bấm “Cập nhật khuyến nghị” để tạo từ chỉ số hiện tại.",
     AI_PROVIDER_RATE_LIMITED: "Dịch vụ AI đang quá tải. Vui lòng thử lại sau ít phút.",
     AI_PROVIDER_TIMEOUT: "Dịch vụ AI phản hồi quá lâu. Vui lòng thử lại.",
-    AI_PROVIDER_UNAVAILABLE: "Dịch vụ AI tạm thời không khả dụng. Vui lòng thử lại sau.",
+    AI_PROVIDER_UNAVAILABLE: "Dịch vụ AI chưa khả dụng. Vui lòng thử lại sau.",
   };
   if (error.code === "TASK_DEPENDENCIES_PENDING") {
     const blocked =
