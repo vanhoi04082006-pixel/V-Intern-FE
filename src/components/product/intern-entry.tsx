@@ -19,6 +19,9 @@ import { WorkspaceGuard } from "@/components/auth/workspace-guard";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { InternShell } from "@/components/intern/intern-shell";
 import { Badge, Empty, PageTitle, Panel } from "./primitives";
+import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
+import { useOwnTaskDrop } from "./use-own-task-drop";
+import { useRouter } from "next/navigation";
 export function InternEntry({
   children,
   requireAssignment = false,
@@ -105,6 +108,7 @@ export function SprintBoard({
   id: string;
   own?: boolean;
 }) {
+  const router = useRouter();
   const board = useResource(
     useCallback(
       (signal: AbortSignal) =>
@@ -112,6 +116,7 @@ export function SprintBoard({
       [id, own],
     ),
   );
+  const drop = useOwnTaskDrop(board.reload, taskId => router.push(`/intern/work/${encodeURIComponent(taskId)}`));
   if (board.loading) return <LoadingState />;
   if (board.error)
     return <ErrorState error={board.error} onRetry={board.reload} />;
@@ -120,6 +125,9 @@ export function SprintBoard({
     done = data.columns.find((c) => c.status === "done")?.count ?? 0;
   return (
     <div className="space-y-4">
+      {own && <p className="text-sm text-slate-600">Kéo thả thẻ để bắt đầu công việc. Thả sang Chờ duyệt để mở chi tiết và nộp bài; giảng viên duyệt Hoàn thành. Bấm thẻ để cập nhật bằng bàn phím hoặc trên điện thoại.</p>}
+      {drop.error && <p role="alert" className="text-sm text-red-700">{drop.error}</p>}
+      {drop.busy && <p role="status">Đang cập nhật nhiệm vụ…</p>}
       <Panel title={data.sprint.name}>
         <div className="flex flex-wrap gap-4 text-sm">
           <Badge>{data.sprint.status}</Badge>
@@ -140,6 +148,7 @@ export function SprintBoard({
       </Panel>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {data.columns.map((column) => (
+          <DropColumn key={column.status} status={column.status} canDrop={from => own && !drop.busy && canOwnDrop(from, column.status)} onDrop={drop.move} className="min-h-48">
           <Panel
             key={column.status}
             title={`${statusLabels[column.status]} · ${column.count}`}
@@ -149,13 +158,14 @@ export function SprintBoard({
                 {column.tasks.map((t) => (
                   <article
                     key={t.id}
-                    className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+                    {...(own && !drop.busy && (t.status === 'todo' || t.status === 'doing') ? draggableTask(t.id, t.status) : {})}
+                    className="rounded-lg border border-slate-200 bg-slate-50 p-3 [&[draggable=true]]:cursor-grab [&[draggable=true]]:active:cursor-grabbing"
                   >
                     <p className="text-xs font-semibold text-blue-600">
                       {t.code}
                     </p>
                     <p className="my-2 text-sm font-semibold text-navy">
-                      {t.title}
+                      {own ? <Link href={`/intern/work/${encodeURIComponent(t.id)}`} draggable={false}>{t.title}</Link> : t.title}
                     </p>
                     <Badge>{t.priority}</Badge>
                     <p className="mt-2 text-xs text-slate-500">
@@ -171,6 +181,7 @@ export function SprintBoard({
               <Empty>Không có nhiệm vụ.</Empty>
             )}
           </Panel>
+          </DropColumn>
         ))}
       </div>
     </div>

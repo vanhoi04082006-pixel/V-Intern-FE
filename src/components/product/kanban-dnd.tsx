@@ -4,6 +4,7 @@ import { nextOwnStatus, type TaskStatus } from "@/lib/api/work";
 import { managerTransitions } from "@/lib/api/management";
 
 export const DRAG_MIME = "application/x-vintern-task";
+let activeDrag: { id: string; from: TaskStatus } | null = null;
 
 /** Interns advance their own tasks exactly one step: todo → doing → review. */
 export function canOwnDrop(from: TaskStatus, to: TaskStatus): boolean {
@@ -17,7 +18,7 @@ export function canManageDrop(from: TaskStatus, to: TaskStatus): boolean {
 
 function parsePayload(raw: string): { id: string; from: TaskStatus } | null {
   const sep = raw.lastIndexOf(":");
-  if (sep < 0) return null;
+  if (sep <= 0) return null;
   const statuses = ["todo", "doing", "review", "done"];
   const from = raw.slice(sep + 1);
   if (!statuses.includes(from)) return null;
@@ -29,9 +30,11 @@ export function draggableTask(id: string, from: TaskStatus) {
   return {
     draggable: true,
     onDragStart: (e: DragEvent) => {
+      activeDrag = { id, from };
       e.dataTransfer.setData(DRAG_MIME, `${id}:${from}`);
       e.dataTransfer.effectAllowed = "move";
     },
+    onDragEnd: () => { activeDrag = null; },
   };
 }
 
@@ -57,7 +60,7 @@ export function DropColumn({
     <div
       data-testid={`drop-${status}`}
       onDragOver={(e) => {
-        const p = payload(e);
+        const p = activeDrag ?? payload(e);
         if (p && canDrop(p.from)) {
           e.preventDefault();
           e.dataTransfer.dropEffect = "move";
@@ -68,6 +71,7 @@ export function DropColumn({
       onDrop={(e) => {
         setOver(false);
         const p = payload(e);
+        activeDrag = null;
         if (p && canDrop(p.from)) {
           e.preventDefault();
           onDrop(p.id, status);

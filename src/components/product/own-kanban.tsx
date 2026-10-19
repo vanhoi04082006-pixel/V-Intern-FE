@@ -11,6 +11,8 @@ import {
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Empty } from "./primitives";
+import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
+import { useOwnTaskDrop } from "./use-own-task-drop";
 
 const tones: Record<TaskStatus, string> = {
   todo: "border-t-slate-400",
@@ -23,13 +25,21 @@ export function OwnKanban({
   priority,
   onOpen,
   revision = 0,
+  onUpdated,
 }: {
   search: string;
   priority: string;
   onOpen: (id: string) => void;
   revision?: number;
+  onUpdated?: () => void;
 }) {
+  const [moved, setMoved] = useState(0);
+  const drop = useOwnTaskDrop(() => { setMoved(value => value + 1); onUpdated?.(); }, onOpen);
   return (
+    <>
+    <p className="mt-4 text-sm text-slate-600">Kéo thẻ từ Cần làm sang Đang làm. Thả sang Chờ duyệt để mở chi tiết và nộp bài; giảng viên duyệt Hoàn thành. Bạn cũng có thể bấm thẻ để cập nhật.</p>
+    {drop.error && <p role="alert" className="mt-2 text-sm text-red-700">{drop.error}</p>}
+    {drop.busy && <p role="status">Đang cập nhật nhiệm vụ…</p>}
     <div className="mt-4 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
       {taskStatuses.map((status) => (
         <KanbanColumn
@@ -37,11 +47,14 @@ export function OwnKanban({
           status={status}
           search={search}
           priority={priority}
-          revision={revision}
+          revision={revision + moved}
           onOpen={onOpen}
+          onDrop={drop.move}
+          busy={drop.busy}
         />
       ))}
     </div>
+    </>
   );
 }
 function KanbanColumn({
@@ -50,12 +63,16 @@ function KanbanColumn({
   priority,
   onOpen,
   revision,
+  onDrop,
+  busy,
 }: {
   status: TaskStatus;
   search: string;
   priority: string;
   onOpen: (id: string) => void;
   revision: number;
+  onDrop: (id: string, to: TaskStatus) => void;
+  busy: boolean;
 }) {
   const [page, setPage] = useState(1);
   const data = useResource(
@@ -81,6 +98,7 @@ function KanbanColumn({
     ),
   );
   return (
+    <DropColumn status={status} canDrop={from => !busy && canOwnDrop(from, status)} onDrop={onDrop} className="h-full">
     <section
       aria-label={statusLabels[status]}
       className={`min-w-0 rounded-2xl border border-t-4 border-slate-200 bg-slate-50/70 p-3 ${tones[status]}`}
@@ -102,8 +120,9 @@ function KanbanColumn({
           {data.data.items.map((t) => (
             <button
               key={t.id}
+              {...(!busy && (t.status === "todo" || t.status === "doing") ? draggableTask(t.id, t.status) : {})}
               onClick={() => onOpen(t.id)}
-              className="group w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              className="group w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 [&[draggable=true]]:cursor-grab [&[draggable=true]]:active:cursor-grabbing"
             >
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-blue-700">{t.code}</span>
@@ -159,5 +178,6 @@ function KanbanColumn({
         </div>
       )}
     </section>
+    </DropColumn>
   );
 }

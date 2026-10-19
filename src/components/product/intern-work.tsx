@@ -106,7 +106,7 @@ export function InternWork() {
           </select>
         </div>
       </Panel>
-      {view === "board" ? <OwnKanban search={search} priority={priority} onOpen={setDetail} revision={revision} /> : <Panel title="Danh sách nhiệm vụ">
+      {view === "board" ? <OwnKanban search={search} priority={priority} onOpen={setDetail} revision={revision} onUpdated={tasks.reload} /> : <Panel title="Danh sách nhiệm vụ">
         {tasks.loading ? (
           <LoadingState />
         ) : tasks.error ? (

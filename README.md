@@ -1,6 +1,6 @@
 # V-INTERN Frontend
 
-Kiểm chứng local ngày 19/10/2026: 71 file/497 test đạt, bổ sung regression kích hoạt Sprint ngay trên trang chi tiết; xem [nguồn và phạm vi kiểm chứng](docs/VERIFICATION.md). Nghiệm thu GitHub trước đó đã chạy nộp PR thật, AI/runner review và giảng viên duyệt. Deep-link thông báo xử lý GUID viết hoa và đúng task theo vai trò; điểm AI và quyết định giảng viên hiển thị riêng. Chat phỏng vấn có đồng hồ đếm ngược từ thời gian server, giữ deadline khi tải lại.
+Kanban tại Công việc của tôi và Sprint Board hỗ trợ kéo thả: Cần làm → Đang làm lưu qua API có kiểm tra version; Đang làm → Chờ duyệt mở chi tiết để nộp bài. Sinh viên không tự kéo sang Hoàn thành. Có thể bấm thẻ để thao tác bằng bàn phím hoặc điện thoại. Xem [nguồn và phạm vi kiểm chứng](docs/VERIFICATION.md). Nghiệm thu GitHub trước đó đã chạy nộp PR thật, AI/runner review và giảng viên duyệt. Deep-link thông báo xử lý GUID viết hoa và đúng task theo vai trò; điểm AI và quyết định giảng viên hiển thị riêng. Chat phỏng vấn có đồng hồ đếm ngược từ thời gian server, giữ deadline khi tải lại.
 
 Next.js 16.3.8 App Router, React 19, TypeScript và Tailwind CSS 4. Giao diện tiếng Việt cho tuyển dụng bằng chat, không gian sinh viên, quản lý phiên giảng viên và quản trị. Browser gọi Nest API thật; frontend không quyết định điểm, quyền hay kết quả task.
 
