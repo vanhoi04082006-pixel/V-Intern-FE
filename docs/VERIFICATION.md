@@ -1,6 +1,10 @@
-# Kiểm chứng frontend — local 18/10/2026
+# Kiểm chứng frontend — local 19/10/2026
 
-Vitest 71 file/495 test đạt, không có test thất bại hoặc bỏ qua. Nguồn: `manual-runtime/private/local-audit-20261018/fe-unit.json` trong workspace; log cùng tên `.log`. Typecheck, lint và build local đạt trong cùng đợt. Báo cáo tổng hợp hiện hành: `manual-runtime/local-completion-verification.json`.
+Vitest 71 file/497 test đạt, không có test thất bại hoặc bỏ qua. Nguồn: `manual-runtime/private/sprint-activation-unit-20261019.json` trong workspace; log cùng tên `.log`. Thêm hai regression cho kích hoạt Sprint từ route chi tiết và giữ trạng thái planned/retry khi API từ chối; kiểm tra người thiếu quyền không thấy nút. Typecheck/build và lint local đạt trong cùng đợt. Bằng chứng API thực tế: `manual-runtime/sprint-activation-verification-20261019.json`.
+
+Sprint do AI publish vẫn là planned cho tới khi giảng viên bắt đầu. Trang chi tiết nay hiển thị trạng thái tiếng Việt, giải thích vì sao sinh viên chưa có Sprint Board và nút Kích hoạt khóa bằng sprints.manage. Dùng API chuyển trạng thái hiện hữu, không tự coi planned là active; giữ ownership, ràng buộc một Sprint active, audit và thông báo. Sau thành công reload metadata/board; lỗi giữ nguyên planned. Phía sinh viên có hướng dẫn và liên kết Công việc của tôi trong thời gian chờ. Sprint được người dùng báo lỗi đã kích hoạt qua tài khoản giảng viên chuẩn; API sinh viên xác nhận đúng Sprint và4task được giao. Không reset dữ liệu.
+
+Đợt kiểm chứng rộng18/10 vẫn giữ nguồn/ngày gốc ở `manual-runtime/local-completion-verification.json`; SQL/backend không thay đổi trong bản sửa giao diện19/10. Mốc frontend18/10 là71file/495test, trước hai regression mới.
 
 Trước khi dọn, chạy lại đúng source đã merge `b80385482f2e15e3ca52495c2c631742cf68b1ad` cho kết quả 70 file/504 test. Xóa 25 file chỉ phục vụ hai workspace Admin/Giảng viên mẫu sau khi phân tích toàn bộ import; route chính vẫn là `AdminOverview`/`InstructorHome` và `ProductShell`. Hai bộ test có 25 ca kiểm tra prototype được thay bằng ba bộ có 16 ca kiểm tra dữ liệu API/zero/loading/error/retry, route theo vai trò, danh tính đăng nhập và bàn phím menu thực tế. Vì vậy tổng mới là 504 − 25 + 16 = 495; không bỏ qua hoặc giảm assertion của các bộ test nghiệp vụ được giữ lại. SQL gate và 20 script-contract tests giữ nguyên yêu cầu.
 

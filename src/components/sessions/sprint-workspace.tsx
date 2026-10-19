@@ -12,8 +12,11 @@ import { ErrorState, LoadingState } from '@/components/shared/data-state';
 import { Badge, Empty, Modal, Pager, Panel, inputClass } from '@/components/product/primitives';
 import { SprintOverview } from '@/components/product/sprint-overview';
 import { TaskManagement } from '@/components/product/sprint-management';
+import { ActivateButton } from '@/components/product/instructor-onboarding';
 import { TaskDetail } from '@/components/product/intern-work';
 import { SessionTaskDelivery } from './session-task-delivery';
+
+const sprintStatusLabels: Record<string, string> = { planned: 'Đã lập kế hoạch', active: 'Đang chạy', completed: 'Đã hoàn thành', cancelled: 'Đã hủy' };
 
 export function SprintDelivery({ sprintId, projectId, sessionId, revision, onOpen }: { sprintId: string; projectId: string; sessionId: string | null; revision: number; onOpen: (id: string) => void }) {
   const [page, setPage] = useState(1), [filters, setFilters] = useState({ status: '', priority: '', assigneeId: '', search: '' });
@@ -61,7 +64,11 @@ export function SprintWorkspace({ id, basePath = '/instructor' }: { id: string; 
   if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
   const sprint = data.data;
   return <div className="space-y-5">
-    <Panel title={sprint.name} action={<Badge>{sprint.status}</Badge>}><p className="text-sm text-slate-500">{sprint.code} · {sprint.startDate?.slice(0, 10) ?? 'Chưa có ngày bắt đầu'} → {sprint.endDate?.slice(0, 10) ?? 'Chưa có ngày kết thúc'}</p><h2 className="mt-3 text-sm font-semibold">Mục tiêu Sprint</h2><p className="mt-1 whitespace-pre-wrap text-sm">{sprint.goal ?? 'Chưa ghi mục tiêu.'}</p>{sprint.sessionId && <Link className="mt-3 inline-block text-sm font-semibold text-blue-700" href={`${basePath}/sessions/${sprint.sessionId}`}>Mở phiên thực tập →</Link>}</Panel>
+    <Panel title={sprint.name} action={<Badge>{sprintStatusLabels[sprint.status] ?? sprint.status}</Badge>}><p className="text-sm text-slate-500">{sprint.code} · {sprint.startDate?.slice(0, 10) ?? 'Chưa có ngày bắt đầu'} → {sprint.endDate?.slice(0, 10) ?? 'Chưa có ngày kết thúc'}</p><h2 className="mt-3 text-sm font-semibold">Mục tiêu Sprint</h2><p className="mt-1 whitespace-pre-wrap text-sm">{sprint.goal ?? 'Chưa ghi mục tiêu.'}</p>{sprint.sessionId && <Link className="mt-3 inline-block text-sm font-semibold text-blue-700" href={`${basePath}/sessions/${sprint.sessionId}`}>Mở phiên thực tập →</Link>}</Panel>
+    {sprint.status === 'planned' && <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+      <p>Sprint đã được lập kế hoạch nhưng chưa bắt đầu. Sinh viên sẽ thấy Sprint Board sau khi giảng viên kích hoạt Sprint này.</p>
+      <Can perm="sprints.manage"><ActivateButton kind="sprints" id={id} status={sprint.status} onChanged={() => { data.reload(); reload(); }} /></Can>
+    </div>}
     <SprintOverview id={id} revision={revision} onUpdated={reload} onManage={() => setManage(true)} />
     <Can perm={sprint.sessionId ? ['sessions.view', 'tasks.view'] : ['projects.view', 'tasks.view']} fallback={<p id="sprint-task-list" className="text-sm text-slate-500">Cần quyền xem đội hình và task để mở danh sách chi tiết.</p>}><SprintDelivery key={id} sprintId={id} projectId={sprint.projectId} sessionId={sprint.sessionId} revision={revision} onOpen={setSelected} /></Can>
     <Can perm="tasks.manage"><details id="sprint-task-management" className="scroll-mt-20 rounded-xl border border-slate-200 bg-white p-4" open={manage} onToggle={event => setManage(event.currentTarget.open)}><summary className="cursor-pointer text-sm font-semibold text-blue-700">Thêm và chỉnh sửa task trong Sprint</summary>{manage && <div className="mt-4"><TaskManagement projectId={sprint.projectId} sprintId={id} onUpdated={reload} /></div>}</details></Can>

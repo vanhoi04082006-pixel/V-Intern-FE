@@ -89,7 +89,11 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
       {id ? (
         <SprintBoard id={id} own />
       ) : (
-        <Empty>Giảng viên chưa kích hoạt Sprint cho dự án này.</Empty>
+        <Empty>
+          <p>Giảng viên chưa kích hoạt Sprint cho dự án này.</p>
+          <p className="mt-2">Sprint Board sẽ hiển thị khi Sprint bắt đầu. Bạn vẫn có thể xem các nhiệm vụ đã được giao.</p>
+          <Link className="mt-3 inline-block font-semibold text-blue-600" href="/intern/work">Công việc của tôi →</Link>
+        </Empty>
       )}
     </>
   );
