@@ -1467,17 +1467,18 @@ export function AdminAudit() {
                 setPage(1);
               }}
             />
-            <input
-              className={inputClass}
-              aria-label="Hành động audit"
-              placeholder="Ví dụ: user.created"
-              value={action}
-              onChange={(e) => {
-                setAction(e.target.value);
-                setPage(1);
-              }}
-            />
             <label className="text-sm">
+              Hành động
+              <input
+                className={inputClass}
+                placeholder="Ví dụ: user.created"
+                value={action}
+                onChange={(e) => {
+                  setAction(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </label>            <label className="text-sm">
               Từ thời điểm
               <input
                 type="datetime-local"
