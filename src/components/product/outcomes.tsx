@@ -404,7 +404,7 @@ export function Certificates({ id }: { id?: string }) {
                   {c.status === "revoked" && (
                     <p
                       role="status"
-                      className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+                      className="mt-3 rounded-lg bg-rose-50 p-3 text-sm text-rose-700"
                     >
                       Đã thu hồi{" "}
                       {c.revokedAt &&

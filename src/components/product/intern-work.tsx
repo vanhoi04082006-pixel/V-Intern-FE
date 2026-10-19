@@ -356,7 +356,7 @@ function TaskContent({
       {Boolean(error) && (
         <p
           role="alert"
-          className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
+          className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700"
         >
           {errorMessage(error)}
         </p>

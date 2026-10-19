@@ -29,7 +29,7 @@ export function InstructorDashboard() {
     { icon: Users, label: "Sinh viên tham gia", value: m.internCount.toLocaleString("vi-VN"), sub: "Đã được phân công vào dự án" },
     { icon: CheckCircle2, label: "Tỷ lệ hoàn thành sprint", value: `${doneRate}%`, sub: `${m.doneCount} / ${m.taskCount} task` },
     { icon: Star, label: "Điểm AI trung bình", value: m.averageScore === null ? "—" : `${m.averageScore.toFixed(1)} / 100`, sub: m.averageScore === null ? "Chưa có đánh giá được chốt" : "Đánh giá chính thức của giảng viên" },
-    { icon: Clock, label: "Task / PR chờ duyệt", value: m.reviewCount.toLocaleString("vi-VN"), sub: `${m.overdueCount} task quá hạn`, subTone: "text-red-600" },
+    { icon: Clock, label: "Task / PR chờ duyệt", value: m.reviewCount.toLocaleString("vi-VN"), sub: `${m.overdueCount} task quá hạn`, subTone: "text-rose-600" },
   ];
   return <div className="instructor-overview">
     <PageTitle title="Instructor Workspace" subtitle="Theo dõi và quản lý chương trình thực tập" action={<Link className={buttonClass} href="/instructor/projects"><Rocket size={16} /> Khởi tạo phiên từ thư viện</Link>} />

@@ -148,7 +148,7 @@ export function InternTopbar({
             <Bell className="size-5" aria-hidden="true" />
             {typeof user.notificationBadge === "number" &&
             user.notificationBadge > 0 ? (
-              <span className="absolute right-1 top-1 grid size-4 place-items-center rounded-full bg-red-500 text-[10px] font-bold leading-none text-white ring-2 ring-white">
+              <span className="absolute right-1 top-1 grid size-4 place-items-center rounded-full bg-rose-500 text-[10px] font-bold leading-none text-white ring-2 ring-white">
                 {user.notificationBadge}
               </span>
             ) : null}

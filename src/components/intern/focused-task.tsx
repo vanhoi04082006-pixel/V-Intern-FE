@@ -51,10 +51,10 @@ export function FocusedTaskCard({
               <TaskAvatar index={0} className="size-6 text-[9px]" />
               {focusedTask.points} points
             </span>
-            <span className="inline-flex items-center gap-1.5 font-semibold text-red-600">
+            <span className="inline-flex items-center gap-1.5 font-semibold text-rose-600">
               <span
                 aria-hidden="true"
-                className="size-1.5 rounded-full bg-red-500"
+                className="size-1.5 rounded-full bg-rose-500"
               />
               {focusedTask.deadlineLabel}
             </span>

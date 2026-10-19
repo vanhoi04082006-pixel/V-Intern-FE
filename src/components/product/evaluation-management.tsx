@@ -508,7 +508,7 @@ function CriterionEditor({
           </button>
           <button
             type="button"
-            className="text-sm text-red-600"
+            className="text-sm text-rose-600"
             disabled={action.busy}
             onClick={() =>
               void action.run(() => api.deleteCriterion(cycleId, c.id))

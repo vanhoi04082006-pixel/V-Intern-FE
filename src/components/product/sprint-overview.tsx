@@ -36,7 +36,7 @@ export function SprintOverview({id, activeCount, revision, onUpdated, onManage}:
       <MetricCard icon={ClipboardList} label="Task tổng" index={1} value={b.total} sub="Trong Sprint đang chọn" />
       <MetricCard icon={CheckCircle2} label="Task hoàn thành" index={2} value={done} sub={`${b.total?Math.round(done/b.total*100):0}% Sprint đang chọn`} />
       <MetricCard icon={Clock} label="Task / PR chờ duyệt" index={3} value={review} sub="Đang ở trạng thái Review" />
-      <MetricCard icon={AlertTriangle} label="Task quá hạn" index={4} value={overdue ?? 'Chưa đo được'} sub="Tổng hợp toàn Sprint từ backend" subTone="text-red-600" />
+      <MetricCard icon={AlertTriangle} label="Task quá hạn" index={4} value={overdue ?? 'Chưa đo được'} sub="Tổng hợp toàn Sprint từ backend" subTone="text-rose-600" />
     </div>
     <div className="mb-5 grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
       <Panel title="Bảng Sprint hiện tại" action={<span className="flex flex-wrap items-center gap-3"><Link href="#sprint-task-list" className="text-xs text-blue-600">Xem tất cả task →</Link><Can perm="tasks.manage"><a href={onManage ? '#sprint-task-management' : '#sprint-task-list'} onClick={onManage} className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"><Plus size={14} />{onManage ? 'Quản lý task' : 'Tạo task mới'}</a></Can></span>}>

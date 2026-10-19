@@ -126,7 +126,7 @@ export function SprintBoard({
   return (
     <div className="space-y-4">
       {own && <p className="text-sm text-slate-600">Kéo thả thẻ để bắt đầu công việc. Thả sang Chờ duyệt để mở chi tiết và nộp bài; giảng viên duyệt Hoàn thành. Bấm thẻ để cập nhật bằng bàn phím hoặc trên điện thoại.</p>}
-      {drop.error && <p role="alert" className="text-sm text-red-700">{drop.error}</p>}
+      {drop.error && <p role="alert" className="text-sm text-rose-700">{drop.error}</p>}
       {drop.busy && <p role="status">Đang cập nhật nhiệm vụ…</p>}
       <Panel title={data.sprint.name}>
         <div className="flex flex-wrap gap-4 text-sm">

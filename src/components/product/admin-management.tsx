@@ -826,7 +826,7 @@ function GroupDetail({
                       <p className="text-xs text-slate-500">{m.user.email}</p>
                     </div>
                     <button
-                      className="text-red-600"
+                      className="text-rose-600"
                       disabled={action.busy}
                       onClick={() =>
                         void action.run(() =>

@@ -519,7 +519,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
               {kind !== "projects" && (
                 <button
                   disabled={busy}
-                  className="text-red-600"
+                  className="text-rose-600"
                   onClick={() =>
                     void mutate(() => api.removeMember(kind, id, m.userId))
                   }
@@ -689,7 +689,7 @@ function SessionExtras({ id }: { id: string }) {
             <div key={i.userId} className="mb-2 flex justify-between text-sm">
               <span>{i.displayName}</span>
               <button
-                className="text-red-600"
+                className="text-rose-600"
                 disabled={busy}
                 onClick={() =>
                   void act(() => api.removeInstructor(id, i.userId))
@@ -745,7 +745,7 @@ function SessionExtras({ id }: { id: string }) {
                 ))}
               </select>
               <button
-                className="text-red-600"
+                className="text-rose-600"
                 disabled={busy}
                 onClick={() => void act(() => api.deleteMilestone(id, m.id))}
               >

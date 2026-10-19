@@ -151,7 +151,7 @@ export function CodeSubmissions({
         </p>
       )}
       {error && (
-        <p role="alert" className="my-3 text-sm text-red-700">
+        <p role="alert" className="my-3 text-sm text-rose-700">
           {error}
         </p>
       )}
@@ -257,7 +257,7 @@ function SubmissionReview({
         )}
       </div>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-red-700">
+        <p role="alert" className="mt-3 text-sm text-rose-700">
           {error}
         </p>
       )}
@@ -410,7 +410,7 @@ function AiCodeReview({
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-rose-700">
           {error}
         </p>
       )}
@@ -538,7 +538,7 @@ function InstructorCodeDecision({
         />
       </label>
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-rose-700">
           {error}
         </p>
       )}

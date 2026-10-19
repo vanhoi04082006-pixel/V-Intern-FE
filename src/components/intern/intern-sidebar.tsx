@@ -90,7 +90,7 @@ function NavItem({
       {icon}
       {item.label}
       {typeof item.badge === "number" && item.badge > 0 ? (
-        <span className="ml-auto grid min-w-5 place-items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
+        <span className="ml-auto grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
           {item.badge}
         </span>
       ) : null}

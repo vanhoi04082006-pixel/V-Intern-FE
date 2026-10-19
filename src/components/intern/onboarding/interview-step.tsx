@@ -90,7 +90,7 @@ export function InterviewStep() {
       {notice && (
         <p
           role="alert"
-          className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+          className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-700"
         >
           {notice}
         </p>

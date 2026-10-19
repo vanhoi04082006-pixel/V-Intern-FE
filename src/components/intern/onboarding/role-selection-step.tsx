@@ -55,7 +55,7 @@ export function RoleSelectionStep() {
         )}
       </section>
       {notice && (
-        <p role="alert" className="mt-4 text-sm text-red-700">
+        <p role="alert" className="mt-4 text-sm text-rose-700">
           {notice}
         </p>
       )}

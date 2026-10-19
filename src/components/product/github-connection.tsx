@@ -114,7 +114,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
         )
       )}
       {error && (
-        <p role="alert" className="mt-4 text-sm text-red-700">
+        <p role="alert" className="mt-4 text-sm text-rose-700">
           {error}
         </p>
       )}
@@ -141,7 +141,7 @@ export function GithubRepositoryAdmin() {
         <button className="ml-3 text-sm text-blue-700" onClick={account.reload}>Tải lại cấu hình GitHub</button>
         <p className="mt-3 text-xs text-slate-500">Tên repo: vintern-dự-án-tên-phiên-ngày-bắt-đầu-mã-phiên. Không đưa email hoặc tên sinh viên vào tên repository public.</p>
       </>}
-      {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-3 text-sm text-rose-700">{error}</p>}
     </Panel>
   </div>;
 }
