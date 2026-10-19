@@ -60,7 +60,7 @@ export function ProjectLibrary({
         />
         <select
           aria-label="Lọc theo độ khó"
-          className={inputClass}
+          className={`${inputClass} sm:w-48`}
           value={difficulty}
           onChange={(e) => { setDifficulty(e.target.value); setPage(1); }}
         >

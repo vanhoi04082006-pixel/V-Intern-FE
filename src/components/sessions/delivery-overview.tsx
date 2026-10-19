@@ -3,11 +3,26 @@
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { AcademicPicker } from "@/components/product/academic-picker";
-import { Empty, inputClass, PageTitle, Pager, Panel } from "@/components/product/primitives";
+import { Card, Empty, inputClass, PageTitle, Pager, Panel, StatusDot } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { listMemberOptions, listSprints, listTasks, taskStatuses } from "@/lib/api/delivery";
 import { statusLabels } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
+
+/** Nhãn tiếng Việt cho trạng thái Sprint; giá trị gốc vẫn là nguồn dữ liệu. */
+const sprintStatusMap: Record<string, { label: string; tone: "blue" | "amber" | "green" | "gray" | "red" }> = {
+  planned: { label: "Đã lên kế hoạch", tone: "gray" },
+  active: { label: "Đang chạy", tone: "blue" },
+  completed: { label: "Đã hoàn thành", tone: "green" },
+  cancelled: { label: "Đã hủy", tone: "red" },
+};
+const sprintStatus = (status: string) => sprintStatusMap[status] ?? { label: status, tone: "gray" as const };
+const taskTone: Record<string, "blue" | "amber" | "green" | "gray" | "red"> = {
+  todo: "gray",
+  doing: "blue",
+  review: "amber",
+  done: "green",
+};
 
 export function DeliveryOverview({ initialProjectId = "", initialSessionId = "", basePath = '/instructor' }: { initialProjectId?: string; initialSessionId?: string; basePath?: '/instructor' | '/admin' }) {
   const [kind, setKind] = useState<"sprints" | "tasks">("sprints");
@@ -45,15 +60,71 @@ export function DeliveryOverview({ initialProjectId = "", initialSessionId = "",
           <label className="text-sm">Hạn đến<input type="date" className={inputClass} value={dueTo} min={dueFrom || undefined} onChange={e => { setDueTo(e.target.value); setPage(1); }} /></label>
         </>
       </div>
-      <div className="mb-4 max-w-xl space-y-2">
+      <div className="mb-4 grid max-w-2xl gap-3 sm:grid-cols-2">
         <label className="block text-sm">Tìm thành viên<input className={inputClass} value={memberSearch} onChange={e => { setMemberSearch(e.target.value); setMemberPage(1); }} /></label>
         <label className="block text-sm">Người phụ trách<select className={inputClass} value={assigneeId} onChange={e => { setAssignee(e.target.value); setPage(1); }}><option value="">Tất cả</option>{assigneeId && !members.data?.items.some(m => m.userId === assigneeId) && <option value={assigneeId}>Thành viên đã chọn</option>}{members.data?.items.map(m => <option key={m.userId} value={m.userId}>{m.displayName} · {m.email}</option>)}</select></label>
-        {members.loading && <LoadingState />}{Boolean(members.error) && <ErrorState error={members.error} onRetry={members.reload} />}{members.data && <Pager {...members.data} onChange={setMemberPage} />}
+        <div className="sm:col-span-2">
+          {members.loading && <LoadingState />}{Boolean(members.error) && <ErrorState error={members.error} onRetry={members.reload} />}{members.data && members.data.totalPages > 1 && <Pager {...members.data} onChange={setMemberPage} />}
+        </div>
       </div>
       {resource.loading && <LoadingState />}{Boolean(resource.error) && <ErrorState error={resource.error} onRetry={resource.reload} />}
       {data && data.items.length === 0 && <Empty />}
-      {kind === "sprints" && sprints.data?.items.map(s => <article key={s.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><Link className="font-semibold text-blue-700 hover:underline" href={`${basePath}/sprints/${s.id}`}>{s.name}</Link><p className="text-sm text-slate-500">{s.code} · {s.status} · {s.endDate?.slice(0, 10) ?? "Chưa có hạn"}</p></div>{s.sessionId && <Link className="text-sm text-blue-700" href={`${basePath}/sessions/${s.sessionId}`}>Xem phiên</Link>}</article>)}
-      {kind === "tasks" && tasks.data?.items.map(t => <article key={t.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-4"><div><Link className="font-semibold text-blue-700 hover:underline" href={`${basePath}/tasks/${t.id}`}>{t.title}</Link><p className="text-sm text-slate-500">{t.code} · {statusLabels[t.status]} · {t.priority} · {t.dueDate?.slice(0, 10) ?? "Chưa có hạn"}</p></div>{t.sprintId && <Link className="text-sm text-blue-700" href={`${basePath}/sprints/${t.sprintId}`}>Xem Sprint</Link>}</article>)}
+      {kind === "sprints" && (
+        <ul className="space-y-3">
+          {sprints.data?.items.map((s) => (
+            <li key={s.id}>
+              <Card>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link className="rounded text-sm font-semibold text-navy transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1" href={`${basePath}/sprints/${s.id}`}>
+                      {s.name}
+                    </Link>
+                    <p className="mt-0.5 font-mono text-[11px] text-slate-400">
+                      {s.code} · Hạn {s.endDate?.slice(0, 10) ?? "chưa có"}
+                    </p>
+                  </div>
+                  <StatusDot tone={sprintStatus(s.status).tone}>{sprintStatus(s.status).label}</StatusDot>
+                </div>
+                {s.sessionId && (
+                  <div className="mt-3 border-t border-slate-100 pt-3 text-xs font-semibold">
+                    <Link className="rounded text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1" href={`${basePath}/sessions/${s.sessionId}`}>
+                      Xem phiên →
+                    </Link>
+                  </div>
+                )}
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
+      {kind === "tasks" && (
+        <ul className="space-y-3">
+          {tasks.data?.items.map((t) => (
+            <li key={t.id}>
+              <Card>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link className="rounded text-sm font-semibold text-navy transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1" href={`${basePath}/tasks/${t.id}`}>
+                      {t.title}
+                    </Link>
+                    <p className="mt-0.5 font-mono text-[11px] text-slate-400">
+                      {t.code} · {t.priority} · Hạn {t.dueDate?.slice(0, 10) ?? "chưa có"}
+                    </p>
+                  </div>
+                  <StatusDot tone={taskTone[t.status] ?? "gray"}>{statusLabels[t.status] ?? t.status}</StatusDot>
+                </div>
+                {t.sprintId && (
+                  <div className="mt-3 border-t border-slate-100 pt-3 text-xs font-semibold">
+                    <Link className="rounded text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1" href={`${basePath}/sprints/${t.sprintId}`}>
+                      Xem Sprint →
+                    </Link>
+                  </div>
+                )}
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
       {data && <Pager {...data} onChange={setPage} />}
     </Panel>
   </div>;
