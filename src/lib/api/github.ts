@@ -34,6 +34,12 @@ export const connectGithub = () =>
   );
 export const disconnectGithub = () =>
   request("/github/me", p.record, { method: "DELETE" });
+function parseRepositoryAccount(value: unknown) {
+  const v = p.record(value);
+  return { configured: p.boolean(v.configured), connected: p.boolean(v.connected), login: p.nullable(v.login, p.string), ready: p.boolean(v.ready) };
+}
+export const repositoryAccountStatus = (signal?: AbortSignal) => request('/github/repository-account', parseRepositoryAccount, { signal });
+export const selectRepositoryAccount = () => request('/github/repository-account', parseRepositoryAccount, { method: 'POST' });
 function parseRepository(value: unknown) {
   const v = p.record(value);
   return {

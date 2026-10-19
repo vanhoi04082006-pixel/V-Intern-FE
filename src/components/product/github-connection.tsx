@@ -10,13 +10,15 @@ import {
   inviteRepositoryMembers,
   configureGithubWebhook,
   githubRepositoryActivity,
+  repositoryAccountStatus,
+  selectRepositoryAccount,
 } from "@/lib/api/github";
 import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Panel, Pager, Empty, buttonClass } from "./primitives";
 
-export function GithubConnection() {
+export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?: boolean }) {
   const data = useResource(
     useCallback((signal: AbortSignal) => githubStatus(signal), []),
   );
@@ -61,9 +63,9 @@ export function GithubConnection() {
         data.data && (
           <div className="space-y-4">
             <p className="text-sm text-slate-600">
-              Kết nối tài khoản GitHub của bạn để tạo repository cho phiên hoặc
-              xác minh danh tính khi nộp bài. Gmail có thể là email đăng ký
-              GitHub.
+              {repositoryAdmin
+                ? 'Admin kết nối tài khoản GitHub dùng chung để hệ thống tạo repository và gửi lời mời cho các phiên thực tập. Mật khẩu GitHub không lưu trong V-INTERN.'
+                : 'Liên kết GitHub để nhận lời mời repository và xác minh danh tính khi nộp bài. Repository được hệ thống tạo bằng tài khoản chung do Admin cấu hình; giảng viên và sinh viên không cần tự tạo repo.'}
             </p>
             {!data.data.configured && (
               <p
@@ -103,9 +105,10 @@ export function GithubConnection() {
               )}
             </div>
             <p className="text-xs leading-5 text-slate-500">
-              Giảng viên cấp quyền tạo và quản lý repo public. Sinh viên chỉ cần
-              liên kết danh tính. Ngắt kết nối trên V-INTERN xóa credential đã
-              lưu; bạn cũng có thể thu hồi quyền ứng dụng trong cài đặt GitHub.
+              Admin cấp quyền tạo và quản lý repo public cho tài khoản chung.
+              Giảng viên và sinh viên chỉ cần liên kết danh tính. Tài khoản chung
+              đang được chọn cần thay thế trước khi ngắt kết nối; các kết nối cá
+              nhân có thể ngắt trên V-INTERN hoặc thu hồi tại cài đặt GitHub.
             </p>
           </div>
         )
@@ -117,6 +120,30 @@ export function GithubConnection() {
       )}
     </Panel>
   );
+}
+export function GithubRepositoryAdmin() {
+  const account = useResource(useCallback((signal: AbortSignal) => repositoryAccountStatus(signal), []));
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  async function select() {
+    setBusy(true); setError('');
+    try { await selectRepositoryAccount(); account.reload(); }
+    catch (cause) { setError(errorMessage(cause)); }
+    finally { setBusy(false); }
+  }
+  return <div className="mb-6 space-y-4">
+    <GithubConnection repositoryAdmin />
+    <Panel title="Tài khoản tạo repository chung">
+      {account.loading ? <LoadingState /> : account.error ? <ErrorState error={account.error} onRetry={account.reload} /> : <>
+        <p className="text-sm">{account.data?.configured ? `Tài khoản đã chọn: @${account.data.login ?? 'cần kết nối lại'} · ${account.data.ready ? 'Sẵn sàng' : 'Cần Admin kiểm tra kết nối/quyền'}` : 'Chưa chọn tài khoản tạo repository chung.'}</p>
+        <p className="my-3 text-sm text-slate-600">Sau khi kết nối đúng tài khoản ở trên, chọn làm tài khoản chung. Các phiên đang chạy sẽ được tự đồng bộ. Repo cũ giữ nguyên chủ sở hữu và đường dẫn.</p>
+        <button className={buttonClass} disabled={busy} onClick={() => void select()}>{busy ? 'Đang lưu…' : 'Dùng GitHub đã liên kết của tôi làm tài khoản chung'}</button>
+        <button className="ml-3 text-sm text-blue-700" onClick={account.reload}>Tải lại cấu hình GitHub</button>
+        <p className="mt-3 text-xs text-slate-500">Tên repo: vintern-dự-án-tên-phiên-ngày-bắt-đầu-mã-phiên. Không đưa email hoặc tên sinh viên vào tên repository public.</p>
+      </>}
+      {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+    </Panel>
+  </div>;
 }
 export function SessionRepositoryCard({
   sessionId,
@@ -195,8 +222,7 @@ export function SessionRepositoryCard({
             </>
           ) : (
             <p>
-              Chưa có repository. Giảng viên chủ trì cần kết nối GitHub và khởi
-              động phiên.
+              Repository được tạo tự động khi phiên bắt đầu, bằng tài khoản chung do Admin cấu hình. Nếu chưa có, liên hệ Admin kiểm tra cấu hình.
             </p>
           )}
           {manage && (
@@ -206,7 +232,7 @@ export function SessionRepositoryCard({
                 onClick={() => void action()}
                 className={buttonClass}
               >
-                Tạo hoặc khôi phục repo
+                Đồng bộ repository của phiên
               </button>
               {repo?.status === "ready" && (
                 <button
