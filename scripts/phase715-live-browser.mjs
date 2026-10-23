@@ -386,7 +386,7 @@ try {
       assert.ok(
         await page
           .getByRole("link", {
-            name: "Tài khoản Nguyễn Chờ Phân Công, Intern",
+            name: "Tài khoản Nguyễn Chờ Phân Công, Sinh viên",
           })
           .count(),
       );
