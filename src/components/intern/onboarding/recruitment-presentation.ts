@@ -113,5 +113,6 @@ export const WELCOME_GUIDANCE_ITEMS = [
   "Theo dõi quy trình qua bốn bước phía trên.",
   "Câu trả lời được lưu vào hệ thống khi bạn gửi.",
   "Điểm và quyết định tuyển dụng được xử lý trên hệ thống.",
-  "Số lần thử và thời gian chờ được hiển thị theo trạng thái tuyển dụng của bạn.",
+  "Dưới 50 điểm: chưa đạt. Từ 50 đến 70: AI đề xuất vai trò khác. Trên 70: đậu.",
+  "Tối đa 3 lượt tổng cộng; đổi vai trò không đặt lại lượt. Thời gian chờ được hiển thị trước lần tiếp theo.",
 ];

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import {
   X,
@@ -39,22 +39,38 @@ const buttonSizes: Record<ButtonSize, string> = {
 };
 
 /** Class cho button theo variant/size — dùng thay cho string ghép tay. */
-export function btn(variant: ButtonVariant = "primary", size: ButtonSize = "md"): string {
-  return cn(buttonBase, buttonVariants[variant], buttonSizes[size]);
+export function btn(
+  variant: ButtonVariant = "primary",
+  size: ButtonSize = "md",
+): string {
+  return cn(
+    "product-button",
+    `product-button-${variant}`,
+    buttonBase,
+    buttonVariants[variant],
+    buttonSizes[size],
+  );
 }
 
 /** Primary CTA class — giữ tên cũ để không phá import hiện có. */
 export const buttonClass = btn("primary");
 
 /** Icon-only button (menu, close, toolbar) — cần aria-label ở call site. */
-export const iconButtonClass = cn(buttonBase, buttonVariants.ghost, buttonSizes.icon);
+export const iconButtonClass = cn(
+  buttonBase,
+  buttonVariants.ghost,
+  buttonSizes.icon,
+);
 
 /* ------------------------------------------------------------------ */
 /* Form controls                                                       */
 /* ------------------------------------------------------------------ */
 export const inputClass =
-  "w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 shadow-xs transition-[border-color,box-shadow] placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30";
-export const selectClass = cn(inputClass, "appearance-none pr-9 cursor-pointer");
+  "product-input w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 shadow-xs transition-[border-color,box-shadow] placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30";
+export const selectClass = cn(
+  inputClass,
+  "appearance-none pr-9 cursor-pointer",
+);
 export const textareaClass = cn(inputClass, "min-h-24 resize-y");
 
 export function Field({
@@ -142,7 +158,10 @@ export function TableSkeleton({
           {Array.from({ length: cols }, (_, c) => (
             <Skeleton
               key={c}
-              className={cn("h-4", c === 0 ? "w-1/4 min-w-24" : "w-full flex-1")}
+              className={cn(
+                "h-4",
+                c === 0 ? "w-1/4 min-w-24" : "w-full flex-1",
+              )}
             />
           ))}
         </div>
@@ -152,10 +171,26 @@ export function TableSkeleton({
 }
 
 const alertTones = {
-  info: { box: "border-sky-200 bg-sky-50 text-sky-900", icon: Info, iconClass: "text-sky-600" },
-  success: { box: "border-emerald-200 bg-emerald-50 text-emerald-900", icon: CircleCheck, iconClass: "text-emerald-600" },
-  warning: { box: "border-amber-200 bg-amber-50 text-amber-900", icon: TriangleAlert, iconClass: "text-amber-600" },
-  danger: { box: "border-rose-200 bg-rose-50 text-rose-900", icon: CircleX, iconClass: "text-rose-600" },
+  info: {
+    box: "border-sky-200 bg-sky-50 text-sky-900",
+    icon: Info,
+    iconClass: "text-sky-600",
+  },
+  success: {
+    box: "border-emerald-200 bg-emerald-50 text-emerald-900",
+    icon: CircleCheck,
+    iconClass: "text-emerald-600",
+  },
+  warning: {
+    box: "border-amber-200 bg-amber-50 text-amber-900",
+    icon: TriangleAlert,
+    iconClass: "text-amber-600",
+  },
+  danger: {
+    box: "border-rose-200 bg-rose-50 text-rose-900",
+    icon: CircleX,
+    iconClass: "text-rose-600",
+  },
 } as const;
 export type AlertTone = keyof typeof alertTones;
 
@@ -183,7 +218,10 @@ export function InlineAlert({
         className,
       )}
     >
-      <Icon aria-hidden="true" className={cn("mt-0.5 size-5 shrink-0", conf.iconClass)} />
+      <Icon
+        aria-hidden="true"
+        className={cn("mt-0.5 size-5 shrink-0", conf.iconClass)}
+      />
       <div className="min-w-0 flex-1">
         {title && <p className="font-semibold">{title}</p>}
         {children}
@@ -211,7 +249,7 @@ export function MetricCard({
   index?: number;
 }) {
   return (
-    <section className="flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xs transition-shadow hover:shadow-sm sm:p-5">
+    <section className="product-metric flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xs transition-shadow hover:shadow-sm sm:p-5">
       <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-blue-50">
         <Icon className="text-blue-600" size={21} aria-hidden="true" />
       </span>
@@ -220,7 +258,9 @@ export function MetricCard({
         <p className="mt-1 break-words text-2xl font-bold tracking-tight text-navy tabular-nums">
           {value}
         </p>
-        {sub != null && <p className={cn("mt-1 text-xs leading-5", subTone)}>{sub}</p>}
+        {sub != null && (
+          <p className={cn("mt-1 text-xs leading-5", subTone)}>{sub}</p>
+        )}
       </div>
     </section>
   );
@@ -242,14 +282,20 @@ export function Panel({
   return (
     <section
       className={cn(
-        "min-w-0 rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xs sm:p-5",
+        "product-panel min-w-0 rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xs sm:p-5",
         className,
       )}
     >
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div className="product-panel-header mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div className="min-w-0">
-          <h2 className="text-sm font-bold leading-6 text-navy sm:text-base">{title}</h2>
-          {description && <p className="mt-0.5 text-xs leading-5 text-slate-500">{description}</p>}
+          <h2 className="product-panel-title text-sm font-bold leading-6 text-navy sm:text-base">
+            {title}
+          </h2>
+          {description && (
+            <p className="product-panel-description mt-0.5 text-xs leading-5 text-slate-500">
+              {description}
+            </p>
+          )}
         </div>
         {action}
       </div>
@@ -269,7 +315,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl border border-slate-200/70 bg-white p-4 shadow-xs",
+        "product-card rounded-xl border border-slate-200/70 bg-white p-4 shadow-xs",
         className,
       )}
     >
@@ -290,7 +336,7 @@ export function PageTitle({
   back?: { href: string; label: string };
 }) {
   return (
-    <div className="mb-6">
+    <div className="product-page-title mb-6">
       {back && (
         <Link
           href={back.href}
@@ -302,10 +348,20 @@ export function PageTitle({
       )}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-navy sm:text-3xl">{title}</h1>
-          {subtitle && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">{subtitle}</p>}
+          <h1 className="product-page-title-heading text-2xl font-bold tracking-tight text-navy sm:text-3xl">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="product-page-title-subtitle mt-2 max-w-3xl text-sm leading-6 text-slate-500">
+              {subtitle}
+            </p>
+          )}
         </div>
-        {action && <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div>}
+        {action && (
+          <div className="product-page-actions flex shrink-0 flex-wrap items-center gap-2">
+            {action}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -328,7 +384,7 @@ export function Empty({
   return (
     <div
       role="status"
-      className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-8 text-center"
+      className="product-empty rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-8 text-center"
     >
       {hasRich && (
         <span className="mx-auto grid size-11 place-items-center rounded-full bg-white text-slate-400 ring-1 ring-slate-200/70">
@@ -337,9 +393,15 @@ export function Empty({
       )}
       {title && <p className="mt-3 text-sm font-semibold text-navy">{title}</p>}
       {description && (
-        <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">{description}</p>
+        <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">
+          {description}
+        </p>
       )}
-      {!hasRich && <div className="text-sm text-slate-500">{children ?? "Chưa có dữ liệu."}</div>}
+      {!hasRich && (
+        <div className="text-sm text-slate-500">
+          {children ?? "Chưa có dữ liệu."}
+        </div>
+      )}
       {hasRich && children}
       {action && <div className="mt-4 flex justify-center gap-2">{action}</div>}
     </div>
@@ -369,7 +431,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium leading-none",
+        "product-badge inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium leading-none",
         badgeTones[tone],
       )}
     >
@@ -398,11 +460,14 @@ export function StatusDot({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded px-2 py-1 text-[11px] font-medium",
+        "product-status inline-flex items-center gap-1.5 whitespace-nowrap rounded px-2 py-1 text-[11px] font-medium",
         statusDotTones[tone],
       )}
     >
-      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-current" />
+      <span
+        aria-hidden="true"
+        className="h-1.5 w-1.5 rounded-full bg-current"
+      />
       {children}
     </span>
   );
@@ -492,14 +557,23 @@ export function Modal({
         onClose();
       }}
       aria-label={title}
-      className={`fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-xl backdrop:bg-slate-900/50`}
+      className={`product-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-xl backdrop:bg-slate-900/50`}
     >
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-xl font-bold text-navy">{title}</h2>
-          {description && <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>}
+          {description && (
+            <p className="mt-1 text-sm leading-6 text-slate-500">
+              {description}
+            </p>
+          )}
         </div>
-        <button type="button" aria-label="Đóng" onClick={onClose} className={iconButtonClass}>
+        <button
+          type="button"
+          aria-label="Đóng"
+          onClick={onClose}
+          className={iconButtonClass}
+        >
           <X size={20} aria-hidden="true" />
         </button>
       </div>
@@ -560,7 +634,13 @@ export function AvatarStack({ count }: { count: number }) {
 }
 
 /** Inline progress bar with percent label. */
-export function ProgressBar({ value, label }: { value: number | null; label?: string }) {
+export function ProgressBar({
+  value,
+  label,
+}: {
+  value: number | null;
+  label?: string;
+}) {
   if (value === null) return <span className="text-slate-400">—</span>;
   const v = Math.max(0, Math.min(100, Math.round(value)));
   return (
@@ -571,7 +651,9 @@ export function ProgressBar({ value, label }: { value: number | null; label?: st
         className="h-2 w-20 accent-blue-600"
         aria-label={label ?? `Tiến độ ${v}%`}
       />
-      <span className="text-[11px] tabular-nums text-slate-500">{label ?? `${v}%`}</span>
+      <span className="text-[11px] tabular-nums text-slate-500">
+        {label ?? `${v}%`}
+      </span>
     </span>
   );
 }
@@ -579,9 +661,11 @@ export function ProgressBar({ value, label }: { value: number | null; label?: st
 /* ------------------------------------------------------------------ */
 /* Table classes — dùng cho bảng thủ công để đồng bộ style             */
 /* ------------------------------------------------------------------ */
-export const tableWrapClass = "overflow-x-auto rounded-xl border border-slate-200/70 bg-white";
-export const tableClass = "w-full border-collapse text-sm";
+export const tableWrapClass =
+  "workspace-table-wrap overflow-x-auto rounded-xl border border-slate-200/70 bg-white";
+export const tableClass = "product-table w-full border-collapse text-sm";
 export const thClass =
   "whitespace-nowrap border-b border-slate-200/70 bg-slate-50/80 px-3.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500";
-export const tdClass = "border-b border-slate-100 px-3.5 py-3 align-top text-slate-700";
+export const tdClass =
+  "border-b border-slate-100 px-3.5 py-3 align-top text-slate-700";
 export const tableRowClass = "transition-colors hover:bg-slate-50/70";

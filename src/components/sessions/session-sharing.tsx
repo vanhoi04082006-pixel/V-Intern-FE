@@ -1,4 +1,5 @@
 "use client";
+import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { useCallback, useState } from "react";
 import { useResource } from "@/lib/api/use-resource";
 import {
@@ -13,7 +14,6 @@ import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
   Panel,
-  PageTitle,
   Empty,
   buttonClass,
   inputClass,

@@ -177,8 +177,8 @@ export function MemberSelector({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <select aria-label="Lọc theo role" className={inputClass} value={role} onChange={(e) => { setRole(e.target.value); setPage(1); }}>
-          <option value="">Mọi role</option>
+        <select aria-label="Lọc theo vai trò" className={inputClass} value={role} onChange={(e) => { setRole(e.target.value); setPage(1); }}>
+          <option value="">Mọi vai trò</option>
           <option value="frontend">Frontend</option>
           <option value="backend">Backend</option>
           <option value="fullstack">Fullstack</option>

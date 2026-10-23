@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, BookOpen, Info } from "lucide-react";
@@ -13,8 +14,8 @@ import {
   WELCOME_INFO_QUESTION,
   WELCOME_SUBTITLE,
 } from "./recruitment-presentation";
-import { HorizontalStepper } from "./onboarding-stepper";
-import { IconTile, NoteCard, StepBadge } from "./onboarding-primitives";
+import { HorizontalStepper, MobileStepbar } from "./onboarding-stepper";
+import { NoteCard, StepBadge } from "./onboarding-primitives";
 
 /**
  * Màn 1 — Welcome (Bước 1/4): tiêu đề chào mừng lớn, stepper ngang 4 bước,
@@ -34,7 +35,7 @@ export function WelcomeStep() {
     <div>
       <StepBadge step={1} />
 
-      <header className="mt-3">
+      <header className="student-onboarding-intro mt-3">
         <div className="max-w-[720px]">
           <h1 className="text-[30px] font-extrabold leading-[1.15] tracking-tight text-navy sm:text-4xl">
             {WELCOME_HEADING}
@@ -57,9 +58,18 @@ export function WelcomeStep() {
             </ol>
           </nav>
         </div>
+        <Image
+          src="/images/student-mascot-v2.png"
+          alt=""
+          width={130}
+          height={150}
+        />
       </header>
 
-      <div className="mt-6">
+      <div className="mt-6 lg:hidden">
+        <MobileStepbar activeStep={1} variant="card" />
+      </div>
+      <div className="mt-6 hidden lg:block">
         <HorizontalStepper activeStep={1} />
       </div>
 
@@ -71,14 +81,13 @@ export function WelcomeStep() {
           {WELCOME_INFO_QUESTION}
         </h2>
 
-        <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <ul className="workspace-onboarding-facts mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {WELCOME_INFO_ITEMS.map((item) => (
             <li
               key={item.id}
-              className="flex min-w-0 flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+              className="min-w-0 border-t border-slate-200 pt-4"
             >
-              <IconTile icon={item.icon} tone={item.tone} />
-              <h3 className="mt-3 text-[15px] font-bold leading-snug text-navy">
+              <h3 className="text-[15px] font-semibold leading-snug text-navy">
                 {item.title}
               </h3>
               <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">
@@ -113,7 +122,7 @@ export function WelcomeStep() {
         <section
           id="welcome-guidance"
           aria-labelledby="welcome-guidance-heading"
-          className="mt-5 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)] sm:p-5"
+          className="mt-6 border-t border-slate-200 pt-6"
         >
           <h2
             id="welcome-guidance-heading"
@@ -128,8 +137,8 @@ export function WelcomeStep() {
             ))}
           </ul>
           <NoteCard tone="blue" className="mt-4">
-            Quy trình này chỉ dành cho lần đăng nhập đầu tiên của Intern — dữ
-            liệu đang hiển thị là dữ liệu mẫu để trình bày UI.
+            Quy trình này chỉ dành cho lần đăng nhập đầu tiên của Intern. Bạn có
+            thể mở lại hướng dẫn trước khi bắt đầu phỏng vấn.
           </NoteCard>
         </section>
       ) : null}

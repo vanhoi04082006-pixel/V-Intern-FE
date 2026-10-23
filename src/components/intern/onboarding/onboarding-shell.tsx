@@ -3,10 +3,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 import { OnboardingTopbar } from "./onboarding-topbar";
-import {
-  MobileStepbar,
-  VerticalStepper,
-} from "./onboarding-stepper";
+import { MobileStepbar, VerticalStepper } from "./onboarding-stepper";
 
 /**
  * Shell dùng chung cho toàn bộ Onboarding flow (4 route con):
@@ -23,7 +20,7 @@ import {
  *
  * KHÔNG set overflow hidden lên body/app toàn cục — chỉ scope shell này.
  * Thuần presentational, server-safe — auth do layout (InternOnboardingGuard)
- * lo, mock state do RecruitmentProvider (layout) lo. Shell KHÔNG giữ state.
+ * lo, trạng thái luồng do RecruitmentProvider (layout) quản lý.
  */
 export function OnboardingShell({
   variant,
@@ -38,9 +35,10 @@ export function OnboardingShell({
 
   return (
     <div
+      data-workspace-role="intern"
       className={cn(
-        "flex min-h-dvh flex-col bg-canvas",
-        isSidebar && "lg:h-dvh lg:min-h-0 lg:overflow-hidden"
+        "student-experience workspace-ui aurora-workspace workspace-onboarding flex min-h-dvh flex-col",
+        isSidebar && "lg:h-dvh lg:min-h-0 lg:overflow-hidden",
       )}
     >
       <OnboardingTopbar />
@@ -66,7 +64,7 @@ export function OnboardingShell({
                   className="object-contain"
                 />
               </div>
-              <figcaption className="mt-1.5 text-center text-[11px] font-medium leading-snug text-slate-400">
+              <figcaption className="mt-1.5 text-center text-[11px] font-medium leading-snug text-slate-500">
                 AI Recruiter luôn đồng hành cùng bạn
               </figcaption>
             </figure>

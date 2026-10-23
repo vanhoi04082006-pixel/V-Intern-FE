@@ -28,11 +28,14 @@ export const INTERN_BOTTOM_NAV: InternNavItem = {
   icon: Settings,
   href: "/intern/profile",
 };
-export function workspaceNav(active = false, outcomesAvailable = active): InternNavGroup[] {
+export function workspaceNav(
+  active = false,
+  outcomesAvailable = active,
+): InternNavGroup[] {
   return [
     {
       id: "workspace",
-      label: "Workspace",
+      label: "Không gian làm việc",
       items: [
         {
           id: INTERN_OVERVIEW_NAV_ID,
@@ -53,7 +56,8 @@ export function workspaceNav(active = false, outcomesAvailable = active): Intern
             active || ["notifications", "github"].includes(item.id)
               ? `/intern/${item.id}`
               : undefined,
-          unavailable: !active && !["notifications", "github"].includes(item.id),
+          unavailable:
+            !active && !["notifications", "github"].includes(item.id),
         })),
       ],
     },
@@ -65,11 +69,11 @@ export function workspaceNav(active = false, outcomesAvailable = active): Intern
         { id: "kpi", label: "KPI & Lương ảo", icon: ChartColumn },
         { id: "certificates", label: "Chứng nhận", icon: Award },
         ...(outcomesAvailable
-          ? [
-              { id: "performance", label: "Hiệu suất", icon: ChartColumn },
-            ]
+          ? [{ id: "performance", label: "Hiệu suất", icon: ChartColumn }]
           : []),
-        ...(active ? [{ id: "recommendations", label: "Gợi ý phát triển", icon: Bot }] : []),
+        ...(active
+          ? [{ id: "recommendations", label: "Gợi ý phát triển", icon: Bot }]
+          : []),
       ].map((item) => ({
         ...item,
         href: outcomesAvailable ? `/intern/${item.id}` : undefined,
@@ -81,7 +85,7 @@ export function workspaceNav(active = false, outcomesAvailable = active): Intern
 export function workspaceUser(user: SessionUser) {
   return {
     name: user.displayName,
-    roleLabel: "Intern",
+    roleLabel: "Sinh viên",
     initials: user.displayName
       .trim()
       .split(/\s+/)

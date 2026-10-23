@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { remainingSeconds, type InterviewSession } from "@/lib/api/recruitment";
 import { useRecruitmentFlow } from "./recruitment-provider";
+import { RecruitmentPolicy } from "./recruitment-policy";
 import { roleLabel } from "@/lib/api/workspace";
 import { ConversationInterview } from "./conversation-interview";
 function InterviewCountdown({ session }: { session: InterviewSession }) {
@@ -54,6 +55,7 @@ export function InterviewStep() {
         <h1 className="text-2xl font-bold text-navy">
           Chưa có phiên phỏng vấn
         </h1>
+        <RecruitmentPolicy attemptNumber={profile.attemptNumber} attemptsRemaining={profile.attemptsRemaining} />
         <button
           type="button"
           disabled={busy || profile.attemptsRemaining <= 0}

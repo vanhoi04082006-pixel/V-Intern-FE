@@ -31,7 +31,7 @@ describe.each(["admin", "instructor"] as const)("Current %s shell", role => {
     const nav = screen.getByRole("navigation", { name: "Điều hướng workspace" });
     expect(within(nav).getByRole("link", { name: "Tổng quan" })).toHaveAttribute("href", `/${role}`);
     expect(within(nav).getByRole("link", { name: "Tổng quan" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByText("Người dùng local")).toBeInTheDocument();
+    expect(within(screen.getByRole("banner")).getByText("Người dùng local")).toBeInTheDocument();
     for (const link of screen.getAllByRole("link", { name: "Thông báo" })) {
       expect(link).toHaveAttribute("href", `/${role}/notifications`);
     }

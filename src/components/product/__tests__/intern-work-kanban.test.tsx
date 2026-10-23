@@ -74,13 +74,15 @@ beforeEach(() => {
 });
 
 describe("Kanban task mutation synchronization", () => {
-  it('opens submission details for review instead of bypassing code submission', async () => {
+  it('opens the submission intent with clear conditions instead of bypassing code submission', async () => {
     task.status = 'doing';
     render(<InternWork />);
     fireEvent.click(screen.getByRole('button', { name: 'Bảng Kanban' }));
     await screen.findByText('Implement endpoint');
     fireEvent.drop(screen.getByTestId('drop-review'), { dataTransfer: { getData: () => 'task-1:doing' } });
-    expect(await screen.findByRole('dialog', { name: 'Chi tiết nhiệm vụ' })).toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog', { name: 'Nộp bài để chuyển sang Chờ duyệt' });
+    // The dialog opens before its task request resolves; verify the loaded content.
+    expect(await within(dialog).findByText(/Kéo thả chỉ mở nhiệm vụ/)).toBeInTheDocument();
     expect(api.updateOwnTask).not.toHaveBeenCalled();
   });
 

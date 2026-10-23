@@ -37,10 +37,10 @@ describe("recruitment-scoring — công thức Overall 70/30", () => {
     expect(calculateOverallScore(70, 70)).toBe(70);
   });
 
-  it("ngưỡng pass: >= 70 đậu, < 70 trượt, biên 70 đậu", () => {
+  it("ngưỡng pass: trên 70 đậu, đúng 70 chưa đậu", () => {
     expect(isPassed(81.1)).toBe(true);
     expect(isPassed(62.2)).toBe(false);
-    expect(isPassed(PASS_THRESHOLD)).toBe(true);
+    expect(isPassed(PASS_THRESHOLD)).toBe(false);
     expect(isPassed(69.9)).toBe(false);
   });
 
@@ -88,7 +88,7 @@ describe("recruitment result datasets — Overall luôn derive", () => {
     const result = buildRecruitmentResult({ technical: 70, soft: 70 });
 
     expect(result.overall).toBe(70);
-    expect(result.passed).toBe(true);
+    expect(result.passed).toBe(false);
   });
 
   it("resolveRecruitmentResult: preview fail → fail, preview pass/null → pass", () => {

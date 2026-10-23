@@ -12,8 +12,8 @@ beforeEach(() => { vi.resetAllMocks(); api.list.mockResolvedValue(page); });
 describe("Instructor root route", () => {
   it("loads scoped sessions and progress through the real route composition", async () => {
     render(<InstructorHome />);
-    expect(await screen.findByText("Phiên từ API")).toBeInTheDocument();
-    expect(screen.getByText(/3\/8 tasks \(37.5%\)/)).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Phiên từ API", level: 3 })).toBeInTheDocument();
+    expect(screen.getByText(/3\/8 nhiệm vụ \(37.5%\)/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Chi tiết/ })).toHaveAttribute("href", "/instructor/sessions/s-local");
     expect(api.list).toHaveBeenCalledWith(expect.objectContaining({ page: 1, pageSize: 10 }), expect.any(AbortSignal));
     expect(screen.queryByText("Dữ liệu mẫu")).not.toBeInTheDocument();
@@ -33,7 +33,7 @@ describe("Instructor root route", () => {
     render(<InstructorHome />);
     expect(await screen.findByRole("alert")).toHaveTextContent("Không thể tải dữ liệu");
     await userEvent.click(screen.getByRole("button", { name: "Thử lại" }));
-    expect(await screen.findByText("Phiên từ API")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Phiên từ API", level: 3 })).toBeInTheDocument();
     expect(api.list).toHaveBeenCalledTimes(2);
   });
 });

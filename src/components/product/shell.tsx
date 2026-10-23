@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { WorkspaceStage } from "@/components/workspace/workspace-stage";
 import { usePathname } from "next/navigation";
 import {
   Activity,
@@ -37,6 +38,7 @@ import {
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getSessionUser } from "@/lib/auth/session";
+import { cn } from "@/lib/utils";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 
 export type ProductRole = "intern" | "instructor" | "admin";
@@ -247,7 +249,9 @@ export function ProductShell({
   }, []);
 
   const flatItems = menus[role].flatMap((group) => group.items);
-  const match = flatItems.find(([key]) => path === `/${role}${key ? `/${key}` : ""}`);
+  const match = flatItems.find(
+    ([key]) => path === `/${role}${key ? `/${key}` : ""}`,
+  );
   const section = flatItems.find(
     ([key]) => key && path.startsWith(`/${role}/${key}/`),
   );
@@ -257,7 +261,7 @@ export function ProductShell({
 
   const navigation = (
     <>
-      <div className="mb-6 border-b border-slate-100 px-3 pb-5">
+      <div className="workspace-brand mb-6 border-b border-slate-100 px-3 pb-5">
         <Logo />
         <p className="mt-1 text-[9px] uppercase tracking-widest text-slate-400">
           Learn · Build · Belong
@@ -268,9 +272,12 @@ export function ProductShell({
       </p>
       <nav aria-label="Điều hướng workspace" className="space-y-4">
         {menus[role].map((group, groupIndex) => (
-          <div key={group.heading ?? `group-${groupIndex}`} className="space-y-1">
+          <div
+            key={group.heading ?? `group-${groupIndex}`}
+            className="space-y-1"
+          >
             {group.heading && (
-              <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="workspace-nav-label mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 {group.heading}
               </p>
             )}
@@ -300,7 +307,7 @@ export function ProductShell({
                   href={href}
                   onClick={() => setOpen(false)}
                   aria-current={current ? "page" : undefined}
-                  className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 ${
+                  className={`workspace-nav-item flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 ${
                     current
                       ? "bg-blue-50 font-semibold text-blue-700 ring-1 ring-inset ring-blue-100"
                       : "text-slate-600 hover:bg-slate-50 hover:text-navy"
@@ -314,16 +321,34 @@ export function ProductShell({
           </div>
         ))}
       </nav>
-      <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
-        <FooterIcon className="mb-2 text-blue-600" size={22} aria-hidden="true" />
-        <p className="text-xs font-semibold text-navy">{footer.title}</p>
-        <p className="mt-1 text-xs leading-5 text-slate-500">{footer.text}</p>
-      </div>
+      {role === "instructor" ? (
+        <div className="workspace-sidebar-account">
+          <div className="aurora-account-link">
+            <span className="aurora-account-monogram" aria-hidden="true">{user?.displayName?.charAt(0) || "G"}</span>
+            <span><strong>{user?.displayName || "Giảng viên"}</strong><span>Không gian giảng dạy</span></span>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+          <FooterIcon
+            className="mb-2 text-blue-600"
+            size={22}
+            aria-hidden="true"
+          />
+          <p className="text-xs font-semibold text-navy">{footer.title}</p>
+          <p className="mt-1 text-xs leading-5 text-slate-500">{footer.text}</p>
+        </div>
+      )}
     </>
   );
 
   return (
-    <div className="min-h-dvh bg-canvas text-slate-700">
+    <div
+      className={cn(
+        "product-shell min-h-dvh bg-canvas text-slate-700",
+        `product-shell-${role}`,
+      )}
+    >
       <a
         href="#product-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-navy focus:shadow-lg focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
@@ -332,7 +357,7 @@ export function ProductShell({
       </a>
       <aside
         aria-label="Thanh điều hướng workspace"
-        className="fixed inset-y-0 left-0 hidden w-[240px] overflow-y-auto border-r border-slate-200/70 bg-white p-3 lg:block"
+        className="product-sidebar fixed inset-y-0 left-0 hidden w-[240px] overflow-y-auto border-r border-slate-200/70 bg-white p-3 lg:block"
       >
         {navigation}
       </aside>
@@ -346,7 +371,7 @@ export function ProductShell({
           event.preventDefault();
           setOpen(false);
         }}
-        className="fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-white p-3 backdrop:bg-slate-900/50"
+        className="product-drawer fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-white p-3 backdrop:bg-slate-900/50"
         aria-label="Menu workspace"
       >
         <div className="flex min-h-full flex-col">
@@ -360,8 +385,8 @@ export function ProductShell({
           {navigation}
         </div>
       </dialog>
-      <div className="lg:pl-[240px]">
-        <header className="sticky top-0 z-30 flex min-h-[72px] flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 bg-white/95 px-4 py-3 backdrop-blur-sm sm:px-6">
+      <div className="aurora-shell-content lg:pl-[240px]">
+        <header className="product-topbar sticky top-0 z-30 flex min-h-[72px] flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 bg-white/95 px-4 py-3 backdrop-blur-sm sm:px-6">
           <div className="flex min-w-0 items-center gap-2 text-sm">
             <button
               aria-label="Mở menu"
@@ -370,14 +395,21 @@ export function ProductShell({
             >
               <Menu aria-hidden="true" />
             </button>
-            <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2">
+            <nav
+              aria-label="Breadcrumb"
+              className="flex min-w-0 items-center gap-2"
+            >
               <Link
                 href={`/${role}`}
                 className="shrink-0 rounded font-medium text-blue-700 transition-colors hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
               >
                 V-Intern
               </Link>
-              <ChevronRight size={14} className="shrink-0 text-slate-300" aria-hidden="true" />
+              <ChevronRight
+                size={14}
+                className="shrink-0 text-slate-300"
+                aria-hidden="true"
+              />
               {section ? (
                 <>
                   <Link
@@ -386,13 +418,23 @@ export function ProductShell({
                   >
                     {section[1]}
                   </Link>
-                  <ChevronRight size={14} className="shrink-0 text-slate-300" aria-hidden="true" />
-                  <span aria-current="page" className="truncate font-medium text-navy">
+                  <ChevronRight
+                    size={14}
+                    className="shrink-0 text-slate-300"
+                    aria-hidden="true"
+                  />
+                  <span
+                    aria-current="page"
+                    className="truncate font-medium text-navy"
+                  >
                     Chi tiết
                   </span>
                 </>
               ) : (
-                <span aria-current="page" className="truncate font-medium text-navy">
+                <span
+                  aria-current="page"
+                  className="truncate font-medium text-navy"
+                >
                   {title}
                 </span>
               )}
@@ -406,8 +448,22 @@ export function ProductShell({
             >
               <Bell size={19} aria-hidden="true" />
             </Link>
-            <div className="max-w-24 truncate text-xs sm:max-w-36">
-              <strong className="block truncate text-navy" title={user?.displayName}>
+            {role === "instructor" && user ? (
+              <span className="product-avatar" aria-hidden="true">
+                {user.displayName
+                  .split(/\s+/)
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((part) => part[0])
+                  .join("")
+                  .toLocaleUpperCase("vi")}
+              </span>
+            ) : null}
+            <div className="product-topbar-user max-w-24 truncate text-xs sm:max-w-36">
+              <strong
+                className="block truncate text-navy"
+                title={user?.displayName}
+              >
                 {user?.displayName}
               </strong>
               <span className="text-slate-400">{roleLabels[role]}</span>
@@ -415,8 +471,11 @@ export function ProductShell({
             <LogoutButton />
           </div>
         </header>
-        <main id="product-content" className="mx-auto max-w-[1680px] p-4 sm:p-6">
-          {children}
+        <main
+          id="product-content"
+          className="product-main mx-auto max-w-[1680px] p-4 sm:p-6"
+        >
+          {role === "instructor" ? <WorkspaceStage role="instructor">{children}</WorkspaceStage> : children}
         </main>
       </div>
     </div>

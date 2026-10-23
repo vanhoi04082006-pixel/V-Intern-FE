@@ -178,7 +178,8 @@ export function ConversationInterview() {
         role="log"
         aria-label="Hội thoại phỏng vấn"
         aria-live="polite"
-        className="max-h-[55dvh] min-h-64 space-y-5 overflow-y-auto p-4 sm:p-6"
+        tabIndex={0}
+        className="max-h-[55dvh] min-h-64 space-y-5 overflow-y-auto p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:p-6"
       >
         {chat?.messages.map((m, i) => (
           <article
@@ -186,6 +187,7 @@ export function ConversationInterview() {
             className={`flex items-start gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}
           >
             <span
+              role="img"
               aria-label={m.role === "assistant" ? "AI Recruiter" : "Bạn"}
               className={`grid size-8 shrink-0 place-items-center rounded-full ${m.role === "assistant" ? "bg-blue-100 text-brand" : "bg-slate-100 text-slate-600"}`}
             >

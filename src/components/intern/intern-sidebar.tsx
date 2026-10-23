@@ -1,18 +1,18 @@
 import Link from "next/link";
+import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/v-intern/logo";
 
-import {
-  INTERN_BOTTOM_NAV,
-} from "./workspace-presentation";
-import type { InternNavGroup, InternNavItem } from "./data/intern-mock-data";
+import { INTERN_BOTTOM_NAV } from "./workspace-presentation";
+import type {
+  InternNavGroup,
+  InternNavItem,
+  InternWorkspaceUser,
+} from "./data/intern-mock-data";
 
 /** Shared desktop/drawer navigation. InternShell supplies route availability
  * from the current workspace lifecycle; unavailable items have no destination.
  */
-
-const itemBase =
-  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40";
 
 function NavItem({
   item,
@@ -24,7 +24,7 @@ function NavItem({
   onNavigate?: () => void;
 }) {
   const icon = (
-    <item.icon className="size-[18px] shrink-0" aria-hidden="true" />
+    <item.icon className="size-[17px] shrink-0" aria-hidden="true" />
   );
 
   if (active) {
@@ -33,10 +33,10 @@ function NavItem({
         href={item.href ?? "/intern"}
         aria-current="page"
         onClick={onNavigate}
-        className={cn(itemBase, "bg-blue-50 font-semibold text-brand")}
+        className="student-nav-item"
       >
         {icon}
-        {item.label}
+        <span className="truncate">{item.label}</span>
       </Link>
     );
   }
@@ -51,48 +51,31 @@ function NavItem({
         disabled
         aria-disabled="true"
         title="Chưa khả dụng — cần dự án được phân công"
-        className={cn(
-          itemBase,
-          "cursor-not-allowed text-slate-300",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
-        )}
+        className="student-nav-item"
       >
         {icon}
-        {item.label}
+        <span className="truncate">{item.label}</span>
       </button>
     );
   }
 
   if (item.href)
     return (
-      <Link
-        href={item.href}
-        onClick={onNavigate}
-        className={cn(
-          itemBase,
-          "text-slate-600 hover:bg-slate-100 hover:text-navy",
-        )}
-      >
+      <Link href={item.href} onClick={onNavigate} className="student-nav-item">
         {icon}
-        {item.label}
+        <span className="truncate">{item.label}</span>
+        {typeof item.badge === "number" && item.badge > 0 ? (
+          <span className="student-nav-badge">{item.badge}</span>
+        ) : null}
       </Link>
     );
 
   return (
-    <button
-      type="button"
-      onClick={onNavigate}
-      className={cn(
-        itemBase,
-        "text-slate-600 hover:bg-slate-100 hover:text-navy",
-      )}
-    >
+    <button type="button" onClick={onNavigate} className="student-nav-item">
       {icon}
-      {item.label}
+      <span className="truncate">{item.label}</span>
       {typeof item.badge === "number" && item.badge > 0 ? (
-        <span className="ml-auto grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
-          {item.badge}
-        </span>
+        <span className="student-nav-badge">{item.badge}</span>
       ) : null}
     </button>
   );
@@ -103,43 +86,47 @@ export function InternSidebar({
   className,
   onNavigate,
   currentPath = "/intern",
+  user,
 }: {
   groups: InternNavGroup[];
   className?: string;
   /** Gọi sau khi user tương tác với một mục (dùng để đóng drawer mobile) */
   onNavigate?: () => void;
   currentPath?: string;
+  user?: InternWorkspaceUser;
 }) {
   return (
-    <aside className={cn("flex min-h-0 flex-col bg-white", className)}>
-      <div className="flex h-16 shrink-0 flex-col justify-center gap-0.5 border-b border-slate-100 px-5">
-        <Logo className="text-xl" />
-        <p className="text-[8px] font-semibold uppercase tracking-[0.24em] text-slate-400">
-          Learn · Build · Belong
-        </p>
+    <aside className={cn("student-sidebar", className)}>
+      <div className="student-sidebar-brand">
+        <div className="student-sidebar-brand-text">
+          <Logo />
+          <p className="student-sidebar-tagline">Learn · Build · Belong</p>
+        </div>
+        <span className="student-sidebar-scope">Sinh viên</span>
       </div>
 
       <nav
         aria-label="Điều hướng thực tập sinh"
-        className="flex min-h-0 flex-1 flex-col px-3 py-4"
+        className="student-sidebar-nav"
       >
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto">
-          {groups.map((group, groupIndex) => (
-            <div key={group.id}>
-              {groupIndex > 0 ? (
-                <hr className="mb-4 border-slate-100" aria-hidden="true" />
-              ) : null}
+        <div className="student-sidebar-scroll">
+          {groups.map((group) => (
+            <div key={group.id} className="student-nav-group">
               {group.label ? (
-                <p className="px-3 pb-2 text-xs font-medium text-slate-400">
-                  {group.label}
-                </p>
+                <p className="student-nav-label">{group.label}</p>
               ) : null}
-              <ul className="space-y-0.5">
+              <ul className="student-nav-list">
                 {group.items.map((item) => (
                   <li key={item.id}>
                     <NavItem
                       item={item}
-                      active={!item.unavailable && Boolean(item.href) && (currentPath === item.href || (item.href !== "/intern" && currentPath.startsWith(`${item.href}/`)))}
+                      active={
+                        !item.unavailable &&
+                        Boolean(item.href) &&
+                        (currentPath === item.href ||
+                          (item.href !== "/intern" &&
+                            currentPath.startsWith(`${item.href}/`)))
+                      }
                       onNavigate={onNavigate}
                     />
                   </li>
@@ -149,8 +136,32 @@ export function InternSidebar({
           ))}
         </div>
 
-        <div className="mt-2 shrink-0 border-t border-slate-100 pt-3">
-          <NavItem item={INTERN_BOTTOM_NAV} active={currentPath === INTERN_BOTTOM_NAV.href} onNavigate={onNavigate} />
+        <div className="student-sidebar-footer">
+          <div>
+            <NavItem
+              item={INTERN_BOTTOM_NAV}
+              active={currentPath === INTERN_BOTTOM_NAV.href}
+              onNavigate={onNavigate}
+            />
+          </div>
+          {user && (
+            <Link
+              href="/intern/profile"
+              className="student-user-card mt-1"
+              aria-label={`Mở hồ sơ cá nhân của ${user.name}`}
+            >
+              <span className="student-avatar" aria-hidden="true">
+                {user.initials}
+              </span>
+              <span className="student-user-meta">
+                <span className="student-user-name">{user.name}</span>
+                <span className="student-user-role">{user.roleLabel}</span>
+              </span>
+              <span className="student-user-settings" aria-hidden="true">
+                <Settings className="size-4" />
+              </span>
+            </Link>
+          )}
         </div>
       </nav>
     </aside>

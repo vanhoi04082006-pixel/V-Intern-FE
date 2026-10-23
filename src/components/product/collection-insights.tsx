@@ -20,29 +20,29 @@ export function CollectionMetrics({
 }) {
   return (
     <div className="mb-5">
-      <dl className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <dl className="workspace-metrics grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {values.map(([label, value], i) => {
           const Icon = icons[i % icons.length];
           return (
             <div
               key={label}
-              className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm"
+              className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm"
             >
-              <span
-                className="rounded-xl p-3"
-                style={{
-                  color: colors[i % colors.length],
-                  backgroundColor: colors[i % colors.length] + "12",
-                }}
-              >
-                <Icon size={23} />
-              </span>
-              <div className="min-w-0">
-                <dt className="text-xs text-slate-500">{label}</dt>
-                <dd className="mt-2 text-2xl font-bold text-navy">
-                  {value.toLocaleString("vi-VN")}
-                </dd>
-              </div>
+              <dt className="flex items-center gap-3 text-xs text-slate-500">
+                <span
+                  className="shrink-0 rounded-xl p-3"
+                  style={{
+                    color: colors[i % colors.length],
+                    backgroundColor: colors[i % colors.length] + "12",
+                  }}
+                >
+                  <Icon size={23} />
+                </span>
+                <span className="min-w-0">{label}</span>
+              </dt>
+              <dd className="mt-2 pl-[59px] text-2xl font-bold text-navy">
+                {value.toLocaleString("vi-VN")}
+              </dd>
             </div>
           );
         })}

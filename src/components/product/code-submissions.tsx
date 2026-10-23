@@ -60,13 +60,15 @@ export function CodeSubmissions({
     [ref, setRef] = useState(""),
     [summary, setSummary] = useState("");
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [sent, setSent] = useState(false);
   const owner =
     task.assigneeId?.toLowerCase() === getSessionUser()?.id.toLowerCase();
   const pending = data.data?.some((s) => s.status === "submitted");
   async function send() {
     setBusy(true);
     setError("");
+    setSent(false);
     try {
       await submitCode(task.id, {
         prUrl: url.trim(),
@@ -76,6 +78,7 @@ export function CodeSubmissions({
       });
       setUrl("");
       setSummary("");
+      setSent(true);
       data.reload();
       onUpdated();
     } catch (e) {
@@ -98,21 +101,44 @@ export function CodeSubmissions({
         thống khóa commit để chấm. Task chỉ hoàn thành sau khi giảng viên xác
         nhận.
       </p>
+      {!managed && pending && (
+        <p
+          role="status"
+          className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-7 text-amber-900"
+        >
+          Bạn đang có bài nộp chờ xử lý. Theo dõi đánh giá bên dưới; nếu cần
+          thay đổi code, rút bài hiện tại rồi nộp lại để hệ thống kiểm tra đúng
+          commit mới.
+        </p>
+      )}
       {owner && !managed && !pending && task.status === "doing" && (
         <form
-          className="mb-6 space-y-3"
+          id="task-submission-form"
+          className="mb-6 space-y-4 rounded-2xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5"
           onSubmit={(e) => {
             e.preventDefault();
             void send();
           }}
         >
+          <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5">
+            <p className="text-xs font-bold uppercase tracking-[0.05em] text-blue-700">
+              Điều kiện để chuyển sang Chờ duyệt
+            </p>
+            <p className="mt-1.5 text-xs leading-6 text-slate-600">
+              Nhiệm vụ đang ở Đang làm, bạn là người được giao, link PR/commit
+              thuộc repository của phiên, mô tả tối thiểu 10 ký tự và không có
+              bài nộp nào đang chờ xử lý. Nếu nhiệm vụ có phụ thuộc, các nhiệm vụ
+              đó phải được giảng viên xác nhận Hoàn thành trước.
+            </p>
+          </div>
           <label className="block text-sm font-semibold">
             Link PR, commit hoặc repository
             <input
+              id="submission-pr-url"
               type="url"
               required
               maxLength={512}
-              placeholder="https://github.com/giang-vien/repo/pull/1"
+              placeholder="https://github.com/owner/repository/pull/1"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className={inputClass}
@@ -137,18 +163,57 @@ export function CodeSubmissions({
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               rows={3}
+              placeholder="Các phần đã hoàn thành, cách kiểm thử và kết quả. Nêu rõ phần còn hạn chế nếu có."
               className={inputClass}
             />
           </label>
           <button disabled={busy} className={buttonClass}>
             {busy ? "Đang xác minh code…" : "Nộp code để review"}
           </button>
+          {sent && (
+            <p
+              role="status"
+              className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800"
+            >
+              Đã gửi bài. Nhiệm vụ đang được chuyển sang Chờ duyệt sau khi hệ
+              thống xác minh.
+            </p>
+          )}
+          <p className="text-xs leading-6 text-slate-500">
+            Hệ thống chấm phiên bản code tại thời điểm nộp. Push thêm code sau
+            đó không tự thay thế commit đã nộp.
+          </p>
         </form>
       )}
       {owner && task.status === "todo" && (
         <p className="mb-4 rounded-lg bg-blue-50 p-3 text-sm">
           Bấm bắt đầu công việc trước khi nộp code.
         </p>
+      )}
+      {!managed && (
+        <details className="student-submission-guide">
+          <summary>Quy trình nộp bài và duyệt</summary>
+          <ol className="student-step-list mt-3">
+            <li>
+              <div>
+                <strong>Kiểm tra bài làm</strong>
+                <p>Chạy kiểm thử và đối chiếu tiêu chí hoàn thành.</p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Chuẩn bị liên kết</strong>
+                <p>Dùng PR đang mở hoặc repository kèm branch/ref.</p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Theo dõi phản hồi</strong>
+                <p>AI đưa gợi ý; giảng viên xác nhận kết quả.</p>
+              </div>
+            </li>
+          </ol>
+        </details>
       )}
       {error && (
         <p role="alert" className="my-3 text-sm text-rose-700">
@@ -227,13 +292,37 @@ function SubmissionReview({
         </a>
       </div>
       <p className="my-3 whitespace-pre-wrap text-sm">{submission.summary}</p>
-      {submission.observedHeadSha && submission.observedHeadSha.toLowerCase() !== submission.headSha?.toLowerCase() && <div role="status" className="my-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"><p className="font-semibold">GitHub ghi nhận code thay đổi sau khi nộp bài.</p><p className="mt-1">Hãy kiểm tra commit, rút bài và nộp lại khi cần. Giảng viên sẽ kiểm tra SHA hiện tại trước khi duyệt.</p><p className="mt-2 break-all font-mono text-xs">Commit được ghi nhận: {submission.observedHeadSha}</p></div>}
+      {submission.observedHeadSha &&
+        submission.observedHeadSha.toLowerCase() !==
+          submission.headSha?.toLowerCase() && (
+          <div
+            role="status"
+            className="my-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"
+          >
+            <p className="font-semibold">
+              GitHub ghi nhận code thay đổi sau khi nộp bài.
+            </p>
+            <p className="mt-1">
+              Hãy kiểm tra commit, rút bài và nộp lại khi cần. Giảng viên sẽ
+              kiểm tra SHA hiện tại trước khi duyệt.
+            </p>
+            <p className="mt-2 break-all font-mono text-xs">
+              Commit được ghi nhận: {submission.observedHeadSha}
+            </p>
+          </div>
+        )}
       {submission.headSha && (
         <p className="break-all font-mono text-xs text-slate-500">
           Commit được nộp: {submission.headSha}
         </p>
       )}
-      {submission.sourceRef && <p className="mt-2 break-all font-mono text-xs text-slate-500">{submission.sourceKind === 'pull' ? `Pull request #${submission.sourceRef}` : `${submission.sourceKind === 'branch' ? 'Nhánh' : submission.sourceKind === 'commit' ? 'Commit/ref' : 'Ref nguồn'}: ${submission.sourceRef}`}</p>}
+      {submission.sourceRef && (
+        <p className="mt-2 break-all font-mono text-xs text-slate-500">
+          {submission.sourceKind === "pull"
+            ? `Pull request #${submission.sourceRef}`
+            : `${submission.sourceKind === "branch" ? "Nhánh" : submission.sourceKind === "commit" ? "Commit/ref" : "Ref nguồn"}: ${submission.sourceRef}`}
+        </p>
+      )}
       {submission.score !== null && (
         <p className="mt-3 text-sm font-semibold">
           Điểm giảng viên: {submission.score}/100 · {submission.feedback}
@@ -387,8 +476,30 @@ function AiCodeReview({
                 {review.evidence.tests?.failed ?? 0} failed
               </p>
               <p>{review.evidence.tests?.summary}</p>
-              {review.evidence.tests?.executionTimeMs != null && <p>Thực thi: {(review.evidence.tests.executionTimeMs / 1000).toFixed(2)} giây · Điểm test: {review.evidence.tests.score}/100</p>}
-              {Boolean(review.evidence.tests?.checks.length) && <ul className="space-y-1">{review.evidence.tests!.checks.map((check, i) => <li key={i} className={check.passed ? 'text-emerald-700' : 'text-rose-700'}>{check.passed ? 'Đạt' : 'Chưa đạt'} · {check.name}<span className="block text-xs text-slate-500">{check.log}</span></li>)}</ul>}
+              {review.evidence.tests?.executionTimeMs != null && (
+                <p>
+                  Thực thi:{" "}
+                  {(review.evidence.tests.executionTimeMs / 1000).toFixed(2)}{" "}
+                  giây · Điểm test: {review.evidence.tests.score}/100
+                </p>
+              )}
+              {Boolean(review.evidence.tests?.checks.length) && (
+                <ul className="space-y-1">
+                  {review.evidence.tests!.checks.map((check, i) => (
+                    <li
+                      key={i}
+                      className={
+                        check.passed ? "text-emerald-700" : "text-rose-700"
+                      }
+                    >
+                      {check.passed ? "Đạt" : "Chưa đạt"} · {check.name}
+                      <span className="block text-xs text-slate-500">
+                        {check.log}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
               {review.evidence.warnings.map((v, i) => (
                 <p key={i}>{v}</p>
               ))}
