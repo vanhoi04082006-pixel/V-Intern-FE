@@ -84,9 +84,10 @@ try {
   await page
     .getByRole("button", { name: "Cuộc trò chuyện mới", exact: true })
     .click();
+  const question = `[${Date.now().toString(36)}] Làm thế nào để chia nhỏ nhiệm vụ?`;
   await page
     .getByLabel("Câu hỏi của bạn")
-    .fill("Làm thế nào để chia nhỏ nhiệm vụ?");
+    .fill(question);
   const sent = page.waitForResponse(
     (r) => r.url().includes("/messages") && r.request().method() === "POST",
   );
@@ -97,11 +98,12 @@ try {
   await shot(page, "intern-mentor");
   await page.reload();
   await page
-    .getByRole("button", { name: /Cuộc trò chuyện mới/ })
-    .last()
+    .getByRole("button")
+    .filter({ has: page.getByText(question, { exact: true }) })
     .click();
   await page
-    .getByText("Làm thế nào để chia nhỏ nhiệm vụ?", { exact: true })
+    .getByLabel("Nội dung cuộc trò chuyện", { exact: true })
+    .getByText(question, { exact: true })
     .waitFor();
   assert.equal(
     (
@@ -171,7 +173,8 @@ try {
   });
   await page.goto(base + `/intern/certificates/${fixture.certificateId}`);
   await page
-    .getByRole("heading", { name: fixture.certificateNumber, exact: true })
+    .locator(".student-cert-document-meta")
+    .getByText(fixture.certificateNumber, { exact: true })
     .waitFor();
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Tải PDF" }).click();
@@ -293,7 +296,9 @@ try {
   await page.getByText("Lập kế hoạch công việc", { exact: true }).waitFor();
   await shot(page, "intern-recommendations");
   await page.goto(base + "/intern/profile");
-  await page.getByText(fixture.email, { exact: true }).waitFor();
+  const accountEmail = page.getByRole("definition").filter({ hasText: fixture.email });
+  await accountEmail.waitFor();
+  assert.equal((await accountEmail.textContent()).trim(), fixture.email);
   await shot(page, "intern-profile");
   assert.deepEqual(errors, []);
   await page.setViewportSize({ width: 390, height: 844 });
