@@ -133,7 +133,12 @@ try {
   }
   for (const key of ["frontend", "frontend2", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
-    await page.locator("li").filter({ hasText: users[key].email }).getByRole("button", { name: "Thêm", exact: true }).click();
+    const [assigned] = await Promise.all([
+      page.waitForResponse(r => new URL(r.url()).pathname === '/api/v1/assignments' && r.request().method() === 'POST' && r.request().postDataJSON().internId.toLowerCase() === users[key].id.toLowerCase()),
+      page.locator("li").filter({ hasText: users[key].email }).getByRole("button", { name: "Thêm", exact: true }).click(),
+    ]);
+    assert.equal(assigned.status(), 201);
+    assert.equal((await assigned.json()).internId.toLowerCase(), users[key].id.toLowerCase());
     await expect(page.getByText(`Đã phân công ${users[key].name}.`, { exact: true })).toBeVisible();
   }
   await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible();
