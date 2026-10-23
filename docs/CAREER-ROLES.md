@@ -51,11 +51,14 @@ Server chịu trách nhiệm quyền, code hợp lệ, trạng thái, constraint
 
 ## Kiểm chứng ngày 23/10/2026
 
-- Baseline UI catalog: 84 file / 548 test đạt; lint và typecheck đạt. Bản production dùng riêng build thành công. Sau đó bổ sung regression không còn nghề thay thế (số liệu lượt mới ghi trong báo cáo CI kế tiếp).
-- Browser thật, không intercept API: tạo draft → publish → hai revision → soạn 10 câu qua UI → tài khoản sinh viên riêng chọn nghề mới → bắt đầu 10 snapshot → archive nhưng buổi đang làm vẫn đọc được. SQL và API thật ở môi trường riêng; external AI/GitHub là fixture của harness.
+- Mốc hiện hành FE `6e6e9c9`: 84 file / **549 test** đạt; lint, typecheck và 21 CI contract đạt. Baseline UI catalog trước đó có 548 test; sau đó bổ sung regression không còn nghề thay thế. Bản production dùng riêng build thành công; [quality của revision mới](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/39945967274) đạt.
+- Browser thật, không intercept API: tạo draft → publish → hai revision → soạn 10 câu qua UI → tài khoản sinh viên riêng chọn nghề mới → bắt đầu 10 snapshot → archive nhưng buổi đang làm vẫn đọc được → trả lời 10 câu → nộp → chấm và lưu kết quả. SQL xác nhận 10 câu trả lời, quyết định `passed`, 81.1 điểm và prompt v5. Điểm 81.1 là fixture được công bố của harness, không phải đánh giá chất lượng model live.
 - Kiểm 1440/1280/1024/768/390 px, không tràn ngang, không page error trong lượt đạt. Evidence local: `manual-runtime/ci-recovery-20261023/phase7-evidence/career-roles/result.json` và ảnh cùng thư mục.
 - Script tái lập: `scripts/career-roles-live.mjs`, chỉ chạy với DB disposable của full-stack harness. Workflow giữ 14 bước cũ và thêm một gate riêng cho catalog.
+- Cặp app FE `6e6e9c9` / BE `ecc1cb8` đã đạt cả quality và [14 bước + gate catalog trên SQL 2019](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/39945967240). Sau đó script catalog được mở rộng đến nộp/chấm; fixture được sửa để trả `recommendedRole=null` ngoài khoảng 50–70. Regression Node mới giữ hợp đồng này; 22/22 contract đạt local. Lượt browser mở rộng đạt ở `career-browser-grade3.log`; các lượt fail trước đó không tính là đạt.
 
 Prompt đánh giá BE v5 dùng danh sách nghề đang tuyển và lưu metadata/version catalog trong input run. Đề xuất ngoài catalog bị từ chối; nếu không có nghề thay thế thì giữ điểm, không tạo nghề giả và thông báo cần định hướng. FE không hiện lời đề xuất khi API trả `recommendedRole=null` ở khoảng 50–70 điểm.
 
 **Giới hạn:** bộ lọc nghề ở màn hình phân công giảng viên và consumer template còn cần chuyển. R03 tổng thể vẫn mở. Các module CV, lịch, Agent runtime, mail và chính sách nộp trễ là các task sau, không được gọi là đã xong chỉ vì có thư viện nghề. Migration mới hiện mới áp dụng DB kiểm thử, chưa thay DB demo chính.
+
+Hiện vẫn giữ luồng chọn nghề thủ công để không phá chức năng đang dùng. Khi M08–M11 hoàn tất, hồ sơ CV được Agent phân tích và xếp lịch mới dùng role được giao; không gọi màn hình hiện tại là nghiệm thu luồng CV tự động.

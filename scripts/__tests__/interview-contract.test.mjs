@@ -8,6 +8,12 @@ test('failed interview fixture is below 50, separate from alternative-role guida
   assert.ok(overall < 50, `Failed fixture must be below 50, received ${overall}`);
 });
 
+test('pass/fail fixtures do not recommend the applied career outside the 50–70 band', () => {
+  for (const role of ['qa', 'frontend', 'new_catalog_career']) {
+    assert.equal(buildTestInterviewPayload({ task: 'recruitment-evaluation', input: { role } }).recommendedRole, null);
+  }
+});
+
 test('test interview provider keeps each conversation feature separate from scoring', () => {
   assert.deepEqual(buildTestInterviewPayload({ task: 'interview_next_question', input: { position: 1, plannedQuestion: 'Describe an API you built.' } }), { message: 'Chào bạn! Describe an API you built.' });
   assert.deepEqual(buildTestInterviewPayload({ task: 'clarify_interview_question', input: { question: 'Describe an API.' } }), { message: 'Bạn hãy nêu một ví dụ cụ thể liên quan đến: Describe an API.' });

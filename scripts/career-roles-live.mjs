@@ -105,7 +105,22 @@ try {
   assert.equal(archived.version, 3); assert.equal(archived.status, 'archived');
   await student.reload();
   await student.getByLabel('Thời gian còn lại').waitFor();
+  for (let i = 0; i < 10; i++) {
+    await student.getByLabel('Tin nhắn của bạn').fill(`I explain the SQL query, expected results, empty data, boundary cases and repeatable tests with concrete examples. Answer ${i}.`);
+    await student.getByRole('button', { name: 'Gửi câu trả lời', exact: true }).click();
+    await student.getByText(`${i + 1}/10 câu ·`, { exact: false }).waitFor();
+  }
+  await student.getByRole('button', { name: 'Kết thúc và chờ kết quả', exact: true }).click();
+  await student.waitForURL('**/intern/onboarding/result');
+  await student.getByRole('heading', { name: 'Bạn đã trúng tuyển', exact: true }).waitFor();
+  const [assessment] = await ds.query('SELECT decision,overallScore,promptVersion FROM recruitment_results WHERE sessionId=@0', [started.session.id]);
+  const [answers] = await ds.query('SELECT COUNT(*) count FROM interview_answers WHERE sessionId=@0', [started.session.id]);
+  assert.equal(answers.count, 10); assert.equal(assessment.decision, 'passed');
+  assert.equal(Number(assessment.overallScore), 81.1, 'Explicit harness fixture score, never a live-model quality assertion');
+  const { RECRUITMENT_EVALUATION_PROMPT_VERSION } = req(path.join(be, 'dist/recruitment/recruitment-prompt.js'));
+  assert.equal(assessment.promptVersion, RECRUITMENT_EVALUATION_PROMPT_VERSION);
+  await student.screenshot({ path: path.join(evidence, 'student-result.png'), fullPage: true, animations: 'disabled' });
   assert.deepEqual(errors, []);
-  fs.writeFileSync(path.join(evidence, 'result.json'), JSON.stringify({ passed: true, code, questions: bank.count, snapshots: snapshots.count, viewports, pageErrors: errors, externalProviders: 'explicit harness fixtures' }, null, 2));
-  console.log('Career-role browser acceptance passed: draft, publish, revisions, 10 authored questions, new-career interview, archive, five responsive widths.');
+  fs.writeFileSync(path.join(evidence, 'result.json'), JSON.stringify({ passed: true, code, questions: bank.count, snapshots: snapshots.count, answers: answers.count, assessment, viewports, pageErrors: errors, externalProviders: 'explicit harness fixtures' }, null, 2));
+  console.log('Career-role browser acceptance passed: draft, publish, revisions, 10 authored questions, 10 submitted answers, persisted grade, archive, five responsive widths.');
 } finally { await browser.close(); if (ds.isInitialized) await ds.destroy(); }
