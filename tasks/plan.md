@@ -1,6 +1,6 @@
 # Kế hoạch mở rộng Agent và tuyển thực tập — FE/BE
 
-> 23/10/2026 — bản đề xuất để người dùng duyệt, chưa bắt đầu code chức năng của đợt này.
+> 23/10/2026 — người dùng đã duyệt kế hoạch; đang thực hiện G0/M00 để khôi phục đầy đủ CI trước các capability mới.
 
 Kế hoạch liên repo được lưu tập trung ở BE để tránh hai checklist có trạng thái khác nhau:
 
