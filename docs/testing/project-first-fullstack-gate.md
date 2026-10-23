@@ -1,5 +1,7 @@
 # Gate full-stack theo phiên bản hợp đồng
 
+Cặp K03: BE `bf3118693c782c145a87d4348212344396ce3526`, UI `17f4370` và bài `scripts/knowledge-library-live.mjs`. Bài knowledge chạy riêng sau career catalog và trước bước 09; không thay thế 14 bước đã có. Kiểm DB thật và zero-mutation import; [nguồn nghiệm thu](../reports/knowledge-library-20261024.md).
+
 Gate local của thay đổi hiện tại phải dùng FE và BE từ cùng bộ thay đổi: library → tuyển dụng chat10lượt → eligible assignment → Start → AI draft → publish → own tasks/submissions → teacher approval. Xem docs/TESTING.md và README hiện hành.
 
 Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA bằng đúng SHA của BE đã review/push (SHA hiện hành được ghi trong root manual-runtime/ci-verification.json; khi thay hợp đồng BE, cập nhật pin và chạy lại toàn gate). Khi thay hợp đồng: commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.

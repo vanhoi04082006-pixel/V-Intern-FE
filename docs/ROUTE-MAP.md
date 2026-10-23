@@ -1,6 +1,6 @@
 # Bản đồ route Frontend
 
-Đọc trực tiếp 66 file `src/app/**/page.tsx` ngày 22/10/2026. Đây là bản đồ source, không phải tuyên bố tất cả route đã nghiệm thu trên trình duyệt. Route có `[id]` cần ID thật trong đúng scope.
+Đối chiếu trực tiếp 70 file `src/app/**/page.tsx` ngày 24/10/2026, gồm catalog nghề và ba route kho tri thức mới. Đây là bản đồ source, không phải tuyên bố tất cả route đã nghiệm thu trên trình duyệt. Route có `[id]` cần ID thật trong đúng scope.
 
 | URL | Source | Component được import trực tiếp |
 |---|---|---|
@@ -18,6 +18,9 @@
 | `/admin/profile` | [page](../src/app/admin/profile/page.tsx) | `product/outcomes` |
 | `/admin/questions` | [page](../src/app/admin/questions/page.tsx) | `admin/question-bank` |
 | `/admin/career-roles` | [page](../src/app/admin/career-roles/page.tsx) | `admin/career-roles`, [hướng dẫn](CAREER-ROLES.md) |
+| `/admin/knowledge` | [page](../src/app/admin/knowledge/page.tsx) | `admin/knowledge/library`, [hướng dẫn](KNOWLEDGE-LIBRARY.md) |
+| `/admin/knowledge/new` | [page](../src/app/admin/knowledge/new/page.tsx) | `admin/knowledge/editor`, tạo draft |
+| `/admin/knowledge/[code]` | [page](../src/app/admin/knowledge/%5Bcode%5D/page.tsx) | `admin/knowledge/editor`, current/history/lifecycle |
 | `/admin/reports` | [page](../src/app/admin/reports/page.tsx) | `sessions/reports-workspace` |
 | `/admin/roles` | [page](../src/app/admin/roles/page.tsx) | `product/admin-management` |
 | `/admin/services` | [page](../src/app/admin/services/page.tsx) | `product/admin-management` |

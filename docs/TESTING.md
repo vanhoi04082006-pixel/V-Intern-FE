@@ -1,5 +1,7 @@
 # Kiểm thử frontend
 
+Kho tri thức K03: `scripts/knowledge-library-live.mjs` kiểm UI/Nest/SQL thật trên DB `VIntern_Phase715_*` dùng riêng, không intercept API. Bài kiểm tạo/publish Q&A, conflict, archive/restore, dry-run import và 24 viewport checks. [Số liệu và giới hạn](reports/knowledge-library-20261024.md). Workflow giữ đủ 14 gate cũ, bổ sung career và knowledge, ghim BE `bf3118693c782c145a87d4348212344396ce3526`.
+
 npm test dùng Vitest/JSDOM; npm run typecheck/lint/build là gate riêng. Test hồi quy gồm passed-unassigned entry/navigation, chat recovery/pending, future prompt protection qua adapter, Kanban reload và rubric AI sau tải dữ liệu. Không skip hoặc xóa assertion để làm xanh.
 
 Browser dùng Chrome/Playwright với Nest/SQL thật. Kiểm tra login, refresh qua reload, route đang xem, heading thật, request failures, mobile overflow, Escape và desktop resize. Ảnh chụp trang login không được tính là bằng chứng route private đã kiểm tra. Dùng client navigation cho nhiều route; hard reload quá nhiều có thể đạt auth rate limit.
