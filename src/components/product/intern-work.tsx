@@ -357,6 +357,7 @@ function TaskContent({
       (signal: AbortSignal) => getHistory(task.id, historyPage, signal),
       [task.id, historyPage],
     ),
+    task.version,
   );
   function scrollSubmissionIntoView(behavior?: ScrollBehavior) {
     const form = document.getElementById("task-submission-form");

@@ -126,3 +126,22 @@ it("uses the latest server progress after a version conflict without deleting th
   await waitFor(() => expect(screen.queryAllByRole("alert")).toHaveLength(0));
   expect(comment).toHaveValue("Nội dung cần giữ");
 });
+
+it("refreshes status history when a successful update changes the task version", async () => {
+  api.getTask.mockResolvedValueOnce({ ...task, status: "todo" });
+  const page = (toStatus: "todo" | "doing", fromStatus: "todo" | null) => ({
+    items: [{ id: "history-1", fromStatus, toStatus, reason: null, createdAt: "2026-10-23T00:00:00Z" }],
+    total: 1, totalPages: 1, page: 1,
+  });
+  api.getHistory.mockResolvedValueOnce(page("todo", null));
+  api.getHistory.mockResolvedValue(page("doing", "todo"));
+  render(<TaskDetail id={task.id} />);
+  await screen.findByText("Tạo mới → Cần làm");
+  const comment = screen.getByRole("textbox", { name: "Bình luận mới" });
+  fireEvent.change(comment, { target: { value: "Giữ bản nháp khi cập nhật lịch sử" } });
+  api.getTask.mockResolvedValue({ ...task, status: "doing", version: 2 });
+  fireEvent.click(screen.getByRole("button", { name: "Chuyển sang Đang làm" }));
+  await screen.findByText("Cần làm → Đang làm");
+  expect(comment).toHaveValue("Giữ bản nháp khi cập nhật lịch sử");
+  expect(screen.getByRole("textbox", { name: "Bình luận mới" })).toBe(comment);
+});
