@@ -144,12 +144,13 @@ try {
   await page.goto(base + `/intern/kpi/${fixture.kpiResultId}`);
   await page
     .getByRole("heading", {
-      name: `KPI: ${fixture.kpiFinalScore}`,
+      name: "Kết quả KPI",
       exact: true,
     })
     .waitFor();
-  await page.getByText("Nguồn dữ liệu", { exact: true }).first().click();
-  await page.getByText("VND_VIRTUAL", { exact: false }).first().waitFor();
+  await page.locator(".student-score").filter({ hasText: "Điểm KPI" }).getByText(String(fixture.kpiFinalScore), { exact: true }).waitFor();
+  await page.getByText("Tiến độ bàn giao", { exact: true }).waitFor();
+  await page.getByText("đồng ảo", { exact: true }).first().waitFor();
   await shot(page, "intern-kpi");
   const ledger = await ds.query(
     "SELECT SUM(amount) balance FROM virtual_salary_ledger WHERE userId=@0",
@@ -298,7 +299,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + "/intern/kpi");
   await page.getByRole("heading", { name: "KPI & Lương ảo" }).waitFor();
-  await page.getByText("VND_VIRTUAL", { exact: false }).first().waitFor();
+  await page.getByText("đồng ảo", { exact: true }).first().waitFor();
   assert.ok(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth + 1,

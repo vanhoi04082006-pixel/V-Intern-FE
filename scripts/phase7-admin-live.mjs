@@ -402,7 +402,7 @@ try {
     status: "PASS",
   });
   await page.goto(base + "/admin/audit");
-  await page.getByLabel("Hành động audit").fill("user.created");
+  await page.getByLabel("Hành động", { exact: true }).fill("user.created");
   await page
     .getByRole("button", { name: /Chi tiết audit/ })
     .first()

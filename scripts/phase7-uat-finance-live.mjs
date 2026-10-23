@@ -27,8 +27,8 @@ async function balance(expected) {
   const sql = await ds.query("SELECT SUM(amount) AS balance FROM virtual_salary_ledger WHERE userId=@0", [f.userId]);
   const value = await call("intern", "/intern/me/virtual-salary");
   assert.equal(Number(sql[0].balance), expected); assert.equal(Number(value.balance), expected);
-  await page.goto(base + "/intern/virtual-salary"); await page.getByText(expected.toLocaleString("vi-VN") + " VND_VIRTUAL", { exact: true }).first().waitFor();
-  await page.reload(); await page.getByText(expected.toLocaleString("vi-VN") + " VND_VIRTUAL", { exact: true }).first().waitFor();
+  await page.goto(base + "/intern/virtual-salary"); await page.getByText(new RegExp("^" + expected.toLocaleString("vi-VN").replaceAll(".", "\\.") + "\\s*đồng\\s*ảo$")).first().waitFor();
+  await page.reload(); await page.getByText(new RegExp("^" + expected.toLocaleString("vi-VN").replaceAll(".", "\\.") + "\\s*đồng\\s*ảo$")).first().waitFor();
   await page.screenshot({ path: "phase7-evidence/final/uat-salary-" + expected + ".png", fullPage: true });
   return { sql: Number(sql[0].balance), nest: Number(value.balance), rendered: expected.toLocaleString("vi-VN") };
 }
@@ -38,7 +38,8 @@ try {
   const kpi = await call("intern", "/intern/me/kpi/" + f.kpiResultId);
   const sqlKpi = await ds.query("SELECT finalScore FROM kpi_results WHERE id=@0", [f.kpiResultId]);
   assert.equal(Number(sqlKpi[0].finalScore), 83.8);
-  await page.goto(base + "/intern/kpi/" + f.kpiResultId); await page.getByRole("heading", { name: "KPI: 83.8", exact: true }).waitFor();
+  await page.goto(base + "/intern/kpi/" + f.kpiResultId); await page.getByRole("heading", { name: "Kết quả KPI", exact: true }).waitFor();
+  await page.locator(".student-score").filter({ hasText: "Điểm KPI" }).getByText("83.8", { exact: true }).waitFor();
   assert.equal(Number(kpi.result?.finalScore ?? kpi.finalScore), 83.8);
   results.push({ name: "KPI exact renormalization SQL/API/FE", status: "PASS", delivery: 80, quality: 90, timeliness: null, finalScore: 83.8 });
   const trace = [await balance(8380000)];

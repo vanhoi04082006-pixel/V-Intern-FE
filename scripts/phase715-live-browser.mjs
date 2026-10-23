@@ -563,17 +563,17 @@ try {
       assert.equal(empty.focusedTask, null);
       assert.equal(empty.taskSummary.total, 0);
       await page
-        .getByText("Chưa có Sprint hiện tại.", { exact: true })
+        .getByText(/^Chưa có Sprint đang hoạt động\./)
         .waitFor();
       await page
-        .getByText("Chưa có Task đang tập trung.", { exact: true })
+        .getByRole("heading", { name: "Chưa có nhiệm vụ cần tập trung", exact: true })
         .waitFor();
       for (const [route, message] of [
         ["evaluations", "Chưa có đánh giá được chốt."],
-        ["kpi", "Chưa có kết quả KPI."],
-        ["virtual-salary", "Chưa có giao dịch lương ảo."],
+        ["kpi", "Chưa có kết quả KPI"],
+        ["virtual-salary", "Chưa có giao dịch lương ảo"],
         ["certificates", "Chưa có chứng nhận được cấp."],
-        ["mentor", "Chưa có cuộc trò chuyện."],
+        ["mentor", "Chưa có cuộc trò chuyện"],
       ]) {
         await page.goto("http://localhost:3001/intern/" + route);
         await page.getByText(message, { exact: true }).waitFor();
