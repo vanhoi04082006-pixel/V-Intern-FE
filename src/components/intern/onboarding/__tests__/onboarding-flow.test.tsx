@@ -30,6 +30,7 @@ let interview: Interview;
 let workspace: InternWorkspace;
 let errorStatus = 0;
 let evaluationFailed = false;
+let careers: Array<{ code: string; label: string }>;
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status });
 const requests: { url: string; options: RequestInit }[] = [];
@@ -45,6 +46,7 @@ beforeEach(() => {
   pathname = "/intern/onboarding";
   errorStatus = 0;
   evaluationFailed = false;
+  careers = [{ code: 'frontend', label: 'Frontend Developer' }, { code: 'backend', label: 'Backend Developer' }, { code: 'qa', label: 'QA Tester' }];
   requests.length = 0;
   replace.mockClear();
   vi.stubGlobal(
@@ -52,6 +54,7 @@ beforeEach(() => {
     vi.fn(async (url: string, options: RequestInit) => {
       requests.push({ url, options });
       if (errorStatus) return json({ code: "TEST_ERROR" }, errorStatus);
+      if (url.endsWith('/career-roles')) return json({ items: careers.map(role => ({ ...role, description: '', level: 'intern', language: 'vi', requiredSkills: [], optionalSkills: [], version: 1 })) });
       if (url.endsWith("/intern/me/workspace")) return json(workspace);
       if (url.endsWith("/recruitment/me")) return json(profile);
       if (url.endsWith("/me/role")) {
@@ -191,7 +194,7 @@ describe("Nest recruitment integration", () => {
       screen.getByRole("button", { name: "Bắt đầu phỏng vấn" }),
     ).toBeDisabled();
     const user = userEvent.setup();
-    await user.click(screen.getByRole("radio", { name: /QA Tester/ }));
+    await user.click(await screen.findByRole("radio", { name: /QA Tester/ }));
     await user.click(screen.getByRole("button", { name: "Bắt đầu phỏng vấn" }));
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/intern/onboarding/interview"),
@@ -219,6 +222,15 @@ describe("Nest recruitment integration", () => {
       screen.getByRole("button", { name: "Bắt đầu phỏng vấn" }),
     ).toBeDisabled();
     expect(screen.getByText(/Có thể thử lại sau/)).toBeInTheDocument();
+  });
+  it('offers a new server career without adding a frontend enum entry', async () => {
+    careers = [{ code: 'data_analyst', label: 'Data Analyst' }];
+    pathname = '/intern/onboarding/role';
+    renderFlow(<RoleSelectionStep />);
+    await userEvent.click(await screen.findByRole('radio', { name: /Data Analyst/ }));
+    expect(screen.queryByRole('radio', { name: /QA Tester/ })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Bắt đầu phỏng vấn' }));
+    await waitFor(() => expect(requests.find(x => x.url.endsWith('/me/role'))?.options.body).toBe(JSON.stringify({ role: 'data_analyst' })));
   });
   it("resume loads persisted answered flags and real questions", async () => {
     setupInterview();

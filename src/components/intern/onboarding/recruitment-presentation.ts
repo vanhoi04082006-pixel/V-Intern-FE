@@ -58,6 +58,11 @@ export const RECRUITMENT_ROLES: readonly RecruitmentRole[] = [
     tone: "amber",
   },
 ];
+/** Legacy entries supply icon/art direction only, never the selectable catalog. */
+export function presentCareer(role: { code: string; label: string; description: string; requiredSkills: string[] }): RecruitmentRole {
+  const visual = RECRUITMENT_ROLES.find(item => item.id === role.code);
+  return { id: role.code, label: role.label, tagline: role.description || visual?.tagline || 'Khám phá yêu cầu và kỹ năng cho vị trí này.', tags: role.requiredSkills.slice(0, 3), icon: visual?.icon ?? Compass, tone: visual?.tone ?? 'blue' };
+}
 export const ONBOARDING_STEPS = [
   { id: "welcome", label: "Chào mừng", description: "Giới thiệu quy trình" },
   { id: "role", label: "Chọn vai trò", description: "Vị trí ứng tuyển" },

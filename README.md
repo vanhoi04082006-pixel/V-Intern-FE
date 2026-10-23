@@ -18,6 +18,7 @@ Chuẩn bị bảo vệ: **[kịch bản ngắn](docs/DEMO-CHECKLIST.md)** · [h
 | [Kiểm thử](docs/TESTING.md) | Gate và các luồng hồi quy phải giữ là gì? |
 | [Kiểm chứng](docs/VERIFICATION.md) | Số liệu và ảnh được kiểm ở thời điểm nào? |
 | [Nhánh Git](docs/GIT-WORKFLOW.md) | Nhánh nào đã tích hợp, nhánh nào là lưu trữ? |
+| [Thư viện nghề nghiệp](docs/CAREER-ROLES.md) | Tạo nghề mới, cấu hình năng lực, mở tuyển và chuẩn bị câu hỏi ra sao? |
 | [Bàn giao Backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feat/admin-repository-account/docs/HANDOVER.md) | Dữ liệu và quy tắc phía server hoạt động thế nào? |
 
 ## Công nghệ và phạm vi

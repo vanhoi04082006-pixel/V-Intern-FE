@@ -5,7 +5,6 @@ import { CircleCheck, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRecruitmentFlow } from "./recruitment-provider";
-import { RECRUITMENT_ROLES } from "./recruitment-presentation";
 import { roleLabel } from "@/lib/api/workspace";
 import { RateComparison } from "@/components/workspace/workspace-charts";
 import { RecruitmentPolicy } from "./recruitment-policy";
@@ -27,7 +26,7 @@ export function RecruitmentResult() {
       : null;
   const roleGuidance = result?.decision === "failed" && result.overallScore >= 50 && result.overallScore <= 70;
   const alternativeRole = roleGuidance && result?.recommendedRole !== profile.selectedRole ? result?.recommendedRole : null;
-  const retryRole = RECRUITMENT_ROLES.find((r) => r.id === (roleGuidance ? alternativeRole : profile.selectedRole));
+  const retryRole = roleGuidance ? alternativeRole : profile.selectedRole;
   const canRetake = profile.attemptsRemaining > 0 && !profile.nextEligibleAt;
   return (
     <div>
@@ -176,7 +175,7 @@ export function RecruitmentResult() {
                   type="button"
                   disabled={busy || !canRetake || !retryRole}
                   onClick={async () => {
-                    if (retryRole && (await selectRole(retryRole.id)))
+                    if (retryRole && (await selectRole(retryRole)))
                       router.replace("/intern/onboarding/role");
                   }}
                   className="student-action mt-4"

@@ -7,7 +7,7 @@ const question: BankQuestion = { id: 'q', roleCode: 'backend', phase: 'technical
 beforeEach(() => { vi.mocked(saveQuestion).mockResolvedValue(question); });
 describe('private question editing', () => {
   it('preserves the version and private guidance while editing bounded fields', async () => {
-    const onSaved = vi.fn(); render(<QuestionEditor question={question} onSaved={onSaved} />);
+    const onSaved = vi.fn(); render(<QuestionEditor roles={[{ code: "backend", name: "Backend Developer" }, { code: "data_analyst", name: "Data Analyst" }]} question={question} onSaved={onSaved} />);
     expect(screen.getByLabelText('Vai trò')).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Ý chính mong đợi (mỗi dòng một ý)'), { target: { value: 'SQL\nrollback\nSQL' } });
     fireEvent.click(screen.getByRole('button', { name: 'Lưu câu hỏi' }));
@@ -15,7 +15,7 @@ describe('private question editing', () => {
     expect(saveQuestion).toHaveBeenCalledWith(expect.objectContaining({ expectedConcepts: ['SQL', 'rollback'], exampleAnswer: question.exampleAnswer }), expect.objectContaining({ id: 'q', version: 3 }));
   });
   it('forces the English language for English interview questions', () => {
-    render(<QuestionEditor onSaved={vi.fn()} />);
+    render(<QuestionEditor roles={[{ code: "backend", name: "Backend Developer" }, { code: "data_analyst", name: "Data Analyst" }]} onSaved={vi.fn()} />);
     fireEvent.change(screen.getByLabelText('Nhóm câu hỏi'), { target: { value: 'english' } });
     expect(screen.getByLabelText('Ngôn ngữ')).toHaveValue('en'); expect(screen.getByLabelText('Ngôn ngữ')).toBeDisabled();
   });

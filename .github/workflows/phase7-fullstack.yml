@@ -17,7 +17,7 @@ jobs:
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
       # Update only through a reviewed compatibility PR; see docs/testing/project-first-fullstack-gate.md.
-      COMPATIBLE_BE_SHA: 3989138d2e8b479b00b4a39f275ad8ee858b7911
+  COMPATIBLE_BE_SHA: 08eaffbc34d98c7836724c2cfa2548280191745c
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
@@ -152,6 +152,9 @@ jobs:
       - name: 08 - Administrator workflows
         working-directory: V-INTERN-FE
         run: node scripts/phase7-admin-live.mjs
+      - name: Dynamic career catalog acceptance
+        working-directory: V-INTERN-FE
+        run: node scripts/career-roles-live.mjs
       - name: 09 - Role navigation and routes
         working-directory: V-INTERN-FE
         run: node scripts/phase7-navigation-live.mjs

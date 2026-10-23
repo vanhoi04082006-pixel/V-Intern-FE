@@ -1,19 +1,23 @@
 "use client";
 import { StudentHeading } from "../student-ui";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { RoleCard } from "./role-card";
-import { RECRUITMENT_ROLES } from "./recruitment-presentation";
+import { presentCareer } from "./recruitment-presentation";
+import { listRecruitingCareers } from '@/lib/api/career-roles';
+import { useResource } from '@/lib/api/use-resource';
+import { ErrorState, LoadingState } from '@/components/shared/data-state';
+import { Empty } from '@/components/product/primitives';
 import { HorizontalStepper, MobileStepbar } from "./onboarding-stepper";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import type { RecruitmentRole } from "@/lib/api/workspace";
 export function RoleSelectionStep() {
   const { profile, selectRole, start, busy, notice } = useRecruitmentFlow();
   const [selected, setSelected] = useState<RecruitmentRole | null>(null);
-  const chosen =
-    selected ??
-    RECRUITMENT_ROLES.find((r) => r.id === profile.selectedRole)?.id ??
-    null;
+  const catalog = useResource(useCallback((signal: AbortSignal) => listRecruitingCareers(signal), []));
+  const roles = (catalog.data ?? []).map(presentCareer);
+  const candidate = selected ?? profile.selectedRole;
+  const chosen = roles.some(role => role.id === candidate) ? candidate : null;
   const canStart = profile.attemptsRemaining > 0 && !profile.nextEligibleAt;
   return (
     <div>
@@ -28,10 +32,13 @@ export function RoleSelectionStep() {
       <div className="mt-6 hidden lg:block">
         <HorizontalStepper activeStep={2} />
       </div>
-      <fieldset disabled={busy} className="mt-8">
+      {catalog.loading && !catalog.data && <LoadingState />}
+      {Boolean(catalog.error) && <ErrorState error={catalog.error} onRetry={catalog.reload} />}
+      {catalog.data?.length === 0 && <Empty>Chưa có vị trí đang tuyển. Hãy liên hệ giảng viên hoặc quay lại khi có đợt mới.</Empty>}
+      <fieldset disabled={busy || catalog.loading || Boolean(catalog.error)} className="mt-8">
         <legend className="sr-only">Chọn vị trí ứng tuyển</legend>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          {RECRUITMENT_ROLES.map((role) => (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {roles.map((role) => (
             <RoleCard
               key={role.id}
               role={role}
@@ -68,7 +75,7 @@ export function RoleSelectionStep() {
             <>
               Bạn đã chọn{" "}
               <strong className="text-navy">
-                {RECRUITMENT_ROLES.find((role) => role.id === chosen)?.label}
+                {roles.find((role) => role.id === chosen)?.label}
               </strong>
             </>
           ) : (
@@ -83,7 +90,7 @@ export function RoleSelectionStep() {
         </Link>
         <button
           type="button"
-          disabled={!chosen || busy || !canStart}
+          disabled={!chosen || busy || !canStart || catalog.loading || Boolean(catalog.error)}
           onClick={async () => {
             if (chosen && (await selectRole(chosen))) await start();
           }}
