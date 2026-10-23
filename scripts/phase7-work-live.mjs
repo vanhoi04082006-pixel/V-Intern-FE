@@ -89,6 +89,7 @@ try {
   });
   await login(page, "waiting");
   await page
+    .getByRole("navigation", { name: "Điều hướng thực tập sinh", exact: true })
     .getByRole("link", { name: "Công việc của tôi", exact: true })
     .click();
   await page
@@ -160,13 +161,13 @@ try {
     fullPage: true,
   });
   await page.getByRole("button", { name: "Đóng", exact: true }).click();
-  await page.getByRole("link", { name: "Sprint Board", exact: true }).click();
+  await page.getByRole("navigation", { name: "Điều hướng thực tập sinh", exact: true }).getByRole("link", { name: "Sprint Board", exact: true }).click();
   await page.getByText(task.title, { exact: true }).waitFor();
   await page.screenshot({
     path: path.join(evidence, "intern-sprint.png"),
     fullPage: true,
   });
-  await page.getByRole("link", { name: "Dự án", exact: true }).click();
+  await page.getByRole("navigation", { name: "Điều hướng thực tập sinh", exact: true }).getByRole("link", { name: "Dự án", exact: true }).click();
   await page
     .getByRole("heading", {
       name: workspace.assignment.project.name,
