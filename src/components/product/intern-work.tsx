@@ -291,7 +291,7 @@ export function TaskDetail({
   const [mutationError, setMutationError] = useState<unknown>();
   return (
     <>
-      {Boolean(mutationError) && <ErrorState error={mutationError} />}
+      {managed && Boolean(mutationError) && <ErrorState error={mutationError} />}
       {task.loading && (!task.data || managed) ? (
         <LoadingState />
       ) : task.error ? (

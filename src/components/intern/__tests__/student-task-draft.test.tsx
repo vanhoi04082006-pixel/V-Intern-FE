@@ -110,4 +110,19 @@ it("uses the latest server progress after a version conflict without deleting th
   expect(screen.getByRole("textbox", { name: "Bình luận mới" })).toBe(comment);
   expect(comment).toHaveValue("Nội dung cần giữ");
   expect(api.updateOwnTask).toHaveBeenCalledTimes(1);
+  expect(screen.getAllByRole("alert")).toHaveLength(1);
+  expect(screen.getByRole("alert")).toHaveTextContent("Trạng thái đã thay đổi");
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "Lưu tiến độ" })).toBeEnabled(),
+  );
+  api.getTask.mockResolvedValue({ ...task, progress: 70, version: 3 });
+  api.updateOwnTask.mockResolvedValueOnce({ ...task, progress: 70, version: 3 });
+  fireEvent.click(screen.getByRole("button", { name: "Lưu tiến độ" }));
+  await waitFor(() => expect(api.updateOwnTask).toHaveBeenCalledTimes(2));
+  expect(api.updateOwnTask).toHaveBeenLastCalledWith(task.id, {
+    expectedVersion: 2,
+    progress: 70,
+  });
+  await waitFor(() => expect(screen.queryAllByRole("alert")).toHaveLength(0));
+  expect(comment).toHaveValue("Nội dung cần giữ");
 });
