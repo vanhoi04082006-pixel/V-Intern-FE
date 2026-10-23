@@ -335,6 +335,15 @@ describe("Nest recruitment integration", () => {
       "/intern",
     );
   });
+  it('does not claim an AI recommendation when no alternative career is recruiting', async () => {
+    pathname = '/intern/onboarding/result';
+    workspace = blocked('recruitment_failed');
+    profile = { ...profile, status: 'failed', selectedRole: 'backend', attemptNumber: 1, attemptsRemaining: 2, result: { ...result, decision: 'failed', overallScore: 60, recommendedRole: null } };
+    renderFlow(<RecruitmentResult />);
+    expect(await screen.findByRole('heading', { name: 'Cần định hướng thêm' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Chọn vai trò được đề xuất' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Xem vị trí đang tuyển' })).toHaveAttribute('href', '/intern/onboarding/role');
+  });
   it("below 50 retains the selected role when retrying and respects the retake policy", async () => {
     pathname = "/intern/onboarding/result";
     workspace = blocked("recruitment_failed");

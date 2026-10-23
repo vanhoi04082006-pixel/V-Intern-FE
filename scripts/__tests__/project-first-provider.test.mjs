@@ -55,5 +55,6 @@ test("workflow isolates databases and exposes every ordered business contract as
     'phase7-uat-finance-fixture.mjs', 'phase7-uat-finance-live.mjs',
   ]);
   assert.doesNotMatch(yaml, /continue-on-error:\s*true/);
+  assert.match(yaml, /^ {6}COMPATIBLE_BE_SHA: [a-f0-9]{40}\r?$/m, 'Backend SHA must stay within jobs.sql2019.env');
   assert.match(yaml, /name: Dynamic career catalog acceptance\r?\n {8}working-directory: V-INTERN-FE\r?\n {8}run: node scripts\/career-roles-live\.mjs/);
 });

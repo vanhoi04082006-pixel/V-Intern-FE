@@ -57,14 +57,14 @@ export function RecruitmentResult() {
                 >
                   {result.decision === "passed"
                     ? "Đã hoàn tất đánh giá"
-                    : roleGuidance ? "Khám phá hướng phù hợp hơn" : "Chuẩn bị cho lần tiếp theo"}
+                  : roleGuidance ? alternativeRole ? "Khám phá hướng phù hợp hơn" : "Cần định hướng thêm" : "Chuẩn bị cho lần tiếp theo"}
                 </span>
                 <h2
                   className={`text-2xl font-bold ${result.decision === "passed" ? "text-emerald-700" : "text-amber-700"}`}
                 >
                   {result.decision === "passed"
                     ? "Bạn đã trúng tuyển"
-                    : roleGuidance ? "AI đề xuất bạn thử một vai trò khác" : "Chưa đạt yêu cầu tuyển dụng"}
+                  : roleGuidance ? alternativeRole ? "AI đề xuất bạn thử một vai trò khác" : "Cần định hướng thêm" : "Chưa đạt yêu cầu tuyển dụng"}
                 </h2>
                 {result.decision === "passed" && (
                   <p
@@ -169,9 +169,9 @@ export function RecruitmentResult() {
                     Vị trí được đề xuất: <strong>{roleLabel(alternativeRole)}</strong>
                   </p>
                 )}
-                {roleGuidance && <p className="mt-3 text-sm leading-7 text-slate-600">Đọc lý do và các câu trả lời được AI viện dẫn trong phần nhận xét. Đề xuất giúp bạn chọn hướng học tập; bạn cần phỏng vấn lại để đạt vị trí mới.</p>}
+                {roleGuidance && <p className="mt-3 text-sm leading-7 text-slate-600">{alternativeRole ? 'Đọc lý do và các câu trả lời được AI viện dẫn trong phần nhận xét. Đề xuất giúp bạn chọn hướng học tập; bạn cần phỏng vấn lại để đạt vị trí mới.' : 'Điểm nằm trong khoảng 50–70, nhưng hiện chưa có nghề thay thế đang nhận hồ sơ. Xem nhận xét và liên hệ giảng viên để được hướng dẫn. Kết quả và số lượt vẫn được giữ.'}</p>}
                 {profile.attemptsRemaining <= 0 && <p role="status" className="mt-4 text-sm text-amber-800">Bạn đã dùng hết 3 lượt phỏng vấn. Liên hệ giảng viên hoặc quản trị viên để được hướng dẫn; đổi vai trò không tạo thêm lượt.</p>}
-                <button
+                {roleGuidance && !alternativeRole ? <Link href="/intern/onboarding/role" className="student-link mt-4 inline-flex">Xem vị trí đang tuyển</Link> : <button
                   type="button"
                   disabled={busy || !canRetake || !retryRole}
                   onClick={async () => {
@@ -181,8 +181,8 @@ export function RecruitmentResult() {
                   className="student-action mt-4"
                 >
                   {roleGuidance ? "Chọn vai trò được đề xuất" : "Thử lại tuyển dụng"}
-                </button>
-                {roleGuidance && canRetake && <Link className="student-link mt-4 inline-flex" href="/intern/onboarding/role">Tự chọn vai trò khác</Link>}
+                </button>}
+                {roleGuidance && alternativeRole && canRetake && <Link className="student-link mt-4 inline-flex" href="/intern/onboarding/role">Tự chọn vai trò khác</Link>}
               </>
             )}
             <RecruitmentPolicy attemptNumber={profile.attemptNumber} attemptsRemaining={profile.attemptsRemaining} />
