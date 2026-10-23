@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { buildTestInterviewPayload, answerTestInterview } from '../project-first-provider.mjs';
 
+test('failed interview fixture is below 50, separate from alternative-role guidance', () => {
+  const result = buildTestInterviewPayload({ task: 'recruitment-evaluation', input: { role: 'qa' } });
+  const overall = Math.round((result.technicalScore * 0.7 + result.softSkillScore * 0.3) * 10) / 10;
+  assert.ok(overall < 50, `Failed fixture must be below 50, received ${overall}`);
+});
+
 test('test interview provider keeps each conversation feature separate from scoring', () => {
   assert.deepEqual(buildTestInterviewPayload({ task: 'interview_next_question', input: { position: 1, plannedQuestion: 'Describe an API you built.' } }), { message: 'Chào bạn! Describe an API you built.' });
   assert.deepEqual(buildTestInterviewPayload({ task: 'clarify_interview_question', input: { question: 'Describe an API.' } }), { message: 'Bạn hãy nêu một ví dụ cụ thể liên quan đến: Describe an API.' });
@@ -12,7 +18,8 @@ test('v3 scoring includes all six dimensions without taking authority over the d
   for (const role of ['backend', 'qa']) {
     const result = buildTestInterviewPayload({ task: 'recruitment-evaluation', input: { role } });
     assert.deepEqual(result.criteria.map(item => item.code), ['knowledge','communication','problem_solving','english','confidence','reasoning']);
-    assert.equal(result.technicalScore, role === 'qa' ? 58 : 85);
+    assert.equal(result.technicalScore, role === 'qa' ? 30 : 85);
+    assert.equal(result.softSkillScore, role === 'qa' ? 40 : 72);
     assert.equal(result.passed, false); // deliberately contradictory, backend computes final PASS
     assert.equal(result.overallScore, 0);
   }

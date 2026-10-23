@@ -294,7 +294,7 @@ try {
       workspace = await call(user.accessToken, "/intern/me/workspace");
     assert.equal(workspace.status, "recruitment_failed");
     assert.equal(profile.result.decision, "failed");
-    assert.equal(profile.result.overallScore, 62.2);
+    assert.equal(profile.result.overallScore, 33);
     assert.ok(profile.nextEligibleAt);
     const attempt = await fetch(api + "/recruitment/me/interviews", {
       method: "POST",
@@ -303,7 +303,7 @@ try {
     assert.equal(attempt.status, 409);
     return {
       status: workspace.status,
-      overall: 62.2,
+      overall: 33,
       decision: "failed",
       cooldownEnforced: 409,
     };
