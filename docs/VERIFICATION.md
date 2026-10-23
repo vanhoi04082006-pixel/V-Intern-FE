@@ -1,43 +1,40 @@
-# Tài khoản repository chung của Admin — local 19/10/2026
+# Kiểm chứng Frontend — 23/10/2026
 
-Frontend 71 file/504 test đạt, 0 lỗi/0 bỏ qua; typecheck, lint và build đạt tại `b7a7266`. Nguồn: `manual-runtime/private/central-repo-fe-unit-20261019.json` cùng các log `central-repo-fe-*` trong workspace gốc. Hai regression mới kiểm tra chọn tài khoản chung, tải lại trạng thái và lỗi API; giữ nguyên kiểm thử Kanban/Sprint.
+Bản này là mốc hiện hành cho giao diện Aurora Glass của **Sinh viên và Giảng viên**. Trang chủ và Admin giữ phạm vi thiết kế trước đó. Không dùng tổng số test ở checkpoint cũ để mô tả bản hiện tại.
 
-Người dùng đã thay tài khoản và tự hoàn tất OAuth cho `hbuivanhoi6-stack`; trang Admin xác nhận tài khoản chung sẵn sàng. Repo public ID `1425170948` đã được tạo thật cho phiên hiện tại, trang GitHub hiển thị đúng owner/README/marker; sinh viên thấy cùng URL. Lời mời sinh viên đã được GitHub nhận, chưa xác nhận chấp nhận; giảng viên chưa liên kết danh tính nên `not_connected`. Nguồn: `manual-runtime/central-repository-live-20261019.json` lúc 05:53:53 UTC. Ảnh: `central-repository-admin-ready-20261019.png`, `central-repository-github-ready-20261019.png`. Ảnh chưa kết nối/consent trước đó là lịch sử. Webhook repo mới chưa cấu hình vì public tunnel đang tắt; không tuyên bố đã nghiệm thu PR webhook/chấm bài trên repo mới.
+| Hạng mục | Kết quả | Log hoặc dữ liệu |
+|---|---|---|
+| Vitest | **82 file / 541 test đạt** | fe-unit-final-v2.log |
+| ESLint | Đạt, không lỗi/cảnh báo lint | fe-lint-final-v2.log |
+| TypeScript | Đạt | fe-typecheck-final-v2.log |
+| Next build | Đạt | fe-build-final-v2.log |
+| Responsive | 1440, 1280, 1024, 768, 390px | browser-final.json, screens/ |
+| Các tương tác shell/modal | Kết quả từng thao tác được ghi riêng | browser.json, browser-final.json |
+| Luồng có dữ liệu thật | Đánh giá, nguồn KPI, ledger, chứng nhận, hiệu suất, AI và thông báo sau kết thúc | outcomes-live.json, browser-final.json |
 
-Gate SQL độc lập đạt 25 suite/237 test, 0 lỗi/0 bỏ qua, tại source BE `824be89`, kết thúc 05:30:34 UTC ngày 19/10. Readiness 05:31:10 UTC xác nhận FE3001/API8080/API8081 trả 200 và ba tài khoản gốc đăng nhập đúng identity/vai trò. Báo cáo tổng hợp: `manual-runtime/central-repository-verification-20261019.json`. Các số 502/497/495 bên dưới là checkpoint lịch sử trước bản này; production và remote CI ngoài phạm vi local hiện tại.
+Kiểm thử mới giữ quyền đọc khuyến nghị sau assignment hoàn thành, chặn người chưa từng được phân công, giữ khóa công việc/Mentor và thay CTA sau kết thúc bằng liên kết đánh giá. Test tái hiện lỗi trước khi sửa nằm ở historical-recommendations-red.log và performance-next-step-red.log; kết quả sau sửa ở historical-outcomes-green.log.
 
-# Kiểm chứng frontend — local 19/10/2026
+Vitest có thông báo jsdom không triển khai điều hướng trang trong một số test bấm liên kết; toàn bộ assertion vẫn đạt. Không đồng nhất thông báo môi trường test này với lỗi console của browser thật. Browser được kiểm riêng bằng dữ liệu runtime.
 
-Đợt bổ sung kéo thả Kanban: **71 file/502 test đạt, 0 thất bại, 0 bỏ qua**; 9 test tập trung Kanban đạt. Nguồn `manual-runtime/private/kanban-dnd-unit-20261019.json` và log `kanban-dnd-green-20261019.log`. Build, typecheck, lint và diff check đạt; local FE3001 và API8080/8081 trả200. Bằng chứng tổng hợp: `manual-runtime/kanban-dnd-verification-20261019.json`.
+## Hiểu đúng phạm vi nghiệm thu
 
-Cả Công việc của tôi và Sprint Board nối kéo thả vào API sinh viên, tải lại trạng thái/version trước khi lưu và chỉ chuyển thẻ khi lưu thành công. Chặn gửi lặp trong lúc lưu; lỗi giữ nguyên thẻ và thông báo. Thả Doing sang Review mở chi tiết nộp bài, không vượt kiểm tra code submission; sinh viên không tự Done hoặc đi ngược. Nút/liên kết chi tiết giữ đường thao tác bàn phím/điện thoại. Bộ kéo thả dùng chung giữ metadata từ dragstart vì trình duyệt không cho đọc payload trong dragover, nhưng kiểm tra lại payload và transition tại drop.
+Luồng thực hành dùng tài khoản QA riêng trên API 8081, database VIntern_Test_Learning_20261014 và FE 3004. FE chính 3001/API 8080 dùng VIntern_M2_BROWSER. Không reset/seed dữ liệu chính hoặc ba tài khoản gốc. Bài nộp là sản phẩm tổng hợp phục vụ kiểm thử, không phải bài đánh giá của một sinh viên thật.
 
-Lần full đầu501/502 có một lookup trạng thái Waiting hết thời gian trong khi chạy đồng thời các gate; giữ nguyên source/assertion/timeout, chạy lại full riêng đạt502/502. JSON/log lần đầu được giữ với hậu tố `unit-first-20261019`. Trình duyệt tích hợp không gắn được webview nên chưa nghiệm thu kéo chuột trực tiếp; không reset hoặc đổi trạng thái task người dùng để kiểm thử. Backend không đổi. Số497 bên dưới là mốc kích hoạt Sprint trước khi thêm5regression kéo thả.
+Đã thực hiện GitHub OAuth, tạo repository dưới tài khoản chung của Admin, sinh viên khác danh tính commit/PR, Docker chạy test có chữ ký, Gemini phân tích, giảng viên trả sửa/duyệt. Kết quả cuối: 4/4 nhiệm vụ, đánh giá **85,5**, KPI **95,7**, số dư **9.570.000 đồng ảo**, chứng nhận xác minh hợp lệ, PDF/Excel tải và đọc được. Sau kết thúc phiên, sinh viên vẫn xem kết quả và khuyến nghị AI.
 
-Vitest 71 file/497 test đạt, không có test thất bại hoặc bỏ qua. Nguồn: `manual-runtime/private/sprint-activation-unit-20261019.json` trong workspace; log cùng tên `.log`. Thêm hai regression cho kích hoạt Sprint từ route chi tiết và giữ trạng thái planned/retry khi API từ chối; kiểm tra người thiếu quyền không thấy nút. Typecheck/build và lint local đạt trong cùng đợt. Bằng chứng API thực tế: `manual-runtime/sprint-activation-verification-20261019.json`.
+Xem [báo cáo nhập vai](ROLEPLAY-ACCEPTANCE.md) để đọc từng bước, lỗi tìm được, cách sửa và giới hạn. [Bàn giao](HANDOVER.md) hướng dẫn sử dụng và đọc code. [Git workflow](GIT-WORKFLOW.md) ghi các nhánh đã đối chiếu và SHA phục hồi.
 
-Sprint do AI publish vẫn là planned cho tới khi giảng viên bắt đầu. Trang chi tiết nay hiển thị trạng thái tiếng Việt, giải thích vì sao sinh viên chưa có Sprint Board và nút Kích hoạt khóa bằng sprints.manage. Dùng API chuyển trạng thái hiện hữu, không tự coi planned là active; giữ ownership, ràng buộc một Sprint active, audit và thông báo. Sau thành công reload metadata/board; lỗi giữ nguyên planned. Phía sinh viên có hướng dẫn và liên kết Công việc của tôi trong thời gian chờ. Sprint được người dùng báo lỗi đã kích hoạt qua tài khoản giảng viên chuẩn; API sinh viên xác nhận đúng Sprint và4task được giao. Không reset dữ liệu.
+## Nguồn và mốc thời gian
 
-Đợt kiểm chứng rộng18/10 vẫn giữ nguồn/ngày gốc ở `manual-runtime/local-completion-verification.json`; SQL/backend không thay đổi trong bản sửa giao diện19/10. Mốc frontend18/10 là71file/495test, trước hai regression mới.
+Tất cả tên tệp bằng chứng trong trang này tính từ **workspace/manual-runtime/aurora-handoff-20261022/**. Thư mục giữ ngày bắt đầu 22/10; kiểm tra cuối thực hiện ngày **23/10/2026, UTC+7**. Trường checkedAt trong JSON dùng UTC. final-manifest.json ghi thời điểm, source hash cả tệp chưa commit, branch/HEAD và trạng thái runtime; log ngày trước không được diễn giải thành lần chạy mới.
 
-Trước khi dọn, chạy lại đúng source đã merge `b80385482f2e15e3ca52495c2c631742cf68b1ad` cho kết quả 70 file/504 test. Xóa 25 file chỉ phục vụ hai workspace Admin/Giảng viên mẫu sau khi phân tích toàn bộ import; route chính vẫn là `AdminOverview`/`InstructorHome` và `ProductShell`. Hai bộ test có 25 ca kiểm tra prototype được thay bằng ba bộ có 16 ca kiểm tra dữ liệu API/zero/loading/error/retry, route theo vai trò, danh tính đăng nhập và bàn phím menu thực tế. Vì vậy tổng mới là 504 − 25 + 16 = 495; không bỏ qua hoặc giảm assertion của các bộ test nghiệp vụ được giữ lại. SQL gate và 20 script-contract tests giữ nguyên yêu cầu.
+Tại mốc chạy các kiểm tra bên trên, thay đổi còn nằm trong working tree. Source và tài liệu được commit/công bố trên nhánh feature ngày 23/10; xem GIT-WORKFLOW. Chưa merge vào main. Đã dọn 5 tên nhánh local có commit nằm trong HEAD bằng branch -d; giữ nhánh đang làm, main, archive và nhánh có patch tương đương để bảo toàn lịch sử. Bốn PR đã merge là trong repository bài thực hành QA.
 
-Đăng nhập ghi Email đúng API; signup gửi request thật/consent, chỉ mở login sau khi backend xác nhận tạo intern. Regression kiểm tra đồng hồ chat lấy thời gian server, giảm đúng từng giây, tự mở câu đầu và không tự lặp khi provider thất bại.
+## Giới hạn còn được ghi nhận
 
-Sprint workspace: route Sprint trực tiếp đọc context board do backend trả (goal, deep-link phiên, tổng overdue toàn sprint gồm item ngoài trang100, loại Done), danh sách nhiệm vụ phân trang kèm phụ thuộc/bài nộp, khu quản lý khóa theo quyền, modal chi tiết nhiệm vụ. Bộ test sprint workspace 3file/24tests đạt; Chrome thật trên FE3004+API8081 chạy9checks, không tràn ngang1440/820/390, console0 — bằng chứng manual-runtime/master-sprint-browser-verification.json và ảnh master-sprint-workspace-*.
+- Webhook repository QA chưa có endpoint public được cấu hình: chưa kiểm delivery live. Live PR/SHA dùng GitHub API; E2E kiểm hợp đồng webhook riêng.
+- Bộ test xuất JSON kiểm preview và version, chưa đối chiếu byte của file tải xuống từ browser.
+- Ma trận responsive không thay audit WCAG hoặc Core Web Vitals đầy đủ; kết quả AI của một bài không chứng minh độ chính xác chấm mọi bài.
+- Production không nằm trong yêu cầu hiện tại.
 
-Hồi quy gồm PASS chưa assignment, khóa task/Mentor, own outcomes sau placement, chat/follow-up/reload/pending, Kanban refresh, rubric AI sau tải dữ liệu, eligibility/roster removal, blueprint/planner metadata, report filters/snapshot, admin bank/template/policy và signed runner details.
-
-Bổ sung MASTER: Kanban hiển thị Sprint/progress/repository state; danh sách phiên sort ở server và có current Sprint/alerts. Chi tiết phiên gồm role, mục tiêu/đầu ra object, thẻ task/phụ thuộc/bài nộp/SHA/PR/AI/human score, timeline phân trang, hiệu suất và báo cáo nhúng khóa đúng phiên. Parser chặn trạng thái giả và link ngoài HTTPS GitHub. Các kiểm thử mới kiểm tra paging/filter/locked scope và không biến đề xuất AI thành quyết định giảng viên.
-
-Chrome với HTTP/Nest/SQL thật ở1440/820/390px: student waiting/notifications; instructor blueprint/performance/detail/report; admin bank/policy/template/session/report; thêm/gỡ thành viên và lifecycle; worker status; certificate/PDF/public verify; signup→login→onboarding. Không sửa API response. Fixtures tách khỏi tài khoản trắng; chỉ tính pass sau nội dung thật đã render, không tính loading/login như private page.
-
-Artifacts browser lịch sử ở workspace manual-runtime/*-master-browser.json và ảnh cùng prefix; các mốc 15–17/10 giữ nguyên ngày nghiệm thu, không gọi là vừa chạy lại. Các luồng/viewport đã chạy không có page errors/body overflow. Runtime import audit chạy lại 18/10 đo 71 route entries/221 modules, không có mock-data/test/server-business imports hoặc Next business route handlers; bản cũ thiếu `contracts-card` trong danh sách module. [Artifact import hiện hành](../phase7-evidence/final/runtime-import-audit.json). UI kết quả AI không auto Done/merge. Report/certificate hiển thị snapshot thật, không bịa số đo/điểm cho dữ liệu cũ.
-
-Nghiệm thu GitHub thật dùng hai danh tính: sinh viên tạo/sửa PR, runner và Gemini chấm; giảng viên nhập rubric riêng, duyệt90.5 và task Done. Student thấy AI98/runner2/2 cùng quyết định giảng viên, không có form duyệt. Đã sửa TaskSpec bị lặp, tên sprint/ưu tiên, deep-link task chứa SQL GUID viết hoa, mark-read và nhãn AI còn chờ sau human approval; có regression. [Bằng chứng](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/LIVE-GITHUB.md).
-
-BE chạy lại 18/10 đạt 73 suite/574 unit test, schema31. [PR backend2](https://github.com/vanhoi04082006-pixel/V-Intern-BE/pull/2) và [PR frontend14](https://github.com/vanhoi04082006-pixel/V-Intern-FE/pull/14) đã merge ngày18/10. CI sau merge trên FE `b803854` đạt; đây là baseline trước đợt dọn local, không phải remote CI cho commit dọn mới. Full-stack vẫn ghim BE `0469793` có source tree trùng BE main `dfefc6c`, giữ đủ 14 bước nghiệp vụ và provider test riêng. Kết quả local, SQL và readiness mới có thời điểm/nguồn riêng trong báo cáo tổng hợp; production chưa nằm trong phạm vi người dùng yêu cầu hiện tại.
-
-CI task giữ luồng nộp bài thật qua API/UI và SQL: chặn chuyển thẳng review/done, đóng băng SHA, AI fixture thiếu execution phải inconclusive, duyệt thủ công phải có lý do lưu audit. GitHub HTTP được thay bằng transport chỉ đọc trong database test riêng, từ chối credential thật; không có browser interception. Đây là kiểm thử hợp đồng hệ thống, không thay bằng chứng GitHub/Docker/Gemini thực tế ở trên.
-
-[Cách chạy test](TESTING.md) · [Bằng chứng hệ thống](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/VERIFICATION.md) · [API](API-CONTRACTS.md).
+[Bằng chứng trước đợt này, giữ nguyên mốc lịch sử](archive/verification-before-aurora-20261023.md).

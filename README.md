@@ -1,80 +1,66 @@
-# V-INTERN Frontend
+# V-Intern Frontend
 
-Admin chọn tài khoản GitHub tạo repository chung tại Cài đặt. Giảng viên Start phiên để hệ thống tạo repo và mời đội hình; sinh viên/giảng viên chỉ liên kết danh tính GitHub và chấp nhận lời mời, không cần tự tạo repository. Xem [hợp đồng API](docs/API-CONTRACTS.md).
+Giao diện thực tập theo dự án dành cho Sinh viên, Giảng viên và Quản trị viên. Sinh viên phỏng vấn, nhận nhiệm vụ, nộp bài và đọc phản hồi. Giảng viên chuẩn bị phiên, hướng dẫn, đánh giá và báo cáo. Dữ liệu nghiệp vụ đến từ NestJS API.
 
-Kanban tại Công việc của tôi và Sprint Board hỗ trợ kéo thả: Cần làm → Đang làm lưu qua API có kiểm tra version; Đang làm → Chờ duyệt mở chi tiết để nộp bài. Sinh viên không tự kéo sang Hoàn thành. Có thể bấm thẻ để thao tác bằng bàn phím hoặc điện thoại. Xem [nguồn và phạm vi kiểm chứng](docs/VERIFICATION.md). Nghiệm thu GitHub trước đó đã chạy nộp PR thật, AI/runner review và giảng viên duyệt. Deep-link thông báo xử lý GUID viết hoa và đúng task theo vai trò; điểm AI và quyết định giảng viên hiển thị riêng. Chat phỏng vấn có đồng hồ đếm ngược từ thời gian server, giữ deadline khi tải lại.
+## Bắt đầu từ tài liệu bàn giao
 
-Next.js 16.3.8 App Router, React 19, TypeScript và Tailwind CSS 4. Giao diện tiếng Việt cho tuyển dụng bằng chat, không gian sinh viên, quản lý phiên giảng viên và quản trị. Browser gọi Nest API thật; frontend không quyết định điểm, quyền hay kết quả task.
+**[Đọc bộ bàn giao FE](docs/HANDOVER.md)** — từ cách chạy local đến hành trình sử dụng, kiến trúc, thiết kế, lỗi thường gặp và bảo trì.
 
-## Chạy local
+Chuẩn bị bảo vệ: **[kịch bản ngắn](docs/DEMO-CHECKLIST.md)** · [hướng dẫn demo từng bước](docs/DEMO-GUIDE.md) · [nghiệm thu hai vai trò](docs/ROLEPLAY-ACCEPTANCE.md). Thông tin đăng nhập được bàn giao riêng.
 
-Yêu cầu Node.js 22+ và BE đã chạy/migrate.
-
-~~~powershell
-npm ci
-Copy-Item .env.example .env.local
-# NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
-npm run dev
-~~~
-
-Mở http://localhost:3001. Sinh viên có thể đăng ký khi server mở signup; giảng viên/admin dùng tài khoản được quản trị cấp. Đăng nhập bằng email. Không có password/token trong repository. Access token chỉ ở memory; browser gửi refresh cookie HttpOnly khi cần. Khi đổi API base, khởi động lại Next.
-
-## Lệnh
-
-| Lệnh | Mục đích |
+| Tài liệu | Trả lời câu hỏi |
 |---|---|
-| npm run dev | Next dev, cổng 3001 |
-| npm run typecheck | TypeScript |
-| npm run lint | ESLint / React hooks |
-| npm test | Vitest + Testing Library |
-| npm run build / npm start | Build / chạy production, cổng 3001 |
+| [Hướng dẫn bàn giao](docs/HANDOVER.md) | Người mới tiếp nhận nên làm gì, đọc gì và dùng hệ thống ra sao? |
+| [Bản đồ route](docs/ROUTE-MAP.md) | URL này nằm ở file nào, dùng component nào? |
+| [Kiến trúc](docs/ARCHITECTURE.md) | Guard, lifecycle, API client và component phối hợp thế nào? |
+| [API contracts](docs/API-CONTRACTS.md) | Frontend trao đổi với Backend theo hợp đồng nào? |
+| [Thiết kế UI](docs/UI-SYSTEM.md) | Dùng Aurora Glass và component chung như thế nào? |
+| [Kiểm thử](docs/TESTING.md) | Gate và các luồng hồi quy phải giữ là gì? |
+| [Kiểm chứng](docs/VERIFICATION.md) | Số liệu và ảnh được kiểm ở thời điểm nào? |
+| [Nhánh Git](docs/GIT-WORKFLOW.md) | Nhánh nào đã tích hợp, nhánh nào là lưu trữ? |
+| [Bàn giao Backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feat/admin-repository-account/docs/HANDOVER.md) | Dữ liệu và quy tắc phía server hoạt động thế nào? |
 
-Không chạy hai Next dev trong cùng checkout vì dùng chung .next. Đọc AGENTS.md và tài liệu Next bundled trước khi sửa API framework.
+## Công nghệ và phạm vi
 
-## Luồng và route
+Next.js 16.3.8, React 19, TypeScript, Tailwind CSS 4, Framer Motion và Lucide. Font đã đóng gói cục bộ. Aurora Glass áp dụng cho Sinh viên/Giảng viên và onboarding; trang chủ và Admin có phạm vi thiết kế riêng. Không thêm dữ liệu giả để làm đầy dashboard.
 
-| Khu vực | Route chính | Nguồn dữ liệu |
-|---|---|---|
-| Tuyển dụng | /intern/onboarding/* | Recruitment/workspace API |
-| Sinh viên chờ phân công | /intern, notifications, profile, github | Lifecycle BE; shell chung |
-| Công việc | /intern/work, sprint, project | Own tasks/specs/history/submissions |
-| Hỗ trợ học tập | /intern/mentor, recommendations | Hội thoại và khuyến nghị AI có ngữ cảnh |
-| Kết quả | /intern/performance, kpi, virtual-salary, certificates | Số liệu đã lưu/finalize |
-| Giảng viên | /instructor/projects, sessions, sprints | Thư viện → phiên → đội hình → Start → draft → publish |
-| Review/báo cáo | /instructor/performance, evaluations, reports | Quyền và số liệu thuộc phạm vi quản lý |
-| Chia sẻ/GitHub | /instructor/sharing, github | Consent / OAuth theo tài khoản |
-| Quản trị học tập | /admin/templates, questions, sessions, performance, reports | Definition có version, bank riêng tư, scope admin ở backend |
-| Vận hành | /admin/ai, services | Policy model/timeout/retry thật; chỉ báo cấu hình integration, không giả kết nối |
-| Admin | /admin/* | Users, RBAC, groups, catalogs, settings, services, audit |
+## Chạy trên workspace hiện tại
 
-BE trả lifecycle; route cần assignment không mount nội dung hoặc gọi API học tập khi chưa được giao dự án. Sinh viên đã đạt nhấn thông báo vẫn dùng InternShell chờ phân công. Kanban có bốn cột, ưu tiên, phân trang; thay đổi task làm mới cả cột và số lượng.
+```powershell
+& .\scripts\Use-ProjectStorage.ps1
+# Chạy tại thư mục gốc repository Frontend
+npm run dev
+```
 
-Phỏng vấn mới là hội thoại từng câu, có thời gian server, retry, giải thích lại, bỏ qua có xác nhận và trạng thái AI đang chấm. Không hiển thị câu hỏi tương lai hoặc đáp án mẫu. Khi AI lỗi, bài làm được giữ để thử lại. AI code review hiện bằng chứng/SHA/giới hạn và điểm đề xuất; giảng viên mới xác nhận task.
+Lệnh dev mặc định dùng cổng 3001. Nếu bản local đang chạy tại đó, không mở thêm process đè cổng. Bản chính đang dùng `next start`; sau khi sửa source cần build thành công rồi restart đúng process:
 
-## Cấu trúc
+```powershell
+& .\scripts\Use-ProjectStorage.ps1
+npm run build
+& ..\manual-runtime\restart-owned-apps.ps1 -Frontend
+```
 
-~~~text
-src/app                           Route/layout App Router
-src/components/auth              Form, session/role guard
-src/components/intern            Shell, lifecycle và tuyển dụng
-src/components/sessions          Project-first workflow, đội hình/draft/publish
-src/components/product           Task, mentor, report, admin; primitives dùng chung
-src/components/shared            Loading/error/empty state
-src/lib/api                      Adapter + parse/validate dữ liệu unknown từ BE
-src/lib/auth                     Transport, session memory, cookie coordination
-src/lib/ui                       Focus/accessibility helpers
-~~~
+Mở [ứng dụng local](http://localhost:3001). API chính là `http://localhost:8080/api/v1`; Swagger tại `http://localhost:8080/api/docs`. `NEXT_PUBLIC_API_BASE_URL` được lấy khi build. Không đặt token/secret vào biến public.
 
-Components mock/reference chỉ phục vụ fixture/presentation test; route thật phải lấy dữ liệu qua lib/api. Không nhập mock dataset vào route production hoặc thay error/empty bằng số liệu giả. Các khối Thiết lập nhanh đã được gỡ; thao tác nghiệp vụ vẫn ở trang tương ứng.
+Máy mới: xem phần chạy local trong [HANDOVER](docs/HANDOVER.md), cài bằng `npm ci` theo lockfile và cấu hình môi trường riêng. Không ghi đè .env của máy đang chạy.
 
-Luồng tuyển dụng hiện có 10 câu chính và tối đa 2 câu phụ thích ứng, phục hồi theo backend. Sinh viên đã đậu nhưng chưa được phân công thấy điểm, kỹ năng, lịch sử và thông báo trong cùng workspace. Fullstack là vai trò tuyển dụng riêng. Giảng viên xem chi tiết phỏng vấn và sửa kế hoạch có milestone, phụ thuộc, task con, đầu ra và ước lượng trước publish.
+## Kiểm tra trước khi bàn giao
 
-Sinh viên đã kết thúc phân công vẫn đọc được kết quả/KPI/trợ cấp/chứng nhận của chính mình khi backend xác nhận có lịch sử. Chứng nhận giữ dự án, phiên và ngày hoàn thành đã chụp khi cấp; task và Mentor tiếp tục cần phân công active.
+```powershell
+& .\scripts\Use-ProjectStorage.ps1
+npm run lint
+npm run typecheck
+npm test
+npm run build
+git diff --check
+```
 
-## Giao diện và kiểm thử
+Kiểm browser riêng cho desktop/mobile, drawer, tab, filter, form/modal, Kanban và trạng thái chưa có dữ liệu. Không coi unit test là bằng chứng đầy đủ cho layout. Số test mới nhất và giới hạn nằm trong [VERIFICATION](docs/VERIFICATION.md).
 
-Panel, nút, input và navigation dùng cùng primitive để giữ độ tương phản, khoảng cách, focus và responsive. Drawer hỗ trợ Escape/Tab và đóng khi chuyển sang desktop. Tìm kiếm topbar tìm trang được phép; tìm task nằm trong trang công việc. Hiệu ứng tuân thủ prefers-reduced-motion.
+## Quy tắc tiếp nhận
 
-[Kiến trúc](docs/ARCHITECTURE.md) · [API/lifecycle](docs/API-CONTRACTS.md) · [UI](docs/UI-SYSTEM.md) · [Kiểm thử](docs/TESTING.md). Hướng dẫn toàn hệ thống ở README của workspace bên ngoài.
-
-Đăng ký sinh viên nối `/auth/register`, yêu cầu checkbox điều khoản và đăng nhập riêng sau khi tạo tài khoản; backend chỉ gán role intern, bắt đầu ở tuyển dụng. GitHub cần BE cấu hình OAuth; Gmail không cấp quyền tạo repository. Google login và quên mật khẩu chưa có tích hợp thật; giao diện thông báo chưa hỗ trợ, không giả thành công.
+- Source, công cụ, dependency, cache, log và bằng chứng của dự án lưu trong workspace.
+- Giữ database và ba tài khoản gốc; không seed/reset để chụp UI.
+- Backend là nơi quyết định quyền, điểm và điều kiện chuyển trạng thái.
+- Giữ working tree có sẵn, review từng nhóm thay đổi trước commit/merge.
+- Không đưa secret hoặc `manual-runtime/private` lên repository.

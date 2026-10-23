@@ -1,5 +1,8 @@
 # API và lifecycle frontend
 
+> Bộ bàn giao theo lộ trình đọc: [HANDOVER](HANDOVER.md). Trang này là chương tra cứu chuyên sâu; kết quả chạy thực tế xem [VERIFICATION](VERIFICATION.md).
+
+
 Admin chọn tài khoản tạo repo chung qua `POST /github/repository-account` (không nhận mật khẩu/token trong body; dùng chính GitHub đã liên kết của Admin). Yêu cầu `settings.update` và vai trò Admin; GET cùng đường dẫn yêu cầu `settings.read`, trả configured/connected/login/ready. OAuth của Admin xin read:user public_repo, callback về /admin/settings; giảng viên/sinh viên xin read:user để xác minh danh tính và nhận lời mời. Start tự tạo repo; worker mỗi60giây xử lý tối đa3phiên và5lời mời/phiên. Nút đồng bộ của chủ trì dùng credential owner đã ghi, không yêu cầu quyền tạo repo từ giảng viên. Repo cũ giữ owner/URL; scope không đủ hoặc danh tính đổi phải báo lỗi. GitHub gửi lời mời/email qua tài khoản numeric ID đã liên kết; không đoán username từ email ứng dụng.
 
 Task detail giữ tên/code sprint đã validate và ưu tiên tiếng Việt. `/tasks/:id/spec` phục vụ hiển thị dependency status; `/tasks/:id/spec/source` xuất raw snapshot để operator seal runner, không dùng thay display API. Notification chỉ chấp nhận route nội bộ đúng vai trò, giữ nguyên task ID kể cả GUID viết hoa; mark-read không đổi trạng thái nghiệp vụ. AI review lưu kết luận gốc, UI ghép thêm trạng thái bài nộp để không hiện chờ duyệt sau quyết định cuối.

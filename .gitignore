@@ -34,3 +34,9 @@ Thumbs.db
 
 # vercel
 .vercel
+
+# Project-local caches and temporary data
+.runtime/
+
+# Host-specific package manager configuration
+.npmrc
