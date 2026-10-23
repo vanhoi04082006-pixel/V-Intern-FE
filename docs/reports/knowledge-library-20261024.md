@@ -1,6 +1,6 @@
 # K03 — giao diện kho tri thức · 24/10/2026
 
-**Đã đạt local; CI và kích hoạt runtime được ghi bổ sung khi có kết quả.** Phạm vi: ba route Admin cho danh sách, tạo mới và biên soạn tài liệu. Chưa kết luận retrieval K04 hoặc các Agent đã dùng kho.
+**Đã đạt local + CI và kích hoạt runtime chính.** Phạm vi: ba route Admin cho danh sách, tạo mới và biên soạn tài liệu. Chưa kết luận retrieval K04 hoặc các Agent đã dùng kho.
 
 Code UI: `17f4370c5475358103fca61454fcae55bae1614b`, cùng adapter/trình soạn `276e807` và `6604fcf`. BE tương thích: `bf3118693c782c145a87d4348212344396ce3526`. [Hướng dẫn thao tác và bàn giao](../KNOWLEDGE-LIBRARY.md).
 
@@ -16,6 +16,7 @@ Code UI: `17f4370c5475358103fca61454fcae55bae1614b`, cùng adapter/trình soạn
 | Responsive | 24 kiểm tra: list, QA editor, publication modal, import modal × 320/390/768/1024/1280/1440 px; không tràn ngang |
 | Keyboard | Tab giữ focus trong dialog; Escape đóng và trả focus về nút mở |
 | BE tương thích | 669 unit; 23 SQL/HTTP. [CI backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/actions/runs/40021504108) và [acceptance](https://github.com/vanhoi04082006-pixel/V-Intern-BE/actions/runs/40021504546) đạt |
+| FE CI `70d5e97` | [Quality](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40025607601) và [full-stack](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40025607650) đạt; 14/14 bước cũ, career và knowledge đều thành công; hoàn tất full-stack 23/10 lúc 21:27:31 UTC, tức 24/10 04:27:31 Asia/Bangkok |
 
 Log local: `workspace/manual-runtime/knowledge-library-20261024/{fe-unit,fe-node,fe-lint,fe-types,fe-build,browser}.log`. Bản kết quả browser và ảnh nằm trong `phase7-evidence/knowledge-library/` dưới cùng thư mục runtime; dữ liệu thử chỉ ở SQL Server 2019 dùng riêng. [Kết quả được lưu cùng tài liệu](../knowledge-assets/result.json).
 
@@ -41,6 +42,12 @@ Browser phát hiện nhóm nút PageTitle tràn 320 px. Sửa giới hạn chi�
 - Cảnh báo chưa lưu bảo vệ refresh/đóng tab và liên kết quay về kho trong editor; chưa chặn mọi điều hướng SPA/sidebar hoặc nút Back. Hướng dẫn yêu cầu lưu trước khi rời bằng các lối đó.
 - Ảnh và dữ liệu nghiệm thu là fixture trong DB riêng; không phải nội dung chuyên môn đã duyệt để đưa vào Agent.
 - K04 sẽ làm retrieval có scope, citation/version và chống lộ đáp án. LangChain/LangSmith, CV, mail và thư viện dự án thuộc các hạng mục tiếp theo.
+
+## Bản local và dữ liệu được giữ
+
+Đã build source cuối vào `.next` sau khi dừng đúng tiến trình FE, giữ bản build trước trong workspace để có đường lui và restart các API/FE do dự án sở hữu. Không migration mới hoặc reset/seed. Lần poll đầu của launcher kết thúc trước khi SQL kết nối xong; các API thử lại kết nối rồi khởi động thành công. Readiness sau đó xác nhận 8080/8081 healthy và 10 thao tác knowledge trên mỗi API.
+
+`native-before.json` / `native-after.json` đối chiếu số user/hồ sơ/phỏng vấn/câu trả lời/câu hỏi/phân công/template/chứng nhận/lượt phỏng vấn/kho và revision: không đổi trên cả hai DB. MDF/LDF được xác nhận nằm trong workspace. Bảy tài khoản gốc/demo/defense đăng nhập và đọc catalog đúng quyền, không tiêu hao lượt. `native-browser.json` xác nhận Admin thật mở list/editor/preview trên cổng 3001, sáu độ rộng không tràn và không mutation/page error. Readiness bắt đầu 23/10 21:32:29 UTC; browser hoàn tất sau đó. Log đều ở thư mục evidence cùng ngày.
 
 ## Ảnh kiểm chứng
 
