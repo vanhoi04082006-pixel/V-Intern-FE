@@ -1278,20 +1278,21 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
     [selected, setSelected] =
       useState<Awaited<ReturnType<typeof api.getSettings>>[number]>(),
     [create, setCreate] = useState(false);
+  const createAction = (
+    <button className={buttonClass} onClick={() => setCreate(true)}>
+      Thêm cấu hình
+    </button>
+  );
   return (
     <>
       {!embedded && (
         <PageTitle
           title="Cài đặt hệ thống"
           subtitle="Cấu hình nghiệp vụ được lưu tại Backend"
-          action={
-            <button className={buttonClass} onClick={() => setCreate(true)}>
-              Thêm cấu hình
-            </button>
-          }
+          action={createAction}
         />
       )}
-      <Panel title="Cấu hình nghiệp vụ">
+      <Panel title="Cấu hình nghiệp vụ" action={embedded ? createAction : undefined}>
         <Result resource={settings}>
           {(r) => (
             <>
