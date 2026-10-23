@@ -14,7 +14,7 @@
 
 ## 1. Chạy local và xác nhận đúng bản
 
-Frontend là ứng dụng Next.js 16.3.8, React 19, TypeScript, Tailwind CSS 4. API nghiệp vụ chạy riêng bằng NestJS. Giao diện mở được chưa có nghĩa API hoặc database đã sẵn sàng.
+Frontend là ứng dụng Next.js 16.4.2, React 19, TypeScript, Tailwind CSS 4. API nghiệp vụ chạy riêng bằng NestJS. Giao diện mở được chưa có nghĩa API hoặc database đã sẵn sàng.
 
 ### Trên máy V-INTERN hiện tại
 

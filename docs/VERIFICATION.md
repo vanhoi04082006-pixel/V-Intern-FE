@@ -38,3 +38,10 @@ Tại mốc chạy các kiểm tra bên trên, thay đổi còn nằm trong work
 - Production không nằm trong yêu cầu hiện tại.
 
 [Bằng chứng trước đợt này, giữ nguyên mốc lịch sử](archive/verification-before-aurora-20261023.md).
+
+
+## Bản vá bảo mật khi công bố GitHub — 23/10/2026
+
+CI ban đầu chặn Next.js 16.3.8 bởi advisory critical. Đã nâng riêng Next và eslint-config-next lên **16.4.2**, giữ React và các ngưỡng CI hiện hữu. Local sau nâng cấp: lint, 82 file/541 test, typecheck và build đạt; audit production không còn finding. Log mới nằm trong workspace/manual-runtime/publish-20261023. Các số liệu browser/nhập vai ở trên là mốc trước nâng dependency, không được gọi là đã chạy lại toàn bộ với Next mới.
+
+Full-stack CI ghim Backend tại commit `3989138d2e8b479b00b4a39f275ad8ee858b7911`, chính là source đã đạt 625 unit/237 SQL E2E trên [CI Backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/actions/runs/39879926943). Giữ đủ các bước nghiệp vụ và test hợp đồng; không chạy theo một nhánh BE thay đổi liên tục. Kết quả CI của bản vá xem [PR Frontend](https://github.com/vanhoi04082006-pixel/V-Intern-FE/pull/15).
