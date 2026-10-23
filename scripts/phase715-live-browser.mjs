@@ -357,6 +357,7 @@ try {
       );
       const start = network.length;
       await new Promise((resolve) => setTimeout(resolve, 22000));
+      const refreshedWorkspace = page.waitForResponse((response) => response.url().endsWith("/intern/me/workspace") && response.status() === 200);
       await page
         .getByRole("button", { name: "Tải lại trạng thái", exact: true })
         .click();
@@ -366,6 +367,7 @@ try {
           exact: true,
         })
         .waitFor();
+      await refreshedWorkspace;
       const calls = network.slice(start).filter((n) => n.source === "browser");
       const work = calls.filter((n) => n.url.endsWith("/intern/me/workspace"));
       assert.deepEqual(
@@ -634,10 +636,9 @@ try {
         [intern.user.id, project.id],
       );
       assert.equal(count[0].taskCount, after.taskSummary.total);
-      const totalSection = page.locator(
-        'section[aria-labelledby="active-task-summary"]',
-      );
-      assert.equal(await totalSection.locator("dd").first().textContent(), "1");
+      const totalMetric = page.locator(".student-metric").filter({ hasText: "Tất cả nhiệm vụ" });
+      await totalMetric.getByText("1", { exact: true }).waitFor();
+      assert.equal(await totalMetric.locator("strong").first().textContent(), "1");
       await screenshot(page, "phase7.1-live-active.png");
       return {
         before: "unassigned",
