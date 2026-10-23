@@ -1,10 +1,18 @@
 import { describe, expect, it, vi } from 'vitest';
-import { parseKnowledgeDocument, parseKnowledgeMetadata, parseKnowledgeSnapshot, toKnowledgeDraft, createKnowledge, updateKnowledge, publishKnowledge, archiveKnowledge, restoreKnowledge } from '../knowledge';
+import { parseKnowledgeDocument, parseKnowledgeMetadata, parseKnowledgeSnapshot, toKnowledgeDraft, createKnowledge, updateKnowledge, publishKnowledge, archiveKnowledge, restoreKnowledge, checkKnowledgePublication } from '../knowledge';
 const transport = vi.hoisted(() => ({ request: vi.fn() }));
 vi.mock('../client', () => transport);
 const snapshot = { schemaVersion: 1, code: 'promise-errors', version: 2, status: 'published', kind: 'qa', title: 'Xử lý Promise', summary: 'Kiểm soát lỗi có bằng chứng.', language: 'vi', difficulty: 'medium', audience: 'grading_only', purposes: ['interview_evaluation'], roleCodes: ['mobile'], tags: ['Promise'], sources: [{ title: 'MDN', url: 'https://developer.mozilla.org/' }], body: { validAnswers: ['Cách thứ nhất\nCó nhiều dòng.', 'Cách thứ hai.'], rubric: [{ criterion: 'Bắt lỗi', weight: 100, description: 'Có giải thích rõ ràng.' }], extraDraftField: { keep: true } } };
 const metadata = { ...snapshot, id: 'test-id', updatedAt: '2026-10-24T00:00:00Z', sha256: 'a'.repeat(64) };
 describe('knowledge API contract', () => {
+  it('checks publication through a read-only GET and rejects another document identity', async () => {
+    transport.request.mockImplementationOnce(async (_path, parse) => parse({ code: 'promise-errors', currentVersion: 2, status: 'draft', sha256: 'a'.repeat(64), publishable: false, issues: ['Cần bổ sung nguồn.'] }));
+    const controller = new AbortController();
+    await expect(checkKnowledgePublication('promise-errors', controller.signal)).resolves.toMatchObject({ currentVersion: 2, publishable: false, issues: ['Cần bổ sung nguồn.'] });
+    expect(transport.request).toHaveBeenLastCalledWith('/admin/knowledge/promise-errors/publication-check', expect.any(Function), { signal: controller.signal });
+    transport.request.mockImplementationOnce(async (_path, parse) => parse({ code: 'another-document', currentVersion: 2, status: 'draft', sha256: 'a'.repeat(64), publishable: true, issues: [] }));
+    await expect(checkKnowledgePublication('promise-errors')).rejects.toThrow();
+  });
   it('preserves full source, multiline alternatives and draft JSON instead of flattening it', () => {
     const result = parseKnowledgeSnapshot(snapshot);
     expect(result.body).toEqual(snapshot.body); expect(result.roleCodes).toEqual(['mobile']);

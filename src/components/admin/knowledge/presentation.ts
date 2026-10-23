@@ -5,7 +5,7 @@ export const audienceLabels: Record<KnowledgeAudience, string> = { student_safe:
 export const audienceHints: Record<KnowledgeAudience, string> = { student_safe: 'Nội dung an toàn để hỗ trợ sinh viên khi được dùng đúng phạm vi.', staff_only: 'Dành cho công việc vận hành và quản lý nội bộ.', grading_only: 'Có đáp án, lời giải hoặc rubric. Không dùng làm context hỗ trợ sinh viên.' };
 export const purposeLabels: Record<KnowledgePurpose, string> = { interview: 'Hội thoại phỏng vấn', interview_evaluation: 'Chấm phỏng vấn', planning: 'Lập kế hoạch', code_review: 'Chấm & review code', mentoring: 'Hỗ trợ học tập', evaluation_assistance: 'Hỗ trợ đánh giá', recommendation: 'Đề xuất cải thiện', cv_screening: 'Phân tích CV', communication: 'Liên lạc tuyển dụng' };
 export const statusLabels: Record<KnowledgeStatus, string> = { draft: 'Bản nháp', published: 'Đã xuất bản', archived: 'Đã lưu trữ' };
-export const statusTone = (status: KnowledgeStatus) => status === 'published' ? 'green' as const : status === 'draft' ? 'amber' as const : 'slate' as const;
+export const statusTone = (status: KnowledgeStatus) => status === 'published' ? 'green' as const : status === 'draft' ? 'amber' as const : 'gray' as const;
 export const gradingKind = (kind: KnowledgeKind) => ['qa', 'solution', 'rubric'].includes(kind);
 export function blankKnowledgeDraft(kind: KnowledgeKind = 'guide'): KnowledgeDraft {
   return { kind, title: '', summary: '', language: 'vi', difficulty: null,

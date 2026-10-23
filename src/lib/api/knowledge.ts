@@ -72,6 +72,11 @@ function page<T>(raw: unknown, item: (value: unknown) => T) { const v = p.record
 const base = '/admin/knowledge', path = (code: string) => `${base}/${encodeURIComponent(code)}`;
 export const listKnowledge = (query: URLSearchParams, signal?: AbortSignal) => request(`${base}?${query}`, raw => page(raw, parseKnowledgeMetadata), { signal });
 export const getKnowledge = (code: string, signal?: AbortSignal) => request(path(code), parseKnowledgeDocument, { signal });
+export const checkKnowledgePublication = (code: string, signal?: AbortSignal) => request(`${path(code)}/publication-check`, raw => {
+  const v = p.record(raw), actualCode = p.string(v.code);
+  if (actualCode !== code) p.invalid();
+  return { code: actualCode, currentVersion: integer(v.currentVersion), status: p.oneOf(v.status, knowledgeStatuses), sha256: hash(v.sha256), publishable: p.boolean(v.publishable), issues: p.array(v.issues, p.string) };
+}, { signal });
 export const createKnowledge = (code: string, draft: KnowledgeDraft) => request(base, parseKnowledgeDocument, { method: 'POST', body: { code, draft } });
 export const updateKnowledge = (code: string, version: number, draft: KnowledgeDraft) => request(path(code), parseKnowledgeDocument, { method: 'PUT', body: { version, draft } });
 export const publishKnowledge = (code: string, version: number) => request(`${path(code)}/publish`, parseKnowledgeDocument, { method: 'POST', body: { version } });

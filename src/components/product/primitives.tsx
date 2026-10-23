@@ -358,7 +358,7 @@ export function PageTitle({
           )}
         </div>
         {action && (
-          <div className="product-page-actions flex shrink-0 flex-wrap items-center gap-2">
+          <div className="product-page-actions flex min-w-0 max-w-full shrink-0 flex-wrap items-center gap-2">
             {action}
           </div>
         )}
