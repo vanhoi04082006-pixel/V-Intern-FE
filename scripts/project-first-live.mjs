@@ -160,8 +160,11 @@ try {
     await isolated(phase);
   };
   await unpublished("before-start");
-  const started = page.waitForResponse(r => r.url().toLowerCase().endsWith(`/sessions/${created.sessionId}`.toLowerCase()) && r.request().method() === "PATCH");
-  await page.getByRole("button", { name: "Start Session", exact: true }).evaluate(b => { b.click(); b.click(); }); assert.equal((await started).status(), 200);
+  const [started] = await Promise.all([
+    page.waitForResponse(r => r.url().toLowerCase().endsWith(`/sessions/${created.sessionId}`.toLowerCase()) && r.request().method() === "PATCH"),
+    page.getByRole("button", { name: "Bắt đầu phiên", exact: true }).evaluate(b => { b.click(); b.click(); }),
+  ]);
+  assert.equal(started.status(), 200);
   await unpublished("after-start");
   await expect(page.getByRole("button", { name: "Chỉnh sửa bản nháp", exact: true })).toBeVisible({ timeout: 30000 });
   const plan = (await call("instructor", `/ai-generations/plans?sessionId=${created.sessionId}`)).find(p => p.status === "ready"); assert.ok(plan);

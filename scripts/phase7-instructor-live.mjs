@@ -119,7 +119,7 @@ try {
   await card.getByRole("button", { name: "Tiêu chí / trạng thái" }).click();
   dialog = page.getByRole("dialog");
   await mutation(page, `/evaluation-cycles/${cycle.id}/status`, "POST", () =>
-    dialog.getByRole("button", { name: "Chuyển kỳ sang open" }).click(),
+    dialog.getByRole("button", { name: "Mở kỳ đánh giá", exact: true }).click(),
   );
   await page.getByRole("button", { name: "Tạo đánh giá", exact: true }).click();
   const internSelect = page.getByRole("combobox", { name: /^Intern đánh giá/ });
