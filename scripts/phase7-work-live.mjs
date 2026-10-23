@@ -93,7 +93,7 @@ try {
     .getByRole("link", { name: "Công việc của tôi", exact: true })
     .click();
   await page
-    .getByRole("button", { name: `${task.code} · ${task.title}`, exact: true })
+    .getByRole("button", { name: `${task.code} ${task.title}`, exact: true })
     .click();
   // A second real client of the owner updates after the browser loaded its version.
   await page
