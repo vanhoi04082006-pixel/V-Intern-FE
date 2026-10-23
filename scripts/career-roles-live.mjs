@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
+import { randomUUID } from 'node:crypto';
 const be = path.resolve(process.env.LIVE_BE_ROOT || '../V-INTERN-BE'), req = createRequire(path.join(be, 'package.json'));
 if (process.env.NODE_ENV !== 'test' || !process.env.DB_NAME?.startsWith('VIntern_Phase715_')) throw Error('Owned disposable full-stack database required.');
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(path.join(process.env.PLAYWRIGHT_MODULE, 'index.mjs')).href : 'playwright');
@@ -120,7 +121,37 @@ try {
   const { RECRUITMENT_EVALUATION_PROMPT_VERSION } = req(path.join(be, 'dist/recruitment/recruitment-prompt.js'));
   assert.equal(assessment.promptVersion, RECRUITMENT_EVALUATION_PROMPT_VERSION);
   await student.screenshot({ path: path.join(evidence, 'student-result.png'), fullPage: true, animations: 'disabled' });
+  const teacherEmail = 'instructor@phase715.test';
+  async function teacherCall(url, method = 'GET', body) {
+    const auth = await fetch(`${api}/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: teacherEmail, password: process.env.LIVE_PASSWORD }) });
+    assert.equal(auth.status, 200);
+    const { accessToken } = await auth.json();
+    const response = await fetch(api + url, { method, headers: { authorization: `Bearer ${accessToken}`, 'content-type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
+    assert.equal(response.ok, true, `${method} ${url}: ${response.status}`);
+    return response.json();
+  }
+  const template = await teacherCall('/project-templates', 'POST', { code: `TPL-${code}`, name: `Small SQL report ${code}`, description: 'Practice one SQL report, empty data and a reproducible verification.', difficulty: 'beginner', techStack: ['SQL'], roles: [code], modules: ['Report'], sprints: [{ name: 'Data report', goal: 'Deliver one verified report', durationDays: 3, tasks: [{ title: 'Query and explain', requirements: 'Implement a SQL report and verify empty and non-empty data.', dod: ['Query is reproducible'], role: code, storyPoints: 2 }] }], dod: ['Report works'], rubricVersion: 'task-review-v1', scenarios: ['Empty data'], documentation: 'Run the query against a small data set and explain the result with evidence.' });
+  const cohortName = `Career cohort ${code}`;
+  const run = await teacherCall(`/project-templates/${template.id}/start`, 'POST', { name: cohortName, startDate: '2027-01-01T00:00:00.000Z', endDate: '2027-01-10T00:00:00.000Z', requestId: randomUUID() });
+  const pinned = await teacherCall(`/projects/${run.projectId}/template-context`);
+  assert.deepEqual(pinned.definition.roles, [code]);
+  const teacherContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), teacher = await teacherContext.newPage();
+  teacher.on('pageerror', error => errors.push(error.message));
+  await login(teacher, teacherEmail);
+  await teacher.goto(`${base}/instructor/sessions/${run.sessionId}/setup?project=${run.projectId}`);
+  await teacher.getByRole('heading', { name: `Thiết lập: ${cohortName}`, exact: true }).waitFor();
+  await teacher.getByRole('option', { name, exact: true }).first().waitFor({ state: 'attached' });
+  await teacher.getByLabel('Lọc theo vai trò', { exact: true }).selectOption(code);
+  await teacher.getByLabel('Tìm sinh viên', { exact: true }).fill(email);
+  const row = teacher.locator('li').filter({ hasText: email });
+  const [assignmentResponse] = await Promise.all([teacher.waitForResponse(r => new URL(r.url()).pathname === '/api/v1/assignments' && r.request().method() === 'POST'), row.getByRole('button', { name: 'Thêm', exact: true }).click()]);
+  assert.equal(assignmentResponse.status(), 201);
+  const assignment = await assignmentResponse.json();
+  assert.equal(assignment.projectId.toLowerCase(), run.projectId.toLowerCase());
+  const projectSlots = await teacherCall(`/projects/${run.projectId}/slots`);
+  assert.equal(projectSlots.slots.find(slot => slot.roleCode === code)?.filledCount, 1);
+  await teacher.screenshot({ path: path.join(evidence, 'instructor-assignment.png'), fullPage: true, animations: 'disabled' });
   assert.deepEqual(errors, []);
-  fs.writeFileSync(path.join(evidence, 'result.json'), JSON.stringify({ passed: true, code, questions: bank.count, snapshots: snapshots.count, answers: answers.count, assessment, viewports, pageErrors: errors, externalProviders: 'explicit harness fixtures' }, null, 2));
-  console.log('Career-role browser acceptance passed: draft, publish, revisions, 10 authored questions, 10 submitted answers, persisted grade, archive, five responsive widths.');
+  fs.writeFileSync(path.join(evidence, 'result.json'), JSON.stringify({ passed: true, code, questions: bank.count, snapshots: snapshots.count, answers: answers.count, assessment, project: { templateId: template.id, sessionId: run.sessionId, projectId: run.projectId, assignmentId: assignment.id, roleCode: code }, viewports, pageErrors: errors, externalProviders: 'explicit harness fixtures' }, null, 2));
+  console.log('Career-role browser acceptance passed: Admin catalog, new-career interview/grade, dynamic template, instructor filter/assignment, archive and five responsive widths.');
 } finally { await browser.close(); if (ds.isInitialized) await ds.destroy(); }

@@ -82,7 +82,7 @@ export function InterviewStep() {
             Phỏng vấn cùng AI Recruiter
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            {roleLabel(session.roleCode)} · Lần {session.attemptNumber} ·{" "}
+            {(profile.selectedRole === session.roleCode ? profile.selectedRoleLabel : null) ?? roleLabel(session.roleCode)} · Lần {session.attemptNumber} ·{" "}
             {questions.filter((q) => q.answered).length}/{session.questionCount}{" "}
             câu đã lưu
           </p>

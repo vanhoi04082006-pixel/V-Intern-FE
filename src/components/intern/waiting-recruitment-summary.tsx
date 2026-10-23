@@ -83,7 +83,7 @@ export function WaitingRecruitmentSummary({
         <p className="text-[12.5px] leading-7 text-slate-600">
           Vị trí đã đăng ký:{" "}
           <strong className="text-[var(--student-navy)]">
-            {roleLabel(profile.selectedRole)}
+            {profile.selectedRoleLabel ?? roleLabel(profile.selectedRole)}
           </strong>
         </p>
         {result ? (

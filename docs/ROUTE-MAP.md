@@ -17,6 +17,7 @@
 | `/admin/performance` | [page](../src/app/admin/performance/page.tsx) | `product/member-performance` |
 | `/admin/profile` | [page](../src/app/admin/profile/page.tsx) | `product/outcomes` |
 | `/admin/questions` | [page](../src/app/admin/questions/page.tsx) | `admin/question-bank` |
+| `/admin/career-roles` | [page](../src/app/admin/career-roles/page.tsx) | `admin/career-roles`, [hướng dẫn](CAREER-ROLES.md) |
 | `/admin/reports` | [page](../src/app/admin/reports/page.tsx) | `sessions/reports-workspace` |
 | `/admin/roles` | [page](../src/app/admin/roles/page.tsx) | `product/admin-management` |
 | `/admin/services` | [page](../src/app/admin/services/page.tsx) | `product/admin-management` |

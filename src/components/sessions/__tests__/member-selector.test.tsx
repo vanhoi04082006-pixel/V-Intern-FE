@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import { MemberSelector, ineligibilityReason, openRolesFor, slotRemaining } from "../member-selector";
 import { clearSession, setSession } from "@/lib/auth/session";
 const instructor = { id: "instructor1", displayName: "Instructor", email: "instructor@test.local", roles: ["instructor"], permissions: ["assignments.view", "assignments.manage", "recruitment.view"] };
@@ -28,6 +28,7 @@ function deps(over: Record<string, unknown> = {}) {
     assign: vi.fn(async () => "assign-1"),
     cancel: vi.fn(async () => "assign-1"),
     listAssignments: vi.fn(async () => []),
+    careers: vi.fn(async () => [{ code: 'frontend', label: 'Frontend Developer' }, { code: 'backend', label: 'Backend Developer' }, { code: 'data_analyst', label: 'Data Analyst' }]),
     ...over,
   };
 }
@@ -53,6 +54,13 @@ describe("ineligibilityReason (M4)", () => {
 });
 
 describe("MemberSelector (M4)", () => {
+  it('filters candidates using a new catalog career without a hard-coded option', async () => {
+    const d = deps();
+    render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} />);
+    expect(await screen.findByRole('option', { name: 'Data Analyst' })).toHaveValue('data_analyst');
+    fireEvent.change(screen.getByLabelText('Lọc theo vai trò'), { target: { value: 'data_analyst' } });
+    await waitFor(() => expect(d.search).toHaveBeenLastCalledWith(expect.objectContaining({ role: 'data_analyst' }), expect.anything()));
+  });
   it('removes a roster member even when the eligible search correctly excludes assigned students', async () => {
     const d = deps({ search: vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 10, totalPages: 0 })), listAssignments: vi.fn(async () => [{ id: 'assigned-one', internId: 'u1', status: 'active' }]) });
     render(<MemberSelector sessionId="s1" projectId="p1" slots={slots} deps={d} members={[{ userId: 'u1', displayName: 'SV A', email: 'a@x.edu' }]} />);

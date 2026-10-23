@@ -171,6 +171,7 @@ describe("SessionSetup (M3)", () => {
       assign: vi.fn(async () => "as1"),
       cancel: vi.fn(async () => "as1"),
       listAssignments: vi.fn(async () => []),
+      careers: vi.fn(async () => [{ code: 'frontend', label: 'Frontend Developer' }, { code: 'backend', label: 'Backend Developer' }]),
     };
     const getMembers = vi.fn(async () => {
       calls += 1;

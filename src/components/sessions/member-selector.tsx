@@ -7,6 +7,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { Can } from "@/components/auth/can";
 import { errorMessage } from "@/lib/auth/api-client";
 import { roleLabel } from '@/lib/api/workspace';
+import { listCareerReferences } from '@/lib/api/career-roles';
 import { CandidateInterviewSummary } from './candidate-interview-summary';
 import {
   assignIntern,
@@ -38,6 +39,7 @@ export function openRolesFor(
 }
 
 export interface SelectorDeps {
+  careers?: typeof listCareerReferences;
   search: typeof searchCandidates;
   detail: typeof getCandidateDetail;
   assign: typeof assignIntern;
@@ -73,7 +75,10 @@ export function MemberSelector({
     assign: assignFn = assignIntern,
     cancel: cancelFn = cancelAssignment,
     listAssignments: listFn = listSessionAssignments,
+    careers: loadCareers = listCareerReferences,
   } = deps ?? {};
+  const careerCatalog = useResource(useCallback((signal: AbortSignal) => loadCareers(signal), [loadCareers]));
+  const careerLabel = (code: string | null) => careerCatalog.data?.find(role => role.code === code)?.label ?? roleLabel(code);
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [role, setRole] = useState("");
@@ -177,16 +182,13 @@ export function MemberSelector({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <select aria-label="Lọc theo vai trò" className={inputClass} value={role} onChange={(e) => { setRole(e.target.value); setPage(1); }}>
+        <select aria-label="Lọc theo vai trò" className={inputClass} disabled={careerCatalog.loading || Boolean(careerCatalog.error)} value={role} onChange={(e) => { setRole(e.target.value); setPage(1); }}>
           <option value="">Mọi vai trò</option>
-          <option value="frontend">Frontend</option>
-          <option value="backend">Backend</option>
-          <option value="fullstack">Fullstack</option>
-          <option value="qa">QA</option>
-          <option value="business_analyst">Business Analyst</option>
+          {careerCatalog.data?.map(role => <option key={role.code} value={role.code}>{role.label}</option>)}
         </select>
       </div>
       <p className="text-xs text-slate-500">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
+      {Boolean(careerCatalog.error) && <div role="alert" className="text-sm text-amber-800">Không tải được danh sách nghề nghiệp. Bạn vẫn có thể tìm sinh viên theo tên. <button type="button" className="font-semibold underline" onClick={careerCatalog.reload}>Thử lại danh sách nghề</button></div>}
       {notice && (
         <p role="status" className="rounded bg-emerald-50 p-2 text-xs text-emerald-700">{notice}</p>
       )}
@@ -210,7 +212,7 @@ export function MemberSelector({
                       <p className="text-sm font-semibold text-slate-800">{c.displayName ?? "Chưa có tên"}</p>
                       <p className="truncate text-[11px] text-slate-500">{c.email ?? "Chưa có email"}</p>
                       <p className="mt-1 text-[11px] text-slate-500">
-                        {roleLabel(c.selectedRole)} · {c.status === 'passed' ? 'Đã đậu phỏng vấn' : 'Chưa đủ điều kiện'}
+                        {careerLabel(c.selectedRole)} · {c.status === 'passed' ? 'Đã đậu phỏng vấn' : 'Chưa đủ điều kiện'}
                         {c.result ? ` · Tổng điểm ${c.result.overallScore} · Chuyên môn ${c.result.technicalScore} · Tiếng Anh ${c.result.englishScore ?? 'Chưa có điểm riêng'}` : ''}
                       </p>
                       {Boolean(c.result?.strengths?.length) && <p className="mt-2 text-xs text-slate-600">Kỹ năng: {c.result!.strengths!.join(' · ')}</p>}
@@ -230,7 +232,7 @@ export function MemberSelector({
                               <option value="">Hết slot</option>
                             ) : (
                               openRolesFor(c, slots).map((r) => (
-                                <option key={r} value={r}>{r}</option>
+                              <option key={r} value={r}>{careerLabel(r)}</option>
                               ))
                             )}
                           </select>

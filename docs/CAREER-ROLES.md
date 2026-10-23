@@ -59,6 +59,14 @@ Server chịu trách nhiệm quyền, code hợp lệ, trạng thái, constraint
 
 Prompt đánh giá BE v5 dùng danh sách nghề đang tuyển và lưu metadata/version catalog trong input run. Đề xuất ngoài catalog bị từ chối; nếu không có nghề thay thế thì giữ điểm, không tạo nghề giả và thông báo cần định hướng. FE không hiện lời đề xuất khi API trả `recommendedRole=null` ở khoảng 50–70 điểm.
 
-**Giới hạn:** bộ lọc nghề ở màn hình phân công giảng viên và consumer template còn cần chuyển. R03 tổng thể vẫn mở. Các module CV, lịch, Agent runtime, mail và chính sách nộp trễ là các task sau, không được gọi là đã xong chỉ vì có thư viện nghề. Migration mới hiện mới áp dụng DB kiểm thử, chưa thay DB demo chính.
+## Template và phân công giảng viên
+
+Template/task dùng mã từ catalog. Nghề mới được giữ trong snapshot template, slot dự án và phân công; không cần bổ sung enum. Bộ lọc giảng viên đọc danh sách tham chiếu có quyền, gồm cả nghề đóng tuyển/có hồ sơ cũ. Đóng tuyển không làm mất khả năng tìm và phân công ứng viên đã đậu. Kỹ năng/trọng số riêng không được trả trong danh sách tham chiếu.
+
+Luồng browser R03 mở rộng đã kiểm: sau kết quả phỏng vấn, giảng viên tạo một mẫu SQL nhỏ và phiên thực tập, chọn nghề mới trong bộ lọc, tìm đúng sinh viên và phân công qua UI. API/SQL xác nhận snapshot đúng mã và slot đã lấp 1 người. Evidence `career-r03-browser.log`, ảnh `instructor-assignment.png`; source script `career-roles-live.mjs` tái lập cả ba vai trò.
+
+Sau bộ lọc mới, FE có **550 test** local đạt (84 file). Bản production dùng riêng, lint/typecheck đạt. BE có 47 SQL E2E hồi quy, 15 KPI/lương/chứng nhận và 5 migration test đạt ở các lượt riêng; không cộng chúng thành một lượt kiểm thử duy nhất. Chứng nhận của nghề mới lấy tên catalog và giữ nguyên sau khi đổi tên nghề. Cặp revision cuối phải đối chiếu CI riêng, không lấy run trước thay cho code mới.
+
+**Giới hạn:** các module CV, lịch, Agent runtime, mail và chính sách nộp trễ là các task sau, không được gọi là đã xong chỉ vì có thư viện nghề. Migration mới hiện mới áp dụng DB kiểm thử, chưa thay DB demo chính. Một số widget cũ vẫn dùng mã làm nhãn dự phòng nếu response không có tên nghề; đây là phần tiếp tục chuẩn hóa UX, không phải danh sách mã được phép.
 
 Hiện vẫn giữ luồng chọn nghề thủ công để không phá chức năng đang dùng. Khi M08–M11 hoàn tất, hồ sơ CV được Agent phân tích và xếp lịch mới dùng role được giao; không gọi màn hình hiện tại là nghiệm thu luồng CV tự động.

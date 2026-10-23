@@ -34,6 +34,7 @@ export const listRecruitingCareers = (signal?: AbortSignal) => request('/career-
   const v = p.record(raw);
   return p.array(v.items, raw => { const r = p.record(raw); return { code: p.string(r.code), label: p.string(r.label), description: p.string(r.description), level: p.string(r.level), language: p.string(r.language), requiredSkills: p.array(r.requiredSkills, p.string), optionalSkills: p.array(r.optionalSkills, p.string), version: p.number(r.version) }; });
 }, { signal });
+export const listCareerReferences = (signal?: AbortSignal) => request('/career-roles/reference', raw => p.array(p.record(raw).items, raw => { const role = p.record(raw); return { code: p.string(role.code), label: p.string(role.label) }; }), { signal });
 
 /** Authoring includes drafts/archived careers; never silently truncate the catalog to one page. */
 export async function allCareerRoles(signal?: AbortSignal): Promise<CareerRole[]> {
