@@ -17,6 +17,7 @@ import {
   Panel,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
+import { BusinessAgentMonitor } from './business-agent-monitor';
 
 export function AiConfiguration() {
   const state = useResource(
@@ -39,6 +40,7 @@ export function AiConfiguration() {
           onSaved={state.reload}
         />
       ) : null}
+      <BusinessAgentMonitor />
     </div>
   );
 }

@@ -140,11 +140,9 @@ try {
   await admin
     .getByLabel("Tìm project template", { exact: true })
     .fill("MINI-NOTES-V1");
-  const row = admin
-    .getByRole("listitem")
-    .filter({
-      has: admin.getByRole("heading", { name: source.name, exact: true }),
-    });
+  const row = admin.getByRole("listitem").filter({
+    has: admin.getByRole("heading", { name: source.name, exact: true }),
+  });
   await row.getByRole("button", { name: "Nhân bản", exact: true }).click();
   await admin.getByLabel("Tên mẫu", { exact: true }).fill(name);
   await admin.getByLabel("Mã mẫu", { exact: true }).fill(code);
@@ -223,16 +221,14 @@ try {
     const id = randomUUID(),
       email = `${id}@g2-browser.test`,
       role = await db.getRepository(Role).findOneByOrFail({ code: roleCode });
-    await db
-      .getRepository(User)
-      .insert({
-        id,
-        email,
-        username: id,
-        displayName: "G2 browser " + roleCode,
-        passwordHash: await req("bcryptjs").hash(process.env.LIVE_PASSWORD, 10),
-        status: "active",
-      });
+    await db.getRepository(User).insert({
+      id,
+      email,
+      username: id,
+      displayName: "G2 browser " + roleCode,
+      passwordHash: await req("bcryptjs").hash(process.env.LIVE_PASSWORD, 10),
+      status: "active",
+    });
     await db.getRepository(UserRole).insert({ userId: id, roleId: role.id });
     identities[roleCode] = { id, email };
   }
@@ -255,24 +251,20 @@ try {
     Assignment = req(
       path.join(be, "dist/assignments/entities/assignment.entity.js"),
     ).Assignment;
-  await db
-    .getRepository(Profile)
-    .save({
-      userId: identities.intern.id,
-      selectedRole: "backend",
-      status: "passed",
-      attemptCount: 1,
-      recruitedAt: new Date(),
-    });
-  await db
-    .getRepository(Assignment)
-    .save({
-      internId: identities.intern.id,
-      projectId: started.projectId,
-      sessionId: started.sessionId,
-      status: "active",
-      assignedAt: new Date(),
-    });
+  await db.getRepository(Profile).save({
+    userId: identities.intern.id,
+    selectedRole: "backend",
+    status: "passed",
+    attemptCount: 1,
+    recruitedAt: new Date(),
+  });
+  await db.getRepository(Assignment).save({
+    internId: identities.intern.id,
+    projectId: started.projectId,
+    sessionId: started.sessionId,
+    status: "active",
+    assignedAt: new Date(),
+  });
   await call(access, `/project-templates/${created.id}`, "PATCH", {
     expectedVersion: 2,
     definition: {
@@ -354,6 +346,50 @@ try {
   checks.push(
     "Instructor historical version, learner pinned v2 after template v3 edit, identical public ZIP, no private material, foreign project 404 and private endpoint 403",
   );
+  const chat = await call(
+    learnerAccess,
+    "/intern/me/ai-mentor/conversations",
+    "POST",
+    { title: "G2 monitor acceptance" },
+    201,
+  );
+  await call(
+    learnerAccess,
+    `/intern/me/ai-mentor/conversations/${chat.id}/messages`,
+    "POST",
+    { content: "G2-SENSITIVE-MESSAGE: Tôi kiểm input thế nào?" },
+    201,
+  );
+  access = await token("admin@phase715.test");
+  const runs = await call(
+    access,
+    "/admin/agents/business-runs?agentId=learning-mentor&status=succeeded",
+  );
+  assert.equal(runs.definitions.length, 7);
+  assert.ok(runs.items.length);
+  assert.ok(
+    !JSON.stringify(runs).match(
+      /G2-SENSITIVE-MESSAGE|inputJson|outputJson|followUps/,
+    ),
+  );
+  await admin.goto(base + "/admin/ai");
+  const monitor = admin.getByRole("region", {
+    name: "Vận hành Agent nghiệp vụ",
+  });
+  await monitor.getByLabel("Lọc Agent").selectOption("learning-mentor");
+  await monitor.getByLabel("Lọc trạng thái Agent").selectOption("succeeded");
+  await monitor
+    .getByText("phase715-deterministic", { exact: true })
+    .first()
+    .waitFor();
+  assert.equal(
+    await monitor.getByText("G2-SENSITIVE-MESSAGE", { exact: false }).count(),
+    0,
+  );
+  await snapshot(admin, "agent-monitor");
+  checks.push(
+    "G07: real SQL Agent run through explicit test provider; Admin registry/version/run/model/filter; no raw prompt/message/output in response or DOM",
+  );
   assert.deepEqual(errors, []);
   fs.writeFileSync(
     path.join(evidence, "result.json"),
@@ -368,7 +404,7 @@ try {
         pinnedVersion: 2,
         currentVersion: 3,
         provider:
-          "Not invoked; this scenario verifies real HTTP/SQL/browser package delivery.",
+          "Explicit test-only provider creates a real Mentor Agent SQL run for the monitor. Gemini is verified separately.",
       },
       null,
       2,
