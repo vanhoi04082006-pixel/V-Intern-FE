@@ -36,6 +36,7 @@ export function WorkspaceGuard({
           router.replace("/login");
           return;
         }
+        if (user.mustChangePassword) { router.replace('/change-password'); return; }
         if (!hasAllowedRole(user, allowedRoles)) {
           router.replace(getWorkspacePathForUser(user));
           return;
