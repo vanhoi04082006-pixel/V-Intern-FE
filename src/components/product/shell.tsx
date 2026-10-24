@@ -148,6 +148,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
       items: [
         ["ai", "Cấu hình AI"],
         ["services", "Trạng thái dịch vụ"],
+        ["communications", "Email & lịch gửi"],
         ["settings", "Cài đặt hệ thống"],
         ["activity", "Hoạt động gần đây"],
         ["audit", "Audit log"],
