@@ -12,7 +12,10 @@ import {
   githubRepositoryActivity,
   repositoryAccountStatus,
   selectRepositoryAccount,
+  inviteRepositoryMember,
+  reconcileRepositoryAccess,
 } from "@/lib/api/github";
+import { RepositoryMembers } from './repository-members';
 import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -164,7 +167,10 @@ export function SessionRepositoryCard({
     setBusy(true);
     setNotice("");
     try {
-      if (invite) await inviteRepositoryMembers(sessionId);
+      if (invite) {
+        const result = await inviteRepositoryMembers(sessionId);
+        setNotice(`Đã đối chiếu ${String(result.processed)} thành viên. Lời mời còn hạn và người đã có quyền không được gửi lặp; thành viên vừa xử lý cần đợi một phút.`);
+      }
       else await provisionRepository(sessionId);
       data.reload();
     } catch (e) {
@@ -177,6 +183,18 @@ export function SessionRepositoryCard({
     setBusy(true); setNotice('');
     try { await configureGithubWebhook(sessionId); data.reload(); }
     catch (e) { setNotice(errorMessage(e)); }
+    finally { setBusy(false); }
+  }
+  async function inviteOne(userId: string) {
+    setBusy(true); setNotice('');
+    try { await inviteRepositoryMember(sessionId, userId); data.reload(); setNotice('Đã đối chiếu và xử lý lời mời của thành viên.'); }
+    catch (cause) { setNotice(errorMessage(cause)); }
+    finally { setBusy(false); }
+  }
+  async function checkMine() {
+    setBusy(true); setNotice('');
+    try { await reconcileRepositoryAccess(sessionId); data.reload(); setNotice('Đã đối chiếu quyền truy cập với GitHub.'); }
+    catch (cause) { setNotice(errorMessage(cause)); }
     finally { setBusy(false); }
   }
   const repo = data.data?.repository;
@@ -240,21 +258,13 @@ export function SessionRepositoryCard({
                   onClick={() => void action(true)}
                   className={buttonClass}
                 >
-                  Mời lại thành viên đã kết nối
+                  Đối chiếu & mời thành viên cần xử lý
                 </button>
               )}
               {repo?.status === 'ready' && <button disabled={busy} onClick={() => void updateWebhook()} className={buttonClass}>{repo.webhookStatus === 'ready' ? 'Cập nhật webhook' : 'Thiết lập webhook'}</button>}
             </div>
           )}
-          {data.data && data.data.members.length > 0 && (
-            <p className="text-xs text-slate-500">
-              {data.data.members.filter((m) => m.status === "invited").length}{" "}
-              thành viên đã gửi lời mời ·{" "}
-              {data.data.members.filter((m) => m.status !== "invited").length}{" "}
-              thành viên cần kết nối hoặc mời lại. Thành viên chấp nhận lời mời
-              trên GitHub trước khi push code.
-            </p>
-          )}
+          {repo?.status === 'ready' && data.data && <RepositoryMembers members={data.data.members} owner={repo.owner} repoName={repo.name} manage={manage && data.data.canManage !== false} busy={busy} onInvite={userId => void inviteOne(userId)} onCheck={() => void checkMine()} />}
           <button onClick={data.reload} className="text-blue-700">
             Tải lại trạng thái repository
           </button>
