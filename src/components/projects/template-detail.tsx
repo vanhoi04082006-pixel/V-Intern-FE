@@ -8,6 +8,7 @@ import { Can } from "@/components/auth/can";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 import { useResource } from "@/lib/api/use-resource";
 import { BlueprintArchitecture, BlueprintTask } from './blueprint-architecture';
+import { TemplateMaterials } from './template-materials';
 import {
   getTemplate,
   parseRoleDetail,
@@ -117,6 +118,7 @@ export function TemplateDetail({
         <p className="text-xs text-slate-500">{typeof def.estimatedDurationDays === 'number' ? `Thời lượng: ${def.estimatedDurationDays} ngày · ` : ''}Đội hình gợi ý: {typeof def.recommendedTeamSize === 'number' ? def.recommendedTeamSize : t.teamSize} người{typeof def.slug === 'string' ? ` · ${def.slug}` : ''}</p>
       </Section>
       <Section id="blueprint-objectives" title="Mục tiêu">
+        <TemplateMaterials key={`${t.id}:${t.version}`} source={t} />
         {typeof objectives.business === "string" && <p><strong>Kinh doanh:</strong> {objectives.business}</p>}
         <p><strong>Học tập:</strong></p>
         <BulletList items={strArr(objectives.learning)} empty="Chưa ghi mục tiêu học tập." />

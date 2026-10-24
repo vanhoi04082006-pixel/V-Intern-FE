@@ -23,7 +23,7 @@ const difficultyLabels: Record<string, string> = {
   intermediate: "Trung bình",
   advanced: "Nâng cao",
 };
-const categoryLabels: Record<string, string> = { "small-projects": "Dự án thực hành", web: "Ứng dụng web", mobile: "Ứng dụng di động", data: "Dữ liệu" };
+const categoryLabels: Record<string, string> = { "small-projects": "Dự án thực hành", "mini-projects": "Bài nhỏ · có starter", web: "Ứng dụng web", mobile: "Ứng dụng di động", data: "Dữ liệu" };
 function artworkSubject(code: string): ProjectArtworkSubject | undefined {
   const subjects: [string, ProjectArtworkSubject][] = [["NOTES", "notes"], ["SHOP", "commerce"], ["TASKS", "tasks"], ["BOOKING", "booking"], ["BLOG", "publishing"], ["STUDENTS", "education"]];
   return subjects.find(([key]) => code.toUpperCase().includes(key))?.[1];

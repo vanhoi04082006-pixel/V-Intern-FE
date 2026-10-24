@@ -17,7 +17,7 @@ jobs:
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
       # Update only through a reviewed compatibility PR; see docs/testing/project-first-fullstack-gate.md.
-      COMPATIBLE_BE_SHA: bf3118693c782c145a87d4348212344396ce3526
+      COMPATIBLE_BE_SHA: bfca7c0dcd5d0fecdf57058d8b06e9afbdfe9a7e
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
@@ -158,6 +158,10 @@ jobs:
       - name: Knowledge authoring acceptance
         working-directory: V-INTERN-FE
         run: node scripts/knowledge-library-live.mjs
+
+      - name: G2 mini-project authoring and pinned learner package
+        working-directory: V-INTERN-FE
+        run: node scripts/mini-project-library-live.mjs
       - name: 09 - Role navigation and routes
         working-directory: V-INTERN-FE
         run: node scripts/phase7-navigation-live.mjs

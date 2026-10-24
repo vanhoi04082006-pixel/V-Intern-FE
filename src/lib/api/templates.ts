@@ -1,5 +1,6 @@
 import { request } from "./client";
 import { array, nullable, number, parsePage, record, string } from "./parse";
+import { parseLearningPackage, type TemplateAssessment } from './template-materials';
 
 /**
  * Optional DTO fields may be ABSENT (undefined) or explicit null — unlike
@@ -96,6 +97,7 @@ export function parseTemplateRun(value: unknown): TemplateRunRef {
 
 export function parseTemplateDetail(value: unknown): TemplateDetail {
   const v = record(value);
+  parseLearningPackage(record(v.definition).learningPackage);
   return {
     ...parseTemplateSummary(v),
     archivedAt: opt(v.archivedAt, string),
@@ -128,7 +130,7 @@ export const listTemplates = (q: TemplateQuery, signal?: AbortSignal) => {
 
 export const getTemplate = (id: string, signal?: AbortSignal) =>
   request(`/project-templates/${encodeURIComponent(id)}`, parseTemplateDetail, { signal });
-export const saveTemplateDefinition = (definition: Record<string, unknown>, current?: { id: string; version: number }) => request(`/project-templates${current ? '/' + encodeURIComponent(current.id) : ''}`, raw => { const v = record(raw); return { id: string(v.id), version: number(v.version) }; }, { method: current ? 'PATCH' : 'POST', body: current ? { definition, expectedVersion: current.version } : definition });
+export const saveTemplateDefinition = (definition: Record<string, unknown>, current?: { id: string; version: number }, assessment?: TemplateAssessment | null) => request(`/project-templates${current ? '/' + encodeURIComponent(current.id) : ''}`, raw => { const v = record(raw); return { id: string(v.id), version: number(v.version) }; }, { method: current ? 'PATCH' : 'POST', body: { ...(current ? { definition, expectedVersion: current.version } : definition), ...(assessment === undefined ? {} : { assessment }) } });
 export const setTemplateStatus = (template: { id: string; version: number }, status: 'active' | 'archived') => request(`/project-templates/${encodeURIComponent(template.id)}`, parseTemplateSummary, { method: 'PATCH', body: { status, expectedVersion: template.version } });
 
 export const getTemplateContext = (projectId: string, signal?: AbortSignal) =>

@@ -20,4 +20,11 @@ describe('versioned template editor', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/Blueprint JSON chưa hợp lệ/);
     expect(saveTemplateDefinition).not.toHaveBeenCalled();
   });
+  it('edits public teaching content through fields without dropping advanced architecture', async () => {
+    render(<TemplateEditor source={template} onSaved={vi.fn()} />);
+    fireEvent.change(screen.getByLabelText('Công nghệ · mỗi dòng một mục'), { target: { value: 'Node.js\nSQL Server' } });
+    fireEvent.change(screen.getByLabelText('Hướng dẫn dự án'), { target: { value: 'Đọc hợp đồng rồi kiểm chứng từng hành vi bằng dữ liệu mẫu.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Lưu phiên bản mới' }));
+    await waitFor(() => expect(saveTemplateDefinition).toHaveBeenCalledWith(expect.objectContaining({ techStack: ['Node.js', 'SQL Server'], documentation: 'Đọc hợp đồng rồi kiểm chứng từng hành vi bằng dữ liệu mẫu.', architecture: template.definition.architecture }), template));
+  });
 });

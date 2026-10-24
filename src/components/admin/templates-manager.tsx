@@ -7,6 +7,7 @@ import { Badge, buttonClass, Empty, inputClass, Modal, PageTitle, Pager, Panel }
 import { useAction } from '@/components/product/use-action';
 import { BlueprintPreview } from '@/components/projects/blueprint-preview';
 import { TemplateEditor } from './template-editor';
+import { TemplateMaterials } from '@/components/projects/template-materials';
 export function TemplatesManager() {
   const [page, setPage] = useState(1), [query, setQuery] = useState(''), [search, setSearch] = useState(''), [status, setStatus] = useState<'active' | 'archived'>('active');
   const [editor, setEditor] = useState<{ source?: TemplateDetail; copy?: boolean } | null>(null), [detail, setDetail] = useState<TemplateDetail | null>(null), [archive, setArchive] = useState<TemplateSummary | null>(null);
@@ -20,7 +21,7 @@ export function TemplatesManager() {
       {resource.data && <Pager page={page} total={resource.data.total} totalPages={resource.data.totalPages} onChange={setPage} />}
     </Panel>
     {editor && <Modal title={editor.source && !editor.copy ? 'Chỉnh sửa blueprint' : 'Tạo project template'} wide onClose={() => setEditor(null)}><TemplateEditor source={editor.source} copy={editor.copy} onSaved={() => { setEditor(null); resource.reload(); }} /></Modal>}
-    {detail && <Modal title={detail.name} wide onClose={() => setDetail(null)}><div className="space-y-4"><BlueprintPreview definition={detail.definition} /><p className="text-xs text-slate-500">{detail.runs.length} phiên gần nhất sử dụng mẫu này; lịch sử phiên giữ nguyên khi chỉnh sửa mẫu.</p></div></Modal>}
+    {detail && <Modal title={detail.name} wide onClose={() => setDetail(null)}><div className="space-y-4"><TemplateMaterials key={`${detail.id}:${detail.version}`} source={detail} /><BlueprintPreview definition={detail.definition} /><p className="text-xs text-slate-500">{detail.runs.length} phiên gần nhất sử dụng mẫu này; lịch sử phiên giữ nguyên khi chỉnh sửa mẫu.</p></div></Modal>}
     {archive && <Modal title={archive.status === 'archived' ? 'Khôi phục mẫu' : 'Lưu trữ mẫu'} onClose={() => setArchive(null)}><p className="text-sm text-slate-600">{archive.status === 'archived' ? 'Cho phép tạo phiên mới từ mẫu này.' : 'Ngừng tạo phiên mới từ mẫu này. Các phiên đang chạy và lịch sử vẫn được giữ nguyên.'}</p>{Boolean(action.error) && <ErrorState error={action.error} />}<button className={`${buttonClass} mt-4`} disabled={action.busy} onClick={() => void action.run(async () => { await setTemplateStatus(archive, archive.status === 'archived' ? 'active' : 'archived'); setArchive(null); resource.reload(); })}>Xác nhận</button></Modal>}
   </div>;
 }

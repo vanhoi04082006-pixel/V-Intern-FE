@@ -1,6 +1,11 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
+import { Blob as FetchBlob } from 'node:buffer';
+
+// Response/fetch come from Node. Keep their binary body constructor in the same
+// realm before Undici initializes lazily; jsdom's Blob has no text()/arrayBuffer().
+Object.defineProperty(globalThis, 'Blob', { configurable: true, writable: true, value: FetchBlob });
 
 // vitest chạy với globals:false → RTL không tự đăng ký cleanup
 afterEach(() => {

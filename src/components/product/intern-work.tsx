@@ -17,6 +17,7 @@ import {
 import { OwnKanban } from "./own-kanban";
 import { CodeSubmissions } from "./code-submissions";
 import { TaskSpec } from "./task-spec";
+import { OwnProjectPackage } from '@/components/projects/own-project-package';
 import { useCallback, useEffect, useState } from "react";
 import type { OwnTaskOpenIntent } from "./use-own-task-drop";
 import Link from "next/link";
@@ -64,6 +65,7 @@ import {
   Panel,
 } from "./primitives";
 export function InternWork() {
+  const workspaceContext = useInternWorkspaceContext();
   const [page, setPage] = useState(1),
     [status, setStatus] = useState(""),
     [priority, setPriority] = useState(""),
@@ -122,6 +124,7 @@ export function InternWork() {
           </div>
         }
       />
+      {workspaceContext?.workspace.assignment && <OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} />}
 
       <section aria-label="Lọc công việc" className="student-toolbar mb-5">
         <div className="student-search-field">
