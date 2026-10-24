@@ -85,6 +85,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
     {
       heading: "Lớp & phiên",
       items: [
+        ["recruitment-rounds", "Hồ sơ CV & lịch tuyển"],
         ["sessions", "Phiên thực tập"],
         ["sprints", "Sprint & Task"],
       ],
@@ -132,6 +133,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
         ["templates", "Project template"],
         ["questions", "Ngân hàng câu hỏi"],
         ["career-roles", "Thư viện nghề nghiệp"],
+        ["recruitment-rounds", "Hồ sơ CV & lịch tuyển"],
         ["knowledge", "Kho tri thức Agent"],
         ["catalogs", "Danh mục dùng chung"],
       ],
