@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -52,7 +52,9 @@ interface LoginFormProps {
   previewState?: LoginFormPreviewState;
 }
 
+const hydrationSubscribe = () => () => {};
 export function LoginForm({ previewState }: LoginFormProps) {
+  const hydrated = useSyncExternalStore(hydrationSubscribe, () => true, () => false);
   const router = useRouter();
   const pendingLogin = useRef(false);
   const [identifier, setIdentifier] = useState("");
@@ -182,7 +184,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
         </AuthAlert>
       )}
 
-      <form onSubmit={handleSubmit} noValidate className="mt-4">
+      <form method="post" onSubmit={handleSubmit} noValidate className="mt-4">
         <div className="space-y-4">
           <AuthField
             id="login-identifier"
@@ -267,7 +269,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={!hydrated || isSubmitting}
           className={cn(
             "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors",
             "hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2",

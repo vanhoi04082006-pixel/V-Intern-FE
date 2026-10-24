@@ -3,6 +3,13 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LoginForm } from "@/components/auth/login-form";
 import { login } from "@/lib/auth/auth-service";
+import { renderToString } from 'react-dom/server';
+
+it('keeps an unhydrated form from sending credentials in a URL', () => {
+  const html = renderToString(<LoginForm />);
+  expect(html).toContain('method="post"');
+  expect(html).toMatch(/type="submit"[^>]*disabled=""/);
+});
 
 const replace = vi.fn();
 
