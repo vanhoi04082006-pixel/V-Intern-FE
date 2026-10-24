@@ -171,7 +171,7 @@ export function RecruitmentResult() {
                 )}
                 {roleGuidance && <p className="mt-3 text-sm leading-7 text-slate-600">{alternativeRole ? 'Đọc lý do và các câu trả lời được AI viện dẫn trong phần nhận xét. Đề xuất giúp bạn chọn hướng học tập; bạn cần phỏng vấn lại để đạt vị trí mới.' : 'Điểm nằm trong khoảng 50–70, nhưng hiện chưa có nghề thay thế đang nhận hồ sơ. Xem nhận xét và liên hệ giảng viên để được hướng dẫn. Kết quả và số lượt vẫn được giữ.'}</p>}
                 {profile.attemptsRemaining <= 0 && <p role="status" className="mt-4 text-sm text-amber-800">Bạn đã dùng hết 3 lượt phỏng vấn. Liên hệ giảng viên hoặc quản trị viên để được hướng dẫn; đổi vai trò không tạo thêm lượt.</p>}
-                {roleGuidance && !alternativeRole ? <Link href="/intern/onboarding/role" className="student-link mt-4 inline-flex">Xem vị trí đang tuyển</Link> : <button
+                {profile.interviewSchedule ? <div className="mt-4 space-y-3"><p className="text-sm leading-7 text-slate-600">Liên hệ giảng viên để hẹn lịch tiếp theo. Nghề mới phải phù hợp với đề xuất đã lưu; số lượt và thời gian chờ vẫn được giữ.</p><Link className="student-link inline-flex" href="/intern/onboarding/role">Xem lịch của tôi</Link></div> : <>{roleGuidance && !alternativeRole ? <Link href="/intern/onboarding/role" className="student-link mt-4 inline-flex">Xem vị trí đang tuyển</Link> : <button
                   type="button"
                   disabled={busy || !canRetake || !retryRole}
                   onClick={async () => {
@@ -182,7 +182,7 @@ export function RecruitmentResult() {
                 >
                   {roleGuidance ? "Chọn vai trò được đề xuất" : "Thử lại tuyển dụng"}
                 </button>}
-                {roleGuidance && alternativeRole && canRetake && <Link className="student-link mt-4 inline-flex" href="/intern/onboarding/role">Tự chọn vai trò khác</Link>}
+                {roleGuidance && alternativeRole && canRetake && <Link className="student-link mt-4 inline-flex" href="/intern/onboarding/role">Tự chọn vai trò khác</Link>}</>}
               </>
             )}
             <RecruitmentPolicy attemptNumber={profile.attemptNumber} attemptsRemaining={profile.attemptsRemaining} />

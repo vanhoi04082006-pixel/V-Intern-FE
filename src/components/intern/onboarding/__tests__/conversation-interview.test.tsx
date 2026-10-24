@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   submit: vi.fn(),
   reload: vi.fn(),
   attemptsRemaining: 2,
+  scheduled: false,
 }));
 vi.mock("@/lib/api/recruitment", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/recruitment")>()),
@@ -21,7 +22,7 @@ vi.mock("@/lib/api/recruitment", async (importOriginal) => ({
 vi.mock("../recruitment-provider", () => ({
   useRecruitmentFlow: () => ({
     interview: { session: { id: "session-1", questionCount: 10 } },
-    profile: { attemptsRemaining: mocks.attemptsRemaining },
+    profile: { attemptsRemaining: mocks.attemptsRemaining,interviewSchedule:mocks.scheduled?{managed:true}:undefined },
     busy: false,
     notice: null,
     start: mocks.start,
@@ -65,9 +66,16 @@ function conversation(status: "expired" | "cancelled" | "in_progress") {
     },
   };
 }
+it('requires a fresh scheduled appointment after a managed interview expires',async()=>{
+  mocks.scheduled=true;mocks.view.mockResolvedValue(conversation('expired'));
+  render(<ConversationInterview/>);
+  expect(await screen.findByRole('link',{name:'Xem lịch phỏng vấn tiếp theo'})).toHaveAttribute('href','/intern/onboarding/role');
+  expect(screen.queryByRole('button',{name:'Bắt đầu lần phỏng vấn mới'})).not.toBeInTheDocument();expect(mocks.start).not.toHaveBeenCalled();
+});
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.attemptsRemaining = 2;
+  mocks.scheduled=false;
   const ready = conversation('in_progress');
   ready.currentQuestion.status = 'ready';
   mocks.next.mockResolvedValue(ready);

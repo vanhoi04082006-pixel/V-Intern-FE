@@ -5,6 +5,7 @@ import { useRecruitmentFlow } from "./recruitment-provider";
 import { RecruitmentPolicy } from "./recruitment-policy";
 import { roleLabel } from "@/lib/api/workspace";
 import { ConversationInterview } from "./conversation-interview";
+import { ScheduledInterview } from './scheduled-interview';
 function InterviewCountdown({ session }: { session: InterviewSession }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -38,6 +39,7 @@ export function InterviewStep() {
   } = useRecruitmentFlow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  if (!interview && profile.interviewSchedule) return <ScheduledInterview/>;
   if (evaluating) return (
     <section className="mx-auto max-w-xl rounded-2xl border border-blue-100 bg-white p-10 text-center shadow-sm" aria-busy="true">
       <div role="status" aria-label="AI đang chấm bài" aria-live="polite">

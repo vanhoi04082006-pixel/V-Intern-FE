@@ -11,7 +11,12 @@ import { Empty } from '@/components/product/primitives';
 import { HorizontalStepper, MobileStepbar } from "./onboarding-stepper";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import type { RecruitmentRole } from "@/lib/api/workspace";
+import { ScheduledInterview } from './scheduled-interview';
 export function RoleSelectionStep() {
+  const {profile}=useRecruitmentFlow();
+  return profile.interviewSchedule ? <ScheduledInterview/> : <ManualRoleSelectionStep/>;
+}
+function ManualRoleSelectionStep() {
   const { profile, selectRole, start, busy, notice } = useRecruitmentFlow();
   const [selected, setSelected] = useState<RecruitmentRole | null>(null);
   const catalog = useResource(useCallback((signal: AbortSignal) => listRecruitingCareers(signal), []));

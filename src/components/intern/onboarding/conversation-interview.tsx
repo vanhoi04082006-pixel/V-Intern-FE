@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from 'next/link';
 import { Bot, Send, User, RefreshCw } from "lucide-react";
 import {
   conversationNext,
@@ -300,7 +301,7 @@ export function ConversationInterview() {
           </button>
         )}
         {chat && ["expired", "cancelled"].includes(chat.session.status) && (
-          <button
+          profile.interviewSchedule ? <Link href="/intern/onboarding/role" className="student-link mr-3">Xem lịch phỏng vấn tiếp theo</Link> : <button
             disabled={busy || working || profile.attemptsRemaining <= 0}
             onClick={() => void start()}
             className="mr-3 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white disabled:opacity-40"
