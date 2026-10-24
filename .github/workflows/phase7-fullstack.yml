@@ -1,7 +1,7 @@
 ﻿name: Project-first full-stack gate
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/ui-ux-overhaul]
   push:
     branches: [main, feat/full-product-fe-nest-integration]
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
       # Update only through a reviewed compatibility PR; see docs/testing/project-first-fullstack-gate.md.
-      COMPATIBLE_BE_SHA: bb67573a38880239d13cea6d0b8dfdb662fa2891
+      COMPATIBLE_BE_SHA: 7e489fbfed17b7d14b32485e15d8f0bdd50e3c05
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
