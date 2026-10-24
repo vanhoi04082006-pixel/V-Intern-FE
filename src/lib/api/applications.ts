@@ -62,6 +62,10 @@ export const publicRounds = (signal?: AbortSignal) =>
   );
 export const submitApplication = (formData: FormData) =>
   apiFetch("/applications", { method: "POST", formData });
+export const leaveCandidateSession = () =>
+  apiFetch("/applications/leave", { method: "POST", body: {} }).then((raw) =>
+    p.boolean(p.record(raw).cleared),
+  );
 export const requestApplicationAccess = (roundId: string, email: string) =>
   apiFetch("/applications/request-access", {
     method: "POST",
@@ -216,10 +220,40 @@ export const staffApplication = (round: string, id: string) =>
                 reason: p.string(m.reason),
               };
             })();
-      return { ...parseApplication(raw), analysis: { facts, match } };
+      const policy = p.record(raw).interviewPolicy;
+      const interviewPolicy =
+        policy === null || policy === undefined
+          ? null
+          : (() => {
+              const view = p.record(policy);
+              return {
+                canRebook: p.boolean(view.canRebook),
+                serverNow: p.string(view.serverNow),
+                attemptsUsed: p.number(view.attemptsUsed),
+                attemptsRemaining: p.number(view.attemptsRemaining),
+                nextEligibleAt: p.nullable(view.nextEligibleAt, p.string),
+                allowedRoleCodes: p.array(view.allowedRoleCodes, p.string),
+              };
+            })();
+      return {
+        ...parseApplication(raw),
+        analysis: { facts, match },
+        interviewPolicy,
+      };
     },
   );
 export type StaffApplication = Awaited<ReturnType<typeof staffApplication>>;
+export const rebookApplication = (
+  round: string,
+  id: string,
+  slotId: string,
+  reason: string,
+) =>
+  request(
+    `/recruitment-rounds/${encodeURIComponent(round)}/applications/${encodeURIComponent(id)}/retake`,
+    (raw) => p.boolean(p.record(raw).rebooked),
+    { method: "POST", body: { slotId, reason } },
+  );
 export const applicationAction = (
   round: string,
   id: string,

@@ -10,6 +10,7 @@ import {
   myApplication,
   requestApplicationAccess,
   supplementCv,
+  leaveCandidateSession,
   type Application,
   applicationLabels,
 } from "@/lib/api/applications";
@@ -169,17 +170,36 @@ export function PublicApplication() {
         ) : application ? (
           <div className="space-y-6 bg-white p-6 sm:p-8">
             <ApplicationTimeline application={application} />
-            <button
-              className={buttonClass}
-              disabled={action.busy}
-              onClick={() =>
-                void action.run(async () =>
-                  setApplication(await myApplication()),
-                )
-              }
-            >
-              Cập nhật tiến trình
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                className={buttonClass}
+                disabled={action.busy}
+                onClick={() =>
+                  void action.run(async () =>
+                    setApplication(await myApplication()),
+                  )
+                }
+              >
+                Cập nhật tiến trình
+              </button>
+              {["cancelled", "deferred"].includes(application.status) && (
+                <button
+                  className={buttonClass}
+                  disabled={action.busy}
+                  onClick={() =>
+                    void action.run(async () => {
+                      await leaveCandidateSession();
+                      setApplication(null);
+                      setNotice(
+                        "Hồ sơ cũ và lịch sử được giữ nguyên. Bạn có thể nộp vào một đợt đang mở khác.",
+                      );
+                    })
+                  }
+                >
+                  Nộp hồ sơ đợt khác
+                </button>
+              )}
+            </div>
             {["needs_information", "failed", "waitlisted"].includes(
               application.status,
             ) && (

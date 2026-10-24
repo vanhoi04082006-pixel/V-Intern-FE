@@ -10,6 +10,7 @@ const api = vi.hoisted(() => ({
   submitApplication: vi.fn(),
   requestApplicationAccess: vi.fn(),
   supplementCv: vi.fn(),
+  leaveCandidateSession: vi.fn(),
 }));
 vi.mock("@/lib/api/applications", async () => ({
   ...(await vi.importActual("@/lib/api/applications")),
@@ -41,6 +42,17 @@ beforeEach(() => {
     new ApiError(401, "UNAUTHENTICATED", "No session"),
   );
   api.verifyApplication.mockResolvedValue({ verified: true });
+});
+it("lets a deferred candidate submit to another round without deleting their previous CV", async () => {
+  api.myApplication.mockResolvedValue({ ...candidate, status: "deferred" });
+  api.leaveCandidateSession.mockResolvedValue(true);
+  render(<PublicApplication />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Nộp hồ sơ đợt khác" }),
+  );
+  expect(await screen.findByLabelText("Họ và tên")).toBeInTheDocument();
+  expect(api.leaveCandidateSession).toHaveBeenCalledTimes(1);
+  expect(api.submitApplication).not.toHaveBeenCalled();
 });
 it("verifies a fragment only once under StrictMode, removes it from the address and shows supplementation", async () => {
   window.history.replaceState(null, "", "/apply#verify=fixture-token");

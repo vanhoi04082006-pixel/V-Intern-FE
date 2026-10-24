@@ -31,6 +31,7 @@ import {
 } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { ApplicationTimeline } from "./public-application";
+import { InterviewRebooking } from './interview-rebooking';
 const localIso = (value: FormDataEntryValue | null) =>
   new Date(String(value)).toISOString();
 export function RecruitmentRounds() {
@@ -551,6 +552,7 @@ function RoundCandidates({
             </button>
           </div>
           <ApplicationTimeline application={selected} showLoginLink={false} />
+          <InterviewRebooking roundId={roundId} application={selected} slots={slots} onChanged={refreshSelected}/>
           <details className="space-y-4 border-y border-slate-200 py-4">
             <summary className="cursor-pointer text-sm font-semibold text-blue-700">
               Phân tích CV & bằng chứng của Agent
