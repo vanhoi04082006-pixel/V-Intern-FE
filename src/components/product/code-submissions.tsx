@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ExternalLink, GitPullRequest } from "lucide-react";
 import {
   confirmCodeReview,
@@ -13,7 +13,7 @@ import {
   type TaskSubmission,
 } from "@/lib/api/submissions";
 import { useResource } from "@/lib/api/use-resource";
-import { errorMessage } from "@/lib/auth/api-client";
+import { ApiError, errorMessage, isRecord } from "@/lib/auth/api-client";
 import { getSessionUser } from "@/lib/auth/session";
 import type { Task } from "@/lib/api/work";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -326,6 +326,7 @@ function SubmissionReview({
       {submission.score !== null && (
         <p className="mt-3 text-sm font-semibold">
           Điểm giảng viên: {submission.score}/100 · {submission.feedback}
+          {!!submission.latePenalty && submission.baseScore != null && <span className="mt-1 block text-xs text-amber-800">Rubric gốc {submission.baseScore} − trễ hạn {submission.latePenalty} = {submission.score}/100. Bằng chứng và cách xử lý được lưu tại mục Thời hạn & trách nhiệm.</span>}
         </p>
       )}
       <div className="mt-3 flex gap-4">
@@ -579,6 +580,10 @@ function InstructorCodeDecision({
     [override, setOverride] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const [penalty, setPenalty] = useState<{ baseScore: number; latePenalty: number; score: number } | null>(null);
+  const [acceptedPenalty, setAcceptedPenalty] = useState(false);
+  const penaltyRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (penalty) penaltyRef.current?.focus(); }, [penalty]);
   return (
     <form
       className="mt-5 space-y-4 rounded-xl border border-blue-100 p-4"
@@ -592,9 +597,18 @@ function InstructorCodeDecision({
             feedback,
             taskVersion: task.version,
             ...(override.trim() ? { overrideReason: override.trim() } : {}),
+            ...(penalty && acceptedPenalty ? { confirmedLatePenalty: penalty.latePenalty } : {}),
           });
           onUpdated();
         } catch (e) {
+          if (e instanceof ApiError && e.code === 'PARTICIPATION_PENALTY_CONFIRM_REQUIRED' && isRecord(e.details)) {
+            const { baseScore, latePenalty, score } = e.details;
+            if (typeof baseScore === 'number' && typeof latePenalty === 'number' && typeof score === 'number'
+              && [baseScore, latePenalty, score].every(n => Number.isFinite(n) && n >= 0 && n <= 100)
+              && latePenalty > 0 && Math.abs(baseScore - latePenalty - score) < 0.01) {
+              setPenalty({ baseScore, latePenalty, score }); setAcceptedPenalty(false);
+            }
+          }
           setError(errorMessage(e));
         } finally {
           setBusy(false);
@@ -618,9 +632,7 @@ function InstructorCodeDecision({
               required
               className={inputClass}
               value={rubric[key]}
-              onChange={(e) =>
-                setRubric({ ...rubric, [key]: Number(e.target.value) })
-              }
+              onChange={(e) => { setRubric({ ...rubric, [key]: Number(e.target.value) }); setPenalty(null); setAcceptedPenalty(false); }}
             />
           </label>
         ))}
@@ -648,12 +660,18 @@ function InstructorCodeDecision({
           onChange={(e) => setOverride(e.target.value)}
         />
       </label>
+      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l-2 border-amber-500 bg-amber-50/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+        <p className="font-semibold text-amber-950">Điểm sau khi xét thời hạn</p>
+        <dl className="my-3 grid grid-cols-3 gap-3"><div><dt className="text-xs text-slate-500">Rubric gốc</dt><dd className="font-semibold">{penalty.baseScore}/100</dd></div><div><dt className="text-xs text-slate-500">Nộp trễ</dt><dd className="font-semibold text-amber-800">−{penalty.latePenalty}</dd></div><div><dt className="text-xs text-slate-500">Điểm cuối</dt><dd className="font-semibold">{penalty.score}/100</dd></div></dl>
+        <label className="flex items-start gap-2 leading-6"><input type="checkbox" checked={acceptedPenalty} onChange={e => setAcceptedPenalty(e.target.checked)} className="mt-1 size-4" />Tôi xác nhận trừ {penalty.latePenalty} điểm theo bằng chứng và chính sách thời hạn của phiên.</label>
+        <p className="mt-2 text-xs text-slate-600">Điểm cuối từ 70 là duyệt; dưới 70 yêu cầu làm lại. Thay đổi rubric sẽ yêu cầu kiểm tra mức trừ lại.</p>
+      </div>}
       {error && (
         <p role="alert" className="text-sm text-rose-700">
           {error}
         </p>
       )}
-      <button disabled={busy} className={buttonClass}>
+      <button disabled={busy || !!penalty && !acceptedPenalty} className={buttonClass}>
         {busy ? "Đang xác nhận…" : "Lưu kết quả giảng viên"}
       </button>
     </form>

@@ -101,6 +101,8 @@ export function errorMessage(error: unknown): string {
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
   const workflowErrors: Record<string, string> = {
+    PARTICIPATION_PENALTY_CONFIRM_REQUIRED: 'Xem điểm rubric gốc, điểm trừ do nộp trễ và điểm cuối. Xác nhận mức trừ trước khi lưu kết quả.',
+    PARTICIPATION_VERSION_CONFLICT: 'Chính sách hoặc bằng chứng đã thay đổi. Tải lại trước khi xử lý.',
     GITHUB_RECONNECT_REQUIRED: 'Cần Admin kết nối lại tài khoản GitHub tạo repository chung tại Cài đặt. Sau đó kiểm tra lại quyền truy cập.',
     GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
     GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',
