@@ -2,7 +2,7 @@
 
 **Dành cho:** Admin duyệt nội dung và kỹ sư tiếp nhận Frontend. Mở **Học tập → Kho tri thức Agent** tại `/admin/knowledge`.
 
-Kho lưu hướng dẫn, câu hỏi với nhiều hướng trả lời đúng, lời giải và tiêu chí chấm có nguồn. Đây là nền tảng cung cấp ngữ cảnh có kiểm soát cho các Agent. **Ở mốc K03, kho chưa nối vào các lượt chạy AI hiện tại.** Xuất bản một tài liệu không có nghĩa model đã được huấn luyện lại hoặc Agent đã dùng tài liệu đó.
+Kho lưu hướng dẫn, câu hỏi với nhiều hướng trả lời đúng, lời giải và tiêu chí chấm có nguồn. **Sau G2, bảy Agent nghiệp vụ hiện hữu đã đọc tài liệu qua tool theo quyền/purpose.** Mốc K03 ban đầu chỉ nghiệm thu biên soạn; không dùng số liệu lịch sử đó thay cho bằng chứng runtime mới. Xuất bản một tài liệu không có nghĩa model được huấn luyện lại hoặc mọi lượt gọi đều đã đọc nó. Xem [thư viện bài nhỏ](MINI-PROJECTS.md) và [báo cáo G2](reports/g2-completion-20261024.md).
 
 ## 1. Chọn đúng loại nội dung
 
