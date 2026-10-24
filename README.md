@@ -1,5 +1,7 @@
 # V-Intern Frontend
 
+**G4 — phòng chờ và hẹn lại:** [hướng dẫn sinh viên, giảng viên và người bảo trì](docs/SCHEDULED-INTERVIEWS.md) · [kiểm chứng và giới hạn](docs/reports/g4-completion-20261025.md).
+
 **G3 — cổng CV và lịch hẹn:** [hướng dẫn ứng viên, giảng viên và người bảo trì](docs/CV-AND-INTERVIEW-SCHEDULING.md) · [nghiệm thu và giới hạn](docs/reports/g3-completion-20261024.md).
 
 **G2 — thư viện bài nhỏ:** [hướng dẫn Admin, giảng viên và sinh viên](docs/MINI-PROJECTS.md) · [báo cáo nghiệm thu](docs/reports/g2-completion-20261024.md).

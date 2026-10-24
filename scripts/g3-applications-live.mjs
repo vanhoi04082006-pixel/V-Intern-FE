@@ -114,7 +114,20 @@ try {
     }),
     candidate = await candidateContext.newPage();
   candidate.on("pageerror", (error) => errors.push(error.message));
-  candidate.on('response', async response => { if (response.url().includes('/api/v1/applications') && response.status() >= 400) { const data = await response.json().catch(() => ({})); console.log('Candidate API issue', new URL(response.url()).pathname, response.status(), data.code); } });
+  candidate.on("response", async (response) => {
+    if (
+      response.url().includes("/api/v1/applications") &&
+      response.status() >= 400
+    ) {
+      const data = await response.json().catch(() => ({}));
+      console.log(
+        "Candidate API issue",
+        new URL(response.url()).pathname,
+        response.status(),
+        data.code,
+      );
+    }
+  });
   const email = `g3-candidate-${randomUUID().slice(0, 8)}@vintern.test`;
   const pdf = await new Promise((resolve) => {
     const doc = new PDF(),
@@ -130,16 +143,21 @@ try {
     "Unauthenticated candidate submits actual PDF and consent through multipart form",
     async () => {
       await candidate.goto(base + "/apply");
-      await candidate.getByLabel('Đợt ứng tuyển').selectOption({ label: await candidate.getByRole('option').filter({ hasText: roundName }).innerText() });
+      await candidate
+        .getByLabel("Đợt ứng tuyển")
+        .selectOption({
+          label: await candidate
+            .getByRole("option")
+            .filter({ hasText: roundName })
+            .innerText(),
+        });
       await candidate.getByLabel("Họ và tên").fill("Ứng viên nghiệm thu G3");
       await candidate.getByLabel("Email nhận lịch").fill(email);
-      await candidate
-        .getByLabel("CV của bạn", { exact: false })
-        .setInputFiles({
-          name: "cv.pdf",
-          mimeType: "application/pdf",
-          buffer: pdf,
-        });
+      await candidate.getByLabel("CV của bạn", { exact: false }).setInputFiles({
+        name: "cv.pdf",
+        mimeType: "application/pdf",
+        buffer: pdf,
+      });
       await candidate.getByRole("checkbox").check();
       await candidate
         .getByRole("button", { name: "Nộp CV & nhận email xác minh" })
@@ -158,8 +176,19 @@ try {
         token = decode(mail.raw).match(/#verify=([\w-]+)/)?.[1];
       assert.ok(token);
       await candidate.goto(base + "/apply#verify=" + token);
-      try { await candidate.getByText("Chờ phân tích", { exact: true }).waitFor(); }
-      catch (error) { await candidate.screenshot({ path: path.join(root,'shots/verification-error.png'),fullPage:true }); console.log('Candidate screen:', (await candidate.locator('main').innerText()).slice(0,1800)); throw error; }
+      try {
+        await candidate.getByText("Chờ phân tích", { exact: true }).waitFor();
+      } catch (error) {
+        await candidate.screenshot({
+          path: path.join(root, "shots/verification-error.png"),
+          fullPage: true,
+        });
+        console.log(
+          "Candidate screen:",
+          (await candidate.locator("main").innerText()).slice(0, 1800),
+        );
+        throw error;
+      }
       assert.equal(new URL(candidate.url()).hash, "");
     },
   );
@@ -226,19 +255,34 @@ try {
     },
   );
   await check(
-    'Instructor sees literal CV evidence and can dismiss credential resend with keyboard and restored focus',
+    "Instructor sees literal CV evidence and can dismiss credential resend with keyboard and restored focus",
     async () => {
-      await teacher.getByText('Phân tích CV & bằng chứng của Agent', { exact: true }).click();
-      await teacher.getByText('React and TypeScript', { exact: true }).waitFor();
-      assert.equal(await teacher.getByRole('link', { name: /đăng nhập/i }).count(), 0);
-      const resend = teacher.getByRole('button', { name: 'Gửi lại email đăng nhập', exact: true });
+      await teacher
+        .getByText("Phân tích CV & bằng chứng của Agent", { exact: true })
+        .click();
+      await teacher
+        .getByText("React and TypeScript", { exact: true })
+        .waitFor();
+      assert.equal(
+        await teacher.getByRole("link", { name: /đăng nhập/i }).count(),
+        0,
+      );
+      const resend = teacher.getByRole("button", {
+        name: "Gửi lại email đăng nhập",
+        exact: true,
+      });
       await resend.click();
-      const modal = teacher.getByRole('dialog', { name: 'Gửi lại email đăng nhập của lịch này' });
+      const modal = teacher.getByRole("dialog", {
+        name: "Gửi lại email đăng nhập của lịch này",
+      });
       await modal.waitFor();
-      assert.equal(await modal.getByRole('checkbox').isChecked(), false);
-      await teacher.keyboard.press('Escape');
-      await modal.waitFor({ state: 'hidden' });
-      assert.equal(await resend.evaluate(element => element === document.activeElement), true);
+      assert.equal(await modal.getByRole("checkbox").isChecked(), false);
+      await teacher.keyboard.press("Escape");
+      await modal.waitFor({ state: "hidden" });
+      assert.equal(
+        await resend.evaluate((element) => element === document.activeElement),
+        true,
+      );
     },
   );
   await check(
@@ -257,25 +301,78 @@ try {
             ),
             false,
           );
-        await page.evaluate(() => window.scrollTo(0, 0));
-        await page.screenshot({
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.screenshot({
             path: path.join(root, `shots/${name}-${width}.png`),
             fullPage: true,
           });
         }
     },
   );
-  await check('Admin previews HTML/text and protected credentials remain redacted on desktop/mobile', async () => {
-    const adminContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-    const admin = await adminContext.newPage();
-    await admin.goto(base + '/login'); await admin.getByLabel(/Email/).first().fill(fixtures.admin.email); await admin.getByLabel('Mật khẩu', { exact: true }).fill(fixtures.admin.password); await admin.getByRole('button', { name: 'Đăng nhập', exact: true }).click(); await admin.waitForURL('**/admin');
-    await admin.goto(base + '/admin/communications');
-    const schedule = admin.getByRole('listitem').filter({ hasText: 'Lịch phỏng vấn' }).first(); await schedule.getByRole('button', { name: 'Xem nội dung' }).click();
-    await admin.getByTitle('Email HTML an toàn').waitFor();
-    for (const width of [390, 1440]) { await admin.setViewportSize({ width, height: 1000 }); assert.equal(await admin.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false); await admin.locator('iframe').scrollIntoViewIfNeeded(); await admin.screenshot({ path: path.join(root, `shots/email-preview-${width}.png`) }); }
-    await admin.getByRole('listitem').filter({ hasText: 'Đăng nhập' }).first().getByRole('button', { name: 'Xem nội dung' }).click(); await admin.getByText('Nội dung có liên kết riêng/mật khẩu được bảo vệ và không hiển thị.').waitFor();
-    await adminContext.close();
-  });
+  await check(
+    "Admin previews HTML/text and protected credentials remain redacted on desktop/mobile",
+    async () => {
+      const adminContext = await browser.newContext({
+        viewport: { width: 1440, height: 1000 },
+      });
+      const admin = await adminContext.newPage();
+      await admin.goto(base + "/login");
+      await admin.getByLabel(/Email/).first().fill(fixtures.admin.email);
+      await admin
+        .getByLabel("Mật khẩu", { exact: true })
+        .fill(fixtures.admin.password);
+      await admin
+        .getByRole("button", { name: "Đăng nhập", exact: true })
+        .click();
+      await admin.waitForURL("**/admin");
+      await admin.goto(base + "/admin/communications");
+      const schedule = admin
+        .getByRole("listitem")
+        .filter({ hasText: "Lịch phỏng vấn" })
+        .first();
+      await schedule.getByRole("button", { name: "Xem nội dung" }).click();
+      await admin.getByTitle("Email HTML an toàn").waitFor();
+      for (const width of [390, 1440]) {
+        await admin.setViewportSize({ width, height: 1000 });
+        assert.equal(
+          await admin.evaluate(
+            () => document.documentElement.scrollWidth > innerWidth + 1,
+          ),
+          false,
+        );
+        await admin.locator("iframe").scrollIntoViewIfNeeded();
+        await admin.screenshot({
+          path: path.join(root, `shots/email-preview-${width}.png`),
+        });
+      }
+      await admin
+        .getByRole("listitem")
+        .filter({ hasText: "Đăng nhập" })
+        .first()
+        .getByRole("button", { name: "Xem nội dung" })
+        .click();
+      await admin
+        .getByText(
+          "Nội dung có liên kết riêng/mật khẩu được bảo vệ và không hiển thị.",
+        )
+        .waitFor();
+      await adminContext.close();
+    },
+  );
+  if (process.env.G4_ACCEPTANCE === "true") {
+    const { verifyScheduledInterviews } =
+      await import("./g4-scheduled-interviews-live.mjs");
+    await verifyScheduledInterviews({
+      teacher,
+      candidate,
+      base,
+      api,
+      root,
+      email,
+      check,
+      errors,
+    });
+  }
   assert.deepEqual(errors, []);
 } finally {
   fs.writeFileSync(
@@ -283,6 +380,7 @@ try {
     JSON.stringify(
       {
         timestamp: new Date().toISOString(),
+        stage: process.env.G4_ACCEPTANCE === "true" ? "G4" : "G3",
         results,
         pageErrors: errors,
         model: "explicit deterministic transport; real Agent graphs and SQL",

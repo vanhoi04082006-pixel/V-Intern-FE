@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feat/ui-ux-overhaul
+      - 'codex/**'
 
   push:
     branches:
