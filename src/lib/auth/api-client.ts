@@ -101,6 +101,10 @@ export function errorMessage(error: unknown): string {
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
   const workflowErrors: Record<string, string> = {
+    GITHUB_RECONNECT_REQUIRED: 'Cần Admin kết nối lại tài khoản GitHub tạo repository chung tại Cài đặt. Sau đó kiểm tra lại quyền truy cập.',
+    GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
+    GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',
+    GITHUB_IDENTITY_CHANGED: 'Danh tính GitHub đã thay đổi. Nhờ Admin đối chiếu quyền cũ trước khi mời tiếp.',
     CV_FILE_INVALID: 'CV cần là PDF hoặc DOCX đúng định dạng, tối đa 5 MB.',
     CV_EXTRACTION_FAILED: 'Không đọc được CV trong giới hạn an toàn. Hãy xuất lại PDF có văn bản hoặc DOCX.',
     VERIFICATION_INVALID: 'Liên kết đã hết hạn hoặc đã dùng. Tải lại trang và chọn nhận lại liên kết theo dõi.',
