@@ -14,6 +14,7 @@ vi.mock("@/lib/api/participation", () => ({
 vi.mock("@/lib/api/replacements", () => ({
   ownReplacements: vi.fn(async () => ({ items: [], limit: 50 })),
 }));
+vi.mock('@/lib/api/repository-access',()=>({ownRepositoryAccess:vi.fn(async()=>({items:[],summary:[],limit:50}))}));
 const policy = {
   version: 0,
   configured: false,

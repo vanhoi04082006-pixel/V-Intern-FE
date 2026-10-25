@@ -8,6 +8,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { IncidentList } from "./incident-list";
 import { ParticipationSummary } from "./summary";
 import { ReplacementHistory } from "./replacement-history";
+import { RepositoryAccessStatus } from "./repository-access";
 export function ParticipationStudent() {
   const [page, setPage] = useState(1);
   const report = useResource(
@@ -61,6 +62,7 @@ export function ParticipationStudent() {
         </>
       )}
       <ReplacementHistory />
+      <RepositoryAccessStatus />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import { IncidentActionDialog, type IncidentAction } from "./incident-action";
 import { PolicyEditor } from "./policy-editor";
 import { ParticipationSummary } from "./summary";
 import { ReplacementDialog } from "./replacement-dialog";
+import { RepositoryAccessStatus } from "./repository-access";
 
 export function InstructorParticipation({
   initialSessionId = "",
@@ -256,6 +257,7 @@ function SessionReport({ sessionId }: { sessionId: string }) {
           }}
         />
       )}
+      <RepositoryAccessStatus sessionId={sessionId} />
     </section>
   );
 }
