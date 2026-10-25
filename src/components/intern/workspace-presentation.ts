@@ -50,14 +50,15 @@ export function workspaceNav(
           { id: "mentor", label: "AI Mentor", icon: Bot },
           { id: "notifications", label: "Thông báo", icon: Bell },
           { id: "github", label: "GitHub", icon: CodeXml },
+          { id: "participation", label: "Thời hạn & ghi nhận", icon: ClipboardCheck },
         ].map((item) => ({
           ...item,
           href:
-            active || ["notifications", "github"].includes(item.id)
+            active || ["notifications", "github", "participation"].includes(item.id)
               ? `/intern/${item.id}`
               : undefined,
           unavailable:
-            !active && !["notifications", "github"].includes(item.id),
+            !active && !["notifications", "github", "participation"].includes(item.id),
         })),
       ],
     },

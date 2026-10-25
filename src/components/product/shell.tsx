@@ -57,6 +57,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
       heading: "Học tập",
       items: [
         ["work", "Công việc của tôi"],
+        ["participation", "Thời hạn & ghi nhận"],
         ["sprint", "Sprint Board"],
         ["project", "Dự án"],
         ["mentor", "AI Mentor"],
@@ -88,6 +89,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
         ["recruitment-rounds", "Hồ sơ CV & lịch tuyển"],
         ["sessions", "Phiên thực tập"],
         ["sprints", "Sprint & Task"],
+        ["participation", "Thời hạn & kỷ luật"],
       ],
     },
     {
@@ -173,6 +175,7 @@ const navIcons: Record<string, LucideIcon> = {
   projects: FolderKanban,
   sprints: KanbanSquare,
   tasks: ListTodo,
+  participation: ClipboardCheck,
   evaluations: ClipboardCheck,
   performance: ChartNoAxesCombined,
   reports: FileText,

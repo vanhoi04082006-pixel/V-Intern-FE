@@ -115,6 +115,7 @@ function InternGate({
         "/intern/notifications",
         "/intern/profile",
         "/intern/github",
+        "/intern/participation",
       ].includes(pathname));
   const renderContent = () =>
     typeof children === "function" ? children(data) : children;
