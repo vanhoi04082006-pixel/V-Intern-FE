@@ -19,7 +19,7 @@ import {
   ListChecks,
   SquareKanban,
 } from "lucide-react";
-import { useCallback, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -35,7 +35,8 @@ import { useResource } from "@/lib/api/use-resource";
 import {
   getBoard,
   getProject,
-  getOwnBoard,
+  getOwnSprintBoard,
+  getOwnSprints,
   getOwnProject,
   statusLabels,
 } from "@/lib/api/work";
@@ -43,7 +44,7 @@ import { sprintStatusLabel } from "@/lib/api/sprint-status";
 import { WorkspaceGuard } from "@/components/auth/workspace-guard";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { InternShell } from "@/components/intern/intern-shell";
-import { Badge, Empty, InlineAlert, Panel, StatusDot } from "./primitives";
+import { Badge, Empty, Field, InlineAlert, Pager, Panel, selectClass, StatusDot } from "./primitives";
 import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
 import { useOwnTaskDrop } from "./use-own-task-drop";
 import { useRouter } from "next/navigation";
@@ -257,16 +258,19 @@ function InternGate({
   );
 }
 export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
-  const id = workspace.currentSprint?.id;
+  const [page, setPage] = useState(1), [selected, setSelected] = useState('');
+  const sprints = useResource(useCallback((signal: AbortSignal) => getOwnSprints(page, signal), [page]));
+  const rows = sprints.data?.items ?? [];
+  const initial = page === 1 ? rows.find(s => s.id.toLowerCase() === workspace.currentSprint?.id.toLowerCase()) : undefined;
+  const sprint = rows.find(s => s.id === selected) ?? initial ?? rows[0];
+  const id = sprint?.id;
   return (
     <>
       <StudentHeading
         eyebrow="Nhịp làm việc của dự án"
         title="Sprint Board"
         description={
-          workspace.currentSprint
-            ? `${workspace.currentSprint.name} · Theo dõi dòng công việc từ bắt đầu đến hoàn thành.`
-            : "Chuẩn bị môi trường và xem trước nhiệm vụ trước khi Sprint bắt đầu."
+          "Xem Sprint đã lên kế hoạch, đang chạy và lịch sử trong phiên được phân công."
         }
         action={
           <StudentLink secondary href="/intern/work">
@@ -274,9 +278,12 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
           </StudentLink>
         }
       />
-      {id ? (
-        <SprintBoard id={id} own />
-      ) : (
+      {sprints.loading && <LoadingState />}
+      {Boolean(sprints.error) && <ErrorState error={sprints.error} onRetry={sprints.reload} />}
+      {sprints.data && rows.length > 0 && <div className="my-5 max-w-2xl"><Field htmlFor="student-sprint" label="Sprint đang xem"><select id="student-sprint" className={selectClass} value={id ?? ''} onChange={event => setSelected(event.target.value)}>{rows.map(row => <option key={row.id} value={row.id}>{row.code} · {row.name} · {sprintStatusLabel(row.status).label}</option>)}</select></Field>{sprints.data.total > 50 && <Pager page={page} total={sprints.data.total} totalPages={sprints.data.totalPages} unit="Sprint" onChange={value => {setSelected('');setPage(value);}} />}</div>}
+      {sprint?.status === 'planned' && <InlineAlert tone="info">Sprint đã được lên kế hoạch. Bạn có thể xem nhiệm vụ và chuẩn bị ngay; giảng viên quyết định thời điểm kích hoạt Sprint.</InlineAlert>}
+      {id && <SprintBoard key={id} id={id} own />}
+      {sprints.data && !rows.length && (
         <div className="student-dashboard-grid student-sprint-empty-grid">
           <StudentPanel
             title="Sprint Board"
@@ -287,11 +294,11 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
               <span className="student-metric-icon size-14">
                 <SquareKanban size={26} aria-hidden="true" />
               </span>
-              <h2>Chưa có Sprint đang chạy</h2>
+              <h2>Chưa có Sprint trong phiên</h2>
               <p>
-                Giảng viên chưa kích hoạt Sprint cho dự án này. Khi Sprint bắt
-                đầu, bảng công việc bốn cột sẽ xuất hiện tại đây cùng tiến độ và
-                thời hạn của từng nhiệm vụ.
+                Giảng viên chưa tạo Sprint cho phiên được phân công. Sprint sẽ
+                hiển thị ở đây ngay khi có kế hoạch, cùng tiến độ và thời hạn
+                của những nhiệm vụ được giao cho bạn.
               </p>
               <div className="mt-5 flex flex-wrap justify-center gap-2.5">
                 <StudentLink href="/intern/work">Xem nhiệm vụ</StudentLink>
@@ -365,7 +372,7 @@ export function SprintBoard({
   const board = useResource(
     useCallback(
       (signal: AbortSignal) =>
-        own ? getOwnBoard(signal) : getBoard(id, signal),
+        own ? getOwnSprintBoard(id, signal) : getBoard(id, signal),
       [id, own],
     ),
   );
