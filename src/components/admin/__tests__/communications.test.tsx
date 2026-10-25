@@ -3,7 +3,7 @@ import { beforeEach, expect, it, vi } from 'vitest';
 import { Communications } from '../communications';
 const api = vi.hoisted(() => ({ listMail: vi.fn(), previewMail: vi.fn(), resendMail: vi.fn() }));
 vi.mock('@/lib/api/communications', () => api);
-beforeEach(() => { vi.clearAllMocks(); api.listMail.mockResolvedValue({ items: [{ id: 'one', kind: 'schedule', recipientHint: 'a***@vintern.test', status: 'uncertain', attempts: 1, availableAt: '2026-10-24T12:00:00Z', expiresAt: '2026-10-25T12:00:00Z', lastCode: 'SMTP_ACCEPTANCE_UNKNOWN', createdAt: '2026-10-24T12:00:00Z' }], total: 1, page: 1, pageSize: 25, transportConfigured: false }); });
+beforeEach(() => { vi.clearAllMocks(); api.listMail.mockResolvedValue({ items: [{ id: 'one', kind: 'schedule', recipientHint: 'a***@vintern.test', status: 'uncertain', attempts: 1, availableAt: '2026-10-24T12:00:00Z', expiresAt: new Date(Date.now() + 3600000).toISOString(), lastCode: 'SMTP_ACCEPTANCE_UNKNOWN', createdAt: '2026-10-24T12:00:00Z' }], total: 1, page: 1, pageSize: 25, transportConfigured: false }); });
 it('explains uncertain delivery, requires acknowledgement, blocks double click and surfaces server failure', async () => {
   let reject!: (reason: Error) => void; api.resendMail.mockReturnValue(new Promise((_, fail) => { reject = fail; }));
   render(<Communications />); await screen.findByText('a***@vintern.test');
@@ -17,4 +17,12 @@ it('renders sensitive preview as redacted text without injecting server HTML', a
   api.previewMail.mockResolvedValue({ redacted: true, message: 'Nội dung được bảo vệ.' });
   render(<Communications />); await screen.findByText('a***@vintern.test'); fireEvent.click(screen.getByRole('button', { name: 'Xem nội dung' }));
   expect(await screen.findByText('Nội dung được bảo vệ.')).toBeInTheDocument();
+});
+it('keeps an expired uncertain email blocked even after acknowledgement', async () => {
+  api.listMail.mockResolvedValueOnce({ items: [{ id: 'expired', kind: 'schedule', recipientHint: 'expired***@vintern.test', status: 'uncertain', attempts: 1, availableAt: '2026-10-24T12:00:00Z', expiresAt: new Date(Date.now() - 1000).toISOString(), lastCode: 'SMTP_ACCEPTANCE_UNKNOWN', createdAt: '2026-10-24T12:00:00Z' }], total: 1, page: 1, pageSize: 25, transportConfigured: true });
+  render(<Communications />); await screen.findByText('expired***@vintern.test');
+  fireEvent.click(screen.getByRole('checkbox', { name: /chấp nhận nguy cơ gửi trùng/ }));
+  const resend = screen.getByRole('button', { name: 'Gửi lại' });
+  expect(resend).toBeDisabled(); fireEvent.click(resend);
+  expect(api.resendMail).not.toHaveBeenCalled();
 });

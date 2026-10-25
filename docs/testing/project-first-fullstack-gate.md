@@ -1,5 +1,7 @@
 # Gate full-stack theo phiên bản hợp đồng
 
+Cặp kiểm tra live acceptance ngày 26/10/2026 ghim BE `78f44b43dfdff5e0397564d8ba2c68ab1b262e7a` (PR BE #12): schema CV khớp validator, sửa tự chấm bài dùng mentor có đủ scope, SQL notification test dùng RBAC thật. FE giữ kiểm thử gửi lại mail uncertain và bổ sung kiểm tra hết hạn; ngày hết hạn fixture tính tương đối để bài kiểm thử không tự hỏng khi đồng hồ qua ngày 25/10. Gate vẫn giữ đầy đủ bước, assertion và timeout. Đọc kết quả CI của đúng commit FE; unit BE 854/114 suites, FE 639/105 files và focused SQL 9 tests chỉ là bằng chứng local, chưa thay thế gate full-stack.
+
 Cặp K03: BE `bf3118693c782c145a87d4348212344396ce3526`, UI `17f4370` và bài `scripts/knowledge-library-live.mjs`. Bài knowledge chạy riêng sau career catalog và trước bước 09; không thay thế 14 bước đã có. Kiểm DB thật và zero-mutation import; [nguồn nghiệm thu](../reports/knowledge-library-20261024.md).
 
 Gate local của thay đổi hiện tại phải dùng FE và BE từ cùng bộ thay đổi: library → tuyển dụng chat10lượt → eligible assignment → Start → AI draft → publish → own tasks/submissions → teacher approval. Xem docs/TESTING.md và README hiện hành.
