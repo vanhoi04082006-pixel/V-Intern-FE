@@ -365,12 +365,13 @@ try {
     access,
     "/admin/agents/business-runs?agentId=learning-mentor&status=succeeded",
   );
-  assert.equal(runs.definitions.length, 10);
+  assert.equal(runs.definitions.length, 11);
   assert.deepEqual(runs.definitions.map(definition => definition.id).sort(), [
     'interview-conversation', 'interview-evaluator', 'project-planner', 'code-reviewer',
     'learning-mentor', 'performance-advisor', 'instructor-assistant',
-    'cv-analyst', 'role-matcher', 'interview-coordinator',
+    'cv-analyst', 'role-matcher', 'interview-coordinator', 'replacement-advisor',
   ].sort());
+  assert.deepEqual(runs.definitions.find(definition => definition.id === 'replacement-advisor').features, ['replacement-advice']);
   assert.ok(runs.items.length);
   assert.ok(
     !JSON.stringify(runs).match(
