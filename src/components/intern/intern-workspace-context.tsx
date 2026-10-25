@@ -6,6 +6,7 @@ import type { InternWorkspace } from "@/lib/api/workspace";
 export interface InternWorkspaceContextValue {
   workspace: InternWorkspace;
   reload: () => void;
+  refreshing?: boolean;
 }
 
 /**

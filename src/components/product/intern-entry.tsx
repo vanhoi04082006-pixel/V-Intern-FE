@@ -123,7 +123,7 @@ function InternGate({
   const isHome = pathname === "/intern";
   return (
     <InternWorkspaceContext.Provider
-      value={{ workspace: data, reload: workspace.reload }}
+      value={{ workspace: data, reload: workspace.reload, refreshing: workspace.loading }}
     >
       <InternShell
         active={data.status === "active"}

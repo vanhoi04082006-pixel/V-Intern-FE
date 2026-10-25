@@ -12,6 +12,7 @@ import { EmptyInternWorkspace } from "./empty-intern-workspace";
 import { ActiveEntry } from "./active-entry";
 import { InternShell } from "./intern-shell";
 import { WaitingRecruitmentSummary } from "./waiting-recruitment-summary";
+import { HistoryEntry } from './history-entry';
 import { waitingPresentation } from "./workspace-presentation";
 import { useInternWorkspaceContext } from "./intern-workspace-context";
 
@@ -28,6 +29,7 @@ export function InternWorkspace() {
     <InternWorkspaceContent
       data={embedded.workspace}
       reload={embedded.reload}
+      refreshing={embedded.refreshing}
     />
   ) : (
     <StandaloneInternWorkspace />
@@ -71,9 +73,11 @@ function StandaloneInternWorkspace() {
 function InternWorkspaceContent({
   data,
   reload,
+  refreshing = false,
 }: {
   data: Workspace;
   reload: () => void;
+  refreshing?: boolean;
 }) {
   const router = useRouter();
   const target = lifecyclePath(data);
@@ -86,6 +90,7 @@ function InternWorkspaceContent({
   if (target !== "/intern")
     return <LoadingState label="Đang chuyển đến bước tuyển dụng..." />;
   const waiting = data.status === "unassigned";
+  if (waiting && data.hasAssignmentHistory) return <HistoryEntry onReload={reload} refreshing={refreshing} />;
   return waiting ? (
     <EmptyInternWorkspace
       state={waitingPresentation(data, user)}

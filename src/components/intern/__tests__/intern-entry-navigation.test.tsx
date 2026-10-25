@@ -30,6 +30,32 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 describe("one lifecycle-aware intern shell", () => {
+  it('shows results and history after an assignment ends instead of telling the student they are awaiting their first project', async () => {
+    path = '/intern'; workspace = { ...waiting, hasAssignmentHistory: true };
+    render(<InternWorkspace />);
+    expect(await screen.findByRole('heading', { name: 'Kết quả và lịch sử thực tập', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByText('Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Xem đánh giá đã ghi nhận/ })).toHaveAttribute('href', '/intern/evaluations');
+    expect(screen.getByRole('link', { name: /Xem KPI và lương ảo/ })).toHaveAttribute('href', '/intern/kpi');
+    expect(screen.getByRole('link', { name: /Xem chứng nhận/ })).toHaveAttribute('href', '/intern/certificates');
+    // History can also contain cancellations: no completion badge, score or certificate count is invented.
+    expect(screen.queryByText('Bạn đã hoàn thành kỳ thực tập')).not.toBeInTheDocument();
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it('keeps the history screen visible and blocks repeated refresh while checking for a new assignment', async () => {
+    path = '/intern'; workspace = { ...waiting, hasAssignmentHistory: true };
+    render(<InternEntry><InternWorkspace /></InternEntry>);
+    await screen.findByRole('heading', { name: 'Kết quả và lịch sử thực tập' });
+    let finish!: (response: Response) => void;
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const { fireEvent, waitFor } = await import('@testing-library/react');
+    fireEvent.click(screen.getByRole('button', { name: 'Kiểm tra phân công mới' }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+    expect(screen.getByRole('button', { name: 'Đang kiểm tra phân công…' })).toBeDisabled();
+    expect(screen.getByRole('heading', { name: 'Kết quả và lịch sử thực tập' })).toBeInTheDocument();
+    finish(new Response(JSON.stringify(workspace)));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Kiểm tra phân công mới' })).toBeEnabled());
+  });
   it("uses the same navigation on overview and notifications, with the actual current page", async () => {
     path = "/intern";
     const view = render(<InternWorkspace />);
