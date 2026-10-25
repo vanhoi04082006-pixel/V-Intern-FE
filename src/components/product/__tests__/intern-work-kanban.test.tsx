@@ -16,7 +16,7 @@ const api = vi.hoisted(() => ({
   getComments: vi.fn(),
   getHistory: vi.fn(),
   updateOwnTask: vi.fn(),
-  getOwnBoard: vi.fn(),
+  getOwnSprintBoard: vi.fn(),
 }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => '/intern/sprint' }));
 vi.mock("@/lib/api/work", async (importOriginal) => ({
@@ -97,13 +97,13 @@ describe("Kanban task mutation synchronization", () => {
   });
 
   it('also enables dragging and refreshes the student Sprint Board after saving', async () => {
-    api.getOwnBoard.mockImplementation(async () => ({ sprint: { id: 'sprint-1', name: 'Sprint', status: 'active', startDate: '2026-10-19', endDate: '2026-10-30' }, total: 1,
+    api.getOwnSprintBoard.mockImplementation(async () => ({ sprint: { id: 'sprint-1', name: 'Sprint', status: 'active', startDate: '2026-10-19', endDate: '2026-10-30' }, total: 1,
       columns: (['todo', 'doing', 'review', 'done'] as const).map(status => ({ status, count: task.status === status ? 1 : 0, tasks: task.status === status ? [{ ...task }] : [] })) }));
     render(<SprintBoard id="sprint-1" own />);
     expect((await screen.findByText('TASK-1')).closest('article')).toHaveAttribute('draggable', 'true');
     fireEvent.drop(screen.getByTestId('drop-doing'), { dataTransfer: { getData: () => 'task-1:todo' } });
     await waitFor(() => expect(within(screen.getByTestId('drop-doing')).getByText('TASK-1')).toBeInTheDocument());
-    expect(api.getOwnBoard).toHaveBeenCalledTimes(2);
+    expect(api.getOwnSprintBoard).toHaveBeenCalledTimes(2);
   });
   it('drags a task into an empty column and saves its current version', async () => {
     render(<InternWork />);

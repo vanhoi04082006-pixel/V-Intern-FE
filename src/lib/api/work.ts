@@ -158,5 +158,12 @@ export const getProject = (id: string, signal?: AbortSignal) =>
   request(`/projects/${encodeURIComponent(id)}`, parseProject, { signal });
 export const getOwnBoard = (signal?: AbortSignal) =>
   request("/intern/me/sprint/board?pageSize=100", parseBoard, { signal });
+export const getOwnSprintBoard = (id: string, signal?: AbortSignal) =>
+  request(`/intern/me/sprints/${encodeURIComponent(id)}/board?pageSize=100`, parseBoard, { signal });
+export const getOwnSprints = (page: number, signal?: AbortSignal) =>
+  request(`/intern/me/sprints?page=${page}&pageSize=50`, value => parsePage(value, item => {
+    const s = record(item);
+    return { id: string(s.id), code: string(s.code), name: string(s.name), status: string(s.status), startDate: string(s.startDate), endDate: string(s.endDate) };
+  }), { signal });
 export const getOwnProject = (signal?: AbortSignal) =>
   request("/intern/me/project", parseProject, { signal });
