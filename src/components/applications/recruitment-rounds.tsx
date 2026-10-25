@@ -1,4 +1,5 @@
 "use client";
+import { CredentialRecovery } from "./credential-recovery";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import {
@@ -553,6 +554,7 @@ function RoundCandidates({
           </div>
           <ApplicationTimeline application={selected} showLoginLink={false} />
           <InterviewRebooking roundId={roundId} application={selected} slots={slots} onChanged={refreshSelected}/>
+          <CredentialRecovery roundId={roundId} applicationId={selected.id} slots={slots} onChanged={refreshSelected}/>
           <details className="space-y-4 border-y border-slate-200 py-4">
             <summary className="cursor-pointer text-sm font-semibold text-blue-700">
               Phân tích CV & bằng chứng của Agent
