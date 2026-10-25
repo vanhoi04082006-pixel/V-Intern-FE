@@ -508,7 +508,9 @@ function AiCodeReview({
           )}
           {review.errorCode && (
             <p className="text-sm text-amber-800">
-              Mã trạng thái: {review.errorCode}. Bài nộp vẫn được giữ nguyên.
+              {review.errorCode === 'AI_REVIEWER_UNAVAILABLE'
+                ? errorMessage(new ApiError(403, review.errorCode, ''))
+                : <>Mã trạng thái: {review.errorCode}. Bài nộp vẫn được giữ nguyên.</>}
             </p>
           )}
           <p className="break-all text-xs text-slate-500">

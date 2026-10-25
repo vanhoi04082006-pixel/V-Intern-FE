@@ -101,6 +101,8 @@ export function errorMessage(error: unknown): string {
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
   const workflowErrors: Record<string, string> = {
+    AI_REVIEW_REQUIRED: 'Chưa có đề xuất đạt với đủ bằng chứng AI và kiểm thử độc lập. Xem phần đánh giá; nếu quyết định chấm thủ công, hãy ghi rõ lý do chấm thủ công và phần đã tự kiểm tra trước khi lưu.',
+    AI_REVIEWER_UNAVAILABLE: 'Chưa có giảng viên phụ trách đủ quyền để chạy Agent chấm bài. Nhờ người phụ trách kiểm tra phân công và quyền quản lý phiên, rồi thử chấm lại.',
     GITHUB_ACCESS_CHANGED: 'Trạng thái đối chiếu đã thay đổi. Đóng và tải lại trước khi gửi yêu cầu mới.',
     PARTICIPATION_PENALTY_CONFIRM_REQUIRED: 'Xem điểm rubric gốc, điểm trừ do nộp trễ và điểm cuối. Xác nhận mức trừ trước khi lưu kết quả.',
     PARTICIPATION_VERSION_CONFLICT: 'Chính sách hoặc bằng chứng đã thay đổi. Tải lại trước khi xử lý.',
