@@ -1,4 +1,5 @@
 import { CalendarDays, CodeXml, GraduationCap, ListChecks, Newspaper, NotebookPen, ShoppingBag } from "lucide-react";
+import { NotebookCompanion } from "./notebook-companion";
 
 export type ProjectArtworkSubject = "notes" | "commerce" | "tasks" | "booking" | "publishing" | "education";
 const projectIcons = { notes: NotebookPen, commerce: ShoppingBag, tasks: ListChecks, booking: CalendarDays, publishing: Newspaper, education: GraduationCap };
@@ -9,6 +10,9 @@ export function WorkspaceArtwork({ variant = "learn", compact = false, subject }
   compact?: boolean;
   subject?: ProjectArtworkSubject;
 }) {
+  if (variant === "learn" || variant === "teach") {
+    return <NotebookCompanion teaching={variant === "teach"} compact={compact} />;
+  }
   const isConnect = variant === "connect";
   const isAward = variant === "achievement";
   const ProjectIcon = subject ? projectIcons[subject] : CodeXml;
