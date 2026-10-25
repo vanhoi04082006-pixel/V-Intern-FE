@@ -1,5 +1,7 @@
 # Kiểm chứng Frontend — 23/10/2026
 
+> **Cập nhật G7 ngày 25/10/2026:** [bộ bàn giao hiện tại](DELIVERY-20261025.md) và [bằng chứng có nguồn](reports/g7-local-acceptance-20261025.json). BE 840 / FE 638 unit test; 17/17 bước full-stack local đạt; hai DB native đã kích hoạt G6/G7. CI GitHub cuối chưa chạy do billing.
+
 Bản này là mốc hiện hành cho giao diện Aurora Glass của **Sinh viên và Giảng viên**. Trang chủ và Admin giữ phạm vi thiết kế trước đó. Không dùng tổng số test ở checkpoint cũ để mô tả bản hiện tại.
 
 | Hạng mục | Kết quả | Log hoặc dữ liệu |

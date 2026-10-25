@@ -1,5 +1,7 @@
 # Bàn giao Frontend V-Intern
 
+> **Cập nhật G7 ngày 25/10/2026:** [bộ bàn giao hiện tại](DELIVERY-20261025.md) và [bằng chứng có nguồn](reports/g7-local-acceptance-20261025.json). BE 840 / FE 638 unit test; 17/17 bước full-stack local đạt; hai DB native đã kích hoạt G6/G7. CI GitHub cuối chưa chạy do billing.
+
 > Dành cho người tiếp nhận sản phẩm, lập trình viên và người kiểm thử. Đọc theo thứ tự nếu bạn mới vào dự án; dùng bảng dưới để đi thẳng đến phần cần tra cứu.
 
 | Bạn muốn làm gì? | Bắt đầu ở đâu? |
