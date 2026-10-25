@@ -21,6 +21,7 @@ import { IncidentList } from "./incident-list";
 import { IncidentActionDialog, type IncidentAction } from "./incident-action";
 import { PolicyEditor } from "./policy-editor";
 import { ParticipationSummary } from "./summary";
+import { ReplacementDialog } from "./replacement-dialog";
 
 export function InstructorParticipation({
   initialSessionId = "",
@@ -89,6 +90,9 @@ export function InstructorParticipation({
   );
 }
 function SessionReport({ sessionId }: { sessionId: string }) {
+  const [replacement, setReplacement] = useState<ParticipationIncident | null>(
+    null,
+  );
   const [page, setPage] = useState(1),
     [policyOpen, setPolicyOpen] = useState(false);
   const [action, setAction] = useState<{
@@ -202,6 +206,7 @@ function SessionReport({ sessionId }: { sessionId: string }) {
             items={report.data.items}
             manage
             onAction={(item, action) => setAction({ item, action })}
+            onReplace={setReplacement}
           />
           <Pager
             page={page}
@@ -235,6 +240,20 @@ function SessionReport({ sessionId }: { sessionId: string }) {
               "Đã lưu xử lý và gửi thông báo sinh viên. Điểm đã duyệt được giữ nguyên.",
             )
           }
+        />
+      )}
+      {replacement && (
+        <ReplacementDialog
+          sessionId={sessionId}
+          incidentId={replacement.id}
+          studentName={replacement.displayName}
+          onClose={() => setReplacement(null)}
+          onSaved={() => {
+            setNotice(
+              "Đã lưu quyết định thay người. Quyền GitHub đang chờ đối chiếu riêng.",
+            );
+            report.reload();
+          }}
         />
       )}
     </section>

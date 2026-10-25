@@ -11,6 +11,9 @@ vi.mock("@/lib/api/participation", () => ({
   resolveParticipation: vi.fn(),
   extendParticipationDeadline: vi.fn(),
 }));
+vi.mock("@/lib/api/replacements", () => ({
+  ownReplacements: vi.fn(async () => ({ items: [], limit: 50 })),
+}));
 const policy = {
   version: 0,
   configured: false,
@@ -41,6 +44,7 @@ const incident: api.ParticipationIncident = {
   ordinal: 3,
   points: 5,
   recommendReplacement: true,
+  replacementEligible: true,
   createdAt: "2026-10-25T00:00:00Z",
   reason: null,
   taskCode: "T-1",
@@ -195,6 +199,7 @@ describe("participation evidence", () => {
             ordinal: 3,
             points: 5,
             recommendReplacement: true,
+            replacementEligible: false,
             createdAt: "2026-10-25T00:00:00Z",
             reason: "Đã kiểm tra lại bằng chứng",
             taskCode: "T-1",

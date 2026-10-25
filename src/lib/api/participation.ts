@@ -16,6 +16,10 @@ function parseIncident(value: unknown) {
     ordinal: p.number(v.ordinal),
     points: p.number(v.points),
     recommendReplacement: p.boolean(v.recommendReplacement),
+    replacementEligible:
+      v.replacementEligible === undefined
+        ? false
+        : p.boolean(v.replacementEligible),
     createdAt: p.string(v.createdAt),
     reason: p.nullable(v.reason, p.string),
     taskCode: p.string(v.taskCode),

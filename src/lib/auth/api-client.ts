@@ -103,6 +103,13 @@ export function errorMessage(error: unknown): string {
   const workflowErrors: Record<string, string> = {
     PARTICIPATION_PENALTY_CONFIRM_REQUIRED: 'Xem điểm rubric gốc, điểm trừ do nộp trễ và điểm cuối. Xác nhận mức trừ trước khi lưu kết quả.',
     PARTICIPATION_VERSION_CONFLICT: 'Chính sách hoặc bằng chứng đã thay đổi. Tải lại trước khi xử lý.',
+    REPLACEMENT_THRESHOLD_NOT_MET: 'Số vi phạm còn hiệu lực chưa đạt ngưỡng thay người. Kiểm tra các lần miễn trừ hoặc hoàn tác rồi đối chiếu lại.',
+    REPLACEMENT_CONTEXT_CHANGED: 'Bằng chứng hoặc ảnh hưởng đã thay đổi. Yêu cầu Agent đối chiếu lại và tạo bản xem trước mới.',
+    REPLACEMENT_CANDIDATE_UNAVAILABLE: 'Ứng viên không còn khả dụng hoặc không còn đáp ứng vai trò. Yêu cầu Agent đề xuất lại.',
+    REPLACEMENT_ADVICE_EXPIRED: 'Tư vấn đã hết hiệu lực. Yêu cầu Agent đối chiếu lại trước khi tạo bản xem trước.',
+    REPLACEMENT_PREVIEW_EXPIRED: 'Bản xem trước đã hết hạn. Kiểm tra ảnh hưởng trong bản xem trước mới rồi xác nhận lại.',
+    REPLACEMENT_PENDING_REVIEW: 'Có bài đang chờ duyệt. Xử lý bài đó trước khi thay thành viên.',
+    REPLACEMENT_TASK_LIMIT: 'Phạm vi vượt 500 nhiệm vụ. Cần kiểm tra lại phân công trước khi bàn giao.',
     GITHUB_RECONNECT_REQUIRED: 'Cần Admin kết nối lại tài khoản GitHub tạo repository chung tại Cài đặt. Sau đó kiểm tra lại quyền truy cập.',
     GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
     GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',

@@ -8,6 +8,7 @@ export function IncidentList({
   items,
   manage = false,
   onAction,
+  onReplace,
 }: {
   items: ParticipationIncident[];
   manage?: boolean;
@@ -15,6 +16,7 @@ export function IncidentList({
     item: ParticipationIncident,
     action: "excused" | "reversed" | "extend",
   ) => void;
+  onReplace?: (item: ParticipationIncident) => void;
 }) {
   if (!items.length)
     return (
@@ -80,8 +82,9 @@ export function IncidentList({
           )}
           {item.status === "active" && item.recommendReplacement && (
             <p className="mt-3 border-l-2 border-amber-400 pl-3 text-sm text-amber-900">
-              Đã đạt ngưỡng xem xét thay thành viên. Giảng viên sẽ xem bằng
-              chứng và quyết định; hệ thống không tự loại sinh viên.
+              {item.replacementEligible
+                ? "Đủ ngưỡng để giảng viên xem xét hỗ trợ hoặc thay thành viên; hệ thống không tự loại sinh viên."
+                : "Ghi nhận này từng đạt ngưỡng xem xét thay thành viên. Quyết định mới phải dựa trên vi phạm còn hiệu lực và phân công hiện tại."}
             </p>
           )}
           {item.reason && (
@@ -124,6 +127,15 @@ export function IncidentList({
                 >
                   Hoàn tác
                 </button>
+                {item.replacementEligible && onReplace && (
+                  <button
+                    type="button"
+                    onClick={() => onReplace(item)}
+                    className="font-medium text-amber-800 hover:underline"
+                  >
+                    Xem xét thay thành viên
+                  </button>
+                )}
               </>
             )}
           </div>
