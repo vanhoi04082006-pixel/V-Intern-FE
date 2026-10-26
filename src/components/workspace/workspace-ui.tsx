@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import { WorkspaceArtwork } from "./workspace-artwork";
 import { X } from "lucide-react";
 export { TaskDistribution } from "./workspace-charts";
@@ -28,12 +27,7 @@ export function WorkspacePageHeader({
         </div>
         {action && <div className="workspace-page-actions">{action}</div>}
       </div>
-      {artwork && (artwork === "learn" || artwork === "teach" ? (
-        <div className="workspace-header-companion" aria-hidden="true">
-          <span className="workspace-companion-orbit" />
-          <Image src="/images/robot-v2.png" width={116} height={128} alt="" sizes="116px" />
-        </div>
-      ) : <WorkspaceArtwork variant={artwork} />)}
+      {artwork && <WorkspaceArtwork variant={artwork} />}
     </header>
   );
 }

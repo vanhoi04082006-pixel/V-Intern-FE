@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { WorkspaceStage } from "@/components/workspace/workspace-stage";
+import { LearningIcon, type LearningIconKind } from "@/components/workspace/learning-icon";
 import { usePathname } from "next/navigation";
 import {
   Activity,
@@ -45,6 +46,11 @@ export type ProductRole = "intern" | "instructor" | "admin";
 
 type NavItem = [key: string, label: string];
 type NavGroup = { heading?: string; items: NavItem[] };
+const groupIcons: Record<string, LearningIconKind> = {
+  'Học tập': 'workflow', 'Kết quả': 'analytics', 'Lớp & phiên': 'team',
+  'Dự án & đánh giá': 'review', 'Theo dõi': 'analytics', 'Quản lý': 'library',
+  'Đào tạo': 'library', 'Phân tích': 'analytics', 'Hệ thống': 'system', 'Cá nhân': 'account',
+};
 
 /**
  * Menu theo nhóm để dễ quét: nhóm không tiêu đề giữ "Tổng quan" đầu tiên,
@@ -287,7 +293,8 @@ export function ProductShell({
             className="space-y-1"
           >
             {group.heading && (
-              <p className="workspace-nav-label mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="workspace-nav-label notebook-nav-group mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <LearningIcon kind={groupIcons[group.heading] ?? 'workflow'} />
                 {group.heading}
               </p>
             )}

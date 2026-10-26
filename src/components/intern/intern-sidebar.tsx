@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/v-intern/logo";
+import { LearningIcon } from "@/components/workspace/learning-icon";
 
 import { INTERN_BOTTOM_NAV } from "./workspace-presentation";
 import type {
@@ -113,7 +114,7 @@ export function InternSidebar({
           {groups.map((group) => (
             <div key={group.id} className="student-nav-group">
               {group.label ? (
-                <p className="student-nav-label">{group.label}</p>
+                <p className="student-nav-label notebook-nav-group"><LearningIcon kind={group.id === 'performance' ? 'analytics' : 'workflow'} />{group.label}</p>
               ) : null}
               <ul className="student-nav-list">
                 {group.items.map((item) => (
