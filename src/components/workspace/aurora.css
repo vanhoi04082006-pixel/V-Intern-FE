@@ -248,8 +248,13 @@
 .aurora-workspace :is(.student-board-column, .workspace-board-column) { border: 0; border-radius: 10px; background: #e7edf7; padding: 12px; }
 .aurora-workspace .student-board-card { border: 1px solid var(--ws-line); border-radius: 8px; background: white; box-shadow: 0 2px 0 #c7d8ee; }
 .aurora-workspace .student-board-card:hover { border-color: var(--notebook-blue-200); box-shadow: 0 3px 0 #afc5e8; }
-.aurora-workspace :is(.student-notification, .workspace-notification) { padding: 16px 14px; border-radius: 10px; margin-bottom: 4px; }
+.aurora-workspace :is(.student-notification, .workspace-notification) { padding: 16px 14px; border: 0; border-bottom: 1px solid var(--ws-line); border-radius: 0; margin: 0; background: transparent; }
 .aurora-workspace :is(.student-notification, .workspace-notification)[data-unread="true"] { border-left: 3px solid var(--ws-primary); background: var(--ws-primary-soft); }
+.aurora-workspace .notebook-notification-copy[data-collapsed="true"] { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.aurora-workspace .notebook-notification-expand { display: inline-flex; align-items: center; min-height: 36px; margin-top: 4px; font-size: 12px; font-weight: 600; color: var(--ws-primary-hover); text-decoration: underline; text-underline-offset: 3px; }
+.aurora-workspace .notebook-notification-read { display: inline-flex; align-items: center; gap: 5px; color: var(--ws-muted); font-size: 12px; }
+.aurora-workspace .notebook-pref-row { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--ws-line); border-radius: 0; background: transparent; cursor: pointer; font-size: 13px; }
+.aurora-workspace .workspace-notification-day { margin: 20px 0 8px; color: var(--ws-muted); font-size: 12px; font-weight: 600; }
 .aurora-workspace :is(.student-info-row, .workspace-profile-info > div) { padding-block: 16px; }
 .aurora-workspace .student-profile-links .student-action {
   min-height: 48px; justify-content: space-between; padding: 12px 0;

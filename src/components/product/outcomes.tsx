@@ -57,6 +57,7 @@ import {
   verifyCertificate,
 } from "@/lib/api/outcomes";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { NotificationText } from "./notification-text";
 import {
   buttonClass,
   Empty,
@@ -1107,6 +1108,7 @@ export function Notifications() {
     [unread, setUnread] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
+  const [notice, setNotice] = useState<string>();
   const notifications = useResource(
     useCallback(
       (signal: AbortSignal) => getNotifications(page, unread, signal),
@@ -1133,9 +1135,15 @@ export function Notifications() {
   async function read(id?: string) {
     setBusy(true);
     setError(undefined);
+    setNotice(undefined);
     try {
-      if (id) await markNotification(id);
-      else await markAllNotifications();
+      if (id) {
+        await markNotification(id);
+        setNotice('Đã đánh dấu thông báo là đã đọc.');
+      } else {
+        const updated = await markAllNotifications();
+        setNotice(updated ? `Đã đánh dấu ${updated.toLocaleString('vi-VN')} thông báo là đã đọc.` : 'Không có thông báo chưa đọc cần cập nhật.');
+      }
       notifications.reload();
     } catch (e) {
       setError(e);
@@ -1155,7 +1163,7 @@ export function Notifications() {
             onClick={() => void read()}
           >
             {intern && <CheckCheck size={16} aria-hidden="true" />}
-            Đánh dấu tất cả đã đọc
+            {busy && !preferencePending ? 'Đang cập nhật…' : 'Đánh dấu tất cả đã đọc'}
           </button>
         }
       />
@@ -1178,12 +1186,9 @@ export function Notifications() {
         Chỉ hiện chưa đọc
       </label>
       {Boolean(error) && <ErrorState error={error} />}
+      {notice && <InlineAlert tone="success" className="mb-5">{notice}</InlineAlert>}
       <div
-        className={
-          intern
-            ? "grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]"
-            : ""
-        }
+        className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_280px]"
       >
         <OutcomeFrame
           intern={intern}
@@ -1203,7 +1208,7 @@ export function Notifications() {
             {(data) => (
               <>
                 {data.items.length ? (
-                  <div className={intern ? "workspace-notification-feed" : "space-y-3"}>
+                  <div className="workspace-notification-feed">
                     {data.items
                       .map((n) => ({
                         ...n,
@@ -1211,12 +1216,12 @@ export function Notifications() {
                       }))
                       .map((n, index) => (
                         <div key={n.id}>
-                        {intern && (index === 0 || new Date(data.items[index - 1].createdAt).toLocaleDateString("vi-VN") !== new Date(n.createdAt).toLocaleDateString("vi-VN")) && <p className="workspace-notification-day"><time dateTime={n.createdAt}>{new Date(n.createdAt).toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</time></p>}
+                        {(index === 0 || new Date(data.items[index - 1].createdAt).toLocaleDateString("vi-VN") !== new Date(n.createdAt).toLocaleDateString("vi-VN")) && <p className="workspace-notification-day"><time dateTime={n.createdAt}>{new Date(n.createdAt).toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</time></p>}
                         <article
                           className={
                             intern
                               ? "student-notification"
-                              : `workspace-notification rounded-2xl border p-4 transition-colors ${n.readAt ? "border-slate-200/70 bg-white" : "border-blue-200 bg-blue-50/50"}`
+                              : "workspace-notification"
                           }
                           data-unread={n.readAt ? undefined : "true"}
                         >
@@ -1237,15 +1242,14 @@ export function Notifications() {
                               <StatusDot tone="sky">Chưa đọc</StatusDot>
                             )}
                           </div>
-                          <p
+                          <NotificationText
+                            body={n.body}
                             className={
                               intern
                                 ? "student-notification-body"
                                 : "mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600"
                             }
-                          >
-                            {n.body}
-                          </p>
+                          />
                           <div
                             className={
                               intern
@@ -1282,7 +1286,7 @@ export function Notifications() {
                                   )}
                                 </Link>
                               )}
-                              {!n.readAt && (
+                              {!n.readAt ? (
                                 <button
                                   disabled={busy}
                                   aria-label={`Đánh dấu đã đọc: ${n.title}`}
@@ -1295,7 +1299,7 @@ export function Notifications() {
                                 >
                                   Đánh dấu đã đọc
                                 </button>
-                              )}
+                              ) : <span className="notebook-notification-read"><CheckCheck size={13} aria-hidden="true" />Đã đọc</span>}
                             </div>
                           </div>
                         </article>
@@ -1320,7 +1324,7 @@ export function Notifications() {
             )}
           </Resource>
         </OutcomeFrame>
-        <div className={intern ? "" : "mt-5"}>
+        <div>
           <OutcomeFrame
             intern={intern}
             icon={Bell}
@@ -1335,19 +1339,15 @@ export function Notifications() {
             <Resource resource={preferences}>
               {(data) => (
                 <div
-                  className={
-                    role === "intern"
-                      ? "grid gap-2 sm:grid-cols-2 xl:grid-cols-1"
-                      : "grid gap-3 sm:grid-cols-3"
-                  }
+                  className="grid gap-x-6 sm:grid-cols-2 xl:grid-cols-1"
                 >
                   {data.map((p) => (
                     <label
                       key={p.category}
                       className={
                         intern
-                          ? "student-pref-row"
-                          : "flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200/70 p-3.5 text-sm transition-colors hover:border-slate-300"
+                          ? "student-pref-row notebook-pref-row"
+                          : "notebook-pref-row"
                       }
                     >
                       <input
@@ -1367,11 +1367,13 @@ export function Notifications() {
                           });
                           setBusy(true);
                           setError(undefined);
+                          setNotice(undefined);
                           try {
                             await setNotificationPreference(
                               p.category,
                               enabled,
                             );
+                            setNotice(`Đã ${enabled ? 'bật' : 'tắt'} thông báo ${preferenceLabels[p.category].toLowerCase()}.`);
                             preferences.reload();
                           } catch (e) {
                             setError(e);
