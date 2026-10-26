@@ -1,6 +1,18 @@
 # Gate full-stack theo phiên bản hợp đồng
 
-Cặp kiểm tra live acceptance ngày 26/10/2026 ghim BE `91a9175a99555036e3fdd247e94146b875c9716f` (PR BE #12): schema CV khớp validator, sửa tự chấm bài dùng mentor có đủ scope, SQL notification test dùng RBAC thật, đọc module `.cjs/.mjs` với nguyên giới hạn kích thước/credential. FE giữ kiểm thử gửi lại mail uncertain và bổ sung kiểm tra hết hạn; ngày hết hạn fixture tính tương đối để bài kiểm thử không tự hỏng khi đồng hồ qua ngày 25/10. Bước 07 đọc/chờ lượt chấm tự động kết thúc, vẫn khẳng định `inconclusive` và đúng SHA trước khi thử duyệt thông thường/thủ công; không POST chấm trùng trong lúc lease đang chạy. Gate vẫn giữ đầy đủ bước, assertion và timeout. Đọc kết quả CI của đúng commit FE; unit BE 859/114 suites, FE 644/106 files, 25 script contract tests, focused SQL 9 tests và production build local chỉ là bằng chứng local, chưa thay thế gate full-stack.
+Cặp hiện hành ghim BE **`254cabd8e5097d86bc6971f03419944b40b2f592`**, đã push trên PR BE #12. Product source không đổi so với `91a9175`; thay đổi mới nằm trong fixture `business-agent.e2e-spec.ts`: provider giả lập vẫn ghi event vào SQL, nhưng không xuất trace sang tài khoản LangSmith thật được nạp từ `.env` của người chạy. Không đổi runtime tracing, assertion hoặc timeout 5 giây.
+
+| Phần kiểm | Source và kết quả |
+|---|---|
+| BE product | Code `91a9175`, 114 suites / 859 unit tests; schema CV, mentor authority, module collector và tool budget đã kiểm |
+| BE SQL contract | Fixture `254cabd`, 3 suites / **31 tests đạt local**, 78 event SQL và 0 lượt xuất trace fixture. Dùng DB mới, file nằm trong dự án; giữ các lần timeout trước làm lịch sử |
+| FE UI | Code `603ee3f`, 109 file / **660 tests**, lint/typecheck/build local đạt; Thông báo ba vai và nền chung có bằng chứng riêng |
+| CI của nền UI trước | FE `8932bef` / BE `91a9175`: [quality](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40262952070) và [full-stack](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40262952079) đã xanh |
+| CI sau pin mới | Chạy lại toàn bộ gate cho commit mang pin `254cabd`; xem checks của PR FE #23. Không gán receipt cũ cho source mới |
+
+FE giữ kiểm thử gửi lại mail uncertain và kiểm tra hết hạn tương đối. Bước 07 đọc/chờ lượt chấm tự động kết thúc, vẫn khẳng định `inconclusive` và đúng SHA trước khi thử duyệt thông thường/thủ công; không POST chấm trùng khi lease đang chạy. Ngân sách và giới hạn source, credential filtering, ownership, RBAC, Docker runner và audit quyết định giảng viên được giữ nguyên.
+
+Nghiệm thu Gemini/LangSmith/Gmail/GitHub/Docker thật đọc ở [checkpoint dịch vụ](../ACCEPTANCE-CHECKPOINT-20261026.md). Provider giả lập trong gate SQL hoặc full-stack không được ghi thành provider ngoài thật. [Report UI](../design/NOTIFICATIONS-20261026.md) ghi đúng phạm vi click và responsive, không thay thế toàn bộ 78 route.
 
 Cặp K03: BE `bf3118693c782c145a87d4348212344396ce3526`, UI `17f4370` và bài `scripts/knowledge-library-live.mjs`. Bài knowledge chạy riêng sau career catalog và trước bước 09; không thay thế 14 bước đã có. Kiểm DB thật và zero-mutation import; [nguồn nghiệm thu](../reports/knowledge-library-20261024.md).
 
