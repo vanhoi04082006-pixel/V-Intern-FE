@@ -1,6 +1,6 @@
 # V-Intern — không gian học tập Blueberry
 
-Ngày bắt đầu: 25/10/2026. Nhánh: `codex/learning-identity`, kế thừa G7.
+Ngày bắt đầu: 25/10/2026. Tích hợp nền chung ngày 26/10 tại `codex/notebook-workspace`, kế thừa G7. [Báo cáo hiện hành](../docs/design/NOTEBOOK-FOUNDATION-20261026.md).
 
 ## Hướng thiết kế đã tiếp nhận
 
@@ -22,15 +22,15 @@ Màu dự kiến: mực `#253858`, xanh `#426CC7`, giấy `#FAFBFE`, nền xanh 
 | Hạng mục | Hoàn thành khi | Trạng thái | Kiểm chứng / kết quả |
 |---|---|---|---|
 | UI-01 Inventory | Có route, layout, shared component và mutation map | Đang làm | Đã liệt kê route App Router; chưa kiểm đủ từng dialog |
-| UI-02 Identity | Token, icon, minh họa có quy cách và dùng thực tế | Đang làm | 3 icon nhóm trang + companion sổ tay học/hướng dẫn; typecheck, lint file đổi, 4 test stage qua. Chưa QA hình ảnh/browser; token chưa áp dụng |
-| UI-03 Shell | Desktop/mobile, active/focus, navigation thống nhất | Chưa làm | 390/768/1024/1280/1440px, keyboard |
+| UI-02 Identity | Token, icon, minh họa có quy cách và dùng thực tế | Đã có nền tảng | 12 SVG nhóm, hai companion, token và tiêu đề dùng chung đã tích hợp; còn asset theo từng luồng |
+| UI-03 Shell | Desktop/mobile, active/focus, navigation thống nhất | Đã có nền chung; đang phủ từng route | 15 lượt trên ba trang × năm độ rộng không tràn ngang; drawer sinh viên/Admin và trả focus đã thử |
 | UI-04 Sinh viên | Tổng quan; công việc/detail; sprint; dự án; mentor; participation | Chưa làm | Loading/empty/error, nộp bài/DnD thật trên tài khoản QA |
 | UI-05 Kết quả sinh viên | Evaluation/detail, KPI/detail, salary, performance, certificates/detail, recommendations | Chưa làm | Biểu đồ từ dữ liệu API, không suy diễn số liệu |
 | UI-06 Cá nhân/onboarding | Profile, notifications, GitHub, role/interview/result | Chưa làm | Success/failure/pending, bảo toàn giới hạn phỏng vấn |
 | UI-07 Giảng viên | Overview, sessions/detail/setup, sprints/detail, task/detail, projects/detail | Chưa làm | Tạo/sửa/nộp/chấm và quyền truy cập |
 | UI-08 Theo dõi giảng viên | Recruitment, participation, evaluation, performance, reports, sharing, GitHub, profile, notifications | Chưa làm | Mutation feedback và empty/error từng trang |
-| UI-09 Admin/shared | Các trang quản trị và feedback dùng chung nhất quán | Chưa làm | Không thay contract hay backend để trang trí UI |
-| UI-10 Nghiệm thu | Quality gates, responsive, hai vai trò, ảnh/log, cập nhật handover | Chưa làm | Chưa có kết quả mới; không dùng số liệu G7 làm bằng chứng UI mới |
+| UI-09 Admin/shared | Các trang quản trị và feedback dùng chung nhất quán | Tích hợp token/shell | Admin đã dùng chung theme; còn bố cục, nội dung và hành động từng trang |
+| UI-10 Nghiệm thu | Quality gates, responsive, ba vai, ảnh/log, handover | Đang thực hiện | 108 file / 651 test, lint/typecheck/build đạt; 15 probe responsive và các tương tác nêu trong report. Chưa đủ 78 route |
 
 ## Phạm vi và bảo vệ dữ liệu
 
@@ -38,6 +38,4 @@ Giữ trang chủ `/` theo yêu cầu cũ. Giữ nguyên API, auth, validation, 
 
 ## Tiến độ tích hợp G7
 
-- Người dùng đã xác nhận nhận được email: bằng chứng xác nhận của người dùng, không phải tự mở hộp thư kiểm tra.
-- GitHub username được người dùng xác nhận lại: `vanhoi04082006-pixel`.
-- CI BE 40189080999 và FE 40189217398 chạy lại vẫn failure; job FE `verify` có 0 step. Chưa đạt cloud CI. Chưa có bằng chứng mới cho hành trình toàn bộ dùng external service thật.
+Cặp FE 9ef1ff6 / BE 91a9175 đã xanh quality và full-stack, hành trình QA thật hoàn thành bốn task, đánh giá 96,1, KPI 98,8, chứng nhận và phục hồi lời mời. Xem [checkpoint có nguồn](../docs/ACCEPTANCE-CHECKPOINT-20261026.md). Bộ số liệu 651 thuộc lát UI mới, không ghi đè receipt nghiệp vụ 649 của source trước. Chưa merge stack sản phẩm.

@@ -4,6 +4,8 @@
 
 # V-Intern Frontend
 
+**UI sổ tay — 26/10:** [phần đã triển khai và bằng chứng](docs/design/NOTEBOOK-FOUNDATION-20261026.md) · [inventory toàn hệ thống](tasks/ui-route-asset-manifest.md). Nhánh UI mới có 651 test, build local đạt và 15 lượt responsive trên ba trang mẫu; chưa nghiệm thu toàn bộ 78 route. Checkpoint nghiệp vụ bên dưới giữ số liệu theo source riêng của nó.
+
 **G6 — thời hạn và thay thành viên:** [quy tắc và điểm phạt](docs/PARTICIPATION.md) · [hướng dẫn tư vấn, xem trước và phê duyệt](docs/REPLACEMENT.md) · [bằng chứng QA và phần còn lại](docs/reports/g6-replacement-evidence-20261025.json). Đã kích hoạt G6 trên cả hai DB native, giữ nguyên dữ liệu cũ.
 
 **G5 — GitHub:** [lời mời, quyền cộng tác và cách mời lại](docs/GITHUB-INVITATIONS.md) · [kết quả local và phụ thuộc live](docs/reports/g5-completion-20261025.md).

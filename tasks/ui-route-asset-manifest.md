@@ -1,6 +1,6 @@
 # Một ngôn ngữ thiết kế cho toàn bộ V-Intern
 
-Trạng thái ngày 26/10/2026: **đã lập inventory và hướng thiết kế; chưa triển khai redesign toàn hệ thống**. Tiếp tục theo thứ tự đã duyệt: hoàn tất nghiệp vụ/dịch vụ thật → đồng bộ bàn giao → triển khai UI → nghiệm thu UI mới. Không lấy unit tests hoặc một vài ảnh dashboard làm bằng chứng 78 route đã được làm xong.
+Trạng thái ngày 26/10/2026: **đã triển khai nền chung cho ba vai; chưa redesign xong từng trang**. [Báo cáo lát nền tảng](../docs/design/NOTEBOOK-FOUNDATION-20261026.md): 12 icon SVG, hai minh họa sổ tay, token/sidebar/tab/section dùng chung, nhận xét thu gọn; 651 test và build local đạt, 15 lượt responsive trên ba trang mẫu. Không lấy kết quả này làm bằng chứng 78 route đã được làm xong.
 
 ## Hướng thiết kế
 
@@ -21,8 +21,8 @@ Các trang cần trả lời ngay: đang ở đâu, việc gì cần xử lý, b
 
 | Asset | Dùng ở đâu, để làm gì | Trạng thái |
 |---|---|---|
-| Notebook companion: học / hướng dẫn | Điểm bắt đầu của sinh viên và giảng viên; tối đa một nhân vật trong vùng chính | Nền tảng ở commit `5165ced`, chưa tích hợp vào nhánh nghiệm thu |
-| Icon nhóm học tập / đội nhóm / vận hành | Giúp nhận diện nhóm điều hướng, không thay icon thao tác có nghĩa quen thuộc | Có 3 SVG nền tảng trong `5165ced`; cần review kích thước nhỏ |
+| Notebook companion: học / hướng dẫn | Điểm bắt đầu của sinh viên và giảng viên; tối đa một nhân vật trong vùng chính | Đã tích hợp vào nhánh `codex/notebook-workspace`, dùng ở tiêu đề chung |
+| Icon nhóm học tập / đội nhóm / vận hành | Giúp nhận diện nhóm điều hướng, không thay icon thao tác có nghĩa quen thuộc | Đã có 12 SVG; nhóm sidebar và khu vực đã dùng một phần, cần phủ tiếp các luồng |
 | Tờ lịch hẹn | CV, phòng chờ, đổi lịch; nhấn ngày/giờ thật | Chưa tạo |
 | Bìa hồ sơ CV | Trạng thái đang phân tích/đã lên lịch; không mô phỏng tài liệu thật của người dùng | Chưa tạo |
 | Nhánh code và tờ review | Nộp bài, đang chạy, cần sửa, chờ giảng viên; trạng thái lấy từ API | Chưa tạo |
