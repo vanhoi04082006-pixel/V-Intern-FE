@@ -1,6 +1,6 @@
 # Kiểm chứng Frontend — 23/10/2026
 
-> **Checkpoint 26/10/2026:** [đọc số liệu, CI theo SHA, luồng dịch vụ thật và phần còn mở](ACCEPTANCE-CHECKPOINT-20261026.md). BE 859 / FE 644 unit tests hiện hành; dữ liệu 840/638 và local G7 bên dưới thuộc mốc cũ. Repo đã public và cặp CI có receipt xanh; không còn mô tả billing là blocker hiện tại. Chưa kết luận nghiệm thu toàn bộ ba vai hoặc UI mới.
+> **Checkpoint 26/10/2026:** [nguồn kiểm chứng và việc còn mở](ACCEPTANCE-CHECKPOINT-20261026.md). BE 859 / FE 649 unit tests; CI xanh đúng SHA. Hành trình QA thật đã hoàn thành 4/4 task, đánh giá 96,1, KPI 98,8, chứng nhận và vòng mời lại GitHub. Có cả bước UI/API; chưa nghiệm thu mọi nhánh hoặc redesign toàn bộ.
 
 Bản này là mốc hiện hành cho giao diện Aurora Glass của **Sinh viên và Giảng viên**. Trang chủ và Admin giữ phạm vi thiết kế trước đó. Không dùng tổng số test ở checkpoint cũ để mô tả bản hiện tại.
 
