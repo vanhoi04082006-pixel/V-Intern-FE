@@ -23,6 +23,19 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
             <SessionRepositoryCard
               sessionId={workspace.assignment.session.id}
             />
+          ) : workspace.hasAssignmentHistory ? (
+            <StudentPanel title="Kết nối cho hành trình tiếp theo">
+              <p className="text-sm leading-7 text-slate-600">
+                Bạn hiện không có phân công đang hoạt động. Kết nối danh tính
+                GitHub vẫn được giữ để sử dụng khi có phiên mới. Các kết quả
+                đã ghi nhận có thể xem lại trong khu vực đánh giá.
+              </p>
+              <div className="mt-4">
+                <StudentLink secondary href="/intern/evaluations">
+                  Xem kết quả đã ghi nhận
+                </StudentLink>
+              </div>
+            </StudentPanel>
           ) : (
             <StudentPanel title="Repository sẽ xuất hiện sau khi phân công">
               <p className="text-sm leading-7 text-slate-600">
