@@ -121,6 +121,7 @@ export function errorMessage(error: unknown): string {
     CV_EXTRACTION_FAILED: 'Không đọc được CV trong giới hạn an toàn. Hãy xuất lại PDF có văn bản hoặc DOCX.',
     VERIFICATION_INVALID: 'Liên kết đã hết hạn hoặc đã dùng. Tải lại trang và chọn nhận lại liên kết theo dõi.',
     APPLICATIONS_CLOSED: 'Đợt tuyển chưa mở hoặc vừa đóng. Hãy chọn đợt đang nhận hồ sơ.',
+    RECRUITMENT_ROUND_SLOT_REQUIRED: 'Chưa thể mở nhận CV. Thêm ít nhất một khung giờ phỏng vấn trong tương lai đang mở, rồi thử lại.',
     MAIL_NOT_CONFIGURED: 'Email chưa được cấu hình ở máy chủ. Liên hệ người phụ trách trước khi nộp CV.',
     CAREER_NOT_READY: 'Nghề cần đang tuyển, có 6 câu chuyên môn, 2 giới thiệu và 2 tiếng Anh trước khi mở lịch.',
     SLOT_INVALID: 'Chọn khung giờ trong tương lai, có múi giờ, còn đủ thời gian chuẩn bị và sức chứa hợp lệ.',
