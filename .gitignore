@@ -40,3 +40,10 @@ Thumbs.db
 
 # Host-specific package manager configuration
 .npmrc
+
+# Project-scoped design skills are restored from the pinned setup instructions.
+.agents/skills/
+.hallmark/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/config.local.json
