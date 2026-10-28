@@ -18,13 +18,15 @@ Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentia
 | Nhóm adapter | Hành vi |
 |---|---|
 | workspace/recruitment | Lifecycle, profile, own session (kể cả polling trạng thái), conversation next/clarify, answer, submit/retry |
+| evaluations/ai-generations | Gợi ý AI cho đánh giá: sinh, lịch sử và chi tiết từng gợi ý; kế hoạch sprint có bản nháp xem trước rồi mới confirm |
 | templates/sessions | Library/detail/create run, eligible members, Start, plan history/publish |
-| work/submissions | Own tasks/specs/comments/history, nộp/rút bài, AI review và rubric cuối |
+| work/submissions | Own tasks/specs/comments/history, nộp/rút bài, hoàn thành phân công, báo cáo hoàn thành sprint, spec nguồn (raw, hiển thị kèm display API), AI review và rubric cuối |
 | github | Trạng thái kết nối, authorize redirect, repo/provision/invitation, webhook setup và activity phân trang |
 | sharing | Xin xem, approve/deny/revoke, snapshot chỉ đọc |
 | mentor | Own conversation/history, selected own taskId |
 | reports/performance | Scope quản lý, phân trang, PDF/XLSX |
-| finance (KPI/salary/certificates) | Kỳ KPI lifecycle (draft/open/calculate/finalize) + kết quả kèm provenance; sinh lương ảo từ kỳ đã chốt, điều chỉnh sổ, số dư theo user; chứng nhận issue/revoke/PDF với lý do 409 có cấu trúc |
+| finance (KPI/salary/certificates) | Kỳ KPI lifecycle (draft/open/calculate/finalize) chạy thẳng từ console kèm kết quả và provenance; sinh lương ảo từ kỳ đã chốt, điều chỉnh sổ, số dư theo user; chứng nhận issue/revoke/PDF với lý do 409 có cấu trúc |
+| projects | Phiên chạy theo dự án cho trang chi tiết; nhận dự án thư viện chưa có mentor (409 khi đã có người nhận) |
 | knowledge-runs | Tạo/poll/cancel/resume run của knowledge agent (requestId idempotent) |
 | notifications | Danh sách/đọc/tùy chọn + unread-count cho badge topbar (60s, fails soft) |
 | burndown/replacements | Burndown sprint dựng từ sự kiện trạng thái; polling trạng thái lệnh thay thế sau approve |
