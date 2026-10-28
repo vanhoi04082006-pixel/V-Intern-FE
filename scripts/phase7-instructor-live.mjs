@@ -113,7 +113,7 @@ try {
   );
   await page.getByRole("button", { name: "Đánh giá browser " + tag }).click();
   const card = page
-    .locator("div.rounded-lg")
+    .locator("div.workspace-evaluation-cycle")
     .filter({
       has: page.getByRole("button", { name: "Đánh giá browser " + tag }),
     });
