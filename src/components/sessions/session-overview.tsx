@@ -566,7 +566,7 @@ export function SessionOverview({
       </div>
       {session.projectSnapshot && (
         <div id="session-project" className="ins-section">
-          <details className="ins-reference">
+          <details className="ins-reference" open>
             <summary>Yêu cầu dự án và tiêu chí bàn giao</summary>
           <Panel
             title={`Dự án · ${session.overview.project?.name ?? "Snapshot"}`}
