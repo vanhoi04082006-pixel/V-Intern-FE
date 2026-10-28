@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { parseSystemContracts } from "@/lib/api/system-admin";
+import { parseSystemContracts, validateSystemContractsDraft } from "@/lib/api/system-admin";
 import { ContractsCard } from "@/components/admin/contracts-card";
 
 const sealedPayload = {
@@ -55,7 +55,7 @@ describe("ContractsCard (admin services)", () => {
       const method = init?.method ?? "GET";
       if (method === "POST" && path.includes("/admin/system/contracts/validate")) {
         const data = JSON.parse(init?.body ?? "{}");
-        const parsed = parseSystemContracts({ ...sealedPayload, valid: false, error: null, contracts: [{ ...sealedPayload.contracts[0], status: "invalid", issues: [{ code: "DIGEST_INVALID", detail: "x" }] }] });
+        const parsed = { checkedAt: sealedPayload.checkedAt, stored: false, valid: false, error: null, contracts: [{ ...sealedPayload.contracts[0], status: "invalid", issues: [{ code: "DIGEST_INVALID", detail: "x" }] }] };
         void data;
         return Promise.resolve(new Response(JSON.stringify(parsed), { status: 200 }));
       }
@@ -78,5 +78,19 @@ describe("ContractsCard (admin services)", () => {
     await waitFor(() => expect(screen.getByText("Chặn seal")).toBeInTheDocument());
     const post = fetchMock.mock.calls.find(([, init]) => (init as { method?: string }).method === "POST");
     expect((post?.[1] as { body?: string }).body).toContain('"data"');
+  });
+  it('shows a malformed-JSON explanation from the real draft response shape without claiming it was saved', async () => {
+    const fetchMock = vi.fn().mockImplementation((_input: unknown, init?: { method?: string }) => Promise.resolve(new Response(JSON.stringify(init?.method === 'POST' ? { checkedAt: sealedPayload.checkedAt, valid: false, error: 'GRADING_SUITES_JSON is not valid JSON: expected property name', contracts: [], stored: false } : sealedPayload), { status: 200 })));
+    vi.stubGlobal('fetch', fetchMock);
+    render(<ContractsCard />); await screen.findByText(/qa-notes-foundation-840404b2-v1/);
+    fireEvent.change(screen.getByLabelText('Nội dung JSON cần kiểm tra'), { target: { value: '{broken' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Kiểm tra JSON' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('JSON');
+    expect(screen.getByRole('alert')).not.toHaveTextContent('không đúng contract');
+    expect(fetchMock.mock.calls.filter(([, init]) => (init as { method?: string })?.method === 'POST')).toHaveLength(1);
+  });
+  it.each([true, undefined])('rejects a draft validation response with stored=%s', async stored => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ source: sealedPayload.source, checkedAt: sealedPayload.checkedAt, valid: true, error: null, contracts: [], stored }), { status: 200 })));
+    await expect(validateSystemContractsDraft('{}')).rejects.toMatchObject({ code: 'INVALID_RESPONSE' });
   });
 });

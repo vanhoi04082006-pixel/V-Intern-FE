@@ -294,7 +294,7 @@ try {
       workspace = await call(user.accessToken, "/intern/me/workspace");
     assert.equal(workspace.status, "recruitment_failed");
     assert.equal(profile.result.decision, "failed");
-    assert.equal(profile.result.overallScore, 62.2);
+    assert.equal(profile.result.overallScore, 33);
     assert.ok(profile.nextEligibleAt);
     const attempt = await fetch(api + "/recruitment/me/interviews", {
       method: "POST",
@@ -303,7 +303,7 @@ try {
     assert.equal(attempt.status, 409);
     return {
       status: workspace.status,
-      overall: 62.2,
+      overall: 33,
       decision: "failed",
       cooldownEnforced: 409,
     };
@@ -357,6 +357,7 @@ try {
       );
       const start = network.length;
       await new Promise((resolve) => setTimeout(resolve, 22000));
+      const refreshedWorkspace = page.waitForResponse((response) => response.url().endsWith("/intern/me/workspace") && response.status() === 200);
       await page
         .getByRole("button", { name: "Tải lại trạng thái", exact: true })
         .click();
@@ -366,6 +367,7 @@ try {
           exact: true,
         })
         .waitFor();
+      await refreshedWorkspace;
       const calls = network.slice(start).filter((n) => n.source === "browser");
       const work = calls.filter((n) => n.url.endsWith("/intern/me/workspace"));
       assert.deepEqual(
@@ -384,7 +386,7 @@ try {
       assert.ok(
         await page
           .getByRole("link", {
-            name: "Tài khoản Nguyễn Chờ Phân Công, Intern",
+            name: "Tài khoản Nguyễn Chờ Phân Công, Sinh viên",
           })
           .count(),
       );
@@ -563,17 +565,17 @@ try {
       assert.equal(empty.focusedTask, null);
       assert.equal(empty.taskSummary.total, 0);
       await page
-        .getByText("Chưa có Sprint hiện tại.", { exact: true })
+        .getByText(/^Chưa có Sprint đang hoạt động\./)
         .waitFor();
       await page
-        .getByText("Chưa có Task đang tập trung.", { exact: true })
+        .getByRole("heading", { name: "Chưa có nhiệm vụ cần tập trung", exact: true })
         .waitFor();
       for (const [route, message] of [
         ["evaluations", "Chưa có đánh giá được chốt."],
-        ["kpi", "Chưa có kết quả KPI."],
-        ["virtual-salary", "Chưa có giao dịch lương ảo."],
+        ["kpi", "Chưa có kết quả KPI"],
+        ["virtual-salary", "Chưa có giao dịch lương ảo"],
         ["certificates", "Chưa có chứng nhận được cấp."],
-        ["mentor", "Chưa có cuộc trò chuyện."],
+        ["mentor", "Chưa có cuộc trò chuyện"],
       ]) {
         await page.goto("http://localhost:3001/intern/" + route);
         await page.getByText(message, { exact: true }).waitFor();
@@ -634,10 +636,9 @@ try {
         [intern.user.id, project.id],
       );
       assert.equal(count[0].taskCount, after.taskSummary.total);
-      const totalSection = page.locator(
-        'section[aria-labelledby="active-task-summary"]',
-      );
-      assert.equal(await totalSection.locator("dd").first().textContent(), "1");
+      const totalMetric = page.locator(".student-metric").filter({ hasText: "Tất cả nhiệm vụ" });
+      await totalMetric.getByText("1", { exact: true }).waitFor();
+      assert.equal(await totalMetric.locator("strong").first().textContent(), "1");
       await screenshot(page, "phase7.1-live-active.png");
       return {
         before: "unassigned",

@@ -519,7 +519,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
               {kind !== "projects" && (
                 <button
                   disabled={busy}
-                  className="text-red-600"
+                  className="text-rose-600"
                   onClick={() =>
                     void mutate(() => api.removeMember(kind, id, m.userId))
                   }
@@ -689,7 +689,7 @@ function SessionExtras({ id }: { id: string }) {
             <div key={i.userId} className="mb-2 flex justify-between text-sm">
               <span>{i.displayName}</span>
               <button
-                className="text-red-600"
+                className="text-rose-600"
                 disabled={busy}
                 onClick={() =>
                   void act(() => api.removeInstructor(id, i.userId))
@@ -745,7 +745,7 @@ function SessionExtras({ id }: { id: string }) {
                 ))}
               </select>
               <button
-                className="text-red-600"
+                className="text-rose-600"
                 disabled={busy}
                 onClick={() => void act(() => api.deleteMilestone(id, m.id))}
               >
@@ -808,13 +808,13 @@ function AcademicBottom({ kind, items, summaries, onOpen }: { kind: api.Academic
       return { x, members: s?.memberCount ?? 0, rate };
     }).sort((a, b) => b.rate - a.rate).slice(0, 5);
     return <div className="mt-3"><Panel title="Hiệu quả lớp học (Top 5)" action={<span className="text-xs text-slate-500">Theo tỷ lệ hoàn thành</span>}>
-      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-[#f0f5fa]"><tr>{["#", "Mã lớp", "Tên lớp", "Sinh viên", "Tỷ lệ HT", "Xu hướng"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{rows.map(({ x, members, rate }, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-blue-600">{x.code}</td><td className="px-2 py-2 text-navy">{x.name}</td><td className="px-2 py-2">{members}</td><td className="px-2 py-2"><ProgressBar value={rate} /></td><td className="px-2 py-2 text-slate-500">—</td></tr>)}</tbody></table></div> : <Empty>Chưa có dữ liệu lớp học.</Empty>}
+      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-slate-50"><tr>{["#", "Mã lớp", "Tên lớp", "Sinh viên", "Tỷ lệ HT", "Xu hướng"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{rows.map(({ x, members, rate }, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-blue-600">{x.code}</td><td className="px-2 py-2 text-navy">{x.name}</td><td className="px-2 py-2">{members}</td><td className="px-2 py-2"><ProgressBar value={rate} /></td><td className="px-2 py-2 text-slate-500">—</td></tr>)}</tbody></table></div> : <Empty>Chưa có dữ liệu lớp học.</Empty>}
     </Panel></div>;
   }
   if (kind === "sessions") {
     const rows = items.filter(x => x.status === "ending" || (x.status === "active" && (summaries.find(s => s.id === x.id)?.taskCount ?? 0) === 0)).slice(0, 5);
     return <div className="mt-3"><Panel title="Cảnh báo & phiên cần chú ý" action={<Link href="/instructor/sessions" className="text-xs text-blue-600">Xem tất cả →</Link>}>
-      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-[#f0f5fa]"><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{rows.map((x, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-blue-600">{x.code}</td><td className="px-2 py-2">{x.status === "ending" ? "Sắp kết thúc" : "Chưa có task"}</td><td className="px-2 py-2"><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className="whitespace-nowrap px-2 py-2">{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className="px-2 py-2"><button className="rounded border border-blue-100 px-2 py-1 text-blue-600" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
+      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-slate-50"><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-blue-50">{rows.map((x, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-blue-600">{x.code}</td><td className="px-2 py-2">{x.status === "ending" ? "Sắp kết thúc" : "Chưa có task"}</td><td className="px-2 py-2"><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className="whitespace-nowrap px-2 py-2">{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className="px-2 py-2"><button className="rounded border border-blue-100 px-2 py-1 text-blue-600" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
     </Panel></div>;
   }
   const rows = items.map(x => ({ x, members: summaries.find(s => s.id === x.id)?.memberCount ?? 0 })).sort((a, b) => b.members - a.members).slice(0, 3);

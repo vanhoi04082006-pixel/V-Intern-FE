@@ -3,10 +3,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CodeSubmissions } from "../code-submissions";
 import type { Task } from "@/lib/api/work";
+import { ApiError } from '@/lib/auth/api-client';
 
 const api = vi.hoisted(() => ({
   listSubmissions: vi.fn(),
   listCodeReviews: vi.fn(),
+  confirmCodeReview: vi.fn(),
 }));
 vi.mock("@/lib/api/submissions", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/submissions")>()),
@@ -67,6 +69,21 @@ beforeEach(() => {
 });
 
 describe("instructor AI rubric handoff", () => {
+  it('requires the instructor to acknowledge a server-computed late penalty before retrying a grade', async () => {
+    const user = userEvent.setup();
+    api.listCodeReviews.mockResolvedValue([{ id: 'late-review', status: 'awaiting_instructor', result: { rubric, summary: 'Ready for teacher.', score: 90, findings: [], limitations: [] }, model: 'fixture', headSha: 'abcdef', inputHash: 'hash', evidence: null, errorCode: null }]);
+    api.confirmCodeReview.mockRejectedValueOnce(new ApiError(409, 'PARTICIPATION_PENALTY_CONFIRM_REQUIRED', 'Confirm penalty', { baseScore: 90, latePenalty: 5, score: 85 }));
+    api.confirmCodeReview.mockResolvedValueOnce({ ...submission, status: 'approved', score: 85, baseScore: 90, latePenalty: 5 });
+    render(<CodeSubmissions task={task} managed onUpdated={vi.fn()} />);
+    await user.type(await screen.findByLabelText('Nhận xét cho sinh viên'), 'Đã kiểm tra bài nộp và bằng chứng.');
+    await user.click(screen.getByRole('button', { name: 'Lưu kết quả giảng viên' }));
+    const acknowledgement = await screen.findByRole('checkbox', { name: /Tôi xác nhận trừ 5 điểm/ });
+    expect(api.confirmCodeReview).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Lưu kết quả giảng viên' })).toBeDisabled();
+    expect(screen.getByText('85/100')).toBeInTheDocument();
+    await user.click(acknowledgement); await user.click(screen.getByRole('button', { name: 'Lưu kết quả giảng viên' }));
+    expect(api.confirmCodeReview).toHaveBeenLastCalledWith('submission-1', expect.objectContaining({ confirmedLatePenalty: 5 }));
+  });
   it("shows the completed instructor decision without leaving AI approval pending", async () => {
     api.listSubmissions.mockResolvedValue([{ ...submission, status: "approved", score: 90.5, feedback: "Reviewed and approved." }]);
     api.listCodeReviews.mockResolvedValue([{ id: "review-approved", status: "awaiting_instructor", result: { rubric, summary: "Requirements met.", score: 98, findings: [], limitations: [] }, model: "test-model", headSha: "abcdef", inputHash: "hash", evidence: null, errorCode: null }]);

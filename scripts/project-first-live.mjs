@@ -64,7 +64,7 @@ try {
   const template = templates[0];
   stage = "entry-library";
   await page.goto(base + "/login"); await page.getByLabel("Email", { exact: true }).fill(users.instructor.email); await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD); await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
-  await page.waitForURL("**/instructor"); await expect(page.getByRole("heading", { name: "Workspace giảng viên", exact: true })).toBeVisible();
+  await page.waitForURL("**/instructor"); await expect(page.getByRole("heading", { name: "Tổng quan giảng dạy", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Khởi tạo phiên từ thư viện", exact: true })).toBeVisible();
   assert.equal(await page.getByRole("link", { name: /^(Lớp học|Class|Attendance|Điểm danh)$/ }).count(), 0);
   assert.equal(await page.getByText(/Quick Setup|Dữ liệu mẫu|Mock QA/).count(), 0);
@@ -75,7 +75,7 @@ try {
     return url.pathname === "/api/v1/project-templates" && url.searchParams.get("search") === `PFCI-${tag}` && url.searchParams.get("category") === `pf-${tag}`;
   });
   await page.getByLabel("Lọc theo nhóm").fill(`pf-${tag}`);
-  await page.getByLabel("Tìm project mẫu").fill(`PFCI-${tag}`);
+  await page.getByLabel("Tìm mẫu dự án").fill(`PFCI-${tag}`);
   const filteredResponse = await filtered; assert.equal(filteredResponse.status(), 200);
   assert.equal((await filteredResponse.json()).meta.total, 10);
   await expect(page.getByText(/10 bản ghi/)).toBeVisible();
@@ -88,10 +88,10 @@ try {
   assert.equal(nextPageResult.meta.page, 2); assert.equal(nextPageResult.meta.totalPages, 2);
   await expect(page.getByText(/Trang\s+2\s*\/\s*2/)).toBeVisible();
   await page.getByLabel("Lọc theo độ khó").selectOption("advanced"); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
-  await page.getByLabel("Lọc theo độ khó").selectOption(""); await page.getByLabel("Tìm project mẫu").fill(template.code); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
+  await page.getByLabel("Lọc theo độ khó").selectOption(""); await page.getByLabel("Tìm mẫu dự án").fill(template.code); await expect(page.getByText(/1 bản ghi/)).toBeVisible();
   const templateCard = page.locator("li").filter({ hasText: template.code });
   await expect(templateCard).toHaveCount(1);
-  await templateCard.getByRole("link", { name: "Xem chi tiết →", exact: true }).click();
+  await templateCard.getByRole("link", { name: "Xem chi tiết", exact: true }).click();
   for (const name of ["Foundation milestone", "Store demo", "Demonstrated store", "Frontend Developer", "Backend Developer"]) await expect(page.getByText(name).first()).toBeVisible();
   await expect(page.getByText(/phiên bản 1/)).toBeVisible();
   results.push({ name: "Real library pagination/search/filter/detail and Class redirect", status: "PASS" });
@@ -112,7 +112,7 @@ try {
   await call("instructor", `/project-templates/${template.id}`, "PATCH", { definition: { ...definition, description: definition.description + " Revised version." } });
   assert.equal((await call("instructor", `/project-templates/${template.id}`)).version, 2);
   const pinned = await call("instructor", `/projects/${created.projectId}/template-context`); assert.equal(pinned.templateVersion, 1); assert.equal(pinned.definition.description, definition.description);
-  await page.getByRole("link", { name: "Mở Session Setup →", exact: true }).click(); await expect(page.getByRole("heading", { name: `Setup: Project-first ${tag}`, exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Mở thiết lập phiên →", exact: true }).click(); await expect(page.getByRole("heading", { name: `Thiết lập: Project-first ${tag}`, exact: true })).toBeVisible();
   const assignment = key => ({ internId: users[key].id, sessionId: created.sessionId, projectId: created.projectId, role: key.startsWith("frontend") ? "frontend" : "backend" });
   await call("instructor", "/assignments", "POST", { ...assignment("invalid"), role: "frontend" }, 409, "INTERN_NOT_RECRUITED");
   await call("instructor", "/assignments", "POST", { ...assignment("backend"), role: "frontend" }, 409, "INTERVIEW_ROLE_MISMATCH");
@@ -133,12 +133,17 @@ try {
   }
   for (const key of ["frontend", "frontend2", "backend"]) {
     await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users[key].email);
-    await page.locator("li").filter({ hasText: users[key].email }).getByRole("button", { name: "Thêm", exact: true }).click();
+    const [assigned] = await Promise.all([
+      page.waitForResponse(r => new URL(r.url()).pathname === '/api/v1/assignments' && r.request().method() === 'POST' && r.request().postDataJSON().internId.toLowerCase() === users[key].id.toLowerCase()),
+      page.locator("li").filter({ hasText: users[key].email }).getByRole("button", { name: "Thêm", exact: true }).click(),
+    ]);
+    assert.equal(assigned.status(), 201);
+    assert.equal((await assigned.json()).internId.toLowerCase(), users[key].id.toLowerCase());
     await expect(page.getByText(`Đã phân công ${users[key].name}.`, { exact: true })).toBeVisible();
   }
   await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible();
   // A fourth genuinely passed, available candidate cannot overfill a frontend role slot.
-  await page.getByLabel("Lọc theo role", { exact: true }).selectOption("frontend");
+  await page.getByLabel("Lọc theo vai trò", { exact: true }).selectOption("frontend");
   await page.getByLabel("Tìm sinh viên", { exact: true }).fill(users.frontendExtra.email);
   const extraCandidate = page.locator("li").filter({ hasText: users.frontendExtra.email });
   await expect(extraCandidate.getByText(/Đã đậu phỏng vấn/)).toBeVisible();
@@ -155,8 +160,11 @@ try {
     await isolated(phase);
   };
   await unpublished("before-start");
-  const started = page.waitForResponse(r => r.url().toLowerCase().endsWith(`/sessions/${created.sessionId}`.toLowerCase()) && r.request().method() === "PATCH");
-  await page.getByRole("button", { name: "Start Session", exact: true }).evaluate(b => { b.click(); b.click(); }); assert.equal((await started).status(), 200);
+  const [started] = await Promise.all([
+    page.waitForResponse(r => r.url().toLowerCase().endsWith(`/sessions/${created.sessionId}`.toLowerCase()) && r.request().method() === "PATCH"),
+    page.getByRole("button", { name: "Bắt đầu phiên", exact: true }).evaluate(b => { b.click(); b.click(); }),
+  ]);
+  assert.equal(started.status(), 200);
   await unpublished("after-start");
   await expect(page.getByRole("button", { name: "Chỉnh sửa bản nháp", exact: true })).toBeVisible({ timeout: 30000 });
   const plan = (await call("instructor", `/ai-generations/plans?sessionId=${created.sessionId}`)).find(p => p.status === "ready"); assert.ok(plan);
@@ -194,7 +202,7 @@ try {
   await page.getByRole("button", { name: "Xác nhận & publish", exact: true }).click();
   const published = await publication; assert.equal(published.status(), 201);
   const publishBody = published.request().postDataJSON(), summary = await published.json();
-  await expect(page.getByText("Kế hoạch đã được publish.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Đã publish Sprint/Task từ kế hoạch.", { exact: true })).toBeVisible();
   assert.equal(publishBody.sessionId.toLowerCase(), scope.sessionId.toLowerCase());
   assert.equal(publishBody.projectId.toLowerCase(), scope.projectId.toLowerCase());
   assert.equal(publishBody.planId.toLowerCase(), plan.planId.toLowerCase());

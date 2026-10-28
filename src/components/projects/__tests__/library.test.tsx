@@ -36,8 +36,8 @@ describe("ProjectLibrary (M2)", () => {
   it("debounces search into a single refetch", async () => {
     const list = vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 9, totalPages: 1 }));
     render(<ProjectLibrary list={list} />);
-    expect(await screen.findByText(/chưa có project mẫu/i)).toBeInTheDocument();
-    const input = screen.getByLabelText(/tìm project mẫu/i);
+    expect(await screen.findByText(/chưa có mẫu dự án/i)).toBeInTheDocument();
+    const input = screen.getByLabelText(/tìm mẫu dự án/i);
     fireEvent.change(input, { target: { value: "a" } });
     fireEvent.change(input, { target: { value: "ab" } });
     fireEvent.change(input, { target: { value: "abc" } });
@@ -88,7 +88,7 @@ describe("TemplateDetail (M2)", () => {
     expect(start).toHaveBeenCalledTimes(1);
     const firstCall = start.mock.calls[0] as Array<{ requestId?: unknown }> | undefined;
     expect(typeof firstCall?.[1]?.requestId).toBe("string");
-    expect(screen.getByRole("link", { name: /mở session setup/i }).getAttribute("href")).toBe(
+    expect(screen.getByRole("link", { name: /mở thiết lập phiên/i }).getAttribute("href")).toBe(
       "/instructor/sessions/s1/setup?project=p1",
     );
   });

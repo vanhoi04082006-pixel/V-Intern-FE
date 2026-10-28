@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useEffect, useState } from 'react';
-import { roleLabel } from '@/lib/api/workspace';
-import { listQuestionBank, questionPhases, questionRoles, retireQuestion, type BankQuestion } from '@/lib/api/question-bank';
+import { roleLabel as legacyRoleLabel } from '@/lib/api/workspace';
+import { allCareerRoles } from '@/lib/api/career-roles';
+import { listQuestionBank, questionPhases, retireQuestion, type BankQuestion } from '@/lib/api/question-bank';
 import { useResource } from '@/lib/api/use-resource';
 import { ErrorState, LoadingState } from '@/components/shared/data-state';
 import { Badge, buttonClass, Empty, inputClass, Modal, PageTitle, Pager, Panel } from '@/components/product/primitives';
@@ -9,19 +10,23 @@ import { useAction } from '@/components/product/use-action';
 import { QuestionEditor } from './question-editor';
 export const phaseLabels: Record<string, string> = { technical: 'Chuyên môn', introduction: 'Giới thiệu', english: 'Tiếng Anh', communication: 'Giao tiếp' };
 export function QuestionBank() {
+  const careers = useResource(useCallback((signal: AbortSignal) => allCareerRoles(signal), []));
+  const questionRoles = (careers.data ?? []).map(role => role.code);
+  const roleLabel = (code: string) => careers.data?.find(role => role.code === code)?.name ?? legacyRoleLabel(code);
   const [search, setSearch] = useState(''), [debounced, setDebounced] = useState(''), [role, setRole] = useState(''), [phase, setPhase] = useState(''), [status, setStatus] = useState('active'), [page, setPage] = useState(1);
   const [editor, setEditor] = useState<BankQuestion | 'new' | null>(null), [retiring, setRetiring] = useState<BankQuestion | null>(null);
   useEffect(() => { const timer = setTimeout(() => { setDebounced(search.trim()); setPage(1); }, 300); return () => clearTimeout(timer); }, [search]);
   const state = useResource(useCallback((signal: AbortSignal) => listQuestionBank(new URLSearchParams({ page: String(page), pageSize: '10', ...(debounced ? { search: debounced } : {}), ...(role ? { roleCode: role } : {}), ...(phase ? { phase } : {}), ...(status ? { status } : {}) }), signal), [page, debounced, role, phase, status]));
   const action = useAction();
   return <div className="space-y-5">
-    <PageTitle title="Ngân hàng câu hỏi phỏng vấn" subtitle="Nội dung và hướng dẫn chấm riêng tư; thay đổi chỉ áp dụng cho phỏng vấn tương lai." action={<button className={buttonClass} onClick={() => setEditor('new')}>Thêm câu hỏi</button>} />
+    <PageTitle title="Ngân hàng câu hỏi phỏng vấn" subtitle="Nội dung và hướng dẫn chấm riêng tư; thay đổi chỉ áp dụng cho phỏng vấn tương lai." action={<button className={buttonClass} disabled={!careers.data?.length || careers.loading || Boolean(careers.error)} onClick={() => setEditor('new')}>Thêm câu hỏi</button>} />
+    {Boolean(careers.error) && <ErrorState error={careers.error} onRetry={careers.reload} />}
     {state.data && <Panel title="Độ phủ câu hỏi đang dùng"><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{questionRoles.map(code => { const count = (type: string) => state.data!.coverage.find(c => c.roleCode === code && c.phase === type)?.count ?? 0; const ready = count('technical') >= 6 && count('introduction') >= 2 && count('english') >= 2; return <div key={code} className={`rounded-xl border p-3 text-xs ${ready ? 'border-blue-100 bg-blue-50/40' : 'border-amber-200 bg-amber-50'}`}><h3 className="font-semibold">{roleLabel(code)}</h3><p className="mt-2">Chuyên môn {count('technical')} · Giới thiệu {count('introduction')} · Anh {count('english')}</p><p className="mt-1">{ready ? 'Đủ số lượng tối thiểu cho 10 câu' : 'Cần bổ sung trước khi mở phỏng vấn'}</p></div>; })}</div></Panel>}
     <Panel title="Danh sách câu hỏi"><div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><label className="text-sm">Tìm nội dung<input className={inputClass} value={search} onChange={e => setSearch(e.target.value)} /></label><label className="text-sm">Vai trò<select className={inputClass} value={role} onChange={e => { setRole(e.target.value); setPage(1); }}><option value="">Tất cả</option>{questionRoles.map(code => <option key={code} value={code}>{roleLabel(code)}</option>)}</select></label><label className="text-sm">Nhóm câu hỏi<select className={inputClass} value={phase} onChange={e => { setPhase(e.target.value); setPage(1); }}><option value="">Tất cả</option>{questionPhases.map(code => <option key={code} value={code}>{phaseLabels[code]}</option>)}</select></label><label className="text-sm">Trạng thái<select aria-label="Trạng thái" className={inputClass} value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}><option value="active">Đang sử dụng</option><option value="retired">Đã ngừng sử dụng</option><option value="">Tất cả</option></select></label></div>
       {state.loading ? <LoadingState /> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : state.data?.items.length ? <ul className="divide-y divide-slate-100">{state.data.items.map(q => <li key={q.id} className="py-4 first:pt-0"><div className="flex flex-wrap gap-2 text-xs"><Badge>{roleLabel(q.roleCode)}</Badge><Badge>{phaseLabels[q.phase]}</Badge><Badge>{q.language.toUpperCase()} · {q.difficulty}</Badge><Badge>{q.isActive ? 'Đang dùng' : 'Đã ngừng'}</Badge></div><p className="mt-3 whitespace-pre-wrap text-sm text-slate-800">{q.prompt}</p><div className="mt-3 flex flex-wrap gap-3"><button className="text-sm font-semibold text-blue-700" onClick={() => setEditor(q)}>Xem & chỉnh sửa</button>{q.isActive && <button className="text-sm font-medium text-rose-700" onClick={() => setRetiring(q)}>Ngừng sử dụng</button>}<span className="text-xs text-slate-400">Phiên bản {q.version}</span></div></li>)}</ul> : <Empty>Không có câu hỏi phù hợp.</Empty>}
       {state.data && <Pager page={page} total={state.data.total} totalPages={Math.ceil(state.data.total / state.data.pageSize)} onChange={setPage} unit="câu hỏi" />}
     </Panel>
-    {editor && <Modal title={editor === 'new' ? 'Thêm câu hỏi' : 'Chỉnh sửa câu hỏi'} wide onClose={() => setEditor(null)}><QuestionEditor question={editor === 'new' ? undefined : editor} onSaved={() => { setEditor(null); state.reload(); }} /></Modal>}
+    {editor && <Modal title={editor === 'new' ? 'Thêm câu hỏi' : 'Chỉnh sửa câu hỏi'} wide onClose={() => setEditor(null)}><QuestionEditor roles={careers.data ?? []} question={editor === 'new' ? undefined : editor} onSaved={() => { setEditor(null); state.reload(); }} /></Modal>}
     {retiring && <Modal title="Ngừng sử dụng câu hỏi" onClose={() => setRetiring(null)}><p className="text-sm text-slate-600">Câu hỏi sẽ không được chọn cho phỏng vấn mới. Nội dung các buổi phỏng vấn đã bắt đầu vẫn được giữ nguyên.</p>{Boolean(action.error) && <ErrorState error={action.error} />}<button className={`${buttonClass} mt-4`} disabled={action.busy} onClick={() => void action.run(async () => { await retireQuestion(retiring); setRetiring(null); state.reload(); })}>{action.busy ? 'Đang lưu…' : 'Xác nhận ngừng sử dụng'}</button></Modal>}
   </div>;
 }

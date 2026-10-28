@@ -62,7 +62,7 @@ function AuthMarketing() {
       <ul className="mt-8 flex divide-x divide-slate-200 gap-6">
         {BENEFITS.map((benefit) => (
           <li key={benefit.title} className="flex-1">
-            <div className="grid size-10 place-items-center rounded-full bg-[#E7ECF4]">
+            <div className="grid size-10 place-items-center rounded-full bg-slate-100">
               <benefit.icon
                 className="size-5 text-brand"
                 aria-hidden="true"

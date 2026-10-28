@@ -1,5 +1,8 @@
 # Kiến trúc frontend
 
+> Bộ bàn giao theo lộ trình đọc: [HANDOVER](HANDOVER.md). Trang này là chương tra cứu chuyên sâu; kết quả chạy thực tế xem [VERIFICATION](VERIFICATION.md).
+
+
 Routes App Router nhận params và chọn component; WorkspaceGuard xác thực/role; InternEntry lấy lifecycle để quyết định chờ phân công hay mount học tập. Giao diện không có backend nghiệp vụ trong Next. Dữ liệu qua lib/api → transport xác thực → Nest.
 
 InternShell dùng cho tổng quan/thông báo/hồ sơ/GitHub và các trang học tập. Task/sprint/Mentor chỉ mount khi có active assignment. Sinh viên đã kết thúc placement nhưng có `hasAssignmentHistory` vẫn xem kết quả/chứng nhận của chính mình; người chưa từng được phân công giữ dashboard chờ. ProductShell dùng giảng viên/admin, có navigation và drawer chung. Một route không tự bọc thêm ProductShell khi layout đã có shell.

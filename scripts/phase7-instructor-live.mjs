@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import { prepareTestRepository } from "./project-first-github.mjs";
+import { waitForSettledCodeReview } from './code-review-settlement.mjs';
 const be = path.resolve(process.env.LIVE_BE_ROOT || "../V-INTERN-BE"),
   req = createRequire(path.join(be, "package.json"));
 req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
@@ -119,7 +120,7 @@ try {
   await card.getByRole("button", { name: "Tiêu chí / trạng thái" }).click();
   dialog = page.getByRole("dialog");
   await mutation(page, `/evaluation-cycles/${cycle.id}/status`, "POST", () =>
-    dialog.getByRole("button", { name: "Chuyển kỳ sang open" }).click(),
+    dialog.getByRole("button", { name: "Mở kỳ đánh giá", exact: true }).click(),
   );
   await page.getByRole("button", { name: "Tạo đánh giá", exact: true }).click();
   const internSelect = page.getByRole("combobox", { name: /^Intern đánh giá/ });
@@ -202,8 +203,8 @@ try {
   assert.equal(pendingTask.status, 'review');
   const blockedTeacher = await call(instructor, `/tasks/${task.id}`, 'PATCH', { status: 'done', expectedVersion: pendingTask.version }, 409);
   assert.equal(blockedTeacher.code, 'SUBMISSION_PENDING_REVIEW');
-  const reviews = await call(instructor, `/submissions/${submission.id}/code-reviews`, 'POST');
-  assert.equal(reviews[0].status, 'inconclusive'); assert.equal(reviews[0].headSha, fixture.headSha);
+  const review = await waitForSettledCodeReview(() => call(instructor, `/submissions/${submission.id}/code-reviews`), fixture.headSha);
+  assert.equal(review.status, 'inconclusive'); assert.equal(review.headSha, fixture.headSha);
   const blockedApproval = await call(instructor, `/submissions/${submission.id}/review`, 'POST', { rubric: { functional: 80, quality: 80, testing: 80, errors: 80, security: 80, dod: 80 }, feedback: 'No verified execution; approval requires an explicit audited reason.', taskVersion: pendingTask.version }, 409);
   assert.equal(blockedApproval.code, 'AI_REVIEW_REQUIRED');
   await page.goto(`${base}/instructor/tasks/${task.id}`);

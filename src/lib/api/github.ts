@@ -34,6 +34,12 @@ export const connectGithub = () =>
   );
 export const disconnectGithub = () =>
   request("/github/me", p.record, { method: "DELETE" });
+function parseRepositoryAccount(value: unknown) {
+  const v = p.record(value);
+  return { configured: p.boolean(v.configured), connected: p.boolean(v.connected), login: p.nullable(v.login, p.string), ready: p.boolean(v.ready) };
+}
+export const repositoryAccountStatus = (signal?: AbortSignal) => request('/github/repository-account', parseRepositoryAccount, { signal });
+export const selectRepositoryAccount = () => request('/github/repository-account', parseRepositoryAccount, { method: 'POST' });
 function parseRepository(value: unknown) {
   const v = p.record(value);
   return {
@@ -51,8 +57,14 @@ function parseRepository(value: unknown) {
     }),
     members: p.array(v.members, (item) => {
       const r = p.record(item);
-      return { userId: p.string(r.userId), status: p.string(r.status) };
+      return { userId: p.string(r.userId), displayName: r.displayName === undefined ? 'Thành viên' : p.string(r.displayName),
+        status: r.status === 'invited' ? 'pending' as const : p.oneOf(r.status, ['pending', 'accepted', 'expired', 'failed', 'not_connected']),
+        login: p.nullable(r.login ?? null, p.string), invitationId: p.nullable(r.invitationId ?? null, v => String(v)),
+        invitedAt: p.nullable(r.invitedAt ?? null, p.string), expiresAt: p.nullable(r.expiresAt ?? null, p.string),
+        acceptedAt: p.nullable(r.acceptedAt ?? null, p.string), lastCheckedAt: p.nullable(r.lastCheckedAt ?? null, p.string),
+        errorCode: p.nullable(r.errorCode ?? null, p.string) };
     }),
+    canManage: v.canManage === undefined ? false : p.boolean(v.canManage),
   };
 }
 export const sessionRepository = (id: string, signal?: AbortSignal) =>
@@ -63,6 +75,9 @@ export const provisionRepository = (id: string) =>
   });
 export const inviteRepositoryMembers = (id: string) =>
   request(`/sessions/${id}/github/invite`, p.record, { method: "POST" });
+export type RepositoryMember = ReturnType<typeof parseRepository>['members'][number];
+export const inviteRepositoryMember = (id: string, userId: string) => request(`/sessions/${encodeURIComponent(id)}/github/members/${encodeURIComponent(userId)}/invite`, p.record, { method: 'POST' });
+export const reconcileRepositoryAccess = (id: string) => request(`/sessions/${encodeURIComponent(id)}/github/reconcile`, parseRepository, { method: 'POST' });
 export const configureGithubWebhook = (id: string) => request(`/sessions/${encodeURIComponent(id)}/github/webhook`, parseRepository, { method: 'POST' });
 export const githubRepositoryActivity = (id: string, page: number, signal?: AbortSignal) => request(`/sessions/${encodeURIComponent(id)}/github/activity?page=${page}&pageSize=5`, value => {
   const v = p.record(value);

@@ -6,7 +6,7 @@ import { Logo } from "@/components/v-intern/logo";
 export function RoleWorkspaceEntry({ role }: { role: "admin" | "instructor" }) {
   const user = getSessionUser();
   return (
-    <div className="min-h-dvh bg-[#F4F6FB]">
+    <div className="min-h-dvh bg-canvas">
       <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
         <Logo />
         <div className="flex items-center gap-4">

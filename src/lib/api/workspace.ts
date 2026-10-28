@@ -7,7 +7,8 @@ export const ROLE_LABELS = {
   qa: "QA Tester",
   business_analyst: "Business Analyst",
 } as const;
-export type RecruitmentRole = keyof typeof ROLE_LABELS;
+/** Career codes come from the server catalog; ROLE_LABELS is legacy display fallback only. */
+export type RecruitmentRole = string;
 export const WORKSPACE_STATUSES = [
   "recruitment_required",
   "recruitment_in_progress",

@@ -84,9 +84,10 @@ try {
   await page
     .getByRole("button", { name: "Cuộc trò chuyện mới", exact: true })
     .click();
+  const question = `[${Date.now().toString(36)}] Làm thế nào để chia nhỏ nhiệm vụ?`;
   await page
     .getByLabel("Câu hỏi của bạn")
-    .fill("Làm thế nào để chia nhỏ nhiệm vụ?");
+    .fill(question);
   const sent = page.waitForResponse(
     (r) => r.url().includes("/messages") && r.request().method() === "POST",
   );
@@ -97,11 +98,12 @@ try {
   await shot(page, "intern-mentor");
   await page.reload();
   await page
-    .getByRole("button", { name: /Cuộc trò chuyện mới/ })
-    .last()
+    .getByRole("button")
+    .filter({ has: page.getByText(question, { exact: true }) })
     .click();
   await page
-    .getByText("Làm thế nào để chia nhỏ nhiệm vụ?", { exact: true })
+    .getByLabel("Nội dung cuộc trò chuyện", { exact: true })
+    .getByText(question, { exact: true })
     .waitFor();
   assert.equal(
     (
@@ -144,12 +146,13 @@ try {
   await page.goto(base + `/intern/kpi/${fixture.kpiResultId}`);
   await page
     .getByRole("heading", {
-      name: `KPI: ${fixture.kpiFinalScore}`,
+      name: "Kết quả KPI",
       exact: true,
     })
     .waitFor();
-  await page.getByText("Nguồn dữ liệu", { exact: true }).first().click();
-  await page.getByText("VND_VIRTUAL", { exact: false }).first().waitFor();
+  await page.locator(".student-score").filter({ hasText: "Điểm KPI" }).getByText(String(fixture.kpiFinalScore), { exact: true }).waitFor();
+  await page.getByText("Tiến độ bàn giao", { exact: true }).waitFor();
+  await page.getByText("đồng ảo", { exact: true }).first().waitFor();
   await shot(page, "intern-kpi");
   const ledger = await ds.query(
     "SELECT SUM(amount) balance FROM virtual_salary_ledger WHERE userId=@0",
@@ -170,7 +173,8 @@ try {
   });
   await page.goto(base + `/intern/certificates/${fixture.certificateId}`);
   await page
-    .getByRole("heading", { name: fixture.certificateNumber, exact: true })
+    .locator(".student-cert-document-meta")
+    .getByText(fixture.certificateNumber, { exact: true })
     .waitFor();
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Tải PDF" }).click();
@@ -292,13 +296,15 @@ try {
   await page.getByText("Lập kế hoạch công việc", { exact: true }).waitFor();
   await shot(page, "intern-recommendations");
   await page.goto(base + "/intern/profile");
-  await page.getByText(fixture.email, { exact: true }).waitFor();
+  const accountEmail = page.getByRole("definition").filter({ hasText: fixture.email });
+  await accountEmail.waitFor();
+  assert.equal((await accountEmail.textContent()).trim(), fixture.email);
   await shot(page, "intern-profile");
   assert.deepEqual(errors, []);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + "/intern/kpi");
   await page.getByRole("heading", { name: "KPI & Lương ảo" }).waitFor();
-  await page.getByText("VND_VIRTUAL", { exact: false }).first().waitFor();
+  await page.getByText("đồng ảo", { exact: true }).first().waitFor();
   assert.ok(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth + 1,

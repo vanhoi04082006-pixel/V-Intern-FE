@@ -1,5 +1,21 @@
 # Gate full-stack theo phiên bản hợp đồng
 
+Cặp hiện hành ghim BE **`254cabd8e5097d86bc6971f03419944b40b2f592`**, đã push trên PR BE #12. Product source không đổi so với `91a9175`; thay đổi mới nằm trong fixture `business-agent.e2e-spec.ts`: provider giả lập vẫn ghi event vào SQL, nhưng không xuất trace sang tài khoản LangSmith thật được nạp từ `.env` của người chạy. Không đổi runtime tracing, assertion hoặc timeout 5 giây.
+
+| Phần kiểm | Source và kết quả |
+|---|---|
+| BE product | Code `91a9175`, 114 suites / 859 unit tests; schema CV, mentor authority, module collector và tool budget đã kiểm |
+| BE SQL contract | Fixture `254cabd`, 3 suites / **31 tests đạt local**, 78 event SQL và 0 lượt xuất trace fixture. Dùng DB mới, file nằm trong dự án; giữ các lần timeout trước làm lịch sử |
+| FE UI | Code `603ee3f`, 109 file / **660 tests**, lint/typecheck/build local đạt; Thông báo ba vai và nền chung có bằng chứng riêng |
+| CI của nền UI trước | FE `8932bef` / BE `91a9175`: [quality](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40262952070) và [full-stack](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40262952079) đã xanh |
+| CI sau pin mới | Chạy lại toàn bộ gate cho commit mang pin `254cabd`; xem checks của PR FE #23. Không gán receipt cũ cho source mới |
+
+FE giữ kiểm thử gửi lại mail uncertain và kiểm tra hết hạn tương đối. Bước 07 đọc/chờ lượt chấm tự động kết thúc, vẫn khẳng định `inconclusive` và đúng SHA trước khi thử duyệt thông thường/thủ công; không POST chấm trùng khi lease đang chạy. Ngân sách và giới hạn source, credential filtering, ownership, RBAC, Docker runner và audit quyết định giảng viên được giữ nguyên.
+
+Nghiệm thu Gemini/LangSmith/Gmail/GitHub/Docker thật đọc ở [checkpoint dịch vụ](../ACCEPTANCE-CHECKPOINT-20261026.md). Provider giả lập trong gate SQL hoặc full-stack không được ghi thành provider ngoài thật. [Report UI](../design/NOTIFICATIONS-20261026.md) ghi đúng phạm vi click và responsive, không thay thế toàn bộ 78 route.
+
+Cặp K03: BE `bf3118693c782c145a87d4348212344396ce3526`, UI `17f4370` và bài `scripts/knowledge-library-live.mjs`. Bài knowledge chạy riêng sau career catalog và trước bước 09; không thay thế 14 bước đã có. Kiểm DB thật và zero-mutation import; [nguồn nghiệm thu](../reports/knowledge-library-20261024.md).
+
 Gate local của thay đổi hiện tại phải dùng FE và BE từ cùng bộ thay đổi: library → tuyển dụng chat10lượt → eligible assignment → Start → AI draft → publish → own tasks/submissions → teacher approval. Xem docs/TESTING.md và README hiện hành.
 
 Workflow `.github/workflows/phase7-fullstack.yml` ghim COMPATIBLE_BE_SHA bằng đúng SHA của BE đã review/push (SHA hiện hành được ghi trong root manual-runtime/ci-verification.json; khi thay hợp đồng BE, cập nhật pin và chạy lại toàn gate). Khi thay hợp đồng: commit/push BE trước, cập nhật pin bằng đúng SHA tương thích rồi chạy lại toàn gate; không dùng main/latest thay commit cố định. CI hiện giữ cả kiểm tra SQL2019 native, browser, ownership, publish/idempotency và các luồng kết quả cũ.

@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - main
+      - feat/ui-ux-overhaul
+      - 'codex/**'
 
   push:
     branches:

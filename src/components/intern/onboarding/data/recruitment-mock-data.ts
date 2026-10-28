@@ -278,8 +278,8 @@ export const ROLE_STEP_NOTE =
 export const ROLE_STEP_EXPLAIN_ITEMS: readonly string[] = [
   "Bạn trả lời 8 câu hỏi phỏng vấn cùng AI Recruiter — gồm cả Technical và Soft Skill.",
   "Điểm Overall được tính = 70% Technical + 30% Soft Skill.",
-  "Overall ≥ 70 → bạn trúng tuyển vị trí đã chọn và chờ giảng viên phân công.",
-  "Overall < 70 → AI Recruiter đề xuất một vị trí phù hợp hơn để bạn tiếp tục.",
+  "Overall > 70 → bạn trúng tuyển vị trí đã chọn và chờ giảng viên phân công.",
+  "Overall từ 50 đến 70 → AI đề xuất vai trò khác dựa trên câu trả lời; dưới 50 → chưa đạt.",
 ];
 
 /* ----------------------------- Interview step ----------------------------- */

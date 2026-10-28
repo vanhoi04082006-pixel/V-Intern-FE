@@ -33,7 +33,9 @@ const provider = {
       throw new AiProviderTimeoutError("Development timeout scenario");
     }
     let payload;
-    if (request.task === "sprint-plan")
+    if (request.task === 'business-agent-decision')
+      payload = request.input.observations?.length ? { action: 'final', query: '' } : { action: 'tool', query: 'kiểm chứng hợp đồng input' };
+    else if (request.task === "sprint-plan")
       payload = buildTestSprintPlan(request.input);
     else if (request.task === "ai-mentor")
       payload = {

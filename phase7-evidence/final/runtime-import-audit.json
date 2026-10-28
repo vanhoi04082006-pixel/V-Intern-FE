@@ -1,6 +1,6 @@
 {
   "entryCount": 71,
-  "runtimeModuleCount": 220,
+  "runtimeModuleCount": 221,
   "runtimeBusinessMockImports": [],
   "businessRouteHandlers": [],
   "files": [
@@ -76,6 +76,7 @@
     "src/app/page.tsx",
     "src/app/verify/page.tsx",
     "src/components/admin/ai-configuration.tsx",
+    "src/components/admin/contracts-card.tsx",
     "src/components/admin/question-bank.tsx",
     "src/components/admin/question-editor.tsx",
     "src/components/admin/sessions.tsx",

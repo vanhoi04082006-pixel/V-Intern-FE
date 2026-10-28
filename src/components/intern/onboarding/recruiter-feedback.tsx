@@ -62,7 +62,7 @@ export function RoleRecommendation({
       </h2>
 
       {/* Role + tags inline compact (không box lồng) — density rail reference */}
-      <p className="mt-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">
+      <p className="mt-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">
         Vai trò phù hợp hơn
       </p>
       <p className="mt-0.5 text-lg font-extrabold tracking-tight text-navy">

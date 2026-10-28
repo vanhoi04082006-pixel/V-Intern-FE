@@ -35,7 +35,7 @@ export function AiMentorCard({
                 <p className="rounded-2xl rounded-br-md bg-brand px-3.5 py-2.5 text-[13px] leading-relaxed text-white">
                   {message.text}
                 </p>
-                <time className="text-[11px] text-slate-400">
+                <time className="text-[11px] text-slate-500">
                   {message.timeLabel}
                 </time>
               </div>
@@ -53,7 +53,7 @@ export function AiMentorCard({
                 <p className="rounded-2xl rounded-bl-md border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-700">
                   {message.text}
                 </p>
-                <time className="text-[11px] text-slate-400">
+                <time className="text-[11px] text-slate-500">
                   {message.timeLabel}
                 </time>
               </div>

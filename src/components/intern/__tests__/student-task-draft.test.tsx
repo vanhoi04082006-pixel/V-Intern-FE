@@ -1,0 +1,147 @@
+import { beforeEach, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { TaskDetail } from "@/components/product/intern-work";
+import { ApiError } from "@/lib/auth/api-client";
+import type { Task } from "@/lib/api/work";
+
+const api = vi.hoisted(() => ({
+  getTask: vi.fn(),
+  getComments: vi.fn(),
+  getHistory: vi.fn(),
+  updateOwnTask: vi.fn(),
+}));
+vi.mock("@/lib/api/work", async (original) => ({
+  ...(await original<typeof import("@/lib/api/work")>()),
+  ...api,
+}));
+vi.mock("@/components/product/task-spec", () => ({ TaskSpec: () => null }));
+vi.mock("@/components/product/code-submissions", () => ({
+  CodeSubmissions: () => null,
+}));
+const task: Task = {
+  id: "task-1",
+  code: "TASK-1",
+  title: "Kiểm thử dữ liệu",
+  description: null,
+  projectId: "project-1",
+  sprintId: null,
+  storyPoints: 3,
+  status: "doing",
+  priority: "high",
+  assigneeId: null,
+  progress: 10,
+  dueDate: null,
+  version: 1,
+};
+beforeEach(() => {
+  vi.clearAllMocks();
+  api.getTask.mockResolvedValue(task);
+  api.getComments.mockResolvedValue({
+    items: [],
+    total: 0,
+    totalPages: 0,
+    page: 1,
+  });
+  api.getHistory.mockResolvedValue({
+    items: [],
+    total: 0,
+    totalPages: 0,
+    page: 1,
+  });
+  api.updateOwnTask.mockResolvedValue({ ...task, version: 2, progress: 45 });
+});
+
+it("keeps an unsent comment and focus when saving progress refreshes the task", async () => {
+  render(<TaskDetail id={task.id} />);
+  const comment = await screen.findByRole("textbox", { name: "Bình luận mới" });
+  fireEvent.change(comment, {
+    target: { value: "Câu hỏi đang viết, chưa gửi" },
+  });
+  fireEvent.change(screen.getByRole("slider", { name: "Tiến độ nhiệm vụ" }), {
+    target: { value: "45" },
+  });
+  comment.focus();
+  let complete!: (value: Task) => void;
+  api.getTask.mockImplementationOnce(
+    () =>
+      new Promise<Task>((resolve) => {
+        complete = resolve;
+      }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Lưu tiến độ" }));
+  await waitFor(() => expect(api.getTask).toHaveBeenCalledTimes(2));
+  expect(screen.getByRole("textbox", { name: "Bình luận mới" })).toBe(comment);
+  expect(comment).toHaveFocus();
+  expect(comment).toHaveValue("Câu hỏi đang viết, chưa gửi");
+  expect(screen.getByRole("button", { name: "Lưu tiến độ" })).toBeDisabled();
+  complete({ ...task, version: 2, progress: 45 });
+  await waitFor(() =>
+    expect(
+      screen.getByRole("slider", { name: "Tiến độ nhiệm vụ" }),
+    ).toHaveValue("45"),
+  );
+  expect(comment).toHaveValue("Câu hỏi đang viết, chưa gửi");
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "Lưu tiến độ" })).toBeEnabled(),
+  );
+  expect(api.updateOwnTask).toHaveBeenCalledWith(task.id, {
+    expectedVersion: 1,
+    progress: 45,
+  });
+});
+
+it("uses the latest server progress after a version conflict without deleting the comment draft", async () => {
+  render(<TaskDetail id={task.id} />);
+  const comment = await screen.findByRole("textbox", { name: "Bình luận mới" });
+  fireEvent.change(comment, { target: { value: "Nội dung cần giữ" } });
+  fireEvent.change(screen.getByRole("slider", { name: "Tiến độ nhiệm vụ" }), {
+    target: { value: "45" },
+  });
+  api.updateOwnTask.mockRejectedValueOnce(
+    new ApiError(409, "VERSION_CONFLICT", "Nhiệm vụ đã được cập nhật."),
+  );
+  api.getTask.mockResolvedValue({ ...task, progress: 70, version: 2 });
+  fireEvent.click(screen.getByRole("button", { name: "Lưu tiến độ" }));
+  await waitFor(() =>
+    expect(
+      screen.getByRole("slider", { name: "Tiến độ nhiệm vụ" }),
+    ).toHaveValue("70"),
+  );
+  expect(screen.getByRole("textbox", { name: "Bình luận mới" })).toBe(comment);
+  expect(comment).toHaveValue("Nội dung cần giữ");
+  expect(api.updateOwnTask).toHaveBeenCalledTimes(1);
+  expect(screen.getAllByRole("alert")).toHaveLength(1);
+  expect(screen.getByRole("alert")).toHaveTextContent("Trạng thái đã thay đổi");
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "Lưu tiến độ" })).toBeEnabled(),
+  );
+  api.getTask.mockResolvedValue({ ...task, progress: 70, version: 3 });
+  api.updateOwnTask.mockResolvedValueOnce({ ...task, progress: 70, version: 3 });
+  fireEvent.click(screen.getByRole("button", { name: "Lưu tiến độ" }));
+  await waitFor(() => expect(api.updateOwnTask).toHaveBeenCalledTimes(2));
+  expect(api.updateOwnTask).toHaveBeenLastCalledWith(task.id, {
+    expectedVersion: 2,
+    progress: 70,
+  });
+  await waitFor(() => expect(screen.queryAllByRole("alert")).toHaveLength(0));
+  expect(comment).toHaveValue("Nội dung cần giữ");
+});
+
+it("refreshes status history when a successful update changes the task version", async () => {
+  api.getTask.mockResolvedValueOnce({ ...task, status: "todo" });
+  const page = (toStatus: "todo" | "doing", fromStatus: "todo" | null) => ({
+    items: [{ id: "history-1", fromStatus, toStatus, reason: null, createdAt: "2026-10-23T00:00:00Z" }],
+    total: 1, totalPages: 1, page: 1,
+  });
+  api.getHistory.mockResolvedValueOnce(page("todo", null));
+  api.getHistory.mockResolvedValue(page("doing", "todo"));
+  render(<TaskDetail id={task.id} />);
+  await screen.findByText("Tạo mới → Cần làm");
+  const comment = screen.getByRole("textbox", { name: "Bình luận mới" });
+  fireEvent.change(comment, { target: { value: "Giữ bản nháp khi cập nhật lịch sử" } });
+  api.getTask.mockResolvedValue({ ...task, status: "doing", version: 2 });
+  fireEvent.click(screen.getByRole("button", { name: "Chuyển sang Đang làm" }));
+  await screen.findByText("Cần làm → Đang làm");
+  expect(comment).toHaveValue("Giữ bản nháp khi cập nhật lịch sử");
+  expect(screen.getByRole("textbox", { name: "Bình luận mới" })).toBe(comment);
+});

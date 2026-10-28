@@ -2,12 +2,39 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
-import { Empty, PageTitle, Pager, Panel, inputClass } from "@/components/product/primitives";
+import {
+  Empty,
+  PageTitle,
+  Pager,
+  inputClass,
+} from "@/components/product/primitives";
+import { ArrowUpRight } from "lucide-react";
+import { WorkspaceArtwork, type ProjectArtworkSubject } from "@/components/workspace/workspace-artwork";
+import { roleLabel } from "@/lib/api/workspace";
 import { useResource } from "@/lib/api/use-resource";
-import { listTemplates, type TemplateQuery, type TemplateSummary } from "@/lib/api/templates";
+import {
+  listTemplates,
+  type TemplateQuery,
+  type TemplateSummary,
+} from "@/lib/api/templates";
+
+const difficultyLabels: Record<string, string> = {
+  beginner: "Cơ bản",
+  intermediate: "Trung bình",
+  advanced: "Nâng cao",
+};
+const categoryLabels: Record<string, string> = { "small-projects": "Dự án thực hành", "mini-projects": "Bài nhỏ · có starter", web: "Ứng dụng web", mobile: "Ứng dụng di động", data: "Dữ liệu" };
+function artworkSubject(code: string): ProjectArtworkSubject | undefined {
+  const subjects: [string, ProjectArtworkSubject][] = [["NOTES", "notes"], ["SHOP", "commerce"], ["TASKS", "tasks"], ["BOOKING", "booking"], ["BLOG", "publishing"], ["STUDENTS", "education"]];
+  return subjects.find(([key]) => code.toUpperCase().includes(key))?.[1];
+}
 
 export function DifficultyBadge({ value }: { value: string }) {
-  return <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-600">{value}</span>;
+  return (
+    <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-600">
+      {difficultyLabels[value] ?? value}
+    </span>
+  );
 }
 
 /**
@@ -17,7 +44,10 @@ export function DifficultyBadge({ value }: { value: string }) {
 export function ProjectLibrary({
   list = listTemplates,
 }: {
-  list?: (q: TemplateQuery, signal?: AbortSignal) => ReturnType<typeof listTemplates>;
+  list?: (
+    q: TemplateQuery,
+    signal?: AbortSignal,
+  ) => ReturnType<typeof listTemplates>;
 }) {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
@@ -35,17 +65,29 @@ export function ProjectLibrary({
   const data = useResource(
     useCallback(
       (signal: AbortSignal) =>
-        list({ page, pageSize: 9, search: debounced || undefined, category: category || undefined, difficulty: difficulty || undefined }, signal),
+        list(
+          {
+            page,
+            pageSize: 9,
+            search: debounced || undefined,
+            category: category || undefined,
+            difficulty: difficulty || undefined,
+          },
+          signal,
+        ),
       [list, page, debounced, category, difficulty],
     ),
   );
 
   return (
     <div className="space-y-4">
-      <PageTitle title="Thư viện dự án" subtitle="Chọn một project mẫu hoàn chỉnh để khởi tạo phiên thực tập" />
-      <div className="flex flex-wrap gap-2">
+      <PageTitle
+        title="Thư viện dự án"
+        subtitle="Chọn một mẫu dự án hoàn chỉnh để khởi tạo phiên thực tập"
+      />
+      <div className="workspace-filter-bar">
         <input
-          aria-label="Tìm project mẫu"
+          aria-label="Tìm mẫu dự án"
           placeholder="Tìm theo mã hoặc tên..."
           className={`${inputClass} min-w-52 flex-1`}
           value={query}
@@ -53,58 +95,81 @@ export function ProjectLibrary({
         />
         <input
           aria-label="Lọc theo nhóm"
-          placeholder="Nhóm (category)..."
-          className={`${inputClass} w-44`}
+          placeholder="Nhóm dự án..."
+          className={`${inputClass} sm:w-44`}
           value={category}
-          onChange={(e) => { setCategory(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setPage(1);
+          }}
         />
         <select
           aria-label="Lọc theo độ khó"
-          className={inputClass}
+          className={`${inputClass} sm:w-48`}
           value={difficulty}
-          onChange={(e) => { setDifficulty(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setDifficulty(e.target.value);
+            setPage(1);
+          }}
         >
           <option value="">Mọi độ khó</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
+          <option value="beginner">Cơ bản</option>
+          <option value="intermediate">Trung bình</option>
+          <option value="advanced">Nâng cao</option>
         </select>
       </div>
       {data.loading ? (
-        <p role="status" className="p-4 text-sm text-slate-500">Đang tải thư viện...</p>
+        <p role="status" className="p-4 text-sm text-slate-500">
+          Đang tải thư viện...
+        </p>
       ) : data.error ? (
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : !data.data || data.data.items.length === 0 ? (
-        <Empty>Chưa có project mẫu{debounced ? ` phù hợp với "${debounced}"` : ""}.</Empty>
+        <Empty>
+          Chưa có mẫu dự án{debounced ? ` phù hợp với "${debounced}"` : ""}.
+        </Empty>
       ) : (
         <>
-          <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <ul className="workspace-project-grid">
             {data.data.items.map((t: TemplateSummary) => (
               <li key={t.id}>
-                <Panel
-                  title={t.name}
-                  action={<DifficultyBadge value={t.difficulty} />}
-                >
-                  <p className="font-mono text-[11px] text-slate-400">{t.code} · v{t.version}</p>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {t.techStack.slice(0, 5).map((tech) => (
-                      <span key={tech} className="rounded bg-blue-50 px-2 py-0.5 text-[11px] text-blue-700">{tech}</span>
-                    ))}
+                <article className="workspace-project-card">
+                  <div className="workspace-project-cover" data-difficulty={t.difficulty}>
+                    <span>{t.category ? categoryLabels[t.category] ?? t.category : "Dự án thực tập"}</span>
+                    <WorkspaceArtwork variant="project" compact subject={artworkSubject(t.code)} />
                   </div>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Roles: {t.roles.join(", ") || "—"} · Đội hình gợi ý: {t.teamSize} · {t.sprintCount} sprints blueprint
+                  <header>
+                    <h2>{t.name}</h2>
+                    <DifficultyBadge value={t.difficulty} />
+                  </header>
+                  <p className="workspace-project-meta">
+                    {t.code} · phiên bản {t.version}
                   </p>
-                  <Link className="mt-3 inline-block text-xs font-semibold text-blue-600 hover:underline" href={`/instructor/projects/${t.id}`}>
-                    Xem chi tiết →
+                  <p className="workspace-project-stack">
+                    {t.techStack.join(" · ") || "Chưa có thông tin công nghệ"}
+                  </p>
+                  <p className="workspace-project-meta mb-5">
+                    Vai trò: {t.roles.map(roleLabel).join(", ") || "—"} · Đội hình gợi ý:{" "}
+                    {t.teamSize} · {t.sprintCount} sprint theo mẫu
+                  </p>
+                  <Link href={`/instructor/projects/${t.id}`}>
+                    Xem chi tiết <ArrowUpRight size={16} aria-hidden="true" />
                   </Link>
-                </Panel>
+                </article>
               </li>
             ))}
           </ul>
-          <Pager page={data.data.page} totalPages={data.data.totalPages} total={data.data.total} onChange={(p: number) => setPage(p)} />
+          <Pager
+            page={data.data.page}
+            totalPages={data.data.totalPages}
+            total={data.data.total}
+            onChange={(p: number) => setPage(p)}
+          />
         </>
       )}
-      <p className="text-[11px] text-slate-400">Dữ liệu thật từ Project Library (phiên bản mẫu được quản lý tập trung).</p>
+      <p className="text-[11px] text-slate-400">
+        Dữ liệu thật từ thư viện mẫu (phiên bản được quản lý tập trung).
+      </p>
     </div>
   );
 }

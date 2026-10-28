@@ -21,9 +21,10 @@ export function isApiConfigured(): boolean {
 export interface ApiFetchOptions {
   method?: string;
   body?: unknown;
+  formData?: FormData;
   token?: string | null;
   signal?: AbortSignal;
-  responseType?: "json" | "blob" | "xlsx";
+  responseType?: "json" | "blob" | "xlsx" | "cv";
 }
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -33,6 +34,7 @@ export async function apiFetch(
   {
     method = "GET",
     body,
+    formData,
     token,
     signal,
     responseType = "json",
@@ -53,18 +55,18 @@ export async function apiFetch(
       cache: "no-store",
       signal,
       headers: {
-        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+        ...(formData || body === undefined ? {} : { "Content-Type": "application/json" }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      ...(formData ? { body: formData } : body === undefined ? {} : { body: JSON.stringify(body) }),
     });
   } catch (error) {
     if (isRecord(error) && error.name === "AbortError") throw error;
     throw new ApiError(0, "NETWORK_ERROR", "Không thể kết nối đến hệ thống.");
   }
   if (response.status === 204 && response.ok) return null;
-  if (response.ok && (responseType === "blob" || responseType === "xlsx")) {
-    const expected = responseType === "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/pdf";
+  if (response.ok && (responseType === "blob" || responseType === "xlsx" || responseType === 'cv')) {
+    const expected = responseType === "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : responseType === 'cv' ? 'application/octet-stream' : "application/pdf";
     if (response.headers.get("content-type")?.split(';')[0].trim().toLowerCase() !== expected)
       throw new ApiError(0, "INVALID_RESPONSE", "Unexpected download response type.");
     return response.blob();
@@ -99,6 +101,33 @@ export function errorMessage(error: unknown): string {
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
   const workflowErrors: Record<string, string> = {
+    AI_REVIEW_REQUIRED: 'Chưa có đề xuất đạt với đủ bằng chứng AI và kiểm thử độc lập. Xem phần đánh giá; nếu quyết định chấm thủ công, hãy ghi rõ lý do chấm thủ công và phần đã tự kiểm tra trước khi lưu.',
+    AI_REVIEWER_UNAVAILABLE: 'Chưa có giảng viên phụ trách đủ quyền để chạy Agent chấm bài. Nhờ người phụ trách kiểm tra phân công và quyền quản lý phiên, rồi thử chấm lại.',
+    GITHUB_ACCESS_CHANGED: 'Trạng thái đối chiếu đã thay đổi. Đóng và tải lại trước khi gửi yêu cầu mới.',
+    PARTICIPATION_PENALTY_CONFIRM_REQUIRED: 'Xem điểm rubric gốc, điểm trừ do nộp trễ và điểm cuối. Xác nhận mức trừ trước khi lưu kết quả.',
+    PARTICIPATION_VERSION_CONFLICT: 'Chính sách hoặc bằng chứng đã thay đổi. Tải lại trước khi xử lý.',
+    REPLACEMENT_THRESHOLD_NOT_MET: 'Số vi phạm còn hiệu lực chưa đạt ngưỡng thay người. Kiểm tra các lần miễn trừ hoặc hoàn tác rồi đối chiếu lại.',
+    REPLACEMENT_CONTEXT_CHANGED: 'Bằng chứng hoặc ảnh hưởng đã thay đổi. Yêu cầu Agent đối chiếu lại và tạo bản xem trước mới.',
+    REPLACEMENT_CANDIDATE_UNAVAILABLE: 'Ứng viên không còn khả dụng hoặc không còn đáp ứng vai trò. Yêu cầu Agent đề xuất lại.',
+    REPLACEMENT_ADVICE_EXPIRED: 'Tư vấn đã hết hiệu lực. Yêu cầu Agent đối chiếu lại trước khi tạo bản xem trước.',
+    REPLACEMENT_PREVIEW_EXPIRED: 'Bản xem trước đã hết hạn. Kiểm tra ảnh hưởng trong bản xem trước mới rồi xác nhận lại.',
+    REPLACEMENT_PENDING_REVIEW: 'Có bài đang chờ duyệt. Xử lý bài đó trước khi thay thành viên.',
+    REPLACEMENT_TASK_LIMIT: 'Phạm vi vượt 500 nhiệm vụ. Cần kiểm tra lại phân công trước khi bàn giao.',
+    GITHUB_RECONNECT_REQUIRED: 'Cần Admin kết nối lại tài khoản GitHub tạo repository chung tại Cài đặt. Sau đó kiểm tra lại quyền truy cập.',
+    GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
+    GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',
+    GITHUB_IDENTITY_CHANGED: 'Danh tính GitHub đã thay đổi. Nhờ Admin đối chiếu quyền cũ trước khi mời tiếp.',
+    CV_FILE_INVALID: 'CV cần là PDF hoặc DOCX đúng định dạng, tối đa 5 MB.',
+    CV_EXTRACTION_FAILED: 'Không đọc được CV trong giới hạn an toàn. Hãy xuất lại PDF có văn bản hoặc DOCX.',
+    VERIFICATION_INVALID: 'Liên kết đã hết hạn hoặc đã dùng. Tải lại trang và chọn nhận lại liên kết theo dõi.',
+    APPLICATIONS_CLOSED: 'Đợt tuyển chưa mở hoặc vừa đóng. Hãy chọn đợt đang nhận hồ sơ.',
+    RECRUITMENT_ROUND_SLOT_REQUIRED: 'Chưa thể mở nhận CV. Thêm ít nhất một khung giờ phỏng vấn trong tương lai đang mở, rồi thử lại.',
+    MAIL_NOT_CONFIGURED: 'Email chưa được cấu hình ở máy chủ. Liên hệ người phụ trách trước khi nộp CV.',
+    CAREER_NOT_READY: 'Nghề cần đang tuyển, có 6 câu chuyên môn, 2 giới thiệu và 2 tiếng Anh trước khi mở lịch.',
+    SLOT_INVALID: 'Chọn khung giờ trong tương lai, có múi giờ, còn đủ thời gian chuẩn bị và sức chứa hợp lệ.',
+    PASSWORD_CHANGE_REQUIRED: 'Bạn cần đổi mật khẩu tạm trước khi dùng hệ thống.',
+    TEMPORARY_PASSWORD_EXPIRED: 'Mật khẩu tạm đã hết hạn. Liên hệ người phụ trách để được hỗ trợ.',
+    MAIL_RESEND_UNAVAILABLE: 'Email đang xử lý, còn trong thời gian chờ, đã hết hạn hoặc chứa dữ liệu được bảo vệ. Không tự thay mật khẩu khi gửi lại.',
     INTERVIEW_ROLE_MISMATCH: "Vai trò phân công phải khớp vai trò đã đạt phỏng vấn.",
     INTERN_NOT_RECRUITED: "Sinh viên phải đang hoạt động và đạt tuyển dụng cho vai trò được phân công.",
     ASSIGNMENT_CONFLICT: "Sinh viên đang có phân công hoạt động. Hãy chọn sinh viên còn trống.",
@@ -108,7 +137,25 @@ export function errorMessage(error: unknown): string {
     PLAN_ALREADY_PUBLISHED: "Phiên này đã có kế hoạch được publish. Vui lòng tải lại.",
     GENERATION_DESCRIPTION_REQUIRED: "Bổ sung mô tả cho từng Task trong bản nháp trước khi publish.",
     GENERATION_ACCEPTANCE_CRITERIA_REQUIRED: "Bổ sung tiêu chí chấp nhận cho từng Task trước khi publish.",
+    TASK_NOT_OWNED: "Bạn chỉ có thể cập nhật nhiệm vụ được giao cho mình.",
+    TASK_ACCESS_DENIED: "Bạn không có quyền cập nhật nhiệm vụ này.",
+    SUBMISSION_PENDING_REVIEW: "Bài nộp đang chờ giảng viên duyệt. Vui lòng chờ kết quả.",
+    SPRINT_HAS_OPEN_TASKS: "Sprint còn nhiệm vụ chưa hoàn thành. Hãy xử lý hết trước khi kết thúc Sprint.",
+    SPRINT_ACTIVE_EXISTS: "Đang có một Sprint khác hoạt động. Hoàn thành hoặc hủy Sprint đó trước.",
+    AI_RECOMMENDATION_NOT_AVAILABLE: "Chưa có khuyến nghị nào. Bấm “Cập nhật khuyến nghị” để tạo từ chỉ số hiện tại.",
+    AI_PROVIDER_RATE_LIMITED: "Dịch vụ AI đang quá tải. Vui lòng thử lại sau ít phút.",
+    AI_PROVIDER_TIMEOUT: "Dịch vụ AI phản hồi quá lâu. Vui lòng thử lại.",
+    AI_PROVIDER_UNAVAILABLE: "Dịch vụ AI chưa khả dụng. Vui lòng thử lại sau.",
   };
+  if (error.code === "TASK_DEPENDENCIES_PENDING") {
+    const blocked =
+      isRecord(error.details) && Array.isArray(error.details.blockedBy)
+        ? error.details.blockedBy.filter((x): x is string => typeof x === "string")
+        : [];
+    return blocked.length
+      ? `Chưa thể bắt đầu: nhiệm vụ ${blocked.join(", ")} cần được giảng viên xác nhận hoàn thành trước.`
+      : "Các nhiệm vụ phụ thuộc cần được giảng viên xác nhận hoàn thành trước.";
+  }
   if (workflowErrors[error.code]) return workflowErrors[error.code];
   switch (error.statusCode) {
     case 0:

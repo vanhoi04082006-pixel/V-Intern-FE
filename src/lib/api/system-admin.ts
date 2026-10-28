@@ -1,5 +1,5 @@
 import { request } from './client';
-import { array, boolean, nullable, number, record, string } from './parse';
+import { array, boolean, invalid, nullable, number, record, string } from './parse';
 
 export interface SealedContractIssue { code: string; detail: string }
 export function parseSystemContracts(raw: unknown) {
@@ -14,7 +14,12 @@ export function parseSystemContracts(raw: unknown) {
   };
 }
 export const getSystemContracts = (signal?: AbortSignal) => request('/admin/system/contracts', parseSystemContracts, { signal });
-export const validateSystemContractsDraft = (data: string) => request('/admin/system/contracts/validate', parseSystemContracts, { method: 'POST', body: { data } });
+export const validateSystemContractsDraft = (data: string) => request('/admin/system/contracts/validate', raw => {
+  const draft = record(raw);
+  if (draft.stored !== false) invalid();
+  // Draft validation is read-only and has no configured source; GET /contracts does.
+  return parseSystemContracts({ ...draft, source: 'Bản nháp kiểm tra — chưa lưu, chưa kích hoạt' });
+}, { method: 'POST', body: { data } });
 export function parseAiConfiguration(raw: unknown) { const v = record(raw), policy = record(v.policy); return { policy: { model: string(policy.model), timeoutMs: number(policy.timeoutMs), maxRetries: number(policy.maxRetries), version: number(policy.version) }, source: string(v.source), provider: nullable(v.provider, string), credentialsConfigured: boolean(v.credentialsConfigured), appliesTo: array(v.appliesTo, string) }; }
 export const getAiConfiguration = (signal?: AbortSignal) => request('/admin/ai-configuration', parseAiConfiguration, { signal });
 export const saveAiConfiguration = (policy: ReturnType<typeof parseAiConfiguration>['policy']) => request('/admin/ai-configuration', parseAiConfiguration, { method: 'PUT', body: policy });

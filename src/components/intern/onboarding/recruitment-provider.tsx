@@ -60,10 +60,11 @@ export function RecruitmentProvider({ children }: { children: ReactNode }) {
       const required = workspace.status === "recruitment_required";
       const viewingResult =
         pathname === "/intern/onboarding/result" && next.status === "passed";
-      const allowed = required
+      const viewingSchedule=pathname==='/intern/onboarding/role' && Boolean(next.interviewSchedule);
+      const allowed = viewingSchedule || (required
         ? pathname === "/intern/onboarding" ||
           pathname === "/intern/onboarding/role"
-        : pathname === target || viewingResult;
+        : pathname === target || viewingResult);
       if (!allowed) {
         router.replace(target);
         return;

@@ -1,7 +1,10 @@
 "use client";
+import { usePathname } from "next/navigation";
+import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
+import { InstructorNotice } from "@/components/instructor/instructor-ui";
 import { useCallback, useState } from "react";
 import * as api from "@/lib/api/management";
-import { PerformanceMemberPicker } from './performance-member-picker';
+import { PerformanceMemberPicker } from "./performance-member-picker";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -15,11 +18,19 @@ import {
   Empty,
   inputClass,
   Modal,
-  PageTitle,
   Pager,
   Panel,
 } from "./primitives";
+const evaluationLabels = {
+  draft: "Bản nháp",
+  submitted: "Đã nộp",
+  finalized: "Đã chốt",
+  open: "Đang mở",
+  closed: "Đã đóng",
+  archived: "Đã lưu trữ",
+};
 export function EvaluationManagement() {
+  const isInstructor = Boolean(usePathname()?.startsWith("/instructor"));
   const [page, setPage] = useState(1),
     [cycleId, setCycleId] = useState(""),
     [status, setStatus] = useState(""),
@@ -87,7 +98,16 @@ export function EvaluationManagement() {
             note="Thống kê trạng thái thuộc trang hiện tại. Điểm AI chỉ tham khảo; không được dùng thay điểm giảng viên."
           />
         )}
-      <div className="grid gap-4 xl:grid-cols-[280px_1fr]">
+      {isInstructor && (
+        <div className="mb-5">
+          <InstructorNotice title="Từ tiêu chí đến điểm chính thức">
+            Chọn kỳ đánh giá, chấm theo từng tiêu chí rồi lưu điểm. Chỉ nộp và
+            chốt khi bạn đã kiểm tra đủ minh chứng. Gợi ý AI được hiển thị riêng
+            để tham khảo.
+          </InstructorNotice>
+        </div>
+      )}
+      <div className="grid items-start gap-5 xl:grid-cols-[280px_minmax(0,1fr)]">
         <Panel title="Kỳ đánh giá">
           {cycles.loading ? (
             <LoadingState />
@@ -108,10 +128,11 @@ export function EvaluationManagement() {
                 {cycles.data.items.map((c) => (
                   <div
                     key={c.id}
-                    className={`mb-3 rounded-lg border p-3 ${cycleId === c.id ? "border-blue-200 bg-blue-50" : "border-slate-100"}`}
+                    className={`workspace-evaluation-cycle mb-3 rounded-lg border p-3 ${cycleId === c.id ? "border-blue-200 bg-blue-50" : "border-slate-100"}`}
                   >
                     <button
                       className="text-left text-sm font-semibold"
+                      aria-pressed={cycleId === c.id}
                       onClick={() => {
                         setCycleId(c.id);
                         setPage(1);
@@ -121,7 +142,9 @@ export function EvaluationManagement() {
                       <small className="block text-slate-400">{c.code}</small>
                     </button>
                     <div className="mt-2 flex items-center justify-between">
-                      <Badge>{c.status}</Badge>
+                      <Badge>
+                        {isInstructor ? evaluationLabels[c.status] : c.status}
+                      </Badge>
                       <button
                         className="text-xs text-blue-600"
                         onClick={() => setCycleEditor(c)}
@@ -161,7 +184,11 @@ export function EvaluationManagement() {
           >
             <option value="">Tất cả trạng thái</option>
             {["draft", "submitted", "finalized"].map((s) => (
-              <option key={s}>{s}</option>
+              <option key={s} value={s}>
+                {isInstructor
+                  ? evaluationLabels[s as keyof typeof evaluationLabels]
+                  : s}
+              </option>
             ))}
           </select>
           {evaluations.loading ? (
@@ -182,7 +209,11 @@ export function EvaluationManagement() {
                         className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 p-4"
                       >
                         <div>
-                          <Badge>{e.status}</Badge>
+                          <Badge>
+                            {isInstructor
+                              ? evaluationLabels[e.status]
+                              : e.status}
+                          </Badge>
                           <p className="mt-2 text-sm font-semibold">
                             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
                           </p>
@@ -335,7 +366,9 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
         onChange={(e) => setType(e.target.value)}
       >
         {["sprint", "midterm", "final"].map((t) => (
-          <option key={t}>{t}</option>
+          <option key={t} value={t}>
+            {{ sprint: "Theo Sprint", midterm: "Giữa kỳ", final: "Cuối kỳ" }[t]}
+          </option>
         ))}
       </select>
       <p className="text-sm text-slate-500">
@@ -354,6 +387,7 @@ function CycleEditor({
   cycle: ReturnType<typeof api.parseCycle>;
   onChanged: () => void;
 }) {
+  const isInstructor = Boolean(usePathname()?.startsWith("/instructor"));
   const criteria = useResource(
       useCallback((s: AbortSignal) => api.getCriteria(cycle.id, s), [cycle.id]),
     ),
@@ -370,7 +404,9 @@ function CycleEditor({
   return (
     <div className="space-y-4">
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <Badge>{cycle.status}</Badge>
+      <Badge>
+        {isInstructor ? evaluationLabels[cycle.status] : cycle.status}
+      </Badge>
       {cycle.status === "draft" && (
         <form
           className="flex gap-2"
@@ -425,7 +461,15 @@ function CycleEditor({
               void action.run(() => api.transitionCycle(cycle.id, status))
             }
           >
-            Chuyển kỳ sang {status}
+            {isInstructor
+              ? (
+                  {
+                    open: "Mở kỳ đánh giá",
+                    closed: "Đóng kỳ đánh giá",
+                    archived: "Lưu trữ kỳ",
+                  } as Record<string, string>
+                )[status]
+              : `Chuyển kỳ sang ${status}`}
           </button>
         ))}
       </div>
@@ -508,7 +552,7 @@ function CriterionEditor({
           </button>
           <button
             type="button"
-            className="text-sm text-red-600"
+            className="text-sm text-rose-600"
             disabled={action.busy}
             onClick={() =>
               void action.run(() => api.deleteCriterion(cycleId, c.id))
@@ -612,7 +656,12 @@ function NewEvaluation({
           }}
         >
           {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
-          <PerformanceMemberPicker label="Intern đánh giá" required value={internId} onChange={setInternId} />
+          <PerformanceMemberPicker
+            label="Intern đánh giá"
+            required
+            value={internId}
+            onChange={setInternId}
+          />
           <button className={buttonClass} disabled={action.busy || !internId}>
             Tạo bản nháp
           </button>
@@ -653,7 +702,7 @@ function EvaluationEditor({
     />
   ) : null;
 }
-function ScoreEditor({
+export function ScoreEditor({
   detail,
   reload,
 }: {
@@ -663,6 +712,7 @@ function ScoreEditor({
   };
   reload: () => void;
 }) {
+  const isInstructor = Boolean(usePathname()?.startsWith("/instructor"));
   const e = detail.evaluation,
     [scores, setScores] = useState<
       Record<string, { score: string; comment: string }>
@@ -685,6 +735,21 @@ function ScoreEditor({
       useState<ReturnType<typeof api.parseAiSuggestion>>();
   const action = useAction(),
     locked = e.status === "finalized";
+  const hasUnsavedChanges =
+    summary !== (e.summary ?? "") ||
+    detail.criteria.some((criterion) => {
+      const saved = e.scores.find(
+        (score) => score.criterionId === criterion.id,
+      );
+      const draft = scores[criterion.id];
+      return (
+        (draft.score === ""
+          ? Boolean(saved)
+          : !saved || Number(draft.score) !== saved.score) ||
+        draft.comment !== (saved?.comment ?? "")
+      );
+    });
+  const needsSave = isInstructor && !locked && hasUnsavedChanges;
   async function save() {
     const ok = await action.run(() =>
       api.saveEvaluation(e.id, {
@@ -701,15 +766,41 @@ function ScoreEditor({
     if (ok) reload();
   }
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_260px]">
+    <div
+      className={`${isInstructor ? "ins-score-editor " : ""}grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]`}
+    >
       <div className="space-y-4">
         {Boolean(action.error) && <ErrorState error={action.error} />}
         <div className="flex flex-wrap gap-3">
-          <Badge>{e.status}</Badge>
+          <Badge>{isInstructor ? evaluationLabels[e.status] : e.status}</Badge>
           <p className="font-bold">
             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
           </p>
         </div>
+        {isInstructor && (
+          <ol className="ins-decision-steps" aria-label="Quy trình đánh giá">
+            {(
+              [
+                ["draft", "Chấm & lưu"],
+                ["submitted", "Đã nộp"],
+                ["finalized", "Đã chốt"],
+              ] as const
+            ).map(([status, label]) => (
+              <li
+                key={status}
+                aria-current={e.status === status ? "step" : undefined}
+              >
+                {label}
+              </li>
+            ))}
+          </ol>
+        )}
+        {needsSave && (
+          <InstructorNotice title="Thay đổi chưa được lưu">
+            Lưu điểm và nhận xét trước khi nộp hoặc chốt, để kết quả chính thức
+            khớp với nội dung bạn đang xem.
+          </InstructorNotice>
+        )}
         <form
           className="space-y-4"
           onSubmit={(event) => {
@@ -719,8 +810,10 @@ function ScoreEditor({
         >
           {detail.criteria.map((c) => (
             <div key={c.id} className="rounded-lg border border-slate-100 p-3">
-              <p className="text-sm font-semibold">
-                {c.name} · Trọng số {c.weight}%
+              <p className="text-sm font-semibold">{c.name}</p>
+              <p className="mt-1 text-xs text-slate-500">
+                Trọng số {c.weight}% · Điểm tối đa {c.maxScore}
+                {c.isRequired ? " · Bắt buộc" : ""}
               </p>
               <label className="mt-2 block text-sm">
                 Điểm {c.name}
@@ -780,7 +873,7 @@ function ScoreEditor({
           {e.status === "draft" && (
             <button
               className={buttonClass}
-              disabled={action.busy}
+              disabled={action.busy || needsSave}
               onClick={() =>
                 void action
                   .run(() => api.advanceEvaluation(e.id, "submit"))
@@ -795,7 +888,7 @@ function ScoreEditor({
           {e.status === "submitted" && (
             <button
               className={buttonClass}
-              disabled={action.busy}
+              disabled={action.busy || needsSave}
               onClick={() =>
                 void action
                   .run(() => api.advanceEvaluation(e.id, "finalize"))
@@ -824,7 +917,7 @@ function ScoreEditor({
         <Can perm="ai.evaluation.assist">
           <button
             className={buttonClass}
-            disabled={action.busy}
+            disabled={action.busy || (isInstructor && locked)}
             onClick={() =>
               void action.run(async () =>
                 setSuggestion(await api.suggestEvaluation(e.id)),
@@ -834,6 +927,11 @@ function ScoreEditor({
             Yêu cầu gợi ý AI
           </button>
         </Can>
+        {isInstructor && locked && (
+          <p className="mt-3 text-xs leading-6 text-slate-500">
+            Đánh giá đã chốt. Gợi ý AI mới không còn khả dụng cho kết quả này.
+          </p>
+        )}
         {suggestion && (
           <div className="mt-4 space-y-3 text-sm">
             <p>{suggestion.summary}</p>

@@ -6,7 +6,9 @@
 @theme {
   --color-navy: #16243e;
   --color-brand: #0c67ed;
+  --color-brand-600: #0a57cb;
   --font-handwriting: var(--font-caveat), cursive;
+  --color-canvas: #f4f6fb;
 }
 
 html {

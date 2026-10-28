@@ -45,7 +45,7 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
           <span aria-hidden="true" className="mx-1.5 text-slate-300">
             |
           </span>
-          <span>Đạt yêu cầu khi Overall ≥ 70</span>
+          <span>Đậu khi trên 70 · 50–70: đề xuất vai trò khác · dưới 50: chưa đạt</span>
         </p>
       </div>
 
@@ -89,7 +89,7 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
               </span>
               <span
                 aria-hidden="true"
-                className="mt-0.5 text-[11px] font-semibold text-slate-400"
+                className="mt-0.5 text-[11px] font-semibold text-slate-500"
               >
                 / 100 Overall
               </span>
@@ -167,7 +167,7 @@ function ScoreRow({
       <div className="flex items-center justify-between gap-2">
         <dt className={cn("text-[13px] font-semibold text-slate-700", emphasized && "text-navy")}>
           {label}
-          <span className="ml-1.5 font-normal text-slate-400">({weight})</span>
+          <span className="ml-1.5 font-normal text-slate-500">({weight})</span>
         </dt>
         <dd
           className={cn(

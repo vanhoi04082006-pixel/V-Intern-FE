@@ -1,5 +1,9 @@
 "use client";
+import { CircleAlert } from "lucide-react";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
+import { btn, Spinner } from "@/components/product/primitives";
+
+/** Lỗi tải dữ liệu: thông điệp an toàn + chi tiết validation có giới hạn + retry. */
 export function ErrorState({
   error,
   onRetry,
@@ -14,31 +18,44 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="mx-auto my-8 max-w-xl rounded-xl border border-red-200 bg-white p-6 text-slate-700"
+      className="mx-auto my-8 max-w-xl rounded-2xl border border-rose-200/80 bg-white p-6 shadow-xs"
     >
-      <h2 className="font-bold text-navy">{title}</h2>
-      <p className="mt-2 text-sm">{errorMessage(error)}</p>
-      {validation.length > 0 && <ul className="mt-3 list-disc space-y-1 pl-5 text-xs">{validation.map((detail, index) => <li key={index}>{detail}</li>)}</ul>}
-      {onRetry && (
-        <button
-          type="button"
-          onClick={onRetry}
-          className="mt-4 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white"
-        >
-          Thử lại
-        </button>
-      )}
+      <div className="flex items-start gap-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rose-50 text-rose-600">
+          <CircleAlert size={20} aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-bold text-navy">{title}</h2>
+          <p className="mt-1.5 text-sm leading-6 text-slate-600">{errorMessage(error)}</p>
+          {validation.length > 0 && (
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-xs leading-5 text-slate-600">
+              {validation.map((detail, index) => <li key={index}>{detail}</li>)}
+            </ul>
+          )}
+          {onRetry && (
+            <button type="button" onClick={onRetry} className={`mt-4 ${btn("secondary", "sm")}`}>
+              Thử lại
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
+
+/** Trạng thái đang tải: spinner + nhãn, dùng được cho cả vùng nội dung lớn lẫn nhỏ. */
 export function LoadingState({
   label = "Đang tải dữ liệu...",
 }: {
   label?: string;
 }) {
   return (
-    <p role="status" className="p-8 text-center text-sm text-slate-500">
-      {label}
-    </p>
+    <div
+      role="status"
+      className="flex items-center justify-center gap-2.5 p-8 text-sm text-slate-500"
+    >
+      <Spinner className="size-4 text-blue-600" />
+      <span>{label}</span>
+    </div>
   );
 }

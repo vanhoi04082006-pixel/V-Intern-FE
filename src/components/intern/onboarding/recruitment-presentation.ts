@@ -58,6 +58,11 @@ export const RECRUITMENT_ROLES: readonly RecruitmentRole[] = [
     tone: "amber",
   },
 ];
+/** Legacy entries supply icon/art direction only, never the selectable catalog. */
+export function presentCareer(role: { code: string; label: string; description: string; requiredSkills: string[] }): RecruitmentRole {
+  const visual = RECRUITMENT_ROLES.find(item => item.id === role.code);
+  return { id: role.code, label: role.label, tagline: role.description || visual?.tagline || 'Khám phá yêu cầu và kỹ năng cho vị trí này.', tags: role.requiredSkills.slice(0, 3), icon: visual?.icon ?? Compass, tone: visual?.tone ?? 'blue' };
+}
 export const ONBOARDING_STEPS = [
   { id: "welcome", label: "Chào mừng", description: "Giới thiệu quy trình" },
   { id: "role", label: "Chọn vai trò", description: "Vị trí ứng tuyển" },
@@ -113,5 +118,6 @@ export const WELCOME_GUIDANCE_ITEMS = [
   "Theo dõi quy trình qua bốn bước phía trên.",
   "Câu trả lời được lưu vào hệ thống khi bạn gửi.",
   "Điểm và quyết định tuyển dụng được xử lý trên hệ thống.",
-  "Số lần thử và thời gian chờ được hiển thị theo trạng thái tuyển dụng của bạn.",
+  "Dưới 50 điểm: chưa đạt. Từ 50 đến 70: AI đề xuất vai trò khác. Trên 70: đậu.",
+  "Tối đa 3 lượt tổng cộng; đổi vai trò không đặt lại lượt. Thời gian chờ được hiển thị trước lần tiếp theo.",
 ];

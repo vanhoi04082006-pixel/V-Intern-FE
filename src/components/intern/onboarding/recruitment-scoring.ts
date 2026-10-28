@@ -2,7 +2,7 @@
  * Công thức tính điểm tuyển dụng — NGUỒN TRUTH DUY NHẤT cho business rule:
  *
  *   Overall = 70% × Technical + 30% × Soft Skill
- *   Đậu khi Overall >= 70, trượt khi Overall < 70
+ *   >70: đậu; 50..70: AI đề xuất vai trò khác; <50: chưa đạt.
  *
  * Business rule thắng con số hiển thị trong reference image (ảnh tham chiếu
  * ghi "81.2" cho 85/72 — SAI toán học, đúng là 81.1). Vì vậy Overall LUÔN
@@ -38,9 +38,9 @@ export function calculateOverallScore(
   return Math.round(overall * 10) / 10;
 }
 
-/** `true` khi Overall đạt ngưỡng trúng tuyển (>= 70). */
+/** A display helper; live eligibility always uses the backend's persisted decision. */
 export function isPassed(overall: number): boolean {
-  return overall >= PASS_THRESHOLD;
+  return overall > PASS_THRESHOLD;
 }
 
 /**

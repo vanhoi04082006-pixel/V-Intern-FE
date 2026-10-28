@@ -51,15 +51,15 @@ export function SectionCard({
     <section
       aria-labelledby={id}
       className={cn(
-        "flex min-w-0 flex-col rounded-xl border border-slate-200 bg-white",
+        "workspace-section flex min-w-0 flex-col rounded-xl border border-slate-200 bg-white",
         SECTION_CARD_SHADOW,
-        className
+        className,
       )}
     >
       <div
         className={cn(
-          "flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 px-4 py-3.5 sm:px-5",
-          headerClassName
+          "workspace-section-header flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 px-4 py-3.5 sm:px-5",
+          headerClassName,
         )}
       >
         <h2
@@ -70,7 +70,7 @@ export function SectionCard({
             aria-hidden="true"
             className={cn(
               "grid size-8 shrink-0 place-items-center rounded-lg",
-              toneStyle.tile
+              toneStyle.tile,
             )}
           >
             <Icon className={cn("size-[18px]", toneStyle.icon)} />
@@ -155,7 +155,7 @@ export function PillButton({
         variant === "soft"
           ? "bg-blue-50 text-brand hover:bg-blue-100"
           : "border border-slate-200 text-slate-600 hover:bg-slate-50",
-        className
+        className,
       )}
     >
       {children}
@@ -179,7 +179,7 @@ export function GhostIconButton({
       aria-label={label}
       className={cn(
         "grid size-8 shrink-0 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
-        className
+        className,
       )}
     >
       {children}
@@ -206,7 +206,7 @@ export function StatusBadge({
       className={cn(
         "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold",
         toneStyle.soft,
-        className
+        className,
       )}
     >
       {withDot ? (
@@ -252,7 +252,7 @@ export function ProgressBar({
       aria-hidden="true"
       className={cn(
         "h-1.5 w-full overflow-hidden rounded-full bg-slate-100",
-        className
+        className,
       )}
     >
       <div
@@ -291,7 +291,7 @@ export function Avatar({
         "grid size-9 shrink-0 place-items-center rounded-full text-xs font-bold",
         toneStyle.tile,
         toneStyle.icon,
-        className
+        className,
       )}
     >
       {initials}

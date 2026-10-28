@@ -96,7 +96,12 @@ export function AcademicPicker({
       {Boolean(rows.error) && (
         <ErrorState error={rows.error} onRetry={rows.reload} />
       )}{" "}
-      {rows.data && <Pager {...rows.data} onChange={setPage} />}
+      {rows.data && rows.data.totalPages > 1 && (
+        <Pager {...rows.data} onChange={setPage} />
+      )}
+      {rows.data && rows.data.totalPages <= 1 && (
+        <p className="text-xs text-slate-400">{rows.data.total} bản ghi</p>
+      )}
     </div>
   );
 }

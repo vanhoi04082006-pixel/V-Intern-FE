@@ -2,8 +2,10 @@
 import { useEffect, useState } from "react";
 import { remainingSeconds, type InterviewSession } from "@/lib/api/recruitment";
 import { useRecruitmentFlow } from "./recruitment-provider";
+import { RecruitmentPolicy } from "./recruitment-policy";
 import { roleLabel } from "@/lib/api/workspace";
 import { ConversationInterview } from "./conversation-interview";
+import { ScheduledInterview } from './scheduled-interview';
 function InterviewCountdown({ session }: { session: InterviewSession }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -37,6 +39,7 @@ export function InterviewStep() {
   } = useRecruitmentFlow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  if (!interview && profile.interviewSchedule) return <ScheduledInterview/>;
   if (evaluating) return (
     <section className="mx-auto max-w-xl rounded-2xl border border-blue-100 bg-white p-10 text-center shadow-sm" aria-busy="true">
       <div role="status" aria-label="AI đang chấm bài" aria-live="polite">
@@ -54,6 +57,7 @@ export function InterviewStep() {
         <h1 className="text-2xl font-bold text-navy">
           Chưa có phiên phỏng vấn
         </h1>
+        <RecruitmentPolicy attemptNumber={profile.attemptNumber} attemptsRemaining={profile.attemptsRemaining} />
         <button
           type="button"
           disabled={busy || profile.attemptsRemaining <= 0}
@@ -80,7 +84,7 @@ export function InterviewStep() {
             Phỏng vấn cùng AI Recruiter
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            {roleLabel(session.roleCode)} · Lần {session.attemptNumber} ·{" "}
+            {(profile.selectedRole === session.roleCode ? profile.selectedRoleLabel : null) ?? roleLabel(session.roleCode)} · Lần {session.attemptNumber} ·{" "}
             {questions.filter((q) => q.answered).length}/{session.questionCount}{" "}
             câu đã lưu
           </p>
@@ -90,7 +94,7 @@ export function InterviewStep() {
       {notice && (
         <p
           role="alert"
-          className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+          className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-700"
         >
           {notice}
         </p>

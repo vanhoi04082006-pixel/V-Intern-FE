@@ -4,11 +4,13 @@ import { SprintDelivery, SprintWorkspace } from '../sprint-workspace';
 import { getSprint, listTasks } from '@/lib/api/delivery';
 import { getMembers } from '@/lib/api/academic';
 import { listSessionWork } from '@/lib/api/session-work';
+import { transitionSprint } from '@/lib/api/management';
 import { clearSession, setSession } from '@/lib/auth/session';
 
 vi.mock('@/lib/api/delivery', async original => ({ ...await original<typeof import('@/lib/api/delivery')>(), getSprint: vi.fn(), listTasks: vi.fn() }));
 vi.mock('@/lib/api/academic', async original => ({ ...await original<typeof import('@/lib/api/academic')>(), getMembers: vi.fn() }));
 vi.mock('@/lib/api/session-work', async original => ({ ...await original<typeof import('@/lib/api/session-work')>(), listSessionWork: vi.fn() }));
+vi.mock('@/lib/api/management', async original => ({ ...await original<typeof import('@/lib/api/management')>(), transitionSprint: vi.fn() }));
 vi.mock('@/components/product/sprint-overview', () => ({ SprintOverview: ({ onManage }: { onManage: () => void }) => <><a href="#sprint-task-list">Xem tất cả task</a><button onClick={onManage}>Quản lý task</button></> }));
 vi.mock('@/components/product/sprint-management', () => ({ TaskManagement: ({ projectId, sprintId }: { projectId: string; sprintId: string }) => <p>Quản lý {projectId}/{sprintId}</p> }));
 vi.mock('@/components/product/intern-work', () => ({ TaskDetail: ({ id }: { id: string }) => <p>Chi tiết {id}</p> }));
@@ -23,6 +25,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'projects.view', 'sessions.view', 'tasks.view', 'tasks.manage'] });
   vi.mocked(getSprint).mockResolvedValue(sprint);
+  vi.mocked(transitionSprint).mockResolvedValue({ ...sprint, description: null, status: 'active' });
   vi.mocked(getMembers).mockResolvedValue([{ userId: 'MEMBER-1', displayName: 'Lan', email: 'lan@example.test', role: 'frontend' }]);
   vi.mocked(listSessionWork).mockImplementation(async q => ({ items: [task], total: 12, page: q.page ?? 1, pageSize: 10, totalPages: 2 }));
   vi.mocked(listTasks).mockResolvedValue({ items: [task], total: 1, page: 1, pageSize: 10, totalPages: 1 });
@@ -32,6 +35,7 @@ afterEach(() => act(() => clearSession()));
 it('shows the complete Sprint context, team, blockers and functional management area', async () => {
   render(<SprintWorkspace id="sp1" basePath="/admin" />);
   expect(await screen.findByText('Hoàn thành validation')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Kích hoạt' })).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Mở phiên thực tập →' })).toHaveAttribute('href', '/admin/sessions/s1');
   expect(await screen.findByText('Frontend Developer')).toBeInTheDocument();
   expect(await screen.findByText('Chờ phụ thuộc')).toBeInTheDocument();
@@ -41,6 +45,28 @@ it('shows the complete Sprint context, team, blockers and functional management 
   expect(await screen.findByText('Quản lý p1/sp1')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Ghi chú' }));
   expect(await screen.findByText('Chi tiết t1')).toBeInTheDocument();
+});
+
+it('lets a sprint manager activate a planned Sprint from its direct detail route and refreshes its status', async () => {
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  vi.mocked(getSprint).mockResolvedValueOnce(sprint).mockResolvedValue({ ...sprint, status: 'active' });
+  render(<SprintWorkspace id="sp1" />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Kích hoạt' }));
+  await waitFor(() => expect(transitionSprint).toHaveBeenCalledWith('sp1', 'active'));
+  expect(await screen.findByText('Đang chạy')).toBeInTheDocument();
+  expect(getSprint).toHaveBeenCalledTimes(2);
+  expect(screen.queryByRole('button', { name: 'Kích hoạt' })).not.toBeInTheDocument();
+});
+
+it('keeps the planned Sprint and allows retry when activation is rejected', async () => {
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  vi.mocked(transitionSprint).mockRejectedValue(new Error('Activation rejected'));
+  render(<SprintWorkspace id="sp1" />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Kích hoạt' }));
+  expect(await screen.findByRole('alert')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Kích hoạt' })).toBeEnabled();
+  expect(getSprint).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText('Đang chạy')).not.toBeInTheDocument();
 });
 
 it('paginates all Sprint tasks on the server and resets to page one after filtering', async () => {

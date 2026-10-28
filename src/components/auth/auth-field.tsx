@@ -59,7 +59,7 @@ export function AuthField({
             "focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/25",
             error
               ? "border-rose-300 focus-visible:border-rose-400 focus-visible:ring-rose-200"
-              : "border-[#DDE3ED]",
+              : "border-slate-200",
             inputProps.disabled && "cursor-not-allowed bg-slate-50"
           )}
         />

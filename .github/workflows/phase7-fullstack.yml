@@ -1,7 +1,7 @@
-﻿name: Project-first full-stack gate
+name: Project-first full-stack gate
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/ui-ux-overhaul, 'codex/**']
   push:
     branches: [main, feat/full-product-fe-nest-integration]
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE
       # Update only through a reviewed compatibility PR; see docs/testing/project-first-fullstack-gate.md.
-      COMPATIBLE_BE_SHA: 0469793897caadb43de783cbf4ff16776c57beef
+      COMPATIBLE_BE_SHA: a81de95e3eb9602450abc428f37bdf3f1188aada
       NODE_ENV: test
       DB_HOST: localhost
       DB_PORT: "1433"
@@ -152,6 +152,16 @@ jobs:
       - name: 08 - Administrator workflows
         working-directory: V-INTERN-FE
         run: node scripts/phase7-admin-live.mjs
+      - name: Dynamic career catalog acceptance
+        working-directory: V-INTERN-FE
+        run: node scripts/career-roles-live.mjs
+      - name: Knowledge authoring acceptance
+        working-directory: V-INTERN-FE
+        run: node scripts/knowledge-library-live.mjs
+
+      - name: G2 mini-project authoring and pinned learner package
+        working-directory: V-INTERN-FE
+        run: node scripts/mini-project-library-live.mjs
       - name: 09 - Role navigation and routes
         working-directory: V-INTERN-FE
         run: node scripts/phase7-navigation-live.mjs

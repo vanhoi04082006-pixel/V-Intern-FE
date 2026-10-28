@@ -1,6 +1,14 @@
 "use client";
 import { useCallback, useState } from "react";
-import { Flag, Clock, ChevronRight, GitBranch } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Gauge,
+  Flag,
+  GitBranch,
+  Info,
+  SquareKanban,
+} from "lucide-react";
 import {
   listTasks,
   statusLabels,
@@ -9,53 +17,92 @@ import {
   type TaskStatus,
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
-import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Empty } from "./primitives";
+import { ErrorState } from "@/components/shared/data-state";
+import { InlineAlert } from "./primitives";
+import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
+import { useOwnTaskDrop, type OwnTaskOpenIntent } from "./use-own-task-drop";
+import { StudentProgress } from "@/components/intern/student-ui";
+import { useInternWorkspaceContext } from "@/components/intern/intern-workspace-context";
+import { TaskDeadline } from "@/components/workspace/task-deadline";
 
-const tones: Record<TaskStatus, string> = {
-  todo: "border-t-slate-400",
-  doing: "border-t-blue-500",
-  review: "border-t-amber-500",
-  done: "border-t-emerald-500",
-};
 export function OwnKanban({
   search,
   priority,
   onOpen,
   revision = 0,
+  onUpdated,
 }: {
   search: string;
   priority: string;
-  onOpen: (id: string) => void;
+  onOpen: (id: string, intent?: OwnTaskOpenIntent) => void;
   revision?: number;
+  onUpdated?: () => void;
 }) {
+  const [moved, setMoved] = useState(0);
+  const workspace = useInternWorkspaceContext();
+  const drop = useOwnTaskDrop(() => {
+    setMoved((value) => value + 1);
+    workspace?.reload();
+    onUpdated?.();
+  }, onOpen);
   return (
-    <div className="mt-4 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {taskStatuses.map((status) => (
-        <KanbanColumn
-          key={`${status}-${search}-${priority}`}
-          status={status}
-          search={search}
-          priority={priority}
-          revision={revision}
-          onOpen={onOpen}
-        />
-      ))}
-    </div>
+    <>
+      <div className="student-notice">
+        <Info size={16} className="shrink-0" aria-hidden="true" />
+        <p>
+          Kéo thẻ từ <strong>Cần làm</strong> sang <strong>Đang làm</strong>.
+          Thả sang <strong>Chờ duyệt</strong> sẽ mở biểu mẫu nộp bài; thẻ chỉ
+          chuyển trạng thái sau khi nộp thành công. Giảng viên duyệt{" "}
+          <strong>Hoàn thành</strong>. Bạn cũng có thể bấm thẻ để cập nhật.{" "}
+          <span className="student-board-touch-hint">
+            Trên điện thoại, vuốt ngang để xem các cột.
+          </span>
+        </p>
+      </div>
+      {drop.error && (
+        <div className="mt-3">
+          <InlineAlert tone="danger">{drop.error}</InlineAlert>
+        </div>
+      )}
+      {drop.busy && (
+        <p role="status" className="mt-3 text-sm text-slate-500">
+          Đang cập nhật nhiệm vụ…
+        </p>
+      )}
+      <div className="student-board mt-4">
+        {taskStatuses.map((status) => (
+          <KanbanColumn
+            key={`${status}-${search}-${priority}`}
+            status={status}
+            search={search}
+            priority={priority}
+            revision={revision + moved}
+            onOpen={onOpen}
+            onDrop={drop.move}
+            busy={drop.busy}
+          />
+        ))}
+      </div>
+    </>
   );
 }
+
 function KanbanColumn({
   status,
   search,
   priority,
   onOpen,
   revision,
+  onDrop,
+  busy,
 }: {
   status: TaskStatus;
   search: string;
   priority: string;
   onOpen: (id: string) => void;
   revision: number;
+  onDrop: (id: string, to: TaskStatus) => void;
+  busy: boolean;
 }) {
   const [page, setPage] = useState(1);
   const data = useResource(
@@ -81,83 +128,139 @@ function KanbanColumn({
     ),
   );
   return (
-    <section
-      aria-label={statusLabels[status]}
-      className={`min-w-0 rounded-2xl border border-t-4 border-slate-200 bg-slate-50/70 p-3 ${tones[status]}`}
+    <DropColumn
+      status={status}
+      canDrop={(from) => !busy && canOwnDrop(from, status)}
+      onDrop={onDrop}
+      className={`student-board-column student-column-${status}`}
     >
-      <header className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-bold text-navy">{statusLabels[status]}</h2>
-        <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600">
-          {data.data?.total ?? "…"}
-        </span>
-      </header>
-      {data.loading ? (
-        <LoadingState />
-      ) : data.error ? (
-        <ErrorState error={data.error} onRetry={data.reload} />
-      ) : !data.data?.items.length ? (
-        <Empty>Chưa có công việc.</Empty>
-      ) : (
-        <div className="space-y-3">
-          {data.data.items.map((t) => (
+      <section aria-label={statusLabels[status]}>
+        <header className="student-board-head">
+          <h2>
+            {statusLabels[status]}
+            <span className="student-board-count">
+              {data.data?.total ?? "…"}
+            </span>
+          </h2>
+          <p>{{ todo: "Đọc yêu cầu và chuẩn bị", doing: "Tập trung từng nhiệm vụ", review: "Đã nộp, chờ phản hồi", done: "Được giảng viên xác nhận" }[status]}</p>
+        </header>
+        {data.loading ? (
+          <div className="space-y-2.5" role="status">
+            <span className="sr-only">
+              Đang tải cột {statusLabels[status]}…
+            </span>
+            {[0, 1].map((card) => (
+              <div key={card} className="student-skeleton h-[118px]" />
+            ))}
+          </div>
+        ) : data.error ? (
+          <ErrorState error={data.error} onRetry={data.reload} />
+        ) : !data.data?.items.length ? (
+          <p className="student-board-empty">
+            {
+              {
+                todo: "Chưa có công việc cần bắt đầu.",
+                doing: "Sẵn sàng? Kéo một thẻ Cần làm vào đây.",
+                review: "Nộp bài để nhận phản hồi từ giảng viên.",
+                done: "Công việc được duyệt sẽ xuất hiện ở đây.",
+              }[status]
+            }
+          </p>
+        ) : (
+          <div className="space-y-2.5">
+            {data.data.items.map((t) => (
+              <button
+                key={t.id}
+                {...(!busy && (t.status === "todo" || t.status === "doing")
+                  ? draggableTask(t.id, t.status)
+                  : {})}
+                onClick={() => onOpen(t.id)}
+                className="student-board-card group w-full text-left"
+              >
+                <div className="student-board-card-head">
+                  <span className="student-work-code">{t.code}</span>
+                  <span
+                    className={`inline-flex items-center gap-1 text-[10.5px] font-semibold ${
+                      t.priority === "critical" || t.priority === "high"
+                        ? "text-rose-700"
+                        : t.priority === "medium"
+                          ? "text-amber-700"
+                          : "text-slate-500"
+                    }`}
+                  >
+                    <Flag size={11} aria-hidden="true" />
+                    {priorityLabels[t.priority]}
+                  </span>
+                </div>
+                <h3>{t.title}</h3>
+                <p className="student-board-card-foot">
+                  <SquareKanban size={11} aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1">
+                    Sprint: {t.sprint?.name ?? "Chưa gắn Sprint"}
+                  </span>
+                </p>
+                <p className="student-board-card-foot workspace-board-repository">
+                  <GitBranch size={12} aria-hidden="true" />
+                  <span className="min-w-0 break-words">
+                    {t.repository
+                      ? `${t.repository.fullName ?? "Repository"} · ${
+                          {
+                            ready: "Sẵn sàng",
+                            provisioning: "Đang tạo repository",
+                            failed: "Cần giảng viên xử lý",
+                          }[t.repository.status]
+                        }`
+                      : "Chưa có repository cho phiên"}
+                  </span>
+                </p>
+                <div className="mt-3">
+                  <StudentProgress
+                    value={t.progress}
+                    label="Tiến độ"
+                    tone={t.progress >= 100 ? "green" : "blue"}
+                  />
+                </div>
+                <div className="mt-2.5 flex items-center justify-between border-t border-slate-100 pt-2.5 text-[10.5px] text-slate-500">
+                  <TaskDeadline value={t.dueDate} status={t.status} compact />
+                  <span className="workspace-task-points"><Gauge size={12} aria-hidden="true" />{t.storyPoints ?? '—'} điểm</span>
+                  <ChevronRight
+                    size={14}
+                    className="text-blue-500 transition-transform group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+        {data.data && data.data.totalPages > 1 && (
+          <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-slate-500">
             <button
-              key={t.id}
-              onClick={() => onOpen(t.id)}
-              className="group w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              type="button"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="student-action student-action-secondary student-action-sm"
+              aria-label={`Trang trước, cột ${statusLabels[status]}`}
             >
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-blue-700">{t.code}</span>
-                <span
-                  className={`inline-flex items-center gap-1 ${t.priority === "critical" || t.priority === "high" ? "text-rose-700" : "text-slate-500"}`}
-                >
-                  <Flag size={12} />
-                  {priorityLabels[t.priority]}
-                </span>
-              </div>
-              <p className="my-3 text-sm font-semibold leading-6 text-navy">
-                {t.title}
-              </p>
-              <p className="mb-2 break-words text-xs text-slate-500">Sprint: {t.sprint?.name ?? 'Chưa gắn Sprint'}</p>
-              <div className="mb-3 flex items-start gap-1.5 text-xs text-slate-600">
-                <GitBranch size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
-                <span className="min-w-0 break-words">{t.repository
-                  ? `${t.repository.fullName} · ${{ ready: 'Sẵn sàng', provisioning: 'Đang tạo repository', failed: 'Cần giảng viên xử lý' }[t.repository.status]}`
-                  : 'Chưa có repository cho phiên'}</span>
-              </div>
-              <p className="mb-1 text-right text-xs font-semibold text-slate-600">{t.progress}%</p>
-              <div className="h-1 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className="h-full rounded-full bg-blue-500"
-                  style={{ width: `${t.progress}%` }}
-                />
-              </div>
-              <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
-                <Clock size={12} />
-                {t.dueDate
-                  ? new Date(t.dueDate).toLocaleDateString("vi-VN")
-                  : "Chưa có hạn"}
-                <ChevronRight size={14} className="ml-auto text-blue-500" />
-              </div>
+              <ChevronLeft size={13} aria-hidden="true" />
+              Trước
             </button>
-          ))}
-        </div>
-      )}
-      {data.data && data.data.totalPages > 1 && (
-        <div className="mt-4 flex justify-between text-xs">
-          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            Trước
-          </button>
-          <span>
-            {page}/{data.data.totalPages}
-          </span>
-          <button
-            disabled={page >= data.data.totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Sau
-          </button>
-        </div>
-      )}
-    </section>
+            <span className="tabular-nums">
+              {page}/{data.data.totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={page >= data.data.totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="student-action student-action-secondary student-action-sm"
+              aria-label={`Trang sau, cột ${statusLabels[status]}`}
+            >
+              Sau
+              <ChevronRight size={13} aria-hidden="true" />
+            </button>
+          </div>
+        )}
+      </section>
+    </DropColumn>
   );
 }

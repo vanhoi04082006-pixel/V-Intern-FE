@@ -19,6 +19,9 @@ function parseSubmission(value: unknown) {
     summary: p.string(v.summary),
     status: p.oneOf(v.status, ["submitted", "approved", "rework", "withdrawn"]),
     score: p.nullable(v.score, p.number),
+    ...(v.baseScore === undefined ? {} : { baseScore: p.nullable(v.baseScore, p.number) }),
+    ...(v.latePenalty === undefined ? {} : { latePenalty: p.nullable(v.latePenalty, p.number) }),
+    ...(v.participationIncidentId === undefined ? {} : { participationIncidentId: p.nullable(v.participationIncidentId, p.string) }),
     feedback: p.nullable(v.feedback, p.string),
     headSha: p.nullable(v.headSha ?? null, p.string),
     ...(v.sourceRef === undefined ? {} : { sourceRef: p.nullable(v.sourceRef, p.string) }),
@@ -52,6 +55,7 @@ export const confirmCodeReview = (
     feedback: string;
     taskVersion: number;
     overrideReason?: string;
+    confirmedLatePenalty?: number;
   },
 ) =>
   request(`/submissions/${id}/review`, parseSubmission, {

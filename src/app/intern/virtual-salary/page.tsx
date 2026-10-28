@@ -1,12 +1,12 @@
 import { InternEntry } from "@/components/product/intern-entry";
 import { Salary } from "@/components/product/outcomes";
-import { PageTitle } from "@/components/product/primitives";
+import { StudentOutcomeHeading } from "@/components/intern/student-outcome-heading";
 export default function Page() {
   return (
     <InternEntry>
-      <PageTitle
+      <StudentOutcomeHeading
         title="Lương ảo"
-        subtitle="Số dư và sổ giao dịch VND_VIRTUAL từ hệ thống"
+        subtitle="Theo dõi tích lũy và các thay đổi trong sổ giao dịch của chương trình"
       />
       <Salary />
     </InternEntry>

@@ -138,7 +138,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         </p>
         <Link
           href="/login"
-          className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-[#0A57CB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2"
+          className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2"
         >
           Đăng nhập ngay
           <ArrowRight className="size-[18px]" aria-hidden="true" />
@@ -342,7 +342,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           disabled={isSubmitting}
           className={cn(
             "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors",
-            "hover:bg-[#0A57CB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2",
+            "hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-80"
           )}
         >
@@ -363,9 +363,9 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         </button>
 
         <div className="mt-4 flex items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-[#E8EDF3]" />
+          <span className="h-px flex-1 bg-slate-200" />
           <span className="text-[13px] text-slate-500">Hoặc</span>
-          <span className="h-px flex-1 bg-[#E8EDF3]" />
+          <span className="h-px flex-1 bg-slate-200" />
         </div>
 
         <button
@@ -382,7 +382,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
               setStatusMessage("");
             }
           }}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-[10px] border border-[#DDE3ED] bg-white text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-[10px] border border-slate-200 bg-white text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <GoogleIcon />
           Tiếp tục với Google
@@ -401,7 +401,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         Đã có tài khoản?{" "}
         <Link
           href="/login"
-          className="rounded-sm font-semibold text-brand underline-offset-2 transition-colors hover:text-[#0A57CB] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          className="rounded-sm font-semibold text-brand underline-offset-2 transition-colors hover:text-brand-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         >
           Đăng nhập
         </Link>

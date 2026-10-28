@@ -7,16 +7,36 @@ import {
   type InternWorkspace as Workspace,
 } from "@/lib/api/workspace";
 import { getSessionUser } from "@/lib/auth/session";
-import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { LoadingState, ErrorState } from "@/components/shared/data-state";
 import { EmptyInternWorkspace } from "./empty-intern-workspace";
 import { ActiveEntry } from "./active-entry";
 import { InternShell } from "./intern-shell";
-import { WaitingRecruitmentSummary } from './waiting-recruitment-summary';
-import {
-  waitingPresentation,
-} from "./workspace-presentation";
+import { WaitingRecruitmentSummary } from "./waiting-recruitment-summary";
+import { HistoryEntry } from './history-entry';
+import { waitingPresentation } from "./workspace-presentation";
+import { useInternWorkspaceContext } from "./intern-workspace-context";
+
+/**
+ * Dashboard entry.
+ *
+ * Under the persistent `/intern` layout the workspace is already loaded, so
+ * this only renders the dashboard body. Standalone rendering (unit tests and
+ * defensive fallbacks) keeps the previous guard/shell behaviour.
+ */
 export function InternWorkspace() {
-  const router = useRouter();
+  const embedded = useInternWorkspaceContext();
+  return embedded ? (
+    <InternWorkspaceContent
+      data={embedded.workspace}
+      reload={embedded.reload}
+      refreshing={embedded.refreshing}
+    />
+  ) : (
+    <StandaloneInternWorkspace />
+  );
+}
+
+function StandaloneInternWorkspace() {
   const [data, setData] = useState<Workspace | null>(null);
   const [error, setError] = useState<unknown>();
   const [attempt, setAttempt] = useState(0);
@@ -24,18 +44,13 @@ export function InternWorkspace() {
     const controller = new AbortController();
     void getWorkspace(controller.signal)
       .then((workspace) => {
-        const target = lifecyclePath(workspace);
-        if (target !== "/intern") {
-          router.replace(target);
-          return;
-        }
-        setData(workspace);
+        if (!controller.signal.aborted) setData(workspace);
       })
       .catch((e) => {
         if (!controller.signal.aborted) setError(e);
       });
     return () => controller.abort();
-  }, [attempt, router]);
+  }, [attempt]);
   const reload = () => {
     setError(undefined);
     setData(null);
@@ -44,12 +59,45 @@ export function InternWorkspace() {
   if (error) return <ErrorState error={error} onRetry={reload} />;
   if (!data)
     return <LoadingState label="Đang xác định trạng thái thực tập..." />;
-  const user = getSessionUser();
-  if (!user) return <LoadingState label="Đang kiểm tra phiên đăng nhập..." />;
   const waiting = data.status === "unassigned";
   return (
-    <InternShell active={!waiting} outcomesAvailable={!waiting || Boolean(data.hasAssignmentHistory)}>
-      {waiting ? <EmptyInternWorkspace state={waitingPresentation(data, user)} onReload={reload} recruitment={<WaitingRecruitmentSummary />} /> : <ActiveEntry workspace={data} />}
+    <InternShell
+      active={!waiting}
+      outcomesAvailable={!waiting || Boolean(data.hasAssignmentHistory)}
+    >
+      <InternWorkspaceContent data={data} reload={reload} />
     </InternShell>
+  );
+}
+
+function InternWorkspaceContent({
+  data,
+  reload,
+  refreshing = false,
+}: {
+  data: Workspace;
+  reload: () => void;
+  refreshing?: boolean;
+}) {
+  const router = useRouter();
+  const target = lifecyclePath(data);
+  const user = getSessionUser();
+  useEffect(() => {
+    if (target !== "/intern") router.replace(target);
+  }, [router, target]);
+  if (!user)
+    return <LoadingState label="Đang kiểm tra phiên đăng nhập..." />;
+  if (target !== "/intern")
+    return <LoadingState label="Đang chuyển đến bước tuyển dụng..." />;
+  const waiting = data.status === "unassigned";
+  if (waiting && data.hasAssignmentHistory) return <HistoryEntry onReload={reload} refreshing={refreshing} />;
+  return waiting ? (
+    <EmptyInternWorkspace
+      state={waitingPresentation(data, user)}
+      onReload={reload}
+      recruitment={<WaitingRecruitmentSummary onReload={reload} />}
+    />
+  ) : (
+    <ActiveEntry workspace={data} />
   );
 }

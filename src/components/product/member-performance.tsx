@@ -1,4 +1,5 @@
 "use client";
+import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/lib/auth/api-client";
 import {
@@ -10,9 +11,8 @@ import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
 import { Metrics } from "./outcomes";
-import { StudentPerformanceDetail } from './student-performance-detail';
+import { StudentPerformanceDetail } from "./student-performance-detail";
 import {
-  PageTitle,
   Panel,
   Empty,
   Modal,
@@ -20,21 +20,43 @@ import {
   inputClass,
   Pager,
 } from "./primitives";
-export function MemberPerformance({ reports = false, initialProjectId = "", initialSessionId = "", basePath = '/instructor', lockedScope = false, embedded = false }: { reports?: boolean; initialProjectId?: string; initialSessionId?: string; basePath?: '/instructor' | '/admin'; lockedScope?: boolean; embedded?: boolean }) {
+export function MemberPerformance({
+  reports = false,
+  initialProjectId = "",
+  initialSessionId = "",
+  basePath = "/instructor",
+  lockedScope = false,
+  embedded = false,
+}: {
+  reports?: boolean;
+  initialProjectId?: string;
+  initialSessionId?: string;
+  basePath?: "/instructor" | "/admin";
+  lockedScope?: boolean;
+  embedded?: boolean;
+}) {
   const [projectId, setProjectId] = useState(initialProjectId),
     [sessionId, setSessionId] = useState(initialSessionId),
     [search, setSearch] = useState(""),
     [from, setFrom] = useState(""),
     [to, setTo] = useState(""),
     [selected, setSelected] = useState<string>();
-  const [page, setPage] = useState(1), [debounced, setDebounced] = useState('');
-  useEffect(() => { const timer = setTimeout(() => { setDebounced(search.trim()); setPage(1); }, 300); return () => clearTimeout(timer); }, [search]);
+  const [page, setPage] = useState(1),
+    [debounced, setDebounced] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounced(search.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
   const rows = useResource(
     useCallback(
       (signal: AbortSignal) =>
         listPerformance(
           new URLSearchParams({
-            page: String(page), pageSize: '10',
+            page: String(page),
+            pageSize: "10",
             ...(projectId ? { projectId } : {}),
             ...(sessionId ? { sessionId } : {}),
             ...(from ? { from } : {}),
@@ -80,19 +102,31 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
   }
   return (
     <>
-      {!embedded && <PageTitle
-        title={reports ? "Báo cáo tổng hợp" : "Hiệu suất thành viên"}
-        subtitle="Số liệu trong phạm vi quản lý, tính từ nhiệm vụ và đánh giá đã chốt"
-        action={
-          <button
-            className={buttonClass}
-            onClick={download}
-            disabled={rows.loading || Boolean(rows.error) || !data.length}
-          >
-            Xuất CSV trang này
-          </button>
-        }
-      />}
+      {!embedded && (
+        <PageTitle
+          title={reports ? "Báo cáo tổng hợp" : "Hiệu suất thành viên"}
+          subtitle="Số liệu trong phạm vi quản lý, tính từ nhiệm vụ và đánh giá đã chốt"
+          action={
+            <button
+              className={buttonClass}
+              onClick={download}
+              disabled={rows.loading || Boolean(rows.error) || !data.length}
+            >
+              Xuất CSV trang này
+            </button>
+          }
+        />
+      )}
+      {basePath === "/instructor" &&
+        rows.data &&
+        !rows.loading &&
+        !rows.error && (
+          <p className="mb-4 text-xs leading-6 text-slate-500">
+            Trang hiện tại hiển thị {data.length}/{rows.data.total} thành viên
+            theo bộ lọc. Chỉ số tổng hợp và tệp CSV bên dưới thuộc các thành
+            viên trên trang này.
+          </p>
+        )}
       <div className="mb-5">
         {rows.loading ? (
           <LoadingState />
@@ -122,26 +156,40 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
       </div>
       <Panel title="Bộ lọc">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {!lockedScope && <AcademicPicker
-            kind="projects"
-            label="Dự án báo cáo"
-            value={projectId}
-            onChange={id => { setPage(1); setProjectId(id); setSessionId(""); }}
-          />}
-          {!lockedScope && <AcademicPicker
-            kind="sessions"
-            label="Phiên báo cáo"
-            value={sessionId}
-            projectId={projectId}
-            onChange={id => { setPage(1); setSessionId(id); }}
-          />}
+          {!lockedScope && (
+            <AcademicPicker
+              kind="projects"
+              label="Dự án báo cáo"
+              value={projectId}
+              onChange={(id) => {
+                setPage(1);
+                setProjectId(id);
+                setSessionId("");
+              }}
+            />
+          )}
+          {!lockedScope && (
+            <AcademicPicker
+              kind="sessions"
+              label="Phiên báo cáo"
+              value={sessionId}
+              projectId={projectId}
+              onChange={(id) => {
+                setPage(1);
+                setSessionId(id);
+              }}
+            />
+          )}
           <label className="text-sm">
             Từ ngày
             <input
               className={inputClass}
               type="date"
               value={from}
-              onChange={(e) => { setPage(1); setFrom(e.target.value); }}
+              onChange={(e) => {
+                setPage(1);
+                setFrom(e.target.value);
+              }}
             />
           </label>
           <label className="text-sm">
@@ -150,17 +198,37 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
               className={inputClass}
               type="date"
               value={to}
-              onChange={(e) => { setPage(1); setTo(e.target.value); }}
+              onChange={(e) => {
+                setPage(1);
+                setTo(e.target.value);
+              }}
             />
           </label>
         </div>
-        <label className="mt-4 block text-sm">Tìm sinh viên<input className={inputClass} value={search} onChange={e => setSearch(e.target.value)} /></label>
+        <label className="mt-4 block text-sm">
+          Tìm sinh viên
+          <input
+            className={inputClass}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </label>
       </Panel>
       <div className="mt-5" />
       {!rows.loading && !rows.error && (
         <div className="grid gap-4 xl:grid-cols-[1fr_300px]">
-          <Panel title={page === 1 && !debounced ? 'Top 10 sinh viên hiệu suất tốt nhất' : 'Kết quả tìm kiếm & xếp hạng'}>
-            <p className="mb-3 text-xs text-slate-500">Ưu tiên tỷ lệ task hoàn thành, điểm đánh giá đã chốt, ít task trễ và khối lượng công việc. Các chỉ số tổng hợp bên trên chỉ tính trang hiện tại.</p>
+          <Panel
+            title={
+              page === 1 && !debounced
+                ? "Top 10 sinh viên hiệu suất tốt nhất"
+                : "Kết quả tìm kiếm & xếp hạng"
+            }
+          >
+            <p className="mb-3 text-xs text-slate-500">
+              Ưu tiên tỷ lệ task hoàn thành, điểm đánh giá đã chốt, ít task trễ
+              và khối lượng công việc. Các chỉ số tổng hợp bên trên chỉ tính
+              trang hiện tại.
+            </p>
             {!data.length ? (
               <Empty>Chưa có thành viên hoặc dữ liệu trong bộ lọc này.</Empty>
             ) : (
@@ -210,7 +278,15 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
                 </table>
               </div>
             )}
-            {rows.data && <Pager page={page} total={rows.data.total} totalPages={Math.ceil(rows.data.total / rows.data.pageSize)} onChange={setPage} unit="sinh viên" />}
+            {rows.data && (
+              <Pager
+                page={page}
+                total={rows.data.total}
+                totalPages={Math.ceil(rows.data.total / rows.data.pageSize)}
+                onChange={setPage}
+                unit="sinh viên"
+              />
+            )}
           </Panel>
           <div className="space-y-4">
             <Panel title="Phân bố hoàn thành">
@@ -220,15 +296,8 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
                   ["Chưa hoàn thành", total - done],
                 ].map(([label, value]) => (
                   <div key={label}>
-                    <p className="mb-2 text-sm">
-                      {label}: {value}
-                    </p>
-                    <progress
-                      className="h-3 w-full accent-blue-600"
-                      value={Number(value)}
-                      max={Math.max(total, 1)}
-                      aria-label={String(label)}
-                    />
+                    <p className="mb-2 text-sm">{label}: {value}</p>
+                    <progress className="h-3 w-full accent-blue-600" value={Number(value)} max={Math.max(total, 1)} aria-label={String(label)} />
                   </div>
                 ))}
                 <p className="text-xs text-slate-500">
@@ -240,26 +309,33 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
             <Panel title="Thứ hạng trong bộ lọc">
               <ol className="space-y-3">
                 {data.map((m, i) => (
-                    <li
-                      key={m.userId}
-                      className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 text-sm"
+                  <li
+                    key={m.userId}
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 text-sm"
+                  >
+                    <span className="font-bold text-blue-600">
+                      {m.rank ?? (page - 1) * 10 + i + 1}
+                    </span>
+                    <button
+                      className="min-w-0 flex-1 truncate text-left font-semibold"
+                      onClick={() => setSelected(m.userId)}
                     >
-                      <span className="font-bold text-blue-600">{m.rank ?? ((page - 1) * 10 + i + 1)}</span>
-                      <button
-                        className="min-w-0 flex-1 truncate text-left font-semibold"
-                        onClick={() => setSelected(m.userId)}
-                      >
-                        {m.displayName ?? m.userId}
-                      </button>
-                      <strong>{m.taskCompletionRate === null ? '—' : `${m.taskCompletionRate}%`}</strong>
-                    </li>
-                  ))}
+                      {m.displayName ?? m.userId}
+                    </button>
+                    <strong>
+                      {m.taskCompletionRate === null
+                        ? "—"
+                        : `${m.taskCompletionRate}%`}
+                    </strong>
+                  </li>
+                ))}
               </ol>
               {!data.length && (
                 <Empty>Chưa có dữ liệu phù hợp để xếp hạng.</Empty>
               )}
               <p className="mt-3 text-xs text-slate-500">
-                Thứ tự từ backend; sinh viên chưa có task giữ tỷ lệ chưa đo được.
+                Thứ tự từ backend; sinh viên chưa có task giữ tỷ lệ chưa đo
+                được.
               </p>
             </Panel>
           </div>
@@ -270,19 +346,41 @@ export function MemberPerformance({ reports = false, initialProjectId = "", init
           title="Chi tiết hiệu suất"
           onClose={() => setSelected(undefined)}
         >
-          <MemberDetail basePath={basePath} id={selected} scope={new URLSearchParams({ ...(projectId ? { projectId } : {}), ...(sessionId ? { sessionId } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}) }).toString()} />
+          <MemberDetail
+            basePath={basePath}
+            id={selected}
+            scope={new URLSearchParams({
+              ...(projectId ? { projectId } : {}),
+              ...(sessionId ? { sessionId } : {}),
+              ...(from ? { from } : {}),
+              ...(to ? { to } : {}),
+            }).toString()}
+          />
         </Modal>
       )}
     </>
   );
 }
-function MemberDetail({ id, scope, basePath }: { id: string; scope: string; basePath: '/instructor' | '/admin' }) {
+function MemberDetail({
+  id,
+  scope,
+  basePath,
+}: {
+  id: string;
+  scope: string;
+  basePath: "/instructor" | "/admin";
+}) {
   const ai = useResource(
     useCallback((s: AbortSignal) => getMemberRecommendations(id, s), [id]),
   );
   return (
     <div className="space-y-5">
-      <StudentPerformanceDetail key={`${id}:${scope}`} id={id} scope={scope} basePath={basePath} />
+      <StudentPerformanceDetail
+        key={`${id}:${scope}`}
+        id={id}
+        scope={scope}
+        basePath={basePath}
+      />
       <Panel title="Khuyến nghị AI">
         {ai.loading ? (
           <LoadingState />

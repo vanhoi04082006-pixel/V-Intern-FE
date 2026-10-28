@@ -30,6 +30,7 @@ let interview: Interview;
 let workspace: InternWorkspace;
 let errorStatus = 0;
 let evaluationFailed = false;
+let careers: Array<{ code: string; label: string }>;
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status });
 const requests: { url: string; options: RequestInit }[] = [];
@@ -45,6 +46,7 @@ beforeEach(() => {
   pathname = "/intern/onboarding";
   errorStatus = 0;
   evaluationFailed = false;
+  careers = [{ code: 'frontend', label: 'Frontend Developer' }, { code: 'backend', label: 'Backend Developer' }, { code: 'qa', label: 'QA Tester' }];
   requests.length = 0;
   replace.mockClear();
   vi.stubGlobal(
@@ -52,6 +54,7 @@ beforeEach(() => {
     vi.fn(async (url: string, options: RequestInit) => {
       requests.push({ url, options });
       if (errorStatus) return json({ code: "TEST_ERROR" }, errorStatus);
+      if (url.endsWith('/career-roles')) return json({ items: careers.map(role => ({ ...role, description: '', level: 'intern', language: 'vi', requiredSkills: [], optionalSkills: [], version: 1 })) });
       if (url.endsWith("/intern/me/workspace")) return json(workspace);
       if (url.endsWith("/recruitment/me")) return json(profile);
       if (url.endsWith("/me/role")) {
@@ -125,6 +128,30 @@ function renderFlow(child: React.ReactNode) {
   return render(<RecruitmentProvider>{child}</RecruitmentProvider>);
 }
 describe("Nest recruitment integration", () => {
+  it.each([50, 62.2, 70])("shows evidence-backed role guidance at %s and requires explicit role selection", async (score) => {
+    pathname = "/intern/onboarding/result";
+    workspace = blocked("recruitment_failed");
+    profile = { ...profile, status: "failed", selectedRole: "backend", attemptNumber: 1, attemptsRemaining: 2, result: { ...result, decision: "failed", overallScore: score, recommendedRole: "qa", feedback: "Câu hỏi 1: cách kiểm tra tình huống biên phù hợp để khám phá QA." } };
+    renderFlow(<RecruitmentResult />);
+    expect(await screen.findByRole("heading", { name: "AI đề xuất bạn thử một vai trò khác" })).toBeInTheDocument();
+    expect(screen.getByText(/Câu hỏi 1: cách kiểm tra/)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Vào Workspace" })).not.toBeInTheDocument();
+    expect(requests.some((entry) => entry.options.method === "PATCH")).toBe(false);
+    await userEvent.click(screen.getByRole("button", { name: "Chọn vai trò được đề xuất" }));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/intern/onboarding/role"));
+    const selection = requests.find((entry) => entry.url.endsWith("/me/role"));
+    expect(JSON.parse(String(selection?.options.body))).toEqual({ role: "qa" });
+    expect(requests.some((entry) => entry.url.endsWith("/me/interviews") && entry.options.method === "POST")).toBe(false);
+  });
+  it("keeps the failed path below 50 and disables another attempt after the third", async () => {
+    pathname = "/intern/onboarding/result";
+    workspace = blocked("recruitment_failed");
+    profile = { ...profile, status: "failed", selectedRole: "backend", attemptNumber: 3, attemptsRemaining: 0, result: { ...result, decision: "failed", overallScore: 49.9 } };
+    renderFlow(<RecruitmentResult />);
+    expect(await screen.findByRole("heading", { name: "Chưa đạt yêu cầu tuyển dụng" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Thử lại tuyển dụng" })).toBeDisabled();
+    expect(screen.getByText(/Bạn đã dùng hết 3 lượt/)).toBeInTheDocument();
+  });
   it("shows an honest animated pending state during evaluation, not answer saving or a countdown", async () => {
     setupInterview();
     interview.questions.forEach((q) => { q.answered = true; });
@@ -167,7 +194,7 @@ describe("Nest recruitment integration", () => {
       screen.getByRole("button", { name: "Bắt đầu phỏng vấn" }),
     ).toBeDisabled();
     const user = userEvent.setup();
-    await user.click(screen.getByRole("radio", { name: /QA Tester/ }));
+    await user.click(await screen.findByRole("radio", { name: /QA Tester/ }));
     await user.click(screen.getByRole("button", { name: "Bắt đầu phỏng vấn" }));
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/intern/onboarding/interview"),
@@ -195,6 +222,15 @@ describe("Nest recruitment integration", () => {
       screen.getByRole("button", { name: "Bắt đầu phỏng vấn" }),
     ).toBeDisabled();
     expect(screen.getByText(/Có thể thử lại sau/)).toBeInTheDocument();
+  });
+  it('offers a new server career without adding a frontend enum entry', async () => {
+    careers = [{ code: 'data_analyst', label: 'Data Analyst' }];
+    pathname = '/intern/onboarding/role';
+    renderFlow(<RoleSelectionStep />);
+    await userEvent.click(await screen.findByRole('radio', { name: /Data Analyst/ }));
+    expect(screen.queryByRole('radio', { name: /QA Tester/ })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Bắt đầu phỏng vấn' }));
+    await waitFor(() => expect(requests.find(x => x.url.endsWith('/me/role'))?.options.body).toBe(JSON.stringify({ role: 'data_analyst' })));
   });
   it("resume loads persisted answered flags and real questions", async () => {
     setupInterview();
@@ -299,7 +335,16 @@ describe("Nest recruitment integration", () => {
       "/intern",
     );
   });
-  it("failed result uses actual recommendation and retake policy", async () => {
+  it('does not claim an AI recommendation when no alternative career is recruiting', async () => {
+    pathname = '/intern/onboarding/result';
+    workspace = blocked('recruitment_failed');
+    profile = { ...profile, status: 'failed', selectedRole: 'backend', attemptNumber: 1, attemptsRemaining: 2, result: { ...result, decision: 'failed', overallScore: 60, recommendedRole: null } };
+    renderFlow(<RecruitmentResult />);
+    expect(await screen.findByRole('heading', { name: 'Cần định hướng thêm' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Chọn vai trò được đề xuất' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Xem vị trí đang tuyển' })).toHaveAttribute('href', '/intern/onboarding/role');
+  });
+  it("below 50 retains the selected role when retrying and respects the retake policy", async () => {
     pathname = "/intern/onboarding/result";
     workspace = blocked("recruitment_failed");
     profile = {
@@ -322,7 +367,7 @@ describe("Nest recruitment integration", () => {
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/intern/onboarding/role"),
     );
-    expect(profile.selectedRole).toBe("qa");
+    expect(profile.selectedRole).toBe("backend");
   });
   it("pending evaluation hides old failed result and retries exact endpoint", async () => {
     pathname = "/intern/onboarding/result";

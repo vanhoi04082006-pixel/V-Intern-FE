@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { X } from "lucide-react";
 import { getSessionUser } from "@/lib/auth/session";
 import { LoadingState } from "@/components/shared/data-state";
 import { InternSidebar } from "./intern-sidebar";
 import { InternTopbar } from "./intern-topbar";
 import { workspaceNav, workspaceUser } from "./workspace-presentation";
+import { WorkspaceStage } from "@/components/workspace/workspace-stage";
 
 export function InternShell({
   active,
@@ -87,8 +89,9 @@ export function InternShell({
     };
   }, [menuOpen]);
   if (!user) return <LoadingState label="Đang kiểm tra phiên đăng nhập..." />;
+  const workspaceUserView = workspaceUser(user);
   return (
-    <div className="min-h-dvh bg-[#F4F6FB]">
+    <div className="student-experience workspace-ui aurora-workspace min-h-dvh" data-workspace-role="intern">
       <a
         href="#intern-main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:bg-white focus:p-3"
@@ -98,7 +101,8 @@ export function InternShell({
       <InternSidebar
         currentPath={pathname}
         groups={groups}
-        className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-[240px] lg:border-r lg:border-slate-200"
+        user={workspaceUserView}
+        className="student-sidebar-desktop"
       />
       {menuOpen && (
         <div
@@ -114,25 +118,36 @@ export function InternShell({
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-slate-900/50"
           />
-          <InternSidebar
-            currentPath={pathname}
-            groups={groups}
-            className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] border-r border-slate-200 shadow-xl"
-            onNavigate={() => setMenuOpen(false)}
-          />
+          <div className="absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-2xl">
+            <InternSidebar
+              currentPath={pathname}
+              groups={groups}
+              user={workspaceUserView}
+              className="h-full w-full"
+              onNavigate={() => setMenuOpen(false)}
+            />
+            <button
+              type="button"
+              aria-label="Đóng bảng điều hướng"
+              onClick={() => setMenuOpen(false)}
+              className="student-drawer-close absolute right-3 top-3"
+            >
+              <X className="size-5" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       )}
       <div
         inert={menuOpen}
-        className={`flex min-h-dvh flex-col lg:pl-[240px] ${compact ? "xl:h-dvh xl:min-h-0" : ""}`}
+        className={`aurora-shell-content flex min-h-dvh flex-col lg:pl-[240px] ${compact ? "xl:h-dvh xl:min-h-0" : ""}`}
       >
         <InternTopbar
           waiting={waiting}
           breadcrumb={[
-            { id: "workspace", label: "Intern Workspace", href: "/intern" },
+            { id: "workspace", label: "Sinh viên", href: "/intern" },
             { id: "current", label: title, current: true },
           ]}
-          searchPlaceholder="Tìm trang trong không gian của bạn…"
+          searchPlaceholder="Tìm trang, nhiệm vụ…"
           searchItems={groups
             .flatMap((g) => g.items)
             .flatMap((i) =>
@@ -140,16 +155,18 @@ export function InternShell({
                 ? [{ href: i.href, label: i.label }]
                 : [],
             )}
-          user={workspaceUser(user)}
+          user={workspaceUserView}
           menuOpen={menuOpen}
           onOpenMenu={() => setMenuOpen(true)}
           menuButtonRef={menuButton}
         />
         <main
           id="intern-main-content"
-          className={`mx-auto w-full max-w-[1600px] flex-1 px-4 py-4 sm:px-6 sm:py-5 ${compact ? "xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8" : ""}`}
+          className={`mx-auto w-full max-w-[1500px] flex-1 px-4 py-4 sm:px-6 sm:py-5 ${compact ? "xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8" : ""}`}
         >
-          {children}
+          <WorkspaceStage role="intern" workAvailable={active} resultsAvailable={outcomesAvailable}>
+            {children}
+          </WorkspaceStage>
         </main>
       </div>
     </div>

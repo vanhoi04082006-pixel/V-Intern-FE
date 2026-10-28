@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import InternPage from "@/app/intern/page";
 import { active, waiting, blocked, principal } from "@/test/nest-fixtures";
@@ -68,7 +68,7 @@ describe("Intern API integration", () => {
     expect(screen.getByText("Phiên từ API")).toBeInTheDocument();
     expect(screen.getByText("SPR-REAL · Sprint từ API")).toBeInTheDocument();
     expect(screen.getByText("TASK-REAL · Task từ API")).toBeInTheDocument();
-    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(within(screen.getByRole("group", { name: "Tổng quan nhiệm vụ" })).getByText("7")).toBeInTheDocument();
     expect(
       screen.queryByText("Chưa có dự án được phân công"),
     ).not.toBeInTheDocument();

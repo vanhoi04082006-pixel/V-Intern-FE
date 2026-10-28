@@ -18,6 +18,7 @@ export interface RecruitmentResult {
   evaluatedAt: string;
 }
 export interface RecruitmentProfile {
+  interviewSchedule?: RecruitmentSchedule | null;
   status:
     | "not_started"
     | "role_selected"
@@ -33,6 +34,43 @@ export interface RecruitmentProfile {
   currentInterviewSessionId: string | null;
   recruitedAt: string | null;
   result: RecruitmentResult | null;
+}
+export interface RecruitmentSchedule {
+  managed: boolean;
+  phase: "waiting" | "ready" | "started" | "no_show" | "cancelled";
+  bookingId: string | null;
+  version: number | null;
+  roleCode: string | null;
+  roleName: string | null;
+  startsAt: string | null;
+  endsAt: string | null;
+  deadlineAt: string | null;
+  timezone: string | null;
+  sessionId: string | null;
+  serverNow: string;
+}
+function parseSchedule(raw: unknown): RecruitmentSchedule {
+  const s = p.record(raw);
+  return {
+    managed: p.boolean(s.managed),
+    phase: p.oneOf(s.phase, [
+      "waiting",
+      "ready",
+      "started",
+      "no_show",
+      "cancelled",
+    ]),
+    bookingId: p.nullable(s.bookingId, p.string),
+    version: p.nullable(s.version, p.number),
+    roleCode: p.nullable(s.roleCode, p.string),
+    roleName: p.nullable(s.roleName, p.string),
+    startsAt: p.nullable(s.startsAt, p.string),
+    endsAt: p.nullable(s.endsAt, p.string),
+    deadlineAt: p.nullable(s.deadlineAt, p.string),
+    timezone: p.nullable(s.timezone, p.string),
+    sessionId: p.nullable(s.sessionId, p.string),
+    serverNow: p.string(s.serverNow),
+  };
 }
 export interface InterviewSession {
   id: string;
@@ -96,6 +134,9 @@ export function parseResult(value: unknown): RecruitmentResult {
 export function parseProfile(value: unknown): RecruitmentProfile {
   const v = p.record(value);
   return {
+    ...(v.interviewSchedule === undefined
+      ? {}
+      : { interviewSchedule: p.nullable(v.interviewSchedule, parseSchedule) }),
     status: p.oneOf(v.status, [
       "not_started",
       "role_selected",
@@ -173,13 +214,18 @@ export function parseInterviewHistory(value: unknown) {
   const v = p.record(value);
   return {
     total: p.number(v.total),
-    items: p.array(v.items, item => {
+    items: p.array(v.items, (item) => {
       const s = p.record(item);
       return {
-        id: p.string(s.id), roleCode: p.string(s.roleCode), status: p.string(s.status),
-        attemptNumber: p.number(s.attemptNumber), questionCount: p.number(s.questionCount),
-        startedAt: p.nullable(s.startedAt, p.string), submittedAt: p.nullable(s.submittedAt, p.string),
-        evaluatedAt: p.nullable(s.evaluatedAt, p.string), result: p.nullable(s.result, parseResult),
+        id: p.string(s.id),
+        roleCode: p.string(s.roleCode),
+        status: p.string(s.status),
+        attemptNumber: p.number(s.attemptNumber),
+        questionCount: p.number(s.questionCount),
+        startedAt: p.nullable(s.startedAt, p.string),
+        submittedAt: p.nullable(s.submittedAt, p.string),
+        evaluatedAt: p.nullable(s.evaluatedAt, p.string),
+        result: p.nullable(s.result, parseResult),
       };
     }),
   };
@@ -188,7 +234,11 @@ export const recruitmentApi = {
   me: (signal?: AbortSignal) =>
     request("/recruitment/me", parseProfile, { signal }),
   history: (page = 1, signal?: AbortSignal) =>
-    request(`/recruitment/me/interviews?page=${page}&pageSize=5`, parseInterviewHistory, { signal }),
+    request(
+      `/recruitment/me/interviews?page=${page}&pageSize=5`,
+      parseInterviewHistory,
+      { signal },
+    ),
   selectRole: (role: RecruitmentRole) =>
     request("/recruitment/me/role", parseProfile, {
       method: "PATCH",
@@ -212,9 +262,14 @@ export const recruitmentApi = {
       { method: "PUT", body: { answerText } },
     ),
   saveFollowUp: (id: string, questionId: string, answerText: string) =>
-    request(`${sessionPath(id)}/follow-ups/${encodeURIComponent(questionId)}`, value => {
-      const v = p.record(value); return { saved: p.boolean(v.saved) };
-    }, { method: 'PUT', body: { answerText } }),
+    request(
+      `${sessionPath(id)}/follow-ups/${encodeURIComponent(questionId)}`,
+      (value) => {
+        const v = p.record(value);
+        return { saved: p.boolean(v.saved) };
+      },
+      { method: "PUT", body: { answerText } },
+    ),
   submit: (id: string) =>
     request(`${sessionPath(id)}/submit`, parseEvaluation, { method: "POST" }),
   retryEvaluation: (id: string) =>
@@ -237,12 +292,46 @@ export function remainingSeconds(
 export function parseConversation(value: unknown) {
   const v = p.record(value);
   return {
-    session: parseInterviewSession(v.session), answeredCount: p.number(v.answeredCount),
-    messages: p.array(v.messages, item => { const m = p.record(item); return { role: p.oneOf(m.role, ["assistant", "user"]), questionId: p.string(m.questionId), position: p.number(m.position), content: p.string(m.content) }; }),
-    currentQuestion: p.nullable(v.currentQuestion, item => { const q = p.record(item); return { id: p.string(q.id), position: p.number(q.position), phase: p.string(q.phase), kind: q.kind === undefined ? 'main' as const : p.oneOf(q.kind, ['main', 'follow_up']), status: p.oneOf(q.status, ["generating", "ready", "failed", "not_started"]), errorCode: p.nullable(q.errorCode, p.string) }; }),
+    session: parseInterviewSession(v.session),
+    answeredCount: p.number(v.answeredCount),
+    messages: p.array(v.messages, (item) => {
+      const m = p.record(item);
+      return {
+        role: p.oneOf(m.role, ["assistant", "user"]),
+        questionId: p.string(m.questionId),
+        position: p.number(m.position),
+        content: p.string(m.content),
+      };
+    }),
+    currentQuestion: p.nullable(v.currentQuestion, (item) => {
+      const q = p.record(item);
+      return {
+        id: p.string(q.id),
+        position: p.number(q.position),
+        phase: p.string(q.phase),
+        kind:
+          q.kind === undefined
+            ? ("main" as const)
+            : p.oneOf(q.kind, ["main", "follow_up"]),
+        status: p.oneOf(q.status, [
+          "generating",
+          "ready",
+          "failed",
+          "not_started",
+        ]),
+        errorCode: p.nullable(q.errorCode, p.string),
+      };
+    }),
   };
 }
-export const conversationView = (id: string, signal?: AbortSignal) => request(`${sessionPath(id)}/conversation`, parseConversation, { signal });
-export const conversationNext = (id: string) => request(`${sessionPath(id)}/conversation/next`, parseConversation, { method: "POST" });
+export const conversationView = (id: string, signal?: AbortSignal) =>
+  request(`${sessionPath(id)}/conversation`, parseConversation, { signal });
+export const conversationNext = (id: string) =>
+  request(`${sessionPath(id)}/conversation/next`, parseConversation, {
+    method: "POST",
+  });
 
-export const conversationClarify = (id: string) => request(`${sessionPath(id)}/conversation/clarify`, parseConversation, { method: "POST" });
+export const conversationClarify = (id: string) =>
+  request(`${sessionPath(id)}/conversation/clarify`, parseConversation, {
+    method: "POST",
+  });

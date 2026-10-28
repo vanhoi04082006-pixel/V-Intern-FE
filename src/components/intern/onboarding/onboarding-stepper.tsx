@@ -41,7 +41,7 @@ function StepCircle({
         state === "completed" &&
           "border-emerald-200 bg-emerald-50 text-emerald-600",
         state === "active" && "border-brand bg-brand text-white shadow-sm",
-        state === "pending" && "border-slate-200 bg-white text-slate-400",
+        state === "pending" && "border-slate-200 bg-white text-slate-500",
       )}
     >
       {state === "completed" ? <Check className="size-4" /> : position}
@@ -51,7 +51,10 @@ function StepCircle({
 
 export function HorizontalStepper({ activeStep }: { activeStep: number }) {
   return (
-    <nav aria-label="Tiến trình onboarding">
+    <nav
+      aria-label="Tiến trình onboarding"
+      className="workspace-onboarding-progress"
+    >
       <ol className="flex items-stretch gap-x-2 gap-y-3 overflow-x-auto pb-1 sm:gap-x-3">
         {ONBOARDING_STEPS.map((step, index) => {
           const position = index + 1;
@@ -72,7 +75,7 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "block truncate text-[13px] font-bold",
-                    state === "pending" ? "text-slate-400" : "text-navy",
+                    state === "pending" ? "text-slate-500" : "text-navy",
                   )}
                 >
                   {step.label}
@@ -80,7 +83,7 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "hidden truncate text-xs sm:block",
-                    state === "active" ? "text-brand" : "text-slate-400",
+                    state === "active" ? "text-brand" : "text-slate-500",
                   )}
                 >
                   {step.description}
@@ -123,7 +126,7 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "block text-sm font-bold leading-tight",
-                    state === "pending" ? "text-slate-400" : "text-navy",
+                    state === "pending" ? "text-slate-500" : "text-navy",
                   )}
                 >
                   {step.label}
@@ -131,7 +134,7 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
                 <span
                   className={cn(
                     "mt-0.5 block text-xs leading-tight",
-                    state === "active" ? "text-brand" : "text-slate-400",
+                    state === "active" ? "text-brand" : "text-slate-500",
                   )}
                 >
                   {step.description}
@@ -149,9 +152,23 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
  * Stepper compact cho mobile/tablet ở màn sidebar-variant (interview/result):
  * "Bước 3/4 · Phỏng vấn AI Recruiter" + dot mini theo 4 bước.
  */
-export function MobileStepbar({ activeStep }: { activeStep: number }) {
+export function MobileStepbar({
+  activeStep,
+  variant = "bar",
+}: {
+  activeStep: number;
+  variant?: "bar" | "card";
+}) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-2.5 lg:hidden">
+    <nav
+      aria-label="Tiến trình onboarding"
+      className={cn(
+        "flex items-center justify-between gap-3",
+        variant === "bar"
+          ? "border-b border-slate-200 bg-white px-4 py-2.5 lg:hidden"
+          : "rounded-xl border border-slate-200 bg-white px-4 py-3",
+      )}
+    >
       <p className="text-[13px] font-bold text-navy">
         Bước {activeStep}/4 ·{" "}
         <span className="font-semibold text-brand">
@@ -174,6 +191,6 @@ export function MobileStepbar({ activeStep }: { activeStep: number }) {
           );
         })}
       </ol>
-    </div>
+    </nav>
   );
 }

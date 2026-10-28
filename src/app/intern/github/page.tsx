@@ -1,9 +1,10 @@
+"use client";
 import { InternEntry } from "@/components/product/intern-entry";
-import { GithubConnection } from "@/components/product/github-connection";
+import { StudentGithub } from "@/components/intern/student-github";
 export default function Page() {
   return (
     <InternEntry>
-      <GithubConnection />
+      {(workspace) => <StudentGithub workspace={workspace} />}
     </InternEntry>
   );
 }

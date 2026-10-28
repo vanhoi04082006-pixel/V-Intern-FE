@@ -63,7 +63,7 @@ export function NotificationsCard({
                   ) : null}
                 </p>
               </div>
-              <time className="shrink-0 text-xs text-slate-400">
+              <time className="shrink-0 text-xs text-slate-500">
                 {item.timeLabel}
               </time>
             </li>
