@@ -246,6 +246,9 @@ export const recruitmentApi = {
     }),
   start: () =>
     request("/recruitment/me/interviews", parseInterview, { method: "POST" }),
+  /** Interview session status (own sessions; 404-safe) — for resume/reload. */
+  sessionStatus: (id: string, signal?: AbortSignal) =>
+    request(sessionPath(id), parseInterviewSession, { signal }),
   questions: (id: string, signal?: AbortSignal) =>
     request(`${sessionPath(id)}/questions`, parseInterview, { signal }),
   saveAnswer: (id: string, questionId: string, answerText: string) =>

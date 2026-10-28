@@ -131,6 +131,23 @@ export const approveReplacement = (
     parseResult,
     { method: "POST", body },
   );
+/** Poll a replacement command: preview document + status + result once approved. */
+export const getReplacementCommand = (
+  sessionId: string,
+  commandId: string,
+  signal?: AbortSignal,
+) =>
+  request(
+    `${scope(sessionId)}/replacements/${encodeURIComponent(commandId)}`,
+    (value) => {
+      const v = p.record(value);
+      return {
+        ...parsePreview(value),
+        result: v.result === null || v.result === undefined ? null : parseResult(v.result),
+      };
+    },
+    { signal },
+  );
 export const ownReplacements = (signal?: AbortSignal) =>
   request(
     "/participation/me/replacements",
