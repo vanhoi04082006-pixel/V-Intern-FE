@@ -15,7 +15,6 @@ import {
   type KpiPeriod,
   type KpiResultRow,
 } from "@/lib/api/finance";
-import { listPerformance } from "@/lib/api/management";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
@@ -28,6 +27,7 @@ import {
   StatusDot,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
+import { useInternNames } from "./use-intern-names";
 
 export const kpiStatusLabels: Record<KpiPeriod["status"], string> = {
   draft: "Bản nháp",
@@ -46,28 +46,6 @@ const kpiStatusTones: Record<KpiPeriod["status"], "gray" | "blue" | "amber" | "g
 };
 
 /** One shared directory of intern names for results and consoles. */
-function useInternNames(enabled: boolean) {
-  return useResource(
-    useCallback(
-      async (signal: AbortSignal) => {
-        const byId = new Map<string, string>();
-        for (let page = 1; page <= 20; page++) {
-          const result = await listPerformance(
-            new URLSearchParams({ page: String(page), pageSize: "100" }),
-            signal,
-          );
-          for (const member of result.items)
-            byId.set(member.userId, member.displayName ?? member.userId);
-          if (page * result.pageSize >= result.total) break;
-        }
-        return byId;
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [enabled],
-    ),
-    enabled,
-  );
-}
 
 const dateInput = (value: string) => value.slice(0, 10);
 
@@ -372,7 +350,7 @@ function KpiPeriodForm({
 function KpiResults({ period }: { period: KpiPeriod }) {
   const [page, setPage] = useState(1);
   const [detail, setDetail] = useState<KpiResultRow | null>(null);
-  const names = useInternNames(true);
+  const names = useInternNames();
   const results = useResource(
     useCallback((signal: AbortSignal) => listKpiResults(period.id, page, signal), [period.id, page]),
   );
@@ -479,7 +457,7 @@ function KpiResultDetail({
   nameOf: (userId: string) => string;
 }) {
   const state = useResource(
-    useCallback((signal: AbortSignal) => getKpiResult(result.id), [result.id]),
+    useCallback(async () => getKpiResult(result.id), [result.id]),
   );
   const metricHint = useMemo(
     () =>

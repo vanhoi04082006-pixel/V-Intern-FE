@@ -170,3 +170,7 @@ export const issueCertificate = (userId: string) =>
 
 export const revokeCertificate = (id: string, reason: string) =>
   request(`/certificates/${encodeURIComponent(id)}/revoke`, parseAdminCertificate, { method: 'POST', body: { reason } });
+
+/** Admin PDF download (issued certificates only; revoked → 409). */
+export const downloadCertificatePdf = (id: string) =>
+  request(`/certificates/${encodeURIComponent(id)}/pdf`, (value) => (value instanceof Blob ? value : p.invalid()), { responseType: 'blob' });

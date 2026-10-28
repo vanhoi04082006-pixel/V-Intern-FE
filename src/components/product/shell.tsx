@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { NotificationBell } from "@/components/shared/notification-bell";
 import { getSessionUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
@@ -454,13 +455,7 @@ export function ProductShell({
             </nav>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              aria-label="Thông báo"
-              href={`/${role}/notifications`}
-              className="grid size-10 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-            >
-              <Bell size={19} aria-hidden="true" />
-            </Link>
+            <NotificationBell href={`/${role}/notifications`} />
             {role === "instructor" && user ? (
               <span className="product-avatar" aria-hidden="true">
                 {user.displayName

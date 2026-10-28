@@ -94,3 +94,54 @@ export function SessionProgressComparison({ items }: {
     </li>)}</ul> : <p>Chưa có phiên phù hợp với bộ lọc.</p>}
   </section>;
 }
+
+export type BurndownPoint = { date: string; actual: number | null; ideal: number };
+
+/**
+ * Sprint burndown: remaining work over time, reconstructed from persisted task
+ * status events. Honest by design — future days have no actual line, and the
+ * legend doubles as the accessible data table.
+ */
+export function SprintBurndown({ points }: { points: BurndownPoint[] }) {
+  const id = useId();
+  const width = 640, height = 220, pad = { top: 18, right: 16, bottom: 30, left: 34 };
+  const innerW = width - pad.left - pad.right, innerH = height - pad.top - pad.bottom;
+  const max = Math.max(1, ...points.map((p) => Math.max(p.ideal, p.actual ?? 0)));
+  const stepX = points.length > 1 ? innerW / (points.length - 1) : 0;
+  const x = (i: number) => pad.left + stepX * i;
+  const y = (v: number) => pad.top + innerH - (v / max) * innerH;
+  const idealPath = points.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.ideal).toFixed(1)}`).join(" ");
+  const actualPoints = points.map((p, i) => ({ i, p })).filter(({ p }) => p.actual !== null);
+  const actualPath = actualPoints.map(({ i, p }, n) => `${n ? "L" : "M"}${x(i).toFixed(1)},${y(p.actual as number).toFixed(1)}`).join(" ");
+  const lastActual = actualPoints.length ? actualPoints[actualPoints.length - 1] : null;
+  const first = points[0], last = points[points.length - 1];
+  const dayLabel = (value: string) => new Date(value).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+  return (
+    <figure className="workspace-chart" aria-labelledby={id}>
+      <figcaption id={id}>Burndown sprint<span>Công việc còn lại, dựng từ sự kiện trạng thái task</span></figcaption>
+      <div className="workspace-burndown" aria-hidden="true">
+        <svg viewBox={`0 0 ${width} ${height}`} fill="none" role="presentation">
+          {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
+            <line key={ratio} x1={pad.left} x2={width - pad.right} y1={y(max * ratio)} y2={y(max * ratio)} stroke="var(--ws-line)" strokeWidth="1" />
+          ))}
+          {points.map((p, i) => i % Math.ceil(points.length / 6) === 0 ? (
+            <text key={p.date} x={x(i)} y={height - 8} textAnchor="middle" fontSize="10" fill="var(--ws-muted)">{dayLabel(p.date)}</text>
+          ) : null)}
+          <path d={idealPath} stroke="var(--ws-chart-neutral)" strokeWidth="2" strokeDasharray="5 6" />
+          {actualPoints.length > 1 && <path d={actualPath} stroke="var(--ws-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
+          {lastActual && <circle cx={x(lastActual.i)} cy={y(lastActual.p.actual as number)} r="4" fill="var(--ws-primary)" />}
+        </svg>
+      </div>
+      <p className="workspace-chart-selection" aria-live="polite" aria-atomic="true">
+        {lastActual
+          ? `Còn ${lastActual.p.actual} việc tính đến ${dayLabel(lastActual.p.date)} (lý tưởng ${Math.round(lastActual.p.ideal)}).`
+          : "Chưa có dữ liệu thực tế — đường lý tưởng sẽ lấp dần khi task đổi trạng thái."}
+        {" "}Kỳ sprint: {first ? dayLabel(first.date) : "—"} → {last ? dayLabel(last.date) : "—"}.
+      </p>
+      <ul className="workspace-chart-legend workspace-burndown-legend">
+        <li><i data-tone="neutral" aria-hidden="true" /><span>Đường lý tưởng</span><strong>{first ? Math.round(first.ideal) : 0} → {last ? Math.round(last.ideal) : 0}</strong></li>
+        <li><i data-tone="primary" aria-hidden="true" /><span>Còn lại thực tế</span><strong>{lastActual ? (lastActual.p.actual as number) : "—"}</strong></li>
+      </ul>
+    </figure>
+  );
+}

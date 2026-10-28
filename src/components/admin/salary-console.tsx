@@ -26,6 +26,7 @@ import {
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { PerformanceMemberPicker } from "@/components/product/performance-member-picker";
+import { useInternNames } from "./use-intern-names";
 
 export const ledgerTypeLabels: Record<SalaryLedgerRow["type"], string> = {
   kpi_earning: "Thu nhập KPI",
@@ -77,6 +78,8 @@ export function SalaryConsole() {
   );
 
   const [balanceUser, setBalanceUser] = useState("");
+  const names = useInternNames();
+  const nameOf = (id: string) => names.data?.get(id) ?? `${id.slice(0, 8)}…`;
   const balance = useResource(
     useCallback(
       (signal: AbortSignal) =>
@@ -165,6 +168,16 @@ export function SalaryConsole() {
       )}
 
       <div className="flex flex-wrap gap-4">
+        <div className="w-full sm:w-72">
+          <PerformanceMemberPicker
+            value={userId}
+            onChange={(id) => {
+              setUserId(id);
+              setPage(1);
+            }}
+            label="Lọc theo sinh viên"
+          />
+        </div>
         <label className="w-full text-body font-medium sm:w-56">
           Loại dòng
           <select
@@ -228,8 +241,8 @@ export function SalaryConsole() {
                   <td className="whitespace-nowrap border-b border-border px-4 py-3 text-muted-foreground">
                     {new Date(row.createdAt).toLocaleString("vi-VN")}
                   </td>
-                  <td className="border-b border-border px-4 py-3 font-mono text-caption text-foreground">
-                    {row.userId.slice(0, 8)}…
+                  <td className="border-b border-border px-4 py-3 font-medium text-foreground">
+                    {nameOf(row.userId)}
                   </td>
                   <td className="border-b border-border px-4 py-3">
                     <StatusDot tone={ledgerTypeTones[row.type]}>

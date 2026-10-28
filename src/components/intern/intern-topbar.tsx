@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type Ref } from "react";
 import {
-  Bell,
   ChevronDown,
   ChevronRight,
   Home,
@@ -10,6 +9,7 @@ import {
   Search,
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { NotificationBell } from "@/components/shared/notification-bell";
 import { cn } from "@/lib/utils";
 
 import type { InternWorkspaceUser } from "./data/intern-mock-data";
@@ -166,22 +166,7 @@ export function InternTopbar({
             )}
           </div>
 
-          <Link
-            href="/intern/notifications"
-            aria-label={
-              typeof user.notificationBadge === "number" &&
-              user.notificationBadge > 0
-                ? `Thông báo, có ${user.notificationBadge} thông báo chưa đọc`
-                : "Thông báo"
-            }
-            className="student-icon-button"
-          >
-            <Bell className="size-5" aria-hidden="true" />
-            {typeof user.notificationBadge === "number" &&
-            user.notificationBadge > 0 ? (
-              <span className="student-dot" aria-hidden="true" />
-            ) : null}
-          </Link>
+          <NotificationBell href="/intern/notifications" />
 
           <span className="student-topbar-divider" aria-hidden="true" />
 

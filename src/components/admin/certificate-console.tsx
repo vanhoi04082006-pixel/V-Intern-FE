@@ -305,12 +305,21 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
             Mã xác minh <span className="font-mono">{result.verificationCode}</span> đã sẵn sàng để
             chia sẻ.
           </p>
+          <button
+            type="button"
+            className={`${buttonClass} mt-3`}
+            onClick={() => onSaved(`Đã cấp chứng nhận ${result.certificateNumber}.`)}
+          >
+            Hoàn tất
+          </button>
         </div>
       )}
-      <button className={buttonClass} disabled={action.busy} type="submit">
-        <Award size={16} aria-hidden />
-        {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
-      </button>
+      {!result && (
+        <button className={buttonClass} disabled={action.busy} type="submit">
+          <Award size={16} aria-hidden />
+          {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
+        </button>
+      )}
     </form>
   );
 }
