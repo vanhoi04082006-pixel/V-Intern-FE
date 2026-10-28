@@ -5,8 +5,10 @@ import {
   Activity,
   Award,
   Bell,
+  BookOpen,
   Bot,
   BrainCircuit,
+  Briefcase,
   ChevronRight,
   ClipboardCheck,
   FileBarChart,
@@ -16,22 +18,30 @@ import {
   Github,
   Home,
   KanbanSquare,
+  KeyRound,
   LayoutDashboard,
+  Library,
   Lightbulb,
   ListChecks,
+  ListTodo,
   LogOut,
   type LucideIcon,
+  Mail,
+  Megaphone,
   Menu,
   Presentation,
   Rocket,
   ScrollText,
   Server,
   Settings,
+  Share2,
+  ShieldCheck,
   Sparkles,
   Target,
   TrendingUp,
   UserRound,
   Users,
+  UsersRound,
   Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,6 +51,7 @@ import { useSession, type Role } from "@/lib/client/session";
 import { relativeTime } from "@/lib/client/labels";
 import { Logo } from "@/components/shared/logo";
 import { UserAvatar } from "@/components/shared/primitives";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -77,6 +88,7 @@ const internNav: NavGroup[] = [
       { to: "/intern/work", label: "Công việc", icon: KanbanSquare },
       { to: "/intern/sprint", label: "Sprint của tôi", icon: Rocket },
       { to: "/intern/project", label: "Dự án", icon: FolderGit2 },
+      { to: "/intern/participation", label: "Kỷ luật của tôi", icon: ShieldCheck },
       { to: "/intern/mentor", label: "Mentor AI", icon: Sparkles },
     ],
   },
@@ -106,9 +118,17 @@ const instructorNav: NavGroup[] = [
     label: "Quản lý lớp học",
     items: [
       { to: "/instructor", label: "Trang chủ", icon: Home },
+      { to: "/instructor/recruitment-rounds", label: "Đợt tuyển dụng", icon: Megaphone },
       { to: "/instructor/projects", label: "Dự án mẫu", icon: FolderKanban },
       { to: "/instructor/sessions", label: "Buổi thực tập", icon: Presentation },
       { to: "/instructor/sprints", label: "Sprint & giao việc", icon: Rocket },
+    ],
+  },
+  {
+    label: "Vận hành phiên",
+    items: [
+      { to: "/instructor/participation", label: "Kỷ luật phiên", icon: ShieldCheck },
+      { to: "/instructor/sharing", label: "Chia sẻ dữ liệu", icon: Share2 },
     ],
   },
   {
@@ -141,9 +161,29 @@ const adminNav: NavGroup[] = [
     label: "Quản trị dữ liệu",
     items: [
       { to: "/admin/users", label: "Người dùng", icon: Users },
+      { to: "/admin/career-roles", label: "Nghề nghiệp", icon: Briefcase },
       { to: "/admin/questions", label: "Ngân hàng câu hỏi", icon: ListChecks },
+      { to: "/admin/knowledge", label: "Kho tri thức AI", icon: BookOpen },
       { to: "/admin/templates", label: "Dự án mẫu", icon: FolderKanban },
       { to: "/admin/sessions", label: "Buổi thực tập", icon: Presentation },
+    ],
+  },
+  {
+    label: "Điều hành & báo cáo",
+    items: [
+      { to: "/admin/tasks", label: "Nhiệm vụ", icon: ListTodo },
+      { to: "/admin/sprints", label: "Sprint", icon: Rocket },
+      { to: "/admin/performance", label: "Hiệu suất", icon: TrendingUp },
+      { to: "/admin/reports", label: "Báo cáo", icon: FileBarChart },
+      { to: "/admin/communications", label: "Hàng đợi email", icon: Mail },
+    ],
+  },
+  {
+    label: "Phân quyền & danh mục",
+    items: [
+      { to: "/admin/groups", label: "Nhóm người dùng", icon: UsersRound },
+      { to: "/admin/roles", label: "Vai trò & quyền", icon: KeyRound },
+      { to: "/admin/catalogs", label: "Danh mục dùng chung", icon: Library },
     ],
   },
   {
@@ -205,8 +245,8 @@ function SidebarNav({
                     className={cn(
                       "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all",
                       active
-                        ? "bg-brand/12 text-brand-bright shadow-[inset_0_0_0_1px_rgba(16,185,129,0.22)]"
-                        : "text-dim hover:bg-white/[0.04] hover:text-ink"
+                        ? "bg-brand/12 text-brand-bright shadow-[inset_0_0_0_1px_var(--brand-ring)]"
+                        : "text-dim hover:bg-panel-2 hover:text-ink"
                     )}
                   >
                     <Icon
@@ -264,7 +304,7 @@ function SidebarUser({ onNavigate }: { onNavigate?: () => void }) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-line" />
           <DropdownMenuItem
-            className="gap-2 text-[13px] hover:!bg-white/[0.05]"
+            className="gap-2 text-[13px] hover:!bg-panel-2"
             onClick={() => {
               navigate(`/${user.role}/profile`);
               onNavigate?.();
@@ -273,7 +313,16 @@ function SidebarUser({ onNavigate }: { onNavigate?: () => void }) {
             <UserRound className="size-4 icon" /> Hồ sơ cá nhân
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-[13px] hover:!bg-white/[0.05]"
+            className="gap-2 text-[13px] hover:!bg-panel-2"
+            onClick={() => {
+              navigate("/change-password");
+              onNavigate?.();
+            }}
+          >
+            <KeyRound className="size-4 icon" /> Đổi mật khẩu
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="gap-2 text-[13px] hover:!bg-panel-2"
             onClick={() => {
               navigate(`/${user.role}/notifications`);
               onNavigate?.();
@@ -376,7 +425,7 @@ function NotificationBell() {
                 type="button"
                 onClick={() => openLink(n)}
                 className={cn(
-                  "flex w-full gap-3 border-b border-line/60 px-4 py-3 text-left transition-colors last:border-0 hover:bg-white/[0.03]",
+                  "flex w-full gap-3 border-b border-line/60 px-4 py-3 text-left transition-colors last:border-0 hover:bg-panel-2",
                   !n.read && "bg-brand/[0.05]"
                 )}
               >
@@ -482,6 +531,7 @@ export function AppShell({
             <span className="font-semibold text-ink">{title ?? "V-Intern"}</span>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             <NotificationBell />
           </div>
         </header>

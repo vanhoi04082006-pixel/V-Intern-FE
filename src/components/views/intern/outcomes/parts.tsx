@@ -111,6 +111,7 @@ export function ScoreRing({
           fill="none"
           stroke="rgba(255,255,255,0.07)"
           strokeWidth={thickness}
+          className="stroke-track"
         />
         <circle
           cx={size / 2}
@@ -158,7 +159,7 @@ export function ScoreBar({
   const tone: ScoreTone = score === null || score === undefined ? "teal" : scoreToneOf(score);
   return (
     <div
-      className={cn("h-1.5 overflow-hidden rounded-full bg-white/[0.06]", className)}
+      className={cn("h-1.5 overflow-hidden rounded-full bg-track", className)}
       role="progressbar"
       aria-valuenow={pct}
       aria-valuemin={0}

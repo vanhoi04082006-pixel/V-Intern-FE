@@ -16,6 +16,11 @@ function getPath(): string {
   return raw.startsWith("/") ? raw : `/${raw}`;
 }
 
+/** Đọc path hiện tại từ hash — dùng trong effect khi cần path thật ngay. */
+export function currentPath(): string {
+  return getPath();
+}
+
 function emit() {
   window.dispatchEvent(new Event(EVENT));
 }
@@ -35,11 +40,24 @@ export function back() {
   window.history.back();
 }
 
-export function useRoute(): { path: string; search: URLSearchParams } {
-  const [path, setPath] = React.useState<string>(() => getPath());
+/**
+ * useLayoutEffect trên client (chạy trước paint — tránh nhấp nháy),
+ * useEffect khi SSR (tránh warning useLayoutEffect phía server).
+ */
+const useIsoLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-  React.useEffect(() => {
+export function useRoute(): { path: string; search: URLSearchParams } {
+  /**
+   * SSR và client render ĐẦU TIÊN luôn dùng "/" để khớp HTML server
+   * (tránh hydration mismatch khi reload với hash URL).
+   * Path thật từ hash được đồng bộ ngay trước lần paint đầu tiên.
+   */
+  const [path, setPath] = React.useState<string>("/");
+
+  useIsoLayoutEffect(() => {
     const update = () => setPath(getPath());
+    update();
     window.addEventListener(EVENT, update);
     window.addEventListener("hashchange", update);
     window.addEventListener("popstate", update);

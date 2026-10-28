@@ -62,7 +62,7 @@ function ScoreRing({ score, passed }: { score: number; passed: boolean }) {
   return (
     <div className="relative grid size-40 shrink-0 place-items-center">
       <svg viewBox="0 0 160 160" className="size-40 -rotate-90">
-        <circle cx="80" cy="80" r={R} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="11" />
+        <circle cx="80" cy="80" r={R} fill="none" stroke="var(--track)" strokeWidth="11" />
         <circle
           cx="80"
           cy="80"

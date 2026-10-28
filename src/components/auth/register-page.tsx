@@ -133,7 +133,7 @@ export function RegisterPage() {
                   value={form.fullName}
                   onChange={(e) => setForm((s) => ({ ...s, fullName: e.target.value }))}
                   placeholder="Nguyễn Văn An"
-                  className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-line-strong"
+                  className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brand/70 dark:focus:border-line-strong"
                 />
               </span>
             </label>
@@ -149,7 +149,7 @@ export function RegisterPage() {
                   value={form.email}
                   onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))}
                   placeholder="ban@email.vn"
-                  className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-line-strong"
+                  className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brand/70 dark:focus:border-line-strong"
                 />
               </span>
             </label>
@@ -177,7 +177,7 @@ export function RegisterPage() {
                   value={pw}
                   onChange={(e) => setForm((s) => ({ ...s, password: e.target.value }))}
                   placeholder="Tối thiểu 8 ký tự"
-                  className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-line-strong"
+                  className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brand/70 dark:focus:border-line-strong"
                 />
               </span>
 
@@ -190,7 +190,7 @@ export function RegisterPage() {
                       "h-1.5 flex-1 rounded-full transition-colors duration-300",
                       score > STRENGTH_SEGMENTS.findIndex((s) => s.key === seg.key)
                         ? seg.cls
-                        : "bg-white/[0.07]"
+                        : "bg-track"
                     )}
                   />
                 ))}
@@ -231,7 +231,7 @@ export function RegisterPage() {
                 type="checkbox"
                 checked={accepted}
                 onChange={(e) => setAccepted(e.target.checked)}
-                className="mt-0.5 size-4 shrink-0 accent-[#10b981]"
+                className="mt-0.5 size-4 shrink-0 accent-brand"
               />
               <span className="text-xs leading-relaxed text-dim">
                 Tôi đã đọc và đồng ý với{" "}

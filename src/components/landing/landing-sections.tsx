@@ -143,7 +143,8 @@ export function HowItWorks() {
 
       {/* Ảnh phỏng vấn AI + caption chat */}
       <div className="mt-16 grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
-        <FadeIn className="relative">
+        <FadeIn className="dark relative">
+          {/* Scope .dark: card chứa ảnh nền tối — giữ surface tối ở cả 2 theme */}
           <div className="card-surface rotate-[-1.5deg] p-2 transition-transform duration-500 ease-out hover:rotate-0">
             <Image
               src="/images/ai-interview.png"
@@ -234,7 +235,8 @@ export function FeaturesBento() {
       <div className="mt-14 grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-12">
         {/* Card lớn */}
         <FadeIn className="md:col-span-2 lg:col-span-7 lg:row-span-2">
-          <div className="card-surface group relative min-h-[280px] overflow-hidden md:min-h-[340px] lg:h-full lg:min-h-0">
+          {/* Scope .dark: feature-showcase.png có nền tối — card tối nổi bật trên trang sáng */}
+          <div className="card-surface dark group relative min-h-[280px] overflow-hidden md:min-h-[340px] lg:h-full lg:min-h-0">
             <Image
               src="/images/feature-showcase.png"
               alt="Bảng Kanban dự án và quy trình làm việc trên V-Intern"
@@ -389,7 +391,7 @@ export function AiShowcase() {
               <div className="flex flex-wrap items-center gap-6">
                 <div className="relative mx-auto shrink-0">
                   <svg viewBox="0 0 120 120" className="size-[120px]" role="img" aria-label="Điểm review 87 trên 100">
-                    <circle cx="60" cy="60" r={RING_RADIUS} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="9" />
+                    <circle cx="60" cy="60" r={RING_RADIUS} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="9" className="stroke-track" />
                     <motion.circle
                       cx="60"
                       cy="60"
@@ -404,6 +406,7 @@ export function AiShowcase() {
                       viewport={{ once: true }}
                       transition={{ duration: 1.1, ease: [0.21, 1.02, 0.73, 1] }}
                       transform="rotate(-90 60 60)"
+                      style={{ stroke: "var(--brand)" }}
                     />
                   </svg>
                   <span className="absolute inset-0 flex flex-col items-center justify-center">

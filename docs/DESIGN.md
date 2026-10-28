@@ -1,9 +1,15 @@
-# V-Intern Design System — "Emerald Noir"
+# V-Intern Design System — "Emerald Noir" (dark) + "Sky White" (light)
 
-> Chuẩn thiết kế BẮT BUỘC cho mọi view. Dark-only, cao cấp, đậm chất AI product.
-> KHÔNG dùng màu indigo/blue. Không dùng theme sáng.
+> Chuẩn thiết kế BẮT BUỘC cho mọi view. **2 theme**: dark "Emerald Noir" (mặc định) và
+> light "Sky White" (trắng xanh dương, brand sky). KHÔNG dùng màu indigo.
+>
+> **QUY TẮC VÀNG: luôn dùng token (bg-panel, text-ink, border-line, bg-brand, bg-track…),
+> KHÔNG hardcode hex / bg-white / text-white / rgba trong component.** Mọi token tự đổi
+> theo theme qua `:root:not(.dark)` (light) và `.dark` (dark) trong globals.css.
 
 ## 1. Palette (đã khai báo trong globals.css — dùng token, không hardcode hex)
+
+### 1a. DARK "Emerald Noir" — mặc định (class `.dark` trên `<html>`, next-themes)
 
 | Token | Giá trị | Dùng cho |
 |---|---|---|
@@ -24,6 +30,40 @@
 | rose | #FB7185 | lỗi / nghiêm trọng |
 | orange | #FB923C | ưu tiên cao |
 | violet | #A78BFA | chỉ dùng cho role QA |
+| `bg-track` | rgba(255,255,255,.06) | rãnh progress / skeleton / SVG ring track |
+
+### 1b. LIGHT "Sky White" (html không có `.dark`)
+
+| Token | Giá trị | Ghi chú |
+|---|---|---|
+| `bg-canvas` | #F6F9FD | trắng pha sky rất nhạt |
+| `bg-deep` | #EEF4FA | input, footer, băng phụ |
+| `bg-panel` | #FFFFFF | surface trắng sạch |
+| `bg-panel-2` | #F4F8FC | hover / surface nâng |
+| `border-line` | rgba(15,23,42,.09) | viền xám lạnh |
+| `border-line-strong` | rgba(15,23,42,.18) | viền focus/đậm |
+| `text-ink` | #0F172A | chữ slate đậm |
+| `text-dim` | #475569 | text phụ |
+| `text-faint` | #64748B | text mờ |
+| `bg-brand` / `text-brand` | #0284C7 | brand = sky-600 (XANH DƯƠNG, không emerald) |
+| `bg-brand-bright` | #0369A1 | hover đậm hơn (sky-700) + text accent |
+| `text-on-brand` | #FFFFFF | chữ trên nền brand |
+| amber | #B45309 | đậm hơn để đọc trên trắng |
+| teal | #0F766E | |
+| rose | #BE123C | |
+| orange | #C2410C | |
+| violet | #6D28D9 | |
+| `bg-track` | rgba(15,23,42,.12) | rãnh progress đọc được trên trắng |
+
+Lưu ý: các class thô `text-*-300 / *-400` (emerald/teal/amber/rose/orange/violet/zinc —
+dùng trong ToneBadge, StatusDot, chip KPI) đã được override trong globals.css để đậm hơn ở
+light — KHÔNG cần đổi trong component; cứ dùng bình thường.
+
+### 1c. Scope "luôn tối" (dark feature card)
+
+Ảnh có nền tối (ai-interview.png, feature-showcase.png), mockup dashboard hero, brand panel
+auth: bọc wrapper thêm class `dark` — mọi token bên trong tự resolves theo bộ dark ở CẢ HAI
+theme: `<div className="dark …">`. Đừng hardcode hex cho các khu này.
 
 Các token shadcn (`bg-background`, `bg-card`, `text-muted-foreground`, `bg-primary`...) đã được map sang cùng bảng màu này — component shadcn dùng được ngay.
 
@@ -82,14 +122,15 @@ Các token shadcn (`bg-background`, `bg-card`, `text-muted-foreground`, `bg-prim
 
 ## 9. Cấm / tránh
 
-- KHÔNG indigo/blue, KHÔNG gradient tím-xanh sáo rỗng, KHÔNG emoji trong UI.
+- KHÔNG indigo, KHÔNG gradient tím-xanh sáo rỗng, KHÔNG emoji trong UI.
 - KHÔNG tạo component trùng functionality với shared primitives — check `@/components/shared/*` trước khi viết.
 - KHÔNG dùng chart library khác recharts. KHÔNG thêm package mới nếu chưa có trong package.json.
 - KHÔNG hardcode hex khi đã có token; KHÔNG viết route Next.js mới ngoài `/` và `src/app/api/**`.
+- **Theme-safe (bắt buộc)**: KHÔNG hardcode `bg-white/…`, `text-white`, `rgba(255,255,255,…)`, `rgba(0,0,0,…)`, hex trong component — dùng token (`bg-track` cho rãnh progress, `stroke-track` cho SVG track, `var(--brand)` cho stroke/fill động, `color-mix(in_srgb,var(--brand)_25%,transparent)` cho glow một lần). Nút chuyển theme: `<ThemeToggle />` (`@/components/shared/theme-toggle`), import được ở mọi nơi; theme hiện tại đọc qua `useTheme()` của next-themes.
 
 ## 10. Component shared có sẵn (xem `src/components/shared/`)
 
-`ViewFrame, Stagger, StaggerItem, FadeIn` (view.tsx) · `Panel, PanelHeader, PageHeader, MetricCard, ToneBadge, Empty, Pager, StatusDot, UserAvatar, AvatarStack, AnimatedProgressBar, KeyValue, SectionHeading` (primitives.tsx) · `TaskStatusBadge, PriorityBadge, RoleBadge, SessionStatusBadge, SubmissionStatusBadge, ReviewStatusBadge, GithubStatusBadge` (badges.tsx) · `LoadingBlock, ErrorBlock, InlineSpinner` (states.tsx) · `KanbanBoard` (kanban.tsx) · `ChatBubble, ChatComposer, TypingDots` (chat.tsx) · `ConfirmDialog` (confirm.tsx) · `FilterBar, SearchInput` (toolbar.tsx) · `AnimatedNumber, CountdownTimer` (counters.tsx) · `Logo` (logo.tsx) · helpers `@/lib/client/labels` (labels, formatters).
+`ViewFrame, Stagger, StaggerItem, FadeIn` (view.tsx) · `Panel, PanelHeader, PageHeader, MetricCard, ToneBadge, Empty, Pager, StatusDot, UserAvatar, AvatarStack, AnimatedProgressBar, KeyValue, SectionHeading` (primitives.tsx) · `TaskStatusBadge, PriorityBadge, RoleBadge, SessionStatusBadge, SubmissionStatusBadge, ReviewStatusBadge, GithubStatusBadge` (badges.tsx) · `LoadingBlock, ErrorBlock, InlineSpinner` (states.tsx) · `KanbanBoard` (kanban.tsx) · `ChatBubble, ChatComposer, TypingDots` (chat.tsx) · `ConfirmDialog` (confirm.tsx) · `FilterBar, SearchInput` (toolbar.tsx) · `AnimatedNumber, CountdownTimer` (counters.tsx) · `Logo` (logo.tsx) · `ThemeProvider` (theme-provider.tsx) · `ThemeToggle` (theme-toggle.tsx) · helpers `@/lib/client/labels` (labels, formatters).
 
 ## 11. Router & guard
 

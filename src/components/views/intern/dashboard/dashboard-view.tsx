@@ -550,7 +550,7 @@ function UnassignedDashboard({ ws }: { ws: InternWorkspace }) {
                     <span
                       className={cn(
                         "absolute left-[19px] top-11 h-[calc(100%-44px)] w-0.5 rounded-full",
-                        step.state === "done" ? "bg-gradient-to-b from-brand to-brand/40" : "bg-white/[0.07]"
+                        step.state === "done" ? "bg-gradient-to-b from-brand to-brand/40" : "bg-track"
                       )}
                     />
                   ) : null}
@@ -559,7 +559,7 @@ function UnassignedDashboard({ ws }: { ws: InternWorkspace }) {
                       "grid size-10 shrink-0 place-items-center rounded-xl border",
                       step.state === "done" && "border-brand bg-brand text-on-brand",
                       step.state === "active" &&
-                        "border-amber/40 bg-amber/10 text-amber shadow-[0_0_0_4px_rgba(251,191,36,0.10)]",
+                        "border-amber/40 bg-amber/10 text-amber shadow-[0_0_0_4px_color-mix(in_srgb,var(--amber)_12%,transparent)]",
                       step.state === "upcoming" && "border-line bg-panel-2 text-faint"
                     )}
                   >

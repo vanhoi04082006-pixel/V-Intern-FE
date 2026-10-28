@@ -251,14 +251,21 @@ async function patchMyTask(ctx: Ctx): Promise<unknown> {
 async function createTask(ctx: Ctx): Promise<unknown> {
   const body = ctx.body ?? {};
   const title = requireString(ctx.body, "title", "Tiêu đề");
-  const projectId = requireString(ctx.body, "projectId", "Dự án");
-  const session = ctx.store.projects.find((p) => p.id === projectId);
-  if (!session) throw badRequest("Dự án không tồn tại.", ["projectId: không hợp lệ"]);
-
   const sprintId = typeof body.sprintId === "string" ? body.sprintId : null;
   const sprint = sprintId ? ctx.store.sprints.find((s) => s.id === sprintId) : null;
+  if (sprintId && !sprint) throw badRequest("Sprint không tồn tại.", ["sprintId: không hợp lệ"]);
+
+  // projectId tùy chọn (Task 2-b): ưu tiên projectId trong body, suy ra từ sprint,
+  // fallback project đầu tiên để form tạo task đơn giản vẫn chạy được.
+  let projectId = typeof body.projectId === "string" && body.projectId ? body.projectId : null;
+  if (!projectId && sprint) projectId = sprint.projectId;
+  if (!projectId) projectId = ctx.store.projects[0]?.id ?? null;
+  if (!projectId) throw badRequest("Không xác định được dự án cho nhiệm vụ.", ["projectId: bắt buộc"]);
+  const session = ctx.store.projects.find((p) => p.id === projectId);
+  if (!session) throw badRequest("Dự án không tồn tại.", ["projectId: không hợp lệ"]);
   const assigneeId = typeof body.assigneeId === "string" && body.assigneeId ? body.assigneeId : null;
   const assignee = assigneeId ? ctx.store.users.find((u) => u.id === assigneeId) : null;
+  if (assigneeId && !assignee) throw badRequest("Người thực hiện không tồn tại.", ["assigneeId: không hợp lệ"]);
   const priority = (typeof body.priority === "string" && PRIORITIES.includes(body.priority as TaskPriority) ? body.priority : "medium") as TaskPriority;
   const storyPoints = typeof body.storyPoints === "number" ? clamp(Math.round(body.storyPoints), 1, 13) : 3;
   const dueDate = typeof body.dueDate === "string" && body.dueDate ? body.dueDate : null;
@@ -298,6 +305,13 @@ async function createTask(ctx: Ctx): Promise<unknown> {
 async function patchTask(ctx: Ctx): Promise<unknown> {
   const t = getTask(ctx, ctx.params.id);
   const body = ctx.body ?? {};
+
+  // expectedVersion tùy chọn (Task 2-b): truyền thì phải khớp, sai → 409.
+  if (body.expectedVersion != null) {
+    if (typeof body.expectedVersion !== "number" || body.expectedVersion !== t.version) {
+      throw conflict("Nhiệm vụ đã được cập nhật bởi người khác. Vui lòng tải lại trang.", "TASK_VERSION_CONFLICT");
+    }
+  }
 
   if (body.title != null) t.title = requireString(ctx.body, "title", "Tiêu đề");
   if (body.description != null && typeof body.description === "string") t.description = body.description;
@@ -351,13 +365,17 @@ async function patchTask(ctx: Ctx): Promise<unknown> {
 
 async function deleteTask(ctx: Ctx): Promise<unknown> {
   const t = getTask(ctx, ctx.params.id);
+  // Chỉ cho xóa khi chưa có bài nộp (Task 2-b).
+  if (ctx.store.submissions.some((s) => s.taskId === t.id)) {
+    throw conflict(
+      "Nhiệm vụ đã có bài nộp — không thể xóa. Hãy xử lý bài nộp trước.",
+      "TASK_HAS_SUBMISSIONS"
+    );
+  }
   ctx.store.tasks = ctx.store.tasks.filter((x) => x.id !== t.id);
   ctx.store.taskComments = ctx.store.taskComments.filter((c) => c.taskId !== t.id);
   delete ctx.store.taskSpecs[t.id];
   delete ctx.store.taskHistory[t.id];
-  const subIds = ctx.store.submissions.filter((s) => s.taskId === t.id).map((s) => s.id);
-  ctx.store.submissions = ctx.store.submissions.filter((s) => s.taskId !== t.id);
-  ctx.store.codeReviews = ctx.store.codeReviews.filter((c) => !subIds.includes(c.submissionId));
   // gỡ dependency trỏ tới task này
   for (const other of ctx.store.tasks) {
     other.dependencies = other.dependencies.filter((d) => d !== t.id);

@@ -1500,3 +1500,490 @@ export const adminApi = {
     return api<PageData<AuditLogRow>>("/admin/audit-logs", { query: params });
   },
 };
+
+/* ==================================================================== */
+/* TUYỂN DỤNG CÔNG KHAI & NGHỀ NGHIỆP (Task 2-a — apply.ts backend)      */
+/* Cổng nộp CV /apply, đợt tuyển + khung giờ, thư viện nghề, mail queue  */
+/* ==================================================================== */
+
+/** 9 trạng thái hồ sơ ứng tuyển công khai. */
+export type ApplicationStatus =
+  | "unverified"
+  | "queued"
+  | "analyzing"
+  | "needs_information"
+  | "waitlisted"
+  | "booked"
+  | "cancelled"
+  | "deferred"
+  | "failed";
+
+export type RoundStatus = "draft" | "open" | "closed";
+export type SlotStatus = "open" | "closed";
+export type CareerRoleStatus = "draft" | "published" | "archived";
+export type CareerLevel = "intern" | "junior";
+export type CareerLanguage = "vi" | "en";
+
+/** 9 trạng thái thư trong hàng đợi email. */
+export type MailStatus =
+  | "pending"
+  | "sending"
+  | "accepted"
+  | "delivered"
+  | "uncertain"
+  | "bounced"
+  | "dead"
+  | "blocked"
+  | "failed";
+
+export type MailKind = "verify" | "schedule" | "credentials" | "existing-account" | "cancelled";
+
+export type TimelineKind =
+  | "submitted"
+  | "email_sent"
+  | "email_verified"
+  | "analysis_completed"
+  | "needs_information"
+  | "cv_updated"
+  | "status_changed"
+  | "waitlisted"
+  | "slot_booked"
+  | "slot_rescheduled"
+  | "slot_released"
+  | "cancelled"
+  | "credentials_sent"
+  | "credentials_resent"
+  | "credentials_recovered";
+
+export interface SkillRequirement {
+  skill: string;
+  weight: number;
+  mandatory: boolean;
+}
+
+export interface AgentAnalysisFact {
+  skill: string;
+  evidence: string;
+}
+
+/** Kết quả phân tích CV bởi Agent (matchedRole chọn từ career-roles, confidence 62–91%). */
+export interface AgentAnalysis {
+  matchedRole: string;
+  matchedRoleLabel: string;
+  confidence: number;
+  facts: AgentAnalysisFact[];
+  missing: string[];
+  summary: string;
+  analyzedAt: string;
+}
+
+export interface TimelineEvent {
+  id: string;
+  applicationId: string;
+  kind: TimelineKind;
+  message: string;
+  actor: string;
+  at: string;
+}
+
+/** Lịch phỏng vấn hiện tại của hồ sơ (null khi chưa đặt). */
+export interface SlotBookingInfo {
+  slotId: string;
+  roleCode: string;
+  startsAt: string;
+  endsAt: string;
+  location: string;
+  bookedAt: string;
+}
+
+/** Chính sách đặt lại lịch của một hồ sơ (mock attemptsRemaining 0–2). */
+export interface RebookingPolicy {
+  canRebook: boolean;
+  attemptsUsed: number;
+  attemptsRemaining: number;
+  nextEligibleAt: string | null;
+  allowedRoleCodes: string[];
+  serverNow: string;
+}
+
+/** Đợt tuyển cho cổng công khai (GET /applications/rounds). */
+export interface PublicApplyRound {
+  id: string;
+  code: string;
+  name: string;
+  status: "open";
+  opensAt: string;
+  closesAt: string;
+  openSlotCount: number;
+  openRoles: { code: string; label: string }[];
+}
+
+/** Khung giờ phỏng vấn (dùng chung public + staff). */
+export interface ApplySlot {
+  id: string;
+  roundId: string;
+  roleCode: string;
+  roleLabel: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+  bookedCount: number;
+  remaining: number;
+  status: SlotStatus;
+  minimumPreparationMinutes: number;
+  credentialsLeadMinutes: number;
+  location: string;
+  createdAt: string;
+}
+
+/** Hồ sơ ứng tuyển — shape public (cổng /apply). */
+export interface PublicApplication {
+  id: string;
+  roundId: string;
+  fullName: string;
+  email: string;
+  status: ApplicationStatus;
+  statusLabel: string;
+  cvFileName: string | null;
+  createdAt: string;
+  updatedAt: string;
+  booking: SlotBookingInfo | null;
+  cancelReason: string | null;
+  credentialsSentAt: string | null;
+  nextRebookEligibleAt: string | null;
+}
+
+/** GET /applications/me — hồ sơ + booking + timeline + policy (+ slots khả dụng). */
+export interface ApplyMePayload {
+  round: { id: string; code: string; name: string; status: RoundStatus; closesAt: string } | null;
+  application: PublicApplication;
+  analysis: AgentAnalysis | null;
+  booking: SlotBookingInfo | null;
+  timeline: TimelineEvent[];
+  rebookingPolicy: RebookingPolicy;
+  availableSlots?: ApplySlot[];
+}
+
+/** Dòng hồ sơ cho bảng giảng viên/admin. */
+export interface ApplicationRecordRow extends PublicApplication {
+  emailHint: string;
+  matchedRole: string | null;
+  matchedRoleLabel: string | null;
+  confidence: number | null;
+  rebookingAttemptsUsed: number;
+  rebookingAttemptsRemaining: number;
+  hasAccount: boolean;
+}
+
+/** GET /recruitment-rounds/:id/applications/:appId — chi tiết đầy đủ. */
+export interface StaffApplicationDetail {
+  application: ApplicationRecordRow & { recoveryRevision: number; accountUserId: string | null };
+  analysis: AgentAnalysis | null;
+  timeline: TimelineEvent[];
+  rebookingPolicy: RebookingPolicy;
+  mails: MailRecordRow[];
+}
+
+/** Dòng đợt tuyển trong bảng quản trị. */
+export interface RoundRecord {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  status: RoundStatus;
+  opensAt: string;
+  closesAt: string;
+  createdAt: string;
+  slotCount: number;
+  openSlotCount: number;
+  applicationCount: number;
+  bookedCount: number;
+}
+
+/** Chính sách đợt tuyển (kèm mặc định khi tạo khung giờ). */
+export interface RoundPolicy {
+  maxRebookingAttempts: number;
+  rebookingCooldownMinutes: number;
+  cancellationDeadlineHours: number;
+  minimumPreparationMinutesDefault: number;
+  credentialsLeadMinutesDefault: number;
+}
+
+export interface RoundDetailPayload {
+  round: RoundRecord;
+  slots: ApplySlot[];
+  policy: RoundPolicy;
+  stats: { applicationCount: number; byStatus: Record<string, number> };
+}
+
+/** Career role — thư viện nghề (admin). */
+export interface CareerRoleRecord {
+  code: string;
+  name: string;
+  description: string;
+  level: CareerLevel;
+  language: CareerLanguage;
+  requiredSkills: SkillRequirement[];
+  optionalSkills: string[];
+  version: number;
+  status: CareerRoleStatus;
+  acceptingApplications: boolean;
+  createdAt: string;
+  updatedAt: string;
+  questionCount: number;
+}
+
+/** Career role bản public (GET /career-roles — chỉ published + accepting). */
+export type PublicCareerRole = Omit<
+  CareerRoleRecord,
+  "status" | "acceptingApplications" | "createdAt" | "updatedAt"
+>;
+
+/** Snapshot nội dung một phiên bản nghề. */
+export interface CareerRoleRevision {
+  id: string;
+  code: string;
+  version: number;
+  note: string;
+  changedBy: string;
+  changedAt: string;
+  snapshot: Omit<CareerRoleRecord, "code" | "createdAt" | "updatedAt" | "questionCount">;
+}
+
+/** Dòng thư trong hàng đợi email (admin). */
+export interface MailRecordRow {
+  id: string;
+  kind: MailKind;
+  subject: string;
+  recipientHint: string;
+  applicationId: string | null;
+  applicationName: string | null;
+  roundId: string | null;
+  availableAt: string;
+  attempts: number;
+  status: MailStatus;
+  lastCode: string | null;
+  lastResentAt: string | null;
+  resendable: boolean;
+  cooldownRemainingSeconds: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** GET /admin/communications/:id/preview. */
+export interface MailPreview {
+  id: string;
+  kind: MailKind;
+  subject: string;
+  recipientHint: string;
+  applicationName: string | null;
+  status: MailStatus;
+  attempts: number;
+  lastCode: string | null;
+  availableAt: string;
+  lastResentAt: string | null;
+  html: string;
+  text: string;
+}
+
+/** GET .../credential-recovery — điều kiện khôi phục credentials. */
+export interface CredentialRecoveryInfo {
+  canRecover: boolean;
+  reason: string | null;
+  expectedRevision: number;
+  slotId: string | null;
+  hasAccount: boolean;
+  serverNow: string;
+}
+
+/* ------------------------- applyApi — cổng công khai ------------------------- */
+
+export const applyApi = {
+  /** Đợt tuyển đang mở (public). */
+  rounds: () => api<{ data: PublicApplyRound[] }>("/applications/rounds"),
+
+  /** Thư viện nghề bản public (chỉ published + đang nhận hồ sơ). */
+  roles: () => api<{ data: PublicCareerRole[] }>("/career-roles"),
+
+  /** Khung giờ còn chỗ của một đợt (lọc theo role nếu muốn). */
+  slots: (roundId: string, roleCode?: string) =>
+    api<{ data: ApplySlot[] }>("/applications/slots", { query: { roundId, roleCode } }),
+
+  /** Nộp hồ sơ — trả verifyToken (mock: xem được luôn để demo luồng verify). */
+  create(input: { roundId: string; fullName: string; email: string; cvFileName?: string; consent: true }) {
+    return api<{ applicationId: string; verifyToken: string; status: ApplicationStatus; mailId: string; message: string }>(
+      "/applications",
+      { method: "POST", body: input }
+    );
+  },
+
+  /** Xác minh email → unverified → queued → analyzing (Agent phân tích đồng bộ). */
+  verify(token: string) {
+    return api<{ application: PublicApplication; analysis: AgentAnalysis | null; status: ApplicationStatus }>(
+      "/applications/verify",
+      { method: "POST", body: { token } }
+    );
+  },
+
+  /** Tra cứu hồ sơ theo email + đợt (thay cookie — dùng cho trang /apply/me). */
+  me: (email: string, roundId: string) => api<ApplyMePayload>("/applications/me", { query: { email, roundId } }),
+
+  /** Đặt / đổi lịch phỏng vấn (tuân thủ rebooking policy). */
+  book: (input: { email: string; roundId: string; slotId: string }) =>
+    api<{ application: PublicApplication; booking: SlotBookingInfo; rebookingPolicy: RebookingPolicy }>(
+      "/applications/me/book",
+      { method: "POST", body: input }
+    ),
+
+  /** Nộp lại CV khi needs_information/failed → phân tích lại. */
+  updateCv: (input: { email: string; roundId: string; cvFileName: string }) =>
+    api<{ application: PublicApplication; analysis: AgentAnalysis }>("/applications/me/cv", {
+      method: "POST",
+      body: input,
+    }),
+
+  /** Ứng viên tự rút hồ sơ → cancelled (giải phóng slot nếu đã đặt). */
+  leave: (input: { email: string; roundId: string }) =>
+    api<{ application: PublicApplication }>("/applications/leave", { method: "POST", body: input }),
+
+  /** Xin lại link truy cập — luôn trả message trung lập. */
+  requestAccess: (input: { roundId: string; email: string }) =>
+    api<{ message: string }>("/applications/request-access", { method: "POST", body: input }),
+};
+
+/* ---------------- recruitmentRoundApi — đợt tuyển (staff) ---------------- */
+
+export const recruitmentRoundApi = {
+  list: (params: { page?: number; pageSize?: number; status?: RoundStatus } = {}) =>
+    api<PageData<RoundRecord>>("/recruitment-rounds", { query: params }),
+
+  create: (input: { name: string; opensAt: string; closesAt: string; description?: string }) =>
+    api<RoundRecord & { slots: ApplySlot[] }>("/recruitment-rounds", { method: "POST", body: input }),
+
+  detail: (id: string) => api<RoundDetailPayload>(`/recruitment-rounds/${id}`),
+
+  /** Mở/đóng nhận CV: draft→open→closed (closed→open cho phép mở lại). */
+  setStatus: (id: string, status: RoundStatus) =>
+    api<RoundRecord>(`/recruitment-rounds/${id}/status`, { method: "POST", body: { status } }),
+
+  /** Thêm khung giờ — chỉ role published + có ≥10 câu hỏi trong ngân hàng. */
+  addSlot: (
+    id: string,
+    input: {
+      roleCode: string;
+      startsAt: string;
+      endsAt: string;
+      capacity: number;
+      minimumPreparationMinutes?: number;
+      credentialsLeadMinutes?: number;
+      location?: string;
+    }
+  ) => api<ApplySlot>(`/recruitment-rounds/${id}/slots`, { method: "POST", body: input }),
+
+  closeSlot: (id: string, slotId: string) =>
+    api<ApplySlot>(`/recruitment-rounds/${id}/slots/${slotId}/close`, { method: "POST" }),
+
+  applications: (
+    id: string,
+    params: { page?: number; pageSize?: number; status?: ApplicationStatus; search?: string } = {}
+  ) => api<PageData<ApplicationRecordRow>>(`/recruitment-rounds/${id}/applications`, { query: params }),
+
+  applicationDetail: (id: string, appId: string) =>
+    api<StaffApplicationDetail>(`/recruitment-rounds/${id}/applications/${appId}`),
+
+  cancelApplication: (id: string, appId: string, reason: string) =>
+    api<{ application: ApplicationRecordRow }>(`/recruitment-rounds/${id}/applications/${appId}/cancel`, {
+      method: "POST",
+      body: { reason },
+    }),
+
+  /** Đổi khung giờ của hồ sơ booked (check capacity, không tốn lượt rebook của ứng viên). */
+  reschedule: (id: string, appId: string, slotId: string) =>
+    api<{ application: ApplicationRecordRow; booking: SlotBookingInfo }>(
+      `/recruitment-rounds/${id}/applications/${appId}/reschedule`,
+      { method: "POST", body: { slotId } }
+    ),
+
+  /** Gửi lại email đăng nhập (tạo mail queue entry; uncertain → cần acknowledge). */
+  resendCredentials: (id: string, appId: string, acknowledgeUncertain?: boolean) =>
+    api<{ queued: boolean; mailId: string; status: MailStatus }>(
+      `/recruitment-rounds/${id}/applications/${appId}/resend-credentials`,
+      { method: "POST", body: { acknowledgeUncertain } }
+    ),
+
+  credentialRecovery: (id: string, appId: string, slotId?: string) =>
+    api<CredentialRecoveryInfo>(`/recruitment-rounds/${id}/applications/${appId}/credential-recovery`, {
+      query: { slotId },
+    }),
+
+  /** Khôi phục credentials: tạo tài khoản intern (pending) + mail credentials / existing-account. */
+  recoverCredentials: (id: string, appId: string, input: { expectedRevision: number; reason: string }) =>
+    api<{ recovered: boolean; accountCreated: boolean; accountEmail: string; mailId: string; revision: number }>(
+      `/recruitment-rounds/${id}/applications/${appId}/recover-credentials`,
+      { method: "POST", body: input }
+    ),
+};
+
+/* ---------------- careerRoleApi — thư viện nghề (admin) ---------------- */
+
+export const careerRoleApi = {
+  publicList: () => api<{ data: PublicCareerRole[] }>("/career-roles"),
+
+  list: (params: { page?: number; pageSize?: number; search?: string; status?: CareerRoleStatus } = {}) =>
+    api<PageData<CareerRoleRecord>>("/admin/career-roles", { query: params }),
+
+  create: (input: {
+    code: string;
+    name: string;
+    description?: string;
+    level: CareerLevel;
+    language: CareerLanguage;
+    requiredSkills: SkillRequirement[];
+    optionalSkills?: string[];
+  }) => api<CareerRoleRecord>("/admin/career-roles", { method: "POST", body: input }),
+
+  /** Sai expectedVersion → 409 code CAREER_ROLE_VERSION_CONFLICT; tăng version + lưu snapshot. */
+  update: (
+    code: string,
+    input: {
+      name?: string;
+      description?: string;
+      level?: CareerLevel;
+      language?: CareerLanguage;
+      requiredSkills?: SkillRequirement[];
+      optionalSkills?: string[];
+      note?: string;
+      expectedVersion: number;
+    }
+  ) => api<CareerRoleRecord>(`/admin/career-roles/${code}`, { method: "PUT", body: input }),
+
+  /** Publish yêu cầu tổng trọng số requiredSkills = 100. */
+  publish: (code: string, version: number) =>
+    api<CareerRoleRecord>(`/admin/career-roles/${code}/publish`, { method: "POST", body: { version } }),
+
+  archive: (code: string, version: number) =>
+    api<CareerRoleRecord>(`/admin/career-roles/${code}/archive`, { method: "POST", body: { version } }),
+
+  revisions: (code: string, params: { page?: number; pageSize?: number } = {}) =>
+    api<PageData<CareerRoleRevision>>(`/admin/career-roles/${code}/revisions`, { query: params }),
+
+  /** Bật/tắt nhận hồ sơ — chỉ role published (không tăng version). */
+  setAccepting: (code: string, input: { accepting: boolean; expectedVersion: number }) =>
+    api<CareerRoleRecord>(`/admin/career-roles/${code}/accepting`, { method: "PATCH", body: input }),
+};
+
+/* ---------------- communicationApi — hàng đợi email (admin) ---------------- */
+
+export const communicationApi = {
+  list: (params: { page?: number; pageSize?: number; kind?: MailKind; status?: MailStatus; search?: string } = {}) =>
+    api<PageData<MailRecordRow>>("/admin/communications", { query: params }),
+
+  preview: (id: string) => api<MailPreview>(`/admin/communications/${id}/preview`),
+
+  /** Chỉ cho status dead/accepted/bounced/uncertain; kind credentials/verify cần acknowledge; cooldown 60s → 429. */
+  resend: (id: string, acknowledgeUncertain?: boolean) =>
+    api<{ mail: MailRecordRow }>(`/admin/communications/${id}/resend`, {
+      method: "POST",
+      body: { acknowledgeUncertain },
+    }),
+};

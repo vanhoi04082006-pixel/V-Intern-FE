@@ -33,7 +33,7 @@ export function OnboardingStepper({
         return (
           <li key={label} className={cn("flex min-w-0 items-start", i > 0 && "flex-1")}>
             {i > 0 ? (
-              <div className="mt-4 h-0.5 min-w-4 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+              <div className="mt-4 h-0.5 min-w-4 flex-1 overflow-hidden rounded-full bg-track">
                 <div
                   className={cn(
                     "h-full rounded-full bg-gradient-to-r from-brand to-brand-bright transition-[width] duration-700 ease-out",

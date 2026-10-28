@@ -77,7 +77,7 @@ export function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ban@email.vn"
-              className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-line-strong"
+              className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brand/70 dark:focus:border-line-strong"
             />
           </span>
         </label>
@@ -93,7 +93,7 @@ export function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-12 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-line-strong"
+              className="h-11 w-full rounded-lg border border-line bg-deep pl-10 pr-12 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brand/70 dark:focus:border-line-strong"
             />
             <button
               type="button"

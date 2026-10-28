@@ -180,11 +180,11 @@ export function ScoreRing({ score, size = 72 }: { score: number; size?: number }
   const stroke = 6;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
-  const color = clamped >= 80 ? "#34D399" : clamped >= 60 ? "#2DD4BF" : clamped >= 40 ? "#FBBF24" : "#FB7185";
+  const color = clamped >= 80 ? "var(--emerald)" : clamped >= 60 ? "var(--teal)" : clamped >= 40 ? "var(--amber)" : "var(--rose)";
   return (
     <div className="relative grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={stroke} />
         <circle
           cx={size / 2}
           cy={size / 2}

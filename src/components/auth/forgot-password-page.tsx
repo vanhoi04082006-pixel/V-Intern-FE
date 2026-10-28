@@ -12,8 +12,8 @@ export function ForgotPasswordPage() {
           className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-amber/[0.08] to-transparent"
           aria-hidden
         />
-        {/* Vòng tròn glow amber */}
-        <span className="relative mx-auto mb-6 grid size-16 place-items-center rounded-full border border-amber/25 bg-amber/10 shadow-[0_0_44px_rgba(251,191,36,0.22)]">
+        {/* Vòng tròn glow amber — màu glow theo token amber của theme */}
+        <span className="relative mx-auto mb-6 grid size-16 place-items-center rounded-full border border-amber/25 bg-amber/10 shadow-[0_0_44px_color-mix(in_srgb,var(--amber)_22%,transparent)]">
           <span className="absolute inset-0 rounded-full bg-amber/10 blur-md" aria-hidden />
           <KeyRound className="relative size-6 icon text-amber" />
         </span>

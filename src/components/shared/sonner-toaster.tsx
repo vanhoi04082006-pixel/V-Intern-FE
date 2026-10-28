@@ -1,17 +1,19 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import { Toaster as Sonner } from "sonner";
 
 export function SonnerToaster() {
+  const { resolvedTheme } = useTheme();
   return (
     <Sonner
-      theme="dark"
+      theme={resolvedTheme === "light" ? "light" : "dark"}
       position="top-right"
       toastOptions={{
         style: {
-          background: "#171D1B",
-          border: "1px solid rgba(255,255,255,0.09)",
-          color: "#EDF2EF",
+          background: "var(--panel-2)",
+          border: "1px solid var(--line-strong)",
+          color: "var(--ink)",
           borderRadius: "14px",
           fontFamily: "var(--font-be-vietnam), sans-serif",
         },

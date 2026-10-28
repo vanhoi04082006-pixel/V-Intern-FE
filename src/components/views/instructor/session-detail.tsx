@@ -56,6 +56,7 @@ import { LoadingBlock, ErrorBlock, InlineSpinner } from "@/components/shared/sta
 import { FilterBar, FilterSelect } from "@/components/shared/toolbar";
 import { ConfirmDialog } from "@/components/shared/confirm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SessionSetupWizard } from "@/components/views/instructor/setup-wizard";
 import {
   Table,
   TableBody,
@@ -143,6 +144,7 @@ export function InstructorSessionDetail({ params }: { params: Record<string, str
           <TabTrigger value="overview" label="Tổng quan" icon={<LayoutList className="size-3.5 icon" />} />
           <TabTrigger value="work" label="Công việc" icon={<ListChecks className="size-3.5 icon" />} />
           <TabTrigger value="members" label="Thành viên" icon={<Users className="size-3.5 icon" />} />
+          <TabTrigger value="setup" label="Khởi tạo" icon={<Rocket className="size-3.5 icon" />} />
           <TabTrigger value="plan" label="Kế hoạch AI" icon={<Sparkles className="size-3.5 icon" />} />
           <TabTrigger value="timeline" label="Timeline" icon={<Clock3 className="size-3.5 icon" />} />
         </TabsList>
@@ -155,6 +157,9 @@ export function InstructorSessionDetail({ params }: { params: Record<string, str
         </TabsContent>
         <TabsContent value="members">
           <MembersTab sessionId={id} onMembersChanged={session.reload} />
+        </TabsContent>
+        <TabsContent value="setup">
+          <SessionSetupWizard sessionId={id} onDone={session.reload} />
         </TabsContent>
         <TabsContent value="plan">
           <PlanTab

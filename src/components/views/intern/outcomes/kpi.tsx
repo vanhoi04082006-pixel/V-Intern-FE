@@ -108,7 +108,7 @@ function ContributionBar({ metric }: { metric: KpiMetric }) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (metric.weightedContribution / max) * 100)) : 0;
   return (
     <div
-      className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]"
+      className="h-1.5 overflow-hidden rounded-full bg-track"
       role="progressbar"
       aria-valuenow={Math.round(pct)}
       aria-valuemin={0}

@@ -307,8 +307,8 @@ function PerformanceDetailDialog({
               />
             </div>
 
-            {/* Trend BarChart */}
-            <Panel className="p-4">
+            {/* Trend BarChart — grid/axis/cursor tô qua CSS (đền màu theo theme) */}
+            <Panel className="p-4 [&_.recharts-cartesian-grid_line]:stroke-line [&_.recharts-cartesian-axis-line]:stroke-line-strong [&_.recharts-tooltip-cursor]:fill-line">
               <p className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-faint">
                 <TrendingUp className="size-3.5 icon text-brand-bright" /> Xu hướng 6 tháng (đã tạo vs hoàn thành)
               </p>
@@ -331,15 +331,15 @@ function PerformanceDetailDialog({
                     <Tooltip
                       cursor={{ fill: "rgba(255,255,255,.04)" }}
                       contentStyle={{
-                        background: "#171D1B",
-                        border: "1px solid rgba(255,255,255,.14)",
+                        background: "var(--panel-2)",
+                        border: "1px solid var(--line-strong)",
                         borderRadius: 12,
                         fontSize: 12,
-                        color: "#EDF2EF",
+                        color: "var(--ink)",
                       }}
-                      labelStyle={{ color: "#9AA5A0" }}
+                      labelStyle={{ color: "var(--dim)" }}
                     />
-                    <Legend wrapperStyle={{ fontSize: 11, color: "#9AA5A0" }} />
+                    <Legend wrapperStyle={{ fontSize: 11, color: "var(--dim)" }} />
                     <Bar dataKey="created" name="Đã tạo" fill="#2DD4BF" radius={[4, 4, 0, 0]} maxBarSize={22} />
                     <Bar dataKey="completed" name="Hoàn thành" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={22} />
                   </BarChart>

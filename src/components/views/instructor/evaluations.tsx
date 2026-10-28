@@ -246,7 +246,7 @@ function CycleCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="border-line bg-panel-2 text-ink">
               <DropdownMenuItem
-                className="gap-2 text-[13px] hover:!bg-white/[0.05]"
+                className="gap-2 text-[13px] hover:!bg-panel-2"
                 onClick={() => handleStatus(next)}
               >
                 <BadgeCheck className="size-4 icon text-brand-bright" />

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowLeft, Award, KanbanSquare, Sparkles } from "lucide-react";
 import { Link } from "@/lib/client/router";
 import { Logo } from "@/components/shared/logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { UserAvatar } from "@/components/shared/primitives";
 import { cn } from "@/lib/utils";
 
@@ -42,12 +43,15 @@ export interface AuthQuote {
 
 function BrandPanel({ quote }: { quote: AuthQuote }) {
   return (
-    <aside className="relative hidden overflow-hidden bg-deep lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14">
+    /* Scope .dark: brand panel luôn là surface đậm — ở light mode được phủ
+       wash gradient "deep teal → sky" (xem .brand-panel-wash trong globals.css) */
+    <aside className="dark relative hidden overflow-hidden bg-deep lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14">
       <Image
         src="/images/hero-orb.png"
         alt=""
         aria-hidden
         fill
+        priority
         sizes="45vw"
         className="object-cover opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"
       />
@@ -55,6 +59,7 @@ function BrandPanel({ quote }: { quote: AuthQuote }) {
         className="absolute inset-0 bg-gradient-to-b from-deep/50 via-transparent to-deep/80"
         aria-hidden
       />
+      <div className="brand-panel-wash absolute inset-0" aria-hidden />
 
       <div className="relative">
         <Logo size={34} />
@@ -129,13 +134,16 @@ export function SplitAuthLayout({
           <Link to="/" aria-label="Về trang chủ" className="py-2">
             <Logo />
           </Link>
-          <Link
-            to="/"
-            className="inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-dim transition-colors hover:text-ink"
-          >
-            <ArrowLeft className="size-3.5 icon" />
-            Về trang chủ
-          </Link>
+          <div className="flex items-center gap-1.5">
+            <ThemeToggle />
+            <Link
+              to="/"
+              className="inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-dim transition-colors hover:text-ink"
+            >
+              <ArrowLeft className="size-3.5 icon" />
+              Về trang chủ
+            </Link>
+          </div>
         </div>
 
         <div className="relative flex flex-1 items-center justify-center py-10">
@@ -160,10 +168,14 @@ export function CenteredAuthLayout({
   return (
     <div className="relative grid min-h-screen place-items-center overflow-hidden bg-canvas px-4 py-10">
       <div className="dot-bg absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_70%)]" aria-hidden />
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+        <ThemeToggle />
+      </div>
       <Image
         src="/images/hero-orb.png"
         alt=""
         aria-hidden
+        priority
         width={640}
         height={640}
         className="pointer-events-none absolute left-1/2 top-1/2 w-[560px] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.14] [mask-image:radial-gradient(closest-side,black_30%,transparent_75%)]"

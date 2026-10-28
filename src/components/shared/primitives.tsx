@@ -318,7 +318,7 @@ export function UserAvatar({
     <span
       aria-hidden
       className={cn(
-        "grid shrink-0 select-none place-items-center rounded-full font-semibold ring-1 ring-white/10",
+        "grid shrink-0 select-none place-items-center rounded-full font-semibold ring-1 ring-line",
         className
       )}
       style={{ ...avatarStyleOf(name), width: size, height: size, fontSize: size * 0.36 }}
@@ -381,7 +381,7 @@ export function AnimatedProgressBar({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <div
-        className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.06]"
+        className="h-1.5 flex-1 overflow-hidden rounded-full bg-track"
         role="progressbar"
         aria-valuenow={pct}
         aria-valuemin={0}

@@ -4,6 +4,9 @@
  * 1-a-1: auth, workspace, recruitment, tasks, sprints, submissions, mentor.
  * 1-a-2: outcomes, notifications, github, profile, templates, sessions,
  * plans, candidates, evaluations, performance, reports, admin.
+ * 2-a: apply (public CV + rounds + career-roles + communications).
+ * 2-b: participation, knowledge, org (groups/roles/catalogs), account
+ * (change-password / github invitation / sharing).
  */
 
 import type { RouteDef } from "./common";
@@ -26,6 +29,11 @@ import { evaluationRoutes } from "./evaluations";
 import { performanceRoutes } from "./performance";
 import { reportRoutes } from "./reports";
 import { adminRoutes } from "./admin";
+import { applyRoutes } from "./apply";
+import { participationRoutes } from "./participation";
+import { knowledgeRoutes } from "./knowledge";
+import { orgRoutes } from "./org";
+import { accountRoutes } from "./account";
 
 export const allRoutes: RouteDef[] = [
   ...authRoutes,
@@ -47,4 +55,9 @@ export const allRoutes: RouteDef[] = [
   ...performanceRoutes,
   ...reportRoutes,
   ...adminRoutes,
+  ...applyRoutes,
+  ...participationRoutes,
+  ...knowledgeRoutes,
+  ...orgRoutes,
+  ...accountRoutes,
 ];

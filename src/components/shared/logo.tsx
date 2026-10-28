@@ -13,8 +13,9 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
       <svg viewBox="0 0 40 40" width={size} height={size}>
         <defs>
           <linearGradient id="vintern-logo-g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#34D399" />
-            <stop offset="100%" stopColor="#2DD4BF" />
+            {/* stop-color qua style để nhận CSS var — logo tự đổi theo theme */}
+            <stop offset="0%" style={{ stopColor: "var(--logo-1)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--logo-2)" }} />
           </linearGradient>
         </defs>
         <path
@@ -35,7 +36,7 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
           strokeWidth="3.2"
           strokeLinecap="round"
         />
-        <circle cx="26" cy="14.5" r="2.6" fill="#34D399" />
+        <circle cx="26" cy="14.5" r="2.6" style={{ fill: "var(--logo-1)" }} />
       </svg>
     </span>
   );

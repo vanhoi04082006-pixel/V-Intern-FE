@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { SonnerToaster } from "@/components/shared/sonner-toaster";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 
 const beVietnam = Be_Vietnam_Pro({
   variable: "--font-be-vietnam",
@@ -27,7 +28,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#090C0B",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#090C0B" },
+    { media: "(prefers-color-scheme: light)", color: "#F6F9FD" },
+  ],
 };
 
 export default function RootLayout({
@@ -40,9 +44,16 @@ export default function RootLayout({
       <body
         className={`${beVietnam.variable} ${jetbrains.variable} font-sans bg-canvas text-ink antialiased`}
       >
-        {children}
-        <Toaster />
-        <SonnerToaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+          <SonnerToaster />
+        </ThemeProvider>
       </body>
     </html>
   );

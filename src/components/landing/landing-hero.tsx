@@ -111,7 +111,8 @@ function DashboardMockup() {
   }, [reduce]);
 
   return (
-    <div className="relative">
+    <div className="dark relative">
+      {/* Scope .dark: mockup luôn là "feature card tối" ở cả 2 theme */}
       {/* Hào quang hero-orb phía dưới mockup */}
       <Image
         src="/images/hero-orb.png"
@@ -240,7 +241,7 @@ function DashboardMockup() {
               {RUBRIC.map((r) => (
                 <span key={r.label} className="flex items-center gap-2">
                   <span className="w-14 shrink-0 text-[9px] text-faint">{r.label}</span>
-                  <span className="h-1 flex-1 overflow-hidden rounded-full bg-white/5">
+                  <span className="h-1 flex-1 overflow-hidden rounded-full bg-track">
                     <span className={cn("block h-full rounded-full", r.cls)} style={{ width: `${r.pct}%` }} />
                   </span>
                   <span className="w-6 text-right font-mono text-[9px] text-dim">{r.pct}</span>

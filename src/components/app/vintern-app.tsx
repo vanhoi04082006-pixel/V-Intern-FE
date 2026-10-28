@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Compass } from "lucide-react";
-import { useRoute, navigate } from "@/lib/client/router";
+import { useRoute, navigate, currentPath } from "@/lib/client/router";
 import { homePathOf, useSession } from "@/lib/client/session";
 import { AppShell } from "./shell";
 import { matchRoutes, type RouteDefinition } from "./route-types";
@@ -14,6 +14,9 @@ import { LoginPage } from "@/components/auth/login-page";
 import { RegisterPage } from "@/components/auth/register-page";
 import { ForgotPasswordPage } from "@/components/auth/forgot-password-page";
 import { VerifyCertificatePage } from "@/components/auth/verify-page";
+import { ChangePasswordPage } from "@/components/auth/change-password-page";
+import { ApplyView } from "@/components/views/public/apply-view";
+import { GithubInvitationView } from "@/components/views/public/github-invitation-view";
 import { ViewFrame } from "@/components/shared/primitives";
 import { Button } from "@/components/ui/button";
 
@@ -28,7 +31,19 @@ const ROLE_ROUTES: Record<string, RouteDefinition[]> = {
   admin: [...adminRoutes, ...sharedAdmin],
 };
 
-const PUBLIC_PREFIXES = ["/login", "/register", "/forgot-password", "/verify"];
+/** Route public — không cần workspace guard. */
+const PUBLIC_PREFIXES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/verify",
+  "/apply",
+  "/github/invitation",
+  "/change-password",
+];
+
+/** Trang auth thuần — người đã đăng nhập sẽ bị chuyển về workspace. */
+const AUTH_ONLY_PREFIXES = ["/login", "/register", "/forgot-password"];
 
 function NotFound() {
   const { user } = useSession();
@@ -58,18 +73,21 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
   const { path } = useRoute();
 
   React.useEffect(() => {
+    // Đọc path thật từ hash tại thời điểm effect chạy — render đầu của
+    // useRoute dùng "/" để khớp hydration nên state có thể chưa kịp sync.
+    const current = currentPath();
     if (!user) {
-      navigate(`/login?next=${encodeURIComponent(path)}`, { replace: true });
+      navigate(`/login?next=${encodeURIComponent(current)}`, { replace: true });
       return;
     }
-    const wanted = path.split("/")[1];
+    const wanted = current.split("/")[1];
     if (user.role !== wanted) {
       navigate(homePathOf(user.role), { replace: true });
     }
   }, [user, path]);
 
   if (!user) return null;
-  const wanted = path.split("/")[1];
+  const wanted = currentPath().split("/")[1];
   if (user.role !== wanted) return null;
 
   return <AppShell role={user.role}>{children}</AppShell>;
@@ -80,12 +98,13 @@ export function VInternApp() {
   const { user } = useSession();
   const isPublic = PUBLIC_PREFIXES.some((p) => path.startsWith(p));
 
-  // Chuyển hướng người đã đăng nhập đừng nhìn trang auth nữa
+  // Chuyển hướng người đã đăng nhập đừng nhìn trang auth thuần nữa
+  // (/apply, /verify, /github/invitation, /change-password vẫn xem được)
   React.useEffect(() => {
-    if (user && isPublic) {
+    if (user && AUTH_ONLY_PREFIXES.some((p) => path.startsWith(p))) {
       navigate(homePathOf(user.role), { replace: true });
     }
-  }, [user, isPublic]);
+  }, [user, path]);
 
   let content: React.ReactNode;
 
@@ -99,6 +118,12 @@ export function VInternApp() {
     content = <ForgotPasswordPage />;
   } else if (path.startsWith("/verify")) {
     content = <VerifyCertificatePage />;
+  } else if (path.startsWith("/apply")) {
+    content = <ApplyView />;
+  } else if (path.startsWith("/github/invitation")) {
+    content = <GithubInvitationView />;
+  } else if (path.startsWith("/change-password")) {
+    content = <ChangePasswordPage />;
   } else if (path.startsWith("/intern") || path.startsWith("/instructor") || path.startsWith("/admin")) {
     const role = path.split("/")[1];
     const routes = ROLE_ROUTES[role] ?? [];

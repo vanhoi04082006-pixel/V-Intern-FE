@@ -301,7 +301,7 @@ function OverviewTab({
                 value={progress}
                 onChange={(e) => setProgress(Number(e.target.value))}
                 aria-label="Chỉnh tiến độ nhiệm vụ"
-                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/[0.08] accent-emerald-500"
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-track accent-brand"
               />
               <div className="mt-1 flex justify-between text-[10px] text-faint">
                 <span>0%</span>

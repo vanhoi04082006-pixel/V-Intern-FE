@@ -219,7 +219,7 @@ export function MiniProgress({ value, className }: { value: number; className?: 
   const pct = Math.max(0, Math.min(100, value));
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <div className="h-1.5 w-14 overflow-hidden rounded-full bg-white/[0.07]" aria-hidden>
+      <div className="h-1.5 w-14 overflow-hidden rounded-full bg-track" aria-hidden>
         <div
           className="h-full rounded-full bg-gradient-to-r from-brand to-brand-bright"
           style={{ width: `${pct}%` }}
