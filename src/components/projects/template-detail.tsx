@@ -211,7 +211,7 @@ export function TemplateDetail({
             </p>
             <p>
               <Link className="font-semibold text-primary hover:underline" href={`/instructor/sessions/${started.sessionId}/setup?project=${started.projectId}`}>
-                Mở thiết lập phiên
+                Mở thiết lập phiên →
               </Link>
             </p>
           </div>
