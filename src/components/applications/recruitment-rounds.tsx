@@ -260,7 +260,11 @@ function RoundWorkspace({
               Agent chỉ chọn trong các lịch đang mở và còn chỗ. Mặc định cần 60
               phút chuẩn bị; email đăng nhập gửi trước 30 phút.
             </p>
-            <button className={buttonClass} onClick={() => setSlotForm(true)}>
+            <button className={buttonClass} disabled={action.busy} onClick={() => {
+              action.clearError();
+              setNotice("");
+              setSlotForm(true);
+            }}>
               Thêm khung giờ
             </button>
           </div>

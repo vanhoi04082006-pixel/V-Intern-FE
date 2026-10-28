@@ -7,6 +7,7 @@ export function useAction(onSuccess?: () => void) {
   return {
     busy,
     error,
+    clearError() { setError(undefined); },
     async run(action: () => Promise<unknown>) {
       if (inFlight.current) return false;
       inFlight.current = true;
