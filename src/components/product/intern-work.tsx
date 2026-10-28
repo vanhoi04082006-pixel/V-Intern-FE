@@ -123,7 +123,7 @@ export function InternWork() {
           </div>
         }
       />
-      {workspaceContext?.workspace.assignment && <details className="student-help-disclosure student-project-materials"><summary>Tài liệu & gói dự án</summary><OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} /></details>}
+      {workspaceContext?.workspace.assignment && <details open className="student-help-disclosure student-project-materials"><summary>Tài liệu & gói dự án</summary><OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} /></details>}
 
       <section aria-label="Lọc công việc" className="student-toolbar mb-5">
         <div className="student-search-field">
