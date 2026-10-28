@@ -1,6 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
 import {
   Modal,
   Field,
@@ -13,11 +18,22 @@ import {
   replacementAdvice,
   prepareReplacement,
   approveReplacement,
+  getReplacementCommand,
   type ReplacementAdvice,
   type ReplacementPreview,
   type ReplacementResult,
 } from "@/lib/api/replacements";
+
+type ReplacementCommand = Awaited<ReturnType<typeof getReplacementCommand>>;
 const date = (value: string) => new Date(value).toLocaleString("vi-VN");
+/** Poll a pending replacement command every 5s; terminal statuses stop the loop. */
+const POLL_MS = 5000;
+const commandStatusLabels: Record<ReplacementPreview["status"], string> = {
+  pending: "Đang chờ phê duyệt",
+  expired: "Bản xem trước đã hết hạn",
+  approved: "Đã phê duyệt",
+};
+
 export function ReplacementDialog({
   sessionId,
   incidentId,
@@ -35,24 +51,76 @@ export function ReplacementDialog({
     [candidate, setCandidate] = useState(""),
     [hours, setHours] = useState("24"),
     [preview, setPreview] = useState<ReplacementPreview | null>(null),
-    [result, setResult] = useState<ReplacementResult | null>(null);
+    [result, setResult] = useState<ReplacementResult | null>(null),
+    [command, setCommand] = useState<ReplacementCommand | null>(null),
+    [checking, setChecking] = useState(false);
   const [reason, setReason] = useState(""),
     [confirmed, setConfirmed] = useState(false),
     [busy, setBusy] = useState(""),
     [error, setError] = useState(""),
     [now, setNow] = useState(() => Date.now());
+  const commandId = useRef<string | null>(null);
+  const onSavedRef = useRef(onSaved);
+  useEffect(() => {
+    onSavedRef.current = onSaved;
+  }, [onSaved]);
   useEffect(() => {
     if (!preview) return;
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, [preview]);
+  /** Refresh the live command status; aborts are silent (modal closing). */
+  const refreshCommand = useCallback(
+    (signal: AbortSignal) =>
+      getReplacementCommand(sessionId, commandId.current ?? "", signal)
+        .then((next) => {
+          setCommand(next);
+          setChecking(false);
+          if (next.result) {
+            setResult(next.result);
+            onSavedRef.current();
+          }
+          return next;
+        })
+        .catch((e: unknown) => {
+          if (e instanceof DOMException && e.name === "AbortError") return null;
+          setError(errorMessage(e));
+          setChecking(false);
+          return null;
+        }),
+    [sessionId],
+  );
+  // Automatic polling while a command is still pending (stops on approved/expired).
+  useEffect(() => {
+    if (!command || command.status !== "pending" || result) return;
+    const controller = new AbortController();
+    const timer = setInterval(() => {
+      void refreshCommand(controller.signal);
+    }, POLL_MS);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+    };
+  }, [command, result, refreshCommand]);
+  const commandStatus = command?.status ?? preview?.status;
+  /** Server-reported expiry wins; otherwise the local countdown still guards a pending snapshot. */
   const expired = Boolean(
-    preview && now >= new Date(preview.expiresAt).getTime(),
+    preview &&
+      (commandStatus === "expired" ||
+        (commandStatus !== "approved" &&
+          now >= new Date(preview.expiresAt).getTime())),
   );
   function invalidate() {
     setPreview(null);
     setConfirmed(false);
     setError("");
+  }
+  /** Fetch the live status of a replacement command (manual refresh button). */
+  function checkNow() {
+    if (busy || !preview || checking) return;
+    if (!commandId.current) commandId.current = preview.id;
+    setChecking(true);
+    void refreshCommand(new AbortController().signal);
   }
   async function generate() {
     if (busy) return;
@@ -92,6 +160,8 @@ export function ReplacementDialog({
       });
       setPreview(next);
       setNow(Date.now());
+      commandId.current = next.id;
+      setCommand({ ...next, result: null });
     } catch (e) {
       setError(errorMessage(e));
     } finally {
@@ -115,6 +185,10 @@ export function ReplacementDialog({
         reason: reason.trim(),
       });
       setResult(next);
+      commandId.current = preview.id;
+      setCommand((current) =>
+        current ? { ...current, status: "approved", result: next } : current,
+      );
       onSaved();
     } catch (e) {
       if (e instanceof ApiError && e.statusCode === 409) {
@@ -300,16 +374,37 @@ export function ReplacementDialog({
               aria-label="Ảnh hưởng cần phê duyệt"
               className="space-y-4 border-t border-border pt-5"
             >
-              <div>
-                <h3 className="font-semibold text-foreground">
-                  {preview.document.summary.projectName} ·{" "}
-                  {preview.document.summary.roleName}
-                </h3>
-                <p className="mt-2 flex flex-wrap items-center gap-2 text-body">
-                  <span>{preview.document.summary.oldInternName}</span>
-                  <ArrowRight size={16} aria-hidden="true" />
-                  <strong>{preview.document.summary.candidateName}</strong>
-                </p>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-foreground">
+                    {preview.document.summary.projectName} ·{" "}
+                    {preview.document.summary.roleName}
+                  </h3>
+                  <p className="mt-2 flex flex-wrap items-center gap-2 text-body">
+                    <span>{preview.document.summary.oldInternName}</span>
+                    <ArrowRight size={16} aria-hidden="true" />
+                    <strong>{preview.document.summary.candidateName}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <p
+                    aria-live="polite"
+                    className="text-caption text-muted-foreground"
+                  >
+                    Trạng thái lệnh:{" "}
+                    {commandStatusLabels[commandStatus ?? "pending"]}
+                  </p>
+                  <button
+                    type="button"
+                    className={btn("secondary", "sm")}
+                    aria-label="Làm mới trạng thái lệnh thay thành viên"
+                    disabled={Boolean(busy) || checking}
+                    onClick={checkNow}
+                  >
+                    <RefreshCw size={14} aria-hidden="true" className={checking ? "animate-spin" : undefined} />
+                    {checking ? "Đang làm mới…" : "Làm mới trạng thái"}
+                  </button>
+                </div>
               </div>
               <p className="text-body text-muted-foreground">
                 Chuyển {preview.document.taskPlan.transfers.length} nhiệm vụ còn

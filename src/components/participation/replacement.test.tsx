@@ -7,6 +7,7 @@ vi.mock("@/lib/api/replacements", () => ({
   replacementAdvice: vi.fn(),
   prepareReplacement: vi.fn(),
   approveReplacement: vi.fn(),
+  getReplacementCommand: vi.fn(),
 }));
 const candidate = "candidate",
   session = "session",
