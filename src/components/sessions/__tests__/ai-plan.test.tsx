@@ -35,6 +35,18 @@ function deps(over: Record<string, unknown> = {}) {
 }
 
 describe("AiPlanPanel (M5)", () => {
+  it("explains current eligibility warnings separately from an already published plan", async () => {
+    const warning = "Assignee is not assigned to this project/session.";
+    render(<AiPlanPanel sessionId="s1" projectId="p1" deps={deps({
+      list: vi.fn(async () => [{ ...readyPlan, status: "confirmed" }]),
+      get: vi.fn(async () => ({ ...detail, status: "confirmed", warnings: [{ taskTitle: "FE task", message: warning }] })),
+    })} />);
+    const toggle = await screen.findByText("Đối chiếu điều kiện hiện tại");
+    expect(toggle.closest("details")).not.toHaveAttribute("open");
+    expect(screen.getByText(/không làm thay đổi kế hoạch đã phát hành/i)).toBeInTheDocument();
+    expect(screen.getByText(warning, { exact: false })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Xác nhận & publish" })).not.toBeInTheDocument();
+  });
   it("discards an old session generation response after switching session scope", async () => {
     let resolveGenerate!: (value: { planId: string; status: string; deduped: boolean }) => void;
     const summaryB = { ...readyPlan, planId: "plB", projectId: "pB", sessionId: "sB" };
