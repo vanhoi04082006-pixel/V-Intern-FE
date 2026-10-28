@@ -4,6 +4,9 @@ import Link from "next/link";
 import { Users, Layers, CalendarDays, Clock, BookOpen, Database } from "lucide-react";
 import { Person, exportCsv } from "./identity";
 import { useResource } from "@/lib/api/use-resource";
+import { getProjectSessions, claimProject, type ProjectSessionSummary } from "@/lib/api/project-sessions";
+import { ApiError, errorMessage } from "@/lib/auth/api-client";
+import { Can } from "@/components/auth/can";
 import { getSessionUser } from "@/lib/auth/session";
 import * as api from "@/lib/api/academic";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -41,7 +44,9 @@ const labels = {
   projects: "Thư viện dự án",
 };
 export function AcademicList({ kind }: { kind: api.AcademicKind }) {
-  const [revision,setRevision] = useState(0);
+  const [revision, setRevision] = useState(0);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [claimError, setClaimError] = useState<string | null>(null);
   const [sessionId,setSessionId] = useState(''),[projectId,setProjectId] = useState(''),[leadInstructorId,setLeadInstructorId] = useState(''),[domainCategory,setDomainCategory] = useState(''),[technology,setTechnology] = useState('');
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
@@ -59,6 +64,24 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
   const projectOptions = useResource(useCallback((signal:AbortSignal)=>kind==='projects'?api.getProjectFilterOptions(signal):Promise.resolve({domains:[],technologies:[]}),[kind]));
   const ids = data.data?.items.map(x=>x.id).join(',') ?? '';
   const summaries = useResource(useCallback((signal: AbortSignal) => ids ? api.getAcademicSummaries(kind,ids,signal) : Promise.resolve([]), [kind,ids]));
+  async function claim(project: api.AcademicEntity) {
+    setClaimError(null);
+    setClaimingId(project.id);
+    try {
+      await claimProject(project.id);
+      data.reload();
+      summaries.reload();
+      setRevision(r=>r+1);
+    } catch (e) {
+      setClaimError(
+        e instanceof ApiError && e.statusCode === 409
+          ? `Dự án ${project.code} đã có mentor quản lý rồi. Tải lại để xem trạng thái mới nhất.`
+          : errorMessage(e),
+      );
+    } finally {
+      setClaimingId(null);
+    }
+  }
   return (
     <>
       <PageTitle
@@ -115,6 +138,12 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
             {kind==='projects'&&<><select aria-label="Lĩnh vực dự án" className={inputClass} value={domainCategory} onChange={e=>{setDomainCategory(e.target.value);setPage(1);}}><option value="">Tất cả lĩnh vực</option>{projectOptions.data?.domains.map(v=><option key={v} value={v}>{v}</option>)}</select><select aria-label="Công nghệ dự án" className={inputClass} value={technology} onChange={e=>{setTechnology(e.target.value);setPage(1);}}><option value="">Tất cả công nghệ</option>{projectOptions.data?.technologies.map(v=><option key={v} value={v}>{v}</option>)}</select></>}
           </div>
           {Boolean(projectOptions.error)&&<ErrorState error={projectOptions.error} onRetry={projectOptions.reload}/>}
+          {claimError && (
+            <div role="alert" className="mb-3 flex flex-wrap items-center gap-2 rounded-control bg-destructive-subtle p-3 text-body text-destructive">
+              <span>{claimError}</span>
+              <button type="button" className="font-semibold underline" onClick={() => { setClaimError(null); data.reload(); }}>Tải lại danh sách</button>
+            </div>
+          )}
           {data.loading ? (
             <LoadingState />
           ) : data.error ? (
@@ -141,7 +170,7 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
                             <td className="p-3 font-semibold whitespace-nowrap text-primary">{x.code}</td>
                             <td className="p-3"><strong className="block text-foreground">{x.name}</strong>{x.description&&<p className="mt-1 max-w-36 truncate text-caption text-muted-foreground" title={x.description}>{x.description}</p>}</td>
                             {kind==='projects'?<><td className="p-3"><Badge>{x.domainCategory??'Chưa phân loại'}</Badge></td><td className="p-3 text-caption">{x.technologies.join(', ')||'Chưa có'}</td>{members}<td className="p-3"><AcademicStatus status={x.status} /></td><td className="p-3"><Badge>{{beginner:'Thấp',intermediate:'Trung bình',advanced:'Cao'}[x.difficulty??'']??'Chưa có'}</Badge></td></>:kind==='classes'?<><td className="p-3 text-primary">{summary?.sessionName??'Chưa gắn phiên'}</td>{members}<td className="p-3 whitespace-nowrap">{x.meetingSchedule??'Chưa có lịch'}<span className="mt-1 block text-caption text-muted-foreground">{x.meetingLocation}</span></td><td className="p-3"><ProgressBar value={x.progress} label={`${x.progress}%`} /></td><td className="p-3"><AcademicStatus status={x.status} /></td>{responsible}</>:<>{members}{responsible}<td className="p-3 whitespace-nowrap">{date(x.startDate)}</td><td className="p-3 whitespace-nowrap">{date(x.endDate)}</td><td className="p-3">{summary?.taskCount?<ProgressBar value={Math.round((summary.doneCount??0)/summary.taskCount*100)} />:<span className="text-caption text-muted-foreground">Chưa có task</span>}</td><td className="p-3"><AcademicStatus status={x.status} /></td></>}
-                            <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Chi tiết ${x.code}`} onClick={()=>setSelected(x.id)}>Xem chi tiết</button> {(kind==='sessions'||kind==='projects')&&<ActivateButton kind={kind} id={x.id} status={x.status} onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}} />} <RowMenu label={`Thao tác ${x.code}`} onOpen={()=>setSelected(x.id)} />{kind==='sessions'&&<Link className="mt-2 block text-caption text-primary" href={`/instructor/sessions/${x.id}`}>Mở phiên</Link>}</td>
+                            <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Chi tiết ${x.code}`} onClick={()=>setSelected(x.id)}>Xem chi tiết</button> {kind==='projects'&&x.mentorId===null&&<Can perm="projects.manage"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Nhận dự án ${x.code}`} disabled={claimingId===x.id} onClick={()=>void claim(x)}>{claimingId===x.id?"Đang nhận...":"Nhận dự án"}</button></Can>} {(kind==='sessions'||kind==='projects')&&<ActivateButton kind={kind} id={x.id} status={x.status} onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}} />} <RowMenu label={`Thao tác ${x.code}`} onOpen={()=>setSelected(x.id)} />{kind==='sessions'&&<Link className="mt-2 block text-caption text-primary" href={`/instructor/sessions/${x.id}`}>Mở phiên</Link>}</td>
                           </tr>;
                         })}
                       </tbody>
@@ -403,6 +432,7 @@ export function AcademicDetail({
               />
             )}
             <Members kind={kind} id={id} onChanged={onChanged} />
+            {kind === "projects" && <ProjectSessionsPanel id={id} />}
             {kind === "sessions" && <SessionExtras id={id} />}
             {kind === "projects" && <ProjectChanges id={id} />}
             <AssignmentForm
@@ -634,6 +664,65 @@ export function AssignmentForm({
           Phân công
         </button>
       </form>
+    </Panel>
+  );
+}
+function ProjectSessionsPanel({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
+  // Only fetch on first expand — the history is rarely needed up-front.
+  const sessions = useResource(
+    useCallback(
+      (s: AbortSignal) => (open ? getProjectSessions(id, s) : Promise.resolve(null)),
+      [id, open],
+    ),
+  );
+  const date = (value: string | null) =>
+    value ? new Date(value).toLocaleDateString("vi-VN") : "Chưa có";
+  return (
+    <Panel title="Phiên chạy dự án">
+      <p className="mb-3 text-body text-muted-foreground">
+        Lịch sử các phiên thực tập đã dùng dự án này qua nhiều khóa.
+      </p>
+      <button
+        className={buttonClass}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {open ? "Ẩn danh sách phiên" : "Xem các phiên đã chạy"}
+      </button>
+      {open && (
+        <div className="mt-3">
+          {sessions.loading ? (
+            <LoadingState />
+          ) : sessions.error ? (
+            <ErrorState error={sessions.error} onRetry={sessions.reload} />
+          ) : !sessions.data || sessions.data.length === 0 ? (
+            <Empty>Chưa có phiên nào chạy trên dự án này.</Empty>
+          ) : (
+            <ul className="max-h-96 overflow-y-auto space-y-2">
+              {sessions.data.map((s: ProjectSessionSummary) => (
+                <li
+                  key={s.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-control bg-background p-3 text-body"
+                >
+                  <span className="min-w-0">
+                    <strong className="block text-foreground">
+                      {s.code}: {s.name}
+                    </strong>
+                    <small className="block text-muted-foreground">
+                      {date(s.startDate)} — {date(s.endDate)}
+                    </small>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    <Badge>{s.memberCount} sinh viên</Badge>
+                    <AcademicStatus status={s.status} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </Panel>
   );
 }
