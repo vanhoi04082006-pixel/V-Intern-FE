@@ -77,7 +77,7 @@ export function DropColumn({
           onDrop(p.id, status);
         }
       }}
-      className={`${className}${over ? " outline-2 outline-blue-500 outline-dashed" : ""}`}
+      className={`${className}${over ? " outline-2 outline-sky-500 outline-dashed" : ""}`}
       aria-dropeffect={over ? "move" : undefined}
     >
       {children}

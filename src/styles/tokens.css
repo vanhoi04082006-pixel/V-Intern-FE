@@ -1,4 +1,4 @@
-/* Hallmark · V-Intern · theme: existing brand, user-directed premium workspace · shape: app screen · scope: app */
+/* Hallmark · V-Intern · theme: "Emerald Noir" port (source branch redesign/emerald-noir-ui) · shape: app screen · scope: app */
 /* Critique: one operational hierarchy, semantic surfaces, readable density; preserve content and wiring. */
 /* Existing public-page theme values; retained exactly for homepage preservation. */
 :root {
@@ -105,50 +105,54 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
 }
 
 :root {
+  /* Neutral ramp: slate (Emerald "ink" system). */
   --app-neutral-0: #ffffff;
-  --app-neutral-50: #f8fafd;
-  --app-neutral-100: #edf2f8;
-  --app-neutral-200: #dce4f0;
-  --app-neutral-300: #bac8db;
-  --app-neutral-400: #8091aa;
-  --app-neutral-500: #60728b;
-  --app-neutral-600: #4b5e78;
-  --app-neutral-700: #334862;
-  --app-neutral-800: #253858;
-  --app-neutral-900: #16243e;
-  --app-neutral-950: #0c192d;
-  --app-primary-50: #eff6ff;
-  --app-primary-100: #dbeafe;
-  --app-primary-200: #bfdbfe;
-  --app-primary-300: #93c5fd;
-  --app-primary-400: #60a5fa;
-  --app-primary-500: #3b82f6;
-  --app-primary-600: #0c67ed;
-  --app-primary-700: #0a57cb;
-  --app-primary-800: #184c9a;
-  --app-primary-900: #183d74;
-  --app-success-50: #edf7f1;
-  --app-success-100: #d8eddf;
-  --app-success-500: #54866b;
-  --app-success-600: #276e53;
-  --app-success-800: #18513a;
-  --app-warning-50: #fff8e7;
-  --app-warning-100: #f5e5bd;
-  --app-warning-500: #b78b32;
-  --app-warning-600: #8b6019;
-  --app-warning-800: #684412;
-  --app-danger-50: #fff0f3;
-  --app-danger-100: #f4dce3;
-  --app-danger-500: #c65370;
-  --app-danger-600: #ac3654;
-  --app-danger-800: #81243e;
+  --app-neutral-50: #f8fafc;
+  --app-neutral-100: #f1f5f9;
+  --app-neutral-200: #e2e8f0;
+  --app-neutral-300: #cbd5e1;
+  --app-neutral-400: #94a3b8;
+  --app-neutral-500: #64748b;
+  --app-neutral-600: #475569;
+  --app-neutral-700: #334155;
+  --app-neutral-800: #1e293b;
+  --app-neutral-900: #0f172a;
+  --app-neutral-950: #020617;
+  /* Brand ramp: sky (Emerald light "Sky White" brand = sky-600). */
+  --app-primary-50: #f0f9ff;
+  --app-primary-100: #e0f2fe;
+  --app-primary-200: #bae6fd;
+  --app-primary-300: #7dd3fc;
+  --app-primary-400: #38bdf8;
+  --app-primary-500: #0ea5e9;
+  --app-primary-600: #0284c7;
+  --app-primary-700: #0369a1;
+  --app-primary-800: #075985;
+  --app-primary-900: #0c4a6e;
+  /* Status ramps: emerald / amber / rose, aligned with Emerald's accent hues. */
+  --app-success-50: #ecfdf5;
+  --app-success-100: #d1fae5;
+  --app-success-500: #059669;
+  --app-success-600: #047857;
+  --app-success-800: #065f46;
+  --app-warning-50: #fffbeb;
+  --app-warning-100: #fef3c7;
+  --app-warning-500: #d97706;
+  --app-warning-600: #b45309;
+  --app-warning-800: #92400e;
+  --app-danger-50: #fff1f2;
+  --app-danger-100: #ffe4e6;
+  --app-danger-500: #f43f5e;
+  --app-danger-600: #be123c;
+  --app-danger-800: #9f1239;
   --app-brand-google-blue: #4285f4;
   --app-brand-google-green: #34a853;
   --app-brand-google-yellow: #fbbc05;
   --app-brand-google-red: #ea4335;
 
-  --font-app-heading: var(--font-geist-sans);
-  --font-app-body: var(--font-geist-sans);
+  /* Workspace typography: "Be Vietnam Pro" for workspace surfaces (homepage keeps Geist). */
+  --font-app-heading: var(--font-be-vietnam);
+  --font-app-body: var(--font-be-vietnam);
   --type-display: 2.25rem;
   --type-page: 1.75rem;
   --type-section: 1.25rem;
@@ -203,23 +207,25 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
 }
 
 :is(.workspace-ui, .app-surface) {
-  --background: var(--app-neutral-50);
-  --foreground: var(--app-neutral-900);
-  --card: var(--app-neutral-0);
+  /* Emerald light theme "Sky White": canvas #f6f9fd, panel #fff, panel-2 #f4f8fc,
+     line slate/9%, brand sky-600 #0284c7, ink #0f172a, dim #475569. */
+  --background: #f6f9fd;
+  --foreground: #0f172a;
+  --card: #ffffff;
   --card-foreground: var(--foreground);
-  --popover: var(--app-neutral-0);
+  --popover: #f4f8fc;
   --popover-foreground: var(--foreground);
   --primary: var(--app-primary-600);
-  --primary-foreground: var(--app-neutral-0);
-  --secondary: var(--app-neutral-100);
-  --secondary-foreground: var(--app-neutral-700);
-  --muted: var(--app-neutral-100);
-  --muted-foreground: var(--app-neutral-600);
-  --accent: var(--app-primary-50);
-  --accent-foreground: var(--app-primary-700);
-  --border: var(--app-neutral-200);
-  --input: var(--app-neutral-400);
-  --ring: var(--app-primary-500);
+  --primary-foreground: #ffffff;
+  --secondary: #f4f8fc;
+  --secondary-foreground: var(--foreground);
+  --muted: #f4f8fc;
+  --muted-foreground: #475569;
+  --accent: #f4f8fc;
+  --accent-foreground: var(--foreground);
+  --border: rgba(15, 23, 42, 0.09);
+  --input: rgba(15, 23, 42, 0.18);
+  --ring: var(--app-primary-600);
   --destructive: var(--app-danger-600);
   --destructive-subtle: var(--app-danger-50);
   --success: var(--app-success-600);
@@ -228,11 +234,11 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   --warning-subtle: var(--app-warning-50);
   --info: var(--app-primary-700);
   --info-subtle: var(--app-primary-50);
-  --sidebar: var(--app-neutral-0);
-  --sidebar-foreground: var(--app-neutral-700);
-  --sidebar-accent: var(--app-primary-50);
-  --sidebar-accent-foreground: var(--app-primary-700);
-  --sidebar-border: var(--app-neutral-200);
+  --sidebar: #eef4fa;
+  --sidebar-foreground: var(--foreground);
+  --sidebar-accent: #f4f8fc;
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
   --color-navy: var(--foreground);
   --color-brand: var(--primary);
@@ -271,6 +277,9 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   --ws-space-8: var(--space-8);
   --ws-space-10: var(--space-10);
   --ws-space-12: var(--space-12);
+  /* Compiled font-mono utilities resolve this var; retarget to JetBrains Mono
+     inside workspace surfaces only so the homepage keeps Geist Mono. */
+  --font-geist-mono: var(--font-jetbrains);
   font-family: var(--font-app-body), sans-serif;
   font-size: var(--type-body);
   line-height: var(--leading-body);
@@ -278,43 +287,51 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   caret-color: var(--primary);
 }
 
-:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: var(--app-primary-100); }
+:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: rgba(2, 132, 199, 0.16); }
 :is(.workspace-ui, .app-surface) :where(h1, h2, h3, h4) { font-family: var(--font-app-heading), sans-serif; min-width: 0; overflow-wrap: break-word; text-wrap: balance; }
 :is(.workspace-ui, .app-surface), :is(.workspace-ui, .app-surface) * { scrollbar-color: var(--input) var(--background); }
 :is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid var(--ring); outline-offset: var(--space-1); }
 :is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary) { transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 
 .dark :is(.workspace-ui, .app-surface) {
-  --background: var(--app-neutral-950);
-  --foreground: var(--app-neutral-50);
-  --card: var(--app-neutral-900);
+  /* Emerald dark theme "Emerald Noir": canvas #090c0b, panel #111615,
+     panel-2 #171d1b, line white/7%, brand #10b981, on-brand #04241a,
+     ink #edf2ef, dim #9aa5a0, deep sidebar #0d1211. */
+  --background: #090c0b;
+  --foreground: #edf2ef;
+  --card: #111615;
   --card-foreground: var(--foreground);
-  --popover: var(--app-neutral-800);
-  --primary: var(--app-primary-300);
-  --primary-foreground: var(--app-neutral-950);
-  --secondary: var(--app-neutral-800);
-  --secondary-foreground: var(--app-neutral-100);
-  --muted: var(--app-neutral-800);
-  --muted-foreground: var(--app-neutral-300);
-  --accent: var(--app-primary-900);
-  --accent-foreground: var(--app-primary-100);
-  --border: var(--app-neutral-700);
-  --input: var(--app-neutral-600);
-  --ring: var(--app-primary-300);
-  --destructive: var(--app-danger-100);
-  --destructive-subtle: var(--app-danger-800);
-  --success: var(--app-success-100);
-  --success-subtle: var(--app-success-800);
-  --warning: var(--app-warning-100);
-  --warning-subtle: var(--app-warning-800);
-  --info: var(--app-primary-200);
-  --info-subtle: var(--app-primary-900);
-  --sidebar: var(--app-neutral-900);
-  --sidebar-foreground: var(--app-neutral-100);
-  --sidebar-accent: var(--app-primary-900);
-  --sidebar-accent-foreground: var(--app-primary-100);
-  --sidebar-border: var(--app-neutral-700);
+  --popover: #171d1b;
+  --primary: #10b981;
+  --primary-foreground: #04241a;
+  --secondary: #171d1b;
+  --secondary-foreground: var(--foreground);
+  --muted: #171d1b;
+  --muted-foreground: #9aa5a0;
+  --accent: #171d1b;
+  --accent-foreground: var(--foreground);
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #10b981;
+  --destructive: #fb7185;
+  --destructive-subtle: #4c0519;
+  --success: #34d399;
+  --success-subtle: #022c22;
+  --warning: #fbbf24;
+  --warning-subtle: #451a03;
+  --info: #38bdf8;
+  --info-subtle: #082f49;
+  --sidebar: #0d1211;
+  --sidebar-foreground: var(--foreground);
+  --sidebar-accent: #171d1b;
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --ws-primary-hover: #34d399;
+  --color-brand: var(--primary);
+  --color-brand-600: #34d399;
 }
+
+.dark :is(.workspace-ui, .app-surface) ::selection { background: rgba(16, 185, 129, 0.28); }
 
 @media (prefers-reduced-motion: reduce) {
   html:has(.workspace-ui, .app-surface) { scroll-behavior: auto; }

@@ -36,7 +36,7 @@ export function OwnProjectPackage({ projectId }: { projectId: string }) {
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="text-body font-semibold text-primary underline decoration-blue-200 underline-offset-4"
+        className="text-body font-semibold text-primary underline decoration-sky-200 underline-offset-4"
       >
         {open
           ? "Đóng starter và hướng dẫn dự án"
