@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChartNoAxesCombined, FolderKanban, GraduationCap, UserRound, Workflow, type LucideIcon } from "lucide-react";
+import { LearningIcon } from "./learning-icon";
 
 type ViewGroup = { label: string; icon: LucideIcon; kind: "workflow" | "analytics" | "account"; items: [string, string][] };
 const student: ViewGroup[] = [
@@ -33,7 +34,7 @@ export function WorkspaceStage({ role, children, workAvailable = true, resultsAv
   return (
     <div className="workspace-stage" data-area={section} data-kind={group?.kind ?? "overview"} data-detail={parts.length > 2 ? "true" : undefined}>
       {group && showViews && <div className="workspace-viewbar">
-        <span className="workspace-viewbar-context">{group.label}</span>
+        <span className="workspace-viewbar-context"><LearningIcon kind={group.kind} />{group.label}</span>
         <nav aria-label="Các trang trong khu vực" className="workspace-view-links">
           {group.items.filter(([key]) => role !== "intern" || workAvailable || key !== "recommendations").map(([key, label]) => <Link key={key} href={`/${role}/${key}`} aria-current={key === viewSection ? "page" : undefined}>{label}</Link>)}
         </nav>
