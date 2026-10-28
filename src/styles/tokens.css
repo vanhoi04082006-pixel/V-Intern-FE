@@ -1,0 +1,323 @@
+/* Hallmark · V-Intern · theme: existing brand, user-directed premium workspace · shape: app screen · scope: app */
+/* Critique: one operational hierarchy, semantic surfaces, readable density; preserve content and wiring. */
+/* Existing public-page theme values; retained exactly for homepage preservation. */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --font-heading: var(--font-app-heading);
+  --font-body: var(--font-app-body);
+  --text-display: var(--type-display);
+  --text-page: var(--type-page);
+  --text-section: var(--type-section);
+  --text-subsection: var(--type-subsection);
+  --text-body: var(--type-body);
+  --text-small: var(--type-small);
+  --text-caption: var(--type-caption);
+  --text-label: var(--type-label);
+  --text-metric: var(--type-metric);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+  --color-destructive-subtle: var(--destructive-subtle);
+  --radius-control: var(--radius-control-value);
+  --radius-panel: var(--radius-panel-value);
+  --radius-dialog: var(--radius-dialog-value);
+  --shadow-app-xs: var(--elevation-xs);
+  --shadow-app-sm: var(--elevation-sm);
+  --shadow-app-md: var(--elevation-md);
+  --shadow-popover: var(--elevation-popover);
+  --ease-ui: var(--motion-ease);
+}
+
+/* Clip only the redesigned application; the public homepage keeps its layout. */
+html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
+  overflow-x: clip;
+}
+
+:root {
+  --app-neutral-0: #ffffff;
+  --app-neutral-50: #f8fafd;
+  --app-neutral-100: #edf2f8;
+  --app-neutral-200: #dce4f0;
+  --app-neutral-300: #bac8db;
+  --app-neutral-400: #8091aa;
+  --app-neutral-500: #60728b;
+  --app-neutral-600: #4b5e78;
+  --app-neutral-700: #334862;
+  --app-neutral-800: #253858;
+  --app-neutral-900: #16243e;
+  --app-neutral-950: #0c192d;
+  --app-primary-50: #eff6ff;
+  --app-primary-100: #dbeafe;
+  --app-primary-200: #bfdbfe;
+  --app-primary-300: #93c5fd;
+  --app-primary-400: #60a5fa;
+  --app-primary-500: #3b82f6;
+  --app-primary-600: #0c67ed;
+  --app-primary-700: #0a57cb;
+  --app-primary-800: #184c9a;
+  --app-primary-900: #183d74;
+  --app-success-50: #edf7f1;
+  --app-success-100: #d8eddf;
+  --app-success-500: #54866b;
+  --app-success-600: #276e53;
+  --app-success-800: #18513a;
+  --app-warning-50: #fff8e7;
+  --app-warning-100: #f5e5bd;
+  --app-warning-500: #b78b32;
+  --app-warning-600: #8b6019;
+  --app-warning-800: #684412;
+  --app-danger-50: #fff0f3;
+  --app-danger-100: #f4dce3;
+  --app-danger-500: #c65370;
+  --app-danger-600: #ac3654;
+  --app-danger-800: #81243e;
+  --app-brand-google-blue: #4285f4;
+  --app-brand-google-green: #34a853;
+  --app-brand-google-yellow: #fbbc05;
+  --app-brand-google-red: #ea4335;
+
+  --font-app-heading: var(--font-geist-sans);
+  --font-app-body: var(--font-geist-sans);
+  --type-display: 2.25rem;
+  --type-page: 1.75rem;
+  --type-section: 1.25rem;
+  --type-subsection: 1rem;
+  --type-body: .875rem;
+  --type-small: .8125rem;
+  --type-caption: .75rem;
+  --type-label: .75rem;
+  --type-metric: 1.75rem;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-heading: 650;
+  --leading-compact: 1.25;
+  --leading-body: 1.6;
+  --leading-reading: 1.75;
+  --space-0: 0;
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --radius-control-value: .5rem;
+  --radius-panel-value: .75rem;
+  --radius-dialog-value: .75rem;
+  --radius-tight: .25rem;
+  --radius-small: .375rem;
+  --elevation-xs: 0 1px 2px color-mix(in srgb, var(--app-neutral-900) 5%, transparent);
+  --elevation-sm: 0 2px 6px color-mix(in srgb, var(--app-neutral-900) 7%, transparent);
+  --elevation-md: 0 4px 12px color-mix(in srgb, var(--app-neutral-900) 9%, transparent);
+  --elevation-popover: 0 8px 24px color-mix(in srgb, var(--app-neutral-900) 12%, transparent);
+  --motion-instant: 0ms;
+  --motion-fast: 160ms;
+  --motion-normal: 200ms;
+  --motion-slow: 240ms;
+  --motion-stagger: 40ms;
+  --motion-ease: cubic-bezier(.2, .8, .2, 1);
+  --layout-max: 96rem;
+  --layout-reading: 72ch;
+  --control-min: 2.5rem;
+  --touch-min: 2.75rem;
+  --layout-sidebar: 15rem;
+  --layout-drawer: 18rem;
+  --layout-topbar: 4rem;
+  --color-overlay: color-mix(in srgb, var(--app-neutral-950) 48%, transparent);
+}
+
+:is(.workspace-ui, .app-surface) {
+  --background: var(--app-neutral-50);
+  --foreground: var(--app-neutral-900);
+  --card: var(--app-neutral-0);
+  --card-foreground: var(--foreground);
+  --popover: var(--app-neutral-0);
+  --popover-foreground: var(--foreground);
+  --primary: var(--app-primary-600);
+  --primary-foreground: var(--app-neutral-0);
+  --secondary: var(--app-neutral-100);
+  --secondary-foreground: var(--app-neutral-700);
+  --muted: var(--app-neutral-100);
+  --muted-foreground: var(--app-neutral-600);
+  --accent: var(--app-primary-50);
+  --accent-foreground: var(--app-primary-700);
+  --border: var(--app-neutral-200);
+  --input: var(--app-neutral-400);
+  --ring: var(--app-primary-500);
+  --destructive: var(--app-danger-600);
+  --destructive-subtle: var(--app-danger-50);
+  --success: var(--app-success-600);
+  --success-subtle: var(--app-success-50);
+  --warning: var(--app-warning-600);
+  --warning-subtle: var(--app-warning-50);
+  --info: var(--app-primary-700);
+  --info-subtle: var(--app-primary-50);
+  --sidebar: var(--app-neutral-0);
+  --sidebar-foreground: var(--app-neutral-700);
+  --sidebar-accent: var(--app-primary-50);
+  --sidebar-accent-foreground: var(--app-primary-700);
+  --sidebar-border: var(--app-neutral-200);
+  --sidebar-ring: var(--ring);
+  --color-navy: var(--foreground);
+  --color-brand: var(--primary);
+  --color-brand-600: var(--app-primary-700);
+  --color-canvas: var(--background);
+  --shadow-xs: var(--elevation-xs);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --ws-ink: var(--foreground);
+  --ws-muted: var(--muted-foreground);
+  --ws-primary: var(--primary);
+  --ws-primary-hover: var(--app-primary-700);
+  --ws-primary-soft: var(--accent);
+  --ws-canvas: var(--background);
+  --ws-surface: var(--card);
+  --ws-line: var(--border);
+  --ws-success: var(--success);
+  --ws-warning: var(--warning);
+  --ws-danger: var(--destructive);
+  --ws-chart-neutral: var(--app-neutral-300);
+  --ws-chart-primary: var(--primary);
+  --ws-chart-success: var(--success);
+  --ws-chart-warning: var(--warning);
+  --ws-motion-quick: var(--motion-fast);
+  --ws-motion-enter: var(--motion-slow);
+  --ws-motion-ease: var(--motion-ease);
+  --ws-radius-xs: var(--radius-tight);
+  --ws-radius-sm: var(--radius-small);
+  --ws-radius-md: var(--radius-control-value);
+  --ws-radius-lg: var(--radius-panel-value);
+  --ws-space-1: var(--space-1);
+  --ws-space-2: var(--space-2);
+  --ws-space-3: var(--space-3);
+  --ws-space-4: var(--space-4);
+  --ws-space-6: var(--space-6);
+  --ws-space-8: var(--space-8);
+  --ws-space-10: var(--space-10);
+  --ws-space-12: var(--space-12);
+  font-family: var(--font-app-body), sans-serif;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  color: var(--foreground);
+  caret-color: var(--primary);
+}
+
+:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: var(--app-primary-100); }
+:is(.workspace-ui, .app-surface) :where(h1, h2, h3, h4) { font-family: var(--font-app-heading), sans-serif; min-width: 0; overflow-wrap: break-word; text-wrap: balance; }
+:is(.workspace-ui, .app-surface), :is(.workspace-ui, .app-surface) * { scrollbar-color: var(--input) var(--background); }
+:is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid var(--ring); outline-offset: var(--space-1); }
+:is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary) { transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
+
+.dark :is(.workspace-ui, .app-surface) {
+  --background: var(--app-neutral-950);
+  --foreground: var(--app-neutral-50);
+  --card: var(--app-neutral-900);
+  --card-foreground: var(--foreground);
+  --popover: var(--app-neutral-800);
+  --primary: var(--app-primary-300);
+  --primary-foreground: var(--app-neutral-950);
+  --secondary: var(--app-neutral-800);
+  --secondary-foreground: var(--app-neutral-100);
+  --muted: var(--app-neutral-800);
+  --muted-foreground: var(--app-neutral-300);
+  --accent: var(--app-primary-900);
+  --accent-foreground: var(--app-primary-100);
+  --border: var(--app-neutral-700);
+  --input: var(--app-neutral-600);
+  --ring: var(--app-primary-300);
+  --destructive: var(--app-danger-100);
+  --destructive-subtle: var(--app-danger-800);
+  --success: var(--app-success-100);
+  --success-subtle: var(--app-success-800);
+  --warning: var(--app-warning-100);
+  --warning-subtle: var(--app-warning-800);
+  --info: var(--app-primary-200);
+  --info-subtle: var(--app-primary-900);
+  --sidebar: var(--app-neutral-900);
+  --sidebar-foreground: var(--app-neutral-100);
+  --sidebar-accent: var(--app-primary-900);
+  --sidebar-accent-foreground: var(--app-primary-100);
+  --sidebar-border: var(--app-neutral-700);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.workspace-ui, .app-surface) { scroll-behavior: auto; }
+  :is(.workspace-ui, .app-surface) { --motion-fast: 0ms; --motion-normal: 0ms; --motion-slow: 0ms; --motion-stagger: 0ms; }
+  :is(.workspace-ui, .app-surface) *, :is(.workspace-ui, .app-surface) *::before, :is(.workspace-ui, .app-surface) *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: 0ms !important; scroll-behavior: auto !important; }
+}

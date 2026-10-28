@@ -96,7 +96,7 @@ export function CodeSubmissions({
         </span>
       }
     >
-      <p className="mb-4 text-sm leading-6 text-slate-600">
+      <p className="mb-4 text-body leading-6 text-muted-foreground">
         Nộp PR đang mở trong repo của phiên, hoặc link repo kèm branch/ref. Hệ
         thống khóa commit để chấm. Task chỉ hoàn thành sau khi giảng viên xác
         nhận.
@@ -104,7 +104,7 @@ export function CodeSubmissions({
       {!managed && pending && (
         <p
           role="status"
-          className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-7 text-amber-900"
+          className="mb-5 rounded-control border border-warning bg-warning-subtle p-4 text-body leading-7 text-warning"
         >
           Bạn đang có bài nộp chờ xử lý. Theo dõi đánh giá bên dưới; nếu cần
           thay đổi code, rút bài hiện tại rồi nộp lại để hệ thống kiểm tra đúng
@@ -114,24 +114,24 @@ export function CodeSubmissions({
       {owner && !managed && !pending && task.status === "doing" && (
         <form
           id="task-submission-form"
-          className="mb-6 space-y-4 rounded-2xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5"
+          className="mb-6 space-y-4 border-b border-border pb-6"
           onSubmit={(e) => {
             e.preventDefault();
             void send();
           }}
         >
-          <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5">
-            <p className="text-xs font-bold uppercase tracking-[0.05em] text-blue-700">
+          <div className="border-l border-primary/30 bg-accent/50 p-4">
+            <p className="text-small font-semibold text-foreground">
               Điều kiện để chuyển sang Chờ duyệt
             </p>
-            <p className="mt-1.5 text-xs leading-6 text-slate-600">
+            <p className="mt-1.5 text-caption leading-6 text-muted-foreground">
               Nhiệm vụ đang ở Đang làm, bạn là người được giao, link PR/commit
               thuộc repository của phiên, mô tả tối thiểu 10 ký tự và không có
               bài nộp nào đang chờ xử lý. Nếu nhiệm vụ có phụ thuộc, các nhiệm vụ
               đó phải được giảng viên xác nhận Hoàn thành trước.
             </p>
           </div>
-          <label className="block text-sm font-semibold">
+          <label className="block text-body font-semibold">
             Link PR, commit hoặc repository
             <input
               id="submission-pr-url"
@@ -144,7 +144,7 @@ export function CodeSubmissions({
               className={inputClass}
             />
           </label>
-          <label className="block text-sm">
+          <label className="block text-body">
             Branch/ref nếu nộp link repository
             <input
               maxLength={200}
@@ -154,7 +154,7 @@ export function CodeSubmissions({
               className={inputClass}
             />
           </label>
-          <label className="block text-sm font-semibold">
+          <label className="block text-body font-semibold">
             Bạn đã làm gì và kiểm thử thế nào?
             <textarea
               required
@@ -173,20 +173,20 @@ export function CodeSubmissions({
           {sent && (
             <p
               role="status"
-              className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800"
+              className="rounded-control border border-success bg-success-subtle p-3 text-body text-success"
             >
               Đã gửi bài. Nhiệm vụ đang được chuyển sang Chờ duyệt sau khi hệ
               thống xác minh.
             </p>
           )}
-          <p className="text-xs leading-6 text-slate-500">
+          <p className="text-caption leading-6 text-muted-foreground">
             Hệ thống chấm phiên bản code tại thời điểm nộp. Push thêm code sau
             đó không tự thay thế commit đã nộp.
           </p>
         </form>
       )}
       {owner && task.status === "todo" && (
-        <p className="mb-4 rounded-lg bg-blue-50 p-3 text-sm">
+        <p className="mb-4 rounded-control bg-accent p-3 text-body">
           Bấm bắt đầu công việc trước khi nộp code.
         </p>
       )}
@@ -216,7 +216,7 @@ export function CodeSubmissions({
         </details>
       )}
       {error && (
-        <p role="alert" className="my-3 text-sm text-rose-700">
+        <p role="alert" className="my-3 text-body text-destructive">
           {error}
         </p>
       )}
@@ -242,7 +242,7 @@ export function CodeSubmissions({
       ) : (
         <Empty>Chưa có bài nộp code cho task này.</Empty>
       )}
-      <button onClick={data.reload} className="mt-4 text-sm text-blue-700">
+      <button onClick={data.reload} className="mt-4 text-body text-primary">
         Tải lại bài nộp
       </button>
     </Panel>
@@ -275,29 +275,29 @@ function SubmissionReview({
     }
   }
   return (
-    <article className="rounded-xl border border-slate-200 p-4">
+    <article className="border-b border-border py-5">
       <div className="flex flex-wrap items-center gap-3">
         <Badge>{statuses[submission.status]}</Badge>
-        <span className="text-xs text-slate-500">
+        <span className="text-caption text-muted-foreground">
           {new Date(submission.submittedAt).toLocaleString("vi-VN")}
         </span>
         <a
           href={submission.prUrl}
           target="_blank"
           rel="noreferrer"
-          className="ml-auto inline-flex items-center gap-1 text-sm text-blue-700"
+          className="ml-auto inline-flex items-center gap-1 text-body text-primary"
         >
           Xem bài trên GitHub
           <ExternalLink size={13} />
         </a>
       </div>
-      <p className="my-3 whitespace-pre-wrap text-sm">{submission.summary}</p>
+      <p className="my-3 whitespace-pre-wrap text-body">{submission.summary}</p>
       {submission.observedHeadSha &&
         submission.observedHeadSha.toLowerCase() !==
           submission.headSha?.toLowerCase() && (
           <div
             role="status"
-            className="my-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"
+            className="my-3 rounded-control bg-warning-subtle p-3 text-body text-warning"
           >
             <p className="font-semibold">
               GitHub ghi nhận code thay đổi sau khi nộp bài.
@@ -306,33 +306,33 @@ function SubmissionReview({
               Hãy kiểm tra commit, rút bài và nộp lại khi cần. Giảng viên sẽ
               kiểm tra SHA hiện tại trước khi duyệt.
             </p>
-            <p className="mt-2 break-all font-mono text-xs">
+            <p className="mt-2 break-all font-mono text-caption">
               Commit được ghi nhận: {submission.observedHeadSha}
             </p>
           </div>
         )}
       {submission.headSha && (
-        <p className="break-all font-mono text-xs text-slate-500">
+        <p className="break-all font-mono text-caption text-muted-foreground">
           Commit được nộp: {submission.headSha}
         </p>
       )}
       {submission.sourceRef && (
-        <p className="mt-2 break-all font-mono text-xs text-slate-500">
+        <p className="mt-2 break-all font-mono text-caption text-muted-foreground">
           {submission.sourceKind === "pull"
             ? `Pull request #${submission.sourceRef}`
             : `${submission.sourceKind === "branch" ? "Nhánh" : submission.sourceKind === "commit" ? "Commit/ref" : "Ref nguồn"}: ${submission.sourceRef}`}
         </p>
       )}
       {submission.score !== null && (
-        <p className="mt-3 text-sm font-semibold">
-          Điểm giảng viên: {submission.score}/100 · {submission.feedback}
-          {!!submission.latePenalty && submission.baseScore != null && <span className="mt-1 block text-xs text-amber-800">Rubric gốc {submission.baseScore} − trễ hạn {submission.latePenalty} = {submission.score}/100. Bằng chứng và cách xử lý được lưu tại mục Thời hạn & trách nhiệm.</span>}
+        <p className="mt-3 text-body font-semibold">
+          Điểm giảng viên: {submission.score}/100; {submission.feedback}
+          {!!submission.latePenalty && submission.baseScore != null && <span className="mt-1 block text-caption text-warning">Rubric gốc {submission.baseScore} − trễ hạn {submission.latePenalty} = {submission.score}/100. Bằng chứng và cách xử lý được lưu tại mục Thời hạn & trách nhiệm.</span>}
         </p>
       )}
       <div className="mt-3 flex gap-4">
         <button
           onClick={() => setShow((v) => !v)}
-          className="text-sm text-blue-700"
+          className="text-body text-primary"
         >
           {show ? "Thu gọn đánh giá" : "Xem đánh giá và bằng chứng"}
         </button>
@@ -340,14 +340,14 @@ function SubmissionReview({
           <button
             disabled={busy}
             onClick={() => void withdraw()}
-            className="text-sm text-amber-800"
+            className="text-body text-warning"
           >
             Rút bài để cập nhật code
           </button>
         )}
       </div>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-rose-700">
+        <p role="alert" className="mt-3 text-body text-destructive">
           {error}
         </p>
       )}
@@ -360,7 +360,7 @@ function SubmissionReview({
         />
       )}
       {show && !submission.headSha && (
-        <p className="mt-3 text-sm text-slate-500">
+        <p className="mt-3 text-body text-muted-foreground">
           Bài nộp lịch sử chưa có snapshot SHA; không có kết quả AI review code.
         </p>
       )}
@@ -417,14 +417,14 @@ function AiCodeReview({
   const source = new URL(submission.prUrl),
     base = source.pathname.split("/").slice(0, 3).join("/");
   return (
-    <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+    <div className="mt-4 space-y-3 border-t border-border pt-4">
       {data.loading ? (
         <LoadingState />
       ) : data.error ? (
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : review ? (
         <>
-          <p role="status" className="font-semibold text-navy">
+          <p role="status" className="font-semibold text-foreground">
             {review.status === "awaiting_instructor" &&
             submission.status !== "submitted"
               ? `AI đề xuất đạt · ${statuses[submission.status]}`
@@ -432,39 +432,39 @@ function AiCodeReview({
           </p>
           {review.result && (
             <>
-              <p className="whitespace-pre-wrap text-sm">
+              <p className="whitespace-pre-wrap text-body">
                 {review.result.summary}
               </p>
-              <p className="text-sm">
+              <p className="text-body">
                 Điểm AI đề xuất: <strong>{review.result.score}/100</strong> ·{" "}
                 {review.model}
               </p>
               <ul className="space-y-3">
                 {review.result.findings.map((f, i) => (
-                  <li key={i} className="rounded-lg bg-slate-50 p-3 text-sm">
+                  <li key={i} className="rounded-control bg-background p-3 text-body">
                     <a
                       target="_blank"
                       rel="noreferrer"
-                      className="font-mono text-xs text-blue-700"
+                      className="font-mono text-caption text-primary"
                       href={`https://github.com${base}/blob/${review.headSha}/${f.file.split("/").map(encodeURIComponent).join("/")}#L${f.line}`}
                     >
                       {f.file}:{f.line}
                     </a>
                     <p className="mt-1">
-                      {f.severity} · {f.message}
+                      {f.severity}; {f.message}
                     </p>
                   </li>
                 ))}
               </ul>
               {review.result.limitations.map((v, i) => (
-                <p key={i} className="text-sm text-amber-800">
+                <p key={i} className="text-body text-warning">
                   Giới hạn: {v}
                 </p>
               ))}
             </>
           )}
           {review.evidence && (
-            <div className="rounded-xl bg-blue-50/70 p-3 text-sm">
+            <div className="rounded-control bg-accent/70 p-3 text-body">
               <p>
                 Source:{" "}
                 {review.evidence.complete
@@ -490,11 +490,11 @@ function AiCodeReview({
                     <li
                       key={i}
                       className={
-                        check.passed ? "text-emerald-700" : "text-rose-700"
+                        check.passed ? "text-success" : "text-destructive"
                       }
                     >
                       {check.passed ? "Đạt" : "Chưa đạt"} · {check.name}
-                      <span className="block text-xs text-slate-500">
+                      <span className="block text-caption text-muted-foreground">
                         {check.log}
                       </span>
                     </li>
@@ -507,24 +507,24 @@ function AiCodeReview({
             </div>
           )}
           {review.errorCode && (
-            <p className="text-sm text-amber-800">
+            <p className="text-body text-warning">
               {review.errorCode === 'AI_REVIEWER_UNAVAILABLE'
                 ? errorMessage(new ApiError(403, review.errorCode, ''))
                 : <>Mã trạng thái: {review.errorCode}. Bài nộp vẫn được giữ nguyên.</>}
             </p>
           )}
-          <p className="break-all text-xs text-slate-500">
-            Lần chấm {review.id} · SHA {review.headSha} · Hash bằng chứng{" "}
+          <p className="break-all text-caption text-muted-foreground">
+            Lần chấm {review.id}; SHA {review.headSha}; Hash bằng chứng{" "}
             {review.inputHash ?? "chưa có"}
           </p>
         </>
       ) : (
-        <p className="text-sm text-slate-500">
+        <p className="text-body text-muted-foreground">
           Chưa có lần AI review. Bạn có thể bắt đầu kiểm tra.
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-rose-700">
+        <p role="alert" className="text-body text-destructive">
           {error}
         </p>
       )}
@@ -537,7 +537,7 @@ function AiCodeReview({
           {busy ? "AI đang kiểm tra…" : "Chấm / thử lại bằng AI"}
         </button>
       )}
-      <button onClick={data.reload} className="ml-4 text-sm text-blue-700">
+      <button onClick={data.reload} className="ml-4 text-body text-primary">
         Tải lại kết quả AI
       </button>
       {managed &&
@@ -588,7 +588,7 @@ function InstructorCodeDecision({
   useEffect(() => { if (penalty) penaltyRef.current?.focus(); }, [penalty]);
   return (
     <form
-      className="mt-5 space-y-4 rounded-xl border border-blue-100 p-4"
+      className="mt-6 space-y-4 border-t border-border pt-5"
       onSubmit={async (e) => {
         e.preventDefault();
         setBusy(true);
@@ -618,13 +618,13 @@ function InstructorCodeDecision({
       }}
     >
       <h4 className="font-semibold">Xác nhận cuối của giảng viên</h4>
-      <p className="text-xs text-slate-500">
+      <p className="text-caption text-muted-foreground">
         Điểm tổng được tính theo rubric. Từ 70/100 là duyệt; dưới 70 là yêu cầu
         làm lại. Kết quả AI là đề xuất để bạn kiểm tra.
       </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {rubricKeys.map((key) => (
-          <label key={key} className="text-xs">
+          <label key={key} className="text-caption">
             {labels[key]}
             <input
               type="number"
@@ -639,7 +639,7 @@ function InstructorCodeDecision({
           </label>
         ))}
       </div>
-      <label className="block text-sm">
+      <label className="block text-body">
         Nhận xét cho sinh viên
         <textarea
           required
@@ -651,7 +651,7 @@ function InstructorCodeDecision({
           onChange={(e) => setFeedback(e.target.value)}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Lý do chấm thủ công nếu kết quả AI chưa đủ cơ sở (tối thiểu 30 ký tự)
         <textarea
           minLength={30}
@@ -662,14 +662,14 @@ function InstructorCodeDecision({
           onChange={(e) => setOverride(e.target.value)}
         />
       </label>
-      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l-2 border-amber-500 bg-amber-50/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
-        <p className="font-semibold text-amber-950">Điểm sau khi xét thời hạn</p>
-        <dl className="my-3 grid grid-cols-3 gap-3"><div><dt className="text-xs text-slate-500">Rubric gốc</dt><dd className="font-semibold">{penalty.baseScore}/100</dd></div><div><dt className="text-xs text-slate-500">Nộp trễ</dt><dd className="font-semibold text-amber-800">−{penalty.latePenalty}</dd></div><div><dt className="text-xs text-slate-500">Điểm cuối</dt><dd className="font-semibold">{penalty.score}/100</dd></div></dl>
+      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l border-warning bg-warning-subtle/70 px-4 py-3 text-body outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <p className="font-semibold text-warning">Điểm sau khi xét thời hạn</p>
+        <dl className="my-3 grid grid-cols-3 gap-3"><div><dt className="text-caption text-muted-foreground">Rubric gốc</dt><dd className="font-semibold">{penalty.baseScore}/100</dd></div><div><dt className="text-caption text-muted-foreground">Nộp trễ</dt><dd className="font-semibold text-warning">−{penalty.latePenalty}</dd></div><div><dt className="text-caption text-muted-foreground">Điểm cuối</dt><dd className="font-semibold">{penalty.score}/100</dd></div></dl>
         <label className="flex items-start gap-2 leading-6"><input type="checkbox" checked={acceptedPenalty} onChange={e => setAcceptedPenalty(e.target.checked)} className="mt-1 size-4" />Tôi xác nhận trừ {penalty.latePenalty} điểm theo bằng chứng và chính sách thời hạn của phiên.</label>
-        <p className="mt-2 text-xs text-slate-600">Điểm cuối từ 70 là duyệt; dưới 70 yêu cầu làm lại. Thay đổi rubric sẽ yêu cầu kiểm tra mức trừ lại.</p>
+        <p className="mt-2 text-caption text-muted-foreground">Điểm cuối từ 70 là duyệt; dưới 70 yêu cầu làm lại. Thay đổi rubric sẽ yêu cầu kiểm tra mức trừ lại.</p>
       </div>}
       {error && (
-        <p role="alert" className="text-sm text-rose-700">
+        <p role="alert" className="text-body text-destructive">
           {error}
         </p>
       )}

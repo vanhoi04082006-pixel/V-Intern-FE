@@ -1,0 +1,48 @@
+/* Hallmark · V-Intern · theme: established brand · scope: app support */
+/* Critique: readable forms, one task at a time, no decorative hero or oversized chrome. */
+.app-surface.auth-surface { min-height: 100dvh; background: var(--background); }
+.app-surface .support-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); width: 100%; max-width: var(--layout-max); margin-inline: auto; padding: var(--space-5) var(--space-8); }
+.app-surface .support-back { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--touch-min); border-radius: var(--radius-control-value); padding-inline: var(--space-3); font-size: var(--type-small); font-weight: var(--weight-medium); color: var(--muted-foreground); }
+.app-surface .support-back:hover { background: var(--muted); color: var(--foreground); }
+.app-surface .auth-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--space-16); max-width: 76rem; margin-inline: auto; padding: var(--space-8) var(--space-8) var(--space-16); }
+.app-surface .auth-context { max-width: 34rem; }
+.app-surface .auth-context > h2 { max-width: 18ch; font-size: var(--type-display); font-weight: var(--weight-heading); line-height: var(--leading-compact); letter-spacing: -.025em; color: var(--foreground); }
+.app-surface .auth-context > p { margin-top: var(--space-5); max-width: var(--layout-reading); color: var(--muted-foreground); line-height: var(--leading-reading); }
+.app-surface .auth-benefits { display: grid; margin-top: var(--space-8); }
+.app-surface .auth-benefits > li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: var(--space-4); padding-block: var(--space-4); border-bottom: 1px solid var(--border); }
+.app-surface .auth-benefits svg { margin-top: var(--space-1); color: var(--primary); }
+.app-surface .auth-benefits h3 { font-size: var(--type-body); font-weight: var(--weight-semibold); }
+.app-surface .auth-benefits p { margin-top: var(--space-1); font-size: var(--type-small); color: var(--muted-foreground); }
+.app-surface .support-context-link { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-6); min-height: var(--touch-min); font-size: var(--type-small); font-weight: var(--weight-semibold); color: var(--primary); }
+.app-surface .support-context-link:hover { text-decoration: underline; text-underline-offset: var(--space-1); }
+.app-surface .auth-form-region { min-width: 0; }
+.app-surface .auth-form-surface { min-width: 0; width: 100%; border-radius: var(--radius-panel-value); background: var(--card); padding: var(--space-8); box-shadow: var(--elevation-sm); }
+.app-surface .auth-form-surface > section > h1 { font-family: var(--font-app-heading); font-size: var(--type-page); font-weight: var(--weight-heading); }
+.app-surface .auth-form-surface input:not([type="checkbox"]):not([type="radio"]), .app-surface .auth-form-surface select { min-height: var(--touch-min); }
+.app-surface .auth-form-surface button:not([aria-label]), .app-surface .auth-form-surface a { min-height: var(--touch-min); }
+.app-surface .auth-form-surface input, .app-surface .auth-form-surface select, .app-surface .auth-form-surface textarea { color: var(--foreground); }
+.app-surface .auth-form-surface input:not([type="checkbox"]):not([type="radio"]), .app-surface .auth-form-surface select, .app-surface .auth-form-surface textarea { border-color: var(--input); }
+.app-surface label:has(> input:focus-visible) { outline: 2px solid var(--ring); outline-offset: var(--space-1); border-radius: var(--radius-tight); }
+.app-surface .auth-form-surface button { transition-property: color, background-color, border-color, opacity, transform; }
+.app-surface .auth-form-surface button:active:not(:disabled) { transform: translateY(1px); }
+.app-surface .public-application-layout { max-width: 68rem; margin-inline: auto; padding-block: var(--space-8); }
+.app-surface .public-application-layout > section { background: var(--card); border-radius: var(--radius-panel-value); }
+.app-surface .public-application-layout form { max-width: var(--layout-reading); }
+.app-surface .public-application-layout > nav { padding-bottom: var(--space-5); border-bottom: 1px solid var(--border); }
+.app-surface.support-invitation { min-height: 100dvh; background: var(--background); padding: var(--space-8) var(--space-5); }
+.app-surface.support-invitation > main { max-width: 56rem; margin-inline: auto; }
+.app-surface :where(input, select, textarea)::placeholder { color: var(--muted-foreground); opacity: 1; }
+@media (max-width: 63.99rem) {
+  .app-surface .auth-layout { grid-template-columns: minmax(0, 1fr); max-width: 44rem; gap: var(--space-8); padding-top: var(--space-4); }
+  .app-surface .auth-context { display: none; }
+}
+@media (max-width: 35rem) {
+  .app-surface .support-header { padding: var(--space-3) var(--space-4); }
+  .app-surface .auth-layout { padding: var(--space-3) var(--space-4) var(--space-8); }
+  .app-surface .auth-form-surface { padding: var(--space-6) var(--space-5); }
+  .app-surface .auth-form-surface h1 { font-size: var(--type-section); }
+  .app-surface .public-application-layout { padding-top: var(--space-5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-surface .auth-form-surface button:active:not(:disabled) { transform: none; }
+}

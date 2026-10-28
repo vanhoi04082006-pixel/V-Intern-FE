@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback } from "react";
 import {
@@ -48,8 +47,6 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
   return (
     <div className="student-dashboard student-reveal space-y-6">
       <StudentHeading
-        artwork="learn"
-        eyebrow="Học qua từng công việc"
         title={name ? `Chào ${name}!` : "Không gian thực tập của bạn"}
         description="Tiếp tục công việc, nhận phản hồi và theo dõi tiến bộ của bạn."
         action={
@@ -63,11 +60,12 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
       />
 
       <section
-        className="workspace-student-context"
+        className="student-placement-summary"
         aria-label="Dự án hiện tại"
       >
         <div className="min-w-0">
-          <div className="student-meta mb-3">
+          <h2>{assignment?.project.name}</h2>
+          <div className="student-meta my-2">
             {assignment && (
               <StudentChip icon={CalendarDays}>
                 {assignment.session.name}
@@ -85,7 +83,6 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                 : (assignment?.project.status ?? "Chưa xác định")}
             </StudentChip>
           </div>
-          <h2>{assignment?.project.name}</h2>
           <p>
             {currentSprint
               ? `Sprint hiện tại: ${currentSprint.name}.`
@@ -110,7 +107,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
             </Link>
           </div>
         </div>
-        <div className="workspace-context-progress">
+        <div className="student-placement-progress">
           <StudentProgress value={completed} label="Tiến độ thực tập" />
         </div>
       </section>
@@ -121,7 +118,6 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
           label="Tất cả nhiệm vụ"
           value={taskSummary.total}
           hint="Công việc được giao"
-          progress={completed}
         />
         <StudentMetric
           icon={ListTodo}
@@ -149,12 +145,12 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
           value={taskSummary.done}
           hint="Được giảng viên xác nhận"
           tone="green"
-          progress={completed}
         />
       </div>
 
       <div className="student-dashboard-grid">
         <div className="student-stack">
+          <WorkQueue />
           <StudentPanel
             title="Tiếp tục từ đây"
             icon={Target}
@@ -224,16 +220,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                 </Link>
               </div>
             )}
-            <div className="mt-6 border-t border-slate-100 pt-5">
-              <StudentProgress
-                value={completed}
-                label={`Hoàn thành ${taskSummary.done}/${taskSummary.total} nhiệm vụ được giao`}
-                tone={completed >= 70 ? "green" : "blue"}
-              />
-            </div>
           </StudentPanel>
-
-          <WorkQueue />
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Link href="/intern/github" className="student-quick-link">
@@ -275,11 +262,11 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                   >
                     {sprintStatusLabel(currentSprint.status).label}
                   </StudentBadge>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-caption text-muted-foreground">
                     {currentSprint.code}
                   </span>
                 </div>
-                <h3 className="mt-3 text-[15px] font-bold leading-relaxed text-navy">
+                <h3 className="mt-3 text-body font-bold leading-relaxed text-foreground">
                   {currentSprint.code} · {currentSprint.name}
                 </h3>
                 <dl className="student-info-list mt-2">
@@ -291,7 +278,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                       Thời gian
                     </dt>
                     <dd>
-                      {studentDate(currentSprint.startDate)} —{" "}
+                      {studentDate(currentSprint.startDate)} đến{" "}
                       {studentDate(currentSprint.endDate)}
                     </dd>
                   </div>
@@ -310,7 +297,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
               </>
             ) : (
               <>
-                <p className="text-sm leading-7 text-slate-600">
+                <p className="text-body leading-7 text-muted-foreground">
                   Chưa có Sprint đang hoạt động. Nhiệm vụ đã phân công vẫn có
                   thể xem trong Công việc của tôi.
                 </p>
@@ -323,10 +310,8 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
             )}
           </StudentPanel>
 
-          <StudentPanel
-            title="Một quy trình, từng bước rõ ràng"
-            icon={FolderKanban}
-          >
+          <details className="student-help-disclosure">
+            <summary>Một quy trình, từng bước rõ ràng</summary>
             <ol className="student-step-list">
               <li>
                 <div>
@@ -350,16 +335,10 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                 </div>
               </li>
             </ol>
-          </StudentPanel>
+          </details>
 
           <Link href="/intern/mentor" className="student-quick-link">
-            <Image
-              className="student-quick-media"
-              src="/images/robot-v2.png"
-              width={44}
-              height={44}
-              alt=""
-            />
+            <Bot size={20} aria-hidden="true" />
             <div>
               <strong>Đang gặp một nút thắt?</strong>
               <p>Cùng AI Mentor tìm hướng giải quyết cho nhiệm vụ hiện tại.</p>
@@ -371,7 +350,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
   );
 }
 
-/** Hàng đợi nhiệm vụ đang mở — dữ liệu thật từ API, thay cho bảng Kanban thu gọn. */
+/** Hàng đợi nhiệm vụ đang mở đến dữ liệu thật từ API, thay cho bảng Kanban thu gọn. */
 function WorkQueue() {
   const tasks = useResource(
     useCallback(
@@ -410,7 +389,7 @@ function WorkQueue() {
           ))}
         </div>
       ) : tasks.error ? (
-        <p className="pt-4 text-sm leading-7 text-slate-500" role="status">
+        <p className="pt-4 text-body leading-7 text-muted-foreground" role="status">
           Chưa tải được danh sách nhiệm vụ. Mở{" "}
           <Link href="/intern/work" className="student-link">
             Công việc của tôi
@@ -418,14 +397,14 @@ function WorkQueue() {
           để xem đầy đủ.
         </p>
       ) : open.length ? (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-border">
           {open.map((task: Task) => (
             <li key={task.id}>
               <Link
                 href={`/intern/work/${encodeURIComponent(task.id)}`}
                 className="group flex items-center gap-4 py-3"
               >
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-slate-50 text-slate-500">
+                <span className="grid size-9 shrink-0 place-items-center rounded-panel bg-background text-muted-foreground">
                   {task.status === "review" ? (
                     <Hourglass size={16} aria-hidden="true" />
                   ) : task.status === "doing" ? (
@@ -436,10 +415,10 @@ function WorkQueue() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="student-work-code">{task.code}</span>
-                  <span className="block truncate text-[13px] font-semibold text-navy group-hover:text-blue-700">
+                  <span className="block truncate text-small font-semibold text-foreground group-hover:text-primary">
                     {task.title}
                   </span>
-                  <span className="student-work-foot mt-0.5">
+                  <span className="student-work-foot mt-1">
                     <span>{studentStatus(task.status)}</span>
                     <span aria-hidden="true">·</span>
                     <span className="inline-flex items-center gap-1">
@@ -456,7 +435,7 @@ function WorkQueue() {
           ))}
         </ul>
       ) : (
-        <p className="pt-4 text-sm leading-7 text-slate-500" role="status">
+        <p className="pt-4 text-body leading-7 text-muted-foreground" role="status">
           Không còn nhiệm vụ đang mở. Mọi việc đã được xử lý hoặc đang chờ giảng
           viên xác nhận.
         </p>

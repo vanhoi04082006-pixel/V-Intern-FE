@@ -18,21 +18,21 @@ export function HistoryEntry({ onReload, refreshing }: { onReload: () => void; r
       action={<StudentLink secondary href="/intern/notifications">Xem thông báo</StudentLink>}
     />
     <section aria-label="Truy cập kết quả thực tập">
-      <ul className="divide-y divide-slate-200/80 border-y border-slate-200/80">
+      <ul className="divide-y divide-border border-y border-border">
         {destinations.map(({ href, title, description, icon: Icon }) => <li key={href}>
-          <Link href={href} className="group flex items-center gap-4 py-5 text-navy transition-colors hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
-            <Icon size={22} className="shrink-0 text-brand" aria-hidden="true" />
-            <span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="mt-1 block text-sm leading-6 text-slate-600">{description}</span></span>
+          <Link href={href} className="group flex items-center gap-4 py-5 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+            <Icon size={22} className="shrink-0 text-primary" aria-hidden="true" />
+            <span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="mt-1 block text-body leading-6 text-muted-foreground">{description}</span></span>
             <ArrowRight size={18} className="shrink-0" aria-hidden="true" />
           </Link>
         </li>)}
       </ul>
     </section>
     <section className="flex flex-wrap items-center justify-between gap-4" aria-label="Tiếp tục hành trình">
-      <p className="max-w-xl text-sm leading-6 text-slate-600">Khi có phân công mới, không gian công việc và Sprint sẽ được cập nhật theo dữ liệu của phiên đó.</p>
-      <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold">
-        <button type="button" onClick={onReload} disabled={refreshing} className="text-brand hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60">{refreshing ? 'Đang kiểm tra phân công…' : 'Kiểm tra phân công mới'}</button>
-        <Link href="/intern/onboarding/result" className="text-slate-600 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Xem lại kết quả tuyển dụng</Link>
+      <p className="max-w-xl text-body leading-6 text-muted-foreground">Khi có phân công mới, không gian công việc và Sprint sẽ được cập nhật theo dữ liệu của phiên đó.</p>
+      <div className="flex flex-wrap gap-x-5 gap-y-3 text-body font-semibold">
+        <button type="button" onClick={onReload} disabled={refreshing} className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60">{refreshing ? 'Đang kiểm tra phân công…' : 'Kiểm tra phân công mới'}</button>
+        <Link href="/intern/onboarding/result" className="text-muted-foreground hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Xem lại kết quả tuyển dụng</Link>
       </div>
     </section>
   </div>;

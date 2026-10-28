@@ -17,7 +17,7 @@ function OwnMaterial({ projectId }: { projectId: string }) {
   if (!resource.data) return null;
   return (
     <div className="min-w-0 space-y-3">
-      <p className="text-xs font-medium text-slate-500">
+      <p className="text-caption font-medium text-muted-foreground">
         {resource.data.templateCode} · bản được giao v
         {resource.data.templateVersion}
       </p>
@@ -31,12 +31,12 @@ function OwnMaterial({ projectId }: { projectId: string }) {
 export function OwnProjectPackage({ projectId }: { projectId: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <section className="my-5 min-w-0 border-y border-slate-200 py-4">
+    <section className="my-5 min-w-0 border-y border-border py-4">
       <button
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="text-sm font-semibold text-blue-800 underline decoration-blue-200 underline-offset-4"
+        className="text-body font-semibold text-primary underline decoration-blue-200 underline-offset-4"
       >
         {open
           ? "Đóng starter và hướng dẫn dự án"

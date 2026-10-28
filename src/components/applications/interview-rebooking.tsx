@@ -45,12 +45,12 @@ export function InterviewRebooking({
         Date.parse(slot.startsAt) >= Date.parse(policy.nextEligibleAt)),
   );
   return (
-    <section className="space-y-3 border-y border-slate-200 py-4">
+    <section className="space-y-3 border-y border-border py-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-600">
-          Đã dùng <strong className="text-navy">{policy.attemptsUsed}</strong>{" "}
+        <p className="text-body text-muted-foreground">
+          Đã dùng <strong className="text-foreground">{policy.attemptsUsed}</strong>{" "}
           lượt · còn{" "}
-          <strong className="text-navy">{policy.attemptsRemaining}</strong> lượt
+          <strong className="text-foreground">{policy.attemptsRemaining}</strong> lượt
         </p>
         <button
           className={buttonClass}
@@ -61,13 +61,13 @@ export function InterviewRebooking({
         </button>
       </div>
       {policy.nextEligibleAt && (
-        <p className="text-xs text-slate-500">
+        <p className="text-caption text-muted-foreground">
           Lịch mới phải sau{" "}
           {new Date(policy.nextEligibleAt).toLocaleString("vi-VN")}.
         </p>
       )}
       {!policy.canRebook && (
-        <p className="text-xs leading-6 text-slate-500">
+        <p className="text-caption leading-6 text-muted-foreground">
           Chỉ hẹn lại khi lịch trước đã được dùng hoặc ghi nhận vắng mặt, còn
           lượt và không có phiên/đánh giá đang chạy.
         </p>
@@ -77,7 +77,7 @@ export function InterviewRebooking({
           role="status"
           tabIndex={-1}
           ref={noticeRef}
-          className="text-sm text-emerald-800 focus:outline-none"
+          className="text-body text-success focus:outline-none"
         >
           {notice}
         </p>
@@ -89,14 +89,14 @@ export function InterviewRebooking({
             if (!action.busy) setOpen(false);
           }}
         >
-          <p className="mb-4 text-sm leading-7 text-slate-600">
+          <p className="mb-4 text-body leading-7 text-muted-foreground">
             {application.status === "deferred"
               ? "Đây là ngoại lệ mở lại hồ sơ vắng mặt và sẽ ghi audit cùng lý do. "
               : "Lịch mới giữ lịch sử của lượt trước. "}
             Không đặt lại mật khẩu hoặc số lượt đã dùng.
           </p>
           {!offered.length && (
-            <p className="mb-4 text-sm text-amber-800">
+            <p className="mb-4 text-body text-warning">
               Chưa có khung giờ đủ điều kiện. Mở thêm lịch đúng nghề, sức chứa
               và thời gian chờ trước khi hẹn lại.
             </p>
@@ -123,7 +123,7 @@ export function InterviewRebooking({
             }}
           >
             <fieldset disabled={action.busy} className="space-y-4">
-              <label className="block text-sm font-medium">
+              <label className="block text-body font-medium">
                 Khung giờ mới
                 <select name="slot" required className={`${inputClass} mt-2`}>
                   <option value="">Chọn lịch mở và còn chỗ</option>
@@ -136,7 +136,7 @@ export function InterviewRebooking({
                   ))}
                 </select>
               </label>
-              <label className="block text-sm font-medium">
+              <label className="block text-body font-medium">
                 Lý do hẹn lại / ngoại lệ
                 <textarea
                   name="reason"

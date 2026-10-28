@@ -80,7 +80,7 @@ export function IncidentActionDialog({
       description={`${item.taskCode} · ${item.displayName}`}
     >
       <form className="space-y-5" onSubmit={submit} aria-busy={busy}>
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-body leading-6 text-muted-foreground">
           Hạn hiện tại: {new Date(item.dueAt).toLocaleString("vi-VN")}. Thao tác
           được lưu lịch sử và thông báo sinh viên; điểm bài đã duyệt và KPI đã
           chốt được giữ nguyên.
@@ -117,7 +117,7 @@ export function IncidentActionDialog({
           />
         </Field>
         {error && (
-          <p role="alert" className="text-sm text-rose-700">
+          <p role="alert" className="text-body text-destructive">
             {error}
           </p>
         )}

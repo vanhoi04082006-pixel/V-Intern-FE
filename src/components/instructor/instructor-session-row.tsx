@@ -15,17 +15,17 @@ export function InstructorSessionRow({
   return (
     <article className="workspace-collection-row workspace-session-row">
       <div>
-        <h3>{row.name}</h3>
+        <h3><Link href={`/instructor/sessions/${row.id}`}>{row.name}</Link></h3>
         <p className="workspace-session-meta">
-          {row.code} · {instructorDate(row.startDate)} →{" "}
+          {row.code}, {instructorDate(row.startDate)} →{" "}
           {instructorDate(row.endDate)}
         </p>
         <p className="workspace-session-meta">
           Dự án: {row.project?.name ?? "—"}
           {row.project?.templateVersion != null
-            ? ` · mẫu v${row.project.templateVersion}`
+            ? `, mẫu v${row.project.templateVersion}`
             : ""}{" "}
-          · {row.memberCount} thành viên · {row.sprintCount} sprint ·{" "}
+         , {row.memberCount} thành viên, {row.sprintCount} sprint ·{" "}
           {row.taskDone}/{row.taskTotal} nhiệm vụ ({row.taskPercent}%)
         </p>
         <p className="workspace-session-meta">
@@ -39,17 +39,17 @@ export function InstructorSessionRow({
             aria-label="Cảnh báo tiến độ"
           >
             {row.alerts.overdueTasks > 0 && (
-              <span className="text-rose-700">
+              <span className="text-destructive">
                 {row.alerts.overdueTasks} nhiệm vụ quá hạn
               </span>
             )}
             {row.alerts.pendingReview > 0 && (
-              <span className="text-amber-800">
+              <span className="text-warning">
                 {row.alerts.pendingReview} nhiệm vụ chờ duyệt
               </span>
             )}
             {row.alerts.sessionOverdue && (
-              <span className="text-rose-700">Phiên đã quá ngày kết thúc</span>
+              <span className="text-destructive">Phiên đã quá ngày kết thúc</span>
             )}
           </div>
         )}
@@ -65,16 +65,16 @@ export function InstructorSessionRow({
           aria-label={`Tiến độ ${row.name}`}
         />
         <strong>
-          {row.taskDone}/{row.taskTotal}
+          {row.taskPercent}%
         </strong>
       </div>
       <div className="workspace-session-actions">
-        <Link href={`/instructor/sessions/${row.id}`}>Chi tiết →</Link>
+        <Link href={`/instructor/sessions/${row.id}`}>Chi tiết</Link>
         {row.status === "upcoming" && row.project && (
           <Link
             href={`/instructor/sessions/${row.id}/setup?project=${row.project.id}`}
           >
-            Thiết lập đội hình →
+            Thiết lập đội hình
           </Link>
         )}
         {onManage && (

@@ -144,10 +144,10 @@ export function LoginForm({ previewState }: LoginFormProps) {
 
   return (
     <section aria-label="Đăng nhập tài khoản V-Intern">
-      <h1 className="text-[28px] font-bold leading-tight tracking-tight text-navy">
+      <h1 className="text-page font-bold leading-tight tracking-tight text-foreground">
         Chào mừng trở lại!
       </h1>
-      <p className="mt-1.5 text-[15px] leading-relaxed text-slate-600">
+      <p className="mt-2 text-body leading-relaxed text-muted-foreground">
         Đăng nhập để tiếp tục hành trình thực tập của bạn.
       </p>
 
@@ -227,7 +227,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
         <div className="mt-4 flex items-center justify-between gap-4">
           <label
             htmlFor="login-remember"
-            className="flex cursor-pointer select-none items-center gap-2.5 text-sm text-slate-700"
+            className="flex cursor-pointer select-none items-center gap-3 text-body text-foreground"
           >
             <input
               id="login-remember"
@@ -240,12 +240,12 @@ export function LoginForm({ previewState }: LoginFormProps) {
             />
             <span
               aria-hidden="true"
-              className="grid size-[18px] shrink-0 place-items-center rounded-[5px] border border-slate-300 bg-white transition-colors peer-checked:border-brand peer-checked:bg-brand peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40 peer-focus-visible:ring-offset-2"
+              className="grid size-4 shrink-0 place-items-center rounded-sm border border-input bg-card transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40 peer-focus-visible:ring-offset-2"
             >
               <svg
                 viewBox="0 0 12 10"
                 fill="none"
-                className="h-2.5 w-3 text-white"
+                className="h-2.5 w-3 text-primary-foreground"
               >
                 <path
                   d="M1 5.2 4.2 8.4 11 1.5"
@@ -261,7 +261,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
 
           <Link
             href="/forgot-password"
-            className="rounded-sm text-sm font-semibold text-brand underline-offset-2 transition-colors hover:text-brand-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            className="shrink-0 whitespace-nowrap rounded-sm text-body font-semibold text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           >
             Quên mật khẩu?
           </Link>
@@ -271,15 +271,15 @@ export function LoginForm({ previewState }: LoginFormProps) {
           type="submit"
           disabled={!hydrated || isSubmitting}
           className={cn(
-            "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors",
-            "hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2",
+            "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
+            "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-80",
           )}
         >
           {isSubmitting ? (
             <>
               <Loader2
-                className="size-[18px] animate-spin"
+                className="size-4 animate-spin"
                 aria-hidden="true"
               />
               Đang đăng nhập...
@@ -287,15 +287,15 @@ export function LoginForm({ previewState }: LoginFormProps) {
           ) : (
             <>
               Đăng nhập
-              <ArrowRight className="size-[18px]" aria-hidden="true" />
+              <ArrowRight className="size-4" aria-hidden="true" />
             </>
           )}
         </button>
 
         <div className="mt-4 flex items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-slate-200" />
-          <span className="text-[13px] text-slate-500">Hoặc</span>
-          <span className="h-px flex-1 bg-slate-200" />
+          <span className="h-px flex-1 bg-secondary" />
+          <span className="text-small text-muted-foreground">Hoặc</span>
+          <span className="h-px flex-1 bg-secondary" />
         </div>
 
         <button
@@ -305,7 +305,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
             clearBoxAlerts();
             setGoogleNotice(true);
           }}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-[10px] border border-slate-200 bg-white text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-control border border-border bg-card text-body font-semibold text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <GoogleIcon />
           Tiếp tục với Google
@@ -321,11 +321,11 @@ export function LoginForm({ previewState }: LoginFormProps) {
         </p>
       </form>
 
-      <p className="mt-5 text-center text-sm text-slate-600">
+      <p className="mt-5 text-center text-body text-muted-foreground">
         Chưa có tài khoản?{" "}
         <Link
           href="/register"
-          className="rounded-sm font-semibold text-brand underline-offset-2 transition-colors hover:text-brand-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          className="rounded-sm font-semibold text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           Đăng ký ngay
         </Link>

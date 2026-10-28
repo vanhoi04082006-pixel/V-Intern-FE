@@ -65,7 +65,7 @@ export function OwnKanban({
         </div>
       )}
       {drop.busy && (
-        <p role="status" className="mt-3 text-sm text-slate-500">
+        <p role="status" className="mt-3 text-body text-muted-foreground">
           Đang cập nhật nhiệm vụ…
         </p>
       )}
@@ -145,7 +145,7 @@ function KanbanColumn({
           <p>{{ todo: "Đọc yêu cầu và chuẩn bị", doing: "Tập trung từng nhiệm vụ", review: "Đã nộp, chờ phản hồi", done: "Được giảng viên xác nhận" }[status]}</p>
         </header>
         {data.loading ? (
-          <div className="space-y-2.5" role="status">
+          <div className="space-y-3" role="status">
             <span className="sr-only">
               Đang tải cột {statusLabels[status]}…
             </span>
@@ -167,7 +167,7 @@ function KanbanColumn({
             }
           </p>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {data.data.items.map((t) => (
               <button
                 key={t.id}
@@ -180,12 +180,12 @@ function KanbanColumn({
                 <div className="student-board-card-head">
                   <span className="student-work-code">{t.code}</span>
                   <span
-                    className={`inline-flex items-center gap-1 text-[10.5px] font-semibold ${
+                    className={`inline-flex items-center gap-1 text-caption font-semibold ${
                       t.priority === "critical" || t.priority === "high"
-                        ? "text-rose-700"
+                        ? "text-destructive"
                         : t.priority === "medium"
-                          ? "text-amber-700"
-                          : "text-slate-500"
+                          ? "text-warning"
+                          : "text-muted-foreground"
                     }`}
                   >
                     <Flag size={11} aria-hidden="true" />
@@ -220,12 +220,12 @@ function KanbanColumn({
                     tone={t.progress >= 100 ? "green" : "blue"}
                   />
                 </div>
-                <div className="mt-2.5 flex items-center justify-between border-t border-slate-100 pt-2.5 text-[10.5px] text-slate-500">
+                <div className="mt-2.5 flex items-center justify-between border-t border-border pt-2.5 text-caption text-muted-foreground">
                   <TaskDeadline value={t.dueDate} status={t.status} compact />
                   <span className="workspace-task-points"><Gauge size={12} aria-hidden="true" />{t.storyPoints ?? '—'} điểm</span>
                   <ChevronRight
                     size={14}
-                    className="text-blue-500 transition-transform group-hover:translate-x-0.5"
+                    className="text-primary transition-transform group-hover:translate-x-0.5"
                     aria-hidden="true"
                   />
                 </div>
@@ -234,7 +234,7 @@ function KanbanColumn({
           </div>
         )}
         {data.data && data.data.totalPages > 1 && (
-          <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-slate-500">
+          <div className="mt-3 flex items-center justify-between gap-2 text-caption text-muted-foreground">
             <button
               type="button"
               disabled={page <= 1}

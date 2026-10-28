@@ -74,7 +74,7 @@ export function SprintManagement() {
         { icon: CalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
         { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
       ]} />
-      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-sm font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="text-sm font-semibold text-blue-600" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
+      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="text-body font-semibold text-primary" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
       <Panel title="Các Sprint" action={<button className={buttonClass} onClick={() => setCreate(true)}>Tạo Sprint</button>}>
         <div className="mb-4 grid items-start gap-3 sm:grid-cols-2">
           <AcademicPicker
@@ -113,7 +113,7 @@ export function SprintManagement() {
                   {rows.data.items.map((s) => (
                     <div
                       key={s.id}
-                      className="rounded-xl border border-slate-200 p-4 hover:border-blue-300"
+                      className="rounded-control border border-border p-4 hover:border-primary"
                     >
                       <button
                         onClick={() => setSelected(s)}
@@ -121,15 +121,15 @@ export function SprintManagement() {
                         aria-label={`Cài đặt Sprint ${s.code}`}
                       >
                         <div className="mb-3 flex justify-between gap-2">
-                          <span className="text-xs text-slate-400">{s.code}</span>
+                          <span className="text-caption text-muted-foreground">{s.code}</span>
                           <Badge>{s.status}</Badge>
                         </div>
-                        <h3 className="font-bold text-navy">{s.name}</h3>
-                        <p className="mt-2 text-sm text-slate-500">
+                        <h3 className="font-bold text-foreground">{s.name}</h3>
+                        <p className="mt-2 text-body text-muted-foreground">
                           {s.goal ?? "Chưa có mục tiêu"}
                         </p>
-                        <p className="mt-3 text-xs text-slate-400">
-                          {new Date(s.startDate).toLocaleDateString("vi-VN")} –{" "}
+                        <p className="mt-3 text-caption text-muted-foreground">
+                          {new Date(s.startDate).toLocaleDateString("vi-VN")} đến{" "}
                           {new Date(s.endDate).toLocaleDateString("vi-VN")}
                         </p>
                       </button>
@@ -218,13 +218,13 @@ export function SprintForm({
       {Boolean(action.error) && <ErrorState error={action.error} />}
       {!sprint && (
         <>
-          <label className="block text-sm">
+          <label className="block text-body">
             Mã Sprint
             <input required name="code" maxLength={64} className={inputClass} />
           </label>
           {fixedProjectId ? (
-            <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">
-              Dự án: <strong>{fixedProjectName ?? fixedProjectId}</strong> — đã kế thừa, không cần chọn lại.
+            <p className="rounded-control bg-accent p-3 text-body text-foreground">
+              Dự án: <strong>{fixedProjectName ?? fixedProjectId}</strong> đến đã kế thừa, không cần chọn lại.
             </p>
           ) : (
             <AcademicPicker
@@ -237,8 +237,8 @@ export function SprintForm({
             />
           )}
           {fixedSessionId ? (
-            <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">
-              Phiên: <strong>{fixedSessionName ?? fixedSessionId}</strong> — đã kế thừa, không cần chọn lại.
+            <p className="rounded-control bg-accent p-3 text-body text-foreground">
+              Phiên: <strong>{fixedSessionName ?? fixedSessionId}</strong> đến đã kế thừa, không cần chọn lại.
             </p>
           ) : (
             <AcademicPicker
@@ -255,7 +255,7 @@ export function SprintForm({
         ["description", "Mô tả Sprint", sprint?.description],
         ["goal", "Mục tiêu", sprint?.goal],
       ].map(([name, label, value]) => (
-        <label key={name} className="block text-sm">
+        <label key={name} className="block text-body">
           {label}
           <input
             name={name ?? ""}
@@ -273,7 +273,7 @@ export function SprintForm({
           ["start", "Bắt đầu (UTC)", sprint?.startDate],
           ["end", "Kết thúc (UTC)", sprint?.endDate],
         ].map(([name, label, value]) => (
-          <label key={name} className="text-sm">
+          <label key={name} className="text-body">
             {label}
             <input
               required
@@ -325,7 +325,7 @@ function SprintDetail({
         <Badge>{status}</Badge>
         {["planned", "active"].includes(status) && (
           <button
-            className="text-sm text-blue-600"
+            className="text-body text-primary"
             onClick={() => setEdit(!edit)}
           >
             Sửa Sprint
@@ -375,31 +375,31 @@ function SprintDetail({
         ) : (
           board.data && (
             <>
-              <p className="mb-3 text-sm">Tổng {board.data.total} nhiệm vụ</p>
+              <p className="mb-3 text-body">Tổng {board.data.total} nhiệm vụ</p>
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {board.data.columns.map((c) => (
                   <section
                     key={c.status}
-                    className="min-w-0 rounded-xl bg-slate-50 p-3"
+                    className="min-w-0 rounded-control bg-background p-3"
                   >
-                    <h3 className="mb-3 text-sm font-bold">
+                    <h3 className="mb-3 text-body font-bold">
                       {statusLabels[c.status]} ({c.count})
                     </h3>
                     {c.tasks.map((t) => (
                       <button
                         key={t.id}
-                        className="mb-2 block w-full rounded-lg bg-white p-3 text-left text-sm shadow-sm"
+                        className="mb-2 block w-full rounded-control bg-card p-3 text-left text-body shadow-app-sm"
                         onClick={() => setTask(t.id)}
                       >
-                        <small className="text-blue-600">{t.code}</small>
+                        <small className="text-primary">{t.code}</small>
                         <p className="mt-1 font-semibold">{t.title}</p>
-                        <p className="mt-2 text-xs text-slate-400">
+                        <p className="mt-2 text-caption text-muted-foreground">
                           {t.priority} · {t.progress}%
                         </p>
                       </button>
                     ))}
                     {c.count > c.tasks.length && (
-                      <p className="text-xs">
+                      <p className="text-caption">
                         Xem danh sách nhiệm vụ để truy cập tất cả.
                       </p>
                     )}
@@ -526,28 +526,28 @@ export function TaskManagement({
           tasks.data && (
             <>
               {tasks.data.items.length ? (
-                <div className="overflow-x-auto"><table className="w-full min-w-[860px] text-left text-xs"><thead className="bg-slate-50"><tr>{['#','Task','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>
+                <div className="overflow-x-auto"><table className="w-full min-w-[860px] text-left text-caption"><thead className="bg-background"><tr>{['#','Task','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>
                   {tasks.data.items.map((t, i) => (
                     <tr
                       key={t.id}
-                      className="border-b border-slate-100"
+                      className="border-b border-border"
                     >
-                      <td className="p-3 text-slate-500">{(page - 1) * 10 + i + 1}</td>
+                      <td className="p-3 text-muted-foreground">{(page - 1) * 10 + i + 1}</td>
                       <td className="max-w-52 p-3">
                         <button
-                          className="block text-left text-sm font-semibold text-blue-600"
+                          className="block text-left text-body font-semibold text-primary"
                           onClick={() => setDetail(t.id)}
                         >
                           {t.code}
                         </button>
-                        <span className="mt-1 line-clamp-1 block text-[11px] text-navy">{t.title}</span>
+                        <span className="mt-1 line-clamp-1 block text-caption text-foreground">{t.title}</span>
                       </td>
                       <td className="max-w-40 p-3"><Person name={memberName(t.assigneeId)} /></td>
                       <td className="p-3"><TaskStatusPill status={t.status} /></td>
                       <td className="p-3"><PriorityBadge priority={t.priority} /></td>
                       <td className="p-3 whitespace-nowrap">{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
-                      <td className="p-3"><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-blue-600" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
-                      <td className="whitespace-nowrap p-3"><button className="rounded border border-blue-100 px-2 py-1 text-blue-600" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
+                      <td className="p-3"><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
+                      <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-2 py-1 text-primary" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
                     </tr>
                   ))}
                 </tbody></table></div>
@@ -652,7 +652,7 @@ export function TaskForm({
           onChange={setProjectId}
         />
       )}
-      <label className="block text-sm">
+      <label className="block text-body">
         Tên nhiệm vụ
         <input
           className={inputClass}
@@ -662,7 +662,7 @@ export function TaskForm({
           defaultValue={task?.title}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Mô tả nhiệm vụ
         <textarea
           className={inputClass}
@@ -681,7 +681,7 @@ export function TaskForm({
           <option key={p} value={p}>{priorityLabels[p]}</option>
         ))}
       </select>
-      <label className="block text-sm">
+      <label className="block text-body">
         Story points
         <input
           type="number"
@@ -692,7 +692,7 @@ export function TaskForm({
           defaultValue={task?.storyPoints ?? ""}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Hạn nhiệm vụ (UTC)
         <input
           type="datetime-local"

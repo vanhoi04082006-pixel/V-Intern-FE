@@ -40,14 +40,14 @@ export function AuthField({
     <div className={className}>
       <label
         htmlFor={id}
-        className="mb-1.5 block text-sm font-semibold text-slate-800"
+        className="mb-2 block text-body font-semibold text-foreground"
       >
         {label}
       </label>
       <div className="relative">
         <Icon
           aria-hidden="true"
-          className="pointer-events-none absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <input
           {...inputProps}
@@ -55,28 +55,28 @@ export function AuthField({
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={cn(
-            "h-12 w-full rounded-[10px] border bg-white pl-11 pr-4 text-[15px] text-slate-900 outline-none transition-colors placeholder:text-slate-400",
-            "focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/25",
+            "h-12 w-full rounded-control border bg-card pl-11 pr-4 text-body text-foreground outline-none transition-colors placeholder:text-muted-foreground",
+            "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-ring/25",
             error
-              ? "border-rose-300 focus-visible:border-rose-400 focus-visible:ring-rose-200"
-              : "border-slate-200",
-            inputProps.disabled && "cursor-not-allowed bg-slate-50"
+              ? "border-destructive/30 focus-visible:border-destructive/40 focus-visible:ring-destructive/20"
+              : "border-border",
+            inputProps.disabled && "cursor-not-allowed bg-muted/50"
           )}
         />
       </div>
       {hint && !error && (
-        <p id={hintId} className="mt-1.5 text-[13px] text-slate-500">
+        <p id={hintId} className="mt-2 text-small text-muted-foreground">
           {hint}
         </p>
       )}
       {error && (
         <p
           id={errorId}
-          className="mt-1.5 flex items-start gap-1.5 text-[13px] font-medium text-rose-600"
+          className="mt-2 flex items-start gap-2 text-small font-medium text-destructive"
         >
           <AlertCircle
             aria-hidden="true"
-            className="mt-[1px] size-4 shrink-0"
+            className="mt-1 size-4 shrink-0"
           />
           {error}
         </p>

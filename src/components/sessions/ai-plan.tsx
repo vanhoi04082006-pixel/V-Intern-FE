@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import {
   instructorDate,
   instructorPlanStatus,
@@ -6,7 +7,7 @@ import {
 import { priorityLabels } from "@/lib/api/work";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
-import { Empty, Panel, buttonClass } from "@/components/product/primitives";
+import { Empty, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { PlanEditor } from "./plan-editor";
@@ -109,7 +110,7 @@ function AiPlanWorkspace({
 
   async function regenerate() {
     setNotice(null);
-    // useAction reports success only — capture the created plan through an
+    // useAction reports success only , capture the created plan through an
     // outer binding so the in-flight plan renders immediately.
     let created: { planId: string } | null = null;
     const ok = await action.run(async () => {
@@ -149,7 +150,7 @@ function AiPlanWorkspace({
   return (
     <Panel title="Kế hoạch AI">
       {plans.loading ? (
-        <p role="status" className="p-2 text-sm text-slate-500">
+        <p role="status" className="p-2 text-body text-muted-foreground">
           Đang tải kế hoạch...
         </p>
       ) : plans.error ? (
@@ -162,7 +163,7 @@ function AiPlanWorkspace({
           </Empty>
           {autoPlanning && (
             <>
-              <p className="text-xs text-slate-500">
+              <p className="text-caption text-muted-foreground">
                 Nếu quá trình tự động chưa bắt đầu, bạn có thể yêu cầu tạo kế
                 hoạch. Backend sẽ dùng lại yêu cầu đang chạy.
               </p>
@@ -182,7 +183,7 @@ function AiPlanWorkspace({
           <div className="flex flex-wrap items-center gap-2">
             <select
               aria-label="Chọn kế hoạch"
-              className="min-w-0 max-w-full rounded border border-slate-200 px-2 py-1 text-xs"
+              className={inputClass}
               value={currentId ?? ""}
               onChange={(e) => setSelectedId(e.target.value || null)}
             >
@@ -199,27 +200,27 @@ function AiPlanWorkspace({
               disabled={
                 action.busy || generating || plan?.status === "confirmed"
               }
-              className="rounded border border-slate-200 px-2 py-1 text-xs"
+              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small hover:bg-accent disabled:opacity-50"
               onClick={() => void regenerate()}
             >
               {action.busy ? "..." : "Tạo lại"}
             </button>
           </div>
           {generating && (
-            <p role="status" className="text-xs text-blue-600">
-              AI đang lập kế hoạch — tự làm mới...
+            <p role="status" className="text-caption text-primary">
+              AI đang lập kế hoạch , tự làm mới...
             </p>
           )}
           {detail.loading ? (
-            <p role="status" className="p-2 text-xs text-slate-500">
+            <p role="status" className="p-2 text-caption text-muted-foreground">
               Đang tải chi tiết...
             </p>
           ) : detail.error ? (
             <ErrorState error={detail.error} />
           ) : plan?.status === "failed" ? (
-            <div role="alert" className="space-y-2 text-sm">
-              <p className="text-rose-600">
-                Tạo kế hoạch thất bại — không có gì được ghi. Hãy thử tạo lại.
+            <div role="alert" className="space-y-2 text-body">
+              <p className="text-destructive">
+                Tạo kế hoạch thất bại , không có gì được ghi. Hãy thử tạo lại.
               </p>
               <button
                 type="button"
@@ -236,7 +237,7 @@ function AiPlanWorkspace({
                 <button
                   type="button"
                   disabled={action.busy}
-                  className="text-sm font-semibold text-blue-600"
+                  className="text-body font-semibold text-primary"
                   onClick={() =>
                     setEdited({
                       planId: plan.planId,
@@ -258,31 +259,37 @@ function AiPlanWorkspace({
                 />
               )}
               {plan.warnings.length > 0 && (
-                <ul className="space-y-1 rounded bg-amber-50 p-2 text-[11px] text-amber-700">
-                  {plan.warnings.map((w, i) => (
-                    <li key={i}>
-                      {w.taskTitle}: {w.message}
-                    </li>
-                  ))}
-                </ul>
+                plan.status === "confirmed" ? (
+                  <details className="text-caption text-muted-foreground">
+                    <summary className="cursor-pointer py-2 font-medium">Đối chiếu điều kiện hiện tại</summary>
+                    <p className="mb-2 max-w-prose leading-6">Thông tin tham khảo theo đội hình hiện tại, không làm thay đổi kế hoạch đã phát hành. Sinh viên đã hoàn tất phân công có thể không còn trong đội hình đang hoạt động.</p>
+                    <ul className="space-y-1 border-l-2 border-border pl-3">
+                      {plan.warnings.map((w, i) => <li key={i}>{w.taskTitle}: {w.message}</li>)}
+                    </ul>
+                  </details>
+                ) : (
+                  <ul className="space-y-1 rounded bg-warning-subtle p-2 text-caption text-warning">
+                    {plan.warnings.map((w, i) => <li key={i}>{w.taskTitle}: {w.message}</li>)}
+                  </ul>
+                )
               )}
               {plan.draft.sprints.map((s, i) => (
                 <div
                   key={s.name + i}
-                  className="rounded border border-slate-100 p-2"
+                  className="border-b border-border py-4"
                 >
-                  <p className="text-sm font-semibold">
+                  <p className="text-body font-semibold">
                     {i + 1}. {s.name}
                   </p>
                   {s.goal && (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-caption text-muted-foreground">
                       {s.goal} · {instructorDate(s.startDate)} →{" "}
                       {instructorDate(s.endDate)}
                     </p>
                   )}
                   <ul className="mt-1 space-y-1">
                     {s.tasks.map((t, j) => (
-                      <li key={t.title + j} className="text-xs text-slate-600">
+                      <li key={t.title + j} className="text-caption text-muted-foreground">
                         • {t.title}
                         {t.assigneeId ? "" : " (chưa gán)"} ·{" "}
                         {priorityLabels[
@@ -307,21 +314,21 @@ function AiPlanWorkspace({
               ) : (
                 <p
                   role="status"
-                  className="text-xs font-medium text-emerald-700"
+                  className="text-caption font-medium text-success"
                 >
                   Kế hoạch đã được phát hành thành Sprint và nhiệm vụ.
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-xs text-slate-400">
+            <p className="text-caption text-muted-foreground">
               Kế hoạch chưa có bản nháp để xem.
             </p>
           )}
           {notice && (
             <p
               role="status"
-              className="rounded bg-emerald-50 p-2 text-xs text-emerald-700"
+              className="rounded bg-success-subtle p-2 text-caption text-success"
             >
               {notice}
             </p>

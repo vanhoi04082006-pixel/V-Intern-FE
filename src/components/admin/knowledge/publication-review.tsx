@@ -16,6 +16,6 @@ export function KnowledgePublicationReview({ document, busy, onPublish }: { docu
       : ready ? <InlineAlert tone="success" title="Đã đủ cấu trúc xuất bản">Cần kiểm chuyên môn, nguồn và phạm vi bên dưới. Xuất bản xác nhận bạn đã duyệt nội dung này; kho chưa được nối vào các lượt chạy AI hiện tại.</InlineAlert>
         : <InlineAlert tone="warning" title="Cần hoàn thiện trước khi xuất bản"><ul className="list-disc space-y-1 pl-4">{row.issues.map((issue, index) => <li key={index}>{issue}</li>)}</ul></InlineAlert>}
     <KnowledgePreview draft={document.snapshot} code={document.code} />
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5"><p className="max-w-lg text-xs leading-5 text-slate-500">Sẽ tạo một phiên bản đã xuất bản mới. Phiên bản đang xem và lịch sử vẫn được giữ.</p><button type="button" className={btn()} disabled={!ready || busy} onClick={onPublish}>{busy ? 'Đang xuất bản…' : 'Xác nhận xuất bản'}</button></div>
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5"><p className="max-w-lg text-caption leading-5 text-muted-foreground">Sẽ tạo một phiên bản đã xuất bản mới. Phiên bản đang xem và lịch sử vẫn được giữ.</p><button type="button" className={btn()} disabled={!ready || busy} onClick={onPublish}>{busy ? 'Đang xuất bản…' : 'Xác nhận xuất bản'}</button></div>
   </div>;
 }

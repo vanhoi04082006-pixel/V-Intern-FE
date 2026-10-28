@@ -26,7 +26,7 @@ export function TagPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold",
+        "inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-caption font-semibold",
         toneStyle.soft,
         className
       )}
@@ -42,8 +42,8 @@ export function TagPill({
  */
 export function StepBadge({ step }: { step: number }) {
   return (
-    <p className="flex items-center gap-2 text-sm font-semibold text-brand">
-      <span aria-hidden="true" className="h-px w-8 bg-brand/50" />
+    <p className="flex items-center gap-2 text-body font-semibold text-primary">
+      <span aria-hidden="true" className="h-px w-8 bg-primary/50" />
       Bước {step} / 4
     </p>
   );
@@ -64,7 +64,7 @@ export function NoteCard({
   return (
     <p
       className={cn(
-        "rounded-lg px-3.5 py-2.5 text-[13px] font-medium leading-relaxed",
+        "rounded-control px-4 py-3 text-small font-medium leading-relaxed",
         toneStyle.soft,
         className
       )}
@@ -99,11 +99,11 @@ export function OnboardingProgress({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={clamped}
-      className={cn("h-2 w-full overflow-hidden rounded-full bg-slate-100", className)}
+      className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
     >
       <div
-        className="h-full rounded-full bg-brand transition-[width]"
-        style={{ width: `${clamped}%` }}
+        className="h-full origin-left rounded-full bg-primary"
+        style={{ transform: `scaleX(${clamped / 100})` }}
       />
     </div>
   );
@@ -125,7 +125,7 @@ export function IconTile({
     <span
       aria-hidden="true"
       className={cn(
-        "grid size-11 shrink-0 place-items-center rounded-xl",
+        "grid size-11 shrink-0 place-items-center rounded-panel",
         toneStyle.tile,
         className
       )}

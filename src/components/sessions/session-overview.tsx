@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import {
   InstructorHeading,
   InstructorSectionNav,
@@ -17,7 +18,6 @@ import {
   Empty,
   PageTitle,
   Pager,
-  Panel,
   inputClass,
 } from "@/components/product/primitives";
 import { useResource } from "@/lib/api/use-resource";
@@ -175,13 +175,15 @@ export function SessionOverview({
       return;
     const target = document.getElementById(id);
     if (!target) return;
+    const disclosure = target.querySelector("details");
+    if (disclosure) disclosure.open = true;
     target.scrollIntoView({ block: "start", behavior: "auto" });
     handledSectionLink.current = true;
   }, [basePath, data.data, delivery.loading, plans.loading]);
 
   if (data.loading)
     return (
-      <p role="status" className="p-4 text-sm text-slate-500">
+      <p role="status" className="p-4 text-body text-muted-foreground">
         Đang tải phiên...
       </p>
     );
@@ -221,7 +223,7 @@ export function SessionOverview({
           subtitle={`${session.code} · ${session.status}${session.startDate ? ` · ${session.startDate.slice(0, 10)} → ${session.endDate?.slice(0, 10) ?? ""}` : ""}`}
           action={
             <Link
-              className="text-xs font-semibold text-blue-600 hover:underline"
+              className="text-caption font-semibold text-primary hover:underline"
               href={`${basePath}/sessions`}
             >
               ← Danh sách phiên
@@ -233,6 +235,16 @@ export function SessionOverview({
         <InstructorSectionNav
           items={[
             {
+              id: "session-work",
+              label: "Công việc",
+              count: session.overview.taskTotal,
+            },
+            {
+              id: "session-sprints",
+              label: "Sprint",
+              count: session.overview.sprintCount,
+            },
+            {
               id: "session-team",
               label: "Đội hình",
               count: session.members.length,
@@ -243,48 +255,42 @@ export function SessionOverview({
             ...(projectId
               ? [{ id: "session-plan", label: "Kế hoạch AI" }]
               : []),
-            {
-              id: "session-sprints",
-              label: "Sprint",
-              count: session.overview.sprintCount,
-            },
-            {
-              id: "session-work",
-              label: "Công việc",
-              count: session.overview.taskTotal,
-            },
             { id: "session-activity", label: "Hoạt động" },
           ]}
         />
       )}
 
-      <div className="ins-session-metrics grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Panel title="Sprint">
-          <p className="text-2xl font-bold text-navy">
+      <dl className="ins-session-stat-strip">
+        <div>
+          <dt>Sprint</dt>
+          <dd>
             {session.overview.sprintCount}
-          </p>
-          <p className="text-xs text-slate-500">
+          </dd>
+          <p className="text-caption text-muted-foreground">
             {session.sprintProgress.filter((s) => s.status === "active").length}{" "}
             đang chạy
           </p>
-        </Panel>
-        <Panel title="Task">
-          <p className="text-2xl font-bold text-navy">{totalTasks}</p>
-          <p className="text-xs text-slate-500">
+        </div>
+        <div>
+          <dt>Task</dt>
+          <dd>{totalTasks}</dd>
+          <p className="text-caption text-muted-foreground">
             {progress.done} hoàn thành ({progress.percent}%)
           </p>
-        </Panel>
-        <Panel title="Còn lại">
-          <p className="text-2xl font-bold text-navy">
+        </div>
+        <div>
+          <dt>Còn lại</dt>
+          <dd>
             {totalTasks - progress.done}
-          </p>
-          <p className="text-xs text-slate-500">
+          </dd>
+          <p className="text-caption text-muted-foreground">
             {session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)}{" "}
             chờ duyệt
           </p>
-        </Panel>
-        <Panel title="Kế hoạch AI">
-          <p className="text-sm font-semibold text-navy">
+        </div>
+        <div>
+          <dt>Kế hoạch AI</dt>
+          <dd className="ins-stat-text">
             {plans.loading
               ? "..."
               : plans.error
@@ -292,17 +298,17 @@ export function SessionOverview({
                 : basePath === "/instructor"
                   ? instructorPlanStatus(plans.data?.[0]?.status ?? "chưa có")
                   : (plans.data?.[0]?.status ?? "chưa có")}
-          </p>
-          <p className="text-xs text-slate-500">
+          </dd>
+          <p className="text-caption text-muted-foreground">
             {plans.data?.length ?? 0} bản kế hoạch
           </p>
-        </Panel>
-      </div>
+        </div>
+      </dl>
 
       {projectId && (
         <nav
           aria-label="Quản lý phiên"
-          className="flex flex-wrap gap-4 text-sm font-semibold text-blue-600"
+          className="flex flex-wrap gap-4 text-body font-semibold text-primary"
         >
           {basePath === "/instructor" && (
             <Link
@@ -328,192 +334,10 @@ export function SessionOverview({
           </Link>
         </nav>
       )}
-      <div id="session-repository" className="ins-section">
-        <SessionRepositoryCard
-          sessionId={sessionId}
-          manage={
-            session.leadInstructorId?.toLowerCase() ===
-            getSessionUser()?.id.toLowerCase()
-          }
-        />
-      </div>
-      <div id="session-team" className="ins-section">
-        <Panel title={`Thành viên (${session.members.length})`}>
-          {session.members.length ? (
-            <ul className="workspace-session-roster text-sm">
-              {session.members.map((m) => (
-                <li className="break-words" key={m.userId}>
-                  {m.displayName} · {m.email}
-                  <p className="mt-1 text-xs text-slate-500">
-                    {m.role ? roleLabel(m.role) : "Chưa có vai trò dự án"}
-                    {m.assignmentStatus === "completed"
-                      ? " · Đã hoàn tất phân công"
-                      : m.assignmentStatus === "active"
-                        ? " · Đang tham gia"
-                        : ""}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <Empty>Chưa có thành viên.</Empty>
-          )}
-        </Panel>
-      </div>
-      {session.projectSnapshot && (
-        <div id="session-project" className="ins-section">
-          <Panel
-            title={`Dự án · ${session.overview.project?.name ?? "Snapshot"}`}
-          >
-            <p className="mb-3 text-sm">
-              {typeof session.projectSnapshot.description === "string"
-                ? session.projectSnapshot.description
-                : ""}
-            </p>
-            {(
-              [
-                "techStack",
-                "objectives",
-                "functionalRequirements",
-                "expectedOutputs",
-                "dod",
-              ] as const
-            ).map((key) => {
-              const values = snapshotItems(session.projectSnapshot?.[key]);
-              const label = {
-                techStack: "Công nghệ",
-                objectives: "Mục tiêu",
-                functionalRequirements: "Yêu cầu",
-                expectedOutputs: "Sản phẩm bàn giao",
-                dod: "Tiêu chí hoàn thành",
-              }[key];
-              return values.length ? (
-                <div key={key} className="mb-3 text-sm">
-                  <h3 className="font-semibold">{label}</h3>
-                  <ul className="list-inside list-disc">
-                    {values.map((v, i) => (
-                      <li key={i}>{v}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null;
-            })}
-          </Panel>
-        </div>
-      )}
-      <Panel title="Mốc thời gian">
-        {session.milestones.length ? (
-          <ul className="space-y-2 text-sm">
-            {session.milestones.map((m) => (
-              <li key={m.id}>
-                {m.title} ·{" "}
-                {basePath === "/instructor"
-                  ? instructorDate(m.dueDate)
-                  : (m.dueDate?.slice(0, 10) ?? "Chưa có hạn")}{" "}
-                ·{" "}
-                {basePath === "/instructor"
-                  ? ((
-                      {
-                        pending: "Chưa hoàn thành",
-                        completed: "Đã hoàn thành",
-                        missed: "Trễ hạn",
-                        cancelled: "Đã hủy",
-                      } as Record<string, string>
-                    )[m.status] ?? m.status)
-                  : m.status}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <Empty>Chưa có mốc thời gian.</Empty>
-        )}
-      </Panel>
-      {projectId && basePath === "/instructor" && (
-        <div id="session-plan" className="ins-section">
-          <Can perm="sprints.manage">
-            <AiPlanPanel
-              autoPlanning={session.status === "active"}
-              sessionId={sessionId}
-              projectId={projectId}
-              onPublished={() => {
-                data.reload();
-                delivery.reload();
-                plans.reload();
-              }}
-            />
-          </Can>
-        </div>
-      )}
       {delivery.error ? (
         <ErrorState error={delivery.error} onRetry={delivery.reload} />
       ) : null}
       {delivery.loading && <p role="status">Đang tải Sprint/Task...</p>}
-
-      <div id="session-sprints" className="ins-section">
-        <Panel title="Sprint">
-          {delivery.loading ? (
-            <p role="status">Đang tải danh sách Sprint...</p>
-          ) : delivery.error ? null : sprints.length === 0 ? (
-            <Empty>
-              Chưa có Sprint. Xác nhận kế hoạch AI để tạo Sprint và nhiệm vụ.
-            </Empty>
-          ) : (
-            <ul className="space-y-2">
-              {sprints.map((s) => {
-                const p = session.sprintProgress.find(
-                  (p) => p.id.toLowerCase() === s.id.toLowerCase(),
-                );
-                return (
-                  <li
-                    key={s.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-100 p-2"
-                  >
-                    <div>
-                      <Link
-                        className="text-sm font-semibold text-blue-600 hover:underline"
-                        href={`${basePath}/sprints/${s.id}`}
-                      >
-                        {s.name}
-                      </Link>
-                      <p className="text-[11px] text-slate-500">
-                        {s.code} · {s.goal ?? "—"}
-                      </p>
-                    </div>
-                    <button
-                      className="text-xs font-semibold text-blue-700 hover:underline"
-                      onClick={() => filter("sprintId", s.id)}
-                    >
-                      Lọc task Sprint này
-                    </button>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span>
-                        {basePath === "/instructor"
-                          ? instructorDate(s.startDate)
-                          : s.startDate?.slice(0, 10)}{" "}
-                        →{" "}
-                        {basePath === "/instructor"
-                          ? instructorDate(s.endDate)
-                          : s.endDate?.slice(0, 10)}
-                      </span>
-                      <Badge>
-                        {basePath === "/instructor"
-                          ? sprintStatusLabel(s.status).label
-                          : s.status}
-                      </Badge>
-                      <span>
-                        {p?.taskDone ?? 0}/{p?.taskTotal ?? 0}
-                      </span>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-          {delivery.data && (
-            <Pager {...delivery.data.sprintsPage} onChange={setSprintPage} />
-          )}
-        </Panel>
-      </div>
 
       <div id="session-work" className="ins-section">
         <Panel title={`Task (${totalTasks})`}>
@@ -559,7 +383,7 @@ export function SessionOverview({
             </select>
             {filters.sprintId && (
               <button
-                className="text-xs font-semibold text-blue-700"
+                className="text-caption font-semibold text-primary"
                 onClick={() => filter("sprintId", "")}
               >
                 Bỏ lọc Sprint
@@ -575,7 +399,7 @@ export function SessionOverview({
                   <p>Không có nhiệm vụ khớp bộ lọc trong phiên này.</p>
                   <button
                     type="button"
-                    className="mt-3 font-semibold text-blue-700"
+                    className="mt-3 font-semibold text-primary"
                     onClick={() => {
                       setFilters({
                         status: "",
@@ -596,30 +420,30 @@ export function SessionOverview({
           ) : (
             <ul
               aria-label="Task và bài nộp trong phiên"
-              className="workspace-task-collection grid gap-3 xl:grid-cols-2"
+              className="ins-task-list"
             >
               {tasks.map((t) => (
                 <li
                   key={t.id}
-                  className="workspace-collection-row min-w-0 break-words rounded-xl border border-slate-200 p-4"
+                  className="ins-task-row break-words"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <Link
-                      className="min-w-0 text-sm font-semibold text-blue-700 hover:underline"
+                      className="min-w-0 text-body font-semibold text-primary hover:underline"
                       href={`${basePath}/tasks/${t.id}`}
                     >
                       {t.title}
                     </Link>
                     <Badge>{statusLabels[t.status]}</Badge>
                   </div>
-                  <p className="mt-1 break-all font-mono text-[11px] text-slate-400">
+                  <p className="mt-1 break-all font-mono text-caption text-muted-foreground">
                     {t.code}
                   </p>
-                  <p className="mt-2 text-xs text-slate-600">
+                  <p className="mt-2 text-caption text-muted-foreground">
                     {t.sprint?.name ?? "Chưa gắn Sprint"} · {t.progress}% ·{" "}
                     {priorityLabels[t.priority]}
                   </p>
-                  <p className="mt-1 text-xs text-slate-600">
+                  <p className="mt-1 text-caption text-muted-foreground">
                     {t.assigneeId
                       ? (session.members.find(
                           (m) =>
@@ -642,15 +466,206 @@ export function SessionOverview({
           )}
         </Panel>
       </div>
+      <div id="session-sprints" className="ins-section">
+        <Panel title="Sprint">
+          {delivery.loading ? (
+            <p role="status">Đang tải danh sách Sprint...</p>
+          ) : delivery.error ? null : sprints.length === 0 ? (
+            <Empty>
+              Chưa có Sprint. Xác nhận kế hoạch AI để tạo Sprint và nhiệm vụ.
+            </Empty>
+          ) : (
+            <ul className="ins-sprint-list">
+              {sprints.map((s) => {
+                const p = session.sprintProgress.find(
+                  (p) => p.id.toLowerCase() === s.id.toLowerCase(),
+                );
+                return (
+                  <li
+                    key={s.id}
+                    className="ins-sprint-row"
+                  >
+                    <div>
+                      <Link
+                        className="text-body font-semibold text-primary hover:underline"
+                        href={`${basePath}/sprints/${s.id}`}
+                      >
+                        {s.name}
+                      </Link>
+                      <p className="text-caption text-muted-foreground">
+                        {s.code} · {s.goal ?? "—"}
+                      </p>
+                    </div>
+                    <button
+                      className="text-caption font-semibold text-primary hover:underline"
+                      onClick={() => filter("sprintId", s.id)}
+                    >
+                      Lọc task Sprint này
+                    </button>
+                    <div className="flex items-center gap-2 text-caption text-muted-foreground">
+                      <span>
+                        {basePath === "/instructor"
+                          ? instructorDate(s.startDate)
+                          : s.startDate?.slice(0, 10)}{" "}
+                        →{" "}
+                        {basePath === "/instructor"
+                          ? instructorDate(s.endDate)
+                          : s.endDate?.slice(0, 10)}
+                      </span>
+                      <Badge>
+                        {basePath === "/instructor"
+                          ? sprintStatusLabel(s.status).label
+                          : s.status}
+                      </Badge>
+                      <span>
+                        {p?.taskDone ?? 0}/{p?.taskTotal ?? 0}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {delivery.data && (
+            <Pager {...delivery.data.sprintsPage} onChange={setSprintPage} />
+          )}
+        </Panel>
+      </div>
+
+      <div id="session-repository" className="ins-section">
+        <SessionRepositoryCard
+          sessionId={sessionId}
+          manage={
+            session.leadInstructorId?.toLowerCase() ===
+            getSessionUser()?.id.toLowerCase()
+          }
+        />
+      </div>
+      <div id="session-team" className="ins-section">
+        <Panel title={`Thành viên (${session.members.length})`}>
+          {session.members.length ? (
+            <ul className="workspace-session-roster text-body">
+              {session.members.map((m) => (
+                <li className="break-words" key={m.userId}>
+                  {m.displayName} · {m.email}
+                  <p className="mt-1 text-caption text-muted-foreground">
+                    {m.role ? roleLabel(m.role) : "Chưa có vai trò dự án"}
+                    {m.assignmentStatus === "completed"
+                      ? " · Đã hoàn tất phân công"
+                      : m.assignmentStatus === "active"
+                        ? " · Đang tham gia"
+                        : ""}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty>Chưa có thành viên.</Empty>
+          )}
+        </Panel>
+      </div>
+      {session.projectSnapshot && (
+        <div id="session-project" className="ins-section">
+          <details className="ins-reference">
+            <summary>Yêu cầu dự án và tiêu chí bàn giao</summary>
+          <Panel
+            title={`Dự án · ${session.overview.project?.name ?? "Snapshot"}`}
+          >
+            <p className="mb-3 text-body">
+              {typeof session.projectSnapshot.description === "string"
+                ? session.projectSnapshot.description
+                : ""}
+            </p>
+            {(
+              [
+                "techStack",
+                "objectives",
+                "functionalRequirements",
+                "expectedOutputs",
+                "dod",
+              ] as const
+            ).map((key) => {
+              const values = snapshotItems(session.projectSnapshot?.[key]);
+              const label = {
+                techStack: "Công nghệ",
+                objectives: "Mục tiêu",
+                functionalRequirements: "Yêu cầu",
+                expectedOutputs: "Sản phẩm bàn giao",
+                dod: "Tiêu chí hoàn thành",
+              }[key];
+              return values.length ? (
+                <div key={key} className="mb-3 text-body">
+                  <h3 className="font-semibold">{label}</h3>
+                  <ul className="list-inside list-disc">
+                    {values.map((v, i) => (
+                      <li key={i}>{v}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null;
+            })}
+          </Panel>
+          </details>
+        </div>
+      )}
+      <Panel title="Mốc thời gian">
+        {session.milestones.length ? (
+          <ul className="space-y-2 text-body">
+            {session.milestones.map((m) => (
+              <li key={m.id}>
+                {m.title} ·{" "}
+                {basePath === "/instructor"
+                  ? instructorDate(m.dueDate)
+                  : (m.dueDate?.slice(0, 10) ?? "Chưa có hạn")}{" "}
+                ·{" "}
+                {basePath === "/instructor"
+                  ? ((
+                      {
+                        pending: "Chưa hoàn thành",
+                        completed: "Đã hoàn thành",
+                        missed: "Trễ hạn",
+                        cancelled: "Đã hủy",
+                      } as Record<string, string>
+                    )[m.status] ?? m.status)
+                  : m.status}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Empty>Chưa có mốc thời gian.</Empty>
+        )}
+      </Panel>
+      {projectId && basePath === "/instructor" && (
+        <div id="session-plan" className="ins-section">
+          <details className="ins-reference">
+            <summary>Kế hoạch AI của phiên</summary>
+          <Can perm="sprints.manage">
+            <AiPlanPanel
+              autoPlanning={session.status === "active"}
+              sessionId={sessionId}
+              projectId={projectId}
+              onPublished={() => {
+                data.reload();
+                delivery.reload();
+                plans.reload();
+              }}
+            />
+          </Can>
+          </details>
+        </div>
+      )}
       <div id="session-activity" className="ins-section">
+          <details className="ins-reference">
+            <summary>Lịch sử hoạt động của phiên</summary>
         <Can perm={["sessions.view", "tasks.view"]}>
           <SessionTimeline key={sessionId} sessionId={sessionId} />
         </Can>
+          </details>
       </div>
       <Can perm="performance.view">
         <Panel title="Hiệu suất sinh viên trong phiên">
           <button
-            className="text-sm font-semibold text-blue-700"
+            className="text-body font-semibold text-primary"
             aria-expanded={showPerformance}
             onClick={() => setShowPerformance((v) => !v)}
           >
@@ -674,7 +689,7 @@ export function SessionOverview({
         <Can perm="performance.view">
           <Panel title="Báo cáo của phiên">
             <button
-              className="text-sm font-semibold text-blue-700"
+              className="text-body font-semibold text-primary"
               aria-expanded={showReports}
               onClick={() => setShowReports((v) => !v)}
             >

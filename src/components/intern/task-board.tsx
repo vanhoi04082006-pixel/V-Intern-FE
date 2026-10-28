@@ -43,25 +43,25 @@ export function TaskBoard({
               <li
                 key={column.id}
                 className={cn(
-                  "flex w-[260px] shrink-0 flex-col rounded-xl border p-3 xl:w-auto xl:min-w-0 xl:flex-1",
+                  "flex w-[260px] shrink-0 flex-col rounded-panel border p-3 xl:w-auto xl:min-w-0 xl:flex-1",
                   column.id === "todo"
-                    ? "border-slate-200 bg-slate-50"
+                    ? "border-border bg-background"
                     : column.id === "doing"
-                      ? "border-blue-100 bg-blue-50/70"
+                      ? "border-border bg-accent"
                       : column.id === "review"
-                        ? "border-amber-100 bg-amber-50/70"
-                        : "border-emerald-100 bg-emerald-50/70"
+                        ? "border-border bg-warning-subtle"
+                        : "border-border bg-success-subtle"
                 )}
                 aria-label={`${column.title}, ${column.tasks.length} task`}
               >
                 <div className="flex items-center justify-between gap-2 px-1 pb-3">
-                  <h3 className="flex items-center gap-2 text-sm font-bold text-navy">
+                  <h3 className="flex items-center gap-2 text-body font-bold text-foreground">
                     <span
                       aria-hidden="true"
                       className={cn("size-2 rounded-full", toneStyle.bar)}
                     />
                     {column.title}
-                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200">
+                    <span className="rounded-full bg-card px-2 py-1 text-caption font-bold text-muted-foreground ring-1 ring-ring">
                       {column.tasks.length}
                     </span>
                   </h3>
@@ -91,38 +91,38 @@ function TaskCard({ task, avatarIndex }: { task: InternTask; avatarIndex: number
   const dueToneStyle = INTERN_TONES[task.dueTone];
 
   return (
-    <article className="rounded-lg border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
+    <article className="rounded-control border border-border bg-card p-3 shadow-app-xs">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[13px] font-bold tracking-tight text-navy">
+        <p className="text-small font-bold tracking-tight text-foreground">
           {task.id}
         </p>
         <GhostIconButton label={`Tuỳ chọn task ${task.id}`} className="size-6">
           <MoreVertical className="size-3.5" />
         </GhostIconButton>
       </div>
-      <p className="mt-0.5 text-sm font-semibold leading-snug text-navy">
+      <p className="mt-1 text-body font-semibold leading-snug text-foreground">
         {task.title}
       </p>
-      <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500">
+      <p className="mt-1 line-clamp-2 text-caption leading-relaxed text-muted-foreground">
         {task.description}
       </p>
-      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         <PriorityBadge priority={task.priority} />
-        <span className="inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+        <span className="inline-flex items-center whitespace-nowrap rounded-full bg-muted px-2 py-1 text-caption font-semibold text-muted-foreground">
           {task.points} pts
         </span>
       </div>
-      <div className="mt-2.5 flex items-center justify-between gap-2">
+      <div className="mt-3 flex items-center justify-between gap-2">
         <p
           className={cn(
-            "inline-flex min-w-0 items-center gap-1.5 text-xs font-medium",
+            "inline-flex min-w-0 items-center gap-2 text-caption font-medium",
             dueToneStyle.icon
           )}
         >
           <CalendarDays className="size-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{task.dueLabel}</span>
         </p>
-        <TaskAvatar index={avatarIndex} className="size-6 text-[9px]" />
+        <TaskAvatar index={avatarIndex} className="size-6 text-caption" />
       </div>
     </article>
   );

@@ -20,7 +20,7 @@ export function BlueprintFields({
     source = raw as Record<string, unknown>;
   } catch {
     return (
-      <p className="text-sm text-amber-800">
+      <p className="text-body text-warning">
         Sửa JSON ở phần nâng cao để tiếp tục soạn bằng biểu mẫu. Nội dung chưa
         lưu được giữ nguyên.
       </p>
@@ -37,17 +37,17 @@ export function BlueprintFields({
     ["scopeOut", "Ngoài phạm vi"],
   ] as const;
   return (
-    <section className="space-y-4 border-t border-slate-200 pt-5">
+    <section className="space-y-4 border-t border-border pt-5">
       <div>
-        <h3 className="font-semibold text-navy">Nội dung học tập</h3>
-        <p className="mt-1 text-xs leading-5 text-slate-500">
+        <h3 className="font-semibold text-foreground">Nội dung học tập</h3>
+        <p className="mt-1 text-caption leading-5 text-muted-foreground">
           Mỗi dòng là một mục. Mã nghề dùng catalog hiện tại; cấu trúc Sprint,
           task và phụ thuộc được giữ trong phần nâng cao.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {collections.map(([key, label]) => (
-          <label key={key} className="text-sm">
+          <label key={key} className="text-body">
             {label} · mỗi dòng một mục
             <textarea
               className={`${inputClass} mt-1`}
@@ -58,7 +58,7 @@ export function BlueprintFields({
           </label>
         ))}
       </div>
-      <label className="block text-sm">
+      <label className="block text-body">
         Hướng dẫn dự án
         <textarea
           className={`${inputClass} mt-1`}

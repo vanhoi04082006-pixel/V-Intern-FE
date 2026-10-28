@@ -2,6 +2,8 @@
 
 import { useId, useState } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { workspaceMotion } from "@/styles/motion";
 
 export type DistributionItem = {
   label: string;
@@ -15,6 +17,7 @@ export function TaskDistribution({ items, label = "Phân bố nhiệm vụ" }: {
   label?: string;
 }) {
   const id = useId();
+  const reduceMotion = useReducedMotion();
   const [selection, setSelection] = useState<string | null>(null);
   const values = items.map((item) => ({ ...item, value: Number.isFinite(item.value) ? Math.max(0, item.value) : 0 }));
   const total = values.reduce((sum, item) => sum + item.value, 0);
@@ -47,9 +50,9 @@ export function TaskDistribution({ items, label = "Phân bố nhiệm vụ" }: {
         <div className="workspace-chart-data">
           <ul className="workspace-chart-legend">
             {values.map((item) => <li key={item.label}>
-              <button type="button" aria-pressed={selected?.label === item.label} onClick={() => setSelection(selected?.label === item.label ? null : item.label)}>
+              <motion.button type="button" aria-pressed={selected?.label === item.label} whileHover={reduceMotion ? undefined : { y: -1 }} transition={reduceMotion ? workspaceMotion.instant : workspaceMotion.press} onClick={() => setSelection(selected?.label === item.label ? null : item.label)}>
                 <i data-tone={item.tone} aria-hidden="true" /><span>{item.label}</span><strong>{item.value}</strong><small>{total ? Math.round(item.value / total * 100) : 0}%</small>
-              </button>
+              </motion.button>
             </li>)}
           </ul>
           <p className="workspace-chart-selection" aria-live="polite" aria-atomic="true">

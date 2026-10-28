@@ -68,7 +68,7 @@ export function StudentWorkList({
             <h3>
               <button
                 onClick={() => onOpen(task.id)}
-                className="student-row-open w-full rounded-lg"
+                className="student-row-open w-full rounded-control"
                 aria-label={`${task.code} ${task.title}`}
               >
                 {task.title}

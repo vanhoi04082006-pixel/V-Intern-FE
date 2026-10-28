@@ -43,18 +43,18 @@ export function NotificationsCard({
               key={item.id}
               className={cn(
                 "flex items-start gap-3 py-3 first:pt-0 last:pb-0",
-                item.unread && "rounded-lg bg-blue-50/40 px-2.5"
+                item.unread && "rounded-control bg-accent px-3"
               )}
             >
               <span
                 aria-hidden="true"
-                className={cn("mt-1.5 size-2 shrink-0 rounded-full", toneStyle.bar)}
+                className={cn("mt-2 size-2 shrink-0 rounded-full", toneStyle.bar)}
               />
               <div className="min-w-0 flex-1">
                 <p
                   className={cn(
-                    "text-[13px] leading-relaxed",
-                    item.unread ? "font-semibold text-navy" : "text-slate-600"
+                    "text-small leading-relaxed",
+                    item.unread ? "font-semibold text-foreground" : "text-muted-foreground"
                   )}
                 >
                   {item.text}
@@ -63,7 +63,7 @@ export function NotificationsCard({
                   ) : null}
                 </p>
               </div>
-              <time className="shrink-0 text-xs text-slate-500">
+              <time className="shrink-0 text-caption text-muted-foreground">
                 {item.timeLabel}
               </time>
             </li>

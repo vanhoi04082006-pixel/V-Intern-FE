@@ -33,7 +33,7 @@ export function ParticipationStudent() {
           </button>
         }
       />
-      <p className="max-w-3xl text-sm leading-6 text-slate-600">
+      <p className="max-w-3xl text-body leading-6 text-muted-foreground">
         Thời điểm nộp hợp lệ đầu tiên quyết định đúng hạn. Thời gian giảng viên
         chấm hoặc yêu cầu sửa bài không tự tạo thêm một lần vi phạm.
       </p>
@@ -44,7 +44,7 @@ export function ParticipationStudent() {
       {report.data && (
         <>
           <ParticipationSummary {...report.data.summary} />
-          <p className="text-xs leading-5 text-slate-500">
+          <p className="text-caption leading-5 text-muted-foreground">
             Điểm phạt ghi nhận là căn cứ xem xét khi chấm bài, không phải tổng
             điểm đã trừ. Điểm đã chốt hiển thị riêng theo từng bài; miễn trừ sau
             đó không tự sửa kết quả đã duyệt.

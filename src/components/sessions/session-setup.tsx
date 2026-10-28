@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import {
   InstructorHeading,
   InstructorNotice,
@@ -7,7 +8,7 @@ import { roleLabel } from "@/lib/api/workspace";
 import Link from "next/link";
 import { useCallback } from "react";
 import { ErrorState } from "@/components/shared/data-state";
-import { Empty, Panel, buttonClass } from "@/components/product/primitives";
+import { Empty, buttonClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import {
@@ -42,7 +43,7 @@ const setupStatusLabels: Record<string, string> = {
 };
 
 function formatSetupDate(value: string | null): string {
-  if (!value) return "—";
+  if (!value) return ",";
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? value.slice(0, 10)
@@ -137,7 +138,7 @@ export interface SetupDeps {
 /**
  * Session Setup workspace (M3): template context, time range, role slots with
  * holders, member list, team validation. Member add/remove arrives in M4,
- * the Start button in M5 — intentionally absent here, no dead affordances.
+ * the Start button in M5 , intentionally absent here, no dead affordances.
  */
 export function SessionSetup({
   sessionId,
@@ -200,7 +201,7 @@ export function SessionSetup({
   if (!data.data) {
     if (data.loading)
       return (
-        <p role="status" className="p-4 text-sm text-slate-500">
+        <p role="status" className="p-4 text-body text-muted-foreground">
           Đang tải phiên setup...
         </p>
       );
@@ -249,7 +250,7 @@ function SetupBody({
         description={`${session.code} · ${setupStatusLabels[session.status] ?? session.status}${templateVersion !== null ? ` · mẫu v${templateVersion}` : ""}`}
         action={
           <Link
-            className="text-xs font-semibold text-blue-600 hover:underline"
+            className="text-caption font-semibold text-primary hover:underline"
             href="/instructor/sessions"
           >
             ← Phiên thực tập
@@ -292,7 +293,7 @@ function SetupBody({
         ))}
       </ol>
       {refreshing && (
-        <p role="status" className="text-[11px] text-slate-400">
+        <p role="status" className="text-caption text-muted-foreground">
           Đang cập nhật dữ liệu...
         </p>
       )}
@@ -303,20 +304,21 @@ function SetupBody({
         </Empty>
       ) : (
         <>
+          <div className="ins-setup-context">
           <Panel title="Dự án">
-            <p className="text-sm font-semibold">{project.name}</p>
-            <p className="font-mono text-[11px] text-slate-400">
+            <p className="text-body font-semibold">{project.name}</p>
+            <p className="font-mono text-caption text-muted-foreground">
               {project.code} ·{" "}
               {setupStatusLabels[project.status] ?? project.status}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-caption text-muted-foreground">
               Thời gian: {formatSetupDate(session.startDate)} →{" "}
               {formatSetupDate(session.endDate)}
             </p>
           </Panel>
           <Panel title={`Đội hình yêu cầu (${slots.length} vị trí)`}>
             {slots.length === 0 ? (
-              <p className="text-xs text-slate-400">
+              <p className="text-caption text-muted-foreground">
                 Dự án chưa định nghĩa vị trí vai trò.
               </p>
             ) : (
@@ -324,30 +326,30 @@ function SetupBody({
                 {slots.map((s) => (
                   <li
                     key={s.roleCode}
-                    className="rounded border border-slate-100 p-2"
+                    className="border-b border-border py-3"
                   >
-                    <p className="text-sm font-semibold">
+                    <p className="text-body font-semibold">
                       {roleLabel(s.roleCode)} · {s.filledCount}/
                       {s.requiredCount}
                       {s.filledCount >= s.requiredCount ? (
-                        <span className="ml-2 text-xs font-medium text-emerald-600">
+                        <span className="ml-2 text-caption font-medium text-success">
                           Đủ
                         </span>
                       ) : (
-                        <span className="ml-2 text-xs font-medium text-amber-600">
+                        <span className="ml-2 text-caption font-medium text-warning">
                           Còn thiếu
                         </span>
                       )}
                     </p>
                     {s.members.length > 0 ? (
-                      <p className="text-xs text-slate-500">
+                      <p className="text-caption text-muted-foreground">
                         {s.members
                           .map((m) => m.displayName ?? m.userId.slice(0, 8))
                           .join(", ")}
                       </p>
                     ) : (
-                      <p className="text-xs text-slate-400">
-                        Chưa có thành viên — chọn ở bước tiếp theo.
+                      <p className="text-caption text-muted-foreground">
+                        Chưa có thành viên , chọn ở bước tiếp theo.
                       </p>
                     )}
                   </li>
@@ -355,17 +357,18 @@ function SetupBody({
               </ul>
             )}
           </Panel>
+          </div>
           <Panel title={`Thành viên (${members.length})`}>
             {members.length === 0 ? (
-              <p className="text-xs text-slate-400">
+              <p className="text-caption text-muted-foreground">
                 Chưa phân công sinh viên nào.
               </p>
             ) : (
-              <ul className="space-y-1 text-sm">
+              <ul className="ins-roster-list text-body">
                 {members.map((m) => (
                   <li key={m.userId}>
                     {m.displayName}{" "}
-                    <span className="text-xs text-slate-400">{m.email}</span>
+                    <span className="text-caption text-muted-foreground">{m.email}</span>
                   </li>
                 ))}
               </ul>
@@ -394,7 +397,7 @@ function SetupBody({
           <Panel title="Bắt đầu phiên">
             {session.status !== "upcoming" ? (
               <div className="space-y-3">
-                <p role="status" className="text-sm text-slate-500">
+                <p role="status" className="text-body text-muted-foreground">
                   Phiên đang ở trạng thái{" "}
                   {setupStatusLabels[session.status] ?? session.status}.
                 </p>
@@ -415,12 +418,12 @@ function SetupBody({
                 {assessment.ready ? (
                   <p
                     role="status"
-                    className="text-sm font-medium text-emerald-700"
+                    className="text-body font-medium text-success"
                   >
                     Đội hình đã đủ điều kiện.
                   </p>
                 ) : assessment.missing.length > 0 ? (
-                  <ul className="space-y-1 text-sm text-amber-700">
+                  <ul className="space-y-1 text-body text-warning">
                     {assessment.missing.map((m) => (
                       <li key={m.roleCode}>
                         Thiếu {m.need - m.have} {roleLabel(m.roleCode)} (đang có{" "}
@@ -429,8 +432,8 @@ function SetupBody({
                     ))}
                   </ul>
                 ) : (
-                  <p role="status" className="text-sm text-amber-700">
-                    Chưa có thành viên nào — hãy thêm sinh viên trước khi bắt
+                  <p role="status" className="text-body text-warning">
+                    Chưa có thành viên nào , hãy thêm sinh viên trước khi bắt
                     đầu.
                   </p>
                 )}

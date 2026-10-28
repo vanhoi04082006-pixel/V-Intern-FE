@@ -25,16 +25,16 @@ export function FileRows({
 }) {
   return (
     <fieldset className="min-w-0 space-y-3">
-      <legend className="mb-3 text-sm font-semibold text-navy">
+      <legend className="mb-3 text-body font-semibold text-foreground">
         {title} · {files.length}/{max}
       </legend>
       {files.map((file, index) => (
         <div
           key={index}
-          className="min-w-0 space-y-2 border-l-2 border-slate-200 pl-4"
+          className="min-w-0 space-y-2 border-l border-border pl-4"
         >
           <div className="flex gap-3">
-            <label className="min-w-0 flex-1 text-xs text-slate-600">
+            <label className="min-w-0 flex-1 text-caption text-muted-foreground">
               {title} · đường dẫn {index + 1}
               <input
                 required
@@ -55,16 +55,16 @@ export function FileRows({
             </label>
             <button
               type="button"
-              className="self-end py-3 text-xs font-semibold text-rose-700"
+              className="self-end py-3 text-caption font-semibold text-destructive"
               onClick={() => onChange(files.filter((_, i) => i !== index))}
             >
               Xóa file {title.toLowerCase()} {index + 1}
             </button>
           </div>
-          <label className="block text-xs text-slate-600">
+          <label className="block text-caption text-muted-foreground">
             {title} · nội dung {index + 1}
             <textarea
-              className={`${inputClass} mt-1 font-mono text-xs`}
+              className={`${inputClass} mt-1 font-mono text-caption`}
               rows={5}
               maxLength={20000}
               spellCheck={false}
@@ -85,7 +85,7 @@ export function FileRows({
       <button
         type="button"
         disabled={files.length >= max}
-        className="text-sm font-semibold text-blue-700 disabled:opacity-40"
+        className="text-body font-semibold text-primary disabled:opacity-40"
         onClick={() => onChange([...files, { path: "", content: "" }])}
       >
         + Thêm file {title.toLowerCase()}
@@ -101,8 +101,8 @@ export function PackageEditor({
   onChange: (value: LearningPackage | null) => void;
 }) {
   return (
-    <section className="min-w-0 space-y-4 border-y border-slate-200 py-5">
-      <label className="flex items-center gap-3 text-sm font-semibold text-navy">
+    <section className="min-w-0 space-y-4 border-y border-border py-5">
+      <label className="flex items-center gap-3 text-body font-semibold text-foreground">
         <input
           type="checkbox"
           checked={!!value}
@@ -112,14 +112,14 @@ export function PackageEditor({
         />
         Đính kèm gói starter công khai
       </label>
-      <p className="text-xs leading-5 text-slate-500">
+      <p className="text-caption leading-5 text-muted-foreground">
         Chỉ đề bài, code khởi đầu và dữ liệu mẫu. Không đưa lời giải hoặc hidden
-        tests vào phần này. Gói nhỏ cần 1–2 Sprint, 3–6 task có key và tổng 3–7
+        tests vào phần này. Gói nhỏ cần 1 đến 2 Sprint, 3 đến 6 task có key và tổng 3 đến 7
         ngày.
       </p>
       {value && (
         <div className="min-w-0 space-y-5">
-          <label className="block text-sm">
+          <label className="block text-body">
             Kiến thức cần có · mỗi dòng một mục
             <textarea
               required
@@ -135,7 +135,7 @@ export function PackageEditor({
             />
           </label>
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="text-sm">
+            <label className="text-body">
               Hướng dẫn chuẩn bị
               <textarea
                 required
@@ -148,7 +148,7 @@ export function PackageEditor({
                 }
               />
             </label>
-            <label className="text-sm">
+            <label className="text-body">
               Lệnh chạy và kết quả mong đợi
               <textarea
                 required

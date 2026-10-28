@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "@/components/sessions/session-section";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/lib/auth/api-client";
@@ -13,7 +14,6 @@ import { AcademicPicker } from "./academic-picker";
 import { Metrics } from "./outcomes";
 import { StudentPerformanceDetail } from "./student-performance-detail";
 import {
-  Panel,
   Empty,
   Modal,
   buttonClass,
@@ -121,7 +121,7 @@ export function MemberPerformance({
         rows.data &&
         !rows.loading &&
         !rows.error && (
-          <p className="mb-4 text-xs leading-6 text-slate-500">
+          <p className="mb-4 text-caption leading-6 text-muted-foreground">
             Trang hiện tại hiển thị {data.length}/{rows.data.total} thành viên
             theo bộ lọc. Chỉ số tổng hợp và tệp CSV bên dưới thuộc các thành
             viên trên trang này.
@@ -180,7 +180,7 @@ export function MemberPerformance({
               }}
             />
           )}
-          <label className="text-sm">
+          <label className="text-body">
             Từ ngày
             <input
               className={inputClass}
@@ -192,7 +192,7 @@ export function MemberPerformance({
               }}
             />
           </label>
-          <label className="text-sm">
+          <label className="text-body">
             Đến ngày
             <input
               className={inputClass}
@@ -205,7 +205,7 @@ export function MemberPerformance({
             />
           </label>
         </div>
-        <label className="mt-4 block text-sm">
+        <label className="mt-4 block text-body">
           Tìm sinh viên
           <input
             className={inputClass}
@@ -214,9 +214,8 @@ export function MemberPerformance({
           />
         </label>
       </Panel>
-      <div className="mt-5" />
       {!rows.loading && !rows.error && (
-        <div className="grid gap-4 xl:grid-cols-[1fr_300px]">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
           <Panel
             title={
               page === 1 && !debounced
@@ -224,7 +223,7 @@ export function MemberPerformance({
                 : "Kết quả tìm kiếm & xếp hạng"
             }
           >
-            <p className="mb-3 text-xs text-slate-500">
+            <p className="mb-3 text-caption text-muted-foreground">
               Ưu tiên tỷ lệ task hoàn thành, điểm đánh giá đã chốt, ít task trễ
               và khối lượng công việc. Các chỉ số tổng hợp bên trên chỉ tính
               trang hiện tại.
@@ -232,9 +231,9 @@ export function MemberPerformance({
             {!data.length ? (
               <Empty>Chưa có thành viên hoặc dữ liệu trong bộ lọc này.</Empty>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-50">
+              <div className="overflow-x-auto" role="region" aria-label="Hiệu suất thành viên theo bộ lọc" tabIndex={0}>
+                <table className="workspace-table w-full text-left text-body">
+                  <thead className="bg-muted">
                     <tr>
                       {[
                         "Thành viên",
@@ -251,10 +250,10 @@ export function MemberPerformance({
                   </thead>
                   <tbody>
                     {data.map((m) => (
-                      <tr key={m.userId} className="border-b border-slate-100">
+                      <tr key={m.userId} className="border-b border-border">
                         <td className="p-3">
                           <button
-                            className="font-semibold text-blue-600"
+                            className="font-semibold text-primary"
                             onClick={() => setSelected(m.userId)}
                           >
                             {m.displayName ?? m.userId}
@@ -296,28 +295,29 @@ export function MemberPerformance({
                   ["Chưa hoàn thành", total - done],
                 ].map(([label, value]) => (
                   <div key={label}>
-                    <p className="mb-2 text-sm">{label}: {value}</p>
-                    <progress className="h-3 w-full accent-blue-600" value={Number(value)} max={Math.max(total, 1)} aria-label={String(label)} />
+                    <p className="mb-2 text-body">{label}: {value}</p>
+                    <progress className="h-3 w-full accent-primary" value={Number(value)} max={Math.max(total, 1)} aria-label={String(label)} />
                   </div>
                 ))}
-                <p className="text-xs text-slate-500">
+                <p className="text-caption text-muted-foreground">
                   Chỉ biểu diễn dữ liệu hiện có. Chưa có chuỗi dữ liệu lịch sử
                   để vẽ xu hướng.
                 </p>
               </div>
             </Panel>
-            <Panel title="Thứ hạng trong bộ lọc">
+            <details className="border-t border-border py-5">
+              <summary className="min-h-10 cursor-pointer text-subsection font-semibold text-primary">Thứ hạng trong bộ lọc</summary>
               <ol className="space-y-3">
                 {data.map((m, i) => (
                   <li
                     key={m.userId}
-                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 text-sm"
+                    className="flex items-center gap-3 border-b border-border py-3 text-body"
                   >
-                    <span className="font-bold text-blue-600">
+                    <span className="font-bold text-primary">
                       {m.rank ?? (page - 1) * 10 + i + 1}
                     </span>
                     <button
-                      className="min-w-0 flex-1 truncate text-left font-semibold"
+                      className="min-w-0 flex-1 break-words text-left font-semibold"
                       onClick={() => setSelected(m.userId)}
                     >
                       {m.displayName ?? m.userId}
@@ -333,11 +333,11 @@ export function MemberPerformance({
               {!data.length && (
                 <Empty>Chưa có dữ liệu phù hợp để xếp hạng.</Empty>
               )}
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-caption text-muted-foreground">
                 Thứ tự từ backend; sinh viên chưa có task giữ tỷ lệ chưa đo
                 được.
               </p>
-            </Panel>
+            </details>
           </div>
         </div>
       )}
@@ -391,11 +391,11 @@ function MemberDetail({
         ) : (
           ai.data && (
             <>
-              <p className="text-sm">{ai.data.summary}</p>
+              <p className="text-body">{ai.data.summary}</p>
               {ai.data.recommendations.map((r) => (
                 <article
                   key={r.title}
-                  className="mt-3 rounded-lg bg-blue-50 p-3 text-sm"
+                  className="mt-3 border-b border-border py-3 text-body"
                 >
                   <strong>{r.title}</strong>
                   <p>{r.reason}</p>
@@ -406,7 +406,7 @@ function MemberDetail({
                   </ul>
                 </article>
               ))}
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-caption text-muted-foreground">
                 Khuyến nghị tham khảo, không thay đổi kết quả đánh giá hay KPI.
               </p>
             </>

@@ -17,7 +17,7 @@ export function LogoutButton() {
           router.replace("/login");
         }
       }}
-      className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 disabled:opacity-50"
+      className="rounded-control border border-border px-3 py-2 text-caption font-semibold text-muted-foreground disabled:opacity-50"
     >
       {busy ? "Đang đăng xuất..." : "Đăng xuất"}
     </button>

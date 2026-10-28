@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AuthShell } from "@/components/auth/auth-shell";
+import "@/components/auth/support.css";
 
 /**
  * Route group (auth): /login, /register, /forgot-password dùng chung

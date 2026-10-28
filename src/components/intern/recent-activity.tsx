@@ -31,10 +31,10 @@ export function RecentActivityCard({
       actions={actionLabel ? <CardLinkAction label={actionLabel} /> : undefined}
       className={className}
       headerClassName="xl:px-4 xl:py-2"
-      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
+      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-3"
     >
       {activities.length === 0 && (
-        <p className="text-sm text-slate-500">
+        <p className="text-body text-muted-foreground">
           Chưa có hoạt động được ghi nhận.
         </p>
       )}
@@ -46,12 +46,12 @@ export function RecentActivityCard({
           return (
             <li
               key={item.id}
-              className="relative flex gap-3.5 pb-[var(--iw-act-pb)] last:pb-0"
+              className="relative flex gap-4 pb-4 last:pb-0"
             >
               {index < activities.length - 1 ? (
                 <span
                   aria-hidden="true"
-                  className="absolute left-[13px] top-8 h-[calc(100%-2rem)] w-px bg-slate-200"
+                  className="absolute left-[13px] top-8 h-[calc(100%-2rem)] w-px bg-muted"
                 />
               ) : null}
               <span
@@ -71,14 +71,14 @@ export function RecentActivityCard({
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <p className="text-sm font-semibold leading-snug text-navy">
+                  <p className="text-body font-semibold leading-snug text-foreground">
                     {item.title}
                   </p>
-                  <time className="shrink-0 text-xs text-slate-500">
+                  <time className="shrink-0 text-caption text-muted-foreground">
                     {item.timeLabel}
                   </time>
                 </div>
-                <p className="mt-0.5 text-[13px] leading-relaxed text-slate-500 xl:text-xs xl:leading-[var(--iw-lead)]">
+                <p className="mt-1 text-small leading-relaxed text-muted-foreground xl:text-caption xl:leading-[var(--iw-lead)]">
                   {item.description}
                 </p>
               </div>

@@ -26,7 +26,6 @@ export function InstructorHome() {
     <div className="instructor-home space-y-10">
       <WorkspacePageHeader
         title="Tổng quan giảng dạy"
-        artwork="teach"
         description="Theo dõi phiên, phản hồi bài nộp và đồng hành cùng sinh viên."
         action={
           <Link href="/instructor/projects" className="instructor-hero-cta">
@@ -36,10 +35,10 @@ export function InstructorHome() {
         }
       />
       <SessionList embedded />
-      <section aria-labelledby="teaching-workflow">
-        <h2 id="teaching-workflow" className="mb-4">
+      <details className="ins-workflow">
+        <summary id="teaching-workflow">
           Bắt đầu một phiên thực tập
-        </h2>
+        </summary>
         <ol className="instructor-steps">
           {steps.map((step) => (
             <li key={step.href}>
@@ -54,7 +53,7 @@ export function InstructorHome() {
             </li>
           ))}
         </ol>
-      </section>
+      </details>
     </div>
   );
 }

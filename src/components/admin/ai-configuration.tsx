@@ -20,6 +20,7 @@ import { useAction } from "@/components/product/use-action";
 import { BusinessAgentMonitor } from './business-agent-monitor';
 
 export function AiConfiguration() {
+  const [notice, setNotice] = useState("");
   const state = useResource(
     useCallback((signal: AbortSignal) => getAiConfiguration(signal), []),
   );
@@ -29,6 +30,7 @@ export function AiConfiguration() {
         title="Cấu hình AI"
         subtitle="Model và giới hạn áp dụng cho lời gọi mới; từng kết quả vẫn lưu model và phiên bản prompt thực tế."
       />
+      {notice && <InlineAlert tone="success">{notice}</InlineAlert>}
       {state.loading ? (
         <LoadingState />
       ) : state.error ? (
@@ -37,7 +39,8 @@ export function AiConfiguration() {
         <AiConfigurationForm
           key={state.data.policy.version}
           config={state.data}
-          onSaved={state.reload}
+          onSaving={() => setNotice("")}
+          onSaved={() => { setNotice("Đã lưu cấu hình AI. Cấu hình mới áp dụng cho các lời gọi tiếp theo."); state.reload(); }}
         />
       ) : null}
       <BusinessAgentMonitor />
@@ -48,9 +51,11 @@ export function AiConfiguration() {
 function AiConfigurationForm({
   config,
   onSaved,
+  onSaving,
 }: {
   config: ReturnType<typeof parseAiConfiguration>;
   onSaved: () => void;
+  onSaving: () => void;
 }) {
   const [policy, setPolicy] = useState(config.policy);
   const action = useAction();
@@ -60,6 +65,7 @@ function AiConfigurationForm({
         className="space-y-5"
         onSubmit={(e) => {
           e.preventDefault();
+          onSaving();
           void action.run(async () => {
             await saveAiConfiguration(policy);
             onSaved();
@@ -149,7 +155,7 @@ function AiConfigurationForm({
           </Field>
         </div>
 
-        <p className="text-xs leading-5 text-slate-500">
+        <p className="text-caption leading-5 text-muted-foreground">
           Không retry lỗi credential/permission. Structured output sai chỉ được
           sửa một lần ở các module có schema repair; không bỏ qua validation
           hoặc tự tạo điểm đạt.
@@ -164,7 +170,7 @@ function AiConfigurationForm({
             {action.busy ? "Đang lưu…" : "Lưu cấu hình AI"}
           </button>
           {action.busy && (
-            <span className="text-xs text-slate-500" role="status">
+            <span className="text-caption text-muted-foreground" role="status">
               Đang gửi cấu hình tới Backend…
             </span>
           )}

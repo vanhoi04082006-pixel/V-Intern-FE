@@ -24,7 +24,6 @@ export function StudentOutcomeHeading({
       <StudentHeading
         title={title}
         description={subtitle}
-        artwork={artwork}
         action={action}
       />
     </>

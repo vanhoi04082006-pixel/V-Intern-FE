@@ -9,7 +9,6 @@ import {
   inputClass,
 } from "@/components/product/primitives";
 import { ArrowUpRight } from "lucide-react";
-import { WorkspaceArtwork, type ProjectArtworkSubject } from "@/components/workspace/workspace-artwork";
 import { roleLabel } from "@/lib/api/workspace";
 import { useResource } from "@/lib/api/use-resource";
 import {
@@ -23,15 +22,11 @@ const difficultyLabels: Record<string, string> = {
   intermediate: "Trung bình",
   advanced: "Nâng cao",
 };
-const categoryLabels: Record<string, string> = { "small-projects": "Dự án thực hành", "mini-projects": "Bài nhỏ · có starter", web: "Ứng dụng web", mobile: "Ứng dụng di động", data: "Dữ liệu" };
-function artworkSubject(code: string): ProjectArtworkSubject | undefined {
-  const subjects: [string, ProjectArtworkSubject][] = [["NOTES", "notes"], ["SHOP", "commerce"], ["TASKS", "tasks"], ["BOOKING", "booking"], ["BLOG", "publishing"], ["STUDENTS", "education"]];
-  return subjects.find(([key]) => code.toUpperCase().includes(key))?.[1];
-}
+const categoryLabels: Record<string, string> = { "small-projects": "Dự án thực hành", "mini-projects": "Bài nhỏ, có starter", web: "Ứng dụng web", mobile: "Ứng dụng di động", data: "Dữ liệu" };
 
 export function DifficultyBadge({ value }: { value: string }) {
   return (
-    <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-600">
+    <span className="shrink-0 rounded bg-muted px-2 py-1 text-caption font-medium text-muted-foreground">
       {difficultyLabels[value] ?? value}
     </span>
   );
@@ -119,7 +114,7 @@ export function ProjectLibrary({
         </select>
       </div>
       {data.loading ? (
-        <p role="status" className="p-4 text-sm text-slate-500">
+        <p role="status" className="p-4 text-body text-muted-foreground">
           Đang tải thư viện...
         </p>
       ) : data.error ? (
@@ -136,21 +131,20 @@ export function ProjectLibrary({
                 <article className="workspace-project-card">
                   <div className="workspace-project-cover" data-difficulty={t.difficulty}>
                     <span>{t.category ? categoryLabels[t.category] ?? t.category : "Dự án thực tập"}</span>
-                    <WorkspaceArtwork variant="project" compact subject={artworkSubject(t.code)} />
                   </div>
                   <header>
                     <h2>{t.name}</h2>
                     <DifficultyBadge value={t.difficulty} />
                   </header>
                   <p className="workspace-project-meta">
-                    {t.code} · phiên bản {t.version}
+                    {t.code}, phiên bản {t.version}
                   </p>
                   <p className="workspace-project-stack">
-                    {t.techStack.join(" · ") || "Chưa có thông tin công nghệ"}
+                    {t.techStack.join(", ") || "Chưa có thông tin công nghệ"}
                   </p>
                   <p className="workspace-project-meta mb-5">
-                    Vai trò: {t.roles.map(roleLabel).join(", ") || "—"} · Đội hình gợi ý:{" "}
-                    {t.teamSize} · {t.sprintCount} sprint theo mẫu
+                    Vai trò: {t.roles.map(roleLabel).join(", ") || "—"}, Đội hình gợi ý:{" "}
+                    {t.teamSize}, {t.sprintCount} sprint theo mẫu
                   </p>
                   <Link href={`/instructor/projects/${t.id}`}>
                     Xem chi tiết <ArrowUpRight size={16} aria-hidden="true" />
@@ -167,7 +161,7 @@ export function ProjectLibrary({
           />
         </>
       )}
-      <p className="text-[11px] text-slate-400">
+      <p className="text-caption text-muted-foreground">
         Dữ liệu thật từ thư viện mẫu (phiên bản được quản lý tập trung).
       </p>
     </div>

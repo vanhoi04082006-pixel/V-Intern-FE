@@ -44,12 +44,12 @@ export function BusinessAgentMonitor({
   return (
     <section
       aria-label="Vận hành Agent nghiệp vụ"
-      className="min-w-0 space-y-5 border-t border-slate-200 pt-7"
+      className="min-w-0 space-y-5 border-t border-border pt-7"
     >
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-navy">Agent & lượt chạy</h2>
-          <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500">
+          <h2 className="text-section font-bold text-foreground">Agent & lượt chạy</h2>
+          <p className="mt-1 max-w-3xl text-body leading-6 text-muted-foreground">
             Registry, phiên bản và trạng thái từ runtime SQL. Chỉ hiển thị
             metadata; không tải prompt, lời giải hay hội thoại. Làm mới không
             gọi model.
@@ -65,24 +65,24 @@ export function BusinessAgentMonitor({
         </button>
       </header>
       {data && (
-        <dl className="grid gap-x-6 gap-y-3 border-y border-slate-200 py-4 sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="grid gap-x-6 gap-y-3 border-y border-border py-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.definitions.map((item) => (
             <div key={item.id}>
-              <dt className="text-sm font-semibold text-navy">
+              <dt className="text-body font-semibold text-foreground">
                 {names[item.id] ?? item.id}{" "}
-                <span className="font-normal text-slate-500">
+                <span className="font-normal text-muted-foreground">
                   v{item.version}
                 </span>
               </dt>
-              <dd className="mt-1 break-all text-xs leading-5 text-slate-500">
-                {item.id} · tối đa {item.maxToolCalls} lần đọc tool
+              <dd className="mt-1 break-all text-caption leading-5 text-muted-foreground">
+                {item.id}, tối đa {item.maxToolCalls} lần đọc tool
               </dd>
             </div>
           ))}
         </dl>
       )}
       <div className="flex flex-wrap gap-3">
-        <label className="min-w-0 flex-1 text-sm">
+        <label className="min-w-0 flex-1 text-body">
           Agent
           <select
             aria-label="Lọc Agent"
@@ -101,7 +101,7 @@ export function BusinessAgentMonitor({
             ))}
           </select>
         </label>
-        <label className="min-w-0 flex-1 text-sm">
+        <label className="min-w-0 flex-1 text-body">
           Trạng thái
           <select
             aria-label="Lọc trạng thái Agent"
@@ -127,11 +127,11 @@ export function BusinessAgentMonitor({
         <ErrorState error={resource.error} onRetry={resource.reload} />
       ) : data?.items.length ? (
         <div className="min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[680px] text-left text-sm">
+          <table className="w-full min-w-[680px] text-left text-body">
             <caption className="sr-only">
               Lịch sử Agent, phiên bản, model và trạng thái thực tế
             </caption>
-            <thead className="border-y border-slate-200 text-xs text-slate-500">
+            <thead className="border-y border-border text-caption text-muted-foreground">
               <tr>
                 {[
                   "Agent / phiên bản",
@@ -145,30 +145,30 @@ export function BusinessAgentMonitor({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border">
               {data.items.map((run) => (
-                <tr key={run.id} className="align-top hover:bg-slate-50/70">
+                <tr key={run.id} className="align-top hover:bg-muted/70">
                   <td className="max-w-56 px-3 py-4">
                     <p className="font-semibold">
-                      {names[run.agentId] ?? run.agentId} · v{run.agentVersion}
+                      {names[run.agentId] ?? run.agentId}, v{run.agentVersion}
                     </p>
-                    <p className="mt-1 break-all font-mono text-xs text-slate-500">
+                    <p className="mt-1 break-all font-mono text-caption text-muted-foreground">
                       {run.promptVersion}
                     </p>
                   </td>
                   <td className="px-3 py-4">
-                    <p className="font-mono text-xs">{run.id}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="font-mono text-caption">{run.id}</p>
+                    <p className="mt-1 text-caption text-muted-foreground">
                       {new Date(run.createdAt).toLocaleString("vi-VN")}
                     </p>
                   </td>
                   <td className="px-3 py-4">
                     <p>{run.model ?? "Chưa có kết quả model"}</p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      {run.toolCalls} tool · {run.attempts} lượt thực thi ·{" "}
+                    <p className="mt-1 text-caption text-muted-foreground">
+                      {run.toolCalls} tool, {run.attempts} lượt thực thi ·{" "}
                       {run.stepCount} bước
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-caption text-muted-foreground">
                       Token vào/ra: {run.inputTokens ?? "—"} /{" "}
                       {run.outputTokens ?? "—"}
                     </p>
@@ -186,7 +186,7 @@ export function BusinessAgentMonitor({
                       {statuses[run.status]}
                     </Badge>
                     {run.errorCode && (
-                      <p className="mt-2 max-w-44 break-all font-mono text-xs text-rose-700">
+                      <p className="mt-2 max-w-44 break-all font-mono text-caption text-destructive">
                         {run.errorCode}
                       </p>
                     )}
@@ -197,7 +197,7 @@ export function BusinessAgentMonitor({
           </table>
         </div>
       ) : (
-        <p className="border-y border-slate-200 py-8 text-sm text-slate-500">
+        <p className="border-y border-border py-8 text-body text-muted-foreground">
           Chưa có lượt chạy trong bộ lọc này. Sử dụng một chức năng AI nghiệp vụ
           rồi làm mới để xem dữ liệu thực.
         </p>

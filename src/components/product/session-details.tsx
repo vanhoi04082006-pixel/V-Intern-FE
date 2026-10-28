@@ -9,7 +9,7 @@ export function SessionDetails({ id }: { id: string }) {
       <PageTitle
         title="Chi tiết phiên thực tập"
         action={
-          <Link className="text-sm text-blue-600" href="/instructor/sessions">
+          <Link className="text-body text-primary" href="/instructor/sessions">
             ← Danh sách phiên
           </Link>
         }

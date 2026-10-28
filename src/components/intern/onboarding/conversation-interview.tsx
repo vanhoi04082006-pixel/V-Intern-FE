@@ -138,39 +138,39 @@ export function ConversationInterview() {
   const remaining = chat ? remainingSeconds(chat.session, elapsed) : null;
   const expired = remaining === 0;
   return (
-    <section className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
-      <header className="flex flex-wrap items-center gap-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white p-5">
-        <span className="grid size-12 place-items-center rounded-2xl bg-brand text-white">
+    <section className="mx-auto max-w-4xl overflow-hidden rounded-panel border border-border bg-card shadow-app-xs">
+      <header className="flex flex-wrap items-center gap-4 border-b border-border bg-background p-5">
+        <span className="grid size-12 place-items-center rounded-panel bg-primary text-primary-foreground">
           <Bot aria-hidden="true" />
         </span>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-navy">
+          <h1 className="text-section font-bold text-foreground">
             Trò chuyện cùng AI Recruiter
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-body text-muted-foreground">
             {chat?.answeredCount ?? 0}/{interview!.session.questionCount} câu ·{" "}
             {current?.kind === 'follow_up' ? 'Câu hỏi phụ theo câu trả lời của bạn' : current ? phaseLabels[current.phase] : "Kết thúc hội thoại"}
           </p>
         </div>
         {active && (
-          <div className="w-full space-y-1 text-xs text-slate-500 sm:w-auto">
-            {remaining !== null && <p>Thời gian còn lại: <span role="timer" aria-label="Thời gian còn lại" className="font-semibold tabular-nums text-navy">{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span></p>}
+          <div className="w-full space-y-1 text-caption text-muted-foreground sm:w-auto">
+            {remaining !== null && <p>Thời gian còn lại: <span role="timer" aria-label="Thời gian còn lại" className="font-semibold tabular-nums text-foreground">{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span></p>}
             {chat?.session.expiresAt && <p>Hạn gửi: {new Date(chat.session.expiresAt).toLocaleTimeString("vi-VN")}</p>}
           </div>
         )}
       </header>
-      <div className="h-1 bg-slate-100">
+      <div className="h-1 bg-muted">
         <div
-          className="h-full bg-brand transition-[width] motion-reduce:transition-none"
+          className="h-full origin-left bg-primary"
           style={{
-            width: `${((chat?.answeredCount ?? 0) / interview!.session.questionCount) * 100}%`,
+            transform: `scaleX(${(chat?.answeredCount ?? 0) / interview!.session.questionCount})`,
           }}
         />
       </div>
       {(notice || error) && (
         <p
           role="alert"
-          className="m-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"
+          className="m-4 rounded-panel bg-warning-subtle p-4 text-body text-warning"
         >
           {notice || error}
         </p>
@@ -190,12 +190,12 @@ export function ConversationInterview() {
             <span
               role="img"
               aria-label={m.role === "assistant" ? "AI Recruiter" : "Bạn"}
-              className={`grid size-8 shrink-0 place-items-center rounded-full ${m.role === "assistant" ? "bg-blue-100 text-brand" : "bg-slate-100 text-slate-600"}`}
+              className={`grid size-8 shrink-0 place-items-center rounded-full ${m.role === "assistant" ? "bg-accent text-primary" : "bg-muted text-muted-foreground"}`}
             >
               {m.role === "assistant" ? <Bot size={16} /> : <User size={16} />}
             </span>
             <div
-              className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-7 ${m.role === "assistant" ? "bg-slate-50 text-slate-700" : "bg-brand text-white"}`}
+              className={`max-w-[85%] whitespace-pre-wrap rounded-panel px-4 py-3 text-body leading-7 ${m.role === "assistant" ? "bg-background text-foreground" : "bg-primary text-primary-foreground"}`}
             >
               {m.content}
             </div>
@@ -203,24 +203,24 @@ export function ConversationInterview() {
         ))}
         {!chat && !error && <p role="status">Đang khôi phục hội thoại…</p>}
         {(working || current?.status === "generating") && (
-          <p role="status" className="text-sm text-slate-500">
+          <p role="status" className="text-body text-muted-foreground">
             AI đang chuẩn bị câu hỏi tiếp theo…
           </p>
         )}
         {current?.status === "failed" && (
-          <p role="status" className="rounded-xl bg-amber-50 p-4 text-sm">
+          <p role="status" className="rounded-panel bg-warning-subtle p-4 text-body">
             AI chưa gửi được câu hỏi. Câu trả lời đã gửi vẫn được giữ nguyên;
             bạn có thể thử lại.
           </p>
         )}
         {!current && chat && (
-          <p role="status" className="rounded-xl bg-emerald-50 p-4">
+          <p role="status" className="rounded-panel bg-success-subtle p-4">
             Bạn đã trả lời xong các câu hỏi. Bấm kết thúc để AI đánh giá.
           </p>
         )}
         <div ref={end} />
       </div>
-      <div className="border-t border-slate-100 bg-slate-50/60 p-4 sm:p-6">
+      <div className="border-t border-border bg-background p-4 sm:p-6">
         {active && current && (
           <>
             {(current.status === "not_started" ||
@@ -229,7 +229,7 @@ export function ConversationInterview() {
               <button
                 disabled={working || busy}
                 onClick={() => void next()}
-                className="mb-4 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+                className="mb-4 rounded-panel bg-primary px-4 py-3 text-body font-semibold text-primary-foreground disabled:opacity-50"
               >
                 {current.status === "failed"
                   ? "Thử lại câu hỏi"
@@ -239,7 +239,7 @@ export function ConversationInterview() {
             {current.kind !== 'follow_up' && <button
               disabled={disabled || expired}
               onClick={() => void clarify()}
-              className="mb-3 text-sm text-blue-700 disabled:opacity-40"
+              className="mb-3 text-body text-primary disabled:opacity-40"
             >
               Giải thích lại câu hỏi
             </button>}
@@ -251,7 +251,7 @@ export function ConversationInterview() {
             >
               <label
                 htmlFor="conversation-answer"
-                className="mb-2 block text-sm font-semibold"
+                className="mb-2 block text-body font-semibold"
               >
                 Tin nhắn của bạn
               </label>
@@ -264,10 +264,10 @@ export function ConversationInterview() {
                 rows={3}
                 disabled={disabled || expired}
                 placeholder="Chia sẻ câu trả lời của bạn. Bạn có thể nói rõ điều mình chưa biết."
-                className="w-full resize-y rounded-xl border border-slate-200 bg-white p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 disabled:bg-slate-100"
+                className="w-full resize-y rounded-panel border border-border bg-card p-3 text-body focus:outline-none focus:ring-2 focus:ring-brand/40 disabled:bg-muted"
               />
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <span className="mr-auto text-xs text-slate-500">
+                <span className="mr-auto text-caption text-muted-foreground">
                   {draft.length}/5000 ký tự
                 </span>
                 <button
@@ -276,13 +276,13 @@ export function ConversationInterview() {
                   onClick={() =>
                     void send("[Bỏ qua câu này — tôi chưa có câu trả lời.]")
                   }
-                  className="rounded-lg px-3 py-2 text-sm text-slate-600 disabled:opacity-40"
+                  className="rounded-control px-3 py-2 text-body text-muted-foreground disabled:opacity-40"
                 >
                   Bỏ qua câu này
                 </button>
                 <button
                   disabled={disabled || expired || !draft.trim()}
-                  className="flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-panel bg-primary px-5 py-3 text-body font-semibold text-primary-foreground disabled:opacity-40"
                 >
                   <Send size={16} />
                   Gửi câu trả lời
@@ -295,7 +295,7 @@ export function ConversationInterview() {
           <button
             disabled={busy || working}
             onClick={() => void submit()}
-            className="rounded-xl bg-brand px-5 py-3 font-semibold text-white disabled:opacity-40"
+            className="rounded-panel bg-primary px-5 py-3 font-semibold text-primary-foreground disabled:opacity-40"
           >
             Kết thúc và chờ kết quả
           </button>
@@ -304,7 +304,7 @@ export function ConversationInterview() {
           profile.interviewSchedule ? <Link href="/intern/onboarding/role" className="student-link mr-3">Xem lịch phỏng vấn tiếp theo</Link> : <button
             disabled={busy || working || profile.attemptsRemaining <= 0}
             onClick={() => void start()}
-            className="mr-3 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white disabled:opacity-40"
+            className="mr-3 rounded-panel bg-primary px-4 py-3 text-body font-semibold text-primary-foreground disabled:opacity-40"
           >
             Bắt đầu lần phỏng vấn mới
           </button>
@@ -322,7 +322,7 @@ export function ConversationInterview() {
             void load();
             void reload();
           }}
-          className="mt-4 flex items-center gap-2 text-sm text-blue-700"
+          className="mt-4 flex items-center gap-2 text-body text-primary"
         >
           <RefreshCw size={14} />
           Tải lại trạng thái

@@ -20,24 +20,24 @@ const STYLES: Record<
   /** Lỗi xác thực từ hệ thống (vd: sai mật khẩu) — nhẹ, không chói. */
   error: {
     icon: AlertCircle,
-    box: "border-rose-200 bg-rose-50 text-rose-700",
+    box: "border-destructive/20 bg-destructive-subtle text-destructive",
     role: "alert",
   },
   /** Lỗi hệ thống/mạng — khác bản chất với lỗi xác thực. */
   system: {
     icon: CloudOff,
-    box: "border-amber-200 bg-amber-50 text-amber-800",
+    box: "border-warning/20 bg-warning-subtle text-warning",
     role: "alert",
   },
   /** Thông tin trung thực (tính năng chưa kết nối backend). */
   info: {
     icon: Info,
-    box: "border-sky-200 bg-sky-50 text-sky-800",
+    box: "border-primary/20 bg-info-subtle text-info",
     role: "status",
   },
   success: {
     icon: CheckCircle2,
-    box: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    box: "border-success/20 bg-success-subtle text-success",
     role: "status",
   },
 };
@@ -69,7 +69,7 @@ export function AuthAlert({
     <div
       role={style.role}
       className={cn(
-        "flex items-start gap-2.5 rounded-xl border px-3.5 py-3 text-[13px] leading-relaxed",
+        "flex items-start gap-3 rounded-panel border px-4 py-3 text-small leading-relaxed",
         style.box,
         className
       )}
@@ -80,7 +80,7 @@ export function AuthAlert({
         <button
           type="button"
           onClick={onAction}
-          className="shrink-0 self-center rounded-md text-[13px] font-semibold underline-offset-2 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current/60"
+          className="shrink-0 self-center rounded-md text-small font-semibold underline-offset-2 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current/60"
         >
           {actionLabel}
         </button>

@@ -11,9 +11,7 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
   return (
     <>
       <StudentHeading
-        eyebrow="Kết nối công cụ làm việc"
         title="GitHub của bạn"
-        artwork="connect"
         description="Liên kết đúng tài khoản, nhận lời mời vào dự án và chuẩn bị mã nguồn để nộp bài."
       />
       <div className="student-dashboard-grid student-github-workspace">
@@ -25,7 +23,7 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
             />
           ) : workspace.hasAssignmentHistory ? (
             <StudentPanel title="Kết nối cho hành trình tiếp theo">
-              <p className="text-sm leading-7 text-slate-600">
+              <p className="text-body leading-7 text-muted-foreground">
                 Bạn hiện không có phân công đang hoạt động. Kết nối danh tính
                 GitHub vẫn được giữ để sử dụng khi có phiên mới. Các kết quả
                 đã ghi nhận có thể xem lại trong khu vực đánh giá.
@@ -38,7 +36,7 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
             </StudentPanel>
           ) : (
             <StudentPanel title="Repository sẽ xuất hiện sau khi phân công">
-              <p className="text-sm leading-7 text-slate-600">
+              <p className="text-body leading-7 text-muted-foreground">
                 Bạn có thể liên kết GitHub ngay bây giờ. Khi được phân vào dự
                 án, kiểm tra lời mời repository trên GitHub trước khi bắt đầu
                 viết code.
@@ -47,7 +45,8 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
           )}
         </div>
         <div className="space-y-5">
-          <StudentPanel title="Từ kết nối đến bài nộp" icon={GitPullRequest}>
+          <details open className="student-help-disclosure">
+            <summary><GitPullRequest size={16} aria-hidden="true" />Từ kết nối đến bài nộp</summary>
             <ol className="student-step-list">
               <li>
                 <div>
@@ -85,9 +84,9 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
                 </div>
               </li>
             </ol>
-          </StudentPanel>
+          </details>
           <StudentPanel title="Giữ tài khoản an toàn" icon={ShieldCheck}>
-            <p className="text-sm leading-7 text-slate-600">
+            <p className="text-body leading-7 text-muted-foreground">
               V-Intern không yêu cầu bạn nhập mật khẩu GitHub tại đây. Việc liên
               kết được xác nhận trên trang GitHub.
             </p>

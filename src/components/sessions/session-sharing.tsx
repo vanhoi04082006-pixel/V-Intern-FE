@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { useCallback, useState } from "react";
 import { useResource } from "@/lib/api/use-resource";
@@ -13,8 +14,9 @@ import { getSessionUser } from "@/lib/auth/session";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
-  Panel,
   Empty,
+  btn,
+  InlineAlert,
   buttonClass,
   inputClass,
 } from "@/components/product/primitives";
@@ -34,6 +36,7 @@ export function SessionSharing() {
   const [viewId, setViewId] = useState<string | null>(null),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState("");
+  const [noticeTone, setNoticeTone] = useState<"success" | "danger">("success");
   const access = useResource(
     useCallback((signal: AbortSignal) => listAccess(page, signal), [page]),
   );
@@ -50,8 +53,10 @@ export function SessionSharing() {
     try {
       await work();
       access.reload();
+      setNoticeTone("success");
       setNotice("Đã lưu.");
     } catch (e) {
+      setNoticeTone("danger");
       setNotice(errorMessage(e));
     } finally {
       setBusy(false);
@@ -64,14 +69,11 @@ export function SessionSharing() {
         subtitle="Chủ trì phiên chọn rõ phạm vi; quyền được cấp chỉ cho phép xem và có thể thu hồi."
       />
       {notice && (
-        <p
-          role="status"
-          className="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4"
-        >
+        <InlineAlert tone={noticeTone} className="mb-4">
           {notice}
-        </p>
+        </InlineAlert>
       )}
-      <div className="grid gap-5 xl:grid-cols-[minmax(260px,1fr)_2fr]">
+      <div className="ins-access-layout">
         <Panel title="Xin quyền xem">
           <form
             className="space-y-4"
@@ -80,7 +82,7 @@ export function SessionSharing() {
               void action(() => requestAccess(email, reason));
             }}
           >
-            <label className="block text-sm">
+            <label className="block text-body">
               Email giảng viên
               <input
                 type="email"
@@ -90,7 +92,7 @@ export function SessionSharing() {
                 className={inputClass}
               />
             </label>
-            <label className="block text-sm">
+            <label className="block text-body">
               Mục đích và phiên muốn xem
               <textarea
                 required
@@ -103,7 +105,7 @@ export function SessionSharing() {
               />
             </label>
             <button disabled={busy} className={buttonClass}>
-              Gửi yêu cầu
+              {busy ? "Đang xử lý…" : "Gửi yêu cầu"}
             </button>
           </form>
         </Panel>
@@ -114,7 +116,7 @@ export function SessionSharing() {
             <ErrorState error={access.error} onRetry={access.reload} />
           ) : (
             <div className="space-y-4">
-              <label className="block text-sm">
+              <label className="block text-body">
                 Tìm phiên của bạn để cấp quyền
                 <input
                   value={query}
@@ -126,7 +128,7 @@ export function SessionSharing() {
               {Boolean(sessions.error) && (
                 <ErrorState error={sessions.error} onRetry={sessions.reload} />
               )}
-              <label className="block text-sm">
+              <label className="block text-body">
                 Phiên cho yêu cầu được chấp nhận
                 <select
                   value={sessionId}
@@ -149,15 +151,15 @@ export function SessionSharing() {
               {access.data?.items.map((item) => (
                 <article
                   key={item.id}
-                  className="rounded-xl border border-slate-200 p-4"
+                  className="ins-access-entry"
                 >
                   <p className="font-semibold">
                     {item.requesterName} → {item.ownerName}
                   </p>
-                  <p className="mt-2 whitespace-pre-wrap text-sm">
+                  <p className="mt-2 whitespace-pre-wrap text-body">
                     {item.reason}
                   </p>
-                  <p className="my-3 text-sm text-slate-500">
+                  <p className="my-3 text-body text-muted-foreground">
                     {labels[item.status]}
                     {item.sessionName ? ` · ${item.sessionName}` : ""}
                     {item.expiresAt
@@ -181,7 +183,7 @@ export function SessionSharing() {
                           </button>
                           <button
                             disabled={busy}
-                            className={buttonClass}
+                            className={btn("secondary")}
                             onClick={() =>
                               void action(() => decideAccess(item.id, "deny"))
                             }
@@ -194,7 +196,7 @@ export function SessionSharing() {
                       item.status === "approved" && (
                         <button
                           disabled={busy}
-                          className={buttonClass}
+                          className={btn("danger")}
                           onClick={() =>
                             void action(() => decideAccess(item.id, "revoke"))
                           }
@@ -259,7 +261,7 @@ function SharedView({ id, onClose }: { id: string; onClose: () => void }) {
         ) : (
           view.data && (
             <>
-              <h3 className="text-xl font-bold">{view.data.session.name}</h3>
+              <h3 className="text-section font-bold">{view.data.session.name}</h3>
               <p>
                 {view.data.projects.join(", ")} · {view.data.session.status}
               </p>
@@ -267,7 +269,7 @@ function SharedView({ id, onClose }: { id: string; onClose: () => void }) {
                 {new Date(view.data.session.startDate).toLocaleDateString(
                   "vi-VN",
                 )}{" "}
-                –{" "}
+                đến{" "}
                 {new Date(view.data.session.endDate).toLocaleDateString(
                   "vi-VN",
                 )}
@@ -275,17 +277,17 @@ function SharedView({ id, onClose }: { id: string; onClose: () => void }) {
               <p className="my-3">
                 Thành viên: {view.data.members.join(", ") || "Chưa có"}
               </p>
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="divide-y divide-border">
                 {view.data.tasks.map((t) => (
-                  <article className="rounded-xl border p-4" key={t.id}>
-                    <p className="text-xs text-slate-500">
+                  <article className="py-4" key={t.id}>
+                    <p className="text-caption text-muted-foreground">
                       {t.sprintName} · {t.priority}
                     </p>
                     <h4 className="font-semibold">{t.title}</h4>
-                    <p className="whitespace-pre-wrap text-sm">
+                    <p className="whitespace-pre-wrap text-body">
                       {t.description}
                     </p>
-                    <p className="mt-2 text-sm">
+                    <p className="mt-2 text-body">
                       {t.assigneeName ?? "Chưa giao"} · {t.status}
                       {t.dueDate
                         ? ` · ${new Date(t.dueDate).toLocaleDateString("vi-VN")}`

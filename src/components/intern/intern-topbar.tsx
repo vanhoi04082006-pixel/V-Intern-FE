@@ -99,7 +99,7 @@ export function InternTopbar({
               {breadcrumb.map((crumb) => (
                 <li key={crumb.id} className="flex min-w-0 items-center gap-1">
                   <ChevronRight
-                    className="size-3.5 shrink-0 text-slate-300"
+                    className="size-3.5 shrink-0 text-muted-foreground"
                     aria-hidden="true"
                   />
                   {crumb.current ? (
@@ -121,7 +121,7 @@ export function InternTopbar({
           <div
             className={cn("student-topbar-search", waiting && "mr-auto")}
           >
-            <Search className="size-4 shrink-0 text-slate-400" aria-hidden="true" />
+            <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
             <input
               ref={searchRef}
               type="search"
@@ -157,7 +157,7 @@ export function InternTopbar({
                 ) : (
                   <p
                     role="status"
-                    className="px-3 py-2.5 text-xs text-slate-500"
+                    className="px-3 py-3 text-caption text-muted-foreground"
                   >
                     Không tìm thấy trang phù hợp.
                   </p>
@@ -190,7 +190,7 @@ export function InternTopbar({
             aria-label={`Tài khoản ${user.name}, ${user.roleLabel}`}
             className="student-topbar-user"
           >
-            <span className="student-avatar size-8 text-[10px]" aria-hidden="true">
+            <span className="student-avatar size-8 text-caption" aria-hidden="true">
               {user.initials}
             </span>
             <span className="student-topbar-user-meta hidden sm:block">
@@ -198,7 +198,7 @@ export function InternTopbar({
               <span className="student-topbar-user-role">{user.roleLabel}</span>
             </span>
             <ChevronDown
-              className="size-4 text-slate-400 max-sm:hidden"
+              className="size-4 text-muted-foreground max-sm:hidden"
               aria-hidden="true"
             />
           </Link>

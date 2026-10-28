@@ -64,7 +64,7 @@ export function InstructorParticipation({
                 )}
               {sessions.data.items.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.code} · {s.name}
+                  {s.code}, {s.name}
                 </option>
               ))}
             </select>
@@ -144,15 +144,15 @@ function SessionReport({ sessionId }: { sessionId: string }) {
       )}
       {report.data && (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="text-section font-semibold text-foreground">
                 Chính sách phiên
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-body text-muted-foreground">
                 {report.data.policy.configured
-                  ? `Phiên bản ${report.data.policy.version} · áp dụng từ ${new Date(report.data.policy.activeFrom!).toLocaleString("vi-VN")}`
-                  : "Chưa kích hoạt · chưa tự ghi nhận hoặc trừ điểm"}
+                  ? `Phiên bản ${report.data.policy.version}, áp dụng từ ${new Date(report.data.policy.activeFrom!).toLocaleString("vi-VN")}`
+                  : "Chưa kích hoạt, chưa tự ghi nhận hoặc trừ điểm"}
               </p>
             </div>
             <div className="flex gap-2">
@@ -174,10 +174,10 @@ function SessionReport({ sessionId }: { sessionId: string }) {
               </button>
             </div>
           </div>
-          <p className="text-sm leading-6 text-slate-600">
+          <p className="text-body leading-6 text-muted-foreground">
             Cảnh báo từ lần <strong>{report.data.policy.warningFrom}</strong> ·
             Xét trừ điểm từ lần{" "}
-            <strong>{report.data.policy.penaltyFrom}</strong> · Đề xuất thay từ
+            <strong>{report.data.policy.penaltyFrom}</strong>, Đề xuất thay từ
             lần <strong>{report.data.policy.replacementFrom}</strong>.{" "}
             {report.data.policy.penaltyPoints === null
               ? "Chưa đặt mức trừ điểm."
@@ -188,18 +188,18 @@ function SessionReport({ sessionId }: { sessionId: string }) {
           {notice && (
             <p
               role="status"
-              className="border-l-2 border-emerald-400 pl-3 text-sm text-emerald-800"
+              className="border-l border-border pl-3 text-body text-success"
             >
               {notice}
             </p>
           )}
           {error && (
-            <p role="alert" className="text-sm text-rose-700">
+            <p role="alert" className="text-body text-destructive">
               {error}
             </p>
           )}
           <ParticipationSummary {...report.data.summary} />
-          <p className="text-xs text-slate-500">
+          <p className="text-caption text-muted-foreground">
             Điểm ghi nhận là căn cứ xem xét, khác với điểm đã trừ ở bài được
             duyệt. Lần nộp hợp lệ đầu tiên quyết định trễ hạn.
           </p>

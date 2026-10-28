@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { WorkspaceArtwork } from "./workspace-artwork";
 import { X } from "lucide-react";
 export { TaskDistribution } from "./workspace-charts";
 
@@ -9,7 +8,6 @@ export function WorkspacePageHeader({
   description,
   action,
   back,
-  artwork,
 }: {
   title: string;
   description?: string;
@@ -18,7 +16,7 @@ export function WorkspacePageHeader({
   artwork?: "learn" | "teach" | "project" | "connect" | "achievement";
 }) {
   return (
-    <header className={`workspace-page-header${artwork ? " workspace-page-header-illustrated" : ""}`}>
+    <header className="workspace-page-header">
       {back && <div className="workspace-back">{back}</div>}
       <div className="workspace-page-header-row">
         <div>
@@ -27,7 +25,6 @@ export function WorkspacePageHeader({
         </div>
         {action && <div className="workspace-page-actions">{action}</div>}
       </div>
-      {artwork && <WorkspaceArtwork variant={artwork} />}
     </header>
   );
 }

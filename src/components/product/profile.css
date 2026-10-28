@@ -1,0 +1,48 @@
+/* Hallmark · V-Intern account · theme: premium workspace · scope: app */
+/* Critique: identity, factual details and linked actions; no nested cards. */
+.aurora-workspace .account-notebook { min-width: 0; }
+.aurora-workspace .account-notebook-identity { display: flex; align-items: center; gap: var(--space-5); padding: var(--space-3) 0 var(--space-6); border-bottom: 1px solid var(--ws-line); }
+.aurora-workspace .account-notebook-avatar { display: grid; place-items: center; flex: 0 0 var(--space-16); height: var(--space-16); border-radius: var(--radius-panel-value); background: var(--ws-primary-soft); color: var(--ws-primary); font-size: var(--type-page); font-weight: var(--weight-heading); }
+.aurora-workspace .account-notebook-name { min-width: 0; flex: 1; }
+.aurora-workspace .account-notebook-name h2 { margin: 0; font-size: var(--type-section); font-weight: var(--weight-heading); letter-spacing: -.025em; overflow-wrap: anywhere; }
+.aurora-workspace .account-notebook-name p { margin: var(--space-2) 0 var(--space-1); font-size: var(--type-body); color: var(--ws-primary); }
+.aurora-workspace .account-notebook-name > span { font-size: var(--type-caption); color: var(--ws-muted); }
+.aurora-workspace .account-notebook-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, 1fr); gap: var(--space-12); padding-top: var(--space-8); }
+.aurora-workspace .account-notebook-layout :is(section, aside) { min-width: 0; }
+.aurora-workspace .account-notebook-layout h2 { margin: 0; font-size: var(--type-subsection); font-weight: 650; }
+.aurora-workspace .account-notebook-layout :is(section, aside) > p { margin: var(--space-2) 0 var(--space-5); color: var(--ws-muted); font-size: var(--type-small); line-height: 1.75; max-width: 64ch; }
+.aurora-workspace .account-notebook-details dl { margin: 0; }
+.aurora-workspace .account-notebook-details dl > div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: var(--space-4); padding: var(--space-5) 0; border-bottom: 1px solid var(--ws-line); }
+.aurora-workspace .account-notebook-details dt { font-size: var(--type-small); color: var(--ws-muted); }
+.aurora-workspace .account-notebook-details dd { margin: 0; font-size: var(--type-body); font-weight: 500; overflow-wrap: anywhere; }
+.aurora-workspace .account-notebook-details .account-notebook-source { margin-top: var(--space-5); font-size: var(--type-caption); }
+.aurora-workspace .account-notebook-connections { padding-left: var(--space-8); border-left: 1px solid var(--ws-line); }
+.aurora-workspace .account-notebook-connections ul { margin: 0; padding: 0; list-style: none; }
+.aurora-workspace .account-notebook-connections li + li { border-top: 1px solid var(--ws-line); }
+.aurora-workspace .account-notebook-connections a { display: flex; align-items: center; gap: var(--space-3); min-height: 76px; padding: var(--space-3) var(--space-1); border-radius: 6px; color: var(--ws-ink); transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease; }
+.aurora-workspace .account-notebook-connections a > svg { flex-shrink: 0; color: var(--ws-primary); }
+.aurora-workspace .account-notebook-connections a > svg:first-child { width: 30px; height: 30px; }
+.aurora-workspace .account-notebook-connections a > svg:last-child { margin-left: auto; }
+.aurora-workspace .account-notebook-connections a > span { min-width: 0; }
+.aurora-workspace .account-notebook-connections strong { display: block; font-size: var(--type-small); font-weight: 600; }
+.aurora-workspace .account-notebook-connections small { display: block; margin-top: var(--space-1); font-size: var(--type-caption); line-height: 1.6; color: var(--ws-muted); }
+.aurora-workspace .account-notebook-connections a:hover { background: var(--ws-primary-soft); color: var(--ws-primary); }
+.aurora-workspace .account-notebook-connections a:focus-visible { outline: 2px solid var(--ws-primary); outline-offset: 4px; }
+.aurora-workspace .account-notebook-connections .account-notebook-note { padding-top: var(--space-4); border-top: 1px solid var(--ws-line); font-size: var(--type-caption); }
+@media (max-width: 1100px) {
+  .aurora-workspace .account-notebook-layout { gap: var(--space-7); grid-template-columns: minmax(0, 1fr); }
+  .aurora-workspace .account-notebook-connections { padding: var(--space-6) 0 0; border-left: 0; border-top: 1px solid var(--ws-line); }
+}
+@media (max-width: 540px) {
+  .aurora-workspace .account-notebook-identity { gap: var(--space-3); min-height: 116px; padding-top: var(--space-1); }
+  .aurora-workspace .account-notebook-avatar { flex-basis: 56px; height: 62px; font-size: var(--type-section); }
+  .aurora-workspace .account-notebook-details dl > div { grid-template-columns: 1fr; gap: var(--space-1); padding: var(--space-4) 0; }
+  .aurora-workspace .account-notebook-layout { padding-top: var(--space-6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-workspace .account-notebook-connections a { transition: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .aurora-workspace .account-refresh-icon { animation: account-refresh 1s linear infinite; }
+}
+@keyframes account-refresh { to { transform: rotate(360deg); } }

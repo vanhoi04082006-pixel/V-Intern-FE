@@ -130,13 +130,13 @@ export function TemplateEditor({
         });
       }}
     >
-      <p className="rounded-xl bg-blue-50 p-3 text-sm text-blue-900">
+      <p className="rounded-panel bg-info-subtle p-3 text-body text-info">
         Sửa mẫu tạo phiên bản mới cho phiên tương lai. Các phiên đã khởi tạo giữ
         blueprint đã chụp. Có thể nhân bản một trong sáu mẫu đầy đủ rồi chỉnh
         nội dung phù hợp.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="text-sm">
+        <label className="text-body">
           Tên mẫu
           <input
             className={inputClass}
@@ -147,7 +147,7 @@ export function TemplateEditor({
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-        <label className="text-sm">
+        <label className="text-body">
           Mã mẫu
           <input
             className={inputClass}
@@ -159,7 +159,7 @@ export function TemplateEditor({
           />
         </label>
       </div>
-      <label className="block text-sm">
+      <label className="block text-body">
         Mô tả
         <textarea
           className={inputClass}
@@ -172,14 +172,14 @@ export function TemplateEditor({
         />
       </label>
       <BlueprintFields text={text} onChange={setText} />
-      <details className="border-y border-slate-200 py-4">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-600">
+      <details className="border-y border-border py-4">
+        <summary className="cursor-pointer text-body font-semibold text-muted-foreground">
           Nâng cao · Sprint, task và cấu trúc blueprint
         </summary>
-        <label className="mt-4 block text-sm">
+        <label className="mt-4 block text-body">
           Blueprint JSON đầy đủ
           <textarea
-            className={`${inputClass} mt-1 font-mono text-xs`}
+            className={`${inputClass} mt-1 font-mono text-caption`}
             rows={20}
             required
             maxLength={180000}
@@ -197,14 +197,14 @@ export function TemplateEditor({
           onChange={setAssessment}
         />
       </Can>
-      <p className="text-xs text-slate-500">
+      <p className="text-caption text-muted-foreground">
         Tên, mã và mô tả ở trên áp dụng khi lưu. Blueprint chứa role,
         requirements, architecture, sprint/task, dependencies và milestone.
         Backend kiểm tra schema và đồ thị trước khi lưu. Không nhập secret hoặc
         dữ liệu cá nhân thật.
       </p>
       {validation && (
-        <p role="alert" className="text-sm text-rose-700">
+        <p role="alert" className="text-body text-destructive">
           {validation}
         </p>
       )}

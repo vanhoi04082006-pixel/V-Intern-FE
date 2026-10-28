@@ -51,13 +51,13 @@ export function EmptyInternWorkspace({
   return (
     <div className="intern-waiting workspace-waiting grid min-w-0 grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_300px]">
       {/* Cột trái: page title + welcome + empty hero + (hoạt động | lưu ý) */}
-      <div className="flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-[var(--iw-gap)]">
+      <div className="flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-6">
         {/* Page header — compact, chỉ nằm trong main column (reference) */}
         <header className="shrink-0">
-          <h1 className="text-[26px] font-extrabold tracking-tight text-navy sm:text-3xl xl:text-[length:var(--iw-h1)] xl:leading-none">
+          <h1 className="text-page font-extrabold tracking-tight text-foreground sm:text-page xl:text-page xl:leading-none">
             {recruitment ? "Hành trình thực tập của bạn" : "Intern Workspace"}
           </h1>
-          <p className="mt-1 text-sm text-slate-500 xl:mt-0.5 xl:text-[13px]">
+          <p className="mt-1 text-body text-muted-foreground xl:mt-1 xl:text-small">
             {state.pageSubtitle}
           </p>
         </header>
@@ -84,11 +84,11 @@ export function EmptyInternWorkspace({
             <div className="min-w-0 flex-1 xl:flex xl:flex-col xl:justify-center xl:py-2">
               <h2
                 id="intern-welcome"
-                className="text-lg font-bold tracking-tight text-navy sm:text-xl xl:text-[length:var(--iw-greet)]"
+                className="text-section font-bold tracking-tight text-foreground sm:text-section xl:text-section"
               >
                 {welcome.greeting}
               </h2>
-              <p className="mt-1 max-w-xl text-sm leading-relaxed text-slate-600 xl:max-w-lg xl:text-[13px] xl:leading-[1.35]">
+              <p className="mt-1 max-w-xl text-body leading-relaxed text-muted-foreground xl:max-w-lg xl:text-small xl:leading-[1.35]">
                 {welcome.message}
               </p>
               <ul className="mt-3 flex flex-wrap items-center gap-2 xl:mt-2">
@@ -98,8 +98,8 @@ export function EmptyInternWorkspace({
                       tone={badge.tone}
                       className={
                         badge.tone === "blue"
-                          ? "border border-blue-200 bg-white"
-                          : "border border-emerald-200 bg-white"
+                          ? "border border-border bg-card"
+                          : "border border-border bg-card"
                       }
                     >
                       <badge.icon className="size-3.5" aria-hidden="true" />
@@ -137,8 +137,8 @@ export function EmptyInternWorkspace({
                   y2="155"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop stopColor="#DCE9FF" />
-                  <stop offset="1" stopColor="#F6F9FF" />
+                  <stop stopColor="var(--muted)" />
+                  <stop offset="1" stopColor="var(--background)" />
                 </linearGradient>
                 <linearGradient
                   id="waiting-box"
@@ -148,16 +148,16 @@ export function EmptyInternWorkspace({
                   y2="168"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop stopColor="#92BAFF" />
-                  <stop offset="1" stopColor="#397BEE" />
+                  <stop stopColor="var(--primary)" />
+                  <stop offset="1" stopColor="var(--primary)" />
                 </linearGradient>
               </defs>
               <path
                 d="M40 149C10 125 41 105 63 107C30 66 78 45 112 70C113 16 195 11 207 44C253 9 282 35 280 69C325 44 360 76 342 110C385 99 385 166 345 166H62C46 167 35 157 40 149Z"
-                fill="#EFF5FF"
+                fill="var(--background)"
               />
-              <circle cx="51" cy="105" r="7" fill="#E0EDFF" />
-              <circle cx="358" cy="143" r="10" fill="#E4EEFF" />
+              <circle cx="51" cy="105" r="7" fill="var(--muted)" />
+              <circle cx="358" cy="143" r="10" fill="var(--muted)" />
               <rect
                 x="112"
                 y="30"
@@ -168,66 +168,66 @@ export function EmptyInternWorkspace({
               />
               <path
                 d="M112 40A10 10 0 0 1 122 30H253A10 10 0 0 1 263 40V48H112Z"
-                fill="#D0E1FF"
+                fill="var(--muted)"
               />
-              <circle cx="126" cy="39" r="3" fill="#6099FA" />
-              <circle cx="137" cy="39" r="3" fill="#6099FA" />
-              <circle cx="148" cy="39" r="3" fill="#6099FA" />
+              <circle cx="126" cy="39" r="3" fill="var(--primary)" />
+              <circle cx="137" cy="39" r="3" fill="var(--primary)" />
+              <circle cx="148" cy="39" r="3" fill="var(--primary)" />
               <rect
                 x="122"
                 y="49"
                 width="131"
                 height="93"
                 rx="4"
-                fill="#FBFDFF"
+                fill="var(--card)"
               />
               <path
                 d="m176 78-15 13 15 13m26-26 15 13-15 13m-9-30-10 34"
-                stroke="#8AB4FF"
+                stroke="var(--primary)"
                 strokeWidth="5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
                 d="M98 72C47 85 54 126 107 140M267 80C318 82 338 49 359 29"
-                stroke="#9BBEFF"
+                stroke="var(--primary)"
                 strokeWidth="2.5"
                 strokeDasharray="5 7"
                 strokeLinecap="round"
               />
-              <path d="m344 22 38-10-17 31-5-15-16-6Z" fill="#80ADFF" />
-              <path d="m360 28 22-16-17 31-5-15Z" fill="#4D8BEF" />
+              <path d="m344 22 38-10-17 31-5-15-16-6Z" fill="var(--primary)" />
+              <path d="m360 28 22-16-17 31-5-15Z" fill="var(--primary)" />
               <path
                 d="m67 143-12-21 24 12-7-27 25 39"
-                stroke="#D4E5FF"
+                stroke="var(--muted)"
                 strokeWidth="6"
                 strokeLinecap="round"
               />
               <path d="M231 111H310V168H231Z" fill="url(#waiting-box)" />
-              <path d="M270 111H310V168H270Z" fill="#609BF9" />
-              <path d="m231 111 39 0-14 23-42-1 17-22Z" fill="#92BBFF" />
-              <path d="m270 111 40 0 18 23-42 0-16-23Z" fill="#A8CBFF" />
-              <path d="M270 112V168" stroke="#3D7FEA" strokeOpacity=".35" />
+              <path d="M270 111H310V168H270Z" fill="var(--primary)" />
+              <path d="m231 111 39 0-14 23-42-1 17-22Z" fill="var(--primary)" />
+              <path d="m270 111 40 0 18 23-42 0-16-23Z" fill="var(--primary)" />
+              <path d="M270 112V168" stroke="var(--primary)" strokeOpacity=".35" />
               <path
                 d="M38 169H362"
-                stroke="#E2ECFD"
+                stroke="var(--muted)"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
             </svg>
             <h2
               id="intern-empty-assignment"
-              className="text-xl font-bold tracking-tight text-navy sm:text-2xl xl:text-[length:var(--iw-h2)]"
+              className="text-section font-bold tracking-tight text-foreground sm:text-page xl:text-page"
             >
               {emptyCard.title}
             </h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 xl:mt-1 xl:max-w-lg xl:text-[13px] xl:leading-[1.35]">
+            <p className="mt-3 max-w-xl text-body leading-relaxed text-muted-foreground xl:mt-1 xl:max-w-lg xl:text-small xl:leading-[1.35]">
               {emptyCard.description}
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 xl:mt-3 xl:gap-2.5">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 xl:mt-3 xl:gap-3">
               <Link
                 href="/intern/onboarding/result"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-[13px] font-semibold text-white"
+                className="inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground"
               >
                 <FileText className="size-4" aria-hidden="true" />
                 {emptyCard.primaryAction}
@@ -235,7 +235,7 @@ export function EmptyInternWorkspace({
               <button
                 type="button"
                 onClick={onReload}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-[13px] font-semibold text-slate-700"
+                className="inline-flex items-center gap-2 rounded-control border border-border px-4 py-2 text-small font-semibold text-foreground"
               >
                 <BookOpen className="size-4" aria-hidden="true" />
                 {emptyCard.secondaryAction}
@@ -245,7 +245,7 @@ export function EmptyInternWorkspace({
         )}
 
         {/* Reference: hoạt động rộng hơn lưu ý (~1.6:1) — nằm trong viewport */}
-        <div className="grid min-w-0 shrink-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] xl:gap-[var(--iw-gap)]">
+        <div className="grid min-w-0 shrink-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] xl:gap-6">
           <RecentActivityCard
             activities={recentActivities}
             actionLabel={state.activitiesActionLabel}
@@ -259,14 +259,14 @@ export function EmptyInternWorkspace({
             tone="amber"
             title="Lưu ý"
             headerClassName="xl:px-4 xl:py-2"
-            bodyClassName="bg-amber-50/60 xl:px-4 xl:py-2.5"
+            bodyClassName="bg-warning-subtle xl:px-4 xl:py-3"
           >
-            <ul className="flex list-disc flex-col gap-2 pl-4 text-[13px] leading-relaxed text-slate-700 marker:text-amber-500 xl:gap-1 xl:text-xs xl:leading-[var(--iw-lead)]">
+            <ul className="flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-warning xl:gap-1 xl:text-caption xl:leading-[var(--iw-lead)]">
               {notes.map((note) => (
                 <li key={note}>{note}</li>
               ))}
             </ul>
-            <p className="mt-3 rounded-lg bg-amber-100/70 px-3 py-2.5 text-[13px] font-medium leading-relaxed text-amber-800 xl:mt-2 xl:py-1.5 xl:text-xs xl:leading-[1.35]">
+            <p className="mt-3 rounded-control bg-warning-subtle px-3 py-3 text-small font-medium leading-relaxed text-warning xl:mt-2 xl:py-2 xl:text-caption xl:leading-[1.35]">
               {state.notesFooter}
             </p>
           </SectionCard>
@@ -277,7 +277,7 @@ export function EmptyInternWorkspace({
           title — Thông tin thực tập + Quy trình tiếp theo vừa đủ viewport */}
       <aside
         aria-label="Thông tin thực tập và quy trình tiếp theo"
-        className={`flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-[var(--iw-gap)]${recruitment ? " self-start" : ""}`}
+        className={`flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-6${recruitment ? " self-start" : ""}`}
       >
         <InternshipInfoCard rows={infoRows} className="xl:shrink-0" />
         <NextProcessCard

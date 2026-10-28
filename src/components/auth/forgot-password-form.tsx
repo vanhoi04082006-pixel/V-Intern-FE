@@ -53,16 +53,16 @@ export function ForgotPasswordForm() {
     <section aria-label="Quên mật khẩu">
       <Link
         href="/login"
-        className="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-slate-500 transition-colors hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        className="inline-flex items-center gap-2 rounded-sm text-body font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
         Quay lại đăng nhập
       </Link>
 
-      <h1 className="mt-5 text-[28px] font-bold leading-tight tracking-tight text-navy">
+      <h1 className="mt-5 text-page font-bold leading-tight tracking-tight text-foreground">
         Quên mật khẩu?
       </h1>
-      <p className="mt-1.5 text-[15px] leading-relaxed text-slate-600">
+      <p className="mt-2 text-body leading-relaxed text-muted-foreground">
         Nhập email đã đăng ký để nhận liên kết đặt lại mật khẩu.
       </p>
 
@@ -95,12 +95,12 @@ export function ForgotPasswordForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-80"
+          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-80"
         >
           {isSubmitting ? (
             <>
               <Loader2
-                className="size-[18px] animate-spin"
+                className="size-4 animate-spin"
                 aria-hidden="true"
               />
               Đang gửi...

@@ -28,9 +28,9 @@ export function InternshipInfoCard({
       title="Thông tin thực tập"
       className={className}
       headerClassName="xl:px-4 xl:py-2"
-      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
+      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-3"
     >
-      <dl className="flex flex-col divide-y divide-slate-100">
+      <dl className="flex flex-col divide-y divide-border">
         {rows.map((row) => {
           const toneStyle = INTERN_TONES[row.tone];
           const RowIcon = row.icon;
@@ -38,11 +38,11 @@ export function InternshipInfoCard({
           return (
             <div
               key={row.id}
-              className="flex items-center justify-between gap-3 py-[var(--iw-row-py)] first:pt-0 last:pb-0"
+              className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
             >
-              <dt className="flex min-w-0 items-center gap-2.5 text-[13px] font-medium text-slate-500">
+              <dt className="flex min-w-0 items-center gap-3 text-small font-medium text-muted-foreground">
                 <RowIcon
-                  className="size-4 shrink-0 text-slate-400"
+                  className="size-4 shrink-0 text-muted-foreground"
                   aria-hidden="true"
                 />
                 <span className="truncate">{row.label}</span>

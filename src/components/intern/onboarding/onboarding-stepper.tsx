@@ -37,11 +37,11 @@ function StepCircle({
     <span
       aria-hidden="true"
       className={cn(
-        "grid size-8 shrink-0 place-items-center rounded-full border text-sm font-bold transition-colors",
+        "grid size-8 shrink-0 place-items-center rounded-full border text-body font-bold transition-colors",
         state === "completed" &&
-          "border-emerald-200 bg-emerald-50 text-emerald-600",
-        state === "active" && "border-brand bg-brand text-white shadow-sm",
-        state === "pending" && "border-slate-200 bg-white text-slate-500",
+          "border-border bg-success-subtle text-success",
+        state === "active" && "border-brand bg-primary text-primary-foreground shadow-app-xs",
+        state === "pending" && "border-border bg-card text-muted-foreground",
       )}
     >
       {state === "completed" ? <Check className="size-4" /> : position}
@@ -64,26 +64,26 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
               key={step.id}
               aria-current={state === "active" ? "step" : undefined}
               className={cn(
-                "flex min-w-0 flex-1 items-center gap-2.5 rounded-xl border px-3 py-2.5",
-                state === "active" && "border-brand/30 bg-blue-50/60",
-                state === "completed" && "border-slate-200 bg-white",
-                state === "pending" && "border-slate-100 bg-slate-50/60",
+                "flex min-w-0 flex-1 items-center gap-3 rounded-panel border px-3 py-3",
+                state === "active" && "border-brand/30 bg-accent",
+                state === "completed" && "border-border bg-card",
+                state === "pending" && "border-border bg-background",
               )}
             >
               <StepCircle state={state} position={position} />
               <span className="min-w-0">
                 <span
                   className={cn(
-                    "block truncate text-[13px] font-bold",
-                    state === "pending" ? "text-slate-500" : "text-navy",
+                    "block truncate text-small font-bold",
+                    state === "pending" ? "text-muted-foreground" : "text-foreground",
                   )}
                 >
                   {step.label}
                 </span>
                 <span
                   className={cn(
-                    "hidden truncate text-xs sm:block",
-                    state === "active" ? "text-brand" : "text-slate-500",
+                    "hidden truncate text-caption sm:block",
+                    state === "active" ? "text-primary" : "text-muted-foreground",
                   )}
                 >
                   {step.description}
@@ -117,7 +117,7 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
                   aria-hidden="true"
                   className={cn(
                     "absolute left-4 top-9 h-[calc(100%-1.75rem)] w-px",
-                    state === "completed" ? "bg-emerald-300" : "bg-slate-200",
+                    state === "completed" ? "bg-success" : "bg-muted",
                   )}
                 />
               ) : null}
@@ -125,16 +125,16 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
               <span className="min-w-0 pt-1">
                 <span
                   className={cn(
-                    "block text-sm font-bold leading-tight",
-                    state === "pending" ? "text-slate-500" : "text-navy",
+                    "block text-body font-bold leading-tight",
+                    state === "pending" ? "text-muted-foreground" : "text-foreground",
                   )}
                 >
                   {step.label}
                 </span>
                 <span
                   className={cn(
-                    "mt-0.5 block text-xs leading-tight",
-                    state === "active" ? "text-brand" : "text-slate-500",
+                    "mt-1 block text-caption leading-tight",
+                    state === "active" ? "text-primary" : "text-muted-foreground",
                   )}
                 >
                   {step.description}
@@ -165,17 +165,17 @@ export function MobileStepbar({
       className={cn(
         "flex items-center justify-between gap-3",
         variant === "bar"
-          ? "border-b border-slate-200 bg-white px-4 py-2.5 lg:hidden"
-          : "rounded-xl border border-slate-200 bg-white px-4 py-3",
+          ? "border-b border-border bg-card px-4 py-3 lg:hidden"
+          : "rounded-panel border border-border bg-card px-4 py-3",
       )}
     >
-      <p className="text-[13px] font-bold text-navy">
+      <p className="text-small font-bold text-foreground">
         Bước {activeStep}/4 ·{" "}
-        <span className="font-semibold text-brand">
+        <span className="font-semibold text-primary">
           {ONBOARDING_STEPS[activeStep - 1]?.label}
         </span>
       </p>
-      <ol className="flex items-center gap-1.5" aria-hidden="true">
+      <ol className="flex items-center gap-2" aria-hidden="true">
         {ONBOARDING_STEPS.map((step, index) => {
           const state = stateForPosition(index + 1, activeStep);
           return (
@@ -183,9 +183,9 @@ export function MobileStepbar({
               key={step.id}
               className={cn(
                 "size-2 rounded-full",
-                state === "completed" && "bg-emerald-400",
-                state === "active" && "bg-brand",
-                state === "pending" && "bg-slate-200",
+                state === "completed" && "bg-success",
+                state === "active" && "bg-primary",
+                state === "pending" && "bg-muted",
               )}
             />
           );
