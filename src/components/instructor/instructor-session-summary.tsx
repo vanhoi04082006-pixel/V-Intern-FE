@@ -1,11 +1,5 @@
 import Link from "next/link";
-import {
-  AlertCircle,
-  ArrowUpRight,
-  CheckCheck,
-  Clock3,
-  Layers3,
-} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { SessionOverviewRow } from "@/lib/api/sessions";
 import { TaskDistribution } from "@/components/workspace/workspace-ui";
 import { SessionProgressComparison } from "@/components/workspace/workspace-charts";
@@ -40,48 +34,40 @@ export function InstructorSessionSummary({
       className="ins-operations"
       aria-label="Tình hình các phiên đang hiển thị"
     >
-      <div className="ins-metric-grid">
+      <dl className="ins-metric-grid">
         {[
           {
             label: "Phiên theo bộ lọc",
             value: total,
-            icon: Layers3,
             tone: "blue",
           },
           {
             label: "Nhiệm vụ hoàn thành",
             value: `${done} / ${tasks}`,
-            icon: CheckCheck,
             tone: "green",
           },
           {
             label: "Bài chờ duyệt",
             value: alertsKnown ? review : "Chưa có dữ liệu",
-            icon: Clock3,
             tone: "amber",
           },
           {
             label: "Nhiệm vụ quá hạn",
             value: alertsKnown ? overdue : "Chưa có dữ liệu",
-            icon: AlertCircle,
             tone: "rose",
           },
-        ].map(({ label, value, icon: Icon, tone }) => (
+        ].map(({ label, value, tone }) => (
           <div className="ins-metric" data-tone={tone} key={label}>
-            <span>
-              <Icon size={18} aria-hidden="true" />
-            </span>
-            <div>
-              <p>{label}</p>
-              <strong>{value}</strong>
-            </div>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
           </div>
         ))}
-      </div>
+      </dl>
       <p className="ins-scope-note">
         Tổng số phiên theo bộ lọc; tiến độ và cảnh báo từ {rows.length} phiên
         đang hiển thị.
       </p>
+      <div className="ins-operations-layout">
       <div className="ins-attention">
         <header>
           <h2>Ưu tiên xử lý</h2>
@@ -129,6 +115,8 @@ export function InstructorSessionSummary({
           </p>
         )}
       </div>
+      <details className="ins-analytics">
+      <summary>Phân bố công việc và tiến độ phiên</summary>
       <div className="workspace-analytics-grid">
         <TaskDistribution
         label="Tiến độ nhiệm vụ trong các phiên đang hiển thị"
@@ -142,6 +130,8 @@ export function InstructorSessionSummary({
         ]}
         />
         <SessionProgressComparison items={rows.map((row) => ({ id: row.id, name: row.name, done: row.taskDone, total: row.taskTotal }))} />
+      </div>
+      </details>
       </div>
     </section>
   );

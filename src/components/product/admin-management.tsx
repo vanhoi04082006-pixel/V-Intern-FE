@@ -5,7 +5,7 @@ import * as api from "@/lib/api/admin";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Clock, ScrollText, ShieldCheck, Timer, Users, UsersRound } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock, Timer } from "lucide-react";
 import {
   Badge,
   buttonClass,
@@ -57,36 +57,16 @@ export function AdminOverview() {
       />
       <Result resource={counts}>
         {(c) => (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard
-              icon={Users}
-              label="Người dùng"
-              value={c[0].toLocaleString("vi-VN")}
-            />
-            <MetricCard
-              icon={UsersRound}
-              label="Nhóm"
-              value={c[1].toLocaleString("vi-VN")}
-            />
-            <MetricCard
-              icon={ShieldCheck}
-              label="Vai trò"
-              value={c[2].toLocaleString("vi-VN")}
-            />
-            <MetricCard
-              icon={ScrollText}
-              label="Bản ghi audit"
-              value={c[3].toLocaleString("vi-VN")}
-            />
-          </div>
+          <CollectionMetrics values={[["Người dùng", c[0]], ["Nhóm", c[1]], ["Vai trò", c[2]], ["Bản ghi audit", c[3]]]} />
         )}
       </Result>
-      <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_320px]">
+      <div className="admin-overview-grid">
         <div>
           <AdminActivity compact />
         </div>
-        <Panel title="Thao tác quản trị">
-          <div className="space-y-2">
+        <section className="admin-overview-actions" aria-label="Thao tác quản trị">
+          <h2 className="text-subsection font-semibold text-foreground">Thao tác quản trị</h2>
+          <nav className="mt-3 divide-y divide-border">
             {[
               ["users", "Quản lý người dùng"],
               ["groups", "Nhóm và quyền kế thừa"],
@@ -96,17 +76,15 @@ export function AdminOverview() {
             ].map(([href, label]) => (
               <Link
                 key={href}
-                className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3.5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-200 hover:bg-slate-50 hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                className="flex min-h-11 items-center justify-between gap-3 py-3 text-body font-medium text-muted-foreground transition-colors hover:text-primary"
                 href={"/admin/" + href}
               >
                 {label}
-                <span aria-hidden="true" className="text-slate-300">
-                  →
-                </span>
+                <ArrowUpRight size={16} aria-hidden />
               </Link>
             ))}
-          </div>
-        </Panel>
+          </nav>
+        </section>
       </div>
     </>
   );
@@ -161,7 +139,7 @@ export function UserPicker({
         )}
         {rows.data?.items.map((u) => (
           <option key={u.id} value={u.id}>
-            {u.displayName} · {u.email}
+            {u.displayName}, {u.email}
           </option>
         ))}
       </select>
@@ -186,11 +164,11 @@ function RoleChoices({
     <Result resource={roles}>
       {(r) => (
         <fieldset className="space-y-3">
-          <legend className="mb-2 text-sm font-semibold">Vai trò</legend>
+          <legend className="mb-2 text-body font-semibold">Vai trò</legend>
           {r.items.map((role) => (
             <label
               key={role.id}
-              className="flex items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm"
+              className="admin-selection-row text-body"
             >
               <input
                 type="checkbox"
@@ -205,7 +183,7 @@ function RoleChoices({
               />
               <span>
                 {role.name}
-                <small className="ml-2 text-slate-400">{role.code}</small>
+                <small className="ml-2 text-muted-foreground">{role.code}</small>
               </span>
             </label>
           ))}
@@ -216,6 +194,7 @@ function RoleChoices({
   );
 }
 export function AdminUsers() {
+  const [notice, setNotice] = useState("");
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
     [status, setStatus] = useState(""),
@@ -229,7 +208,7 @@ export function AdminUsers() {
         [page, q, status, roleCode],
       ),
     ),
-    action = useAction(users.reload);
+    action = useAction(() => { setNotice("Đã cập nhật trạng thái tài khoản."); users.reload(); });
   const roleOptions = useResource(
     useCallback(
       (signal: AbortSignal) => api.listRoles(rolePage, signal),
@@ -243,37 +222,38 @@ export function AdminUsers() {
         subtitle="Danh sách và trạng thái tài khoản từ cơ sở dữ liệu"
         action={
           <Can perm="users.create">
-            <button className={buttonClass} onClick={() => setCreate(true)}>
+            <button className={buttonClass} onClick={() => { setNotice(""); setCreate(true); }}>
               Tạo người dùng
             </button>
           </Can>
         }
       />
+      {notice && !action.busy && !action.error && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
       {!users.loading && !users.error && users.data && (
         <CollectionMetrics
           values={[
             ["Kết quả bộ lọc", users.data.total],
             [
-              "Đang hoạt động · trang",
+              "Đang hoạt động, trang",
               users.data.items.filter((u) => u.status === "active").length,
             ],
             [
-              "Chờ kích hoạt · trang",
+              "Chờ kích hoạt, trang",
               users.data.items.filter((u) => u.status === "pending").length,
             ],
             [
-              "Bị khóa · trang",
+              "Bị khóa, trang",
               users.data.items.filter((u) => u.status === "locked").length,
             ],
             [
-              "Đã xóa · trang",
+              "Đã xóa, trang",
               users.data.items.filter((u) => u.status === "deleted").length,
             ],
           ]}
           note="Tổng theo bộ lọc; thống kê trạng thái dùng trang hiện tại. Chưa có dữ liệu lịch sử tăng trưởng."
         />
       )}
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="admin-collection-layout">
         <Panel title="Tài khoản">
           <div className="mb-4">
             <select
@@ -338,8 +318,8 @@ export function AdminUsers() {
               <>
                 {data.items.length ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-50">
+                    <table className="w-full text-left text-body">
+                      <thead className="bg-muted/50">
                         <tr>
                           {[
                             "Người dùng",
@@ -356,12 +336,12 @@ export function AdminUsers() {
                       </thead>
                       <tbody>
                         {data.items.map((u) => (
-                          <tr key={u.id} className="border-b border-slate-100">
+                          <tr key={u.id} className="border-b border-border">
                             <td className="p-3">
-                              <strong className="block text-navy">
+                              <strong className="block text-foreground">
                                 {u.displayName}
                               </strong>
-                              <span className="text-xs text-slate-400">
+                              <span className="text-caption text-muted-foreground">
                                 {u.email}
                               </span>
                             </td>
@@ -378,8 +358,8 @@ export function AdminUsers() {
                             </td>
                             <td className="p-3">
                               <button
-                                className="mb-2 text-blue-600"
-                                onClick={() => setEdit(u)}
+                                className="mb-2 text-primary"
+                                onClick={() => { setNotice(""); setEdit(u); }}
                               >
                                 Sửa tài khoản
                               </button>
@@ -439,6 +419,7 @@ export function AdminUsers() {
           <UserForm
             user={edit}
             onSaved={() => {
+              setNotice("Đã lưu tài khoản và cập nhật danh sách người dùng.");
               setCreate(false);
               setEdit(undefined);
               users.reload();
@@ -480,7 +461,7 @@ function UserForm({
       }}
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <label className="block text-sm">
+      <label className="block text-body">
         Họ tên
         <input
           name="name"
@@ -490,7 +471,7 @@ function UserForm({
           defaultValue={user?.displayName}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Username
         <input
           name="username"
@@ -504,11 +485,11 @@ function UserForm({
       </label>
       {!user && (
         <>
-          <label className="block text-sm">
+          <label className="block text-body">
             Email
             <input name="email" required type="email" className={inputClass} />
           </label>
-          <label className="block text-sm">
+          <label className="block text-body">
             Mật khẩu khởi tạo
             <input
               name="password"
@@ -553,20 +534,20 @@ export function AdminRoles() {
           values={[
             ["Vai trò", roles.data.total],
             ["Quyền trong lựa chọn", permissions.data.total],
-            ["Quyền · trang", permissions.data.items.length],
-            ["Vai trò · trang", roles.data.items.length],
-            ["Nhóm quyền · trang", new Set(permissions.data.items.map((p) => p.code.split(".")[0])).size],
+            ["Quyền, trang", permissions.data.items.length],
+            ["Vai trò, trang", roles.data.items.length],
+            ["Nhóm quyền, trang", new Set(permissions.data.items.map((p) => p.code.split(".")[0])).size],
           ]}
           note="Quyền theo vai trò đang chọn; không suy ra số người dùng từ chính sách RBAC."
         />
       )}
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,440px)]">
+      <div className="admin-role-layout">
         <Panel title="Vai trò">
           <Result resource={roles}>
             {(r) => (
               <>
                 <button
-                  className="mb-3 text-sm text-blue-600"
+                  className="mb-3 text-body text-primary"
                   onClick={() => {
                     setRole(undefined);
                     setPage(1);
@@ -575,12 +556,12 @@ export function AdminRoles() {
                   Tất cả quyền
                 </button>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50"><tr>{["Vai trò", "Mã vai trò", "Mô tả"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
-                    <tbody>{r.items.map(v => <tr key={v.id} className={`border-b border-slate-100 ${role?.id === v.id ? "bg-blue-50" : ""}`}>
-                      <td className="p-3"><button className="font-semibold text-blue-600" aria-label={`${v.name} · ${v.code}`} aria-pressed={role?.id === v.id} onClick={() => { setRole(v); setPage(1); }}>{v.name}</button></td>
+                  <table className="w-full text-left text-body">
+                    <thead className="bg-muted/50"><tr>{["Vai trò", "Mã vai trò", "Mô tả"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
+                    <tbody>{r.items.map(v => <tr key={v.id} className={`border-b border-border ${role?.id === v.id ? "bg-info-subtle" : ""}`}>
+                      <td className="p-3"><button className="font-semibold text-primary" aria-label={`${v.name}, ${v.code}`} aria-pressed={role?.id === v.id} onClick={() => { setRole(v); setPage(1); }}>{v.name}</button></td>
                       <td className="p-3"><Badge>{v.code}</Badge></td>
-                      <td className="p-3 text-slate-500">{v.description ?? "Chưa có mô tả"}</td>
+                      <td className="p-3 text-muted-foreground">{v.description ?? "Chưa có mô tả"}</td>
                     </tr>)}</tbody>
                   </table>
                 </div>
@@ -590,7 +571,7 @@ export function AdminRoles() {
           </Result>
         </Panel>
         <Panel title={role ? "Quyền của " + role.name : "Danh sách quyền"}>
-          <p className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+          <p className="mb-4 rounded-control bg-info-subtle p-3 text-body text-info">
             Chính sách vai trò được quản lý tại Backend. Trang này tra cứu các
             quyền đã cấp; quyền kế thừa cho người dùng được cấu hình qua nhóm.
           </p>
@@ -600,20 +581,20 @@ export function AdminRoles() {
                 {p.items.map((v) => (
                   <article
                     key={v.id}
-                    className="mb-3 flex items-start gap-3 rounded-lg border border-slate-100 p-3"
+                    className="admin-permission-row"
                   >
                     <span
-                      className="text-emerald-600"
+                      className="text-success"
                       aria-label={role ? "Đã cấp" : "Quyền hệ thống"}
                     >
-                      ✓
+                      <CheckCircle2 size={16} aria-hidden />
                     </span>
                     <div>
-                      <strong className="text-sm">{v.name}</strong>
-                      <p className="mt-1 break-all text-xs text-blue-600">
+                      <strong className="text-body">{v.name}</strong>
+                      <p className="mt-1 break-all text-caption text-primary">
                         {v.code}
                       </p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-caption text-muted-foreground">
                         {v.description}
                       </p>
                     </div>
@@ -629,6 +610,7 @@ export function AdminRoles() {
   );
 }
 export function AdminGroups() {
+  const [notice, setNotice] = useState("");
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
     [create, setCreate] = useState(false),
@@ -647,13 +629,14 @@ export function AdminGroups() {
           </button>
         }
       />
+      {notice && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
       {rows.data && (
         <CollectionMetrics
           values={[
             ["Nhóm phù hợp", rows.data.total],
-            ["Nhóm · trang", rows.data.items.length],
+            ["Nhóm, trang", rows.data.items.length],
             [
-              "Có mô tả · trang",
+              "Có mô tả, trang",
               rows.data.items.filter((g) => Boolean(g.description)).length,
             ],
             ["Số trang", rows.data.totalPages],
@@ -677,12 +660,12 @@ export function AdminGroups() {
             <>
               {r.items.length ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50"><tr>{["Nhóm", "Mô tả", "Quản lý"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
-                    <tbody>{r.items.map(g => <tr key={g.id} className="border-b border-slate-100">
-                      <td className="p-3"><button className="text-left font-semibold text-blue-600" onClick={() => setSelected(g)}><span className="block">{g.name}</span><small className="mt-1 block font-normal text-slate-500">{g.code}</small></button></td>
-                      <td className="p-3 text-slate-500">{g.description ?? "Chưa có mô tả"}</td>
-                      <td className="p-3 text-xs text-slate-500">Thành viên · Vai trò</td>
+                  <table className="w-full text-left text-body">
+                    <thead className="bg-muted/50"><tr>{["Nhóm", "Mô tả", "Quản lý"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
+                    <tbody>{r.items.map(g => <tr key={g.id} className="border-b border-border">
+                      <td className="p-3"><button className="text-left font-semibold text-primary" onClick={() => setSelected(g)}><span className="block">{g.name}</span><small className="mt-1 block font-normal text-muted-foreground">{g.code}</small></button></td>
+                      <td className="p-3 text-muted-foreground">{g.description ?? "Chưa có mô tả"}</td>
+                      <td className="p-3 text-caption text-muted-foreground">Thành viên, Vai trò</td>
                     </tr>)}</tbody>
                   </table>
                 </div>
@@ -698,6 +681,7 @@ export function AdminGroups() {
         <Modal title="Tạo nhóm" onClose={() => setCreate(false)}>
           <GroupForm
             onSaved={() => {
+              setNotice("Đã tạo nhóm người dùng.");
               setCreate(false);
               rows.reload();
             }}
@@ -706,7 +690,7 @@ export function AdminGroups() {
       )}
       {selected && (
         <Modal title={selected.name} onClose={() => setSelected(undefined)}>
-          <GroupDetail group={selected} onSaved={rows.reload} />
+          <GroupDetail group={selected} onSaved={() => { setNotice("Đã cập nhật nhóm, thành viên hoặc vai trò kế thừa."); rows.reload(); }} />
         </Modal>
       )}
     </>
@@ -737,7 +721,7 @@ function GroupForm({
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
       {!group && (
-        <label className="block text-sm">
+        <label className="block text-body">
           Mã nhóm
           <input
             name="code"
@@ -747,7 +731,7 @@ function GroupForm({
           />
         </label>
       )}
-      <label className="block text-sm">
+      <label className="block text-body">
         Tên nhóm
         <input
           name="name"
@@ -757,7 +741,7 @@ function GroupForm({
           defaultValue={group?.name}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Mô tả nhóm
         <textarea
           name="description"
@@ -819,14 +803,14 @@ function GroupDetail({
                 r.map((m) => (
                   <div
                     key={m.userId}
-                    className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 p-3 text-sm"
+                    className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-control bg-muted/50 p-3 text-body"
                   >
                     <div>
                       <strong>{m.user.displayName}</strong>
-                      <p className="text-xs text-slate-500">{m.user.email}</p>
+                      <p className="text-caption text-muted-foreground">{m.user.email}</p>
                     </div>
                     <button
-                      className="text-rose-600"
+                      className="text-destructive"
                       disabled={action.busy}
                       onClick={() =>
                         void action.run(() =>
@@ -911,7 +895,7 @@ function GroupPermissionSummary({ roleCodes }: { roleCodes: string }) {
   );
   return (
     <div className="mt-5">
-      <h3 className="mb-3 text-sm font-semibold">Quyền kế thừa từ nhóm</h3>
+      <h3 className="mb-3 text-body font-semibold">Quyền kế thừa từ nhóm</h3>
       <Result resource={summary}>
         {(data) =>
           data.length ? (
@@ -919,19 +903,19 @@ function GroupPermissionSummary({ roleCodes }: { roleCodes: string }) {
               {data.map(({ role, grants }) => (
                 <div
                   key={role.id}
-                  className="rounded-lg bg-slate-50 p-3 text-sm"
+                  className="rounded-control bg-muted/50 p-3 text-body"
                 >
                   <strong>
-                    {role.name} · {grants.total} quyền
+                    {role.name}, {grants.total} quyền
                   </strong>
-                  <p className="mt-2 break-all text-xs text-slate-500">
-                    {grants.items.map((p) => p.code).join(" · ")}
+                  <p className="mt-2 break-all text-caption text-muted-foreground">
+                    {grants.items.map((p) => p.code).join(", ")}
                   </p>
                   {grants.totalPages > 1 && (
-                    <p className="mt-2 text-xs">
+                    <p className="mt-2 text-caption">
                       Danh sách rút gọn trang 1.{" "}
-                      <Link className="text-blue-600" href="/admin/roles">
-                        Tra cứu toàn bộ quyền →
+                      <Link className="text-primary" href="/admin/roles">
+                        Tra cứu toàn bộ quyền
                       </Link>
                     </p>
                   )}
@@ -976,6 +960,7 @@ function GroupRoleForm({
   );
 }
 export function AdminCatalogs() {
+  const [notice, setNotice] = useState("");
   const [page, setPage] = useState(1),
     [itemPage, setItemPage] = useState(1),
     [type, setType] = useState<ReturnType<typeof api.parseNamed>>(),
@@ -1003,24 +988,25 @@ export function AdminCatalogs() {
           </button>
         }
       />
+      {notice && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
       {types.data && items.data && (
         <CollectionMetrics
           values={[
             ["Loại danh mục", types.data.total],
             ["Giá trị trong lựa chọn", items.data.total],
             [
-              "Đang sử dụng · trang",
+              "Đang sử dụng, trang",
               items.data.items.filter((v) => v.isActive).length,
             ],
             [
-              "Tạm ngừng · trang",
+              "Tạm ngừng, trang",
               items.data.items.filter((v) => !v.isActive).length,
             ],
           ]}
           note="Tổng giá trị theo loại đang chọn; trạng thái đếm trên trang hiện tại."
         />
       )}
-      <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)_280px]">
+      <div className="admin-catalog-layout">
         <Panel title="Loại danh mục">
           <Result resource={types}>
             {(r) => (
@@ -1028,7 +1014,8 @@ export function AdminCatalogs() {
                 {r.items.map((t) => (
                   <button
                     key={t.id}
-                    className={`mb-2 block w-full rounded-lg border p-3 text-left text-sm ${type?.id === t.id ? "border-blue-200 bg-blue-50" : "border-slate-100"}`}
+                    className={`admin-selection-row w-full text-body ${type?.id === t.id ? "text-primary" : "text-muted-foreground"}`}
+                    aria-pressed={type?.id === t.id}
                     onClick={() => {
                       setType(t);
                       setItemPage(1);
@@ -1036,7 +1023,7 @@ export function AdminCatalogs() {
                     }}
                   >
                     <strong>{t.name}</strong>
-                    <small className="block text-slate-400">{t.code}</small>
+                    <small className="block text-muted-foreground">{t.code}</small>
                   </button>
                 ))}
                 <Pager {...r} onChange={setPage} />
@@ -1061,7 +1048,7 @@ export function AdminCatalogs() {
                   r.items.map((v) => (
                     <button
                       key={v.id}
-                      className="mb-3 flex w-full items-center justify-between gap-3 rounded-lg border border-slate-100 p-3 text-left text-sm"
+                      className="admin-selection-row w-full justify-between text-body"
                       onClick={() => {
                         setFocusedId(v.id);
                         setEdit(v);
@@ -1069,8 +1056,8 @@ export function AdminCatalogs() {
                     >
                       <div>
                         <strong>{v.name}</strong>
-                        <p className="mt-1 text-xs text-slate-400">
-                          {v.code} · {v.value ?? "Chưa có giá trị"}
+                        <p className="mt-1 text-caption text-muted-foreground">
+                          {v.code}, {v.value ?? "Chưa có giá trị"}
                         </p>
                       </div>
                       <Badge>{v.isActive ? "active" : "inactive"}</Badge>
@@ -1091,7 +1078,7 @@ export function AdminCatalogs() {
             const value = items.data?.items.find((v) => v.id === focusedId);
             return value ? (
               <>
-                <dl className="space-y-4 text-sm">
+                <dl className="space-y-4 text-body">
                   {[
                     ["Tên", value.name],
                     ["Mã định danh", value.code],
@@ -1103,7 +1090,7 @@ export function AdminCatalogs() {
                     ],
                   ].map(([label, text]) => (
                     <div key={label}>
-                      <dt className="text-slate-500">{label}</dt>
+                      <dt className="text-muted-foreground">{label}</dt>
                       <dd className="mt-1 break-words font-medium">{text}</dd>
                     </div>
                   ))}
@@ -1125,6 +1112,7 @@ export function AdminCatalogs() {
         <Modal title="Tạo loại danh mục" onClose={() => setCreateType(false)}>
           <CatalogTypeForm
             onSaved={() => {
+              setNotice("Đã tạo loại danh mục.");
               setCreateType(false);
               types.reload();
             }}
@@ -1143,6 +1131,7 @@ export function AdminCatalogs() {
             typeCode={type.code}
             item={edit}
             onSaved={() => {
+              setNotice("Đã lưu giá trị danh mục.");
               setCreate(false);
               setEdit(undefined);
               items.reload();
@@ -1172,7 +1161,7 @@ function CatalogTypeForm({ onSaved }: { onSaved: () => void }) {
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
       {["code", "name", "description"].map((name, i) => (
-        <label key={name} className="block text-sm">
+        <label key={name} className="block text-body">
           {["Mã loại", "Tên loại", "Mô tả loại"][i]}
           <input
             required={i < 2}
@@ -1219,7 +1208,7 @@ function CatalogItemForm({
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
       {!item && (
-        <label className="block text-sm">
+        <label className="block text-body">
           Mã giá trị
           <input
             name="code"
@@ -1229,7 +1218,7 @@ function CatalogItemForm({
           />
         </label>
       )}
-      <label className="block text-sm">
+      <label className="block text-body">
         Tên giá trị
         <input
           required
@@ -1239,7 +1228,7 @@ function CatalogItemForm({
           defaultValue={item?.name}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Giá trị
         <input
           name="value"
@@ -1248,7 +1237,7 @@ function CatalogItemForm({
           defaultValue={item?.value ?? ""}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Thứ tự
         <input
           required
@@ -1260,7 +1249,7 @@ function CatalogItemForm({
         />
       </label>
       {item && (
-        <label className="flex gap-2 text-sm">
+        <label className="flex gap-2 text-body">
           <input type="checkbox" name="active" defaultChecked={item.isActive} />
           Đang hoạt động
         </label>
@@ -1272,6 +1261,7 @@ function CatalogItemForm({
   );
 }
 export function AdminSettings({ embedded = false }: { embedded?: boolean } = {}) {
+  const [notice, setNotice] = useState("");
   const settings = useResource(
       useCallback((s: AbortSignal) => api.getSettings(s), []),
     ),
@@ -1292,6 +1282,7 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
           action={createAction}
         />
       )}
+      {notice && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
       <Panel title="Cấu hình nghiệp vụ" action={embedded ? createAction : undefined}>
         <Result resource={settings}>
           {(r) => (
@@ -1300,15 +1291,15 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
                 r.map((v) => (
                   <button
                     key={v.key}
-                    className="mb-3 block w-full rounded-lg border border-slate-100 p-4 text-left"
+                    className="admin-configuration-item block w-full"
                     onClick={() => setSelected(v)}
                   >
-                    <strong className="text-sm text-navy">
+                    <strong className="text-body text-foreground">
                       {v.description ?? v.key}
                     </strong>
-                    <p className="mt-1 text-xs text-slate-400">{v.key}</p>
-                    <p className="mt-2 break-all text-sm">{v.value}</p>
-                    <time className="mt-2 block text-xs text-slate-400">
+                    <p className="mt-1 text-caption text-muted-foreground">{v.key}</p>
+                    <p className="mt-2 break-all text-body">{v.value}</p>
+                    <time className="mt-2 block text-caption text-muted-foreground">
                       {new Date(v.updatedAt).toLocaleString("vi-VN")}
                     </time>
                   </button>
@@ -1319,7 +1310,7 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
             </>
           )}
         </Result>
-        <p className="mt-4 text-sm text-slate-500">
+        <p className="mt-4 text-body text-muted-foreground">
           Kết nối database và khóa dịch vụ do môi trường triển khai quản lý.
         </p>
       </Panel>
@@ -1334,6 +1325,7 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
           <SettingForm
             setting={selected}
             onSaved={() => {
+              setNotice("Đã lưu cấu hình nghiệp vụ.");
               setCreate(false);
               setSelected(undefined);
               settings.reload();
@@ -1373,7 +1365,7 @@ function SettingForm({
       }}
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <label className="block text-sm">
+      <label className="block text-body">
         Khóa cấu hình
         <input
           required
@@ -1384,7 +1376,7 @@ function SettingForm({
           defaultValue={setting?.key}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Giá trị cấu hình
         <textarea
           required
@@ -1394,7 +1386,7 @@ function SettingForm({
           defaultValue={setting?.value}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Mô tả cấu hình
         <input
           name="description"
@@ -1442,14 +1434,14 @@ export function AdminAudit() {
         <CollectionMetrics
           values={[
             ["Audit phù hợp", rows.data.total],
-            ["Bản ghi · trang", rows.data.items.length],
+            ["Bản ghi, trang", rows.data.items.length],
             [
-              "Actor · trang",
+              "Actor, trang",
               new Set(rows.data.items.map((v) => v.actorId).filter(Boolean))
                 .size,
             ],
             [
-              "Loại đối tượng · trang",
+              "Loại đối tượng, trang",
               new Set(rows.data.items.map((v) => v.targetType).filter(Boolean))
                 .size,
             ],
@@ -1457,7 +1449,7 @@ export function AdminAudit() {
           note="Số liệu theo bộ lọc; phân bố bên phải chỉ tính các bản ghi trên trang hiện tại."
         />
       )}
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="admin-collection-layout">
         <Panel title="Tra cứu">
           <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <UserPicker
@@ -1468,7 +1460,7 @@ export function AdminAudit() {
                 setPage(1);
               }}
             />
-            <label className="text-sm">
+            <label className="text-body">
               Hành động
               <input
                 className={inputClass}
@@ -1479,7 +1471,7 @@ export function AdminAudit() {
                   setPage(1);
                 }}
               />
-            </label>            <label className="text-sm">
+            </label>            <label className="text-body">
               Từ thời điểm
               <input
                 type="datetime-local"
@@ -1491,7 +1483,7 @@ export function AdminAudit() {
                 }}
               />
             </label>
-            <label className="text-sm">
+            <label className="text-body">
               Đến thời điểm
               <input
                 type="datetime-local"
@@ -1509,8 +1501,8 @@ export function AdminAudit() {
               <>
                 {r.items.length ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-50">
+                    <table className="w-full text-left text-body">
+                      <thead className="bg-muted/50">
                         <tr>
                           {[
                             "Thời điểm",
@@ -1527,7 +1519,7 @@ export function AdminAudit() {
                       </thead>
                       <tbody>
                         {r.items.map((v) => (
-                          <tr key={v.id} className="border-b border-slate-100">
+                          <tr key={v.id} className="border-b border-border">
                             <td className="p-3 whitespace-nowrap">
                               {new Date(v.createdAt).toLocaleString("vi-VN")}
                             </td>
@@ -1539,14 +1531,14 @@ export function AdminAudit() {
                               <span className="block max-w-40 truncate">
                                 {v.actorId ?? "Hệ thống"}
                               </span>
-                              <small className="text-slate-400">
+                              <small className="text-muted-foreground">
                                 {v.ip ?? "Chưa ghi nhận"}
                               </small>
                             </td>
                             <td className="p-3">
                               <button
                                 aria-label={"Chi tiết audit " + v.id}
-                                className="text-blue-600"
+                                className="text-primary"
                                 onClick={() => setSelected(v)}
                               >
                                 Chi tiết
@@ -1580,10 +1572,10 @@ export function AdminAudit() {
       </div>
       {selected && (
         <Modal title="Chi tiết audit" onClose={() => setSelected(undefined)}>
-          <dl className="space-y-3 text-sm">
+          <dl className="space-y-3 text-body">
             {Object.entries(selected).map(([key, value]) => (
               <div key={key}>
-                <dt className="font-semibold text-slate-500">{key}</dt>
+                <dt className="font-semibold text-muted-foreground">{key}</dt>
                 <dd className="mt-1 whitespace-pre-wrap break-all">
                   {value ?? "Chưa ghi nhận"}
                 </dd>
@@ -1617,18 +1609,18 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
         <CollectionMetrics
           values={[
             ["Hoạt động phù hợp", rows.data.total],
-            ["Sự kiện · trang", rows.data.items.length],
+            ["Sự kiện, trang", rows.data.items.length],
             [
-              "Module · trang",
+              "Module, trang",
               new Set(rows.data.items.map((v) => v.module)).size,
             ],
             [
-              "Actor · trang",
+              "Actor, trang",
               new Set(rows.data.items.map((v) => v.actorId).filter(Boolean))
                 .size,
             ],
             [
-              "Loại hành động · trang",
+              "Loại hành động, trang",
               new Set(rows.data.items.map((v) => v.action)).size,
             ],
           ]}
@@ -1637,7 +1629,7 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
       )}
       <div
         className={
-          compact ? "" : "grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]"
+          compact ? "" : "admin-collection-layout"
         }
       >
         <Panel title="Dòng hoạt động">
@@ -1671,18 +1663,18 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
                     {r.items.map((v) => (
                       <li
                         key={v.id}
-                        className="border-l-2 border-blue-200 pl-4"
+                        className="border-l border-primary/20 pl-4"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <Badge>{v.module}</Badge>
-                          <time className="text-xs text-slate-400">
+                          <time className="text-caption text-muted-foreground">
                             {new Date(v.createdAt).toLocaleString("vi-VN")}
                           </time>
                         </div>
-                        <p className="mt-2 text-sm font-semibold text-navy">
+                        <p className="mt-2 text-body font-semibold text-foreground">
                           {v.summary ?? v.action}
                         </p>
-                        <p className="mt-1 text-xs text-slate-400">
+                        <p className="mt-1 text-caption text-muted-foreground">
                           {v.action}
                         </p>
                       </li>
@@ -1769,7 +1761,7 @@ export function AdminServices() {
                   "AI Provider",
                   h.ai,
                   h.aiProvider
-                    ? `${h.aiProvider} · ${h.aiModel ?? "Chưa cấu hình model"}`
+                    ? `${h.aiProvider}, ${h.aiModel ?? "Chưa cấu hình model"}`
                     : "Chưa cấu hình dịch vụ AI",
                 ],
               ].map(([name, status, description]) => {
@@ -1777,14 +1769,14 @@ export function AdminServices() {
                 return (
                   <Panel key={name} title={name}>
                     <StatusDot tone={conf.tone}>{conf.label}</StatusDot>
-                    <p className="mt-3 break-words text-sm text-slate-500">
+                    <p className="mt-3 break-words text-body text-muted-foreground">
                       {description}
                     </p>
                   </Panel>
                 );
               })}
             </div>
-            <p className="mt-5 text-xs text-slate-400">
+            <p className="mt-5 text-caption text-muted-foreground">
               Kiểm tra lúc {new Date(h.timestamp).toLocaleString("vi-VN")}. AI
               configured chỉ xác nhận cấu hình hiện diện, chưa phải kiểm tra
               truy vấn Gemini.

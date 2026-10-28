@@ -53,15 +53,15 @@ export function RecruitmentRounds() {
           </button>
         }
       />
-      <div className="flex flex-wrap items-center gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-wrap items-center gap-4 border-b border-border pb-4">
         <Link
-          className="text-sm font-semibold text-blue-700"
+          className="text-body font-semibold text-primary"
           href="/apply"
           target="_blank"
         >
           Mở cổng nộp CV ↗
         </Link>
-        <span className="text-xs text-slate-500">
+        <span className="text-caption text-muted-foreground">
           Chỉ nghề đang tuyển và đủ 10 câu hỏi theo nhóm mới mở được lịch.
         </span>
       </div>
@@ -70,7 +70,7 @@ export function RecruitmentRounds() {
       ) : list.error ? (
         <ErrorState error={list.error} onRetry={list.reload} />
       ) : list.data?.length ? (
-        <label className="block max-w-xl text-sm font-medium">
+        <label className="block max-w-xl text-body font-medium">
           Đợt tuyển
           <select
             className={inputClass}
@@ -123,7 +123,7 @@ export function RecruitmentRounds() {
               });
             }}
           >
-            <label className="block text-sm font-medium">
+            <label className="block text-body font-medium">
               Tên đợt tuyển
               <input
                 name="name"
@@ -133,7 +133,7 @@ export function RecruitmentRounds() {
                 required
               />
             </label>
-            <label className="block text-sm font-medium">
+            <label className="block text-body font-medium">
               Bắt đầu nhận CV (giờ máy của bạn)
               <input
                 name="opens"
@@ -142,7 +142,7 @@ export function RecruitmentRounds() {
                 required
               />
             </label>
-            <label className="block text-sm font-medium">
+            <label className="block text-body font-medium">
               Hạn nhận CV (giờ máy của bạn)
               <input
                 name="closes"
@@ -151,7 +151,7 @@ export function RecruitmentRounds() {
                 required
               />
             </label>
-            <p className="text-xs leading-5 text-slate-500">
+            <p className="text-caption leading-5 text-muted-foreground">
               Đợt được lưu ở trạng thái nháp. Thêm ít nhất một khung giờ đủ điều
               kiện rồi mở nhận hồ sơ.
             </p>
@@ -195,13 +195,13 @@ function RoundWorkspace({
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-navy">{round.name}</h2>
-          <p className="mt-2 text-xs text-slate-500">
+          <h2 className="text-section font-semibold text-foreground">{round.name}</h2>
+          <p className="mt-2 text-caption text-muted-foreground">
             Mã đợt:{" "}
             <span className="select-all break-all font-mono">{round.id}</span>
           </p>
-          <p className="mt-2 text-sm text-slate-600">
-            {new Date(round.opensAt).toLocaleString("vi-VN")} —{" "}
+          <p className="mt-2 text-body text-muted-foreground">
+            {new Date(round.opensAt).toLocaleString("vi-VN")} đến{" "}
             {new Date(round.closesAt).toLocaleString("vi-VN")}
           </p>
         </div>
@@ -222,6 +222,7 @@ function RoundWorkspace({
                   id,
                   round.status === "open" ? "closed" : "open",
                 );
+                setNotice(round.status === "open" ? "Đã đóng nhận CV cho đợt này." : "Đã mở nhận CV cho đợt này.");
                 reload();
               })
             }
@@ -231,32 +232,43 @@ function RoundWorkspace({
         </div>
       </div>
       <div
-        className="flex gap-6 border-b border-slate-200"
+        className="flex gap-6 border-b border-border"
         role="tablist"
         aria-label="Quản lý đợt tuyển"
       >
         {(["schedule", "applications"] as const).map((value) => (
           <button
-            className={`border-b-2 py-3 text-sm font-semibold ${tab === value ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500"}`}
+            className={`border-b-2 py-3 text-body font-semibold ${tab === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
             role="tab"
+            id={`round-${id}-tab-${value}`}
+            aria-controls={`round-${id}-panel-${value}`}
+            tabIndex={tab === value ? 0 : -1}
             aria-selected={tab === value}
             key={value}
             onClick={() => setTab(value)}
+            onKeyDown={event => {
+              if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+              event.preventDefault();
+              const next = event.key === "Home" ? "schedule" : event.key === "End" ? "applications" : value === "schedule" ? "applications" : "schedule";
+              setTab(next);
+              document.getElementById(`round-${id}-tab-${next}`)?.focus();
+            }}
           >
             {value === "schedule" ? "Khung giờ phỏng vấn" : "Hồ sơ ứng tuyển"}
           </button>
         ))}
       </div>
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-body text-success">
           {notice}
         </p>
       )}
       {action.error ? <ErrorState error={action.error} /> : null}
+      <div role="tabpanel" id={`round-${id}-panel-${tab}`} aria-labelledby={`round-${id}-tab-${tab}`} tabIndex={0}>
       {tab === "schedule" ? (
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="max-w-xl text-sm leading-6 text-slate-600">
+            <p className="max-w-xl text-body leading-6 text-muted-foreground">
               Agent chỉ chọn trong các lịch đang mở và còn chỗ. Mặc định cần 60
               phút chuẩn bị; email đăng nhập gửi trước 30 phút.
             </p>
@@ -269,18 +281,18 @@ function RoundWorkspace({
             </button>
           </div>
           {round.slots.length ? (
-            <ul className="divide-y divide-slate-200 border-y border-slate-200">
+            <ul className="divide-y divide-border border-y border-border">
               {round.slots.map((slot) => (
                 <li
                   key={slot.id}
                   className="flex flex-wrap items-center justify-between gap-4 py-4"
                 >
                   <div>
-                    <p className="font-semibold text-navy">
+                    <p className="font-semibold text-foreground">
                       {roles.data?.find((r) => r.code === slot.roleCode)
                         ?.label ?? slot.roleCode}
                     </p>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-body text-muted-foreground">
                       {new Intl.DateTimeFormat("vi-VN", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -288,17 +300,17 @@ function RoundWorkspace({
                       }).format(new Date(slot.startsAt))}{" "}
                       · {slot.timezone}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-caption text-muted-foreground">
                       Chuẩn bị ≥{slot.minimumPreparationMinutes} phút · mail
                       đăng nhập trước {slot.credentialsLeadMinutes} phút
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <p className="text-sm tabular-nums">
+                    <p className="text-body tabular-nums">
                       <strong>{slot.booked}</strong> / {slot.capacity} chỗ
                     </p>
                     <button
-                      className="text-sm font-semibold text-blue-700 disabled:text-slate-400"
+                      className="text-body font-semibold text-primary disabled:text-muted-foreground"
                       disabled={slot.status !== "open" || action.busy}
                       onClick={() =>
                         void action.run(async () => {
@@ -349,7 +361,7 @@ function RoundWorkspace({
                   });
                 }}
               >
-                <label className="text-sm font-medium sm:col-span-2">
+                <label className="text-body font-medium sm:col-span-2">
                   Nghề đang tuyển
                   <select name="role" className={inputClass} required>
                     <option value="">Chọn nghề đủ ngân hàng câu hỏi</option>
@@ -360,7 +372,7 @@ function RoundWorkspace({
                     ))}
                   </select>
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Bắt đầu (giờ máy của bạn)
                   <input
                     name="start"
@@ -369,7 +381,7 @@ function RoundWorkspace({
                     required
                   />
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Kết thúc (giờ máy của bạn)
                   <input
                     name="end"
@@ -378,7 +390,7 @@ function RoundWorkspace({
                     required
                   />
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Múi giờ hiển thị
                   <input
                     name="timezone"
@@ -387,7 +399,7 @@ function RoundWorkspace({
                     required
                   />
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Số ứng viên tối đa
                   <input
                     name="capacity"
@@ -399,7 +411,7 @@ function RoundWorkspace({
                     required
                   />
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Chuẩn bị tối thiểu (phút)
                   <input
                     name="prepare"
@@ -411,7 +423,7 @@ function RoundWorkspace({
                     required
                   />
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Gửi mail đăng nhập trước (phút)
                   <input
                     name="lead"
@@ -440,6 +452,7 @@ function RoundWorkspace({
       ) : (
         <RoundCandidates roundId={id} slots={round.slots} />
       )}
+      </div>
     </section>
   );
 }
@@ -480,18 +493,18 @@ function RoundCandidates({
   return (
     <div className="space-y-5">
       <div className="flex justify-between">
-        <p className="text-sm text-slate-600">
+        <p className="text-body text-muted-foreground">
           CV chỉ hiển thị trong phạm vi đợt tuyển bạn quản lý.
         </p>
         <button
-          className="text-sm font-semibold text-blue-700"
+          className="text-body font-semibold text-primary"
           onClick={state.reload}
         >
           Làm mới
         </button>
       </div>
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-body text-success">
           {notice}
         </p>
       )}
@@ -500,18 +513,18 @@ function RoundCandidates({
       ) : state.error ? (
         <ErrorState error={state.error} onRetry={state.reload} />
       ) : state.data?.items.length ? (
-        <ul className="divide-y divide-slate-200 border-y border-slate-200">
+        <ul className="divide-y divide-border border-y border-border">
           {state.data.items.map((candidate) => (
             <li
               key={candidate.id}
               className="flex flex-wrap items-center justify-between gap-3 py-4"
             >
               <div>
-                <p className="font-semibold text-navy">{candidate.fullName}</p>
-                <p className="break-all text-sm text-slate-500">
+                <p className="font-semibold text-foreground">{candidate.fullName}</p>
+                <p className="break-all text-body text-muted-foreground">
                   {candidate.email}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-caption text-muted-foreground">
                   {applicationLabels[candidate.status] ?? candidate.status}
                   {candidate.matchedRole ? ` · ${candidate.matchedRole}` : ""}
                   {candidate.lastCode ? ` · ${candidate.lastCode}` : ""}
@@ -546,11 +559,11 @@ function RoundCandidates({
         />
       )}
       {selected && (
-        <section className="space-y-5 border-t border-slate-200 pt-6">
+        <section className="space-y-5 border-t border-border pt-6">
           <div className="flex justify-between">
             <h2 className="font-semibold">Chi tiết hồ sơ</h2>
             <button
-              className="text-sm text-blue-700"
+              className="text-body text-primary"
               onClick={() => setSelected(null)}
             >
               Đóng chi tiết
@@ -559,13 +572,13 @@ function RoundCandidates({
           <ApplicationTimeline application={selected} showLoginLink={false} />
           <InterviewRebooking roundId={roundId} application={selected} slots={slots} onChanged={refreshSelected}/>
           <CredentialRecovery roundId={roundId} applicationId={selected.id} slots={slots} onChanged={refreshSelected}/>
-          <details className="space-y-4 border-y border-slate-200 py-4">
-            <summary className="cursor-pointer text-sm font-semibold text-blue-700">
+          <details className="space-y-4 border-y border-border py-4">
+            <summary className="cursor-pointer text-body font-semibold text-primary">
               Phân tích CV & bằng chứng của Agent
             </summary>
             {selected.analysis.facts ? (
-              <div className="space-y-4 text-sm leading-6">
-                <p className="text-slate-500">
+              <div className="space-y-4 text-body leading-6">
+                <p className="text-muted-foreground">
                   Độ tin cậy phân tích:{" "}
                   {Math.round(selected.analysis.facts.confidence * 100)}% · đây
                   là nhận định của Agent, không phải điểm phỏng vấn.
@@ -575,14 +588,14 @@ function RoundCandidates({
                     <li key={i}>
                       <p className="font-semibold">
                         {fact.skill}{" "}
-                        <span className="font-normal text-slate-500">
+                        <span className="font-normal text-muted-foreground">
                           ·{" "}
                           {fact.ref
                             .replace("page:", "Trang ")
                             .replace("paragraph:", "Đoạn ")}
                         </span>
                       </p>
-                      <blockquote className="mt-1 border-l-2 border-slate-200 pl-3 text-slate-600">
+                      <blockquote className="mt-1 border-l border-border pl-3 text-muted-foreground">
                         {fact.quote}
                       </blockquote>
                     </li>
@@ -599,7 +612,7 @@ function RoundCandidates({
                   </div>
                 )}
                 {selected.analysis.match && (
-                  <p className="border-t border-slate-200 pt-3">
+                  <p className="border-t border-border pt-3">
                     Đề xuất nghề:{" "}
                     {selected.analysis.match.roleCode ?? "Chưa đủ bằng chứng"} ·
                     độ tin cậy{" "}
@@ -609,7 +622,7 @@ function RoundCandidates({
                 )}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">
+              <p className="text-body text-muted-foreground">
                 Chưa có kết quả phân tích. Chỉ hồ sơ đã xác minh mới được Agent
                 xử lý.
               </p>
@@ -659,7 +672,7 @@ function RoundCandidates({
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
-              className="text-sm font-semibold text-blue-700"
+              className="text-body font-semibold text-primary"
               disabled={action.busy}
               onClick={() => void action.run(resendAccess)}
             >
@@ -682,12 +695,12 @@ function RoundCandidates({
                 if (!action.busy) setCredentialResend(false);
               }}
             >
-              <p className="mb-4 text-sm leading-6 text-slate-600">
+              <p className="mb-4 text-body leading-6 text-muted-foreground">
                 Chỉ xếp lại email chưa gửi thành công, còn hạn và còn payload
                 bảo vệ. Mật khẩu giữ nguyên. Email chứa mật khẩu đã được SMTP
                 nhận sẽ xóa payload và không thể khôi phục mật khẩu cũ.
               </p>
-              <label className="mb-4 flex gap-2 text-sm">
+              <label className="mb-4 flex gap-2 text-body">
                 <input
                   type="checkbox"
                   checked={acknowledgeUncertain}
@@ -736,7 +749,7 @@ function RoundCandidates({
                 });
               }}
             >
-              <label className="min-w-0 flex-1 text-sm font-medium">
+              <label className="min-w-0 flex-1 text-body font-medium">
                 Chuyển sang khung giờ đang mở
                 <select name="slot" className={inputClass} required>
                   <option value="">Chọn lịch mới</option>
@@ -767,7 +780,7 @@ function RoundCandidates({
                 if (!action.busy) setConfirmCancel(false);
               }}
             >
-              <p className="mb-4 text-sm leading-6 text-slate-600">
+              <p className="mb-4 text-body leading-6 text-muted-foreground">
                 Email chưa gửi sẽ bị vô hiệu. Email đã được SMTP nhận không thể
                 thu hồi. Nếu đang gửi mail, hệ thống yêu cầu chờ để bảo đảm nhất
                 quán.

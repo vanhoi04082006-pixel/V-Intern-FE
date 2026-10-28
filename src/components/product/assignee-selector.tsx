@@ -191,10 +191,10 @@ export function AssigneeSelector({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium">
+      <label className="block text-body font-medium">
         {label}
         <span className="relative mt-1 block">
-          <Search size={15} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={15} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             aria-label="Tìm theo tên hoặc email"
             placeholder="Tìm theo tên hoặc email..."
@@ -211,7 +211,7 @@ export function AssigneeSelector({
             <button
               type="button"
               aria-label="Xóa tìm kiếm"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:text-navy"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
               onClick={() => setQuery("")}
             >
               <X size={15} />
@@ -220,13 +220,13 @@ export function AssigneeSelector({
         </span>
       </label>
       {multiple && selected.length > 0 && (
-        <div className="flex flex-wrap gap-1.5" aria-label="Đã chọn">
+        <div className="flex flex-wrap gap-2" aria-label="Đã chọn">
           {selected.map((id) => {
             const c = loaded.find((x) => x.userId === id);
             return (
-              <span key={id} className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
+              <span key={id} className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-caption font-semibold text-primary">
                 {c?.displayName ?? id.slice(0, 8)}
-                <button type="button" aria-label={`Bỏ chọn ${c?.displayName ?? id}`} className="rounded-full hover:bg-blue-200" onClick={() => pick(id)}>
+                <button type="button" aria-label={`Bỏ chọn ${c?.displayName ?? id}`} className="rounded-full hover:bg-accent" onClick={() => pick(id)}>
                   <X size={12} />
                 </button>
               </span>
@@ -235,11 +235,11 @@ export function AssigneeSelector({
         </div>
       )}
       {loading ? (
-        <p role="status" className="flex items-center gap-2 p-3 text-sm text-slate-500">
+        <p role="status" className="flex items-center gap-2 p-3 text-body text-muted-foreground">
           <Loader2 size={16} className="animate-spin" /> Đang tải danh sách ứng viên…
         </p>
       ) : error ? (
-        <p role="alert" className="p-3 text-sm text-rose-600">
+        <p role="alert" className="p-3 text-body text-destructive">
           {errorMessage(error)}{" "}
           <button type="button" className="underline" onClick={() => setReloadKey((k) => k + 1)}>
             Thử lại
@@ -247,7 +247,7 @@ export function AssigneeSelector({
         </p>
       ) : results.length ? (
         <>
-          <ul id="assignee-results" role="listbox" aria-label="Kết quả ứng viên" className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-blue-100/70 p-1.5">
+          <ul id="assignee-results" role="listbox" aria-label="Kết quả ứng viên" className="max-h-64 space-y-1 overflow-y-auto rounded-control border border-primary/70 p-1.5">
             {results.slice(0, 50).map((c, i) => {
               const isActive = i === active;
               const isSelected = multiple ? selected.includes(c.userId) : selected[0] === c.userId;
@@ -266,7 +266,7 @@ export function AssigneeSelector({
                       pick(c.userId);
                     }
                   }}
-                  className={`flex cursor-pointer items-center gap-3 rounded-md p-2.5 text-sm ${isActive ? "bg-blue-50 outline outline-1 outline-blue-300" : ""} ${isSelected ? "ring-1 ring-blue-400" : ""}`}
+                  className={`flex cursor-pointer items-center gap-3 rounded-md p-2.5 text-body ${isActive ? "bg-accent outline outline-1 outline-ring" : ""} ${isSelected ? "ring-1 ring-ring" : ""}`}
                 >
                   {multiple && (
                     <input
@@ -275,34 +275,34 @@ export function AssigneeSelector({
                       aria-label={c.displayName ?? c.userId}
                       checked={isSelected}
                       readOnly
-                      className="h-4 w-4 accent-blue-600"
+                      className="h-4 w-4 accent-primary"
                     />
                   )}
                   <span className="min-w-0 flex-1">
-                    <strong className="block truncate text-navy">{c.displayName ?? "Chưa có tên"}</strong>
-                    <span className="block truncate text-[11px] text-slate-500">{c.email ?? "Chưa có email"}</span>
+                    <strong className="block truncate text-foreground">{c.displayName ?? "Chưa có tên"}</strong>
+                    <span className="block truncate text-caption text-muted-foreground">{c.email ?? "Chưa có email"}</span>
                   </span>
-                  <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-600">
+                  <span className="shrink-0 rounded bg-muted px-2 py-1 text-caption font-medium text-muted-foreground">
                     {statusLabels[c.status] ?? c.status}
                   </span>
                 </li>
               );
             })}
           </ul>
-          <p className="flex items-center justify-between text-[11px] text-slate-500">
+          <p className="flex items-center justify-between text-caption text-muted-foreground">
             <span>
               Hiển thị {Math.min(results.length, 50)}{results.length > 50 ? "+" : ""} / {results.length} phù hợp · Đã tải {loaded.length}/{total}
             </span>
             {(pagesLeft || loadingMore) && (
-              <button type="button" disabled={loadingMore} className="font-semibold text-blue-600 hover:underline disabled:opacity-50" onClick={() => void loadMore()}>
+              <button type="button" disabled={loadingMore} className="font-semibold text-primary hover:underline disabled:opacity-50" onClick={() => void loadMore()}>
                 {loadingMore ? "Đang tải…" : "Tải thêm"}
               </button>
             )}
           </p>
-          <p className="text-[11px] text-slate-400">Hệ thống kiểm tra điều kiện phân công khi lưu; ứng viên chưa đạt sẽ bị từ chối.</p>
+          <p className="text-caption text-muted-foreground">Hệ thống kiểm tra điều kiện phân công khi lưu; ứng viên chưa đạt sẽ bị từ chối.</p>
         </>
       ) : (
-        <p role="status" className="rounded-lg bg-slate-50 p-4 text-center text-sm text-slate-500">
+        <p role="status" className="rounded-control bg-background p-4 text-center text-body text-muted-foreground">
           Không tìm thấy ứng viên phù hợp{query ? ` với “${query}”` : ""}.
         </p>
       )}

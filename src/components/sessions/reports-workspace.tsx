@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 
 import { usePathname } from "next/navigation";
@@ -9,8 +10,9 @@ import {
   Empty,
   inputClass,
   buttonClass,
-  Panel,
+  
   Pager,
+  InlineAlert,
 } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
@@ -54,6 +56,7 @@ export function ReportsWorkspace({
   const [selected, setSelected] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
+  const [notice, setNotice] = useState<string | null>(null);
   const pending = useRef(false),
     requestId = useRef<string | null>(null);
   const scopeRevision = useRef(0);
@@ -72,6 +75,7 @@ export function ReportsWorkspace({
     ),
   );
   function changed() {
+    setNotice(null);
     requestId.current = null;
     scopeRevision.current += 1;
   }
@@ -81,6 +85,7 @@ export function ReportsWorkspace({
     pending.current = true;
     setBusy(true);
     setError(undefined);
+    setNotice(null);
     try {
       requestId.current ??= crypto.randomUUID();
       const saved = await createReport({
@@ -94,6 +99,7 @@ export function ReportsWorkspace({
       setPage(1);
       reports.reload();
       requestId.current = null;
+      setNotice(`Đã lưu báo cáo “${saved.title}”.`);
     } catch (err) {
       if (scopeRevision.current === revision) setError(err);
     } finally {
@@ -106,6 +112,7 @@ export function ReportsWorkspace({
     pending.current = true;
     setBusy(true);
     setError(undefined);
+    setNotice(null);
     try {
       const blob =
         format === "pdf"
@@ -121,6 +128,7 @@ export function ReportsWorkspace({
       anchor.download = `v-intern-report-${selected}.${format}`;
       anchor.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setNotice(`Đã chuẩn bị tệp ${format.toUpperCase()}. Kiểm tra mục tải xuống của trình duyệt.`);
     } catch (err) {
       setError(err);
     } finally {
@@ -212,7 +220,7 @@ export function ReportsWorkspace({
             void save();
           }}
         >
-          <label className="text-sm">
+          <label className="text-body">
             Tên báo cáo
             <input
               required
@@ -226,7 +234,7 @@ export function ReportsWorkspace({
               }}
             />
           </label>
-          <label className="text-sm">
+          <label className="text-body">
             Loại báo cáo
             <select
               className={inputClass}
@@ -244,7 +252,7 @@ export function ReportsWorkspace({
               ))}
             </select>
           </label>
-          <label className="text-sm">
+          <label className="text-body">
             Từ ngày
             <input
               type="date"
@@ -258,7 +266,7 @@ export function ReportsWorkspace({
               }}
             />
           </label>
-          <label className="text-sm">
+          <label className="text-body">
             Đến ngày
             <input
               type="date"
@@ -272,7 +280,7 @@ export function ReportsWorkspace({
               }}
             />
           </label>
-          <p className="text-xs text-slate-500 sm:col-span-2">
+          <p className="text-caption text-muted-foreground sm:col-span-2">
             Chọn dự án và phiên có thành viên được phân công; có thể thu hẹp
             sprint và sinh viên. Tối đa 500 task mỗi bản chụp. Điểm chưa chấm
             giữ trống; thời gian lọc gồm cả ngày kết thúc.
@@ -291,15 +299,16 @@ export function ReportsWorkspace({
           </button>
         </form>
       </Panel>
+      {notice && <InlineAlert tone="success">{notice}</InlineAlert>}
       {Boolean(error) && (
-        <p role="alert" className="text-sm text-rose-700">
+        <p role="alert" className="text-body text-destructive">
           {errorMessage(error)}
         </p>
       )}
       </div>
       <div className={isInstructor ? "workspace-report-output" : "space-y-5"}>
       <Panel title="Báo cáo đã lưu">
-        <label className="mb-3 block text-sm">
+        <label className="mb-3 block text-body">
           Lọc loại
           <select
             className={inputClass}
@@ -331,12 +340,12 @@ export function ReportsWorkspace({
         {reports.data?.items.map((r) => (
           <button
             key={r.id}
-            className="block w-full border-b py-3 text-left text-blue-700"
+            className="block w-full border-b py-3 text-left text-primary"
             aria-pressed={selected === r.id}
             onClick={() => setSelected(r.id)}
           >
             <strong>{r.title}</strong>
-            <span className="block text-xs text-slate-500">
+            <span className="block text-caption text-muted-foreground">
               {r.projectName} · {reportLabels[r.kind]} ·{" "}
               {new Date(r.createdAt).toLocaleString("vi-VN")}
             </span>
@@ -360,12 +369,12 @@ export function ReportsWorkspace({
           {detail.data && (
             <>
               <h3 className="font-semibold">{detail.data.title}</h3>
-              <p className="mb-4 text-sm text-slate-500">
+              <p className="mb-4 text-body text-muted-foreground">
                 {detail.data.snapshot.projectName} ·{" "}
                 {new Date(detail.data.createdAt).toLocaleString("vi-VN")}
               </p>
-              <div className="overflow-x-auto">
-                <table className="workspace-table w-full text-left text-sm">
+              <div className="overflow-x-auto" role="region" aria-label="Thành viên trong bản chụp báo cáo" tabIndex={0}>
+                <table className="workspace-table w-full text-left text-body">
                   <thead>
                     <tr>
                       {[

@@ -37,23 +37,23 @@ export function PerformanceSummary({
           return (
             <li
               key={metric.id}
-              className="flex min-w-0 flex-col rounded-lg border border-slate-100 bg-slate-50/70 p-3.5"
+              className="flex min-w-0 flex-col rounded-control border border-border bg-background p-4"
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "grid size-8 shrink-0 place-items-center rounded-lg bg-white",
+                    "grid size-8 shrink-0 place-items-center rounded-control bg-card",
                     toneStyle.icon
                   )}
                 >
                   <MetricIcon className="size-4" />
                 </span>
-                <p className="min-w-0 truncate text-xs font-medium text-slate-500">
+                <p className="min-w-0 truncate text-caption font-medium text-muted-foreground">
                   {metric.label}
                 </p>
               </div>
-              <p className="mt-2 text-lg font-bold leading-tight tracking-tight text-navy">
+              <p className="mt-2 text-section font-bold leading-tight tracking-tight text-foreground">
                 {metric.value}
               </p>
               {typeof metric.percent === "number" ? (
@@ -66,8 +66,8 @@ export function PerformanceSummary({
               {metric.note ? (
                 <p
                   className={cn(
-                    "mt-2 text-xs font-semibold",
-                    noteToneStyle?.icon ?? "text-slate-500"
+                    "mt-2 text-caption font-semibold",
+                    noteToneStyle?.icon ?? "text-muted-foreground"
                   )}
                 >
                   {metric.note}

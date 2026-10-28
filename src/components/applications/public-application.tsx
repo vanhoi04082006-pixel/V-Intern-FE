@@ -33,50 +33,50 @@ export function ApplicationTimeline({
   return (
     <section className="space-y-5" aria-label="Tiến trình hồ sơ">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-700">
-          Hồ sơ · phiên bản {application.revision}
+        <p className="text-caption font-semibold text-primary">
+          Hồ sơ, phiên bản {application.revision}
         </p>
-        <h2 className="mt-2 text-2xl font-semibold text-navy">
+        <h2 className="mt-2 text-page font-semibold text-foreground">
           {application.fullName}
         </h2>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-muted-foreground">
           {applicationLabels[application.status] ?? application.status}
         </p>
       </div>
       {booking && booking.status === "confirmed" && (
-        <div className="border-l-4 border-blue-500 bg-blue-50/60 p-5">
+        <div className="border-l border-primary bg-info-subtle p-5">
           <h3 className="font-semibold">{booking.roleName}</h3>
-          <p className="mt-2 text-lg font-medium">
+          <p className="mt-2 text-section font-medium">
             {new Intl.DateTimeFormat("vi-VN", {
               dateStyle: "full",
               timeStyle: "short",
               timeZone: booking.timezone,
             }).format(new Date(booking.startsAt))}
           </p>
-          <p className="mt-1 text-sm text-slate-600">
-            Múi giờ {booking.timezone} · Lịch lần {booking.version}
+          <p className="mt-1 text-body text-muted-foreground">
+            Múi giờ {booking.timezone}, Lịch lần {booking.version}
           </p>
-          <p className="mt-3 text-sm leading-6">
+          <p className="mt-3 text-body leading-6">
             Email lịch và thông tin đăng nhập được gửi riêng. Đăng nhập bằng tài
             khoản trong email; đổi mật khẩu tạm trước khi phỏng vấn. Đến trễ từ
             15 phút khi chưa bắt đầu: chờ đợt tiếp theo.
           </p>
           {showLoginLink && (
             <Link
-              className="mt-4 inline-block font-semibold text-blue-700"
+              className="mt-4 inline-block font-semibold text-primary"
               href="/login"
             >
-              Đi tới đăng nhập →
+              Đi tới đăng nhập
             </Link>
           )}
         </div>
       )}
-      <ol className="space-y-0 border-l border-slate-200 pl-5">
+      <ol className="space-y-0 border-l border-border pl-5">
         {application.timeline.map((event, i) => (
           <li className="relative pb-5" key={`${event.kind}-${i}`}>
-            <span className="absolute -left-[25px] top-2 size-2 rounded-full bg-blue-500" />
-            <p className="text-sm leading-6 text-slate-700">{event.message}</p>
-            <time className="text-xs text-slate-400">
+            <span className="absolute -left-6 top-2 size-2 rounded-full bg-info-subtle0" />
+            <p className="text-body leading-6 text-foreground">{event.message}</p>
+            <time className="text-caption text-muted-foreground">
               {new Date(event.createdAt).toLocaleString("vi-VN")}
             </time>
           </li>
@@ -143,17 +143,17 @@ export function PublicApplication() {
     };
   }, []);
   return (
-    <main className="min-h-screen bg-[#f5f7fc] px-4 py-10 sm:px-8">
-      <div className="mx-auto max-w-4xl space-y-8">
-        <nav className="flex items-center justify-between text-sm">
+    <main className="app-surface min-h-dvh bg-background px-4 py-6 sm:px-8">
+      <div className="public-application-layout space-y-8">
+        <nav className="flex items-center justify-between text-body">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-blue-700"
+            className="text-section font-bold tracking-tight text-primary"
           >
             V-Intern
           </Link>
-          <Link href="/login" className="font-medium text-slate-600">
-            Đã có tài khoản? Đăng nhập →
+          <Link href="/login" className="font-medium text-muted-foreground">
+            Đã có tài khoản? Đăng nhập
           </Link>
         </nav>
         <PageTitle
@@ -168,7 +168,7 @@ export function PublicApplication() {
             onRetry={() => window.location.reload()}
           />
         ) : application ? (
-          <div className="space-y-6 bg-white p-6 sm:p-8">
+          <div className="space-y-6 bg-card p-6 sm:p-8">
             <ApplicationTimeline application={application} />
             <div className="flex flex-wrap items-center gap-3">
               <button
@@ -204,7 +204,7 @@ export function PublicApplication() {
               application.status,
             ) && (
               <form
-                className="space-y-3 border-t border-slate-200 pt-5"
+                className="space-y-3 border-t border-border pt-5"
                 onSubmit={(event) => {
                   event.preventDefault();
                   const form = new FormData(event.currentTarget),
@@ -216,7 +216,7 @@ export function PublicApplication() {
                 }}
               >
                 <h3 className="font-semibold">Bổ sung CV</h3>
-                <label className="block text-sm">
+                <label className="block text-body">
                   CV PDF/DOCX, tối đa 5 MB
                   <input
                     name="cv"
@@ -233,7 +233,7 @@ export function PublicApplication() {
             )}
           </div>
         ) : (
-          <section className="bg-white p-6 sm:p-8">
+          <section className="bg-card p-6 sm:p-8">
             {rounds.loading ? (
               <LoadingState />
             ) : rounds.error ? (
@@ -258,18 +258,18 @@ export function PublicApplication() {
                   });
                 }}
               >
-                <label className="text-sm font-medium sm:col-span-2">
+                <label className="text-body font-medium sm:col-span-2">
                   Đợt ứng tuyển
                   <select name="roundId" className={inputClass} required>
                     {rounds.data.map((r) => (
                       <option key={r.id} value={r.id}>
-                        {r.name} · nhận đến{" "}
+                        {r.name}, nhận đến{" "}
                         {new Date(r.closesAt).toLocaleDateString("vi-VN")}
                       </option>
                     ))}
                   </select>
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Họ và tên
                   <input
                     name="fullName"
@@ -280,7 +280,7 @@ export function PublicApplication() {
                     autoComplete="name"
                   />
                 </label>
-                <label className="text-sm font-medium">
+                <label className="text-body font-medium">
                   Email nhận lịch
                   <input
                     name="email"
@@ -291,7 +291,7 @@ export function PublicApplication() {
                     autoComplete="email"
                   />
                 </label>
-                <label className="text-sm font-medium sm:col-span-2">
+                <label className="text-body font-medium sm:col-span-2">
                   CV của bạn
                   <input
                     name="cv"
@@ -300,12 +300,12 @@ export function PublicApplication() {
                     className={inputClass}
                     required
                   />
-                  <span className="mt-2 block font-normal text-slate-500">
-                    PDF có văn bản hoặc DOCX · tối đa 5 MB. CV scan cần được
+                  <span className="mt-2 block font-normal text-muted-foreground">
+                    PDF có văn bản hoặc DOCX, tối đa 5 MB. CV scan cần được
                     xuất lại thành văn bản, hiện chưa có OCR.
                   </span>
                 </label>
-                <label className="flex items-start gap-3 text-sm leading-6 text-slate-600 sm:col-span-2">
+                <label className="flex items-start gap-3 text-body leading-6 text-muted-foreground sm:col-span-2">
                   <input
                     className="mt-1"
                     type="checkbox"
@@ -327,8 +327,8 @@ export function PublicApplication() {
                 </div>
               </form>
             )}
-            <details className="mt-7 border-t border-slate-200 pt-5">
-              <summary className="cursor-pointer text-sm font-semibold text-blue-700">
+            <details className="mt-7 border-t border-border pt-5">
+              <summary className="cursor-pointer text-body font-semibold text-primary">
                 Đã nộp CV? Nhận lại liên kết theo dõi
               </summary>
               <form
@@ -347,7 +347,7 @@ export function PublicApplication() {
                   });
                 }}
               >
-                <label className="text-sm">
+                <label className="text-body">
                   Mã đợt tuyển
                   <input
                     name="round"
@@ -356,7 +356,7 @@ export function PublicApplication() {
                     placeholder="Mã đợt trong thông tin tuyển dụng"
                   />
                 </label>
-                <label className="text-sm">
+                <label className="text-body">
                   Email đã nộp
                   <input
                     name="email"
@@ -378,13 +378,13 @@ export function PublicApplication() {
         {notice && (
           <p
             role="status"
-            className="border-l-2 border-emerald-500 pl-4 text-sm leading-6 text-emerald-900"
+            className="border-l border-success pl-4 text-body leading-6 text-success"
           >
             {notice}
           </p>
         )}
         {action.error ? <ErrorState error={action.error} /> : null}
-        <p className="text-xs leading-6 text-slate-500">
+        <p className="text-caption leading-6 text-muted-foreground">
           Hồ sơ có xác minh email riêng, không cần tạo tài khoản trước. Việc lên
           lịch chỉ diễn ra khi nghề đủ điều kiện và còn chỗ trong lịch tuyển.
         </p>

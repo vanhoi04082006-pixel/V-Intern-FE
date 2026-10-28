@@ -139,16 +139,16 @@ export function ReplacementDialog({
       {result ? (
         <div className="space-y-4" role="status">
           <CheckCircle2
-            className="text-emerald-600"
+            className="text-success"
             size={28}
             aria-hidden="true"
           />
-          <p className="text-sm leading-6 text-slate-700">
+          <p className="text-body leading-6 text-foreground">
             Đã chuyển {result.transferredTaskIds.length} nhiệm vụ còn mở.{" "}
             {result.preservedTaskCount} bài và phần lịch sử được giữ nguyên tác
             giả, bài nộp và điểm đã chấm.
           </p>
-          <p className="text-sm text-slate-600">
+          <p className="text-body text-muted-foreground">
             Quyền GitHub đang chờ đối chiếu riêng. Sinh viên đã được gửi thông
             báo trong hệ thống; trạng thái này chưa xác nhận cấp hoặc thu hồi
             quyền trên GitHub.
@@ -159,7 +159,7 @@ export function ReplacementDialog({
         </div>
       ) : (
         <div className="space-y-5" aria-busy={Boolean(busy)}>
-          <p className="text-sm leading-6 text-slate-600">
+          <p className="text-body leading-6 text-muted-foreground">
             Agent đối chiếu ứng viên đã đạt đúng vai trò và còn khả dụng. Bạn
             quyết định sau khi xem ảnh hưởng. Các bài đã chấm, tài khoản và lịch
             sử không bị xóa.
@@ -177,7 +177,7 @@ export function ReplacementDialog({
           {error && (
             <p
               role="alert"
-              className="border-l-2 border-rose-400 pl-3 text-sm text-rose-700"
+              className="border-l border-border pl-3 text-body text-destructive"
             >
               {error}
               {preview &&
@@ -188,22 +188,22 @@ export function ReplacementDialog({
             <>
               <section
                 aria-label="Tư vấn của Agent"
-                className="space-y-2 border-t border-slate-200 pt-4"
+                className="space-y-2 border-t border-border pt-4"
               >
-                <h3 className="font-semibold text-slate-900">
+                <h3 className="font-semibold text-foreground">
                   Nhận định từ bằng chứng
                 </h3>
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-body leading-6 text-muted-foreground">
                   {advice.advice.reason}
                 </p>
                 {advice.searchLimited && (
-                  <p className="text-sm text-amber-800">
+                  <p className="text-body text-warning">
                     Lượt đối chiếu giới hạn tối đa 60 hồ sơ; đây chưa phải toàn
                     bộ ứng viên.
                   </p>
                 )}
                 {advice.advice.limitations.length > 0 && (
-                  <ul className="list-disc space-y-1 pl-5 text-sm text-slate-500">
+                  <ul className="list-disc space-y-1 pl-5 text-body text-muted-foreground">
                     {advice.advice.limitations.map((item, i) => (
                       <li key={i}>{item}</li>
                     ))}
@@ -213,10 +213,10 @@ export function ReplacementDialog({
               {advice.candidates.length > 0 && (
                 <>
                   <fieldset disabled={Boolean(busy)}>
-                    <legend className="mb-2 text-sm font-semibold text-slate-900">
-                      Ứng viên thay thế · chọn một người
+                    <legend className="mb-2 text-body font-semibold text-foreground">
+                      Ứng viên thay thế, chọn một người
                     </legend>
-                    <div className="max-h-64 divide-y divide-slate-100 overflow-y-auto">
+                    <div className="max-h-64 divide-y divide-border overflow-y-auto">
                       {advice.candidates.map((c) => (
                         <label
                           key={c.userId}
@@ -225,7 +225,7 @@ export function ReplacementDialog({
                           <input
                             type="radio"
                             name="replacement-candidate"
-                            className="mt-1 accent-blue-600"
+                            className="mt-1 accent-primary"
                             checked={candidate === c.userId}
                             onChange={() => {
                               setCandidate(c.userId);
@@ -233,28 +233,28 @@ export function ReplacementDialog({
                             }}
                             value={c.userId}
                           />
-                          <span className="min-w-0 text-sm">
-                            <span className="font-semibold text-slate-900">
+                          <span className="min-w-0 text-body">
+                            <span className="font-semibold text-foreground">
                               {c.displayName}
                             </span>
                             {advice.advice.candidateId === c.userId && (
-                              <span className="ml-2 text-xs text-blue-700">
+                              <span className="ml-2 text-caption text-primary">
                                 Agent đề xuất
                               </span>
                             )}
-                            <span className="mt-1 block text-slate-500">
-                              {c.roleCode} · Tổng điểm{" "}
+                            <span className="mt-1 block text-muted-foreground">
+                              {c.roleCode}, Tổng điểm{" "}
                               {c.overallScore === null
                                 ? "chưa có"
                                 : `${c.overallScore}/100`}{" "}
-                              · Kỹ thuật{" "}
+                             , Kỹ thuật{" "}
                               {c.technicalScore === null
                                 ? "chưa có"
                                 : `${c.technicalScore}/100`}
                             </span>
                             {c.strengths.length > 0 && (
-                              <span className="mt-1 block text-slate-600">
-                                {c.strengths.join(" · ")}
+                              <span className="mt-1 block text-muted-foreground">
+                                {c.strengths.join(", ")}
                               </span>
                             )}
                           </span>
@@ -298,30 +298,30 @@ export function ReplacementDialog({
           {preview && (
             <section
               aria-label="Ảnh hưởng cần phê duyệt"
-              className="space-y-4 border-t border-slate-200 pt-5"
+              className="space-y-4 border-t border-border pt-5"
             >
               <div>
-                <h3 className="font-semibold text-slate-900">
+                <h3 className="font-semibold text-foreground">
                   {preview.document.summary.projectName} ·{" "}
                   {preview.document.summary.roleName}
                 </h3>
-                <p className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                <p className="mt-2 flex flex-wrap items-center gap-2 text-body">
                   <span>{preview.document.summary.oldInternName}</span>
                   <ArrowRight size={16} aria-hidden="true" />
                   <strong>{preview.document.summary.candidateName}</strong>
                 </p>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-body text-muted-foreground">
                 Chuyển {preview.document.taskPlan.transfers.length} nhiệm vụ còn
                 mở; {preview.document.taskPlan.preservedCount} bài và phần lịch
                 sử giữ nguyên.
               </p>
-              <ul className="max-h-64 divide-y divide-slate-100 overflow-y-auto">
+              <ul className="max-h-64 divide-y divide-border overflow-y-auto">
                 {preview.document.taskPlan.transfers.map((t) => (
-                  <li key={t.id} className="py-3 text-sm">
-                    <span className="text-xs text-slate-500">{t.code}</span>
-                    <p className="font-medium text-slate-900">{t.title}</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                  <li key={t.id} className="py-3 text-body">
+                    <span className="text-caption text-muted-foreground">{t.code}</span>
+                    <p className="font-medium text-foreground">{t.title}</p>
+                    <p className="mt-1 text-caption leading-5 text-muted-foreground">
                       Hạn cũ: {t.dueAt ? date(t.dueAt) : "Chưa đặt"}
                       <br />
                       Hạn bàn giao:{" "}
@@ -335,14 +335,14 @@ export function ReplacementDialog({
               {preview.document.warnings.map((warning, i) => (
                 <p
                   key={i}
-                  className="border-l-2 border-amber-300 pl-3 text-sm leading-6 text-amber-900"
+                  className="border-l border-border pl-3 text-body leading-6 text-warning"
                 >
                   {warning}
                 </p>
               ))}
               <p
                 role={expired ? "alert" : undefined}
-                className={`text-xs ${expired ? "text-rose-700" : "text-slate-500"}`}
+                className={`text-caption ${expired ? "text-destructive" : "text-muted-foreground"}`}
               >
                 {expired
                   ? "Bản xem trước đã hết hạn. Hãy xem trước lại trước khi duyệt."
@@ -364,10 +364,10 @@ export function ReplacementDialog({
                   onChange={(e) => setReason(e.target.value)}
                 />
               </Field>
-              <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+              <label className="flex items-start gap-3 text-body leading-6 text-foreground">
                 <input
                   type="checkbox"
-                  className="mt-1 accent-blue-600"
+                  className="mt-1 accent-primary"
                   checked={confirmed}
                   disabled={Boolean(busy) || expired}
                   onChange={(e) => setConfirmed(e.target.checked)}

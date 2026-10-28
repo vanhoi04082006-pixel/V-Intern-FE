@@ -1,7 +1,6 @@
 "use client";
 
 import type { RecruitmentRole } from "./recruitment-presentation";
-import { TagPill } from "./onboarding-primitives";
 
 /**
  * Card lựa chọn vai trò ứng tuyển — pattern radio thuần (input sr-only bên
@@ -23,8 +22,8 @@ export function RoleCard({
     <label
       className={
         checked
-          ? "flex min-w-0 cursor-pointer flex-col rounded-xl border-2 border-brand bg-blue-50/50 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-brand/40"
-          : "flex min-w-0 cursor-pointer flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-colors hover:border-brand/40 focus-within:outline-none focus-within:ring-2 focus-within:ring-brand/40"
+          ? "student-role-option flex min-w-0 cursor-pointer flex-col rounded-panel border border-primary bg-accent p-4 transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-ring"
+          : "student-role-option flex min-w-0 cursor-pointer flex-col rounded-panel border border-border bg-card p-4 transition-colors hover:border-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring"
       }
     >
       <input
@@ -38,27 +37,21 @@ export function RoleCard({
       <span className="flex items-start justify-between gap-2">
         <span
           aria-hidden="true"
-          className="grid size-11 shrink-0 place-items-center rounded-xl bg-slate-100"
+          className="grid size-11 shrink-0 place-items-center rounded-panel bg-muted"
         >
-          <Icon className="size-5 text-navy" />
+          <Icon className="size-5 text-foreground" />
         </span>
         {checked ? (
-          <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white">
+          <span className="rounded-full bg-primary px-2 py-1 text-caption font-bold text-primary-foreground">
             Đang chọn
           </span>
         ) : null}
       </span>
-      <span className="mt-3 text-[15px] font-bold text-navy">{role.label}</span>
-      <span className="mt-1 text-[13px] leading-relaxed text-slate-600">
+      <span className="mt-3 text-body font-bold text-foreground">{role.label}</span>
+      <span className="mt-1 text-small leading-relaxed text-muted-foreground">
         {role.tagline}
       </span>
-      <span className="mt-3 flex flex-wrap gap-1.5">
-        {role.tags.map((tag) => (
-          <TagPill key={tag} tone={role.tone}>
-            {tag}
-          </TagPill>
-        ))}
-      </span>
+      <span className="mt-3 text-caption text-muted-foreground">{role.tags.join(", ")}</span>
     </label>
   );
 }

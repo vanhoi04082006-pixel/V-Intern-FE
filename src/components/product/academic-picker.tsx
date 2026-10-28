@@ -60,7 +60,7 @@ export function AcademicPicker({
     ) ?? [];
   return (
     <div className={compact ? "space-y-1" : "space-y-2"}>
-      <label className="block text-sm">
+      <label className="block text-body">
         {label}
         <input
           aria-label={`Tìm ${label.toLowerCase()}`}
@@ -100,7 +100,7 @@ export function AcademicPicker({
         <Pager {...rows.data} onChange={setPage} />
       )}
       {rows.data && rows.data.totalPages <= 1 && (
-        <p className="text-xs text-slate-400">{rows.data.total} bản ghi</p>
+        <p className="text-caption text-muted-foreground">{rows.data.total} bản ghi</p>
       )}
     </div>
   );

@@ -123,25 +123,25 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         aria-label="Đăng ký thành công"
         className="flex flex-col items-center py-6 text-center sm:py-8"
       >
-        <div className="grid size-14 place-items-center rounded-full bg-emerald-50 ring-1 ring-emerald-200">
+        <div className="grid size-14 place-items-center rounded-full bg-success-subtle ring-1 ring-success/20">
           <CheckCircle2
-            className="size-7 text-emerald-500"
+            className="size-7 text-success"
             aria-hidden="true"
           />
         </div>
-        <h1 className="mt-5 text-xl font-bold tracking-tight text-navy">
+        <h1 className="mt-5 text-section font-bold tracking-tight text-foreground">
           Đăng ký thành công
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+        <p className="mt-2 text-body leading-relaxed text-muted-foreground">
           Tài khoản của bạn đã được tạo. Hãy đăng nhập để bắt đầu hành trình
           thực tập.
         </p>
         <Link
           href="/login"
-          className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2"
+          className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2"
         >
           Đăng nhập ngay
-          <ArrowRight className="size-[18px]" aria-hidden="true" />
+          <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
         <p aria-live="polite" className="sr-only">
           Đăng ký thành công.
@@ -157,10 +157,10 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
 
   return (
     <section aria-label="Đăng ký tài khoản V-Intern">
-      <h1 className="text-[28px] font-bold leading-tight tracking-tight text-navy">
+      <h1 className="text-page font-bold leading-tight tracking-tight text-foreground">
         Tạo tài khoản mới
       </h1>
-      <p className="mt-1.5 text-[15px] leading-relaxed text-slate-600">
+      <p className="mt-2 text-body leading-relaxed text-muted-foreground">
         Bắt đầu hành trình thực tập của bạn ngay hôm nay.
       </p>
 
@@ -279,7 +279,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         <div className="mt-4">
           <label
             htmlFor="register-terms"
-            className="flex cursor-pointer select-none items-start gap-2.5 text-sm leading-relaxed text-slate-700"
+            className="flex cursor-pointer select-none items-start gap-3 text-body leading-relaxed text-foreground"
           >
             <input
               id="register-terms"
@@ -300,9 +300,9 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
             <span
               aria-hidden="true"
               className={cn(
-                "mt-0.5 grid size-[18px] shrink-0 place-items-center rounded-[5px] border transition-colors",
-                "peer-checked:border-brand peer-checked:bg-brand peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40 peer-focus-visible:ring-offset-2",
-                errors.terms ? "border-rose-300" : "border-slate-300"
+                "mt-0.5 grid size-4 shrink-0 place-items-center rounded-sm border transition-colors",
+                "peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40 peer-focus-visible:ring-offset-2",
+                errors.terms ? "border-destructive/30" : "border-input"
               )}
             >
               <svg
@@ -310,7 +310,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
                 fill="none"
                 className={cn(
                   "h-2.5 w-3",
-                  terms ? "text-white" : "text-transparent"
+                  terms ? "text-primary-foreground" : "text-transparent"
                 )}
               >
                 <path
@@ -330,7 +330,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           {errors.terms && (
             <p
               id="register-terms-error"
-              className="mt-1.5 text-[13px] font-medium text-rose-600"
+              className="mt-2 text-small font-medium text-destructive"
             >
               {errors.terms}
             </p>
@@ -341,15 +341,15 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-brand text-[15px] font-semibold text-white transition-colors",
-            "hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2",
+            "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
+            "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-80"
           )}
         >
           {isSubmitting ? (
             <>
               <Loader2
-                className="size-[18px] animate-spin"
+                className="size-4 animate-spin"
                 aria-hidden="true"
               />
               Đang đăng ký...
@@ -357,15 +357,15 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           ) : (
             <>
               Đăng ký
-              <ArrowRight className="size-[18px]" aria-hidden="true" />
+              <ArrowRight className="size-4" aria-hidden="true" />
             </>
           )}
         </button>
 
         <div className="mt-4 flex items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-slate-200" />
-          <span className="text-[13px] text-slate-500">Hoặc</span>
-          <span className="h-px flex-1 bg-slate-200" />
+          <span className="h-px flex-1 bg-secondary" />
+          <span className="text-small text-muted-foreground">Hoặc</span>
+          <span className="h-px flex-1 bg-secondary" />
         </div>
 
         <button
@@ -382,7 +382,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
               setStatusMessage("");
             }
           }}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-[10px] border border-slate-200 bg-white text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-control border border-border bg-card text-body font-semibold text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <GoogleIcon />
           Tiếp tục với Google
@@ -397,11 +397,11 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         </p>
       </form>
 
-      <p className="mt-5 text-center text-sm text-slate-600">
+      <p className="mt-5 text-center text-body text-muted-foreground">
         Đã có tài khoản?{" "}
         <Link
           href="/login"
-          className="rounded-sm font-semibold text-brand underline-offset-2 transition-colors hover:text-brand-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          className="rounded-sm font-semibold text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           Đăng nhập
         </Link>

@@ -80,7 +80,7 @@ export function WaitingRecruitmentSummary({
           </div>
         }
       >
-        <p className="text-[12.5px] leading-7 text-slate-600">
+        <p className="text-small leading-7 text-muted-foreground">
           Vị trí đã đăng ký:{" "}
           <strong className="text-[var(--student-navy)]">
             {profile.selectedRoleLabel ?? roleLabel(profile.selectedRole)}
@@ -100,6 +100,8 @@ export function WaitingRecruitmentSummary({
                 </div>
               ))}
             </dl>
+            <details className="student-help-disclosure">
+              <summary>Điểm mạnh, hướng cải thiện & tiêu chí</summary>
             <div className="student-eval-columns">
               <div>
                 <h3>Kỹ năng & điểm mạnh</h3>
@@ -110,7 +112,7 @@ export function WaitingRecruitmentSummary({
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-[12px] text-slate-500">
+                  <p className="text-caption text-muted-foreground">
                     Chưa có nhận xét kỹ năng.
                   </p>
                 )}
@@ -124,7 +126,7 @@ export function WaitingRecruitmentSummary({
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-[12px] text-slate-500">
+                  <p className="text-caption text-muted-foreground">
                     Chưa có đề xuất cải thiện.
                   </p>
                 )}
@@ -145,6 +147,7 @@ export function WaitingRecruitmentSummary({
                 ))}
               </div>
             )}
+            </details>
           </>
         ) : (
           <div className="mt-4">

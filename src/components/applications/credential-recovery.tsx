@@ -36,11 +36,11 @@ export function CredentialRecovery({
   return (
     <section
       aria-label="Khôi phục mật khẩu tạm"
-      className="space-y-4 border-b border-slate-200 py-4"
+      className="space-y-4 border-b border-border py-4"
     >
       <div>
-        <h3 className="font-semibold text-slate-900">Mật khẩu tạm hết hạn</h3>
-        <p className="mt-1 text-sm leading-6 text-slate-500">
+        <h3 className="font-semibold text-foreground">Mật khẩu tạm hết hạn</h3>
+        <p className="mt-1 text-body leading-6 text-muted-foreground">
           Dành cho tài khoản CV chưa đổi mật khẩu và đã xác minh email trong 24
           giờ. Tài khoản dùng mật khẩu chính thức được giữ nguyên.
         </p>
@@ -89,11 +89,11 @@ export function CredentialRecovery({
         {action.busy ? "Đang xử lý…" : "Kiểm tra điều kiện"}
       </button>
       {preview && (
-        <div className="space-y-3 border-l-2 border-amber-300 pl-4">
-          <p className="text-sm leading-6 text-slate-700">{preview.message}</p>
+        <div className="space-y-3 border-l border-warning/30 pl-4">
+          <p className="text-body leading-6 text-foreground">{preview.message}</p>
           {preview.allowed && (
             <>
-              <p className="text-sm leading-6 text-slate-600">
+              <p className="text-body leading-6 text-muted-foreground">
                 Phiên đăng nhập cũ sẽ bị thu hồi. Mật khẩu mới chỉ được gửi qua
                 email, có hạn đến{" "}
                 {preview.expiresAt
@@ -148,7 +148,7 @@ export function CredentialRecovery({
                     onChange={(event) => setReason(event.target.value)}
                   />
                 </Field>
-                <label className="flex items-start gap-2 text-sm leading-6">
+                <label className="flex items-start gap-2 text-body leading-6">
                   <input
                     type="checkbox"
                     checked={confirmed}
@@ -177,7 +177,7 @@ export function CredentialRecovery({
           ref={noticeRef}
           tabIndex={-1}
           role="status"
-          className="text-sm leading-6 text-emerald-800"
+          className="text-body leading-6 text-success"
         >
           {notice}
         </p>

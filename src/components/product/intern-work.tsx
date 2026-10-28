@@ -96,7 +96,6 @@ export function InternWork() {
   return (
     <>
       <StudentHeading
-        eyebrow="Lên kế hoạch · Thực hiện · Cải thiện"
         title="Công việc của tôi"
         description="Theo dõi hạn nộp, tập trung vào nhiệm vụ đang làm và gửi bài để nhận phản hồi."
         action={
@@ -124,7 +123,7 @@ export function InternWork() {
           </div>
         }
       />
-      {workspaceContext?.workspace.assignment && <OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} />}
+      {workspaceContext?.workspace.assignment && <details open className="student-help-disclosure student-project-materials"><summary>Tài liệu & gói dự án</summary><OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} /></details>}
 
       <section aria-label="Lọc công việc" className="student-toolbar mb-5">
         <div className="student-search-field">
@@ -563,20 +562,20 @@ function TaskContent({
 
       {managed && (
         <div>
-          <h3 className="text-lg font-bold leading-relaxed text-navy">
+          <h3 className="text-section font-bold leading-relaxed text-foreground">
             {task.code} · {task.title}
           </h3>
-          <p className="mt-2 whitespace-pre-wrap text-sm">
+          <p className="mt-2 whitespace-pre-wrap text-body">
             {task.description ?? "Chưa có mô tả."}
           </p>
           <div className="mt-3 flex gap-2">
             <Badge>{statusLabels[task.status]}</Badge>
             <Badge>{priorityLabels[task.priority]}</Badge>
           </div>
-          <dl className="mt-4 grid gap-3 rounded-lg bg-slate-50 p-3 text-sm sm:grid-cols-3">
+          <dl className="mt-4 grid gap-3 rounded-control bg-background p-3 text-body sm:grid-cols-3">
             <div>
-              <dt className="text-slate-500">Sprint</dt>
-              <dd className="mt-1 break-all text-xs">
+              <dt className="text-muted-foreground">Sprint</dt>
+              <dd className="mt-1 break-all text-caption">
                 {task.sprint
                   ? `${task.sprint.code} · ${task.sprint.name}`
                   : task.sprintId
@@ -585,11 +584,11 @@ function TaskContent({
               </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Story points</dt>
+              <dt className="text-muted-foreground">Story points</dt>
               <dd className="mt-1">{task.storyPoints ?? "Chưa có"}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Hạn hoàn thành</dt>
+              <dt className="text-muted-foreground">Hạn hoàn thành</dt>
               <dd className="mt-1">
                 {task.dueDate
                   ? new Date(task.dueDate).toLocaleDateString("vi-VN")
@@ -612,7 +611,7 @@ function TaskContent({
           <div className="student-detail-grid">
             <div className="student-stack">
               <StudentPanel title="Mô tả công việc" icon={FileText}>
-                <p className="whitespace-pre-wrap text-[13px] leading-8 text-slate-600">
+                <p className="whitespace-pre-wrap text-small leading-8 text-muted-foreground">
                   {task.description?.trim()
                     ? task.description
                     : "Giảng viên chưa thêm mô tả cho nhiệm vụ này. Hãy đọc tiêu chí hoàn thành bên dưới trước khi bắt đầu."}
@@ -742,7 +741,7 @@ function TaskContent({
                 </dl>
               </StudentPanel>
 
-              <StudentPanel title="Lịch sử trạng thái" icon={History}>
+              <StudentPanel title="Lịch sử trạng thái" icon={History} className="student-task-history">
                 {history.loading ? (
                   <LoadingState />
                 ) : history.error ? (
@@ -829,19 +828,19 @@ function TaskContent({
                           {comments.data.items.map((c) => (
                             <li
                               key={c.id}
-                              className="rounded-xl border border-slate-100 bg-slate-50/70 p-3"
+                              className="rounded-panel border border-border bg-background p-3"
                             >
-                              <p className="whitespace-pre-wrap text-[12.5px] leading-7 text-slate-700">
+                              <p className="whitespace-pre-wrap text-small leading-7 text-foreground">
                                 {c.content}
                               </p>
-                              <time className="mt-1.5 block text-[10.5px] text-slate-500">
+                              <time className="mt-2 block text-caption text-muted-foreground">
                                 {new Date(c.createdAt).toLocaleString("vi-VN")}
                               </time>
                             </li>
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-[12.5px] leading-7 text-slate-500">
+                        <p className="text-small leading-7 text-muted-foreground">
                           Chưa có bình luận. Đặt câu hỏi cho giảng viên hoặc ghi
                           lại điều bạn học được.
                         </p>
@@ -921,12 +920,12 @@ function TaskContent({
                     comments.data.items.map((c) => (
                       <article
                         key={c.id}
-                        className="mb-3 rounded-lg bg-slate-50 p-3"
+                        className="mb-3 rounded-control bg-background p-3"
                       >
-                        <p className="whitespace-pre-wrap text-sm">
+                        <p className="whitespace-pre-wrap text-body">
                           {c.content}
                         </p>
-                        <time className="mt-2 block text-xs text-slate-500">
+                        <time className="mt-2 block text-caption text-muted-foreground">
                           {new Date(c.createdAt).toLocaleString("vi-VN")}
                         </time>
                       </article>
@@ -945,7 +944,7 @@ function TaskContent({
                 void comment();
               }}
             >
-              <label className="block text-sm">
+              <label className="block text-body">
                 Bình luận mới
                 <textarea
                   required
@@ -975,7 +974,7 @@ function TaskContent({
                     {history.data.items.map((h) => (
                       <li
                         key={h.id}
-                        className="border-l-2 border-blue-300 pl-3 text-sm"
+                        className="border-l-2 border-border pl-3 text-body"
                       >
                         <strong>
                           {h.fromStatus
@@ -984,7 +983,7 @@ function TaskContent({
                           → {statusLabels[h.toStatus]}
                         </strong>
                         <p>{h.reason}</p>
-                        <time className="text-xs text-slate-500">
+                        <time className="text-caption text-muted-foreground">
                           {new Date(h.createdAt).toLocaleString("vi-VN")}
                         </time>
                       </li>

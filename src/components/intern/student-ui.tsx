@@ -113,10 +113,11 @@ export function StudentMetric({
 }) {
   return (
     <div className="student-metric" data-tone={tone}>
-      <div className="student-metric-top">
+      <div className="student-metric-heading">
         <span className="student-metric-icon">
           <Icon size={18} aria-hidden="true" />
         </span>
+        <p>{label}</p>
         {trend && (
           <span
             className="student-metric-trend"
@@ -126,7 +127,6 @@ export function StudentMetric({
           </span>
         )}
       </div>
-      <p>{label}</p>
       <strong>{value}</strong>
       {hint && <small>{hint}</small>}
       {typeof progress === "number" && (

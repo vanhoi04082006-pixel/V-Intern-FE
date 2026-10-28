@@ -1,6 +1,7 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import Link from "next/link";
-import { instructorDate } from "@/components/instructor/instructor-ui";
+import { InstructorHeading, instructorDate } from "@/components/instructor/instructor-ui";
 import { useCallback, useEffect, useState } from "react";
 import { getSprint, listTasks } from "@/lib/api/delivery";
 import { getMembers } from "@/lib/api/academic";
@@ -20,7 +21,6 @@ import {
   Empty,
   Modal,
   Pager,
-  Panel,
   inputClass,
 } from "@/components/product/primitives";
 import { SprintOverview } from "@/components/product/sprint-overview";
@@ -121,14 +121,14 @@ export function SprintDelivery({
         ) : members.error ? (
           <ErrorState error={members.error} onRetry={members.reload} />
         ) : members.data?.length ? (
-          <ul className="grid gap-2 sm:grid-cols-2">
+          <ul className="ins-roster-list">
             {members.data.map((m) => (
               <li
-                className="min-w-0 break-words rounded-lg bg-slate-50 p-3 text-sm"
+                className="min-w-0 break-words border-b border-border py-3 text-body"
                 key={m.userId}
               >
                 <strong>{m.displayName}</strong>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-caption text-muted-foreground">
                   {m.role ? roleLabel(m.role) : "Chưa có vai trò dự án"}
                 </p>
               </li>
@@ -137,7 +137,7 @@ export function SprintDelivery({
         ) : (
           <Empty>Chưa có thành viên.</Empty>
         )}
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-caption text-muted-foreground">
           Người phụ trách từng task được hiển thị bên dưới.
         </p>
       </Panel>
@@ -200,25 +200,25 @@ export function SprintDelivery({
             tasks.data && (
               <>
                 {tasks.data.items.length ? (
-                  <ul className="grid gap-3 xl:grid-cols-2">
+                  <ul className="ins-task-list">
                     {tasks.data.items.map((t) => (
                       <li
                         key={t.id}
-                        className="min-w-0 break-words rounded-xl border border-slate-200 p-4"
+                        className="ins-task-row break-words"
                       >
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <button
-                            className="text-left text-sm font-semibold text-blue-700 hover:underline"
+                            className="text-left text-body font-semibold text-primary hover:underline"
                             onClick={() => onOpen(t.id)}
                           >
                             {t.title}
                           </button>
                           <Badge>{statusLabels[t.status]}</Badge>
                         </div>
-                        <p className="mt-2 break-all font-mono text-xs text-slate-400">
+                        <p className="mt-2 break-all font-mono text-caption text-muted-foreground">
                           {t.code}
                         </p>
-                        <p className="mt-2 text-xs text-slate-600">
+                        <p className="mt-2 text-caption text-muted-foreground">
                           {t.assigneeId
                             ? (members.data?.find(
                                 (m) =>
@@ -226,9 +226,9 @@ export function SprintDelivery({
                                   t.assigneeId?.toLowerCase(),
                               )?.displayName ?? "Đã phân công")
                             : "Chưa phân công"}{" "}
-                          · {priorityLabels[t.priority]} · {t.progress}%
+                         · {priorityLabels[t.priority]}, {t.progress}%
                         </p>
-                        <p className="mt-1 text-xs text-slate-600">
+                        <p className="mt-1 text-caption text-muted-foreground">
                           Hạn{" "}
                           {t.dueDate
                             ? instructorDate(t.dueDate)
@@ -271,13 +271,19 @@ export function SprintWorkspace({
   const sprint = data.data;
   return (
     <div className="space-y-5">
-      <Panel
+      {basePath === "/instructor" && <InstructorHeading
         title={sprint.name}
+        description={`Chi tiết Sprint, ${sprint.code}, ${sprint.startDate ? instructorDate(sprint.startDate) : "Chưa có ngày bắt đầu"} — ${sprint.endDate ? instructorDate(sprint.endDate) : "Chưa có ngày kết thúc"}`}
+        back={{ href: "/instructor/sprints", label: "Sprint & công việc" }}
+        action={<Badge>{sprintStatusLabels[sprint.status] ?? sprint.status}</Badge>}
+      />}
+      <Panel
+        title={basePath === "/instructor" ? "Mục tiêu Sprint" : sprint.name}
         action={
-          <Badge>{sprintStatusLabels[sprint.status] ?? sprint.status}</Badge>
+          basePath !== "/instructor" && <Badge>{sprintStatusLabels[sprint.status] ?? sprint.status}</Badge>
         }
       >
-        <p className="text-sm text-slate-500">
+        {basePath !== "/instructor" && <p className="text-body text-muted-foreground">
           {sprint.code} ·{" "}
           {sprint.startDate
             ? instructorDate(sprint.startDate)
@@ -286,14 +292,14 @@ export function SprintWorkspace({
           {sprint.endDate
             ? instructorDate(sprint.endDate)
             : "Chưa có ngày kết thúc"}
-        </p>
-        <h2 className="mt-3 text-sm font-semibold">Mục tiêu Sprint</h2>
-        <p className="mt-1 whitespace-pre-wrap text-sm">
+        </p>}
+        {basePath !== "/instructor" && <h2 className="mt-3 text-body font-semibold">Mục tiêu Sprint</h2>}
+        <p className="mt-1 whitespace-pre-wrap text-body">
           {sprint.goal ?? "Chưa ghi mục tiêu."}
         </p>
         {sprint.sessionId && (
           <Link
-            className="mt-3 inline-block text-sm font-semibold text-blue-700"
+            className="mt-3 inline-block text-body font-semibold text-primary"
             href={`${basePath}/sessions/${sprint.sessionId}`}
           >
             Mở phiên thực tập →
@@ -301,7 +307,7 @@ export function SprintWorkspace({
         )}
       </Panel>
       {sprint.status === "planned" && (
-        <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="space-y-3 rounded-panel border border-border bg-warning-subtle p-4 text-body text-warning">
           <p>
             Sprint đã được lập kế hoạch nhưng chưa bắt đầu. Sinh viên sẽ thấy
             Sprint Board sau khi giảng viên kích hoạt Sprint này.
@@ -333,7 +339,7 @@ export function SprintWorkspace({
             : ["projects.view", "tasks.view"]
         }
         fallback={
-          <p id="sprint-task-list" className="text-sm text-slate-500">
+          <p id="sprint-task-list" className="text-body text-muted-foreground">
             Cần quyền xem đội hình và task để mở danh sách chi tiết.
           </p>
         }
@@ -350,11 +356,11 @@ export function SprintWorkspace({
       <Can perm="tasks.manage">
         <details
           id="sprint-task-management"
-          className="scroll-mt-20 rounded-xl border border-slate-200 bg-white p-4"
+          className="scroll-mt-20 border-t border-border py-5"
           open={manage}
           onToggle={(event) => setManage(event.currentTarget.open)}
         >
-          <summary className="cursor-pointer text-sm font-semibold text-blue-700">
+          <summary className="cursor-pointer text-body font-semibold text-primary">
             Thêm và chỉnh sửa task trong Sprint
           </summary>
           {manage && (

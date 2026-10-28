@@ -6,6 +6,7 @@ import { InternEntry } from "@/components/product/intern-entry";
 import "@/components/intern/student-experience.css";
 import "@/components/workspace/workspace.css";
 import "@/components/workspace/aurora.css";
+import "@/components/product/collection-insights.css";
 
 /**
  * Persistent student shell.

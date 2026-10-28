@@ -1,4 +1,5 @@
 "use client";
+import { SessionSection as Panel } from "@/components/sessions/session-section";
 import { usePathname } from "next/navigation";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { InstructorNotice } from "@/components/instructor/instructor-ui";
@@ -14,12 +15,12 @@ import { Can } from "@/components/auth/can";
 import { CollectionMetrics } from "./collection-insights";
 import {
   Badge,
+  btn,
   buttonClass,
   Empty,
   inputClass,
   Modal,
   Pager,
-  Panel,
 } from "./primitives";
 const evaluationLabels = {
   draft: "Bản nháp",
@@ -107,7 +108,7 @@ export function EvaluationManagement() {
           </InstructorNotice>
         </div>
       )}
-      <div className="grid items-start gap-5 xl:grid-cols-[280px_minmax(0,1fr)]">
+      <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
         <Panel title="Kỳ đánh giá">
           {cycles.loading ? (
             <LoadingState />
@@ -117,7 +118,7 @@ export function EvaluationManagement() {
             cycles.data && (
               <>
                 <button
-                  className="mb-3 text-sm text-blue-600"
+                  className="mb-3 text-body text-primary"
                   onClick={() => {
                     setCycleId("");
                     setPage(1);
@@ -128,10 +129,10 @@ export function EvaluationManagement() {
                 {cycles.data.items.map((c) => (
                   <div
                     key={c.id}
-                    className={`workspace-evaluation-cycle mb-3 rounded-lg border p-3 ${cycleId === c.id ? "border-blue-200 bg-blue-50" : "border-slate-100"}`}
+                    className={`workspace-evaluation-cycle border-b border-border py-4 ${cycleId === c.id ? "bg-accent px-3" : ""}`}
                   >
                     <button
-                      className="text-left text-sm font-semibold"
+                      className="text-left text-body font-semibold"
                       aria-pressed={cycleId === c.id}
                       onClick={() => {
                         setCycleId(c.id);
@@ -139,14 +140,14 @@ export function EvaluationManagement() {
                       }}
                     >
                       {c.name}
-                      <small className="block text-slate-400">{c.code}</small>
+                      <small className="block text-muted-foreground">{c.code}</small>
                     </button>
                     <div className="mt-2 flex items-center justify-between">
                       <Badge>
                         {isInstructor ? evaluationLabels[c.status] : c.status}
                       </Badge>
                       <button
-                        className="text-xs text-blue-600"
+                        className="text-caption text-primary"
                         onClick={() => setCycleEditor(c)}
                       >
                         Tiêu chí / trạng thái
@@ -206,7 +207,7 @@ export function EvaluationManagement() {
                     {evaluations.data.items.map((e) => (
                       <article
                         key={e.id}
-                        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 p-4"
+                        className="flex flex-wrap items-center justify-between gap-4 border-b border-border py-5"
                       >
                         <div>
                           <Badge>
@@ -214,10 +215,10 @@ export function EvaluationManagement() {
                               ? evaluationLabels[e.status]
                               : e.status}
                           </Badge>
-                          <p className="mt-2 text-sm font-semibold">
+                          <p className="mt-2 text-body font-semibold">
                             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
                           </p>
-                          <p className="mt-1 max-w-md text-sm text-slate-500">
+                          <p className="mt-1 max-w-md text-body text-muted-foreground">
                             {e.summary ?? "Chưa có nhận xét"}
                           </p>
                         </div>
@@ -309,7 +310,7 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
       }}
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <label className="block text-sm">
+      <label className="block text-body">
         Mã kỳ
         <input
           required
@@ -319,7 +320,7 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
           onChange={(e) => setCode(e.target.value)}
         />
       </label>
-      <label className="block text-sm">
+      <label className="block text-body">
         Tên kỳ
         <input
           required
@@ -347,7 +348,7 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
           ["Bắt đầu", start, setStart],
           ["Kết thúc", end, setEnd],
         ].map(([label, value, set]) => (
-          <label key={String(label)} className="block text-sm">
+          <label key={String(label)} className="block text-body">
             {String(label)}
             <input
               type="datetime-local"
@@ -371,7 +372,7 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
           </option>
         ))}
       </select>
-      <p className="text-sm text-slate-500">
+      <p className="text-body text-muted-foreground">
         Kỳ mới sử dụng bộ tiêu chí chuẩn. Có thể chỉnh trọng số trước khi mở kỳ.
       </p>
       <button className={buttonClass} disabled={action.busy}>
@@ -493,7 +494,7 @@ function CriterionEditor({
     action = useAction(onChanged);
   return (
     <form
-      className="rounded-lg border border-slate-100 p-3"
+      className="border-b border-border py-4"
       onSubmit={(e) => {
         e.preventDefault();
         void action.run(() =>
@@ -503,7 +504,7 @@ function CriterionEditor({
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <div className="grid gap-3 sm:grid-cols-3">
-        <label className="text-sm">
+        <label className="text-body">
           Tiêu chí
           <input
             aria-label={`Tên ${c.code}`}
@@ -514,7 +515,7 @@ function CriterionEditor({
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-        <label className="text-sm">
+        <label className="text-body">
           Trọng số (%)
           <input
             aria-label={`Trọng số ${c.code}`}
@@ -529,7 +530,7 @@ function CriterionEditor({
             onChange={(e) => setWeight(Number(e.target.value))}
           />
         </label>
-        <label className="text-sm">
+        <label className="text-body">
           Điểm tối đa
           <input
             aria-label={`Điểm tối đa ${c.code}`}
@@ -552,7 +553,7 @@ function CriterionEditor({
           </button>
           <button
             type="button"
-            className="text-sm text-rose-600"
+            className="text-body text-destructive"
             disabled={action.busy}
             onClick={() =>
               void action.run(() => api.deleteCriterion(cycleId, c.id))
@@ -578,7 +579,7 @@ function NewCriterion({
     action = useAction(onChanged);
   return (
     <form
-      className="space-y-2 rounded-lg bg-slate-50 p-3"
+      className="space-y-3 border-t border-border py-4"
       onSubmit={(e) => {
         e.preventDefault();
         void action.run(() =>
@@ -809,13 +810,14 @@ export function ScoreEditor({
           }}
         >
           {detail.criteria.map((c) => (
-            <div key={c.id} className="rounded-lg border border-slate-100 p-3">
-              <p className="text-sm font-semibold">{c.name}</p>
-              <p className="mt-1 text-xs text-slate-500">
+            <fieldset key={c.id} className="border-b border-border pb-5 pt-3">
+              <legend className="text-subsection font-semibold">{c.name}</legend>
+              <p className="mt-1 text-caption text-muted-foreground">
                 Trọng số {c.weight}% · Điểm tối đa {c.maxScore}
                 {c.isRequired ? " · Bắt buộc" : ""}
               </p>
-              <label className="mt-2 block text-sm">
+              <div className="mt-3 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+              <label className="block text-body">
                 Điểm {c.name}
                 <input
                   aria-label={`Điểm ${c.name}`}
@@ -835,7 +837,7 @@ export function ScoreEditor({
                   }
                 />
               </label>
-              <label className="mt-2 block text-sm">
+              <label className="block text-body">
                 Nhận xét {c.name}
                 <textarea
                   aria-label={`Nhận xét ${c.name}`}
@@ -851,9 +853,10 @@ export function ScoreEditor({
                   }
                 />
               </label>
-            </div>
+              </div>
+            </fieldset>
           ))}
-          <label className="block text-sm">
+          <label className="block text-body">
             Tổng kết
             <textarea
               className={`${inputClass} mt-1`}
@@ -901,14 +904,14 @@ export function ScoreEditor({
             </button>
           )}
           {locked && (
-            <p className="text-sm text-slate-500">
+            <p className="text-body text-muted-foreground">
               Đánh giá đã khóa. Hiệu chỉnh cần quyền quản trị và lưu lịch sử.
             </p>
           )}
         </div>
       </div>
       <Panel title="Gợi ý AI">
-        <p className="mb-3 text-xs text-slate-500">
+        <p className="mb-3 text-caption text-muted-foreground">
           Gợi ý không ghi vào điểm chính thức. Hãy kiểm tra chứng cứ và tự chấm
           điểm.
         </p>
@@ -916,7 +919,7 @@ export function ScoreEditor({
             state enforced server-side). Hide the affordance instead of a surprise 403. */}
         <Can perm="ai.evaluation.assist">
           <button
-            className={buttonClass}
+            className={btn("secondary")}
             disabled={action.busy || (isInstructor && locked)}
             onClick={() =>
               void action.run(async () =>
@@ -928,17 +931,17 @@ export function ScoreEditor({
           </button>
         </Can>
         {isInstructor && locked && (
-          <p className="mt-3 text-xs leading-6 text-slate-500">
+          <p className="mt-3 text-caption leading-6 text-muted-foreground">
             Đánh giá đã chốt. Gợi ý AI mới không còn khả dụng cho kết quả này.
           </p>
         )}
         {suggestion && (
-          <div className="mt-4 space-y-3 text-sm">
+          <div className="mt-4 space-y-3 text-body">
             <p>{suggestion.summary}</p>
             {suggestion.criteria.map((c) => (
               <article
                 key={c.criterionCode}
-                className="rounded-lg bg-blue-50 p-3"
+                className="border-b border-border py-4"
               >
                 <strong>
                   {detail.criteria.find((x) => x.code === c.criterionCode)
@@ -946,7 +949,7 @@ export function ScoreEditor({
                   : AI đề xuất {c.suggestedScore}
                 </strong>
                 <p className="mt-2">{c.comment}</p>
-                <ul className="mt-2 list-inside list-disc text-xs">
+                <ul className="mt-2 list-inside list-disc text-caption">
                   {c.evidence.map((x, i) => (
                     <li key={i}>{x}</li>
                   ))}

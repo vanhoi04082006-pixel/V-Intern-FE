@@ -140,7 +140,7 @@ export function PolicyEditor({
             />
           </Field>
         </div>
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-body leading-6 text-muted-foreground">
           Giảng viên xác nhận phần trừ trước khi lưu điểm bài nộp. Đạt ngưỡng
           thay chỉ tạo đề xuất; hệ thống không tự loại sinh viên.
         </p>
@@ -157,7 +157,7 @@ export function PolicyEditor({
           />
         </Field>
         {error && (
-          <p role="alert" className="text-sm text-rose-700">
+          <p role="alert" className="text-body text-destructive">
             {error}
           </p>
         )}

@@ -29,10 +29,10 @@ const labels = {
   done: "Done",
 };
 const colors = {
-  todo: "bg-slate-100",
-  doing: "bg-blue-50",
-  review: "bg-amber-50",
-  done: "bg-emerald-50",
+  todo: "bg-muted",
+  doing: "bg-accent",
+  review: "bg-warning-subtle",
+  done: "bg-success-subtle",
 };
 export function SprintOverview({
   id,
@@ -138,7 +138,7 @@ export function SprintOverview({
               ? "Tổng hợp trong Sprint này"
               : "Tổng hợp toàn Sprint từ backend"
           }
-          subTone="text-rose-600"
+          subTone="text-destructive"
         />
       </div>
       {instructor && (
@@ -155,8 +155,8 @@ export function SprintOverview({
           title="Bảng Sprint hiện tại"
           action={
             <span className="flex flex-wrap items-center gap-3">
-              <Link href="#sprint-task-list" className="text-xs text-blue-600">
-                Xem tất cả task →
+              <Link href="#sprint-task-list" className="text-caption text-primary">
+                Xem tất cả task
               </Link>
               <Can perm="tasks.manage">
                 <a
@@ -164,7 +164,7 @@ export function SprintOverview({
                     onManage ? "#sprint-task-management" : "#sprint-task-list"
                   }
                   onClick={onManage}
-                  className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                  className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-caption font-semibold text-primary-foreground hover:bg-primary"
                 >
                   <Plus size={14} />
                   {onManage ? "Quản lý task" : "Tạo task mới"}
@@ -173,8 +173,8 @@ export function SprintOverview({
             </span>
           }
         >
-          <p className="mb-4 text-sm text-slate-500">
-            {b.sprint.code} · {b.sprint.name}
+          <p className="mb-4 text-body text-muted-foreground">
+            {b.sprint.code}, {b.sprint.name}
           </p>
           <div
             className={`grid gap-3 sm:grid-cols-2 xl:grid-cols-4 ${instructor ? "ins-sprint-board" : ""}`}
@@ -182,9 +182,9 @@ export function SprintOverview({
             {b.columns.map((c) => (
               <section
                 key={c.status}
-                className={`min-w-0 rounded-lg p-3 ${colors[c.status]}`}
+                className={`min-w-0 rounded-control p-3 ${colors[c.status]}`}
               >
-                <h3 className="mb-3 text-sm font-bold text-navy">
+                <h3 className="mb-3 text-body font-bold text-foreground">
                   {instructor ? statusLabels[c.status] : labels[c.status]}{" "}
                   <Badge>{c.count}</Badge>
                 </h3>
@@ -198,35 +198,35 @@ export function SprintOverview({
                       <button
                         key={t.id}
                         {...draggableTask(t.id, t.status)}
-                        title="Mở chi tiết · kéo sang cột được phép để chuyển trạng thái"
-                        className="mb-3 w-full rounded-md border border-blue-100 bg-white p-3 text-left"
+                        title="Mở chi tiết, kéo sang cột được phép để chuyển trạng thái"
+                        className="mb-3 w-full rounded-md border border-primary bg-card p-3 text-left"
                         onClick={() => setTask(t.id)}
                       >
                         <span className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-blue-600">
+                          <span className="text-caption font-semibold text-primary">
                             {t.code}
                           </span>
                           <PriorityBadge priority={t.priority} />
                         </span>
                         <p
                           title={t.title}
-                          className="mt-1 line-clamp-2 text-[13px] font-bold text-navy"
+                          className="mt-1 line-clamp-2 text-small font-bold text-foreground"
                         >
                           {t.title}
                         </p>
                         {t.description && (
-                          <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-slate-500">
+                          <p className="mt-1 line-clamp-2 text-caption leading-relaxed text-muted-foreground">
                             {t.description}
                           </p>
                         )}
-                        <span className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
+                        <span className="mt-2 flex items-center justify-between text-caption text-muted-foreground">
                           <span>
                             {t.dueDate
                               ? new Date(t.dueDate).toLocaleDateString("vi-VN")
                               : "Chưa có hạn"}
                           </span>
                           {t.storyPoints !== null && (
-                            <span className="rounded bg-slate-100 px-2 py-1 text-[10px]">
+                            <span className="rounded bg-muted px-2 py-1 text-caption">
                               {t.storyPoints} pts
                             </span>
                           )}
@@ -236,7 +236,7 @@ export function SprintOverview({
                   </div>
                 </DropColumn>
                 {instructor && c.count === 0 && (
-                  <p className="py-5 text-center text-xs leading-6 text-slate-500">
+                  <p className="py-5 text-center text-caption leading-6 text-muted-foreground">
                     {c.status === "review"
                       ? "Chưa có bài cần duyệt."
                       : c.status === "done"
@@ -247,9 +247,9 @@ export function SprintOverview({
                 {c.count > 3 && (
                   <a
                     href="#sprint-task-list"
-                    className="block rounded bg-white/70 p-2 text-center text-[11px] font-semibold text-blue-600"
+                    className="block rounded bg-card/70 p-2 text-center text-caption font-semibold text-primary"
                   >
-                    Xem tất cả {c.count} task →
+                    Xem tất cả {c.count} task
                   </a>
                 )}
               </section>
@@ -258,7 +258,7 @@ export function SprintOverview({
         </Panel>
         <div className="min-w-0 space-y-4">
           <Panel title={`Tiến độ ${b.sprint.code}`}>
-            <strong className="text-2xl text-navy">
+            <strong className="text-page text-foreground">
               {done} / {b.total} task
             </strong>
             <div
@@ -267,23 +267,23 @@ export function SprintOverview({
               aria-valuenow={done}
               aria-valuemin={0}
               aria-valuemax={b.total || 1}
-              className="my-4 h-2 overflow-hidden rounded-full bg-slate-200"
+              className="my-4 h-2 overflow-hidden rounded-full bg-muted"
             >
               <div
-                className="h-full rounded-full bg-blue-600"
+                className="h-full rounded-full bg-primary"
                 style={{ width: `${b.total ? (done / b.total) * 100 : 0}%` }}
               />
             </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="rounded-md border border-blue-100 p-2.5">
-                <p className="text-[10px] text-slate-500">Thời gian còn lại</p>
-                <strong className="mt-1 block text-sm text-navy">
+            <div className="grid grid-cols-2 gap-2 text-caption">
+              <div className="rounded-md border border-primary p-2.5">
+                <p className="text-caption text-muted-foreground">Thời gian còn lại</p>
+                <strong className="mt-1 block text-body text-foreground">
                   {remain} ngày
                 </strong>
               </div>
-              <div className="rounded-md border border-blue-100 p-2.5">
-                <p className="text-[10px] text-slate-500">Task còn lại</p>
-                <strong className="mt-1 block text-sm text-navy">
+              <div className="rounded-md border border-primary p-2.5">
+                <p className="text-caption text-muted-foreground">Task còn lại</p>
+                <strong className="mt-1 block text-body text-foreground">
                   {b.total - done} task
                 </strong>
               </div>
@@ -293,8 +293,8 @@ export function SprintOverview({
           <Panel
             title="Review & PR cần xử lý"
             action={
-              <a href="#sprint-task-list" className="text-xs text-blue-600">
-                Xem tất cả →
+              <a href="#sprint-task-list" className="text-caption text-primary">
+                Xem tất cả
               </a>
             }
           >
@@ -303,17 +303,17 @@ export function SprintOverview({
                 {reviewTasks.map((t) => (
                   <li
                     key={t.id}
-                    className="flex items-center gap-2 rounded-md border border-blue-50 p-2 text-xs"
+                    className="flex items-center gap-2 rounded-md border border-primary p-2 text-caption"
                   >
                     <div className="min-w-0 flex-1">
-                      <strong className="block text-blue-600">{t.code}</strong>
-                      <span className="mt-0.5 line-clamp-1 block text-navy">
+                      <strong className="block text-primary">{t.code}</strong>
+                      <span className="mt-0.5 line-clamp-1 block text-foreground">
                         {t.title}
                       </span>
                     </div>
                     <TaskStatusPill status="review" />
                     <button
-                      className="rounded border border-blue-100 px-2 py-1 text-blue-600"
+                      className="rounded border border-primary px-2 py-1 text-primary"
                       onClick={() => setTask(t.id)}
                     >
                       Xem
@@ -384,9 +384,9 @@ export function Burndown({
     .join(" ");
   return (
     <div className={compact ? "mt-3" : "mt-5"}>
-      <h3 className="text-sm font-bold text-navy">Burndown</h3>
-      <p className="my-2 text-xs text-slate-500">
-        Xanh: task còn lại · Nét đứt: kế hoạch lý tưởng
+      <h3 className="text-body font-bold text-foreground">Burndown</h3>
+      <p className="my-2 text-caption text-muted-foreground">
+        Xanh: task còn lại, Nét đứt: kế hoạch lý tưởng
       </p>
       <svg
         viewBox="0 0 490 210"
@@ -394,7 +394,7 @@ export function Burndown({
         role="img"
         aria-label="Burndown theo lịch sử trạng thái task hiện thuộc Sprint"
       >
-        <path d="M35 25V175H455" fill="none" stroke="#dbeafe" />
+        <path d="M35 25V175H455" fill="none" stroke="var(--border)" />
         {[0, 0.5, 1].map((f) => (
           <g key={f}>
             <line
@@ -402,10 +402,10 @@ export function Burndown({
               x2="455"
               y1={175 - f * 140}
               y2={175 - f * 140}
-              stroke="#e2e8f0"
+              stroke="var(--border)"
               strokeDasharray="3 3"
             />
-            <text x="2" y={179 - f * 140} fontSize="11" fill="#64748b">
+            <text x="2" y={179 - f * 140} className="text-caption" fill="var(--muted-foreground)">
               {Math.round(max * f)}
             </text>
           </g>
@@ -413,14 +413,14 @@ export function Burndown({
         <polyline
           points={points.map((p, i) => coords(i, p.ideal)).join(" ")}
           fill="none"
-          stroke="#94a3b8"
+          stroke="var(--input)"
           strokeWidth="2"
           strokeDasharray="6 5"
         />
         <polyline
           points={actual}
           fill="none"
-          stroke="#246bfe"
+          stroke="var(--primary)"
           strokeWidth="3"
         />
         {points.map((p, i) =>
@@ -430,7 +430,7 @@ export function Burndown({
               cx={35 + (i / Math.max(1, points.length - 1)) * 420}
               cy={175 - (p.actual / max) * 140}
               r="3"
-              fill="#246bfe"
+              fill="var(--primary)"
             >
               <title>
                 {new Date(p.date).toLocaleDateString("vi-VN")}: {p.actual} task
@@ -439,14 +439,14 @@ export function Burndown({
             </circle>
           ),
         )}
-        <text x="35" y="202" fontSize="11" fill="#64748b">
+        <text x="35" y="202" className="text-caption" fill="var(--muted-foreground)">
           {new Date(points[0].date).toLocaleDateString("vi-VN")}
         </text>
-        <text x="455" y="202" textAnchor="end" fontSize="11" fill="#64748b">
+        <text x="455" y="202" textAnchor="end" className="text-caption" fill="var(--muted-foreground)">
           {new Date(points.at(-1)!.date).toLocaleDateString("vi-VN")}
         </text>
       </svg>
-      <details className="text-xs text-slate-500">
+      <details className="text-caption text-muted-foreground">
         <summary>Nguồn dữ liệu và bảng số</summary>
         <p className="my-2">
           Tái dựng từ lịch sử trạng thái của các task hiện thuộc Sprint, theo

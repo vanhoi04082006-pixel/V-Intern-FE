@@ -17,7 +17,7 @@ export function AuthTabs({ active }: { active: AuthTabKey }) {
   return (
     <nav
       aria-label="Chuyển giữa đăng nhập và đăng ký"
-      className="mb-3.5 border-b border-slate-200"
+      className="mb-4 border-b border-border"
     >
       <ul className="flex gap-9">
         {TABS.map((tab) => {
@@ -27,17 +27,17 @@ export function AuthTabs({ active }: { active: AuthTabKey }) {
               <Link
                 href={tab.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`relative block rounded-sm pb-3 text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 ${
+                className={`relative block rounded-sm pb-3 text-body font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 ${
                   isActive
-                    ? "text-brand"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {tab.label}
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute inset-x-0 -bottom-px h-[3px] rounded-full bg-brand"
+                    className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-primary"
                   />
                 )}
               </Link>

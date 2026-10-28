@@ -133,16 +133,14 @@ function InternGate({
           renderContent()
         ) : target !== "/intern" ? (
           <>
-            <StudentHeading
-              eyebrow="Bắt đầu hành trình"
-              title="Hoàn tất tuyển dụng"
+            <StudentHeading              title="Hoàn tất tuyển dụng"
               description="Bạn cần hoàn thành bước tuyển dụng trước khi mở khóa không gian thực tập."
             />
             <div className="student-dashboard-grid">
               <div className="student-panel student-chat-welcome">
                 <Compass
                   size={42}
-                  className="text-blue-600"
+                  className="text-primary"
                   aria-hidden="true"
                 />
                 <h2>Bước tuyển dụng đang chờ bạn</h2>
@@ -187,9 +185,7 @@ function InternGate({
           </>
         ) : assignmentRequired && data.status !== "active" ? (
           <>
-            <StudentHeading
-              eyebrow="Không gian của bạn"
-              title="Đang chờ phân công"
+            <StudentHeading              title="Đang chờ phân công"
               description="Bạn đã vượt qua vòng tuyển dụng. Giảng viên sẽ phân công dự án và Sprint tiếp theo cho bạn."
               action={
                 <StudentLink secondary href="/intern/notifications">
@@ -202,7 +198,7 @@ function InternGate({
               <div className="student-panel student-chat-welcome">
                 <Clock3
                   size={42}
-                  className="text-blue-600"
+                  className="text-primary"
                   aria-hidden="true"
                 />
                 <h2>Bạn chưa có dự án, Sprint hoặc nhiệm vụ được giao.</h2>
@@ -266,9 +262,7 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
   const id = sprint?.id;
   return (
     <>
-      <StudentHeading
-        eyebrow="Nhịp làm việc của dự án"
-        title="Sprint Board"
+      <StudentHeading        title="Sprint Board"
         description={
           "Xem Sprint đã lên kế hoạch, đang chạy và lịch sử trong phiên được phân công."
         }
@@ -288,7 +282,7 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
           <StudentPanel
             title="Sprint Board"
             icon={SquareKanban}
-            className="student-panel-accent"
+            className="student-sprint-empty"
           >
             <div className="student-chat-welcome">
               <span className="student-metric-icon size-14">
@@ -300,7 +294,7 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
                 hiển thị ở đây ngay khi có kế hoạch, cùng tiến độ và thời hạn
                 của những nhiệm vụ được giao cho bạn.
               </p>
-              <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+              <div className="mt-5 flex flex-wrap justify-center gap-3">
                 <StudentLink href="/intern/work">Xem nhiệm vụ</StudentLink>
                 <StudentLink secondary href="/intern/project">
                   Dự án của tôi
@@ -343,7 +337,7 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
               </ol>
             </StudentPanel>
             <StudentPanel title="Bạn vẫn có thể làm việc" icon={Info}>
-              <p className="text-[12.5px] leading-7 text-slate-600">
+              <p className="text-small leading-7 text-muted-foreground">
                 Nhiệm vụ đã được giao vẫn hiển thị trong Công việc của tôi. Bạn
                 có thể đọc yêu cầu, cập nhật tiến độ và trao đổi với giảng viên
                 ngay cả khi Sprint chưa kích hoạt.
@@ -412,7 +406,7 @@ export function SprintBoard({
       )}
       {drop.error && <InlineAlert tone="danger">{drop.error}</InlineAlert>}
       {drop.busy && (
-        <p role="status" className="text-sm text-slate-500">
+        <p role="status" className="text-body text-muted-foreground">
           Đang cập nhật nhiệm vụ…
         </p>
       )}
@@ -420,6 +414,7 @@ export function SprintBoard({
       {own ? (
         <StudentPanel
           title={`${data.sprint.code} · ${data.sprint.name}`}
+          className="student-sprint-summary"
           icon={SquareKanban}
           action={
             <StudentBadge
@@ -435,7 +430,7 @@ export function SprintBoard({
         >
           <div className="grid gap-5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]">
             <div>
-              <p className="student-eyebrow">Tiến độ Sprint</p>
+              <p className="student-label">Tiến độ Sprint</p>
               <StudentProgress
                 value={percent}
                 label={`${done}/${data.total} nhiệm vụ hoàn thành`}
@@ -443,17 +438,17 @@ export function SprintBoard({
               />
             </div>
             <div>
-              <p className="student-eyebrow">Thời gian</p>
+              <p className="student-label">Thời gian</p>
               <p className="student-chip mt-1">
                 <CalendarDays size={13} aria-hidden="true" />
-                {start} — {end}
+                {start} đến {end}
               </p>
             </div>
             <div>
-              <p className="student-eyebrow">Tổng nhiệm vụ</p>
-              <p className="mt-1 text-[20px] font-extrabold tracking-tight text-navy">
+              <p className="student-label">Tổng nhiệm vụ</p>
+              <p className="mt-1 text-section font-extrabold tracking-tight text-foreground">
                 {data.total}
-                <span className="ml-1.5 text-[11.5px] font-medium text-slate-500">
+                <span className="ml-2 text-caption font-medium text-muted-foreground">
                   nhiệm vụ
                 </span>
               </p>
@@ -462,7 +457,7 @@ export function SprintBoard({
         </StudentPanel>
       ) : (
         <Panel title={data.sprint.name}>
-          <div className="flex flex-wrap items-center gap-4 text-sm">
+          <div className="flex flex-wrap items-center gap-4 text-body">
             <StatusDot tone={sprintStatusLabel(data.sprint.status).tone}>
               {sprintStatusLabel(data.sprint.status).label}
             </StatusDot>
@@ -470,14 +465,14 @@ export function SprintBoard({
               {done}/{data.total} nhiệm vụ hoàn thành
             </span>
             <span>
-              {start} – {end}
+              {start} đến {end}
             </span>
           </div>
           <progress
             aria-label="Tiến độ Sprint"
             value={done}
             max={data.total || 1}
-            className="mt-3 h-2 w-full accent-blue-600"
+            className="mt-3 h-2 w-full accent-primary"
           />
         </Panel>
       )}
@@ -513,7 +508,7 @@ export function SprintBoard({
                   <p>{{ todo: "Đọc yêu cầu và chuẩn bị", doing: "Tập trung từng nhiệm vụ", review: "Đã nộp, chờ phản hồi", done: "Được giảng viên xác nhận" }[column.status]}</p>
                 </header>
                 {column.tasks.length ? (
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {column.tasks.map((t) => (
                       <article
                         key={t.id}
@@ -535,7 +530,7 @@ export function SprintBoard({
                           <Link
                             href={`/intern/work/${encodeURIComponent(t.id)}`}
                             draggable={false}
-                            className="hover:text-blue-700"
+                            className="hover:text-primary"
                           >
                             {t.title}
                           </Link>
@@ -569,16 +564,16 @@ export function SprintBoard({
                     {column.tasks.map((t) => (
                       <article
                         key={t.id}
-                        className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+                        className="rounded-control border border-border bg-background p-3"
                       >
-                        <p className="text-xs font-semibold text-blue-600">
+                        <p className="text-caption font-semibold text-primary">
                           {t.code}
                         </p>
-                        <p className="my-2 text-sm font-semibold text-navy">
+                        <p className="my-2 text-body font-semibold text-foreground">
                           {t.title}
                         </p>
                         <Badge>{t.priority}</Badge>
-                        <p className="mt-2 text-xs text-slate-500">
+                        <p className="mt-2 text-caption text-muted-foreground">
                           {t.progress}% ·{" "}
                           {t.dueDate
                             ? new Date(t.dueDate).toLocaleDateString("vi-VN")
@@ -603,10 +598,7 @@ export function InternProject({ workspace }: { workspace: InternWorkspace }) {
   const assignment = workspace.assignment;
   return (
     <>
-      <StudentHeading
-        eyebrow="Bức tranh tổng thể"
-        title="Dự án của tôi"
-        artwork="project"
+      <StudentHeading        title="Dự án của tôi"
         description="Hiểu mục tiêu, công nghệ và thời gian thực hiện trước khi bắt đầu từng nhiệm vụ."
         action={<StudentLink href="/intern/work">Xem nhiệm vụ</StudentLink>}
       />
@@ -646,19 +638,18 @@ export function ProjectDetail({
     return (
       <div className="student-dashboard-grid student-project-layout">
         <div className="space-y-5">
-          <StudentPanel title={p.name} icon={FolderKanban}>
-            <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
+          <StudentPanel title={p.name} icon={FolderKanban} className="student-project-brief">
+            <span className="rounded-control bg-accent px-2 py-1 text-caption font-bold text-primary">
               {p.code}
             </span>
-            <h3 className="mb-3 mt-6 text-sm font-bold">Mục tiêu & phạm vi</h3>
-            <p className="whitespace-pre-wrap text-sm leading-8 text-slate-600">
+            <h3 className="mb-3 mt-6 text-body font-bold">Mục tiêu & phạm vi</h3>
+            <p className="whitespace-pre-wrap text-body leading-8 text-muted-foreground">
               {p.description || "Giảng viên chưa bổ sung mô tả dự án."}
             </p>
-          </StudentPanel>
-          <StudentPanel title="Bộ công nghệ" icon={GitBranch}>
+            <h3 className="mb-3 mt-6 flex items-center gap-2 text-body font-semibold"><GitBranch size={16} aria-hidden="true" />Bộ công nghệ</h3>
             <div className="student-project-technologies">
               {p.technologies.length ? p.technologies.join(" · ") : (
-                <p className="text-sm text-slate-500">
+                <p className="text-body text-muted-foreground">
                   Chưa có công nghệ khai báo.
                 </p>
               )}
@@ -667,7 +658,7 @@ export function ProjectDetail({
         </div>
         <div className="space-y-5">
           <StudentPanel title="Thông tin dự án">
-            <dl className="space-y-4 text-sm">
+            <dl className="space-y-4 text-body">
               {[
                 [
                   "Trạng thái",
@@ -709,15 +700,15 @@ export function ProjectDetail({
               ].map(([label, value]) => (
                 <div
                   key={String(label)}
-                  className="flex justify-between gap-4 border-b border-slate-100 pb-3"
+                  className="flex justify-between gap-4 border-b border-border pb-3"
                 >
-                  <dt className="text-slate-500">{label}</dt>
+                  <dt className="text-muted-foreground">{label}</dt>
                   <dd className="text-right font-semibold">{value}</dd>
                 </div>
               ))}
             </dl>
             {p.mentorId && (
-              <details className="mt-4 text-xs text-slate-500">
+              <details className="mt-4 text-caption text-muted-foreground">
                 <summary className="cursor-pointer">
                   Thông tin người phụ trách
                 </summary>
@@ -727,7 +718,8 @@ export function ProjectDetail({
               </details>
             )}
           </StudentPanel>
-          <StudentPanel title="Chuẩn bị cho công việc">
+          <details className="student-help-disclosure">
+            <summary>Chuẩn bị cho công việc</summary>
             <ol className="student-step-list">
               <li>
                 <div>
@@ -753,15 +745,15 @@ export function ProjectDetail({
                 Kiểm tra GitHub
               </StudentLink>
             </div>
-          </StudentPanel>
+          </details>
         </div>
       </div>
     );
   return (
     <Panel title={p.name}>
       <Badge>{p.code}</Badge>
-      <p className="mt-3 whitespace-pre-wrap text-sm">{p.description}</p>
-      <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
+      <p className="mt-3 whitespace-pre-wrap text-body">{p.description}</p>
+      <dl className="mt-5 grid gap-4 text-body sm:grid-cols-2">
         {[
           ["Trạng thái", p.status],
           ["Độ khó", p.difficulty],
@@ -781,7 +773,7 @@ export function ProjectDetail({
           ],
         ].map(([label, value]) => (
           <div key={String(label)}>
-            <dt className="text-slate-500">{label}</dt>
+            <dt className="text-muted-foreground">{label}</dt>
             <dd className="mt-1 break-words font-medium">{value}</dd>
           </div>
         ))}
@@ -791,7 +783,7 @@ export function ProjectDetail({
         {p.technologies.length ? (
           p.technologies.map((t) => <Badge key={t}>{t}</Badge>)
         ) : (
-          <p className="text-sm text-slate-500">Chưa có công nghệ khai báo.</p>
+          <p className="text-body text-muted-foreground">Chưa có công nghệ khai báo.</p>
         )}
       </div>
     </Panel>

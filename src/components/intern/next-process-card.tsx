@@ -28,11 +28,11 @@ export function NextProcessCard({
       title="Quy trình tiếp theo"
       className={className}
       headerClassName="xl:px-4 xl:py-2"
-      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-2.5"
+      bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-3"
     >
       {/* Desktop: nhịp bước cố định theo R01; connector dọc nối số.
           Ba bước hiển thị cùng lúc, không giãn kín chiều cao card. */}
-      <ol className="relative flex flex-col gap-[var(--iw-step-gap)] xl:gap-8">
+      <ol className="relative flex flex-col gap-4 xl:gap-8">
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
           // Reference: bước 1 (sắp tới) đậm màu blue, các bước sau trung tính.
@@ -41,7 +41,7 @@ export function NextProcessCard({
           return (
             <li
               key={step.order}
-              className="relative flex gap-3.5 xl:min-h-0 xl:min-h-16"
+              className="relative flex gap-4 xl:min-h-0 xl:min-h-16"
             >
               {/*
                 Đường nối dọc giữa các bước — chỉ vẽ khi không phải bước cuối,
@@ -53,23 +53,23 @@ export function NextProcessCard({
               >
                 <span
                   className={cn(
-                    "grid size-7 shrink-0 place-items-center rounded-full text-[13px] font-bold",
+                    "grid size-7 shrink-0 place-items-center rounded-full text-small font-bold",
                     isNextUp
-                      ? "bg-brand text-white shadow-sm"
-                      : "bg-slate-100 text-slate-500",
+                      ? "bg-primary text-primary-foreground shadow-app-xs"
+                      : "bg-muted text-muted-foreground",
                   )}
                 >
                   {step.order}
                 </span>
                 {!isLast ? (
-                  <span className="absolute top-8 -bottom-8 w-px bg-slate-200" />
+                  <span className="absolute top-8 -bottom-8 w-px bg-muted" />
                 ) : null}
               </span>
-              <div className="min-w-0 pb-0.5">
-                <p className="text-sm font-semibold leading-snug text-navy">
+              <div className="min-w-0 pb-1">
+                <p className="text-body font-semibold leading-snug text-foreground">
                   {step.title}
                 </p>
-                <p className="mt-1 text-[13px] leading-relaxed text-slate-500 xl:text-xs xl:leading-[var(--iw-lead)]">
+                <p className="mt-1 text-small leading-relaxed text-muted-foreground xl:text-caption xl:leading-[var(--iw-lead)]">
                   {step.description}
                 </p>
               </div>

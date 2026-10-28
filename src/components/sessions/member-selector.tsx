@@ -173,7 +173,7 @@ export function MemberSelector({
 
   return (
     <div className="space-y-3">
-      {members.length > 0 && <section aria-label="Thành viên đã phân công" className="rounded-xl border border-blue-100 bg-blue-50/30 p-3"><h3 className="mb-2 text-sm font-semibold">Đội hình hiện tại</h3><ul className="space-y-2">{members.map(member => <li key={member.userId} className="flex flex-wrap items-center justify-between gap-2 text-sm"><div className="min-w-0"><strong>{member.displayName}</strong><p className="break-all text-xs text-slate-500">{member.email}</p></div><Can perm="assignments.manage"><button type="button" aria-label={`Gỡ ${member.displayName} khỏi phiên`} className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 disabled:opacity-50" disabled={action.busy} onClick={() => void remove(member.userId, member.displayName)}>Gỡ khỏi phiên</button></Can></li>)}</ul></section>}
+      {members.length > 0 && <section aria-label="Thành viên đã phân công" className="border-b border-border pb-4"><h3 className="mb-2 text-body font-semibold">Đội hình hiện tại</h3><ul className="space-y-2">{members.map(member => <li key={member.userId} className="flex flex-wrap items-center justify-between gap-2 text-body"><div className="min-w-0"><strong>{member.displayName}</strong><p className="break-all text-caption text-muted-foreground">{member.email}</p></div><Can perm="assignments.manage"><button type="button" aria-label={`Gỡ ${member.displayName} khỏi phiên`} className="rounded-control border border-border px-3 py-2 text-caption font-semibold text-destructive disabled:opacity-50" disabled={action.busy} onClick={() => void remove(member.userId, member.displayName)}>Gỡ khỏi phiên</button></Can></li>)}</ul></section>}
       <div className="flex flex-wrap gap-2">
         <input
           aria-label="Tìm sinh viên"
@@ -187,14 +187,14 @@ export function MemberSelector({
           {careerCatalog.data?.map(role => <option key={role.code} value={role.code}>{role.label}</option>)}
         </select>
       </div>
-      <p className="text-xs text-slate-500">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
-      {Boolean(careerCatalog.error) && <div role="alert" className="text-sm text-amber-800">Không tải được danh sách nghề nghiệp. Bạn vẫn có thể tìm sinh viên theo tên. <button type="button" className="font-semibold underline" onClick={careerCatalog.reload}>Thử lại danh sách nghề</button></div>}
+      <p className="text-caption text-muted-foreground">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
+      {Boolean(careerCatalog.error) && <div role="alert" className="text-body text-warning">Không tải được danh sách nghề nghiệp. Bạn vẫn có thể tìm sinh viên theo tên. <button type="button" className="font-semibold underline" onClick={careerCatalog.reload}>Thử lại danh sách nghề</button></div>}
       {notice && (
-        <p role="status" className="rounded bg-emerald-50 p-2 text-xs text-emerald-700">{notice}</p>
+        <p role="status" className="rounded bg-success-subtle p-2 text-caption text-success">{notice}</p>
       )}
       {Boolean(action.error) && <ErrorState error={action.error} />}
       {results.loading ? (
-        <p role="status" className="p-3 text-sm text-slate-500">Đang tìm ứng viên...</p>
+        <p role="status" className="p-3 text-body text-muted-foreground">Đang tìm ứng viên...</p>
       ) : results.error ? (
         <ErrorState error={results.error} onRetry={results.reload} />
       ) : !results.data || results.data.items.length === 0 ? (
@@ -206,24 +206,24 @@ export function MemberSelector({
               const reason = ineligibilityReason(c);
               const added = assignedIds.has(c.userId.toLowerCase());
               return (
-                <li key={c.userId} className="rounded-lg border border-slate-100 p-3">
+                <li key={c.userId} className="border-b border-border py-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-800">{c.displayName ?? "Chưa có tên"}</p>
-                      <p className="truncate text-[11px] text-slate-500">{c.email ?? "Chưa có email"}</p>
-                      <p className="mt-1 text-[11px] text-slate-500">
+                      <p className="text-body font-semibold text-foreground">{c.displayName ?? "Chưa có tên"}</p>
+                      <p className="break-words text-caption text-muted-foreground">{c.email ?? "Chưa có email"}</p>
+                      <p className="mt-1 text-caption text-muted-foreground">
                         {careerLabel(c.selectedRole)} · {c.status === 'passed' ? 'Đã đậu phỏng vấn' : 'Chưa đủ điều kiện'}
                         {c.result ? ` · Tổng điểm ${c.result.overallScore} · Chuyên môn ${c.result.technicalScore} · Tiếng Anh ${c.result.englishScore ?? 'Chưa có điểm riêng'}` : ''}
                       </p>
-                      {Boolean(c.result?.strengths?.length) && <p className="mt-2 text-xs text-slate-600">Kỹ năng: {c.result!.strengths!.join(' · ')}</p>}
-                      {Boolean(c.result?.weaknesses?.length) && <p className="mt-1 text-xs text-slate-500">Cần cải thiện: {c.result!.weaknesses!.join(' · ')}</p>}
-                      {reason && <p className="mt-1 text-[11px] text-amber-700">{reason}</p>}
+                      {Boolean(c.result?.strengths?.length) && <p className="mt-2 text-caption text-muted-foreground">Kỹ năng: {c.result!.strengths!.join(' · ')}</p>}
+                      {Boolean(c.result?.weaknesses?.length) && <p className="mt-1 text-caption text-muted-foreground">Cần cải thiện: {c.result!.weaknesses!.join(' · ')}</p>}
+                      {reason && <p className="mt-1 text-caption text-warning">{reason}</p>}
                       {!reason && !added && (
-                        <label className="mt-1 block text-[11px] text-slate-500">
+                        <label className="mt-1 block text-caption text-muted-foreground">
                           Vai trò trong đội
                           <select
                             aria-label={`Vai trò cho ${c.displayName ?? c.userId}`}
-                            className="mt-0.5 block rounded border border-slate-200 px-1.5 py-0.5 text-[11px]"
+                            className={`${inputClass} mt-1`}
                             value={rolePick[c.userId] ?? openRolesFor(c, slots)[0] ?? ""}
                             onChange={(e) => setRolePick((prev) => ({ ...prev, [c.userId]: e.target.value }))}
                             disabled={openRolesFor(c, slots).length === 0}
@@ -239,7 +239,7 @@ export function MemberSelector({
                         </label>
                       )}
                       {expanded === c.userId && (
-                        <div className="mt-2 rounded bg-slate-50 p-2 text-[11px] text-slate-600">
+                        <div className="mt-3 border-t border-border pt-3 text-small text-muted-foreground">
                           {detail ? (
                             <CandidateInterviewSummary detail={detail} />
                           ) : (
@@ -248,10 +248,10 @@ export function MemberSelector({
                         </div>
                       )}
                     </div>
-                    <div className="flex shrink-0 gap-1.5">
+                    <div className="flex shrink-0 gap-2">
                       <button
                         type="button"
-                        className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-600"
+                        className="min-h-10 rounded-control border border-input px-3 py-2 text-small text-primary hover:bg-accent"
                         onClick={() => void toggleDetail(c)}
                       >
                         {expanded === c.userId ? "Ẩn" : "Chi tiết"}
@@ -260,7 +260,7 @@ export function MemberSelector({
                         <button
                           type="button"
                           disabled={action.busy}
-                          className="rounded border border-rose-200 px-2 py-1 text-[11px] text-rose-600 disabled:opacity-50"
+                          className="min-h-10 rounded-control border border-input px-3 py-2 text-small text-destructive hover:bg-destructive-subtle disabled:opacity-50"
                           onClick={() => void remove(c.userId, c.displayName)}
                         >
                           Gỡ
@@ -270,7 +270,7 @@ export function MemberSelector({
                           type="button"
                           disabled={action.busy || reason !== null || openRolesFor(c, slots).length === 0}
                           title={reason ?? (openRolesFor(c, slots).length === 0 ? "Không còn slot vai trò trống" : "Phân công vào phiên")}
-                          className={`${buttonClass} px-2 py-1 text-[11px] disabled:opacity-50`}
+                          className={`${buttonClass} px-2 py-1 text-caption disabled:opacity-50`}
                           onClick={() => void add(c)}
                         >
                           Thêm
@@ -288,7 +288,7 @@ export function MemberSelector({
             total={results.data.total}
             onChange={(p: number) => setPage(p)}
           />
-          <p className="text-xs text-slate-500">Chỉ sinh viên đã đậu, còn trống và phù hợp vai trò trong đội mới được phân công.</p>
+          <p className="text-caption text-muted-foreground">Chỉ sinh viên đã đậu, còn trống và phù hợp vai trò trong đội mới được phân công.</p>
         </>
       )}
     </div>

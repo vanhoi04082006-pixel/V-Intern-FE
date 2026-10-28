@@ -2,6 +2,8 @@
 
 Trạng thái ngày 26/10/2026: **đã triển khai nền chung cho ba vai; chưa redesign xong từng trang**. [Báo cáo lát nền tảng](../docs/design/NOTEBOOK-FOUNDATION-20261026.md): 12 icon SVG, hai minh họa sổ tay, token/sidebar/tab/section dùng chung, nhận xét thu gọn; 651 test và build local đạt, 15 lượt responsive trên ba trang mẫu. Không lấy kết quả này làm bằng chứng 78 route đã được làm xong.
 
+Riêng [tab Thông báo ba vai](../docs/design/NOTIFICATIONS-20261026.md) đã trau chuốt tiếp ở 603ee3f: 660 test, build đạt, thêm ma trận 15 lượt đúng kích thước và thao tác đọc/lọc/lưu tùy chọn có phản hồi API.
+
 ## Hướng thiết kế
 
 V-Intern là không gian thực hành của sinh viên đại học và giảng viên. Hình ảnh gợi sổ tay, thời khóa biểu và giấy kẻ ô: xanh việt quất, nền giấy sáng, xanh nhạt hỗ trợ, điểm nhấn vàng nhạt dùng ít. Tham khảo nhịp tiến bộ và phản hồi rõ ràng của ứng dụng học tập; nhân vật, icon và bố cục là của V-Intern. Không đưa XP, streak, thành tích hoặc số liệu không có nguồn vào giao diện.
@@ -46,14 +48,14 @@ Nút có hover/focus/pressed/disabled/pending. Mutation chỉ báo thành công 
 
 | Nhóm | Phạm vi | Hoàn thành khi | Trạng thái |
 |---|---|---|---|
-| Shell + feedback | 2 shell workspace, onboarding, nav, dialog, các trạng thái | Nhất quán desktop/mobile, bàn phím, thông báo theo kết quả thật | Chưa triển khai vòng mới |
-| Sinh viên làm việc | Tổng quan, work/list/detail, Sprint, project, Mentor, GitHub, participation | Có trọng tâm công việc, DnD và nộp bài giữ logic; ưu tiên/tiến độ scan nhanh | Chưa triển khai vòng mới |
-| Sinh viên kết quả | Evaluation/detail, KPI/detail, salary, performance, recommendation, certificate/detail | Biểu đồ có nguồn và empty state trung thực; drill-down rõ | Chưa triển khai vòng mới |
-| Sinh viên tài khoản/tuyển | Profile, notification, onboarding/role/interview/result | Lịch và giới hạn 3 lượt giữ nguyên; validation, no-show, success/error đủ | Chưa triển khai vòng mới |
-| Giảng viên tổ chức | Home, sessions/detail/setup, Sprint/detail, task/detail, library/detail, alias classes | Hàng đợi cần xử lý rõ; review là vùng chính; form không bị card lồng card | Chưa triển khai vòng mới |
-| Giảng viên theo dõi | Recruitment, participation, evaluations, performance, reports, sharing, GitHub, profile, notification | Tạo/sửa/duyệt/xuất/mời lại có pending và kết quả đúng | Chưa triển khai vòng mới |
-| Admin | 28 route trong route map | Cùng ngôn ngữ thiết kế, mật độ phù hợp vận hành; giữ phân quyền | Chưa triển khai vòng mới |
-| Public ngoài trang chủ | 7 route public còn lại | Auth, CV, verify, lỗi và các trạng thái thống nhất; `/` không đổi | Chưa triển khai vòng mới |
+| Shell + feedback | 2 shell workspace, onboarding, nav, dialog, các trạng thái | Nhất quán desktop/mobile, bàn phím, thông báo theo kết quả thật | Chưa trau chuốt riêng |
+| Sinh viên làm việc | Tổng quan, work/list/detail, Sprint, project, Mentor, GitHub, participation | Có trọng tâm công việc, DnD và nộp bài giữ logic; ưu tiên/tiến độ scan nhanh | Chưa trau chuốt riêng |
+| Sinh viên kết quả | Evaluation/detail, KPI/detail, salary, performance, recommendation, certificate/detail | Biểu đồ có nguồn và empty state trung thực; drill-down rõ | Chưa trau chuốt riêng |
+| Sinh viên tài khoản/tuyển | Profile, notification, onboarding/role/interview/result | Lịch và giới hạn 3 lượt giữ nguyên; validation, no-show, success/error đủ | Đang làm: Thông báo/GitHub đã kiểm; còn các luồng khác |
+| Giảng viên tổ chức | Home, sessions/detail/setup, Sprint/detail, task/detail, library/detail, alias classes | Hàng đợi cần xử lý rõ; review là vùng chính; form không bị card lồng card | Chưa trau chuốt riêng |
+| Giảng viên theo dõi | Recruitment, participation, evaluations, performance, reports, sharing, GitHub, profile, notification | Tạo/sửa/duyệt/xuất/mời lại có pending và kết quả đúng | Đang làm: Thông báo đã kiểm; còn từng tab theo dõi |
+| Admin | 28 route trong route map | Cùng ngôn ngữ thiết kế, mật độ phù hợp vận hành; giữ phân quyền | Đã có nền chung và Thông báo; còn từng tab quản trị |
+| Public ngoài trang chủ | 7 route public còn lại | Auth, CV, verify, lỗi và các trạng thái thống nhất; `/` không đổi | Chưa trau chuốt riêng |
 | Nghiệm thu | Toàn bộ route và hành động trên dữ liệu QA riêng | 390/768/1024/1280/1440px, keyboard, reduced motion, loading/empty/error/success, regression và ảnh có nguồn | Chưa làm cho UI mới |
 
 Mỗi dòng được đánh dấu hoàn tất phải kèm route cụ thể, thao tác đã thử, kết quả quan sát và ảnh/log. Alias, trang empty và trang có dữ liệu đều được kiểm riêng. Không thu gọn phạm vi còn một dashboard đẹp.

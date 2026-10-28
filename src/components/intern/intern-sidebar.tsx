@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/v-intern/logo";
-import { LearningIcon } from "@/components/workspace/learning-icon";
 
 import { INTERN_BOTTOM_NAV } from "./workspace-presentation";
 import type {
@@ -25,7 +24,7 @@ function NavItem({
   onNavigate?: () => void;
 }) {
   const icon = (
-    <item.icon className="size-[17px] shrink-0" aria-hidden="true" />
+    <item.icon className="size-4 shrink-0" aria-hidden="true" />
   );
 
   if (active) {
@@ -101,7 +100,6 @@ export function InternSidebar({
       <div className="student-sidebar-brand">
         <div className="student-sidebar-brand-text">
           <Logo />
-          <p className="student-sidebar-tagline">Learn · Build · Belong</p>
         </div>
         <span className="student-sidebar-scope">Sinh viên</span>
       </div>
@@ -114,7 +112,7 @@ export function InternSidebar({
           {groups.map((group) => (
             <div key={group.id} className="student-nav-group">
               {group.label ? (
-                <p className="student-nav-label notebook-nav-group"><LearningIcon kind={group.id === 'performance' ? 'analytics' : 'workflow'} />{group.label}</p>
+                <p className="student-nav-label notebook-nav-group">{group.label}</p>
               ) : null}
               <ul className="student-nav-list">
                 {group.items.map((item) => (

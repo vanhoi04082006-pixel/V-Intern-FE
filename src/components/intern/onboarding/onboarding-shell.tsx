@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -50,24 +49,10 @@ export function OnboardingShell({
           {/* Rail stepper dọc — chỉ desktop, dashboard height */}
           <aside
             aria-label="Tiến trình onboarding"
-            className="hidden w-[248px] shrink-0 flex-col border-r border-slate-200 bg-white px-4 py-5 lg:flex lg:min-h-0 lg:overflow-y-auto"
+            className="hidden w-[248px] shrink-0 flex-col border-r border-border bg-card px-4 py-5 lg:flex lg:min-h-0 lg:overflow-y-auto"
           >
             <VerticalStepper activeStep={activeStep} />
-            {/* Mascot compact — đáy rail (mt-auto), không chiếm chỗ lớn */}
-            <figure className="mt-auto pt-5">
-              <div className="relative mx-auto h-20 w-16">
-                <Image
-                  src="/images/robot-v2.png"
-                  alt=""
-                  fill
-                  sizes="64px"
-                  className="object-contain"
-                />
-              </div>
-              <figcaption className="mt-1.5 text-center text-[11px] font-medium leading-snug text-slate-500">
-                AI Recruiter luôn đồng hành cùng bạn
-              </figcaption>
-            </figure>
+            <p className="mt-auto border-t border-border pt-5 text-caption leading-relaxed text-muted-foreground">AI Recruiter luôn đồng hành cùng bạn</p>
           </aside>
 
           <main className="min-w-0 flex-1 px-4 py-5 sm:px-6 lg:min-h-0 lg:overflow-y-auto lg:px-8">

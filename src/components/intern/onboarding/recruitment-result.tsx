@@ -31,21 +31,19 @@ export function RecruitmentResult() {
   return (
     <div>
       <StudentHeading
-        artwork={result?.decision === "passed" ? "achievement" : "learn"}
-        eyebrow="Bước 4 · Nhìn lại năng lực"
         title="Kết quả tuyển dụng"
         description="Đọc kết quả, hiểu điểm mạnh và chọn bước tiếp theo cho hành trình thực tập của bạn."
       />
       {notice && (
         <p
           role="alert"
-          className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-700"
+          className="mt-4 rounded-control bg-destructive-subtle p-3 text-body text-destructive"
         >
           {notice}
         </p>
       )}
       {result ? (
-        <div className="recruitment-result-reveal mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="student-recruitment-result mt-6 grid gap-8 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="space-y-5">
             <section
               className="student-result-hero"
@@ -53,14 +51,14 @@ export function RecruitmentResult() {
             >
               <div>
                 <span
-                  className={`mb-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${result.decision === "passed" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}
+                  className={`mb-4 inline-flex rounded-full px-3 py-1 text-caption font-semibold ${result.decision === "passed" ? "bg-success-subtle text-success" : "bg-warning-subtle text-warning"}`}
                 >
                   {result.decision === "passed"
                     ? "Đã hoàn tất đánh giá"
                   : roleGuidance ? alternativeRole ? "Khám phá hướng phù hợp hơn" : "Cần định hướng thêm" : "Chuẩn bị cho lần tiếp theo"}
                 </span>
                 <h2
-                  className={`text-2xl font-bold ${result.decision === "passed" ? "text-emerald-700" : "text-amber-700"}`}
+                  className={`text-page font-bold ${result.decision === "passed" ? "text-success" : "text-warning"}`}
                 >
                   {result.decision === "passed"
                     ? "Bạn đã trúng tuyển"
@@ -69,12 +67,12 @@ export function RecruitmentResult() {
                 {result.decision === "passed" && (
                   <p
                     role="status"
-                    className="mt-2 font-semibold text-emerald-700"
+                    className="mt-2 font-semibold text-success"
                   >
                     Chúc mừng! Bạn đã vượt qua phỏng vấn.
                   </p>
                 )}
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-body leading-7 text-muted-foreground">
                   Vị trí:{" "}
                   {profile.selectedRoleLabel ?? roleLabel(profile.selectedRole)}
                 </p>
@@ -106,17 +104,17 @@ export function RecruitmentResult() {
               </div>
             </section>
             <section className="workspace-interview-feedback">
-              <h2 className="text-lg font-bold">Nhận xét từ AI Recruiter</h2>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">
+              <h2 className="text-section font-bold">Nhận xét từ AI Recruiter</h2>
+              <p className="mt-3 whitespace-pre-wrap text-body leading-relaxed">
                 {result.feedback}
               </p>
               {result.strengths.length > 0 && (
                 <>
-                  <h3 className="mt-5 flex items-center gap-2 font-semibold text-emerald-700">
+                  <h3 className="mt-5 flex items-center gap-2 font-semibold text-success">
                     <CircleCheck size={17} aria-hidden="true" />
                     Điểm mạnh
                   </h3>
-                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-600">
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 text-muted-foreground">
                     {result.strengths.map((s, i) => (
                       <li key={i}>{s}</li>
                     ))}
@@ -125,11 +123,11 @@ export function RecruitmentResult() {
               )}
               {result.weaknesses.length > 0 && (
                 <>
-                  <h3 className="mt-5 flex items-center gap-2 font-semibold text-amber-700">
+                  <h3 className="mt-5 flex items-center gap-2 font-semibold text-warning">
                     <Lightbulb size={17} aria-hidden="true" />
                     Cần cải thiện
                   </h3>
-                  <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-600">
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 text-muted-foreground">
                     {result.weaknesses.map((s, i) => (
                       <li key={i}>{s}</li>
                     ))}
@@ -143,35 +141,35 @@ export function RecruitmentResult() {
             <h2 className="font-bold">Bước tiếp theo</h2>
             {result.decision === "passed" ? (
               <>
-                <p className="mt-3 text-sm text-slate-600">
+                <p className="mt-3 text-body text-muted-foreground">
                   Vào Workspace để xem trạng thái phân công mới nhất.
                 </p>
                 <Link
                   href="/intern"
-                  className="mt-4 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white"
+                  className="mt-4 inline-block rounded-control bg-primary px-4 py-2 text-body font-semibold text-primary-foreground"
                 >
                   Vào Workspace
                 </Link>
               </>
             ) : (
               <>
-                <p className="mt-3 text-sm">
+                <p className="mt-3 text-body">
                   Số lần còn lại: {profile.attemptsRemaining}
                 </p>
                 {profile.nextEligibleAt && (
-                  <p className="mt-3 text-sm">
+                  <p className="mt-3 text-body">
                     Có thể thử lại sau:{" "}
                     {new Date(profile.nextEligibleAt).toLocaleString("vi-VN")}
                   </p>
                 )}
                 {alternativeRole && (
-                  <p className="mt-3 text-sm">
+                  <p className="mt-3 text-body">
                     Vị trí được đề xuất: <strong>{roleLabel(alternativeRole)}</strong>
                   </p>
                 )}
-                {roleGuidance && <p className="mt-3 text-sm leading-7 text-slate-600">{alternativeRole ? 'Đọc lý do và các câu trả lời được AI viện dẫn trong phần nhận xét. Đề xuất giúp bạn chọn hướng học tập; bạn cần phỏng vấn lại để đạt vị trí mới.' : 'Điểm nằm trong khoảng 50–70, nhưng hiện chưa có nghề thay thế đang nhận hồ sơ. Xem nhận xét và liên hệ giảng viên để được hướng dẫn. Kết quả và số lượt vẫn được giữ.'}</p>}
-                {profile.attemptsRemaining <= 0 && <p role="status" className="mt-4 text-sm text-amber-800">Bạn đã dùng hết 3 lượt phỏng vấn. Liên hệ giảng viên hoặc quản trị viên để được hướng dẫn; đổi vai trò không tạo thêm lượt.</p>}
-                {profile.interviewSchedule ? <div className="mt-4 space-y-3"><p className="text-sm leading-7 text-slate-600">Liên hệ giảng viên để hẹn lịch tiếp theo. Nghề mới phải phù hợp với đề xuất đã lưu; số lượt và thời gian chờ vẫn được giữ.</p><Link className="student-link inline-flex" href="/intern/onboarding/role">Xem lịch của tôi</Link></div> : <>{roleGuidance && !alternativeRole ? <Link href="/intern/onboarding/role" className="student-link mt-4 inline-flex">Xem vị trí đang tuyển</Link> : <button
+                {roleGuidance && <p className="mt-3 text-body leading-7 text-muted-foreground">{alternativeRole ? 'Đọc lý do và các câu trả lời được AI viện dẫn trong phần nhận xét. Đề xuất giúp bạn chọn hướng học tập; bạn cần phỏng vấn lại để đạt vị trí mới.' : 'Điểm nằm trong khoảng 50–70, nhưng hiện chưa có nghề thay thế đang nhận hồ sơ. Xem nhận xét và liên hệ giảng viên để được hướng dẫn. Kết quả và số lượt vẫn được giữ.'}</p>}
+                {profile.attemptsRemaining <= 0 && <p role="status" className="mt-4 text-body text-warning">Bạn đã dùng hết 3 lượt phỏng vấn. Liên hệ giảng viên hoặc quản trị viên để được hướng dẫn; đổi vai trò không tạo thêm lượt.</p>}
+                {profile.interviewSchedule ? <div className="mt-4 space-y-3"><p className="text-body leading-7 text-muted-foreground">Liên hệ giảng viên để hẹn lịch tiếp theo. Nghề mới phải phù hợp với đề xuất đã lưu; số lượt và thời gian chờ vẫn được giữ.</p><Link className="student-link inline-flex" href="/intern/onboarding/role">Xem lịch của tôi</Link></div> : <>{roleGuidance && !alternativeRole ? <Link href="/intern/onboarding/role" className="student-link mt-4 inline-flex">Xem vị trí đang tuyển</Link> : <button
                   type="button"
                   disabled={busy || !canRetake || !retryRole}
                   onClick={async () => {
@@ -189,13 +187,13 @@ export function RecruitmentResult() {
           </aside>
         </div>
       ) : (
-        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-bold">
+        <section className="mt-6 rounded-panel border border-border bg-card p-6">
+          <h2 className="text-section font-bold">
             {interview?.session.status === "evaluation_failed"
               ? "Đánh giá chưa khả dụng"
               : "Chưa có kết quả tuyển dụng"}
           </h2>
-          <p className="mt-3 text-sm text-slate-500">
+          <p className="mt-3 text-body text-muted-foreground">
             {interview?.session.status === "evaluation_failed"
               ? "Hệ thống chưa thể hoàn tất đánh giá. Câu trả lời đã nộp được giữ lại."
               : "Hệ thống đang xử lý trạng thái tuyển dụng của bạn."}
@@ -205,7 +203,7 @@ export function RecruitmentResult() {
               type="button"
               disabled={busy}
               onClick={() => void retryEvaluation()}
-              className="mt-4 rounded-lg bg-brand px-4 py-2 text-white"
+              className="mt-4 rounded-control bg-primary px-4 py-2 text-primary-foreground"
             >
               Thử lại đánh giá
             </button>
@@ -216,7 +214,7 @@ export function RecruitmentResult() {
         type="button"
         disabled={busy}
         onClick={() => void reload()}
-        className="mt-5 rounded-lg border border-slate-200 px-4 py-2 text-sm"
+        className="mt-5 rounded-control border border-border px-4 py-2 text-body"
       >
         Tải lại trạng thái
       </button>

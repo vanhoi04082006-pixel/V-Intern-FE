@@ -30,12 +30,12 @@ export function ChangePassword() {
   if (loadError) return <ErrorState error={loadError} />;
   if (!ready) return <LoadingState />;
   return (
-    <div className="space-y-6">
+    <div className="auth-form-surface space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-navy">
+        <h1 className="text-page font-semibold text-foreground">
           Bảo vệ tài khoản của bạn
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-body leading-6 text-muted-foreground">
           Đổi mật khẩu tạm trước khi vào hệ thống. Sau khi lưu, đăng nhập lại
           bằng mật khẩu mới.
         </p>
@@ -61,7 +61,7 @@ export function ChangePassword() {
           });
         }}
       >
-        <label className="block text-sm font-medium">
+        <label className="block text-body font-medium">
           Mật khẩu hiện tại
           <input
             className={inputClass}
@@ -72,7 +72,7 @@ export function ChangePassword() {
             maxLength={72}
           />
         </label>
-        <label className="block text-sm font-medium">
+        <label className="block text-body font-medium">
           Mật khẩu mới
           <input
             className={inputClass}
@@ -87,11 +87,11 @@ export function ChangePassword() {
         </label>
         <p
           id="new-password-help"
-          className="mt-1 text-xs font-normal text-slate-500"
+          className="mt-1 text-caption font-normal text-muted-foreground"
         >
           Từ 12 ký tự; tối đa 72 byte. Chọn mật khẩu riêng cho tài khoản này.
         </p>
-        <label className="block text-sm font-medium">
+        <label className="block text-body font-medium">
           Nhập lại mật khẩu mới
           <input
             className={inputClass}

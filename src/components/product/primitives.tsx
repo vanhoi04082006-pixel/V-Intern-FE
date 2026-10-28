@@ -21,20 +21,20 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const buttonBase =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-xl font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0";
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: "bg-blue-600 text-white shadow-xs hover:bg-blue-700 hover:shadow-sm",
+  primary: "bg-primary text-primary-foreground shadow-app-xs hover:bg-primary/90",
   secondary:
-    "border border-slate-200 bg-white text-navy shadow-xs hover:border-slate-300 hover:bg-slate-50",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-navy",
-  danger: "bg-rose-600 text-white shadow-xs hover:bg-rose-700 hover:shadow-sm",
+    "border border-border bg-card text-foreground shadow-app-xs hover:border-input hover:bg-background",
+  ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
+  danger: "bg-destructive text-primary-foreground shadow-app-xs hover:bg-destructive/90",
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
-  sm: "min-h-9 px-3 py-2 text-[13px]",
-  md: "min-h-10 px-4 py-2.5 text-sm",
-  lg: "min-h-11 px-5 py-3 text-sm",
+  sm: "min-h-9 px-3 py-2 text-small",
+  md: "min-h-10 px-4 py-3 text-body",
+  lg: "min-h-11 px-5 py-3 text-body",
   icon: "size-10 p-0",
 };
 
@@ -66,10 +66,10 @@ export const iconButtonClass = cn(
 /* Form controls                                                       */
 /* ------------------------------------------------------------------ */
 export const inputClass =
-  "product-input w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 shadow-xs transition-[border-color,box-shadow] placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30";
+  "product-input w-full min-w-0 rounded-control border border-border bg-card px-4 py-3 text-body text-foreground shadow-app-xs transition-[border-color,box-shadow] placeholder:text-muted-foreground hover:border-input focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30";
 export const selectClass = cn(
   inputClass,
-  "appearance-none pr-9 cursor-pointer",
+  "pr-9 cursor-pointer",
 );
 export const textareaClass = cn(inputClass, "min-h-24 resize-y");
 
@@ -91,18 +91,18 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <div className={cn("space-y-1.5", className)}>
-      <label htmlFor={htmlFor} className="block text-sm font-medium text-navy">
+    <div className={cn("space-y-2", className)}>
+      <label htmlFor={htmlFor} className="block text-body font-medium text-foreground">
         {label}
         {required && (
-          <span aria-hidden="true" className="ml-0.5 text-rose-600">
+          <span aria-hidden="true" className="ml-0.5 text-destructive">
             *
           </span>
         )}
       </label>
       {children}
       {hint && !error && (
-        <p id={`${htmlFor}-hint`} className="text-xs leading-5 text-slate-500">
+        <p id={`${htmlFor}-hint`} className="text-caption leading-5 text-muted-foreground">
           {hint}
         </p>
       )}
@@ -110,7 +110,7 @@ export function Field({
         <p
           id={`${htmlFor}-error`}
           role="alert"
-          className="text-xs font-medium leading-5 text-rose-700"
+          className="text-caption font-medium leading-5 text-destructive"
         >
           {error}
         </p>
@@ -138,7 +138,7 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={cn("animate-pulse rounded-lg bg-slate-200/60", className)}
+      className={cn("animate-pulse rounded-control bg-muted/60", className)}
     />
   );
 }
@@ -172,24 +172,24 @@ export function TableSkeleton({
 
 const alertTones = {
   info: {
-    box: "border-sky-200 bg-sky-50 text-sky-900",
+    box: "border-primary/20 bg-accent text-primary",
     icon: Info,
-    iconClass: "text-sky-600",
+    iconClass: "text-primary",
   },
   success: {
-    box: "border-emerald-200 bg-emerald-50 text-emerald-900",
+    box: "border-success/20 bg-success-subtle text-success",
     icon: CircleCheck,
-    iconClass: "text-emerald-600",
+    iconClass: "text-success",
   },
   warning: {
-    box: "border-amber-200 bg-amber-50 text-amber-900",
+    box: "border-warning/20 bg-warning-subtle text-warning",
     icon: TriangleAlert,
-    iconClass: "text-amber-600",
+    iconClass: "text-warning",
   },
   danger: {
-    box: "border-rose-200 bg-rose-50 text-rose-900",
+    box: "border-destructive/20 bg-destructive-subtle text-destructive",
     icon: CircleX,
-    iconClass: "text-rose-600",
+    iconClass: "text-destructive",
   },
 } as const;
 export type AlertTone = keyof typeof alertTones;
@@ -213,7 +213,7 @@ export function InlineAlert({
     <div
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
       className={cn(
-        "flex items-start gap-3 rounded-xl border px-4 py-3 text-sm leading-6",
+        "flex items-start gap-3 rounded-control border px-4 py-3 text-body leading-6",
         conf.box,
         className,
       )}
@@ -239,7 +239,7 @@ export function MetricCard({
   label,
   value,
   sub,
-  subTone = "text-slate-500",
+  subTone = "text-muted-foreground",
 }: {
   icon: LucideIcon;
   label: string;
@@ -249,17 +249,17 @@ export function MetricCard({
   index?: number;
 }) {
   return (
-    <section className="product-metric flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xs transition-shadow hover:shadow-sm sm:p-5">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-blue-50">
-        <Icon className="text-blue-600" size={21} aria-hidden="true" />
+    <section className="product-metric flex min-w-0 items-start gap-3 border-b border-border py-4">
+      <span className="grid size-10 shrink-0 place-items-center rounded-control bg-accent">
+        <Icon className="text-primary" size={21} aria-hidden="true" />
       </span>
       <div className="min-w-0">
-        <p className="text-xs font-medium leading-5 text-slate-500">{label}</p>
-        <p className="mt-1 break-words text-2xl font-bold tracking-tight text-navy tabular-nums">
+        <p className="text-caption font-medium leading-5 text-muted-foreground">{label}</p>
+        <p className="mt-1 break-words text-page font-bold tracking-tight text-foreground tabular-nums">
           {value}
         </p>
         {sub != null && (
-          <p className={cn("mt-1 text-xs leading-5", subTone)}>{sub}</p>
+          <p className={cn("mt-1 text-caption leading-5", subTone)}>{sub}</p>
         )}
       </div>
     </section>
@@ -282,17 +282,17 @@ export function Panel({
   return (
     <section
       className={cn(
-        "product-panel min-w-0 rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xs sm:p-5",
+        "product-panel min-w-0",
         className,
       )}
     >
-      <div className="product-panel-header mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div className="product-panel-header mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <div className="min-w-0">
-          <h2 className="product-panel-title text-sm font-bold leading-6 text-navy sm:text-base">
+          <h2 className="product-panel-title text-body font-bold leading-6 text-foreground sm:text-subsection">
             {title}
           </h2>
           {description && (
-            <p className="product-panel-description mt-0.5 text-xs leading-5 text-slate-500">
+            <p className="product-panel-description mt-0.5 text-caption leading-5 text-muted-foreground">
               {description}
             </p>
           )}
@@ -304,7 +304,7 @@ export function Panel({
   );
 }
 
-/** Card phụ trong Panel — thay cho pattern `rounded-xl border border-slate-200` rải rác. */
+/** Card phụ trong Panel — thay cho pattern `rounded-control border border-border` rải rác. */
 export function Card({
   children,
   className,
@@ -315,7 +315,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "product-card rounded-xl border border-slate-200/70 bg-white p-4 shadow-xs",
+        "product-card border-b border-border py-4",
         className,
       )}
     >
@@ -340,7 +340,7 @@ export function PageTitle({
       {back && (
         <Link
           href={back.href}
-          className="mb-3 inline-flex min-h-8 items-center gap-1.5 rounded-lg px-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+          className="mb-3 inline-flex min-h-8 items-center gap-2 rounded-control px-2 text-small font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         >
           <ArrowLeft size={15} aria-hidden="true" />
           {back.label}
@@ -348,11 +348,11 @@ export function PageTitle({
       )}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="product-page-title-heading text-2xl font-bold tracking-tight text-navy sm:text-3xl">
+          <h1 className="product-page-title-heading text-page font-bold tracking-tight text-foreground sm:text-page">
             {title}
           </h1>
           {subtitle && (
-            <p className="product-page-title-subtitle mt-2 max-w-3xl text-sm leading-6 text-slate-500">
+            <p className="product-page-title-subtitle mt-2 max-w-3xl text-body leading-6 text-muted-foreground">
               {subtitle}
             </p>
           )}
@@ -384,21 +384,21 @@ export function Empty({
   return (
     <div
       role="status"
-      className="product-empty rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-8 text-center"
+      className="product-empty px-4 py-8 text-center"
     >
       {hasRich && (
-        <span className="mx-auto grid size-11 place-items-center rounded-full bg-white text-slate-400 ring-1 ring-slate-200/70">
+        <span className="mx-auto grid size-11 place-items-center rounded-full bg-card text-muted-foreground ring-1 ring-ring/70">
           <Icon size={20} aria-hidden="true" />
         </span>
       )}
-      {title && <p className="mt-3 text-sm font-semibold text-navy">{title}</p>}
+      {title && <p className="mt-3 text-body font-semibold text-foreground">{title}</p>}
       {description && (
-        <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">
+        <p className="mx-auto mt-1 max-w-md text-body leading-6 text-muted-foreground">
           {description}
         </p>
       )}
       {!hasRich && (
-        <div className="text-sm text-slate-500">
+        <div className="text-body text-muted-foreground">
           {children ?? "Chưa có dữ liệu."}
         </div>
       )}
@@ -412,12 +412,12 @@ export function Empty({
 /* Badge / status                                                      */
 /* ------------------------------------------------------------------ */
 const badgeTones = {
-  blue: "bg-blue-50 text-blue-700",
-  gray: "bg-slate-100 text-slate-600",
-  amber: "bg-amber-50 text-amber-800",
-  green: "bg-emerald-50 text-emerald-700",
-  red: "bg-rose-50 text-rose-700",
-  sky: "bg-sky-50 text-sky-700",
+  blue: "bg-accent text-primary",
+  gray: "bg-muted text-muted-foreground",
+  amber: "bg-warning-subtle text-warning",
+  green: "bg-success-subtle text-success",
+  red: "bg-destructive-subtle text-destructive",
+  sky: "bg-accent text-primary",
 } as const;
 export type BadgeTone = keyof typeof badgeTones;
 
@@ -431,7 +431,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "product-badge inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium leading-none",
+        "product-badge inline-flex items-center gap-1 rounded-md px-2 py-1 text-caption font-medium leading-none",
         badgeTones[tone],
       )}
     >
@@ -441,12 +441,12 @@ export function Badge({
 }
 
 const statusDotTones: Record<string, string> = {
-  green: "bg-emerald-50 text-emerald-700",
-  amber: "bg-amber-50 text-amber-800",
-  blue: "bg-blue-50 text-blue-700",
-  gray: "bg-slate-100 text-slate-500",
-  red: "bg-rose-50 text-rose-700",
-  sky: "bg-sky-50 text-sky-700",
+  green: "bg-success-subtle text-success",
+  amber: "bg-warning-subtle text-warning",
+  blue: "bg-accent text-primary",
+  gray: "bg-muted text-muted-foreground",
+  red: "bg-destructive-subtle text-destructive",
+  sky: "bg-accent text-primary",
 };
 
 /** Status pill with leading dot, as in the reference tables. */
@@ -460,14 +460,10 @@ export function StatusDot({
   return (
     <span
       className={cn(
-        "product-status inline-flex items-center gap-1.5 whitespace-nowrap rounded px-2 py-1 text-[11px] font-medium",
+        "product-status inline-flex items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-caption font-medium",
         statusDotTones[tone],
       )}
     >
-      <span
-        aria-hidden="true"
-        className="h-1.5 w-1.5 rounded-full bg-current"
-      />
       {children}
     </span>
   );
@@ -491,7 +487,7 @@ export function Pager({
 }) {
   const last = Math.max(1, totalPages);
   return (
-    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-body text-muted-foreground">
       <span className="tabular-nums">
         {total} {unit} · Trang {page}/{last}
       </span>
@@ -557,13 +553,13 @@ export function Modal({
         onClose();
       }}
       aria-label={title}
-      className={`product-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-xl backdrop:bg-slate-900/50`}
+      className={`product-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-panel border border-border bg-card p-5 shadow-popover backdrop:bg-foreground/50`}
     >
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-xl font-bold text-navy">{title}</h2>
+          <h2 className="text-section font-bold text-foreground">{title}</h2>
           {description && (
-            <p className="mt-1 text-sm leading-6 text-slate-500">
+            <p className="mt-1 text-body leading-6 text-muted-foreground">
               {description}
             </p>
           )}
@@ -579,7 +575,7 @@ export function Modal({
       </div>
       {children}
       {footer && (
-        <div className="mt-5 flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4">
+        <div className="mt-5 flex flex-wrap justify-end gap-2 border-t border-border pt-4">
           {footer}
         </div>
       )}
@@ -596,12 +592,12 @@ export function PageMeta({
   items: { icon: LucideIcon; label: string; value: ReactNode }[];
 }) {
   return (
-    <dl className="mb-4 flex flex-wrap gap-x-7 gap-y-2 text-xs text-slate-500">
+    <dl className="mb-4 flex flex-wrap gap-x-7 gap-y-2 text-caption text-muted-foreground">
       {items.map(({ icon: Icon, label, value }) => (
         <div key={label} className="flex items-center gap-2">
           <Icon size={16} aria-hidden="true" />
           <dt>{label}:</dt>
-          <dd className="font-bold text-navy">{value}</dd>
+          <dd className="font-bold text-foreground">{value}</dd>
         </div>
       ))}
     </dl>
@@ -610,7 +606,7 @@ export function PageMeta({
 
 /** Overlapping member avatars with overflow count. */
 export function AvatarStack({ count }: { count: number }) {
-  if (!count) return <span className="text-slate-400">0</span>;
+  if (!count) return <span className="text-muted-foreground">0</span>;
   return (
     <span className="flex items-center gap-2">
       <strong className="tabular-nums">{count}</strong>
@@ -618,13 +614,13 @@ export function AvatarStack({ count }: { count: number }) {
         {Array.from({ length: Math.min(3, count) }, (_, i) => (
           <span
             key={i}
-            className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-blue-100 text-[8px] text-blue-700"
+            className="grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-accent text-caption text-primary"
           >
             SV
           </span>
         ))}
         {count > 3 && (
-          <span className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-slate-100 text-[8px] text-slate-500">
+          <span className="grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-muted text-caption text-muted-foreground">
             +{count - 3}
           </span>
         )}
@@ -641,17 +637,17 @@ export function ProgressBar({
   value: number | null;
   label?: string;
 }) {
-  if (value === null) return <span className="text-slate-400">—</span>;
+  if (value === null) return <span className="text-muted-foreground">Chưa có dữ liệu</span>;
   const v = Math.max(0, Math.min(100, Math.round(value)));
   return (
     <span className="flex items-center gap-2">
       <progress
         value={v}
         max={100}
-        className="h-2 w-20 accent-blue-600"
+        className="h-2 w-20 accent-primary"
         aria-label={label ?? `Tiến độ ${v}%`}
       />
-      <span className="text-[11px] tabular-nums text-slate-500">
+      <span className="text-caption tabular-nums text-muted-foreground">
         {label ?? `${v}%`}
       </span>
     </span>
@@ -662,10 +658,10 @@ export function ProgressBar({
 /* Table classes — dùng cho bảng thủ công để đồng bộ style             */
 /* ------------------------------------------------------------------ */
 export const tableWrapClass =
-  "workspace-table-wrap overflow-x-auto rounded-xl border border-slate-200/70 bg-white";
-export const tableClass = "product-table w-full border-collapse text-sm";
+  "workspace-table-wrap overflow-x-auto border-y border-border";
+export const tableClass = "product-table w-full border-collapse text-body";
 export const thClass =
-  "whitespace-nowrap border-b border-slate-200/70 bg-slate-50/80 px-3.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500";
+  "whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold  text-muted-foreground";
 export const tdClass =
-  "border-b border-slate-100 px-3.5 py-3 align-top text-slate-700";
-export const tableRowClass = "transition-colors hover:bg-slate-50/70";
+  "border-b border-border px-4 py-3 align-top text-foreground";
+export const tableRowClass = "transition-colors hover:bg-background/70";

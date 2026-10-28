@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { Bot, MessageSquarePlus, Send } from "lucide-react";
 import {
   StudentHeading,
@@ -53,7 +52,6 @@ export function Mentor() {
     <>
       <StudentHeading
         title="AI Mentor"
-        eyebrow="Học cùng một người đồng hành"
         description="Gỡ vướng bằng câu hỏi cụ thể, hiểu cách làm và tự hoàn thiện bài tập. Gợi ý AI hỗ trợ bạn; giảng viên quyết định đánh giá chính thức."
         action={
           <button
@@ -67,7 +65,7 @@ export function Mentor() {
         }
       />
       {Boolean(error) && <ErrorState error={error} />}
-      <div className="workspace-mentor-layout grid items-start gap-5 lg:grid-cols-[282px_minmax(0,1fr)]">
+      <div className="student-mentor-workbench">
         <Panel
           title="Cuộc trò chuyện"
           action={
@@ -144,14 +142,8 @@ export function Mentor() {
         {selected ? (
           <MentorChat key={selected} id={selected} onChanged={list.reload} />
         ) : (
-          <section className="student-panel student-chat-welcome">
-            <Image
-              src="/images/robot-v2.png"
-              alt=""
-              width={100}
-              height={100}
-              className="h-24 w-24 object-contain"
-            />
+          <section className="student-mentor-welcome">
+            <Bot size={24} aria-hidden="true" />
             <h2>Bắt đầu từ điều bạn chưa hiểu</h2>
             <p>
               Mô tả mục tiêu, đoạn bạn đang mắc và những cách đã thử. Mentor có
@@ -165,7 +157,7 @@ export function Mentor() {
               <MessageSquarePlus size={17} aria-hidden="true" />
               {busy ? "Đang tạo…" : "Bắt đầu trao đổi"}
             </button>
-            <p className="mt-5 !text-xs">
+            <p className="mt-5 !text-caption">
               Không đưa mật khẩu, token hoặc dữ liệu riêng tư vào câu hỏi.
             </p>
           </section>
@@ -336,7 +328,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
               </div>
             )}
             {detail.data.conversation.status === "archived" ? (
-              <p role="status" className="mt-4 text-sm text-slate-500">
+              <p role="status" className="mt-4 text-body text-muted-foreground">
                 Cuộc trò chuyện đã lưu trữ. Tạo cuộc trò chuyện mới để tiếp tục.
               </p>
             ) : (
@@ -371,8 +363,8 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                     ))}
                   </div>
                 )}
-                <details className="workspace-mentor-context rounded-xl border border-slate-200 bg-slate-50/50 p-3">
-                  <summary className="cursor-pointer text-xs font-semibold text-slate-600">
+                <details className="workspace-mentor-context rounded-panel border border-border bg-background p-3">
+                  <summary className="cursor-pointer text-caption font-semibold text-muted-foreground">
                     {taskId
                       ? "Đã chọn ngữ cảnh công việc · Thay đổi"
                       : "Thêm ngữ cảnh công việc (không bắt buộc)"}
@@ -426,7 +418,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                   />
                 </label>
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="text-[11px] tabular-nums text-slate-500">
+                  <span className="text-caption tabular-nums text-muted-foreground">
                     {content.length.toLocaleString("vi-VN")}/8.000 ký tự · Enter
                     để xuống dòng
                   </span>
@@ -439,7 +431,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                   </button>
                 </div>
                 {busy && (
-                  <p role="status" className="text-xs text-blue-700">
+                  <p role="status" className="text-caption text-primary">
                     Mentor đang xử lý yêu cầu. Hãy giữ cuộc trò chuyện này mở.
                   </p>
                 )}

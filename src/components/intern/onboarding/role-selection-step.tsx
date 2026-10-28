@@ -27,7 +27,6 @@ function ManualRoleSelectionStep() {
   return (
     <div>
       <StudentHeading
-        eyebrow="Bước 2 · Chọn hướng phát triển"
         title="Chọn vị trí ứng tuyển"
         description="Khám phá yêu cầu của từng vị trí và chọn hướng phù hợp với thế mạnh của bạn. Vòng phỏng vấn sẽ dựa trên lựa chọn này."
       />
@@ -53,33 +52,33 @@ function ManualRoleSelectionStep() {
           ))}
         </div>
       </fieldset>
-      <section className="mt-8 border-t border-slate-200 pt-6">
+      <section className="mt-8 border-t border-border pt-6">
         <h2 className="font-semibold">Trước khi bắt đầu</h2>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-body text-muted-foreground">
           Vai trò sẽ được lưu vào hệ thống. Bạn chỉ có thể thay đổi trước khi
           bắt đầu phỏng vấn.
         </p>
-        <p className="mt-2 text-sm">
+        <p className="mt-2 text-body">
           Số lần còn lại: {profile.attemptsRemaining}
         </p>
         {profile.nextEligibleAt && (
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-body">
             Có thể thử lại sau:{" "}
             {new Date(profile.nextEligibleAt).toLocaleString("vi-VN")}
           </p>
         )}
       </section>
       {notice && (
-        <p role="alert" className="mt-4 text-sm text-rose-700">
+        <p role="alert" className="mt-4 text-body text-destructive">
           {notice}
         </p>
       )}
       <div className="student-selection-bar">
-        <p className="mr-auto text-sm text-slate-600">
+        <p className="mr-auto text-body text-muted-foreground">
           {chosen ? (
             <>
               Bạn đã chọn{" "}
-              <strong className="text-navy">
+              <strong className="text-foreground">
                 {roles.find((role) => role.id === chosen)?.label}
               </strong>
             </>
@@ -89,7 +88,7 @@ function ManualRoleSelectionStep() {
         </p>
         <Link
           href="/intern/onboarding"
-          className="rounded-lg border border-slate-200 px-5 py-3 text-sm"
+          className="rounded-control border border-border px-5 py-3 text-body"
         >
           Quay lại
         </Link>
@@ -99,7 +98,7 @@ function ManualRoleSelectionStep() {
           onClick={async () => {
             if (chosen && (await selectRole(chosen))) await start();
           }}
-          className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-control bg-primary px-5 py-3 text-body font-semibold text-primary-foreground disabled:opacity-50"
         >
           {busy ? "Đang xử lý..." : "Bắt đầu phỏng vấn"}
         </button>

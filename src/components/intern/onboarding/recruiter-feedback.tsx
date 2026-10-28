@@ -22,16 +22,16 @@ export function RecruiterFeedback({
   return (
     <section
       aria-labelledby="result-feedback-heading"
-      className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+      className="rounded-panel border border-border bg-card p-4 shadow-app-xs"
     >
       <h2
         id="result-feedback-heading"
-        className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-navy"
+        className="flex items-center gap-2 text-body font-bold tracking-tight text-foreground"
       >
-        <Bot className="size-5 text-brand" aria-hidden="true" />
+        <Bot className="size-5 text-primary" aria-hidden="true" />
         Nhận xét từ AI Recruiter
       </h2>
-      <ul className="mt-2.5 flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-relaxed text-slate-700 marker:text-brand/50">
+      <ul className="mt-3 flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-primary/50">
         {result.feedback.map((item) => (
           <li key={item}>{item}</li>
         ))}
@@ -51,25 +51,25 @@ export function RoleRecommendation({
   return (
     <section
       aria-labelledby="result-recommendation-heading"
-      className="rounded-xl border border-amber-200 bg-amber-50/70 p-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+      className="rounded-panel border border-border bg-warning-subtle p-4 shadow-app-xs"
     >
       <h2
         id="result-recommendation-heading"
-        className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-navy"
+        className="flex items-center gap-2 text-body font-bold tracking-tight text-foreground"
       >
-        <Sparkles className="size-5 text-amber-600" aria-hidden="true" />
+        <Sparkles className="size-5 text-warning" aria-hidden="true" />
         Đề xuất từ AI Recruiter
       </h2>
 
       {/* Role + tags inline compact (không box lồng) — density rail reference */}
-      <p className="mt-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">
+      <p className="mt-3 text-caption font-bold  text-muted-foreground">
         Vai trò phù hợp hơn
       </p>
-      <p className="mt-0.5 text-lg font-extrabold tracking-tight text-navy">
+      <p className="mt-1 text-section font-extrabold tracking-tight text-foreground">
         {suggested.label}
       </p>
       <ul
-        className="mt-1.5 flex flex-wrap gap-1.5"
+        className="mt-2 flex flex-wrap gap-2"
         aria-label="Kỹ năng của vai trò đề xuất"
       >
         {suggested.tags.map((tag) => (
@@ -80,7 +80,7 @@ export function RoleRecommendation({
       </ul>
 
       {/* Lý do gộp 1 đoạn clamp-3 — đủ business info, tiết kiệm chiều cao */}
-      <p className="mt-2.5 line-clamp-3 text-[13px] leading-relaxed text-slate-700">
+      <p className="mt-3 line-clamp-3 text-small leading-relaxed text-foreground">
         {suggested.reasons.join(" ")}
       </p>
 

@@ -40,17 +40,17 @@ function AssessmentFields({
         onChange={(hiddenTestFiles) => onChange({ ...value, hiddenTestFiles })}
       />
       <fieldset className="space-y-4">
-        <legend className="mb-3 text-sm font-semibold">
+        <legend className="mb-3 text-body font-semibold">
           Tiêu chí chấm · tổng{" "}
           {value.rubric.reduce((sum, row) => sum + row.weight, 0)} / 100%
         </legend>
         {value.rubric.map((row, index) => (
           <div
             key={index}
-            className="space-y-3 border-l-2 border-amber-200 pl-4"
+            className="space-y-3 border-l border-warning/20 pl-4"
           >
             <div className="grid gap-3 sm:grid-cols-[1fr_100px]">
-              <label className="text-sm">
+              <label className="text-body">
                 Tiêu chí chấm {index + 1}
                 <input
                   required
@@ -69,7 +69,7 @@ function AssessmentFields({
                   }
                 />
               </label>
-              <label className="text-sm">
+              <label className="text-body">
                 Trọng số {index + 1} (%)
                 <input
                   required
@@ -91,7 +91,7 @@ function AssessmentFields({
                 />
               </label>
             </div>
-            <label className="block text-sm">
+            <label className="block text-body">
               Mô tả chấm {index + 1}
               <textarea
                 required
@@ -112,7 +112,7 @@ function AssessmentFields({
             </label>
             <button
               type="button"
-              className="text-xs font-semibold text-rose-700"
+              className="text-caption font-semibold text-destructive"
               onClick={() =>
                 onChange({
                   ...value,
@@ -127,7 +127,7 @@ function AssessmentFields({
         <button
           type="button"
           disabled={value.rubric.length >= 20}
-          className="text-sm font-semibold text-amber-800"
+          className="text-body font-semibold text-warning"
           onClick={() =>
             onChange({
               ...value,
@@ -142,17 +142,17 @@ function AssessmentFields({
         </button>
       </fieldset>
       <fieldset className="space-y-4">
-        <legend className="mb-3 text-sm font-semibold">
+        <legend className="mb-3 text-body font-semibold">
           Nối nhiệm vụ với bộ kiểm thử
         </legend>
-        <p className="text-xs leading-5 text-slate-600">
+        <p className="text-caption leading-5 text-muted-foreground">
           Task key phải tồn tại trong blueprint. Digest SHA-256 do người quản lý
           bộ kiểm thử cung cấp; metadata này chưa cấp quyền chạy trusted runner.
         </p>
         {value.taskSuites.map((row, index) => (
           <div
             key={index}
-            className="space-y-3 border-l-2 border-amber-200 pl-4"
+            className="space-y-3 border-l border-warning/20 pl-4"
           >
             {(
               [
@@ -161,11 +161,11 @@ function AssessmentFields({
                 ["digest", "SHA-256 bộ kiểm thử", 64],
               ] as const
             ).map(([key, label, maxLength]) => (
-              <label key={key} className="block text-sm">
+              <label key={key} className="block text-body">
                 {label} {index + 1}
                 <input
                   required
-                  className={`${inputClass} font-mono text-xs`}
+                  className={`${inputClass} font-mono text-caption`}
                   maxLength={maxLength}
                   value={row[key]}
                   onChange={(event) =>
@@ -181,7 +181,7 @@ function AssessmentFields({
             ))}
             <button
               type="button"
-              className="text-xs font-semibold text-rose-700"
+              className="text-caption font-semibold text-destructive"
               onClick={() =>
                 onChange({
                   ...value,
@@ -196,7 +196,7 @@ function AssessmentFields({
         <button
           type="button"
           disabled={value.taskSuites.length >= 60}
-          className="text-sm font-semibold text-amber-800"
+          className="text-body font-semibold text-warning"
           onClick={() =>
             onChange({
               ...value,
@@ -258,13 +258,13 @@ export function AssessmentEditor({
     /* Preserve incomplete advanced text. */
   }
   return (
-    <section className="min-w-0 space-y-4 border-l-2 border-amber-300 pl-4">
-      <h3 className="font-semibold text-amber-900">Tài liệu chấm riêng</h3>
-      <p className="text-xs leading-5 text-slate-600">
+    <section className="min-w-0 space-y-4 border-l border-warning/30 pl-4">
+      <h3 className="font-semibold text-warning">Tài liệu chấm riêng</h3>
+      <p className="text-caption leading-5 text-muted-foreground">
         Không nằm trong blueprint public hoặc ZIP starter. Thay đổi tạo phiên
         bản mới; phiên đang chạy giữ tài liệu đã ghim.
       </p>
-      <label className="block text-sm">
+      <label className="block text-body">
         Cách xử lý tài liệu chấm
         <select
           className={`${inputClass} mt-1`}
@@ -282,7 +282,7 @@ export function AssessmentEditor({
         </select>
       </label>
       {value.mode === "clear" && (
-        <p className="text-sm text-amber-900">
+        <p className="text-body text-warning">
           Phiên bản mới sẽ không có tài liệu chấm. Lịch sử và các phiên cũ vẫn
           được giữ.
         </p>
@@ -293,7 +293,7 @@ export function AssessmentEditor({
             <button
               disabled={busy}
               type="button"
-              className="text-sm font-semibold text-amber-800 underline underline-offset-4"
+              className="text-body font-semibold text-warning underline underline-offset-4"
               onClick={() => {
                 setBusy(true);
                 setError(null);
@@ -322,20 +322,20 @@ export function AssessmentEditor({
               }
             />
           ) : (
-            <p role="alert" className="text-sm text-amber-900">
+            <p role="alert" className="text-body text-warning">
               Cấu trúc JSON chưa đủ để mở biểu mẫu. Nội dung đang soạn được giữ
               nguyên ở phần nâng cao.
             </p>
           )}
           <details>
-            <summary className="cursor-pointer text-sm font-semibold text-slate-600">
+            <summary className="cursor-pointer text-body font-semibold text-muted-foreground">
               Nâng cao · JSON tài liệu chấm
             </summary>
-            <label className="mt-3 block text-sm">
+            <label className="mt-3 block text-body">
               Assessment JSON riêng
               <textarea
                 required
-                className={`${inputClass} mt-1 font-mono text-xs`}
+                className={`${inputClass} mt-1 font-mono text-caption`}
                 rows={16}
                 maxLength={300000}
                 spellCheck={false}

@@ -25,27 +25,27 @@ export function PullRequestReviewCard({
       title="Pull Request & AI Review"
       actions={<CardLinkAction label="Xem trên GitHub" />}
     >
-      <p className="flex flex-wrap items-baseline gap-x-1.5 text-sm font-bold text-navy">
+      <p className="flex flex-wrap items-baseline gap-x-2 text-body font-bold text-foreground">
         {pullRequest.prLabel}
-        <span className="font-normal text-slate-300">/</span>
-        <span className="font-mono text-[13px] font-semibold text-brand">
+        <span className="font-normal text-muted-foreground">/</span>
+        <span className="font-mono text-small font-semibold text-primary">
           {pullRequest.branch}
         </span>
       </p>
 
       <ul className="mt-3 flex flex-wrap items-center gap-2">
-        <li className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+        <li className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-caption font-semibold text-primary">
           {pullRequest.statusLabel}
         </li>
-        <li className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+        <li className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-caption font-semibold text-muted-foreground">
           {pullRequest.reviewScore}
         </li>
-        <li className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+        <li className="inline-flex items-center rounded-full bg-success-subtle px-3 py-1 text-caption font-semibold text-success">
           {pullRequest.resultLabel}
         </li>
       </ul>
 
-      <ul className="mt-3 flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-relaxed text-slate-600 marker:text-slate-300">
+      <ul className="mt-3 flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-muted-foreground marker:text-muted-foreground">
         {pullRequest.feedback.map((item) => (
           <li key={item}>{item}</li>
         ))}

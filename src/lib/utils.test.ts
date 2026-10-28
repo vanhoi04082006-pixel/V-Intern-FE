@@ -13,4 +13,14 @@ describe("cn()", () => {
   it("hỗ trợ object điều kiện", () => {
     expect(cn("base", { active: true, disabled: false })).toBe("base active");
   });
+
+  it("giữ màu chữ nút khi áp dụng typography token", () => {
+    expect(cn("bg-primary text-primary-foreground", "text-body"))
+      .toBe("bg-primary text-primary-foreground text-body");
+  });
+
+  it("chỉ thay kích thước chữ, giữ semantic color và responsive variant", () => {
+    expect(cn("text-caption text-success md:text-small", "text-body md:text-section"))
+      .toBe("text-success text-body md:text-section");
+  });
 });

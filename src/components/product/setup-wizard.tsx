@@ -152,7 +152,7 @@ export function SetupWizard({
           record = { ...record, status: activated.status };
         } catch (e) {
           setProject(record);
-          fail(`Đã tạo dự án ${record.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt” — sẽ không tạo trùng.`);
+          fail(`Đã tạo dự án ${record.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt” , sẽ không tạo trùng.`);
           return;
         }
       }
@@ -227,7 +227,7 @@ export function SetupWizard({
           status = moved.status;
         } catch (e) {
           setSprint({ id: created.id, code: created.code, name: created.name, status });
-          fail(`Đã tạo sprint ${created.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt sprint” — sẽ không tạo trùng.`);
+          fail(`Đã tạo sprint ${created.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt sprint” , sẽ không tạo trùng.`);
           return;
         }
       }
@@ -286,7 +286,7 @@ export function SetupWizard({
 
   return (
     <Modal title="Khởi tạo đợt thực tập" onClose={requestClose}>
-      <p className="mb-3 text-xs text-slate-500" aria-live="polite">
+      <p className="mb-3 text-caption text-muted-foreground" aria-live="polite">
         {step <= 4 ? `Bước ${step} / 4` : "Hoàn tất"}
       </p>
       <ol aria-label="Tiến trình thiết lập" className="mb-5 flex gap-1 overflow-x-auto sm:gap-2">
@@ -298,9 +298,9 @@ export function SetupWizard({
             <li
               key={label}
               aria-current={current ? "step" : undefined}
-              className={`flex min-w-0 flex-1 items-center gap-1.5 rounded-md px-2 py-2 text-[11px] sm:text-xs ${current ? "bg-blue-600 font-bold text-white" : done ? "bg-emerald-50 font-semibold text-emerald-700" : "bg-slate-50 text-slate-500"}`}
+              className={`flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-2 text-caption sm:text-caption ${current ? "bg-primary font-bold text-primary-foreground" : done ? "bg-success-subtle font-semibold text-success" : "bg-background text-muted-foreground"}`}
             >
-              <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] ${current ? "bg-white/25" : done ? "bg-emerald-500 text-white" : "bg-slate-200"}`}>
+              <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-caption ${current ? "bg-card/25" : done ? "bg-success text-primary-foreground" : "bg-muted"}`}>
                 {done ? "✓" : n}
               </span>
               <span className="truncate">{label}</span>
@@ -310,28 +310,28 @@ export function SetupWizard({
       </ol>
 
       {Boolean(error) && (
-        <p ref={alertRef} tabIndex={-1} role="alert" className="mb-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-700 focus:outline-none">
+        <p ref={alertRef} tabIndex={-1} role="alert" className="mb-4 rounded-control bg-destructive-subtle p-3 text-body text-destructive focus:outline-none">
           {error}
         </p>
       )}
 
       {step === 1 && (
         <div className="space-y-4">
-          <div role="group" aria-label="Cách chọn phiên" className="flex gap-2 text-sm">
+          <div role="group" aria-label="Cách chọn phiên" className="flex gap-2 text-body">
             {(["new", "existing"] as const).map((m) => (
-              <button key={m} type="button" aria-pressed={sessionMode === m} onClick={() => setSessionMode(m)} className={`rounded-md border px-3 py-1.5 ${sessionMode === m ? "border-blue-400 bg-blue-50 font-semibold text-blue-700" : "border-slate-200"}`}>
+              <button key={m} type="button" aria-pressed={sessionMode === m} onClick={() => setSessionMode(m)} className={`rounded-md border px-3 py-2 ${sessionMode === m ? "border-primary bg-accent font-semibold text-primary" : "border-border"}`}>
                 {m === "new" ? "Tạo phiên mới" : "Chọn phiên có sẵn"}
               </button>
             ))}
           </div>
           {sessionMode === "new" ? (
             <>
-              <label className="block text-sm">Mã phiên<input required maxLength={64} className={`${inputClass} mt-1`} value={sCode} onChange={(e) => { setTouched(true); setSCode(e.target.value); }} /></label>
-              <label className="block text-sm">Tên phiên<input required maxLength={256} className={`${inputClass} mt-1`} value={sName} onChange={(e) => { setTouched(true); setSName(e.target.value); }} /></label>
-              <label className="block text-sm">Mô tả<textarea rows={2} maxLength={2000} className={`${inputClass} mt-1`} value={sDesc} onChange={(e) => { setTouched(true); setSDesc(e.target.value); }} /></label>
+              <label className="block text-body">Mã phiên<input required maxLength={64} className={`${inputClass} mt-1`} value={sCode} onChange={(e) => { setTouched(true); setSCode(e.target.value); }} /></label>
+              <label className="block text-body">Tên phiên<input required maxLength={256} className={`${inputClass} mt-1`} value={sName} onChange={(e) => { setTouched(true); setSName(e.target.value); }} /></label>
+              <label className="block text-body">Mô tả<textarea rows={2} maxLength={2000} className={`${inputClass} mt-1`} value={sDesc} onChange={(e) => { setTouched(true); setSDesc(e.target.value); }} /></label>
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm">Bắt đầu<input required type="datetime-local" className={`${inputClass} mt-1`} value={sStart} onChange={(e) => { setTouched(true); setSStart(e.target.value); }} /></label>
-                <label className="block text-sm">Kết thúc<input required type="datetime-local" className={`${inputClass} mt-1`} value={sEnd} onChange={(e) => { setTouched(true); setSEnd(e.target.value); }} /></label>
+                <label className="block text-body">Bắt đầu<input required type="datetime-local" className={`${inputClass} mt-1`} value={sStart} onChange={(e) => { setTouched(true); setSStart(e.target.value); }} /></label>
+                <label className="block text-body">Kết thúc<input required type="datetime-local" className={`${inputClass} mt-1`} value={sEnd} onChange={(e) => { setTouched(true); setSEnd(e.target.value); }} /></label>
               </div>
             </>
           ) : (
@@ -347,34 +347,34 @@ export function SetupWizard({
 
       {step === 2 && session && (
         <div className="space-y-4">
-          <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">Phiên: <strong>{session.code} · {session.name}</strong> — các bước sau dùng phiên này, không cần chọn lại.</p>
-          <div role="group" aria-label="Cách chọn dự án" className="flex gap-2 text-sm">
+          <p className="rounded-control bg-accent p-3 text-body text-foreground">Phiên: <strong>{session.code} · {session.name}</strong> , các bước sau dùng phiên này, không cần chọn lại.</p>
+          <div role="group" aria-label="Cách chọn dự án" className="flex gap-2 text-body">
             {(["new", "existing"] as const).map((m) => (
-              <button key={m} type="button" aria-pressed={projectMode === m} onClick={() => setProjectMode(m)} className={`rounded-md border px-3 py-1.5 ${projectMode === m ? "border-blue-400 bg-blue-50 font-semibold text-blue-700" : "border-slate-200"}`}>
+              <button key={m} type="button" aria-pressed={projectMode === m} onClick={() => setProjectMode(m)} className={`rounded-md border px-3 py-2 ${projectMode === m ? "border-primary bg-accent font-semibold text-primary" : "border-border"}`}>
                 {m === "new" ? "Tạo dự án mới" : "Chọn dự án có sẵn"}
               </button>
             ))}
           </div>
           {projectMode === "new" ? (
             <>
-              <label className="block text-sm">Mã dự án<input required maxLength={64} className={`${inputClass} mt-1`} value={pCode} onChange={(e) => { setTouched(true); setPCode(e.target.value); }} /></label>
-              <label className="block text-sm">Tên dự án<input required maxLength={256} className={`${inputClass} mt-1`} value={pName} onChange={(e) => { setTouched(true); setPName(e.target.value); }} /></label>
-              <label className="block text-sm">Mô tả<input required maxLength={4000} className={`${inputClass} mt-1`} value={pDesc} onChange={(e) => { setTouched(true); setPDesc(e.target.value); }} /></label>
+              <label className="block text-body">Mã dự án<input required maxLength={64} className={`${inputClass} mt-1`} value={pCode} onChange={(e) => { setTouched(true); setPCode(e.target.value); }} /></label>
+              <label className="block text-body">Tên dự án<input required maxLength={256} className={`${inputClass} mt-1`} value={pName} onChange={(e) => { setTouched(true); setPName(e.target.value); }} /></label>
+              <label className="block text-body">Mô tả<input required maxLength={4000} className={`${inputClass} mt-1`} value={pDesc} onChange={(e) => { setTouched(true); setPDesc(e.target.value); }} /></label>
             </>
           ) : (
             <AcademicPicker kind="projects" label="Dự án" value={projectPick} onChange={(v) => { setTouched(true); setProjectPick(v); }} />
           )}
-          <label className="flex cursor-pointer items-start gap-2 rounded-md border border-blue-100 bg-blue-50/50 p-3 text-sm">
-            <input type="checkbox" className="mt-1 h-4 w-4 accent-blue-600" checked={activateProject} onChange={(e) => setActivateProject(e.target.checked)} />
-            <span><strong>Kích hoạt dự án ngay sau khi tạo/chọn.</strong><span className="mt-0.5 block text-xs text-slate-500">Chỉ dự án đang hoạt động mới phân công được. Bỏ tick để giữ trạng thái nháp.</span></span>
+          <label className="flex cursor-pointer items-start gap-2 rounded-md border border-primary bg-accent/50 p-3 text-body">
+            <input type="checkbox" className="mt-1 h-4 w-4 accent-primary" checked={activateProject} onChange={(e) => setActivateProject(e.target.checked)} />
+            <span><strong>Kích hoạt dự án ngay sau khi tạo/chọn.</strong><span className="mt-0.5 block text-caption text-muted-foreground">Chỉ dự án đang hoạt động mới phân công được. Bỏ tick để giữ trạng thái nháp.</span></span>
           </label>
           {project && project.status !== "active" && (
-            <button className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700" disabled={busy} onClick={() => void retryActivation()}>
+            <button className="rounded-md border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning" disabled={busy} onClick={() => void retryActivation()}>
               Thử lại kích hoạt
             </button>
           )}
           <div className="flex justify-between gap-2">
-            <button className="rounded-md border border-blue-100 px-4 py-2 text-sm text-navy" disabled={busy} onClick={() => setStep(1)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(1)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
             <button className={buttonClass} disabled={busy || (projectMode === "new" ? !pCode.trim() || !pName.trim() || !pDesc.trim() : !projectPick)} onClick={() => void submitProject()}>
               {busy ? "Đang lưu…" : <>Tiếp tục <ArrowRight size={15} className="inline" /></>}
             </button>
@@ -384,7 +384,7 @@ export function SetupWizard({
 
       {step === 3 && session && project && (
         <div className="space-y-4">
-          <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">Phân công vào <strong>{project.code}</strong> · <strong>{session.code}</strong> — không cần chọn lại.</p>
+          <p className="rounded-control bg-accent p-3 text-body text-foreground">Phân công vào <strong>{project.code}</strong> · <strong>{session.code}</strong> , không cần chọn lại.</p>
           <AssigneeSelector
             value={assignees}
             multiple
@@ -392,9 +392,9 @@ export function SetupWizard({
             onSelectionChange={(items) => setAssigneeNames(Object.fromEntries(items.map((i) => [i.userId, i.name])))}
           />
           <div className="flex flex-wrap justify-between gap-2">
-            <button className="rounded-md border border-blue-100 px-4 py-2 text-sm text-navy" disabled={busy} onClick={() => setStep(2)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(2)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
             <span className="flex gap-2">
-              <button className="rounded-md border border-blue-100 px-4 py-2 text-sm text-navy" disabled={busy} onClick={() => { setOutcomes([]); setStep(4); }}>Bỏ qua</button>
+              <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => { setOutcomes([]); setStep(4); }}>Bỏ qua</button>
               <button className={buttonClass} disabled={busy || !assignees.length} onClick={() => void submitAssignment()}>
                 {busy ? "Đang phân công…" : `Phân công ${assignees.length} sinh viên`}
               </button>
@@ -405,21 +405,21 @@ export function SetupWizard({
 
       {step === 4 && session && project && (
         <div className="space-y-4">
-          <p className="rounded-lg bg-blue-50 p-3 text-sm text-navy">Sprint thuộc <strong>{project.code}</strong> · <strong>{session.code}</strong> — đã kế thừa, không cần chọn lại.</p>
+          <p className="rounded-control bg-accent p-3 text-body text-foreground">Sprint thuộc <strong>{project.code}</strong> · <strong>{session.code}</strong> , đã kế thừa, không cần chọn lại.</p>
           {!sprint ? (
             <>
-              <label className="block text-sm">Mã Sprint<input required maxLength={64} className={`${inputClass} mt-1`} value={spCode} onChange={(e) => { setTouched(true); setSpCode(e.target.value); }} /></label>
-              <label className="block text-sm">Tên Sprint<input required maxLength={256} className={`${inputClass} mt-1`} value={spName} onChange={(e) => { setTouched(true); setSpName(e.target.value); }} /></label>
+              <label className="block text-body">Mã Sprint<input required maxLength={64} className={`${inputClass} mt-1`} value={spCode} onChange={(e) => { setTouched(true); setSpCode(e.target.value); }} /></label>
+              <label className="block text-body">Tên Sprint<input required maxLength={256} className={`${inputClass} mt-1`} value={spName} onChange={(e) => { setTouched(true); setSpName(e.target.value); }} /></label>
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm">Bắt đầu (UTC)<input required type="datetime-local" className={`${inputClass} mt-1`} value={spStart} onChange={(e) => { setTouched(true); setSpStart(e.target.value); }} /></label>
-                <label className="block text-sm">Kết thúc (UTC)<input required type="datetime-local" className={`${inputClass} mt-1`} value={spEnd} onChange={(e) => { setTouched(true); setSpEnd(e.target.value); }} /></label>
+                <label className="block text-body">Bắt đầu (UTC)<input required type="datetime-local" className={`${inputClass} mt-1`} value={spStart} onChange={(e) => { setTouched(true); setSpStart(e.target.value); }} /></label>
+                <label className="block text-body">Kết thúc (UTC)<input required type="datetime-local" className={`${inputClass} mt-1`} value={spEnd} onChange={(e) => { setTouched(true); setSpEnd(e.target.value); }} /></label>
               </div>
-              <label className="flex cursor-pointer items-start gap-2 rounded-md border border-blue-100 bg-blue-50/50 p-3 text-sm">
-                <input type="checkbox" className="mt-1 h-4 w-4 accent-blue-600" checked={activateSprint} onChange={(e) => setActivateSprint(e.target.checked)} />
-                <span><strong>Kích hoạt Sprint ngay.</strong><span className="mt-0.5 block text-xs text-slate-500">Sprint đang hoạt động mới giao được task.</span></span>
+              <label className="flex cursor-pointer items-start gap-2 rounded-md border border-primary bg-accent/50 p-3 text-body">
+                <input type="checkbox" className="mt-1 h-4 w-4 accent-primary" checked={activateSprint} onChange={(e) => setActivateSprint(e.target.checked)} />
+                <span><strong>Kích hoạt Sprint ngay.</strong><span className="mt-0.5 block text-caption text-muted-foreground">Sprint đang hoạt động mới giao được task.</span></span>
               </label>
               <div className="flex justify-between gap-2">
-                <button className="rounded-md border border-blue-100 px-4 py-2 text-sm text-navy" disabled={busy} onClick={() => setStep(3)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(3)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
                 <button className={buttonClass} disabled={busy || !spCode.trim() || !spName.trim() || !spStart || !spEnd} onClick={() => void submitSprint()}>
                   {busy ? "Đang lưu…" : "Tạo Sprint"}
                 </button>
@@ -427,35 +427,35 @@ export function SetupWizard({
             </>
           ) : (
             <>
-              <p className="flex items-center gap-2 text-sm"><CheckCircle2 size={18} className="text-emerald-500" /> Sprint <strong>{sprint.code}</strong> · <StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></p>
+              <p className="flex items-center gap-2 text-body"><CheckCircle2 size={18} className="text-success" /> Sprint <strong>{sprint.code}</strong> · <StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></p>
               {sprint.status !== "active" && (
-                <button className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700" disabled={busy} onClick={() => void retrySprintActivation()}>
+                <button className="rounded-md border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning" disabled={busy} onClick={() => void retrySprintActivation()}>
                   Thử lại kích hoạt sprint
                 </button>
               )}
-              <label className="flex cursor-pointer items-start gap-2 rounded-md border border-blue-100 p-3 text-sm">
-                <input type="checkbox" className="mt-1 h-4 w-4 accent-blue-600" checked={wantTask} onChange={(e) => setWantTask(e.target.checked)} />
-                <span><strong>Thêm task đầu tiên</strong> <span className="text-slate-500">(không bắt buộc)</span></span>
+              <label className="flex cursor-pointer items-start gap-2 rounded-md border border-primary p-3 text-body">
+                <input type="checkbox" className="mt-1 h-4 w-4 accent-primary" checked={wantTask} onChange={(e) => setWantTask(e.target.checked)} />
+                <span><strong>Thêm task đầu tiên</strong> <span className="text-muted-foreground">(không bắt buộc)</span></span>
               </label>
               {wantTask && !task && (
-                <div className="space-y-3 rounded-md border border-slate-100 p-3">
-                  <label className="block text-sm">Tên task<input required maxLength={256} className={`${inputClass} mt-1`} value={tTitle} onChange={(e) => { setTouched(true); setTTitle(e.target.value); }} /></label>
-                  <label className="block text-sm">Mô tả<textarea rows={2} maxLength={4000} className={`${inputClass} mt-1`} value={tDesc} onChange={(e) => { setTouched(true); setTDesc(e.target.value); }} /></label>
+                <div className="space-y-3 rounded-md border border-border p-3">
+                  <label className="block text-body">Tên task<input required maxLength={256} className={`${inputClass} mt-1`} value={tTitle} onChange={(e) => { setTouched(true); setTTitle(e.target.value); }} /></label>
+                  <label className="block text-body">Mô tả<textarea rows={2} maxLength={4000} className={`${inputClass} mt-1`} value={tDesc} onChange={(e) => { setTouched(true); setTDesc(e.target.value); }} /></label>
                   <div className="grid gap-3 sm:grid-cols-3">
-                    <label className="block text-sm">Story points<input type="number" min={0} max={1000} className={`${inputClass} mt-1`} value={tPoints} onChange={(e) => { setTouched(true); setTPoints(e.target.value); }} /></label>
-                    <label className="block text-sm">Ưu tiên<select className={`${inputClass} mt-1`} value={tPriority} onChange={(e) => { setTouched(true); setTPriority(e.target.value); }}><option value="low">Thấp</option><option value="medium">Trung bình</option><option value="high">Cao</option><option value="critical">Khẩn cấp</option></select></label>
-                    <label className="block text-sm">Hạn (UTC)<input type="datetime-local" className={`${inputClass} mt-1`} value={tDue} onChange={(e) => { setTouched(true); setTDue(e.target.value); }} /></label>
+                    <label className="block text-body">Story points<input type="number" min={0} max={1000} className={`${inputClass} mt-1`} value={tPoints} onChange={(e) => { setTouched(true); setTPoints(e.target.value); }} /></label>
+                    <label className="block text-body">Ưu tiên<select className={`${inputClass} mt-1`} value={tPriority} onChange={(e) => { setTouched(true); setTPriority(e.target.value); }}><option value="low">Thấp</option><option value="medium">Trung bình</option><option value="high">Cao</option><option value="critical">Khẩn cấp</option></select></label>
+                    <label className="block text-body">Hạn (UTC)<input type="datetime-local" className={`${inputClass} mt-1`} value={tDue} onChange={(e) => { setTouched(true); setTDue(e.target.value); }} /></label>
                   </div>
-                  <label className="block text-sm">Giao cho sinh viên vừa phân công<select className={`${inputClass} mt-1`} value={tAssignee} onChange={(e) => { setTouched(true); setTAssignee(e.target.value); }}>
+                  <label className="block text-body">Giao cho sinh viên vừa phân công<select className={`${inputClass} mt-1`} value={tAssignee} onChange={(e) => { setTouched(true); setTAssignee(e.target.value); }}>
                     <option value="">Chưa giao</option>
                     {assignedOk.map((o) => <option key={o.userId} value={o.userId}>{o.name}</option>)}
                   </select></label>
                   <button className={buttonClass} disabled={busy || !tTitle.trim()} onClick={() => void submitTask()}>{busy ? "Đang lưu…" : "Tạo task"}</button>
                 </div>
               )}
-              {task && <p className="flex items-center gap-2 text-sm"><CheckCircle2 size={18} className="text-emerald-500" /> Task <strong>{task.title}</strong> đã tạo.</p>}
+              {task && <p className="flex items-center gap-2 text-body"><CheckCircle2 size={18} className="text-success" /> Task <strong>{task.title}</strong> đã tạo.</p>}
               <div className="flex justify-between gap-2">
-                <button className="rounded-md border border-blue-100 px-4 py-2 text-sm text-navy" disabled={busy} onClick={() => setSprint(null)}><ArrowLeft size={15} className="mr-1 inline" />Tạo sprint khác</button>
+                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setSprint(null)}><ArrowLeft size={15} className="mr-1 inline" />Tạo sprint khác</button>
                 <button className={buttonClass} disabled={busy} onClick={() => setStep(5)}>Hoàn tất<ArrowRight size={15} className="ml-1 inline" /></button>
               </div>
             </>
@@ -465,22 +465,22 @@ export function SetupWizard({
 
       {step === 5 && session && project && sprint && (
         <div className="space-y-3">
-          <h3 className="text-lg font-bold text-navy">Tóm tắt đợt thực tập</h3>
-          <dl className="space-y-2 rounded-lg border border-blue-100/70 p-4 text-sm">
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Phiên</dt><dd className="font-semibold text-navy">{session.code} · {session.name}</dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Dự án</dt><dd className="font-semibold text-navy">{project.code} · {project.name}</dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Trạng thái dự án</dt><dd><StatusDot tone={project.status === "active" ? "green" : "amber"}>{project.status}</StatusDot></dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Sinh viên đã phân công</dt><dd className="font-semibold text-navy">{assignedOk.length}</dd></div>
+          <h3 className="text-section font-bold text-foreground">Tóm tắt đợt thực tập</h3>
+          <dl className="space-y-2 rounded-control border border-primary/70 p-4 text-body">
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Phiên</dt><dd className="font-semibold text-foreground">{session.code} · {session.name}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Dự án</dt><dd className="font-semibold text-foreground">{project.code} · {project.name}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Trạng thái dự án</dt><dd><StatusDot tone={project.status === "active" ? "green" : "amber"}>{project.status}</StatusDot></dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Sinh viên đã phân công</dt><dd className="font-semibold text-foreground">{assignedOk.length}</dd></div>
             {assignedFail.map((o) => (
-              <div key={o.userId} className="flex justify-between gap-3 text-xs"><dt className="text-slate-500">{o.name}</dt><dd className="text-rose-600">Thất bại: {o.message}</dd></div>
+              <div key={o.userId} className="flex justify-between gap-3 text-caption"><dt className="text-muted-foreground">{o.name}</dt><dd className="text-destructive">Thất bại: {o.message}</dd></div>
             ))}
-            {!outcomes?.length && <div className="text-xs text-slate-500">Bỏ qua phân công ở bước 3.</div>}
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Sprint</dt><dd className="font-semibold text-navy">{sprint.code} · {sprint.name}</dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Trạng thái sprint</dt><dd><StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-slate-500">Task đầu tiên</dt><dd className="font-semibold text-navy">{task ? task.title : "Chưa tạo (có thể tạo sau)"}</dd></div>
+            {!outcomes?.length && <div className="text-caption text-muted-foreground">Bỏ qua phân công ở bước 3.</div>}
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Sprint</dt><dd className="font-semibold text-foreground">{sprint.code} · {sprint.name}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Trạng thái sprint</dt><dd><StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Task đầu tiên</dt><dd className="font-semibold text-foreground">{task ? task.title : "Chưa tạo (có thể tạo sau)"}</dd></div>
           </dl>
           <div className="flex flex-wrap justify-end gap-2">
-            <button className="rounded-md border border-blue-100 px-4 py-2 text-sm text-navy" onClick={requestClose}>Đóng</button>
+            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" onClick={requestClose}>Đóng</button>
             <Link href={`/instructor/sessions/${session.id}`} className={buttonClass} onClick={() => onFinished(session.id)}>
               <Rocket size={16} /> Vào không gian làm việc
             </Link>
@@ -489,7 +489,7 @@ export function SetupWizard({
       )}
 
       <div className="mt-5 flex justify-start">
-        <button type="button" className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-navy" onClick={requestClose}>
+        <button type="button" className="inline-flex items-center gap-1 text-caption text-muted-foreground hover:text-foreground" onClick={requestClose}>
           <X size={14} /> Đóng wizard
         </button>
       </div>

@@ -11,6 +11,10 @@ const eslintConfig = [
   {
     ignores: [
       "node_modules/**",
+      // Project-local vendor tools and their generated audit artifacts.
+      ".agents/skills/**",
+      ".hallmark/**",
+      ".impeccable/**",
       ".next/**",
       ".runtime/**",
       "out/**",

@@ -65,7 +65,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
       ) : (
         data.data && (
           <div className="space-y-4">
-            <p className="text-sm text-slate-600">
+            <p className="text-body text-muted-foreground">
               {repositoryAdmin
                 ? 'Admin kết nối tài khoản GitHub dùng chung để hệ thống tạo repository và gửi lời mời cho các phiên thực tập. Mật khẩu GitHub không lưu trong V-INTERN.'
                 : 'Liên kết GitHub để nhận lời mời repository và xác minh danh tính khi nộp bài. Repository được hệ thống tạo bằng tài khoản chung do Admin cấu hình; giảng viên và sinh viên không cần tự tạo repo.'}
@@ -73,14 +73,14 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
             {!data.data.configured && (
               <p
                 role="status"
-                className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900"
+                className="rounded-control bg-warning-subtle p-4 text-body text-warning"
               >
                 Tích hợp GitHub chưa được bật. Vui lòng liên hệ quản trị viên để
                 hoàn tất cấu hình.
               </p>
             )}
             {data.data.connected && (
-              <p className="rounded-xl bg-emerald-50 p-4 text-sm">
+              <p className="rounded-control bg-success-subtle p-4 text-body">
                 Đã liên kết: <strong>@{data.data.login}</strong>
                 {data.data.reconnectRequired ? " · Cần kết nối lại" : ""}
               </p>
@@ -101,13 +101,13 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
                 <button
                   disabled={busy}
                   onClick={() => void disconnect()}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                  className="rounded-control border border-border px-4 py-2 text-body"
                 >
                   Ngắt kết nối trên V-INTERN
                 </button>
               )}
             </div>
-            <p className="text-xs leading-5 text-slate-500">
+            <p className="text-caption leading-5 text-muted-foreground">
               Admin cấp quyền tạo và quản lý repo public cho tài khoản chung.
               Giảng viên và sinh viên chỉ cần liên kết danh tính. Tài khoản chung
               đang được chọn cần thay thế trước khi ngắt kết nối; các kết nối cá
@@ -117,7 +117,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
         )
       )}
       {error && (
-        <p role="alert" className="mt-4 text-sm text-rose-700">
+        <p role="alert" className="mt-4 text-body text-destructive">
           {error}
         </p>
       )}
@@ -138,13 +138,13 @@ export function GithubRepositoryAdmin() {
     <GithubConnection repositoryAdmin />
     <Panel title="Tài khoản tạo repository chung">
       {account.loading ? <LoadingState /> : account.error ? <ErrorState error={account.error} onRetry={account.reload} /> : <>
-        <p className="text-sm">{account.data?.configured ? `Tài khoản đã chọn: @${account.data.login ?? 'cần kết nối lại'} · ${account.data.ready ? 'Sẵn sàng' : 'Cần Admin kiểm tra kết nối/quyền'}` : 'Chưa chọn tài khoản tạo repository chung.'}</p>
-        <p className="my-3 text-sm text-slate-600">Sau khi kết nối đúng tài khoản ở trên, chọn làm tài khoản chung. Các phiên đang chạy sẽ được tự đồng bộ. Repo cũ giữ nguyên chủ sở hữu và đường dẫn.</p>
+        <p className="text-body">{account.data?.configured ? `Tài khoản đã chọn: @${account.data.login ?? 'cần kết nối lại'} · ${account.data.ready ? 'Sẵn sàng' : 'Cần Admin kiểm tra kết nối/quyền'}` : 'Chưa chọn tài khoản tạo repository chung.'}</p>
+        <p className="my-3 text-body text-muted-foreground">Sau khi kết nối đúng tài khoản ở trên, chọn làm tài khoản chung. Các phiên đang chạy sẽ được tự đồng bộ. Repo cũ giữ nguyên chủ sở hữu và đường dẫn.</p>
         <button className={buttonClass} disabled={busy} onClick={() => void select()}>{busy ? 'Đang lưu…' : 'Dùng GitHub đã liên kết của tôi làm tài khoản chung'}</button>
-        <button className="ml-3 text-sm text-blue-700" onClick={account.reload}>Tải lại cấu hình GitHub</button>
-        <p className="mt-3 text-xs text-slate-500">Tên repo: vintern-dự-án-tên-phiên-ngày-bắt-đầu-mã-phiên. Không đưa email hoặc tên sinh viên vào tên repository public.</p>
+        <button className="ml-3 text-body text-primary" onClick={account.reload}>Tải lại cấu hình GitHub</button>
+        <p className="mt-3 text-caption text-muted-foreground">Tên repo: vintern-dự-án-tên-phiên-ngày-bắt-đầu-mã-phiên. Không đưa email hoặc tên sinh viên vào tên repository public.</p>
       </>}
-      {error && <p role="alert" className="mt-3 text-sm text-rose-700">{error}</p>}
+      {error && <p role="alert" className="mt-3 text-body text-destructive">{error}</p>}
     </Panel>
   </div>;
 }
@@ -212,7 +212,7 @@ export function SessionRepositoryCard({
       ) : data.error ? (
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : (
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3 text-body">
           {repo ? (
             <>
               <p className="font-semibold">
@@ -225,13 +225,13 @@ export function SessionRepositoryCard({
                     ? "Đang tạo repository…"
                     : "Chưa tạo được repository; hãy kiểm tra kết nối và thử lại."}
               </p>
-              {repo.status === 'ready' && <p className={repo.webhookStatus === 'ready' ? 'text-emerald-700' : 'text-slate-500'}>{repo.webhookStatus === 'ready' ? 'Webhook đang đồng bộ' : repo.webhookStatus === 'configuring' ? 'Đang thiết lập đồng bộ GitHub…' : repo.webhookStatus === 'failed' ? 'Chưa đồng bộ được webhook. Kiểm tra quyền GitHub hoặc thử lại.' : 'Đồng bộ webhook chưa được bật. Nhờ quản trị hệ thống cấu hình kết nối nhận sự kiện GitHub.'}</p>}
+              {repo.status === 'ready' && <p className={repo.webhookStatus === 'ready' ? 'text-success' : 'text-muted-foreground'}>{repo.webhookStatus === 'ready' ? 'Webhook đang đồng bộ' : repo.webhookStatus === 'configuring' ? 'Đang thiết lập đồng bộ GitHub…' : repo.webhookStatus === 'failed' ? 'Chưa đồng bộ được webhook. Kiểm tra quyền GitHub hoặc thử lại.' : 'Đồng bộ webhook chưa được bật. Nhờ quản trị hệ thống cấu hình kết nối nhận sự kiện GitHub.'}</p>}
               {repo.url && (
                 <a
                   href={repo.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-blue-700"
+                  className="inline-flex items-center gap-2 text-primary"
                 >
                   Mở trên GitHub
                   <ExternalLink size={14} />
@@ -265,14 +265,14 @@ export function SessionRepositoryCard({
             </div>
           )}
           {repo?.status === 'ready' && data.data && <RepositoryMembers members={data.data.members} owner={repo.owner} repoName={repo.name} manage={manage && data.data.canManage !== false} busy={busy} onInvite={userId => void inviteOne(userId)} onCheck={() => void checkMine()} />}
-          <button onClick={data.reload} className="text-blue-700">
+          <button onClick={data.reload} className="text-primary">
             Tải lại trạng thái repository
           </button>
           {repo?.status === 'ready' && <RepositoryActivity key={sessionId} sessionId={sessionId} />}
         </div>
       )}
       {notice && (
-        <p role="alert" className="mt-3 text-sm text-amber-800">
+        <p role="alert" className="mt-3 text-body text-warning">
           {notice}
         </p>
       )}
@@ -284,12 +284,12 @@ function RepositoryActivity({ sessionId }: { sessionId: string }) {
   const [page, setPage] = useState(1);
   const state = useResource(useCallback((signal: AbortSignal) => githubRepositoryActivity(sessionId, page, signal), [sessionId, page]));
   const actionLabels: Record<string, string> = { synchronize: 'Cập nhật code', opened: 'Mở PR', reopened: 'Mở lại PR', closed: 'Đóng PR', pushed: 'Push commit', completed: 'Cập nhật CI', requested: 'Yêu cầu chạy CI', ping: 'Kiểm tra kết nối', received: 'Nhận sự kiện' };
-  return <section aria-label="Hoạt động GitHub của phiên" className="mt-4 border-t border-slate-100 pt-4">
-    <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-semibold">Hoạt động GitHub gần đây</h3><button className="text-xs text-blue-700" onClick={state.reload}>Tải lại hoạt động</button></div>
-    {state.loading ? <p role="status" className="text-sm text-slate-500">Đang tải hoạt động…</p> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : !state.data?.items.length ? <Empty>Chưa ghi nhận sự kiện GitHub cho phiên này.</Empty> : <>
-      <ol className="divide-y divide-slate-100">{state.data.items.map(e => <li key={e.id} className="py-2"><p>{actionLabels[e.action] ?? 'Cập nhật GitHub'}{e.pullNumber ? ` · PR #${e.pullNumber}` : ''}{e.branch ? ` · ${e.branch}` : ''}</p>{e.headSha && <p className="mt-1 break-all font-mono text-xs text-slate-500">{e.headSha}</p>}<time className="text-xs text-slate-500">{new Date(e.receivedAt).toLocaleString('vi-VN')}</time></li>)}</ol>
+  return <section aria-label="Hoạt động GitHub của phiên" className="mt-4 border-t border-border pt-4">
+    <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-semibold">Hoạt động GitHub gần đây</h3><button className="text-caption text-primary" onClick={state.reload}>Tải lại hoạt động</button></div>
+    {state.loading ? <p role="status" className="text-body text-muted-foreground">Đang tải hoạt động…</p> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : !state.data?.items.length ? <Empty>Chưa ghi nhận sự kiện GitHub cho phiên này.</Empty> : <>
+      <ol className="divide-y divide-border">{state.data.items.map(e => <li key={e.id} className="py-2"><p>{actionLabels[e.action] ?? 'Cập nhật GitHub'}{e.pullNumber ? ` · PR #${e.pullNumber}` : ''}{e.branch ? ` · ${e.branch}` : ''}</p>{e.headSha && <p className="mt-1 break-all font-mono text-caption text-muted-foreground">{e.headSha}</p>}<time className="text-caption text-muted-foreground">{new Date(e.receivedAt).toLocaleString('vi-VN')}</time></li>)}</ol>
       {state.data.total > 5 && <Pager page={page} totalPages={Math.ceil(state.data.total / 5)} total={state.data.total} onChange={setPage} unit="sự kiện" />}
     </>}
-    <p className="mt-3 text-xs text-slate-500">Trạng thái CI từ repository là bằng chứng bổ sung; quyết định chấm và duyệt được lưu riêng theo bài nộp.</p>
+    <p className="mt-3 text-caption text-muted-foreground">Trạng thái CI từ repository là bằng chứng bổ sung; quyết định chấm và duyệt được lưu riêng theo bài nộp.</p>
   </section>;
 }

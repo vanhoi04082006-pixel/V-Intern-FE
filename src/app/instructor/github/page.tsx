@@ -4,7 +4,7 @@ import {
   InstructorHeading,
   InstructorNotice,
 } from "@/components/instructor/instructor-ui";
-import { Panel } from "@/components/product/primitives";
+import { SessionSection } from "@/components/sessions/session-section";
 export default function Page() {
   return (
     <>
@@ -22,7 +22,7 @@ export default function Page() {
             </InstructorNotice>
           </div>
         </div>
-        <Panel title="Chuẩn bị trước khi nhận bài">
+        <SessionSection title="Chuẩn bị trước khi nhận bài">
           <ol className="ins-checklist">
             <li>
               <strong>Liên kết đúng danh tính</strong>
@@ -48,7 +48,7 @@ export default function Page() {
           <Link className="ins-queue-action mt-5" href="/instructor/sessions">
             Mở các phiên thực tập
           </Link>
-        </Panel>
+        </SessionSection>
       </div>
     </>
   );

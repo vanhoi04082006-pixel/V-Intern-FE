@@ -21,20 +21,16 @@ import {
   FileText,
   History,
   Info,
-  RefreshCw,
   ShieldCheck,
   Sparkles,
   Target,
-  UserRound,
   Wallet,
 } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useResource } from "@/lib/api/use-resource";
-import { ApiError, errorMessage } from "@/lib/auth/api-client";
-import { getSessionUser } from "@/lib/auth/session";
-import { refreshSession } from "@/lib/auth/auth-service";
+import { ApiError } from "@/lib/auth/api-client";
 import {
   getCertificate,
   getCertificatePdf,
@@ -130,18 +126,18 @@ function Resource<T>({
 export function Metrics({ values }: { values: [string, number | null][] }) {
   return (
     <dl
-      className={`workspace-metrics grid gap-3 sm:grid-cols-2 ${values.length === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}
+      className={`workspace-metrics workspace-stat-strip grid gap-y-4 sm:grid-cols-2 ${values.length === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}
     >
       {values.map(([name, value]) => (
         <div
           key={name}
-          className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-colors hover:border-slate-300"
+          className="min-w-0 px-4 py-3"
         >
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+          <dt className="text-caption font-medium text-muted-foreground">
             {name}
           </dt>
           <dd
-            className={`mt-2.5 text-2xl font-bold tracking-tight tabular-nums ${value === null ? "text-slate-500" : "text-navy"}`}
+            className={`mt-3 text-page font-bold tracking-tight tabular-nums ${value === null ? "text-muted-foreground" : "text-foreground"}`}
           >
             {value === null ? "Chưa đo được" : value.toLocaleString("vi-VN")}
           </dd>
@@ -169,10 +165,11 @@ export function Evaluations({ id }: { id?: string }) {
       <Resource resource={evaluations}>
         {(data) =>
           data.length ? (
-            <div className="student-stack">
+            <div className="student-stack student-record-collection">
               {data.map((e) => (
                 <StudentPanel
                   key={e.id}
+                  className="student-outcome-record"
                   icon={Award}
                   title={`Điểm chính thức: ${e.overallScore ?? "Chưa có"}/100`}
                   action={
@@ -193,10 +190,10 @@ export function Evaluations({ id }: { id?: string }) {
                       tone="green"
                     />
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.06em] text-slate-500">
+                      <p className="text-caption font-bold  text-muted-foreground">
                         Nhận xét của giảng viên
                       </p>
-                      <p className="mt-2 whitespace-pre-wrap text-[13px] leading-8 text-slate-600">
+                      <p className="mt-2 whitespace-pre-wrap text-small leading-8 text-muted-foreground">
                         {e.summary ?? "Chưa có nhận xét."}
                       </p>
                     </div>
@@ -210,6 +207,8 @@ export function Evaluations({ id }: { id?: string }) {
                     </time>
                   </div>
 
+                  <details open={Boolean(id)} className="student-help-disclosure">
+                    <summary>Tiêu chí & nhận xét chi tiết ({e.scores.length})</summary>
                   <div
                     className="student-table-wrap mt-4"
                     role="region"
@@ -228,10 +227,10 @@ export function Evaluations({ id }: { id?: string }) {
                         {e.scores.map((s, index) => (
                           <tr key={s.id}>
                             <td>
-                              <span className="font-semibold text-slate-700">
+                              <span className="font-semibold text-foreground">
                                 Tiêu chí {index + 1}
                               </span>
-                              <details className="mt-1 text-[10.5px] text-slate-500">
+                              <details className="mt-1 text-caption text-muted-foreground">
                                 <summary className="cursor-pointer">
                                   Mã tham chiếu
                                 </summary>
@@ -249,6 +248,7 @@ export function Evaluations({ id }: { id?: string }) {
                       </tbody>
                     </table>
                   </div>
+                  </details>
                 </StudentPanel>
               ))}
             </div>
@@ -333,18 +333,19 @@ export function Kpi({ id }: { id?: string }) {
     <>
       <StudentOutcomeHeading
         title="KPI & Lương ảo"
-        subtitle="Điểm KPI có nguồn tính rõ ràng · Lương ảo phục vụ chương trình thực tập"
+        subtitle="Điểm KPI có nguồn tính rõ ràng, Lương ảo phục vụ chương trình thực tập"
       />
       <Resource resource={results}>
         {(data) =>
           data.length ? (
-            <div className="student-stack">
+            <div className="student-stack student-record-collection">
               {data.map((k) => (
                 <StudentPanel
                   key={k.id}
+                  className="student-outcome-record"
                   title="Kết quả KPI"
                   icon={Target}
-                  description={`Quy tắc ${k.ruleVersion} · cập nhật ${new Date(k.calculatedAt).toLocaleString("vi-VN")}`}
+                  description={`Quy tắc ${k.ruleVersion}, cập nhật ${new Date(k.calculatedAt).toLocaleString("vi-VN")}`}
                   action={
                     !id && (
                       <StudentLink secondary href={`/intern/kpi/${k.id}`}>
@@ -364,7 +365,7 @@ export function Kpi({ id }: { id?: string }) {
                       }
                     />
                     <div className="min-w-0">
-                      <p className="text-[13px] leading-7 text-slate-600">
+                      <p className="text-small leading-7 text-muted-foreground">
                         {k.finalScore === null
                           ? "Chưa đủ dữ liệu để tính điểm. Các chỉ số còn thiếu được giữ nguyên, không tự quy về 0."
                           : "Điểm được tính theo quy tắc của chương trình. Mở nguồn tính để xem các chỉ số và trọng số đóng góp."}
@@ -465,7 +466,7 @@ export function Kpi({ id }: { id?: string }) {
           )
         }
       </Resource>
-      <div className="mt-5">
+      <div className="student-salary-section">
         <Salary />
       </div>
     </>
@@ -559,7 +560,7 @@ export function Salary() {
                             </td>
                             <td className="workspace-ledger-amount whitespace-nowrap font-semibold tabular-nums" data-negative={l.amount < 0 ? "true" : undefined}>
                               {l.amount > 0 ? "+" : ""}{l.amount.toLocaleString("vi-VN")}{" "}
-                              <span className="text-[10.5px] font-normal text-slate-500">
+                              <span className="text-caption font-normal text-muted-foreground">
                                 {l.unit === "VND_VIRTUAL" ? "đồng ảo" : l.unit}
                               </span>
                             </td>
@@ -686,7 +687,7 @@ export function Certificates({ id }: { id?: string }) {
                         <p>
                           {[c.projectName, c.sessionName]
                             .filter(Boolean)
-                            .join(" · ") || "Chứng nhận thực tập V-Intern"}
+                            .join(", ") || "Chứng nhận thực tập V-Intern"}
                         </p>
                       </div>
                       <StudentBadge
@@ -715,7 +716,7 @@ export function Certificates({ id }: { id?: string }) {
                       <div>
                         <dt>Chính sách</dt>
                         <dd>
-                          {c.policyCode} · v{c.policyVersion}
+                          {c.policyCode}, v{c.policyVersion}
                         </dd>
                       </div>
                     </dl>
@@ -727,7 +728,7 @@ export function Certificates({ id }: { id?: string }) {
                         >
                           {c.revokedAt &&
                             new Date(c.revokedAt).toLocaleDateString("vi-VN")}
-                          {c.revokedAt ? " · " : ""}
+                          {c.revokedAt ? ", " : ""}
                           {c.revokeReason}
                         </StudentCallout>
                       </div>
@@ -845,7 +846,7 @@ function CertificateDetail({
           </span>
           <div>
             <p className="student-cert-document-brand">
-              V-INTERN · LEARN · BUILD · BELONG
+              V-INTERN, LEARN, BUILD, BELONG
             </p>
             <p className="student-cert-document-type">
               Chứng nhận hoàn thành thực tập
@@ -873,7 +874,7 @@ function CertificateDetail({
           </div>
         </dl>
         <p className="student-cert-document-note">
-          Chứng nhận được cấp theo chính sách {c.policyCode} · phiên bản{" "}
+          Chứng nhận được cấp theo chính sách {c.policyCode}, phiên bản{" "}
           {c.policyVersion}. Mã xác minh công khai ở cột bên cạnh giúp đơn vị
           tuyển dụng kiểm tra tính hợp lệ của chứng nhận.
         </p>
@@ -901,7 +902,7 @@ function CertificateDetail({
             <div>
               <dt>Chính sách</dt>
               <dd>
-                {c.policyCode} · v{c.policyVersion}
+                {c.policyCode}, v{c.policyVersion}
               </dd>
             </div>
           </dl>
@@ -928,7 +929,7 @@ function CertificateDetail({
             <div className="mt-4">
               <StudentCallout tone="rose" title="Chứng nhận đã bị thu hồi">
                 {c.revokedAt
-                  ? `${new Date(c.revokedAt).toLocaleDateString("vi-VN")} · `
+                  ? `${new Date(c.revokedAt).toLocaleDateString("vi-VN")}, `
                   : ""}
                 {c.revokeReason ?? "Không có lý do được ghi nhận."}
               </StudentCallout>
@@ -937,7 +938,7 @@ function CertificateDetail({
         </StudentPanel>
 
         <StudentPanel title="Tệp chính thức" icon={FileText}>
-          <p className="text-[12px] leading-6 text-slate-600">
+          <p className="text-caption leading-6 text-muted-foreground">
             Bản PDF có cùng thông tin với chứng nhận trực tuyến và có thể lưu
             trữ hoặc chia sẻ.
           </p>
@@ -983,10 +984,11 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
     }
   }
   return (
-    <main className="mx-auto min-h-dvh max-w-2xl px-5 py-10 sm:pt-16">
+    <div className="app-surface min-h-dvh">
+    <main className="mx-auto max-w-2xl px-5 py-10 sm:pt-16">
       <Link
         href="/"
-        className="inline-flex items-center gap-2 rounded text-[15px] font-bold text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+        className="inline-flex items-center gap-2 rounded text-body font-bold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         V-Intern
       </Link>
@@ -1037,38 +1039,38 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
               <div className="mb-4">
                 <StatusDot tone="green">Còn hiệu lực</StatusDot>
               </div>
-              <dl className="grid gap-3 text-sm sm:grid-cols-2">
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
-                  <dt className="text-xs text-slate-500">Số chứng nhận</dt>
-                  <dd className="mt-1 font-semibold text-navy">
+              <dl className="grid gap-x-8 text-body sm:grid-cols-2">
+                <div className="border-b border-border py-4">
+                  <dt className="text-caption text-muted-foreground">Số chứng nhận</dt>
+                  <dd className="mt-1 font-semibold text-foreground">
                     {result.certificateNumber}
                   </dd>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
-                  <dt className="text-xs text-slate-500">Người nhận</dt>
-                  <dd className="mt-1 font-semibold text-navy">
+                <div className="border-b border-border py-4">
+                  <dt className="text-caption text-muted-foreground">Người nhận</dt>
+                  <dd className="mt-1 font-semibold text-foreground">
                     {result.holderName ?? "Chưa có"}
                   </dd>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
-                  <dt className="text-xs text-slate-500">Vai trò</dt>
-                  <dd className="mt-1 text-navy">{result.role ?? "Chưa có"}</dd>
+                <div className="border-b border-border py-4">
+                  <dt className="text-caption text-muted-foreground">Vai trò</dt>
+                  <dd className="mt-1 text-foreground">{result.role ?? "Chưa có"}</dd>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
-                  <dt className="text-xs text-slate-500">Dự án</dt>
-                  <dd className="mt-1 text-navy">
+                <div className="border-b border-border py-4">
+                  <dt className="text-caption text-muted-foreground">Dự án</dt>
+                  <dd className="mt-1 text-foreground">
                     {result.projectName ?? "Chưa có"}
                   </dd>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
-                  <dt className="text-xs text-slate-500">Phiên thực tập</dt>
-                  <dd className="mt-1 text-navy">
+                <div className="border-b border-border py-4">
+                  <dt className="text-caption text-muted-foreground">Phiên thực tập</dt>
+                  <dd className="mt-1 text-foreground">
                     {result.sessionName ?? "Chưa ghi nhận"}
                   </dd>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
-                  <dt className="text-xs text-slate-500">Ngày hoàn thành</dt>
-                  <dd className="mt-1 text-navy">
+                <div className="border-b border-border py-4">
+                  <dt className="text-caption text-muted-foreground">Ngày hoàn thành</dt>
+                  <dd className="mt-1 text-foreground">
                     {result.completedAt
                       ? new Date(result.completedAt).toLocaleDateString("vi-VN")
                       : "Chưa ghi nhận"}
@@ -1081,13 +1083,13 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
               <div className="mb-4">
                 <StatusDot tone="red">Không còn hiệu lực</StatusDot>
               </div>
-              <p role="status" className="text-sm leading-6 text-rose-700">
+              <p role="status" className="text-body leading-6 text-destructive">
                 Chứng nhận không còn hiệu lực. Ngày thu hồi:{" "}
                 {result.revokedAt
                   ? new Date(result.revokedAt).toLocaleDateString("vi-VN")
                   : "Chưa có"}
               </p>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-body text-muted-foreground">
                 Số chứng nhận: {result.certificateNumber}
               </p>
             </Panel>
@@ -1095,6 +1097,7 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
         </div>
       )}
     </main>
+    </div>
   );
 }
 export function Notifications() {
@@ -1171,12 +1174,12 @@ export function Notifications() {
         className={
           intern
             ? "student-filter-chip mb-4"
-            : "mb-4 inline-flex cursor-pointer select-none items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 shadow-xs transition-colors hover:border-slate-300 focus-within:ring-2 focus-within:ring-blue-600/30"
+            : "mb-4 inline-flex cursor-pointer select-none items-center gap-3 rounded-panel border border-border bg-card px-4 py-2 text-body font-medium text-muted-foreground shadow-app-xs transition-colors hover:border-border focus-within:ring-2 focus-within:ring-ring"
         }
       >
         <input
           type="checkbox"
-          className="size-4 accent-blue-600"
+          className="size-4 accent-primary"
           checked={unread}
           onChange={(e) => {
             setUnread(e.target.checked);
@@ -1230,7 +1233,7 @@ export function Notifications() {
                               className={
                                 intern
                                   ? "student-notification-title"
-                                  : "font-semibold text-navy"
+                                  : "font-semibold text-foreground"
                               }
                             >
                               {n.title}
@@ -1247,7 +1250,7 @@ export function Notifications() {
                             className={
                               intern
                                 ? "student-notification-body"
-                                : "mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600"
+                                : "mt-2 whitespace-pre-wrap text-body leading-6 text-muted-foreground"
                             }
                           />
                           <div
@@ -1261,7 +1264,7 @@ export function Notifications() {
                               className={
                                 intern
                                   ? "student-notification-time"
-                                  : "text-xs text-slate-500"
+                                  : "text-caption text-muted-foreground"
                               }
                               dateTime={n.createdAt}
                             >
@@ -1274,7 +1277,7 @@ export function Notifications() {
                                   className={
                                     intern
                                       ? "student-action student-action-secondary student-action-sm"
-                                      : "rounded text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                                   }
                                 >
                                   Mở nội dung
@@ -1294,7 +1297,7 @@ export function Notifications() {
                                   className={
                                     intern
                                       ? "student-action student-action-ghost student-action-sm"
-                                      : "rounded text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 disabled:opacity-50"
+                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:opacity-50"
                                   }
                                 >
                                   Đánh dấu đã đọc
@@ -1331,7 +1334,7 @@ export function Notifications() {
             title="Tùy chọn nhận thông báo"
           >
             {role === "intern" && (
-              <p className="mb-4 text-xs leading-6 text-slate-500">
+              <p className="mb-4 text-caption leading-6 text-muted-foreground">
                 Chọn những cập nhật bạn muốn nhận. Thay đổi sẽ được lưu khi bạn
                 bật hoặc tắt từng mục.
               </p>
@@ -1352,7 +1355,7 @@ export function Notifications() {
                     >
                       <input
                         type="checkbox"
-                        className="size-4 accent-blue-600"
+                        className="size-4 accent-primary"
                         checked={
                           preferencePending?.category === p.category
                             ? preferencePending.enabled
@@ -1434,7 +1437,7 @@ export function Recommendations() {
       recommendations.error.statusCode === 404 ? (
         <div className="student-dashboard-grid">
           <div className="student-panel student-chat-welcome">
-            <Sparkles size={42} className="text-blue-600" aria-hidden="true" />
+            <Sparkles size={42} className="text-primary" aria-hidden="true" />
             <h2>Một kế hoạch phát triển dành cho bạn</h2>
             <p>
               Chưa có khuyến nghị. Cập nhật để yêu cầu AI phân tích dữ liệu hiện
@@ -1476,7 +1479,7 @@ export function Recommendations() {
                 </div>
               </li>
             </ol>
-            <p className="mt-4 text-[11px] leading-6 text-slate-500">
+            <p className="mt-4 text-caption leading-6 text-muted-foreground">
               Khuyến nghị chỉ giúp định hướng học tập, không thay đổi điểm số
               hay KPI.
             </p>
@@ -1492,13 +1495,14 @@ export function Recommendations() {
                 className="student-panel-accent"
                 description={`Tạo lúc ${new Date(data.createdAt).toLocaleString("vi-VN")}`}
               >
-                <p className="text-[13px] leading-8 text-slate-600">
+                <p className="text-small leading-8 text-muted-foreground">
                   {data.summary}
                 </p>
               </StudentPanel>
               {data.recommendations.map((r, i) => (
                 <StudentPanel
                   key={i}
+                  className="student-recommendation-record"
                   title={r.title}
                   icon={Target}
                   action={
@@ -1519,7 +1523,7 @@ export function Recommendations() {
                     </StudentBadge>
                   }
                 >
-                  <p className="text-[12.5px] leading-7 text-slate-600">
+                  <p className="text-small leading-7 text-muted-foreground">
                     {r.reason}
                   </p>
                   <ol className="student-step-list mt-4">
@@ -1531,7 +1535,7 @@ export function Recommendations() {
                       </li>
                     ))}
                   </ol>
-                  <p className="mt-4 border-t border-slate-100 pt-3 text-[10.5px] text-slate-500">
+                  <p className="mt-4 border-t border-border pt-3 text-caption text-muted-foreground">
                     Chỉ số tham chiếu:{" "}
                     {r.evidenceMetricCodes
                       .map((code) => kpiMetricLabels[code] ?? code)
@@ -1546,146 +1550,4 @@ export function Recommendations() {
     </>
   );
 }
-export function Profile() {
-  const pathname = usePathname();
-  const intern = pathname.startsWith("/intern");
-  const instructor = pathname.startsWith("/instructor");
-  const workspaceRole = intern ? "intern" : "instructor";
-  const [user, setUser] = useState(() => getSessionUser());
-  const [busy, setBusy] = useState(false);
-  const [feedback, setFeedback] = useState<{
-    tone: "success" | "danger";
-    text: string;
-  } | null>(null);
-
-  async function refresh() {
-    setBusy(true);
-    setFeedback(null);
-    try {
-      const next = await refreshSession();
-      if (!next) {
-        setFeedback({
-          tone: "danger",
-          text: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
-        });
-      } else {
-        setUser(next);
-        setFeedback({
-          tone: "success",
-          text: "Đã cập nhật thông tin tài khoản từ hệ thống.",
-        });
-      }
-    } catch (cause) {
-      setFeedback({ tone: "danger", text: errorMessage(cause) });
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <>
-      <StudentOutcomeHeading
-        title="Hồ sơ"
-        subtitle="Thông tin tài khoản được xác minh từ hệ thống"
-        action={
-          <button
-            type="button"
-            className={
-              intern ? "student-action student-action-secondary" : buttonClass
-            }
-            disabled={busy}
-            onClick={() => void refresh()}
-          >
-            {intern && <RefreshCw size={15} aria-hidden="true" />}
-            {busy ? "Đang làm mới..." : "Làm mới"}
-          </button>
-        }
-      />
-      {feedback && (
-        <div className="mb-4">
-          <InlineAlert tone={feedback.tone}>{feedback.text}</InlineAlert>
-        </div>
-      )}
-      {(intern || instructor) && user && (
-        <div className="workspace-profile-identity">
-          <div className="flex min-w-0 items-center gap-4">
-            <span className="workspace-profile-avatar" aria-hidden="true">
-              {user.displayName.trim().split(/\s+/).slice(-2).map((part) => part[0]).join("").toLocaleUpperCase("vi")}
-            </span>
-            <div className="min-w-0">
-              <h2>{user.displayName}</h2>
-              <p className="break-all">{user.email}</p>
-            </div>
-          </div>
-          <StudentLink secondary href={`/${workspaceRole}/github`}>
-            Liên kết GitHub
-          </StudentLink>
-        </div>
-      )}
-      <div className={intern || instructor ? "workspace-profile-grid" : undefined}>
-        <OutcomeFrame intern={intern} icon={UserRound} title="Tài khoản">
-          <dl className="workspace-profile-info grid gap-3 text-sm sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-              <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                Họ tên
-              </dt>
-              <dd className="mt-1.5 font-semibold text-navy">
-                {user?.displayName ?? "—"}
-              </dd>
-            </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-              <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                Email
-              </dt>
-              <dd className="mt-1.5 break-all text-navy">
-                {user?.email ?? "—"}
-              </dd>
-            </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4 sm:col-span-2">
-              <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                Vai trò
-              </dt>
-              <dd className="mt-1.5 text-navy">
-                {user?.roles.length
-                  ? user.roles
-                      .map(
-                        (role) =>
-                          ({
-                            intern: "Sinh viên",
-                            instructor: "Giảng viên",
-                            admin: "Quản trị viên",
-                          })[role] ?? role,
-                      )
-                      .join(", ")
-                  : "Chưa gán vai trò"}
-              </dd>
-            </div>
-          </dl>
-          <p className="mt-5 text-sm text-slate-500">
-            Liên hệ quản trị viên để cập nhật tài khoản.
-          </p>
-        </OutcomeFrame>
-        {(intern || instructor) && (
-          <StudentPanel title="Kết nối & hỗ trợ" icon={Info}>
-            <div className="student-profile-links">
-              <StudentLink secondary href={`/${workspaceRole}/github`}>
-                Kiểm tra liên kết GitHub
-              </StudentLink>
-              <StudentLink secondary href={`/${workspaceRole}/notifications`}>
-                Xem thông báo cập nhật
-              </StudentLink>
-              <StudentLink secondary href={`/${workspaceRole}/performance`}>
-                Xem hiệu suất thực tập
-              </StudentLink>
-            </div>
-            <p className="mt-5 text-xs leading-6 text-slate-500">
-              Hồ sơ được đọc trực tiếp từ tài khoản V-Intern. Tài khoản không
-              chứa mật khẩu GitHub; liên kết repository được xác minh trên trang
-              GitHub.
-            </p>
-          </StudentPanel>
-        )}
-      </div>
-    </>
-  );
-}
+export { Profile } from "./profile";

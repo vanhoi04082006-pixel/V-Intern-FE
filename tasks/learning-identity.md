@@ -26,11 +26,12 @@ Màu dự kiến: mực `#253858`, xanh `#426CC7`, giấy `#FAFBFE`, nền xanh 
 | UI-03 Shell | Desktop/mobile, active/focus, navigation thống nhất | Đã có nền chung; đang phủ từng route | 15 lượt trên ba trang × năm độ rộng không tràn ngang; drawer sinh viên/Admin và trả focus đã thử |
 | UI-04 Sinh viên | Tổng quan; công việc/detail; sprint; dự án; mentor; participation | Chưa làm | Loading/empty/error, nộp bài/DnD thật trên tài khoản QA |
 | UI-05 Kết quả sinh viên | Evaluation/detail, KPI/detail, salary, performance, certificates/detail, recommendations | Chưa làm | Biểu đồ từ dữ liệu API, không suy diễn số liệu |
-| UI-06 Cá nhân/onboarding | Profile, notifications, GitHub, role/interview/result | Chưa làm | Success/failure/pending, bảo toàn giới hạn phỏng vấn |
+| UI-06 Cá nhân/onboarding | Profile, notifications, GitHub, role/interview/result | Đang làm | Thông báo đã kiểm ba vai; GitHub có trạng thái lịch sử; còn profile/onboarding và ngoại lệ theo luồng |
+| UI-06.1 Thông báo ba vai | Danh sách gọn, mở nội dung, đọc/lọc/tùy chọn có phản hồi thật | Đạt lát triển khai | Code 603ee3f; 9 regression tests, click ba vai, 15 lượt responsive đúng kích thước, 0 tràn ngang. [Báo cáo](../docs/design/NOTIFICATIONS-20261026.md) |
 | UI-07 Giảng viên | Overview, sessions/detail/setup, sprints/detail, task/detail, projects/detail | Chưa làm | Tạo/sửa/nộp/chấm và quyền truy cập |
 | UI-08 Theo dõi giảng viên | Recruitment, participation, evaluation, performance, reports, sharing, GitHub, profile, notifications | Chưa làm | Mutation feedback và empty/error từng trang |
 | UI-09 Admin/shared | Các trang quản trị và feedback dùng chung nhất quán | Tích hợp token/shell | Admin đã dùng chung theme; còn bố cục, nội dung và hành động từng trang |
-| UI-10 Nghiệm thu | Quality gates, responsive, ba vai, ảnh/log, handover | Đang thực hiện | 108 file / 651 test, lint/typecheck/build đạt; 15 probe responsive và các tương tác nêu trong report. Chưa đủ 78 route |
+| UI-10 Nghiệm thu | Quality gates, responsive, ba vai, ảnh/log, handover | Đang thực hiện | 109 file / 660 test, lint/typecheck/build đạt; nền chung và Thông báo có hai ma trận 15 lượt riêng, kèm click và bàn phím. Chưa đủ 78 route |
 
 ## Phạm vi và bảo vệ dữ liệu
 
@@ -38,4 +39,4 @@ Giữ trang chủ `/` theo yêu cầu cũ. Giữ nguyên API, auth, validation, 
 
 ## Tiến độ tích hợp G7
 
-Cặp FE 9ef1ff6 / BE 91a9175 đã xanh quality và full-stack, hành trình QA thật hoàn thành bốn task, đánh giá 96,1, KPI 98,8, chứng nhận và phục hồi lời mời. Xem [checkpoint có nguồn](../docs/ACCEPTANCE-CHECKPOINT-20261026.md). Bộ số liệu 651 thuộc lát UI mới, không ghi đè receipt nghiệp vụ 649 của source trước. Chưa merge stack sản phẩm.
+Cặp FE 9ef1ff6 / BE 91a9175 đã xanh quality và full-stack, hành trình QA thật hoàn thành bốn task, đánh giá 96,1, KPI 98,8, chứng nhận và phục hồi lời mời. Xem [checkpoint có nguồn](../docs/ACCEPTANCE-CHECKPOINT-20261026.md). Bộ số liệu 660 thuộc source UI mới, không ghi đè receipt nghiệp vụ 649 của source trước. Chưa merge stack sản phẩm.

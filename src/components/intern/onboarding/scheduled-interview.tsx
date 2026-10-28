@@ -76,48 +76,48 @@ export function ScheduledInterview() {
   return (
     <section className="mx-auto max-w-4xl space-y-7">
       <header className="space-y-3">
-        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand">
+        <p className="flex items-center gap-2 text-caption font-bold  text-primary">
           <CalendarClock size={17} aria-hidden="true" />
           Lịch phỏng vấn của bạn
         </p>
-        <h1 className="text-3xl font-bold tracking-tight text-navy">
+        <h1 className="text-page font-bold tracking-tight text-foreground">
           Sẵn sàng cho bước tiếp theo
         </h1>
-        <p className="max-w-2xl leading-7 text-slate-600">
+        <p className="max-w-2xl leading-7 text-muted-foreground">
           Vị trí được xếp từ CV và khung giờ giảng viên đã mở. Bạn không cần
           chọn lại nghề hoặc tạo tài khoản khác.
         </p>
       </header>
-      <div className="grid gap-6 border-y border-slate-200/80 py-6 sm:grid-cols-[1fr_auto]">
+      <div className="grid gap-6 border-y border-border py-6 sm:grid-cols-[1fr_auto]">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <p className="text-caption font-semibold  text-muted-foreground">
             Vị trí được xếp
           </p>
-          <h2 className="mt-2 text-2xl font-bold text-navy">
+          <h2 className="mt-2 text-page font-bold text-foreground">
             {schedule.roleName ?? "Đang chờ lịch hợp lệ"}
           </h2>
-          <p className="mt-3 text-sm text-slate-600">
+          <p className="mt-3 text-body text-muted-foreground">
             {time(schedule.startsAt, schedule.timezone)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-caption text-muted-foreground">
             Múi giờ: {schedule.timezone ?? "Chưa xác định"}
           </p>
         </div>
         {valid && ["waiting", "ready"].includes(phase) && (
-          <div className="sm:border-l sm:border-slate-200 sm:pl-8">
-            <p className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="sm:border-l sm:border-border sm:pl-8">
+            <p className="flex items-center gap-2 text-body text-muted-foreground">
               <Clock3 size={15} aria-hidden="true" />
               {phase === "waiting"
                 ? "Mở phòng sau"
                 : "Còn thời gian để bắt đầu"}
             </p>
             <p
-              className="mt-2 font-mono text-3xl font-semibold tabular-nums text-navy"
+              className="mt-2 font-mono text-page font-semibold tabular-nums text-foreground"
               aria-label="Thời gian chờ"
             >
               {duration((phase === "waiting" ? opens : closes) - now)}
             </p>
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-caption text-muted-foreground">
               Hạn bắt đầu: {time(schedule.deadlineAt, schedule.timezone)}
             </p>
           </div>
@@ -125,42 +125,42 @@ export function ScheduledInterview() {
       </div>
       <p
         role="status"
-        className={`max-w-3xl text-sm leading-7 ${phase === "no_show" || phase === "cancelled" ? "text-amber-800" : "text-slate-700"}`}
+        className={`max-w-3xl text-body leading-7 ${phase === "no_show" || phase === "cancelled" ? "text-warning" : "text-foreground"}`}
       >
         {status}
       </p>
-      <dl className="flex flex-wrap gap-x-10 gap-y-4 text-sm">
+      <dl className="flex flex-wrap gap-x-10 gap-y-4 text-body">
         <div>
-          <dt className="text-slate-500">Lượt đã dùng</dt>
-          <dd className="mt-1 text-xl font-semibold tabular-nums text-navy">
+          <dt className="text-muted-foreground">Lượt đã dùng</dt>
+          <dd className="mt-1 text-section font-semibold tabular-nums text-foreground">
             {profile.attemptNumber}
           </dd>
         </div>
         <div>
-          <dt className="text-slate-500">Lượt còn lại</dt>
-          <dd className="mt-1 text-xl font-semibold tabular-nums text-navy">
+          <dt className="text-muted-foreground">Lượt còn lại</dt>
+          <dd className="mt-1 text-section font-semibold tabular-nums text-foreground">
             {profile.attemptsRemaining}
           </dd>
         </div>
       </dl>
       {profile.attemptsRemaining <= 0 && (
-        <p className="text-sm text-amber-800">
+        <p className="text-body text-warning">
           Bạn đã dùng hết số lượt cho phép. Đổi nghề hoặc tải lại trang không
           tạo thêm lượt.
         </p>
       )}
       {cooling && (
-        <p className="text-sm text-amber-800">
+        <p className="text-body text-warning">
           Có thể phỏng vấn lại từ{" "}
           {time(profile.nextEligibleAt, schedule.timezone)}.
         </p>
       )}
       {notice && (
-        <p role="alert" className="text-sm text-rose-700">
+        <p role="alert" className="text-body text-destructive">
           {notice}
         </p>
       )}
-      <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-5">
+      <div className="flex flex-wrap items-center gap-3 border-t border-border pt-5">
         <button
           className="student-action"
           disabled={!canStart}
@@ -188,7 +188,7 @@ export function ScheduledInterview() {
           </Link>
         ) : null}
       </div>
-      <p className="text-xs leading-6 text-slate-500">
+      <p className="text-caption leading-6 text-muted-foreground">
         Đồng hồ trên màn hình giúp bạn theo dõi. Máy chủ xác nhận giờ và quyền
         bắt đầu; phiên đã bắt đầu được tiếp tục theo thời hạn bài phỏng vấn
         riêng.

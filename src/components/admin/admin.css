@@ -1,0 +1,50 @@
+/* Hallmark · V-Intern · theme: established brand · shape: administrative workbench · scope: app */
+/* Critique: priority through type, separators and compact records; preserve every operation and honest data scope. */
+.admin-workspace .admin-overview-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, .4fr); align-items: start; gap: var(--space-8); margin-top: var(--space-8); }
+.admin-workspace .admin-overview-actions { border-left: 1px solid var(--border); padding-left: var(--space-6); }
+.admin-workspace .admin-collection-layout { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; gap: var(--space-8); align-items: start; }
+.admin-workspace .admin-role-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: start; gap: var(--space-8); }
+.admin-workspace .admin-catalog-layout { display: grid; grid-template-columns: 13rem minmax(0, 1fr) 16rem; gap: var(--space-6); align-items: start; }
+.admin-workspace .admin-selection-row { display: flex; min-height: var(--touch-min); align-items: center; gap: var(--space-3); border-bottom: 1px solid var(--border); padding-block: var(--space-3); text-align: left; }
+.admin-workspace .admin-selection-row:hover { color: var(--primary); }
+.admin-workspace .admin-selection-row[aria-pressed="true"] { color: var(--primary); font-weight: var(--weight-semibold); }
+.admin-workspace .admin-permission-row { display: flex; align-items: start; gap: var(--space-3); padding-block: var(--space-4); border-bottom: 1px solid var(--border); }
+.admin-workspace .admin-coverage-table { width: 100%; border-collapse: collapse; font-size: var(--type-small); }
+.admin-workspace .admin-coverage-table :is(th, td) { padding: var(--space-3); border-bottom: 1px solid var(--border); text-align: left; }
+.admin-workspace .admin-coverage-table th { font-size: var(--type-caption); color: var(--muted-foreground); font-weight: var(--weight-medium); }
+.admin-workspace .admin-coverage-table td:not(:first-child) { font-variant-numeric: tabular-nums; }
+.admin-workspace .admin-coverage-table th:first-child, .admin-workspace .admin-coverage-table td:first-child { padding-left: 0; }
+.admin-workspace .admin-template-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+.admin-workspace .admin-template-item { min-width: 0; padding-block: var(--space-5); border-bottom: 1px solid var(--border); }
+.admin-workspace .admin-template-item h3 { font-size: var(--type-subsection); line-height: var(--leading-body); }
+.admin-workspace .admin-template-actions { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin-top: var(--space-4); font-size: var(--type-small); color: var(--muted-foreground); }
+.admin-workspace .admin-template-actions button { min-height: var(--touch-min); font-weight: var(--weight-medium); }
+.admin-workspace .admin-template-actions button:first-child { color: var(--primary); font-weight: var(--weight-semibold); }
+.admin-workspace .admin-template-actions button:hover { text-decoration: underline; text-underline-offset: var(--space-1); }
+.admin-workspace .admin-integration-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); border-block: 1px solid var(--border); padding-block: var(--space-5); }
+.admin-workspace .admin-integration-grid > div { min-width: 0; padding-right: var(--space-5); border-right: 1px solid var(--border); }
+.admin-workspace .admin-integration-grid > div:last-child { border-right: 0; }
+.admin-workspace .admin-alert-scan { padding-block: var(--space-4); border-block: 1px solid var(--border); }
+.admin-workspace .admin-contract-check { padding-top: var(--space-6); border-top: 1px solid var(--border); }
+.admin-workspace .admin-configuration-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-6) var(--space-8); }
+.admin-workspace .admin-configuration-item { padding-block: var(--space-4); border-bottom: 1px solid var(--border); text-align: left; }
+.admin-workspace .admin-configuration-item:hover { background: var(--muted); }
+.admin-workspace .product-panel :is(th, td) { vertical-align: top; }
+.admin-workspace .product-panel th { font-size: var(--type-caption); color: var(--muted-foreground); font-weight: var(--weight-semibold); }
+.admin-workspace .product-panel tbody tr { transition: background-color var(--motion-fast) var(--motion-ease); }
+.admin-workspace .product-panel tbody tr:hover { background: var(--muted); }
+.admin-workspace :is(.admin-template-actions, .admin-selection-row, .admin-configuration-item) button:disabled { cursor: not-allowed; opacity: .5; }
+@media (max-width: 79.99rem) {
+  .admin-workspace .admin-catalog-layout { grid-template-columns: 13rem minmax(0, 1fr); }
+  .admin-workspace .admin-catalog-layout > :last-child { grid-column: 1 / -1; }
+  .admin-workspace .admin-template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 63.99rem) {
+  .admin-workspace :is(.admin-overview-grid, .admin-role-layout, .admin-collection-layout) { grid-template-columns: minmax(0, 1fr); }
+  .admin-workspace .admin-integration-grid { grid-template-columns: minmax(0, 1fr); }
+  .admin-workspace .admin-integration-grid > div { border-right: 0; padding-right: 0; }
+}
+@media (max-width: 39.99rem) {
+  .admin-workspace :is(.admin-catalog-layout, .admin-template-grid, .admin-configuration-grid) { grid-template-columns: minmax(0, 1fr); }
+}
+.admin-workspace .admin-overview-actions { min-width: 0; }

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft, Info } from "lucide-react";
@@ -58,6 +60,10 @@ export function InstructorSectionNav({
         <a
           key={item.id}
           href={`#${item.id}`}
+          onClick={() => {
+            const disclosure = document.getElementById(item.id)?.querySelector("details");
+            if (disclosure) disclosure.open = true;
+          }}
           aria-label={`Đến phần ${item.label}${item.count !== undefined ? ` (${item.count})` : ""}`}
         >
           {item.label}

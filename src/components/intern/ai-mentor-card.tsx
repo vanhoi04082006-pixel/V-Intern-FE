@@ -25,35 +25,35 @@ export function AiMentorCard({
       title="AI Mentor"
       actions={<CardLinkAction label="Xem lịch sử" />}
     >
-      <p className="text-xs text-slate-500">{mentor.contextLine}</p>
+      <p className="text-caption text-muted-foreground">{mentor.contextLine}</p>
 
       <ul className="mt-3 flex flex-col gap-3">
         {mentor.messages.map((message) =>
           message.author === "intern" ? (
-            <li key={message.id} className="flex items-start justify-end gap-2.5">
+            <li key={message.id} className="flex items-start justify-end gap-3">
               <div className="flex max-w-[85%] flex-col items-end gap-1">
-                <p className="rounded-2xl rounded-br-md bg-brand px-3.5 py-2.5 text-[13px] leading-relaxed text-white">
+                <p className="rounded-panel rounded-br-md bg-primary px-4 py-3 text-small leading-relaxed text-primary-foreground">
                   {message.text}
                 </p>
-                <time className="text-[11px] text-slate-500">
+                <time className="text-caption text-muted-foreground">
                   {message.timeLabel}
                 </time>
               </div>
-              <Avatar initials="NA" className="size-8 text-[11px]" />
+              <Avatar initials="NA" className="size-8 text-caption" />
             </li>
           ) : (
-            <li key={message.id} className="flex items-start gap-2.5">
+            <li key={message.id} className="flex items-start gap-3">
               <span
                 aria-hidden="true"
-                className="grid size-8 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-600"
+                className="grid size-8 shrink-0 place-items-center rounded-full bg-accent text-primary"
               >
                 <Bot className="size-4" />
               </span>
               <div className="flex max-w-[85%] flex-col gap-1">
-                <p className="rounded-2xl rounded-bl-md border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-700">
+                <p className="rounded-panel rounded-bl-md border border-border bg-background px-4 py-3 text-small leading-relaxed text-foreground">
                   {message.text}
                 </p>
-                <time className="text-[11px] text-slate-500">
+                <time className="text-caption text-muted-foreground">
                   {message.timeLabel}
                 </time>
               </div>
@@ -73,12 +73,12 @@ export function AiMentorCard({
           id="ai-mentor-input"
           type="text"
           placeholder={mentor.inputPlaceholder}
-          className="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3.5 text-sm text-navy outline-none transition-shadow placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-brand/30"
+          className="h-10 min-w-0 flex-1 rounded-control border border-border bg-background px-4 text-body text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-brand/30"
         />
         <button
           type="submit"
           aria-label="Gửi câu hỏi cho AI Mentor"
-          className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+          className="grid size-10 shrink-0 place-items-center rounded-control bg-primary text-primary-foreground transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
         >
           <Send className="size-4" aria-hidden="true" />
         </button>

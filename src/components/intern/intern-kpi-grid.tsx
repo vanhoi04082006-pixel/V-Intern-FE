@@ -26,34 +26,34 @@ export function InternKpiGrid({ kpis }: { kpis: InternKpi[] }) {
 
         return (
           <li key={kpi.id}>
-            <article className="h-full rounded-xl border border-slate-200 bg-white p-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
-              <div className="flex items-start gap-2.5">
+            <article className="h-full rounded-panel border border-border bg-card p-4 shadow-app-xs">
+              <div className="flex items-start gap-3">
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "grid size-9 shrink-0 place-items-center rounded-lg",
+                    "grid size-9 shrink-0 place-items-center rounded-control",
                     toneStyle.tile
                   )}
                 >
                   <KpiIcon className={cn("size-[18px]", toneStyle.icon)} />
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-[11px] leading-tight text-slate-500">
+                  <p className="truncate text-caption leading-tight text-muted-foreground">
                     {kpi.label}
                   </p>
-                  <p className="truncate text-xl font-bold leading-tight tracking-tight text-navy">
+                  <p className="truncate text-section font-bold leading-tight tracking-tight text-foreground">
                     {kpi.value}
                   </p>
                 </div>
               </div>
 
               {hasProgress ? (
-                <div className="mt-2.5">
+                <div className="mt-3">
                   {kpi.note ? (
                     <p
                       className={cn(
-                        "text-xs font-semibold",
-                        noteToneStyle?.icon ?? "text-navy"
+                        "text-caption font-semibold",
+                        noteToneStyle?.icon ?? "text-foreground"
                       )}
                     >
                       {kpi.note}
@@ -62,14 +62,14 @@ export function InternKpiGrid({ kpis }: { kpis: InternKpi[] }) {
                   <ProgressBar
                     value={kpi.progress ?? 0}
                     tone={kpi.tone}
-                    className="mt-1.5"
+                    className="mt-2"
                   />
                 </div>
               ) : kpi.note ? (
                 <p
                   className={cn(
-                    "mt-2 text-xs font-semibold",
-                    noteToneStyle?.icon ?? "text-slate-500"
+                    "mt-2 text-caption font-semibold",
+                    noteToneStyle?.icon ?? "text-muted-foreground"
                   )}
                 >
                   {kpi.note}

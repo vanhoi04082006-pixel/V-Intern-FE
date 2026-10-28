@@ -94,7 +94,7 @@ export function InternShell({
     <div className="student-experience workspace-ui aurora-workspace min-h-dvh" data-workspace-role="intern">
       <a
         href="#intern-main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:bg-white focus:p-3"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:bg-card focus:p-3"
       >
         Bỏ qua tới nội dung chính
       </a>
@@ -116,9 +116,9 @@ export function InternShell({
             type="button"
             aria-label="Đóng menu thực tập sinh"
             onClick={() => setMenuOpen(false)}
-            className="absolute inset-0 bg-slate-900/50"
+            className="absolute inset-0 bg-foreground/50"
           />
-          <div className="absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-2xl">
+          <div className="absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-popover">
             <InternSidebar
               currentPath={pathname}
               groups={groups}
@@ -139,7 +139,7 @@ export function InternShell({
       )}
       <div
         inert={menuOpen}
-        className={`aurora-shell-content flex min-h-dvh flex-col lg:pl-[240px] ${compact ? "xl:h-dvh xl:min-h-0" : ""}`}
+        className={`aurora-shell-content flex min-h-dvh flex-col  ${compact ? "xl:h-dvh xl:min-h-0" : ""}`}
       >
         <InternTopbar
           waiting={waiting}
@@ -162,7 +162,7 @@ export function InternShell({
         />
         <main
           id="intern-main-content"
-          className={`mx-auto w-full max-w-[1500px] flex-1 px-4 py-4 sm:px-6 sm:py-5 ${compact ? "xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8" : ""}`}
+          className={`mx-auto w-full max-w-none flex-1 px-4 py-4 sm:px-6 sm:py-5 ${compact ? "xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8" : ""}`}
         >
           <WorkspaceStage role="intern" workAvailable={active} resultsAvailable={outcomesAvailable}>
             {children}

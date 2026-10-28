@@ -26,30 +26,30 @@ function PrivateAssessment({ id, version }: { id: string; version: number }) {
   const assessment = resource.data?.assessment;
   if (!assessment)
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-body text-muted-foreground">
         Phiên bản {version} chưa có tài liệu chấm riêng. Không lấy lời giải của
         phiên bản khác để thay vào.
       </p>
     );
   return (
     <div className="space-y-5">
-      <p className="text-sm leading-6 text-amber-900">
-        Tài liệu dành cho người chấm · v{version}. Không đưa các file này vào
+      <p className="text-body leading-6 text-warning">
+        Tài liệu dành cho người chấm, v{version}. Không đưa các file này vào
         starter hoặc gửi cho sinh viên đang làm bài.
       </p>
       <PackageFiles
         files={[...assessment.solutionFiles, ...assessment.hiddenTestFiles]}
       />
-      <table className="w-full text-left text-sm">
-        <caption className="mb-3 text-left font-semibold text-navy">
-          Rubric tham khảo · tổng 100%
+      <table className="w-full text-left text-body">
+        <caption className="mb-3 text-left font-semibold text-foreground">
+          Rubric tham khảo, tổng 100%
         </caption>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-border">
           {assessment.rubric.map((row) => (
             <tr key={row.criterion}>
               <th scope="row" className="py-3 pr-4 align-top font-medium">
                 {row.criterion}
-                <p className="mt-1 font-normal leading-6 text-slate-500">
+                <p className="mt-1 font-normal leading-6 text-muted-foreground">
                   {row.description}
                 </p>
               </th>
@@ -60,11 +60,11 @@ function PrivateAssessment({ id, version }: { id: string; version: number }) {
           ))}
         </tbody>
       </table>
-      <p className="text-xs leading-5 text-slate-500">
+      <p className="text-caption leading-5 text-muted-foreground">
         Mapping{" "}
         {assessment.taskSuites
           .map((row) => `${row.taskKey} → ${row.suiteId}`)
-          .join(" · ")}
+          .join(", ")}
         . Digest authoring không tự thay thế seal của operator theo
         task/repository/spec.
       </p>
@@ -90,7 +90,7 @@ function RevisionPicker({
   if (resource.error)
     return <ErrorState error={resource.error} onRetry={resource.reload} />;
   return (
-    <label className="text-sm text-slate-600">
+    <label className="text-body text-muted-foreground">
       Phiên bản public
       <select
         className={`${inputClass} mt-1`}
@@ -104,8 +104,8 @@ function RevisionPicker({
           </option>
         ))}
       </select>
-      <span className="mt-1 block text-xs text-slate-500">
-        {resource.data?.total} phiên bản · hiển thị tối đa 100 gần nhất. Phiên
+      <span className="mt-1 block text-caption text-muted-foreground">
+        {resource.data?.total} phiên bản, hiển thị tối đa 100 gần nhất. Phiên
         đang chạy giữ bản đã ghim.
       </span>
     </label>
@@ -126,12 +126,12 @@ export function TemplateMaterials({ source }: { source: TemplateDetail }) {
   );
   return (
     <section
-      className="min-w-0 space-y-5 border-y border-slate-200 py-6"
+      className="min-w-0 space-y-5 border-y border-border py-6"
       aria-label="Tài liệu và phiên bản mẫu"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-bold text-navy">
-          Gói học tập · v{version}
+        <h2 className="text-section font-bold text-foreground">
+          Gói học tập, v{version}
         </h2>
         <button
           type="button"
@@ -167,10 +167,10 @@ export function TemplateMaterials({ source }: { source: TemplateDetail }) {
         )
       )}
       <Can perm="templates.assessment.read">
-        <div className="space-y-4 border-t border-slate-200 pt-5">
+        <div className="space-y-4 border-t border-border pt-5">
           <button
             type="button"
-            className="text-sm font-semibold text-amber-800 underline decoration-amber-300 underline-offset-4"
+            className="text-body font-semibold text-warning underline decoration-amber-300 underline-offset-4"
             aria-expanded={privateOpen}
             onClick={() => setPrivateOpen((value) => !value)}
           >

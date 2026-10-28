@@ -55,15 +55,15 @@ export function StudentPerformance({
             { label: "Tiến độ Sprint hiện tại", value: m.activeSprintProgress },
             { label: "Hoàn thành điểm độ lớn", value: m.storyPointCompletionRate },
           ]} />
-          <div className="mt-7 border-t border-slate-100 pt-5 text-sm text-slate-600">
-            <strong className="text-navy">
+          <div className="mt-7 border-t border-border pt-5 text-body text-muted-foreground">
+            <strong className="text-foreground">
               {m.completedStoryPoints}/{m.committedStoryPoints}
             </strong>{" "}
             điểm độ lớn đã hoàn thành / cam kết
           </div>
         </div>
         <StudentPanel title="Bước tiếp theo">
-          <p className="mb-5 text-sm leading-7 text-slate-600">
+          <p className="mb-5 text-body leading-7 text-muted-foreground">
             {!activeAssignment
               ? "Phiên thực tập đã kết thúc. Xem lại đánh giá chính thức và gợi ý phát triển để chuẩn bị cho chặng tiếp theo."
               : m.overdueOpenTaskCount > 0
@@ -82,7 +82,7 @@ export function StudentPerformance({
           </div>
         </StudentPanel>
       </div>
-      <p className="text-xs leading-6 text-slate-500">
+      <p className="text-caption leading-6 text-muted-foreground">
         Chưa đo được nghĩa là chưa có đủ dữ liệu. Hệ thống không suy diễn xu
         hướng từ một thời điểm. Các chỉ số được tính từ nhiệm vụ và đánh giá
         chính thức.

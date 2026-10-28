@@ -26,26 +26,26 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
   return (
     <section
       aria-labelledby="result-score-heading"
-      className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+      className="rounded-panel border border-border bg-card p-4 shadow-app-xs"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2
           id="result-score-heading"
-          className="flex items-center gap-2 text-base font-bold tracking-tight text-navy"
+          className="flex items-center gap-2 text-subsection font-bold tracking-tight text-foreground"
         >
           Kết quả đánh giá
         </h2>
         {/* Badge công thức như reference — inner span giữ chuỗi công thức
             CHÍNH XÁC (dùng chung cho test), phần prefix chỉ sr-only. */}
-        <p className="hidden items-center rounded-lg bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500 sm:inline-flex">
+        <p className="hidden items-center rounded-control bg-background px-3 py-1 text-caption font-medium text-muted-foreground sm:inline-flex">
           <span className="sr-only">Công thức tính: </span>
-          <span className="font-semibold text-navy">
+          <span className="font-semibold text-foreground">
             {OVERALL_FORMULA_LABEL}
           </span>
-          <span aria-hidden="true" className="mx-1.5 text-slate-300">
+          <span aria-hidden="true" className="mx-2 text-muted-foreground">
             |
           </span>
-          <span>Đậu khi trên 70 · 50–70: đề xuất vai trò khác · dưới 50: chưa đạt</span>
+          <span>Đậu khi trên 70, 50 đến 70: đề xuất vai trò khác, dưới 50: chưa đạt</span>
         </p>
       </div>
 
@@ -66,7 +66,7 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
                 r={DONUT_RADIUS}
                 fill="none"
                 strokeWidth="11"
-                className="stroke-slate-100"
+                className="stroke-muted-foreground"
               />
               <circle
                 cx="60"
@@ -77,19 +77,19 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
                 strokeLinecap="round"
                 strokeDasharray={`${dash} ${DONUT_CIRCUMFERENCE - dash}`}
                 transform="rotate(-90 60 60)"
-                className={passed ? "stroke-emerald-500" : "stroke-amber-500"}
+                className={passed ? "stroke-success" : "stroke-warning"}
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span
                 aria-hidden="true"
-                className="text-[26px] font-extrabold leading-none tracking-tight text-navy"
+                className="text-page font-extrabold leading-none tracking-tight text-foreground"
               >
                 {formatScore(overall)}
               </span>
               <span
                 aria-hidden="true"
-                className="mt-0.5 text-[11px] font-semibold text-slate-500"
+                className="mt-1 text-caption font-semibold text-muted-foreground"
               >
                 / 100 Overall
               </span>
@@ -100,10 +100,10 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
           </div>
           <span
             className={cn(
-              "mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-bold",
+              "mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-small font-bold",
               passed
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-amber-50 text-amber-700"
+                ? "bg-success-subtle text-success"
+                : "bg-warning-subtle text-warning"
             )}
           >
             {passed ? (
@@ -121,19 +121,19 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
             label="Technical"
             weight="70%"
             value={scores.technical}
-            barTone="bg-brand"
+            barTone="bg-primary"
           />
           <ScoreRow
             label="Soft Skill"
             weight="30%"
             value={scores.soft}
-            barTone="bg-violet-500"
+            barTone="bg-info"
           />
           <ScoreRow
             label="Overall"
             weight="100%"
             value={overall}
-            barTone={passed ? "bg-emerald-500" : "bg-amber-500"}
+            barTone={passed ? "bg-success" : "bg-warning"}
             emphasized
           />
         </dl>
@@ -160,19 +160,19 @@ function ScoreRow({
   return (
     <div
       className={cn(
-        "rounded-lg px-3 py-2 [&+&]:mt-1.5",
-        emphasized ? "bg-blue-50/60" : "bg-slate-50"
+        "rounded-control px-3 py-2 [&+&]:mt-2",
+        emphasized ? "bg-accent" : "bg-background"
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <dt className={cn("text-[13px] font-semibold text-slate-700", emphasized && "text-navy")}>
+        <dt className={cn("text-small font-semibold text-foreground", emphasized && "text-foreground")}>
           {label}
-          <span className="ml-1.5 font-normal text-slate-500">({weight})</span>
+          <span className="ml-2 font-normal text-muted-foreground">({weight})</span>
         </dt>
         <dd
           className={cn(
-            "text-[13px] font-bold tabular-nums",
-            emphasized ? "text-navy" : "text-slate-700"
+            "text-small font-bold tabular-nums",
+            emphasized ? "text-foreground" : "text-foreground"
           )}
         >
           {formatScore(value)}/100
@@ -180,7 +180,7 @@ function ScoreRow({
       </div>
       <div
         aria-hidden="true"
-        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200/70"
+        className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted"
       >
         <div
           className={cn("h-full rounded-full", barTone)}

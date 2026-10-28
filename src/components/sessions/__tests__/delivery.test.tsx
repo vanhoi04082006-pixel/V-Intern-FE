@@ -14,6 +14,7 @@ it("keeps session context and sends task status, assignee and inclusive deadline
   render(<DeliveryOverview initialProjectId="p1" initialSessionId="s1" />);
   await waitFor(() => expect(listSprints).toHaveBeenCalledWith(expect.objectContaining({ projectId: "p1", sessionId: "s1" }), expect.any(AbortSignal)));
   fireEvent.click(screen.getByRole("button", { name: "Task" }));
+  fireEvent.click(screen.getByText("Bộ lọc nâng cao"));
   await screen.findByRole("option", { name: /Intern One/ });
   fireEvent.change(screen.getByLabelText("Người phụ trách"), { target: { value: "u1" } });
   fireEvent.change(screen.getByLabelText("Trạng thái"), { target: { value: "review" } });

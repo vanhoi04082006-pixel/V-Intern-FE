@@ -12,7 +12,7 @@ import { INTERN_TONES, type InternTone } from "./intern-ui-tones";
  * chéo vào admin/instructor components (cùng pattern với instructor).
  */
 
-const SECTION_CARD_SHADOW = "shadow-[0_1px_2px_rgba(15,23,42,0.05)]";
+const SECTION_CARD_SHADOW = "shadow-app-xs";
 
 /**
  * Card section chuẩn theo reference: header (icon mềm + h2 + actions)
@@ -51,25 +51,25 @@ export function SectionCard({
     <section
       aria-labelledby={id}
       className={cn(
-        "workspace-section flex min-w-0 flex-col rounded-xl border border-slate-200 bg-white",
+        "workspace-section flex min-w-0 flex-col rounded-panel border border-border bg-card",
         SECTION_CARD_SHADOW,
         className,
       )}
     >
       <div
         className={cn(
-          "workspace-section-header flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 px-4 py-3.5 sm:px-5",
+          "workspace-section-header flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border px-4 py-4 sm:px-5",
           headerClassName,
         )}
       >
         <h2
           id={id}
-          className="flex min-w-0 items-center gap-2.5 text-base font-bold text-navy"
+          className="flex min-w-0 items-center gap-3 text-subsection font-bold text-foreground"
         >
           <span
             aria-hidden="true"
             className={cn(
-              "grid size-8 shrink-0 place-items-center rounded-lg",
+              "grid size-8 shrink-0 place-items-center rounded-control",
               toneStyle.tile,
             )}
           >
@@ -77,7 +77,7 @@ export function SectionCard({
           </span>
           <span className="truncate">{title}</span>
           {titleSuffix ? (
-            <span className="truncate text-[13px] font-normal text-slate-400">
+            <span className="truncate text-small font-normal text-muted-foreground">
               {titleSuffix}
             </span>
           ) : null}
@@ -98,7 +98,7 @@ export function CardLinkAction({ label }: { label: string }) {
   return (
     <button
       type="button"
-      className="inline-flex items-center gap-1 rounded-md text-[13px] font-semibold text-brand transition-colors hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+      className="inline-flex items-center gap-1 rounded-control text-small font-semibold text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
     >
       {label}
       <ArrowRight className="size-4" aria-hidden="true" />
@@ -107,15 +107,15 @@ export function CardLinkAction({ label }: { label: string }) {
 }
 
 /**
- * Nút hành động chính. Round 3: cùng hệ nút với Instructor (px-3.5 py-2,
- * text 13px, rounded-lg, shadow mảnh) để hai workspace cùng một visual
- * language — trước đây h-10 px-4 text-sm khiến Waiting "như app khác".
+ * Nút hành động chính. Round 3: cùng hệ nút với Instructor (px-4 py-2,
+ * text 13px, rounded-control, shadow mảnh) để hai workspace cùng một visual
+ * language — trước đây h-10 px-4 text-body khiến Waiting "như app khác".
  */
 export function PrimaryAction({ children }: { children: ReactNode }) {
   return (
     <button
       type="button"
-      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-brand px-3.5 py-2 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+      className="inline-flex items-center gap-2 whitespace-nowrap rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground shadow-app-xs transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
     >
       {children}
     </button>
@@ -127,7 +127,7 @@ export function OutlineAction({ children }: { children: ReactNode }) {
   return (
     <button
       type="button"
-      className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control border border-border bg-card px-4 py-2 text-small font-semibold text-foreground shadow-app-xs transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
     >
       {children}
     </button>
@@ -151,10 +151,10 @@ export function PillButton({
       type="button"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-3 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
+        "inline-flex h-8 items-center justify-center whitespace-nowrap rounded-control px-3 text-small font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
         variant === "soft"
-          ? "bg-blue-50 text-brand hover:bg-blue-100"
-          : "border border-slate-200 text-slate-600 hover:bg-slate-50",
+          ? "bg-accent text-primary hover:bg-accent"
+          : "border border-border text-muted-foreground hover:bg-background",
         className,
       )}
     >
@@ -178,7 +178,7 @@ export function GhostIconButton({
       type="button"
       aria-label={label}
       className={cn(
-        "grid size-8 shrink-0 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
+        "grid size-8 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
         className,
       )}
     >
@@ -204,7 +204,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold",
+        "inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1 text-caption font-semibold",
         toneStyle.soft,
         className,
       )}
@@ -251,7 +251,7 @@ export function ProgressBar({
     <div
       aria-hidden="true"
       className={cn(
-        "h-1.5 w-full overflow-hidden rounded-full bg-slate-100",
+        "h-1.5 w-full overflow-hidden rounded-full bg-muted",
         className,
       )}
     >
@@ -288,7 +288,7 @@ export function Avatar({
     <span
       aria-hidden="true"
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-full text-xs font-bold",
+        "grid size-9 shrink-0 place-items-center rounded-full text-caption font-bold",
         toneStyle.tile,
         toneStyle.icon,
         className,
@@ -302,7 +302,7 @@ export function Avatar({
 /** Avatar nhỏ xoay vòng tone theo index — dùng trong task card/bảng. */
 export function TaskAvatar({
   index,
-  className = "size-7 text-[10px]",
+  className = "size-7 text-caption",
 }: {
   index: number;
   className?: string;

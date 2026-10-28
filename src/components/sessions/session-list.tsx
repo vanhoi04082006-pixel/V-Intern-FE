@@ -108,7 +108,7 @@ export function SessionList({
   return (
     <div className="space-y-4">
       {embedded ? (
-        <h2 className="text-xl font-semibold text-navy">
+        <h2 className="text-section font-semibold text-foreground">
           Phiên thực tập của bạn
         </h2>
       ) : (
@@ -214,17 +214,17 @@ export function SessionList({
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h3 className="text-sm font-bold leading-6 text-navy sm:text-base">
+                          <h3 className="text-body font-bold leading-6 text-foreground sm:text-subsection">
                             {s.name}
                           </h3>
-                          <p className="mt-0.5 font-mono text-[11px] text-slate-400">
-                            {s.code} · {formatDate(s.startDate)} →{" "}
+                          <p className="mt-1 font-mono text-caption text-muted-foreground">
+                            {s.code}, {formatDate(s.startDate)} →{" "}
                             {formatDate(s.endDate)}
                           </p>
                         </div>
                         <StatusDot tone={conf.tone}>{conf.label}</StatusDot>
                       </div>
-                      <p className="mt-3 text-xs text-slate-600">
+                      <p className="mt-3 text-caption text-muted-foreground">
                         Sprint đang chạy:{" "}
                         {s.currentSprint?.name ??
                           (isInstructor
@@ -234,39 +234,39 @@ export function SessionList({
                       {s.alerts && (
                         <div
                           role="group"
-                          className="mt-2 flex flex-wrap gap-2 text-xs"
+                          className="mt-2 flex flex-wrap gap-2 text-caption"
                           aria-label="Cảnh báo tiến độ"
                         >
                           {s.alerts.overdueTasks > 0 && (
-                            <span className="rounded-lg bg-rose-50 px-2 py-1 font-medium text-rose-700">
+                            <span className="rounded-control bg-destructive-subtle px-2 py-1 font-medium text-destructive">
                               {s.alerts.overdueTasks}{" "}
                               {isInstructor ? "nhiệm vụ" : "task"} quá hạn
                             </span>
                           )}
                           {s.alerts.pendingReview > 0 && (
-                            <span className="rounded-lg bg-amber-50 px-2 py-1 font-medium text-amber-800">
+                            <span className="rounded-control bg-warning-subtle px-2 py-1 font-medium text-warning">
                               {s.alerts.pendingReview}{" "}
                               {isInstructor ? "nhiệm vụ" : "task"} chờ duyệt
                             </span>
                           )}
                           {s.alerts.sessionOverdue && (
-                            <span className="rounded-lg bg-rose-50 px-2 py-1 font-medium text-rose-700">
+                            <span className="rounded-control bg-destructive-subtle px-2 py-1 font-medium text-destructive">
                               Phiên đã quá ngày kết thúc
                             </span>
                           )}
                         </div>
                       )}
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-caption text-muted-foreground">
                         {isInstructor ? (
                           <>
                             Dự án: {s.project?.name ?? "—"}
                             {s.project?.templateVersion !== null &&
                             s.project?.templateVersion !== undefined
-                              ? ` · mẫu v${s.project.templateVersion}`
+                              ? `, mẫu v${s.project.templateVersion}`
                               : ""}
-                            {" · "}
-                            {s.memberCount} thành viên · {s.sprintCount} sprint
-                            · {s.taskDone}/{s.taskTotal} nhiệm vụ (
+                            {", "}
+                            {s.memberCount} thành viên, {s.sprintCount} sprint
+                           , {s.taskDone}/{s.taskTotal} nhiệm vụ (
                             {s.taskPercent}%)
                           </>
                         ) : (
@@ -274,16 +274,16 @@ export function SessionList({
                             Project: {s.project?.name ?? "—"}
                             {s.project?.templateVersion !== null &&
                             s.project?.templateVersion !== undefined
-                              ? ` · template v${s.project.templateVersion}`
+                              ? `, template v${s.project.templateVersion}`
                               : ""}
-                            {" · "}
-                            {s.memberCount} thành viên · {s.sprintCount} sprints
-                            · {s.taskDone}/{s.taskTotal} tasks ({s.taskPercent}
+                            {", "}
+                            {s.memberCount} thành viên, {s.sprintCount} sprints
+                           , {s.taskDone}/{s.taskTotal} tasks ({s.taskPercent}
                             %)
                           </>
                         )}
                       </p>
-                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-caption text-muted-foreground">
                         <span>
                           {isInstructor
                             ? "Hoàn thành nhiệm vụ"
@@ -291,16 +291,16 @@ export function SessionList({
                         </span>
                         <ProgressBar value={s.taskPercent} />
                       </div>
-                      <div className="mt-3 flex flex-wrap gap-3 border-t border-slate-100 pt-3 text-xs font-semibold">
+                      <div className="mt-3 flex flex-wrap gap-3 border-t border-border pt-3 text-caption font-semibold">
                         <Link
-                          className="rounded text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                          className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                           href={`${basePath}/sessions/${s.id}`}
                         >
-                          Chi tiết →
+                          Chi tiết
                         </Link>
                         {onManage && (
                           <button
-                            className="rounded text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                            className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                             onClick={() => onManage(s.id)}
                           >
                             Quản trị thông tin

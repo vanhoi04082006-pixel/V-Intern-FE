@@ -1,15 +1,15 @@
 "use client";
+import { SessionSection as Panel } from "./session-section";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { AcademicPicker } from "@/components/product/academic-picker";
 import {
-  Card,
   Empty,
   inputClass,
   Pager,
-  Panel,
+  
   StatusDot,
 } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -137,6 +137,7 @@ export function DeliveryOverview({
     setAssignee("");
     setMemberPage(1);
   }
+  const advancedFilterCount = [dueFrom, dueTo, assigneeId, memberSearch].filter(Boolean).length;
   const resource = kind === "sprints" ? sprints : tasks;
   const data = kind === "sprints" ? sprints.data : tasks.data;
   return (
@@ -145,7 +146,9 @@ export function DeliveryOverview({
         title="Sprint & Task"
         subtitle="Theo dõi công việc trong các dự án và phiên thực tập bạn quản lý."
       />
-      <Panel title="Phạm vi công việc">
+      <details className="border-b border-border pb-4">
+        <summary className="cursor-pointer py-2 text-body font-semibold text-foreground">Phạm vi dự án và phiên{projectId || sessionId ? " (đã chọn)" : " (tất cả)"}</summary>
+        <div className="pt-3">
         <div className="grid gap-4 md:grid-cols-2">
           <AcademicPicker
             compact
@@ -170,7 +173,8 @@ export function DeliveryOverview({
             }}
           />
         </div>
-      </Panel>
+        </div>
+      </details>
       <div
         role="group"
         className="ins-view-switch flex gap-2"
@@ -180,7 +184,7 @@ export function DeliveryOverview({
           <button
             key={tab}
             aria-pressed={kind === tab}
-            className="rounded-lg border bg-white px-5 py-2 aria-pressed:bg-blue-600 aria-pressed:text-white"
+            className="min-h-10 border-b-2 border-transparent px-4 py-2 text-body text-muted-foreground hover:bg-accent aria-pressed:border-primary aria-pressed:text-primary"
             onClick={() => {
               setKind(tab);
               setStatus("");
@@ -220,8 +224,8 @@ export function DeliveryOverview({
           ) : undefined
         }
       >
-        <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <label className="text-sm">
+        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+          <label className="text-body">
             Trạng thái
             <select
               aria-label="Trạng thái"
@@ -247,8 +251,7 @@ export function DeliveryOverview({
               ))}
             </select>
           </label>
-          <>
-            <label className="text-sm">
+            <label className="text-body">
               {kind === "tasks" ? "Tìm Task" : "Tìm Sprint"}
               <input
                 maxLength={100}
@@ -260,7 +263,11 @@ export function DeliveryOverview({
                 }}
               />
             </label>
-            <label className="text-sm">
+        </div>
+        <details className="mb-5 border-y border-border py-2">
+          <summary className="cursor-pointer py-2 text-body font-medium text-foreground">Bộ lọc nâng cao{advancedFilterCount > 0 ? ` (${advancedFilterCount} đang dùng)` : ""}</summary>
+          <div className="mt-3 grid max-w-2xl gap-3 sm:grid-cols-2">
+            <label className="text-body">
               Hạn từ
               <input
                 type="date"
@@ -273,7 +280,7 @@ export function DeliveryOverview({
                 }}
               />
             </label>
-            <label className="text-sm">
+            <label className="text-body">
               Hạn đến
               <input
                 type="date"
@@ -286,10 +293,9 @@ export function DeliveryOverview({
                 }}
               />
             </label>
-          </>
         </div>
         <div className="mb-4 grid max-w-2xl gap-3 sm:grid-cols-2">
-          <label className="block text-sm">
+          <label className="block text-body">
             Tìm thành viên
             <input
               className={inputClass}
@@ -300,7 +306,7 @@ export function DeliveryOverview({
               }}
             />
           </label>
-          <label className="block text-sm">
+          <label className="block text-body">
             Người phụ trách
             <select
               className={inputClass}
@@ -317,7 +323,7 @@ export function DeliveryOverview({
                 )}
               {members.data?.items.map((m) => (
                 <option key={m.userId} value={m.userId}>
-                  {m.displayName} · {m.email}
+                  {m.displayName}, {m.email}
                 </option>
               ))}
             </select>
@@ -332,26 +338,27 @@ export function DeliveryOverview({
             )}
           </div>
         </div>
+        </details>
         {resource.loading && <LoadingState />}
         {Boolean(resource.error) && (
           <ErrorState error={resource.error} onRetry={resource.reload} />
         )}
         {data && data.items.length === 0 && <Empty />}
         {kind === "sprints" && (
-          <ul className="space-y-3">
+          <ul className="divide-y divide-border">
             {sprints.data?.items.map((s) => (
               <li key={s.id}>
-                <Card className="workspace-collection-row">
+                <div className="min-w-0 border-b border-border py-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
-                        className="rounded text-sm font-semibold text-navy transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                        className="rounded text-body font-semibold text-foreground transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                         href={`${basePath}/sprints/${s.id}`}
                       >
                         {s.name}
                       </Link>
-                      <p className="mt-0.5 font-mono text-[11px] text-slate-400">
-                        {s.code} · Hạn {formatDate(s.endDate)}
+                      <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-caption text-muted-foreground">
+                        <span className="font-mono">{s.code}</span><span>Hạn {formatDate(s.endDate)}</span>
                       </p>
                     </div>
                     <StatusDot tone={sprintStatusLabel(s.status).tone}>
@@ -359,41 +366,41 @@ export function DeliveryOverview({
                     </StatusDot>
                   </div>
                   {s.sessionId && (
-                    <div className="mt-3 border-t border-slate-100 pt-3 text-xs font-semibold">
+                    <div className="mt-3 border-t border-border pt-3 text-caption font-semibold">
                       <Link
-                        className="rounded text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                        className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                         href={`${basePath}/sessions/${s.sessionId}`}
                       >
-                        Xem phiên →
+                        Xem phiên
                       </Link>
                     </div>
                   )}
-                </Card>
+                </div>
               </li>
             ))}
           </ul>
         )}
         {kind === "tasks" && (
-          <ul className="space-y-3">
+          <ul className="divide-y divide-border">
             {tasks.data?.items.map((t) => (
               <li key={t.id}>
-                <Card className="workspace-collection-row">
+                <div className="min-w-0 border-b border-border py-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
-                        className="rounded text-sm font-semibold text-navy transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                        className="rounded text-body font-semibold text-foreground transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                         href={`${basePath}/tasks/${t.id}`}
                       >
                         {t.title}
                       </Link>
-                      <p className="mt-0.5 font-mono text-[11px] text-slate-400">
-                        {t.code} ·{" "}
+                      <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-caption text-muted-foreground">
+                        <span className="font-mono">{t.code}</span><span>
                         {basePath === "/instructor"
                           ? (priorityLabels[
                               t.priority as keyof typeof priorityLabels
                             ] ?? t.priority)
-                          : t.priority}{" "}
-                        · Hạn {formatDate(t.dueDate)}
+                          : t.priority}</span>
+                        <span>Hạn {formatDate(t.dueDate)}</span>
                       </p>
                     </div>
                     <StatusDot tone={taskTone[t.status] ?? "gray"}>
@@ -401,16 +408,16 @@ export function DeliveryOverview({
                     </StatusDot>
                   </div>
                   {t.sprintId && (
-                    <div className="mt-3 border-t border-slate-100 pt-3 text-xs font-semibold">
+                    <div className="mt-3 border-t border-border pt-3 text-caption font-semibold">
                       <Link
-                        className="rounded text-blue-600 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1"
+                        className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                         href={`${basePath}/sprints/${t.sprintId}`}
                       >
-                        Xem Sprint →
+                        Xem Sprint
                       </Link>
                     </div>
                   )}
-                </Card>
+                </div>
               </li>
             ))}
           </ul>
