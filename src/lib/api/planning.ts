@@ -124,9 +124,7 @@ export function parsePlanDetail(value: unknown): PlanDetail {
     sprintCount: optNum(v.sprintCount),
     taskCount: optNum(v.taskCount),
     hasDraft: v.hasDraft === true,
-    draft: d ? { sprints: array(d.sprints, parsePlannedSprint), milestones: d.milestones === undefined ? [] : array(d.milestones, item => {
-      const m = record(item); return { key: string(m.key), title: string(m.title), dueDate: string(m.dueDate), taskKeys: array(m.taskKeys, string) };
-    }) } : null,
+    draft: d ? parsePlanDraftBody(d) : null,
     warnings: Array.isArray(v.warnings)
       ? v.warnings.map((w) => {
           const r = record(w);
@@ -135,6 +133,19 @@ export function parsePlanDetail(value: unknown): PlanDetail {
       : [],
     error: v.error ?? null,
     deduped: v.deduped === true,
+  };
+}
+
+function parsePlanDraftBody(d: Record<string, unknown>): SprintPlan {
+  return {
+    sprints: array(d.sprints, parsePlannedSprint),
+    milestones:
+      d.milestones === undefined
+        ? []
+        : array(d.milestones, item => {
+            const m = record(item);
+            return { key: string(m.key), title: string(m.title), dueDate: string(m.dueDate), taskKeys: array(m.taskKeys, string) };
+          }),
   };
 }
 
@@ -178,6 +189,26 @@ export const confirmPlan = (body: {
       sprintCount: number(r.sprintCount),
       taskCount: number(r.taskCount),
       deduped: r.deduped === true,
+    };
+  }, { method: "POST", body });
+
+/** Draft preview — same plan shape the confirm endpoint re-validates. */
+export const draftSprintPlan = (body: {
+  projectId: string;
+  sessionId: string;
+  sprintCount?: number;
+  startDate?: string;
+}) =>
+  request("/ai-generations/sprint-plan/draft", (v) => {
+    const r = record(v);
+    return {
+      draft: parsePlanDraftBody(record(r.draft)),
+      warnings: Array.isArray(r.warnings)
+        ? r.warnings.map((w) => {
+            const row = record(w);
+            return { taskTitle: string(row.taskTitle), message: string(row.message) };
+          })
+        : [],
     };
   }, { method: "POST", body });
 

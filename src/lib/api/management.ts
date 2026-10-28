@@ -218,6 +218,32 @@ export const listEvaluationSuggestions = (id: string, signal?: AbortSignal) =>
     },
     { signal },
   );
+/** One AI suggestion detail (advisory; ownership enforced backend-side). */
+export const getEvaluationSuggestion = (
+  evaluationId: string,
+  suggestionId: string,
+  signal?: AbortSignal,
+) =>
+  request(
+    `/evaluations/${encodeURIComponent(evaluationId)}/ai-suggestions/${encodeURIComponent(suggestionId)}`,
+    (x) => {
+      const row = record(x);
+      return {
+        id: string(row.id),
+        evaluationId: string(row.evaluationId),
+        status: string(row.status),
+        generatedAt: string(row.generatedAt),
+        aiRunId: nullable(row.aiRunId, string),
+        promptVersion: string(row.promptVersion),
+        acceptedAt:
+          row.acceptedAt === null || row.acceptedAt === undefined
+            ? null
+            : string(row.acceptedAt),
+        suggestion: parseAiSuggestion(row),
+      };
+    },
+    { signal },
+  );
 export function parseSprint(value: unknown) {
   const v = record(value);
   return {

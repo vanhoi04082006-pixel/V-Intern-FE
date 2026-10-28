@@ -13,11 +13,13 @@ import { useResource } from "@/lib/api/use-resource";
 import { PlanEditor } from "./plan-editor";
 import {
   confirmPlan,
+  draftSprintPlan,
   generatePlan,
   getPlan,
   listPlans,
   type PlanDetail,
   type PlanSummary,
+  type SprintPlan,
 } from "@/lib/api/planning";
 
 export interface PlanDeps {
@@ -25,6 +27,7 @@ export interface PlanDeps {
   get: typeof getPlan;
   generate: typeof generatePlan;
   confirm: typeof confirmPlan;
+  draft?: typeof draftSprintPlan;
 }
 
 /**
@@ -56,6 +59,7 @@ function AiPlanWorkspace({
     get = getPlan,
     generate = generatePlan,
     confirm = confirmPlan,
+    draft = draftSprintPlan,
   } = deps ?? {};
   const [revision, setRevision] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -66,6 +70,10 @@ function AiPlanWorkspace({
   const [edited, setEdited] = useState<{
     planId: string;
     draft: NonNullable<PlanDetail["draft"]>;
+  } | null>(null);
+  const [preview, setPreview] = useState<{
+    draft: SprintPlan;
+    warnings: Array<{ taskTitle: string; message: string }>;
   } | null>(null);
   const action = useAction();
   const mounted = useRef(true);
@@ -147,6 +155,19 @@ function AiPlanWorkspace({
     }
   }
 
+  /** Draft preview: nothing persisted server-side; user reviews then confirms. */
+  async function previewDraft() {
+    setNotice(null);
+    let created: Awaited<ReturnType<typeof draft>> | null = null;
+    const ok = await action.run(async () => {
+      created = await draft({ projectId, sessionId });
+    });
+    if (mounted.current && ok && created) {
+      const done: Awaited<ReturnType<typeof draft>> = created;
+      setPreview({ draft: done.draft, warnings: done.warnings });
+    }
+  }
+
   return (
     <Panel title="Kế hoạch AI">
       {plans.loading ? (
@@ -204,6 +225,14 @@ function AiPlanWorkspace({
               onClick={() => void regenerate()}
             >
               {action.busy ? "..." : "Tạo lại"}
+            </button>
+            <button
+              type="button"
+              disabled={action.busy || generating || plan?.status === "confirmed"}
+              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small hover:bg-accent disabled:opacity-50"
+              onClick={() => void previewDraft()}
+            >
+              {action.busy ? "..." : "Xem bản nháp"}
             </button>
           </div>
           {generating && (
@@ -334,8 +363,67 @@ function AiPlanWorkspace({
             </p>
           )}
           {Boolean(action.error) && <ErrorState error={action.error} />}
+          <SprintPlanPreview preview={preview} />
         </div>
       )}
     </Panel>
+  );
+}
+
+/** "Xem bản nháp" result: proposed plan + warnings, confirm happens on the draft flow above. */
+function SprintPlanPreview({
+  preview,
+}: {
+  preview: {
+    draft: SprintPlan;
+    warnings: Array<{ taskTitle: string; message: string }>;
+  } | null;
+}) {
+  if (!preview) return null;
+  return (
+    <div className="space-y-2 rounded-control border border-border bg-card p-3">
+      <p className="text-body font-semibold">Bản nháp chưa lưu</p>
+      <p className="text-caption text-muted-foreground">
+        Bản nháp chỉ để xem trước — chưa ghi vào hệ thống. Chọn “Tạo lại” hoặc
+        lưu một kế hoạch trước khi publish.
+      </p>
+      {preview.warnings.length > 0 && (
+        <ul className="space-y-1 rounded bg-warning-subtle p-2 text-caption text-warning">
+          {preview.warnings.map((w, i) => (
+            <li key={i}>
+              {w.taskTitle}: {w.message}
+            </li>
+          ))}
+        </ul>
+      )}
+      {preview.draft.sprints.map((s, i) => (
+        <div key={s.name + i} className="border-b border-border py-2">
+          <p className="text-body font-semibold">
+            {i + 1}. {s.name}
+          </p>
+          {s.goal && (
+            <p className="text-caption text-muted-foreground">
+              {s.goal} · {instructorDate(s.startDate)} →{" "}
+              {instructorDate(s.endDate)}
+            </p>
+          )}
+          <ul className="mt-1 space-y-1">
+            {s.tasks.map((t, j) => (
+              <li
+                key={t.title + j}
+                className="text-caption text-muted-foreground"
+              >
+                • {t.title}
+                {t.assigneeId ? "" : " (chưa gán)"} ·{" "}
+                {priorityLabels[t.priority as keyof typeof priorityLabels] ??
+                  t.priority}
+                {t.storyPoints !== null ? ` · ${t.storyPoints}pt` : ""}
+                {t.dueDate ? ` · hạn ${instructorDate(t.dueDate)}` : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
   );
 }

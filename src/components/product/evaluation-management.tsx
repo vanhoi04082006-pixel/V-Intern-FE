@@ -958,7 +958,187 @@ export function ScoreEditor({
             ))}
           </div>
         )}
+        <SuggestionHistory evaluationId={e.id} criteria={detail.criteria} />
       </Panel>
+    </div>
+  );
+}
+
+/** Suggestion history rows; each expands into its fetched detail (advisory). */
+function SuggestionHistory({
+  evaluationId,
+  criteria,
+}: {
+  evaluationId: string;
+  criteria: ReturnType<typeof api.parseCriterion>[];
+}) {
+  const [openId, setOpenId] = useState<string>();
+  return (
+    <Can perm="ai.evaluation.assist">
+      <SuggestionHistoryList
+        evaluationId={evaluationId}
+        criteria={criteria}
+        openId={openId}
+        onToggle={setOpenId}
+      />
+    </Can>
+  );
+}
+
+function SuggestionHistoryList({
+  evaluationId,
+  criteria,
+  openId,
+  onToggle,
+}: {
+  evaluationId: string;
+  criteria: ReturnType<typeof api.parseCriterion>[];
+  openId?: string;
+  onToggle: (id: string | undefined) => void;
+}) {
+  const history = useResource(
+    useCallback(
+      (s: AbortSignal) => api.listEvaluationSuggestions(evaluationId, s),
+      [evaluationId],
+    ),
+  );
+  return (
+    <div className="mt-5">
+      <h3 className="text-subsection font-semibold">Lịch sử gợi ý AI</h3>
+      {history.loading ? (
+        <LoadingState label="Đang tải lịch sử gợi ý..." />
+      ) : history.error ? (
+        /* Advisory panel: quiet inline error — never competes with the
+           primary save/finalize alerts for the alert role. */
+        <p className="mt-2 text-caption text-muted-foreground" role="status">
+          Không tải được lịch sử gợi ý AI.{" "}
+          <button
+            type="button"
+            className="font-medium text-primary hover:underline"
+            onClick={history.reload}
+          >
+            Thử lại
+          </button>
+        </p>
+      ) : !history.data || history.data.length === 0 ? (
+        <p className="mt-2 text-caption text-muted-foreground">
+          Chưa có gợi ý AI nào được lưu cho đánh giá này.
+        </p>
+      ) : (
+        <ul className="mt-2 max-h-96 space-y-1 overflow-y-auto text-body">
+          {history.data.map((row) => (
+            <li key={row.id} className="border-b border-border py-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-caption text-muted-foreground">
+                  {new Date(row.generatedAt).toLocaleString("vi-VN")} ·{" "}
+                  {row.status}
+                </span>
+                <button
+                  type="button"
+                  className="min-h-9 rounded-control px-2 text-caption font-medium text-primary hover:underline"
+                  aria-expanded={openId === row.id}
+                  onClick={() =>
+                    onToggle(openId === row.id ? undefined : row.id)
+                  }
+                >
+                  {openId === row.id ? "Ẩn chi tiết" : "Chi tiết"}
+                </button>
+              </div>
+              {openId === row.id && (
+                <SuggestionDetail
+                  evaluationId={evaluationId}
+                  suggestionId={row.id}
+                  criteria={criteria}
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Fetches one suggestion detail and renders the full advisory payload. */
+function SuggestionDetail({
+  evaluationId,
+  suggestionId,
+  criteria,
+}: {
+  evaluationId: string;
+  suggestionId: string;
+  criteria: ReturnType<typeof api.parseCriterion>[];
+}) {
+  const suggestionDetail = useResource(
+    useCallback(
+      (s: AbortSignal) =>
+        api.getEvaluationSuggestion(evaluationId, suggestionId, s),
+      [evaluationId, suggestionId],
+    ),
+  );
+  return (
+    <div className="mt-3">
+      {suggestionDetail.loading ? (
+        <LoadingState label="Đang tải chi tiết gợi ý..." />
+      ) : suggestionDetail.error ? (
+        <ErrorState
+          error={suggestionDetail.error}
+          onRetry={suggestionDetail.reload}
+        />
+      ) : suggestionDetail.data ? (
+        <div className="space-y-3 rounded-control bg-accent p-3 text-body">
+          <p className="text-caption text-muted-foreground">
+            Trạng thái: {suggestionDetail.data.status} · Phiên bản prompt:{" "}
+            {suggestionDetail.data.promptVersion}
+            {suggestionDetail.data.aiRunId
+              ? ` · Lượt chạy AI: ${suggestionDetail.data.aiRunId.slice(0, 8)}`
+              : ""}
+          </p>
+          <p>{suggestionDetail.data.suggestion.summary}</p>
+          {suggestionDetail.data.suggestion.strengths.length > 0 && (
+            <div>
+              <strong className="text-small">Điểm mạnh</strong>
+              <ul className="mt-1 list-inside list-disc text-caption">
+                {suggestionDetail.data.suggestion.strengths.map((x, i) => (
+                  <li key={i}>{x}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {suggestionDetail.data.suggestion.improvements.length > 0 && (
+            <div>
+              <strong className="text-small">Cần cải thiện</strong>
+              <ul className="mt-1 list-inside list-disc text-caption">
+                {suggestionDetail.data.suggestion.improvements.map(
+                  (x, i) => (
+                    <li key={i}>{x}</li>
+                  ),
+                )}
+              </ul>
+            </div>
+          )}
+          {suggestionDetail.data.suggestion.criteria.map((c) => (
+            <article
+              key={c.criterionCode}
+              className="border-t border-border pt-2"
+            >
+              <strong>
+                {criteria.find((x) => x.code === c.criterionCode)?.name ??
+                  c.criterionCode}
+                : AI đề xuất {c.suggestedScore}
+              </strong>
+              {c.comment && <p className="mt-1">{c.comment}</p>}
+              {c.evidence.length > 0 && (
+                <ul className="mt-1 list-inside list-disc text-caption">
+                  {c.evidence.map((x, i) => (
+                    <li key={i}>{x}</li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
