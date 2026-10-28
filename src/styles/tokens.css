@@ -40,7 +40,11 @@
    These tokens feed the static utilities (bg-navy, text-navy, bg-brand…) because
    Tailwind 4 emits them as custom properties — overriding here re-themes the page. */
 .dark {
-  --color-navy: #0a100e;
+  /* Navy is dual-purpose ink/surface. In dark it flips to light ink so the
+     18 text-navy headings read on the dark canvas; the few navy SURFACES
+     (bg-navy — footer, hero mock, avatars) keep a deep tone via the
+     .dark .bg-navy override in globals.css. */
+  --color-navy: #edf2ef;
   --color-brand: #10b981;
   --color-brand-600: #34d399;
   --color-canvas: #090c0b;

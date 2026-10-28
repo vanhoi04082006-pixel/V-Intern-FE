@@ -16,6 +16,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Navy is dual-purpose: ink for text-navy headings, deep surface for the few
+   bg-navy mocks (footer, hero sidebar, avatars — always paired with text-white).
+   In dark the token flips to light ink (see tokens.css); these overrides keep
+   the navy SURFACES deep near-black so their white text stays readable. */
+.dark .bg-navy { background-color: #0d1512; }
+.dark .ring-offset-navy { --tw-ring-offset-color: #0d1512; }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
