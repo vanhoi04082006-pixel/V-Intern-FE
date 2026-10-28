@@ -12,7 +12,7 @@ import { LogoutButton } from "@/components/auth/logout-button";
 import { NotificationBell } from "@/components/shared/notification-bell";
 import { cn } from "@/lib/utils";
 
-import type { InternWorkspaceUser } from "./data/intern-mock-data";
+import type { InternWorkspaceUser } from "./intern-workspace-types";
 
 /**
  * Topbar của Intern Workspace: breadcrumb, ô tìm kiếm, thông báo, user.

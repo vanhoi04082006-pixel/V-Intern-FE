@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 import { OVERALL_FORMULA_LABEL } from "./recruitment-scoring";
 import { formatScore } from "./recruitment-scoring";
-import type { RecruitmentResultData } from "./data/recruitment-mock-data";
+import type { RecruitmentResultData } from "./recruitment-model";
 
 /**
  * Card phân tích điểm của Result screen (dùng chung Đạt/Chưa đạt) —

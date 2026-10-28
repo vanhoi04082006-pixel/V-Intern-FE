@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 import { CardLinkAction, SectionCard } from "./intern-primitives";
 import { INTERN_TONES } from "./intern-ui-tones";
-import type { InternActivityItem } from "./data/intern-mock-data";
+import type { InternActivityItem } from "./intern-workspace-types";
 
 /**
  * Card "Hoạt động gần đây" (state empty): timeline các mốc trong quá trình

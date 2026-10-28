@@ -18,7 +18,7 @@ import type {
   InternNavGroup,
   InternNavItem,
   InternWorkspaceState,
-} from "./data/intern-mock-data";
+} from "./intern-workspace-types";
 import { roleLabel, type InternWorkspace } from "@/lib/api/workspace";
 import type { SessionUser } from "@/lib/auth/session";
 export const INTERN_OVERVIEW_NAV_ID = "tong-quan";

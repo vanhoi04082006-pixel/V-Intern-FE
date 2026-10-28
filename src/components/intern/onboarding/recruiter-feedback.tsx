@@ -2,7 +2,7 @@
 
 import { Bot, Sparkles } from "lucide-react";
 
-import type { RecruitmentResultData } from "./data/recruitment-mock-data";
+import type { RecruitmentResultData } from "./recruitment-model";
 import { TagPill } from "./onboarding-primitives";
 
 /**
