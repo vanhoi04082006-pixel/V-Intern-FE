@@ -8,7 +8,7 @@
 
 # V-Intern Frontend
 
-**UI sổ tay — 26/10:** [nền dùng chung và asset](docs/design/NOTEBOOK-FOUNDATION-20261026.md) · [tab Thông báo ba vai](docs/design/NOTIFICATIONS-20261026.md) · [inventory toàn hệ thống](tasks/ui-route-asset-manifest.md). Source UI mới có **660 test** và build local đạt; nền chung và tab Thông báo đều có ma trận 15 lượt responsive riêng. Chưa nghiệm thu toàn bộ 78 route. Checkpoint nghiệp vụ bên dưới giữ số liệu theo source riêng của nó.
+**UI sổ tay — 26/10:** [nền dùng chung và asset](docs/design/NOTEBOOK-FOUNDATION-20261026.md) · [tab Thông báo ba vai](docs/design/NOTIFICATIONS-20261026.md) · [inventory toàn hệ thống](tasks/ui-route-asset-manifest.md). Source UI mới có **677 test** và build local đạt; nền chung và tab Thông báo đều có ma trận 15 lượt responsive riêng. Chưa nghiệm thu toàn bộ 78 route. Checkpoint nghiệp vụ bên dưới giữ số liệu theo source riêng của nó.
 
 **G6 — thời hạn và thay thành viên:** [quy tắc và điểm phạt](docs/PARTICIPATION.md) · [hướng dẫn tư vấn, xem trước và phê duyệt](docs/REPLACEMENT.md) · [bằng chứng QA và phần còn lại](docs/reports/g6-replacement-evidence-20261025.json). Đã kích hoạt G6 trên cả hai DB native, giữ nguyên dữ liệu cũ.
 
