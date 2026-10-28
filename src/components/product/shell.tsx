@@ -39,6 +39,7 @@ import {
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { NotificationBell } from "@/components/shared/notification-bell";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { getSessionUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
@@ -455,6 +456,7 @@ export function ProductShell({
             </nav>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle className="hidden sm:inline-flex" />
             <NotificationBell href={`/${role}/notifications`} />
             {role === "instructor" && user ? (
               <span className="product-avatar" aria-hidden="true">

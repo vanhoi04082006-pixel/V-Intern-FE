@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, BarChart3, Code2, Users } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 const BENEFITS = [
   { icon: Code2, title: "Dự án thực tế", desc: "Làm việc với các project mô phỏng doanh nghiệp." },
@@ -10,7 +11,7 @@ const BENEFITS = [
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return <div className="app-surface auth-surface">
-    <header className="support-header"><Logo /><Link href="/" aria-label="Quay lại trang chủ" className="support-back"><ArrowLeft size={16} aria-hidden />Quay lại</Link></header>
+    <header className="support-header"><Logo /><div className="flex items-center gap-3"><ThemeToggle /><Link href="/" aria-label="Quay lại trang chủ" className="support-back"><ArrowLeft size={16} aria-hidden />Quay lại</Link></div></header>
     <main className="auth-layout">
       <section className="auth-context" aria-label="Giới thiệu V-Intern">
         <h2>Thực tập như một lập trình viên thực thụ.</h2>

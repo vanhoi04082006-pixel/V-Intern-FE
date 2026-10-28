@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { NotificationBell } from "@/components/shared/notification-bell";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 
 import type { InternWorkspaceUser } from "./intern-workspace-types";
@@ -165,6 +166,8 @@ export function InternTopbar({
               </nav>
             )}
           </div>
+
+          <ThemeToggle className="hidden sm:inline-flex" />
 
           <NotificationBell href="/intern/notifications" />
 

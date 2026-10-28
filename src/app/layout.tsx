@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { THEME_BOOTSTRAP } from "@/lib/theme";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -77,6 +78,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${beVietnam.variable} ${jetbrains.variable}`}>
+      <head>
+        {/* Apply the stored theme before first paint — no flash of the wrong palette. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
+      </head>
       <body className="antialiased bg-background text-foreground">
         {children}
       </body>
