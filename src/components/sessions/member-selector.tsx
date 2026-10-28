@@ -12,6 +12,7 @@ import { CandidateInterviewSummary } from './candidate-interview-summary';
 import {
   assignIntern,
   cancelAssignment,
+  completeAssignment,
   getCandidateDetail,
   listSessionAssignments,
   searchCandidates,
@@ -44,6 +45,7 @@ export interface SelectorDeps {
   detail: typeof getCandidateDetail;
   assign: typeof assignIntern;
   cancel: typeof cancelAssignment;
+  complete?: typeof completeAssignment;
   listAssignments: typeof listSessionAssignments;
 }
 
@@ -74,6 +76,7 @@ export function MemberSelector({
     detail: getDetail = getCandidateDetail,
     assign: assignFn = assignIntern,
     cancel: cancelFn = cancelAssignment,
+    complete: completeFn = completeAssignment,
     listAssignments: listFn = listSessionAssignments,
     careers: loadCareers = listCareerReferences,
   } = deps ?? {};
@@ -171,6 +174,23 @@ export function MemberSelector({
     if (ok && removed) setNotice(`Đã gỡ ${displayName ?? internId.slice(0, 8)} khỏi phiên.`);
   }
 
+  /** POST assignments/:id/complete — kết thúc phân công trong trạng thái hoàn thành (lịch sử được giữ lại). */
+  async function complete(internId: string, displayName: string | null) {
+    setNotice(null);
+    let completed = false;
+    const ok = await action.run(async () => {
+      const list = await listFn(sessionId, undefined, internId);
+      const row = list.find((a) => a.internId.toLowerCase() === internId.toLowerCase() && a.status === "active");
+      if (!row) {
+        setNotice("Không tìm thấy phân công đang hoạt động để hoàn thành.");
+        return;
+      }
+      await completeFn(row.id);
+      completed = true;
+    });
+    if (ok && completed) setNotice(`Đã hoàn thành phân công của ${displayName ?? internId.slice(0, 8)}.`);
+  }
+
   return (
     <div className="space-y-3">
       {members.length > 0 && <section aria-label="Thành viên đã phân công" className="border-b border-border pb-4"><h3 className="mb-2 text-body font-semibold">Đội hình hiện tại</h3><ul className="space-y-2">{members.map(member => <li key={member.userId} className="flex flex-wrap items-center justify-between gap-2 text-body"><div className="min-w-0"><strong>{member.displayName}</strong><p className="break-all text-caption text-muted-foreground">{member.email}</p></div><Can perm="assignments.manage"><button type="button" aria-label={`Gỡ ${member.displayName} khỏi phiên`} className="rounded-control border border-border px-3 py-2 text-caption font-semibold text-destructive disabled:opacity-50" disabled={action.busy} onClick={() => void remove(member.userId, member.displayName)}>Gỡ khỏi phiên</button></Can></li>)}</ul></section>}
@@ -256,7 +276,16 @@ export function MemberSelector({
                       >
                         {expanded === c.userId ? "Ẩn" : "Chi tiết"}
                       </button>
-                      <Can perm="assignments.manage">{added ? (
+                      <Can perm="assignments.manage">{added ? (<>
+                        <button
+                          type="button"
+                          disabled={action.busy}
+                          title="Đánh dấu phân công của sinh viên này là hoàn thành"
+                          className="min-h-10 rounded-control border border-input px-3 py-2 text-small text-primary hover:bg-accent disabled:opacity-50"
+                          onClick={() => void complete(c.userId, c.displayName)}
+                        >
+                          Hoàn thành
+                        </button>
                         <button
                           type="button"
                           disabled={action.busy}
@@ -265,7 +294,7 @@ export function MemberSelector({
                         >
                           Gỡ
                         </button>
-                      ) : (
+                      </>) : (
                         <button
                           type="button"
                           disabled={action.busy || reason !== null || openRolesFor(c, slots).length === 0}

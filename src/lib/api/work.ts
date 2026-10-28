@@ -154,6 +154,18 @@ export const updateOwnTask = (
   });
 export const getBoard = (id: string, signal?: AbortSignal) =>
   request(`/sprints/${encodeURIComponent(id)}/board`, parseBoard, { signal });
+/** GET sprints/:id/completion — task counts + story points (null when no task declares points). */
+export const getSprintCompletion = (id: string, signal?: AbortSignal) =>
+  request(`/sprints/${encodeURIComponent(id)}/completion`, (value) => {
+    const v = record(value);
+    return {
+      total: number(v.total),
+      done: number(v.done),
+      open: number(v.open),
+      committedStoryPoints: nullable(v.committedStoryPoints, number),
+      completedStoryPoints: nullable(v.completedStoryPoints, number),
+    };
+  }, { signal });
 export const getProject = (id: string, signal?: AbortSignal) =>
   request(`/projects/${encodeURIComponent(id)}`, parseProject, { signal });
 export const getOwnBoard = (signal?: AbortSignal) =>

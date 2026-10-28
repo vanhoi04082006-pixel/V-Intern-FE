@@ -168,3 +168,11 @@ export const getTaskSpec = (id: string, signal?: AbortSignal) => request(`/tasks
     dependencies: s.dependencies === undefined ? [] : array(s.dependencies, item => { const d = record(item); return { taskId: string(d.taskId), code: string(d.code), title: string(d.title), status: string(d.status) }; }),
   };
 }), { signal });
+
+/**
+ * GET tasks/:id/spec/source — the raw persisted spec snapshot (grading binds
+ * this one, not the display view). Shape is intentionally loose: the source
+ * view must render whatever the template author stored.
+ */
+export const getTaskSpecSource = (id: string, signal?: AbortSignal) =>
+  request(`/tasks/${encodeURIComponent(id)}/spec/source`, (v) => nullable(v, record), { signal });

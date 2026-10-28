@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { request } from "@/lib/api/client";
 import { array, nullable, number, record, string } from "@/lib/api/parse";
-import { getBoard } from "@/lib/api/work";
+import { getBoard, getSprintCompletion } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Modal, Panel, Badge, Empty, MetricCard } from "./primitives";
@@ -54,6 +54,15 @@ export function SprintOverview({
       revision,
     ),
     [task, setTask] = useState("");
+  const [completionOpen, setCompletionOpen] = useState(false);
+  const completion = useResource(
+    useCallback(
+      (s: AbortSignal) =>
+        completionOpen ? getSprintCompletion(id, s) : Promise.resolve(null),
+      [id, completionOpen],
+    ),
+    revision,
+  );
   const [now] = useState(() => Date.now());
   const [dropError, setDropError] = useState<unknown>(null);
   const [dropping, setDropping] = useState(false);
@@ -325,6 +334,11 @@ export function SprintOverview({
               <Empty>Không có task chờ review.</Empty>
             )}
           </Panel>
+          <SprintCompletionPanel
+            open={completionOpen}
+            onToggle={() => setCompletionOpen((v) => !v)}
+            state={completion}
+          />
         </div>
       </div>
       {dropping && <LoadingState />}
@@ -343,6 +357,89 @@ export function SprintOverview({
         </Modal>
       )}
     </>
+  );
+}
+/**
+ * GET sprints/:id/completion — tổng kết nhiệm vụ & story points của Sprint.
+ * Chỉ tải khi mở; số liệu ưa điểm (points) có thể NULL khi không task nào
+ * khai báo story points (không tự bịa số liệu).
+ */
+function SprintCompletionPanel({
+  open,
+  onToggle,
+  state,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  state: {
+    data:
+      | {
+          total: number;
+          done: number;
+          open: number;
+          committedStoryPoints: number | null;
+          completedStoryPoints: number | null;
+        }
+      | null
+      | undefined;
+    error?: unknown;
+    loading: boolean;
+    reload: () => void;
+  };
+}) {
+  return (
+    <Panel
+      title="Hoàn thành sprint"
+      action={
+        <button
+          type="button"
+          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent"
+          aria-expanded={open}
+          aria-controls="sprint-completion-report"
+          onClick={onToggle}
+        >
+          {open ? "Ẩn báo cáo" : "Xem báo cáo hoàn thành"}
+        </button>
+      }
+    >
+      {!open ? (
+        <p className="text-body text-muted-foreground">
+          Tổng kết số nhiệm vụ và story points được tính trực tiếp từ dữ liệu máy chủ.
+        </p>
+      ) : state.loading ? (
+        <LoadingState />
+      ) : state.error ? (
+        <ErrorState error={state.error} onRetry={state.reload} />
+      ) : state.data ? (
+        <div id="sprint-completion-report" className="space-y-3">
+          <div className="grid grid-cols-3 gap-2 text-caption">
+            <div className="rounded-md border border-primary p-2.5">
+              <p className="text-muted-foreground">Tổng nhiệm vụ</p>
+              <strong className="mt-1 block text-body text-foreground">
+                {state.data.total}
+              </strong>
+            </div>
+            <div className="rounded-md border border-primary p-2.5">
+              <p className="text-muted-foreground">Đã hoàn thành</p>
+              <strong className="mt-1 block text-body text-success">
+                {state.data.done}
+              </strong>
+            </div>
+            <div className="rounded-md border border-primary p-2.5">
+              <p className="text-muted-foreground">Đang mở</p>
+              <strong className="mt-1 block text-body text-warning">
+                {state.data.open}
+              </strong>
+            </div>
+          </div>
+          <p className="text-body text-muted-foreground">
+            {state.data.committedStoryPoints === null
+              ? "Chưa có task nào khai báo story points — không hiển thị điểm ước lượng."
+              : `Story points: đã hoàn thành ${state.data.completedStoryPoints ?? 0} / cam kết ${state.data.committedStoryPoints} points.`}
+          </p>
+        </div>
+      ) : null}
+    </Panel>
   );
 }
 export function Burndown({

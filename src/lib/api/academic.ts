@@ -267,6 +267,12 @@ export const cancelAssignment = (id: string) =>
     method: "POST",
   });
 
+/** POST assignments/:id/complete — complete an active assignment (history preserved). */
+export const completeAssignment = (id: string) =>
+  request(`/assignments/${encodeURIComponent(id)}/complete`, (x) => string(record(x).id), {
+    method: "POST",
+  });
+
 export const listCandidates = (page: number, signal?: AbortSignal) =>
   request(
     `/recruitment/candidates?page=${page}&pageSize=20`,

@@ -1,14 +1,41 @@
 "use client";
-import { useCallback } from "react";
-import { getTaskSpec } from "@/lib/api/templates";
+import { useCallback, useState } from "react";
+import { getTaskSpec, getTaskSpecSource } from "@/lib/api/templates";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Panel } from "./primitives";
 import { roleLabel } from "@/lib/api/workspace";
 import { StudentPanel } from "@/components/intern/student-ui";
-import { ClipboardCheck, FileText } from "lucide-react";
+import { ClipboardCheck, FileCode2, FileText } from "lucide-react";
+
+/** GET tasks/:id/spec/source — nguồn spec thô (bản chấm điểm ràng buộc), hiển thị cạnh bản đã dựng. */
+function TaskSpecSource({ id }: { id: string }) {
+  const source = useResource(
+    useCallback((signal: AbortSignal) => getTaskSpecSource(id, signal), [id]),
+  );
+  if (source.loading)
+    return (
+      <p role="status" className="mt-3 text-body text-muted-foreground">
+        Đang tải spec nguồn...
+      </p>
+    );
+  if (source.error) return <ErrorState error={source.error} onRetry={source.reload} />;
+  if (!source.data) return null;
+  return (
+    <details className="mt-3 border-t border-border pt-3" open>
+      <summary className="cursor-pointer text-body font-semibold text-primary">
+        <FileCode2 size={16} className="mr-2 inline" aria-hidden="true" />
+        Spec nguồn (dùng để chấm điểm)
+      </summary>
+      <pre className="mt-3 max-h-96 overflow-auto rounded-control bg-muted p-3 text-caption leading-6 text-foreground">
+        {JSON.stringify(source.data, null, 2)}
+      </pre>
+    </details>
+  );
+}
 
 export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
+  const [showSource, setShowSource] = useState(false);
   const data = useResource(
     useCallback((signal: AbortSignal) => getTaskSpec(id, signal), [id]),
   );
@@ -102,10 +129,24 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
             {spec.documentation || "Chưa có tài liệu bổ sung."}
           </p>
         </details>
+        {showSource && <TaskSpecSource id={id} />}
       </StudentPanel>
     );
   return (
-    <Panel title="Tiêu chí hoàn thành & tài liệu">
+    <Panel
+      title="Tiêu chí hoàn thành & tài liệu"
+      action={
+        <button
+          type="button"
+          aria-expanded={showSource}
+          aria-controls="task-spec-source"
+          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent"
+          onClick={() => setShowSource((v) => !v)}
+        >
+          {showSource ? "Ẩn nguồn" : "Xem nguồn"}
+        </button>
+      }
+    >
       <p className="mb-3 whitespace-pre-wrap text-body">{spec.requirements}</p>
       <p className="text-caption text-muted-foreground">
         Vai trò: {roleLabel(spec.role)}
@@ -150,6 +191,11 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
         </summary>
         <p className="whitespace-pre-wrap text-body">{spec.documentation}</p>
       </details>
+      {showSource && (
+        <div id="task-spec-source">
+          <TaskSpecSource id={id} />
+        </div>
+      )}
     </Panel>
   );
 }
