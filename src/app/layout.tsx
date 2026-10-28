@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -23,6 +24,21 @@ const caveat = localFont({
   weight: "400 700",
   display: "swap",
   preload: false,
+});
+
+/* Emerald Noir workspace typography (homepage keeps Geist/Caveat). */
+const beVietnam = Be_Vietnam_Pro({
+  variable: "--font-be-vietnam",
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -60,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable}`}>
+    <html lang="vi" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${beVietnam.variable} ${jetbrains.variable}`}>
       <body className="antialiased bg-background text-foreground">
         {children}
       </body>
