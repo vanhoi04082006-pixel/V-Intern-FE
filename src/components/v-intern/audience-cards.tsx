@@ -38,7 +38,7 @@ const AUDIENCES: Audience[] = [
   {
     id: "students",
     badge: "Dành cho sinh viên",
-    badgeColor: "text-blue-600",
+    badgeColor: "text-brand",
     title: "Phát triển kỹ năng - Kiến tạo sự nghiệp",
     description:
       "Trải nghiệm quy trình làm việc thực tế, học hỏi kỹ năng chuyên môn và mềm, được hỗ trợ bởi AI Mentor và kết nối với cộng đồng.",
@@ -56,12 +56,12 @@ const AUDIENCES: Audience[] = [
     imagePositionClass: "bottom-0 right-0 max-h-[64%] max-w-full sm:max-h-[72%]",
     scriptLines: ["Học", "Làm", "Vươn xa"],
     scriptIndents: [0, 16, 34],
-    scriptColor: "text-blue-600",
+    scriptColor: "text-brand",
     scriptWrapClass: "left-1 top-3 -rotate-6 sm:left-7 sm:top-5",
     accent: "drop",
     gradient: "bg-gradient-to-br from-[#EAF1FE] to-[#F7FAFF]",
-    buttonColor: "bg-blue-600 hover:bg-blue-700 shadow-blue-600/25",
-    checkColor: "bg-blue-600",
+    buttonColor: "bg-brand hover:bg-brand-600 shadow-brand/25",
+    checkColor: "bg-brand",
   },
   {
     id: "instructors",
@@ -121,7 +121,7 @@ function ScriptNote({ audience }: { audience: Audience }) {
       ))}
 
       {audience.accent === "drop" && (
-        <Droplet className="absolute -top-3 right-2 h-4 w-4 rotate-12 fill-blue-200 opacity-70" />
+        <Droplet className="absolute -top-3 right-2 h-4 w-4 rotate-12 fill-brand/30 opacity-70" />
       )}
       {audience.accent === "sparkles" && (
         <Sparkles className="absolute -right-4 top-1/2 h-4 w-4 opacity-50" />
@@ -137,14 +137,14 @@ function AudienceCard({ audience }: { audience: Audience }) {
       className={`relative flex h-full flex-col overflow-hidden rounded-3xl scroll-mt-24 md:flex-row md:items-stretch ${audience.gradient}`}
     >
       <div className="flex flex-1 flex-col items-start p-6 sm:p-8 md:py-9 md:pl-9 md:pr-4 lg:pr-6">
-        <span className="inline-flex items-center rounded-full bg-white px-4 py-1.5 text-xs font-semibold shadow-sm">
+        <span className="inline-flex items-center rounded-full bg-card px-4 py-1.5 text-xs font-semibold shadow-sm">
           <span className={audience.badgeColor}>{audience.badge}</span>
         </span>
 
         <h3 className="mt-4 text-xl font-bold leading-snug text-navy sm:text-2xl">
           {audience.title}
         </h3>
-        <p className="mt-3 text-sm leading-relaxed text-slate-600">
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           {audience.description}
         </p>
 
@@ -160,7 +160,7 @@ function AudienceCard({ audience }: { audience: Audience }) {
                   aria-hidden="true"
                 />
               </span>
-              <span className="text-sm text-slate-700">{item}</span>
+              <span className="text-sm text-foreground">{item}</span>
             </li>
           ))}
         </ul>
@@ -194,7 +194,7 @@ export function AudienceCards() {
   return (
     <section
       id="for-students"
-      className="bg-white pb-20 pt-4 scroll-mt-20"
+      className="bg-card pb-20 pt-4 scroll-mt-20"
       aria-label="Đối tượng sử dụng V-Intern"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 md:px-6 lg:grid-cols-2 lg:px-8">

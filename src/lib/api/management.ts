@@ -200,6 +200,24 @@ export const suggestEvaluation = (id: string) =>
     parseAiSuggestion,
     { method: "POST" },
   );
+/** AI suggestion history for one evaluation (advisory; newest first). */
+export const listEvaluationSuggestions = (id: string, signal?: AbortSignal) =>
+  request(
+    `/evaluations/${encodeURIComponent(id)}/ai-suggestions`,
+    (x) => {
+      const v = record(x);
+      return array(
+        v.items,
+        (raw) => record(raw),
+      ).map((row) => ({
+        id: string(row.id),
+        status: string(row.status),
+        generatedAt: string(row.generatedAt),
+        suggestion: parseAiSuggestion(row),
+      }));
+    },
+    { signal },
+  );
 export function parseSprint(value: unknown) {
   const v = record(value);
   return {

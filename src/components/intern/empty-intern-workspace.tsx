@@ -8,7 +8,7 @@ import { SectionCard, StatusBadge } from "./intern-primitives";
 import { InternshipInfoCard } from "./internship-info-card";
 import { NextProcessCard } from "./next-process-card";
 import { RecentActivityCard } from "./recent-activity";
-import type { InternWorkspaceState } from "./data/intern-mock-data";
+import type { InternWorkspaceState } from "./intern-workspace-types";
 
 /**
  * State A — UNASSIGNED/WAITING của Intern Workspace (reference "Waiting

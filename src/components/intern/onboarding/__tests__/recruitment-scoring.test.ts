@@ -1,12 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  RECRUITMENT_RESULT_FAIL,
-  RECRUITMENT_RESULT_PASS,
   buildRecruitmentResult,
   getSuggestedRoleId,
-  resolveRecruitmentResult,
-} from "@/components/intern/onboarding/data/recruitment-mock-data";
+} from "@/components/intern/onboarding/recruitment-model";
 import {
   OVERALL_FORMULA_LABEL,
   PASS_THRESHOLD,
@@ -14,6 +11,10 @@ import {
   formatScore,
   isPassed,
 } from "@/components/intern/onboarding/recruitment-scoring";
+
+/** Same pass/fail score pairs the legacy fixtures used: 85/72 and 58/72. */
+const RESULT_PASS = buildRecruitmentResult({ technical: 85, soft: 72 });
+const RESULT_FAIL = buildRecruitmentResult({ technical: 58, soft: 72 });
 
 /**
  * Test business rule tính điểm tuyển dụng — NGUỒN TRUTH của toàn flow:
@@ -59,8 +60,8 @@ describe("recruitment-scoring — công thức Overall 70/30", () => {
 });
 
 describe("recruitment result datasets — Overall luôn derive", () => {
-  it("PASS mock: Frontend Developer, 85/72 → Overall 81.1, Đạt, không có đề xuất", () => {
-    const result = RECRUITMENT_RESULT_PASS;
+  it("PASS: Frontend Developer, 85/72 → Overall 81.1, Đạt, không có đề xuất", () => {
+    const result = RESULT_PASS;
 
     expect(result.status).toBe("pass");
     expect(result.appliedRoleLabel).toBe("Frontend Developer");
@@ -71,8 +72,8 @@ describe("recruitment result datasets — Overall luôn derive", () => {
     expect(result.headline).toBe("Chúc mừng bạn!");
   });
 
-  it("FAIL mock: Frontend Developer, 58/72 → Overall 62.2, Chưa đạt, đề xuất QA / Tester", () => {
-    const result = RECRUITMENT_RESULT_FAIL;
+  it("FAIL: Frontend Developer, 58/72 → Overall 62.2, Chưa đạt, đề xuất QA / Tester", () => {
+    const result = RESULT_FAIL;
 
     expect(result.status).toBe("fail");
     expect(result.appliedRoleLabel).toBe("Frontend Developer");
@@ -89,12 +90,6 @@ describe("recruitment result datasets — Overall luôn derive", () => {
 
     expect(result.overall).toBe(70);
     expect(result.passed).toBe(false);
-  });
-
-  it("resolveRecruitmentResult: preview fail → fail, preview pass/null → pass", () => {
-    expect(resolveRecruitmentResult("fail").status).toBe("fail");
-    expect(resolveRecruitmentResult("pass").status).toBe("pass");
-    expect(resolveRecruitmentResult(null).status).toBe("pass");
   });
 
   it("getSuggestedRoleId: không tự đề xuất chính vị trí vừa trượt", () => {

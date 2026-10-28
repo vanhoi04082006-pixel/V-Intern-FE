@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 import { SectionCard, StatusBadge } from "./intern-primitives";
 import { INTERN_TONES } from "./intern-ui-tones";
-import type { InternInfoRow } from "./data/intern-mock-data";
+import type { InternInfoRow } from "./intern-workspace-types";
 
 /**
  * Card "Thông tin thực tập" (state empty): từng dòng label → chip giá trị.

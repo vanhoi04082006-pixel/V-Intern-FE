@@ -1,6 +1,6 @@
 # Bản đồ route Frontend
 
-Đối chiếu trực tiếp 78 file `src/app/**/page.tsx` ngày 26/10/2026: public 8, admin 28, instructor 19, intern 23. Đây là inventory source, không phải bằng chứng đã click kiểm thử mọi route. Các URL có `[id]`/`[code]` cần dữ liệu và quyền thật; không dùng chuỗi placeholder để nghiệm thu.
+Đối chiếu trực tiếp 81 file `src/app/**/page.tsx` ngày 28/10/2026: public 8, admin 31, instructor 19, intern 23. Đây là inventory source, không phải bằng chứng đã click kiểm thử mọi route. Các URL có `[id]`/`[code]` cần dữ liệu và quyền thật; không dùng chuỗi placeholder để nghiệm thu.
 
 | URL | Source | Component chính |
 |---|---|---|
@@ -13,11 +13,13 @@
 | `/admin/audit` | [page](../src/app/admin/audit/page.tsx) | `product/admin-management` |
 | `/admin/career-roles` | [page](../src/app/admin/career-roles/page.tsx) | `admin/career-roles` |
 | `/admin/catalogs` | [page](../src/app/admin/catalogs/page.tsx) | `product/admin-management` |
+| `/admin/certificates` | [page](../src/app/admin/certificates/page.tsx) | `admin/certificate-console` |
 | `/admin/communications` | [page](../src/app/admin/communications/page.tsx) | `admin/communications` |
 | `/admin/groups` | [page](../src/app/admin/groups/page.tsx) | `product/admin-management` |
 | `/admin/knowledge/[code]` | [page](../src/app/admin/knowledge/%5Bcode%5D/page.tsx) | `admin/knowledge/editor` |
 | `/admin/knowledge/new` | [page](../src/app/admin/knowledge/new/page.tsx) | `admin/knowledge/editor` |
 | `/admin/knowledge` | [page](../src/app/admin/knowledge/page.tsx) | `admin/knowledge/library` |
+| `/admin/kpi` | [page](../src/app/admin/kpi/page.tsx) | `admin/kpi-console` |
 | `/admin/notifications` | [page](../src/app/admin/notifications/page.tsx) | `product/outcomes` |
 | `/admin` | [page](../src/app/admin/page.tsx) | `product/admin-management` |
 | `/admin/performance` | [page](../src/app/admin/performance/page.tsx) | `product/member-performance` |
@@ -26,6 +28,7 @@
 | `/admin/recruitment-rounds` | [page](../src/app/admin/recruitment-rounds/page.tsx) | `applications/recruitment-rounds` |
 | `/admin/reports` | [page](../src/app/admin/reports/page.tsx) | `sessions/reports-workspace` |
 | `/admin/roles` | [page](../src/app/admin/roles/page.tsx) | `product/admin-management` |
+| `/admin/salary` | [page](../src/app/admin/salary/page.tsx) | `admin/salary-console` |
 | `/admin/services` | [page](../src/app/admin/services/page.tsx) | `product/admin-management` |
 | `/admin/sessions/[id]` | [page](../src/app/admin/sessions/%5Bid%5D/page.tsx) | `sessions/session-overview` |
 | `/admin/sessions` | [page](../src/app/admin/sessions/page.tsx) | `admin/sessions` |

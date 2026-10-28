@@ -3,7 +3,7 @@ import { SessionSection as Panel } from "./session-section";
 import Link from "next/link";
 import { InstructorHeading, instructorDate } from "@/components/instructor/instructor-ui";
 import { useCallback, useEffect, useState } from "react";
-import { getSprint, listTasks } from "@/lib/api/delivery";
+import { getSprint, listTasks, fetchSprintBurndown } from "@/lib/api/delivery";
 import { getMembers } from "@/lib/api/academic";
 import { listSessionWork } from "@/lib/api/session-work";
 import {
@@ -24,6 +24,7 @@ import {
   inputClass,
 } from "@/components/product/primitives";
 import { SprintOverview } from "@/components/product/sprint-overview";
+import { SprintBurndown } from "@/components/workspace/workspace-charts";
 import { TaskManagement } from "@/components/product/sprint-management";
 import { ActivateButton } from "@/components/product/instructor-onboarding";
 import { TaskDetail } from "@/components/product/intern-work";
@@ -251,6 +252,15 @@ export function SprintDelivery({
   );
 }
 
+/** Burndown fails soft — the chart simply stays hidden when data is unavailable. */
+export function SprintBurndownSection({ id }: { id: string }) {
+  const data = useResource(
+    useCallback((signal: AbortSignal) => fetchSprintBurndown(id, signal), [id]),
+  );
+  if (data.loading || data.error || !data.data) return null;
+  return <SprintBurndown points={data.data} />;
+}
+
 export function SprintWorkspace({
   id,
   basePath = "/instructor",
@@ -332,6 +342,9 @@ export function SprintWorkspace({
         onUpdated={reload}
         onManage={() => setManage(true)}
       />
+      <Can perm={["tasks.view", "sprints.view"]}>
+        <SprintBurndownSection id={id} />
+      </Can>
       <Can
         perm={
           sprint.sessionId

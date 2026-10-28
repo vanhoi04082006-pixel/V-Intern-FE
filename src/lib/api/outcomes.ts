@@ -340,6 +340,11 @@ export const getNotifications = (
     (x) => parsePage(x, parseNotification),
     { signal },
   );
+/** Unread badge count for the topbar bell (self-scoped). */
+export const fetchUnreadCount = (signal?: AbortSignal) =>
+  request("/notifications/unread-count", (x) => number(record(x).count), {
+    signal,
+  });
 export const markNotification = (id: string) =>
   request(`/notifications/${encodeURIComponent(id)}/read`, () => null, {
     method: "POST",

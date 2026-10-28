@@ -75,6 +75,11 @@ export const verifyApplication = (token: string) =>
   apiFetch("/applications/verify", { method: "POST", body: { token } });
 export const myApplication = () =>
   apiFetch("/applications/me").then(parseApplication);
+/** Candidate downloads the CV they submitted (public cookie capability). */
+export const downloadMyCv = () =>
+  request("/applications/me/cv", (raw) => raw as Blob, {
+    responseType: "cv",
+  });
 export const supplementCv = (cv: File) => {
   const data = new FormData();
   data.append("cv", cv);

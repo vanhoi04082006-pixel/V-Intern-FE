@@ -8,7 +8,7 @@ import type {
   InternNavGroup,
   InternNavItem,
   InternWorkspaceUser,
-} from "./data/intern-mock-data";
+} from "./intern-workspace-types";
 
 /** Shared desktop/drawer navigation. InternShell supplies route availability
  * from the current workspace lifecycle; unavailable items have no destination.

@@ -32,9 +32,9 @@ function ArtifactFacts({ facts }: { facts: string[] }) {
       {facts.map((f) => (
         <li
           key={f}
-          className="flex items-start gap-3 rounded-lg bg-blue-50/60 p-3 text-xs leading-relaxed text-slate-600"
+          className="flex items-start gap-3 rounded-lg bg-accent/60 p-3 text-xs leading-relaxed text-muted-foreground"
         >
-          <CircleCheck size={16} className="shrink-0 text-blue-600" />
+          <CircleCheck size={16} className="shrink-0 text-brand" />
           {f}
         </li>
       ))}
@@ -205,8 +205,8 @@ const PHASES: { name: string; range: string; from: number; to: number }[] = [
 
 function StepDetail({ step }: { step: Step }) {
   return (
-    <div className="mt-5 border-t border-slate-200/80 pt-5">
-      <p className="text-sm leading-relaxed text-slate-600">{step.detail}</p>
+    <div className="mt-5 border-t border-border/80 pt-5">
+      <p className="text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
 
       <div className="mt-5 space-y-5">
         <div>
@@ -215,10 +215,10 @@ function StepDetail({ step }: { step: Step }) {
             {step.does.map((item) => (
               <li
                 key={item}
-                className="flex gap-2 text-xs leading-relaxed text-slate-600"
+                className="flex gap-2 text-xs leading-relaxed text-muted-foreground"
               >
                 <Check
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600"
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand"
                   strokeWidth={3}
                   aria-hidden="true"
                 />
@@ -230,9 +230,9 @@ function StepDetail({ step }: { step: Step }) {
 
         <div>
           <p className="text-xs font-bold text-navy">Bạn nhận</p>
-          <p className="mt-2.5 flex gap-2 text-xs leading-relaxed text-slate-600">
+          <p className="mt-2.5 flex gap-2 text-xs leading-relaxed text-muted-foreground">
             <Check
-              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600"
+              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand"
               strokeWidth={3}
               aria-hidden="true"
             />
@@ -248,12 +248,12 @@ function ArtifactPreview({ step }: { step: Step }) {
   return (
     <div
       aria-hidden="true"
-      className="rounded-2xl bg-white p-5 ring-1 ring-slate-200"
+      className="rounded-2xl bg-card p-5 ring-1 ring-border"
     >
-      <p className="font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-slate-400">
+      <p className="font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-muted-foreground">
         {step.artifact}
       </p>
-      <div className="mt-3 h-px bg-slate-100" aria-hidden="true" />
+      <div className="mt-3 h-px bg-border" aria-hidden="true" />
       <div className="mt-3.5">{step.preview}</div>
     </div>
   );
@@ -269,7 +269,7 @@ export function Workflow() {
   return (
     <section
       id="workflow"
-      className="bg-white py-20 scroll-mt-20"
+      className="bg-card py-20 scroll-mt-20"
       aria-label="Quy trình thực tập ảo"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -284,7 +284,7 @@ export function Workflow() {
           <div className="relative">
             <span
               aria-hidden="true"
-              className="absolute bottom-[30px] left-[22px] top-0 w-px bg-slate-200"
+              className="absolute bottom-[30px] left-[22px] top-0 w-px bg-border"
             />
 
             {PHASES.map((phase) => (
@@ -293,7 +293,7 @@ export function Workflow() {
                   <h3 className="text-xs font-bold leading-none text-navy">
                     {phase.name}
                   </h3>
-                  <p className="font-mono text-[11px] leading-none text-slate-400">
+                  <p className="font-mono text-[11px] leading-none text-muted-foreground">
                     {phase.range}
                   </p>
                 </div>
@@ -319,15 +319,15 @@ export function Workflow() {
                             delay: reduceMotion ? 0 : index * 0.06,
                             ease: [0.21, 0.47, 0.32, 0.98],
                           }}
-                          className="group flex w-full items-center gap-4 rounded-2xl py-2 pr-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                          className="group flex w-full items-center gap-4 rounded-2xl py-2 pr-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent0 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                         >
                           <span
                             className={
                               isActive
-                                ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy text-white ring-4 ring-blue-50"
+                                ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy text-white ring-4 ring-accent"
                                 : isDone
-                                  ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors"
-                                  : "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-slate-400 ring-1 ring-slate-200 transition-colors group-hover:text-blue-500 group-hover:ring-blue-300"
+                                  ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white transition-colors"
+                                  : "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-card text-muted-foreground ring-1 ring-border transition-colors group-hover:text-brand group-hover:ring-brand/60"
                             }
                           >
                             <item.icon
@@ -338,14 +338,14 @@ export function Workflow() {
 
                           <span className="min-w-0 flex-1">
                             <span className="flex items-baseline gap-2">
-                              <span className="font-mono text-[11px] leading-none text-slate-400">
+                              <span className="font-mono text-[11px] leading-none text-muted-foreground">
                                 {String(index + 1).padStart(2, "0")}
                               </span>
                               <span
                                 className={
                                   isActive
                                     ? "text-sm font-bold leading-none text-navy"
-                                    : "text-sm font-bold leading-none text-slate-700"
+                                    : "text-sm font-bold leading-none text-foreground"
                                 }
                               >
                                 {item.name}
@@ -354,8 +354,8 @@ export function Workflow() {
                             <span
                               className={
                                 isActive
-                                  ? "mt-1.5 block text-xs leading-relaxed text-slate-600"
-                                  : "mt-1.5 block text-xs leading-relaxed text-slate-400"
+                                  ? "mt-1.5 block text-xs leading-relaxed text-muted-foreground"
+                                  : "mt-1.5 block text-xs leading-relaxed text-muted-foreground"
                               }
                             >
                               {item.summary}
@@ -383,7 +383,7 @@ export function Workflow() {
           </div>
 
           <div className="hidden lg:block">
-            <div className="sticky top-24 rounded-3xl bg-gradient-to-br from-[#F7FAFF] to-white p-7 ring-1 ring-slate-200/80">
+            <div className="sticky top-24 rounded-3xl bg-gradient-to-br from-accent to-card p-7 ring-1 ring-border/80">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={step.name}
@@ -398,13 +398,13 @@ export function Workflow() {
                 >
                   <div className="grid gap-8 sm:grid-cols-2">
                     <div>
-                      <p className="font-mono text-[11px] leading-none text-slate-400">
+                      <p className="font-mono text-[11px] leading-none text-muted-foreground">
                         {step.range}
                       </p>
                       <h3 className="mt-2 text-lg font-bold leading-tight text-navy">
                         {step.phase}
                       </h3>
-                      <span className="mt-4 block h-px w-10 bg-blue-400" />
+                      <span className="mt-4 block h-px w-10 bg-brand" />
                       <h4 className="mt-5 text-base font-bold text-navy">
                         {step.name}
                       </h4>

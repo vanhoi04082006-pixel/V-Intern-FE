@@ -2,7 +2,7 @@ import { ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { SectionCard } from "./intern-primitives";
-import type { InternNextStep } from "./data/intern-mock-data";
+import type { InternNextStep } from "./intern-workspace-types";
 
 /**
  * Card "Quy trình tiếp theo" (state empty): 3 bước đánh số nối đường line

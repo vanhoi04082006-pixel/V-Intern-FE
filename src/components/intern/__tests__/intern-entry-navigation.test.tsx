@@ -14,6 +14,11 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/components/auth/workspace-guard", () => ({
   WorkspaceGuard: ({ children }: { children: React.ReactNode }) => children,
 }));
+// The topbar bell polls the unread-count endpoint; keep it out of the
+// global fetch call-count assertions below.
+vi.mock("@/lib/api/outcomes", () => ({
+  fetchUnreadCount: async () => 0,
+}));
 beforeEach(() => {
   path = "/intern/notifications";
   workspace = waiting;

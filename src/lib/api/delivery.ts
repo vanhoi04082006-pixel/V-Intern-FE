@@ -1,5 +1,5 @@
 import { request } from "./client";
-import { nullable, number, parsePage, record, string } from "./parse";
+import { invalid, nullable, number, parsePage, record, string } from "./parse";
 import { taskStatuses, priorities, parseTask } from "./work";
 
 export interface SprintSummary {
@@ -42,6 +42,26 @@ export interface SprintQuery {
   dueTo?: string;
   search?: string;
 }
+
+export interface BurndownPoint {
+  date: string;
+  actual: number | null;
+  ideal: number;
+}
+
+/** Sprint burndown reconstructed from task status events (dashboard endpoint). */
+export const fetchSprintBurndown = (id: string, signal?: AbortSignal) =>
+  request(`/dashboard/sprints/${encodeURIComponent(id)}/burndown`, (value) => {
+    if (!Array.isArray(value)) invalid();
+    return value.map((raw) => {
+      const v = record(raw);
+      return {
+        date: string(v.date),
+        actual: nullable(v.actual, number),
+        ideal: number(v.ideal),
+      } satisfies BurndownPoint;
+    });
+  }, { signal });
 
 /** Server-side sprint list (managed scope enforced by the backend). */
 export const listSprints = (q: SprintQuery, signal?: AbortSignal) => {

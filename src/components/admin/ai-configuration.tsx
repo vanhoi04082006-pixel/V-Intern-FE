@@ -18,6 +18,7 @@ import {
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { BusinessAgentMonitor } from './business-agent-monitor';
+import { KnowledgeRunMonitor } from './knowledge-run-monitor';
 
 export function AiConfiguration() {
   const [notice, setNotice] = useState("");
@@ -44,6 +45,7 @@ export function AiConfiguration() {
         />
       ) : null}
       <BusinessAgentMonitor />
+      <KnowledgeRunMonitor />
     </div>
   );
 }
