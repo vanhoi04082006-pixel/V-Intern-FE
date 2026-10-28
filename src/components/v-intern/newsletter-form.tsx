@@ -23,7 +23,7 @@ export function NewsletterForm() {
       <button
         type="button"
         onClick={() => setState("idle")}
-        className="mt-2 text-xs text-slate-400 underline focus-visible:outline-blue-400"
+        className="mt-2 text-xs text-muted-foreground underline focus-visible:outline-brand"
       >
         Thử lại
       </button>
@@ -34,7 +34,7 @@ export function NewsletterForm() {
         <div className="relative min-w-0 flex-1">
           <Mail
             aria-hidden="true"
-            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
           />
           <label htmlFor="footer-newsletter-email" className="sr-only">
             Email của bạn
@@ -52,12 +52,12 @@ export function NewsletterForm() {
             }}
             aria-invalid={state === "invalid"}
             aria-describedby="footer-newsletter-feedback"
-            className="h-11 w-full rounded-l-lg border border-white/10 bg-white/[0.06] pl-10 pr-3 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/40"
+            className="h-11 w-full rounded-l-lg border border-white/10 bg-white/[0.06] pl-10 pr-3 text-sm text-white outline-none focus:ring-2 focus:ring-accent0/40"
           />
         </div>
         <button
           type="submit"
-          className="rounded-r-lg bg-blue-600 px-4 text-sm font-semibold text-white focus-visible:outline-blue-400"
+          className="rounded-r-lg bg-brand px-4 text-sm font-semibold text-white focus-visible:outline-brand"
         >
           Đăng ký
         </button>

@@ -26,18 +26,18 @@ const FEATURES: { icon: LucideIcon; title: string; subtitle: string }[] = [
 
 export function FeatureStrip() {
   return (
-    <div className="grid grid-cols-1 gap-2 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-lg shadow-blue-900/5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-slate-100">
+    <div className="grid grid-cols-1 gap-2 rounded-2xl border border-border/80 bg-card p-3 shadow-lg shadow-blue-900/5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-border">
       {FEATURES.map((feature) => (
         <div
           key={feature.title}
-          className="flex items-center gap-3.5 rounded-xl p-4 transition-colors hover:bg-blue-50/50"
+          className="flex items-center gap-3.5 rounded-xl p-4 transition-colors hover:bg-accent/60"
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-brand">
             <feature.icon className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">
             <p className="text-sm font-bold text-navy">{feature.title}</p>
-            <p className="mt-0.5 truncate text-xs text-slate-500">
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
               {feature.subtitle}
             </p>
           </div>

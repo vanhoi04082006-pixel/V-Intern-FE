@@ -15,7 +15,7 @@ export function SectionHeading({
         {title}
       </h2>
       {subtitle ? (
-        <p className="mt-4 text-base leading-relaxed text-slate-500">
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
           {subtitle}
         </p>
       ) : null}

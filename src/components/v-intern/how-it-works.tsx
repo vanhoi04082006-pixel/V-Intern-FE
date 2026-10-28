@@ -38,7 +38,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="bg-white py-20 scroll-mt-20"
+      className="bg-card py-20 scroll-mt-20"
       aria-label="Cách V-Intern hoạt động"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -55,18 +55,18 @@ export function HowItWorks() {
               <Fragment key={step.title}>
                 {index > 0 ? (
                   <ArrowRight
-                    className="mx-1 mt-[18px] hidden h-5 w-5 shrink-0 self-start text-blue-300 lg:block"
+                    className="mx-1 mt-[18px] hidden h-5 w-5 shrink-0 self-start text-brand/50 lg:block"
                     aria-hidden="true"
                   />
                 ) : null}
                 <div className="flex flex-1 flex-col items-center text-center">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600 ring-1 ring-blue-100">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-brand ring-1 ring-border">
                     <step.icon className="h-6 w-6" aria-hidden="true" />
                   </span>
                   <h3 className="mt-4 text-sm font-bold text-navy sm:text-base">
                     {step.title}
                   </h3>
-                  <p className="mt-1.5 max-w-[230px] text-xs leading-relaxed text-slate-500 sm:text-sm">
+                  <p className="mt-1.5 max-w-[230px] text-xs leading-relaxed text-muted-foreground sm:text-sm">
                     {step.description}
                   </p>
                 </div>

@@ -75,7 +75,7 @@ function FooterColumnNav({ column }: { column: FooterColumn }) {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="rounded text-sm text-slate-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                className="rounded text-sm text-muted-foreground transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               >
                 {link.label}
               </a>
@@ -83,7 +83,7 @@ function FooterColumnNav({ column }: { column: FooterColumn }) {
           ) : (
             <li key={link.label}>
               <span
-                className="cursor-default text-sm text-slate-500"
+                className="cursor-default text-sm text-muted-foreground"
                 title="Sắp ra mắt"
               >
                 {link.label}
@@ -110,7 +110,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.45fr_1fr_1fr_1fr_0.95fr] lg:gap-x-8">
           <div className="col-span-2 lg:col-span-1 lg:pr-4">
             <Logo inverse />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Nền tảng thực tập ảo mô phỏng quy trình làm việc thật, giúp sinh
               viên và giảng viên kết nối với cơ hội nghề nghiệp thực tế.
             </p>
@@ -119,7 +119,7 @@ export function Footer() {
               <h2 className="text-xs font-bold uppercase tracking-widest text-white">
                 Nhận bản tin
               </h2>
-              <p className="mt-2 max-w-xs text-xs leading-relaxed text-slate-400">
+              <p className="mt-2 max-w-xs text-xs leading-relaxed text-muted-foreground">
                 Nhập email nghề nghiệp và nhận bản tin ngành mới mỗi tuần.
               </p>
               <NewsletterForm />
@@ -132,7 +132,7 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-slate-300 transition-colors hover:border-blue-500 hover:bg-blue-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-muted-foreground transition-colors hover:border-brand hover:bg-brand hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
                   >
                     <span className="sr-only">{social.label}</span>
                     <social.icon className="h-4 w-4" aria-hidden="true" />
@@ -155,7 +155,7 @@ export function Footer() {
             paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))",
           }}
         >
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             © {year} V-Intern. Bảo lưu mọi quyền.
           </p>
         </div>

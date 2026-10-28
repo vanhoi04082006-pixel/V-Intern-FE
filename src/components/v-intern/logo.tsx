@@ -24,7 +24,7 @@ export function Logo({
       <span className="sr-only">V-Intern</span>
       <span
         aria-hidden="true"
-        className={inverse ? "text-[#4D8DFF]" : "text-[#2060F0]"}
+        className={inverse ? "text-brand" : "text-brand"}
       >
         V
       </span>
@@ -32,14 +32,14 @@ export function Logo({
         aria-hidden="true"
         className={cn(
           "mx-[0.2em]",
-          inverse ? "text-white/70" : "text-[#182850]"
+          inverse ? "text-white/70" : "text-navy"
         )}
       >
         -
       </span>
       <span
         aria-hidden="true"
-        className={inverse ? "text-white" : "text-[#182850]"}
+        className={inverse ? "text-white" : "text-navy"}
       >
         Intern
       </span>

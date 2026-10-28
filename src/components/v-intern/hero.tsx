@@ -29,7 +29,7 @@ const SIDEBAR_ITEMS = [
 
 function DashboardOverview() {
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-2xl shadow-blue-900/10 ring-1 ring-slate-900/5">
+    <div className="overflow-hidden rounded-2xl bg-card shadow-2xl shadow-blue-900/10 ring-1 ring-border/60">
       <div className="flex">
         <aside
           className="hidden w-44 shrink-0 flex-col gap-1 bg-navy p-4 md:flex"
@@ -41,18 +41,18 @@ function DashboardOverview() {
           {SIDEBAR_ITEMS.map((item) => (
             <span
               key={item.label}
-              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300"
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground"
             >
               <item.icon className="h-3.5 w-3.5" />
               {item.label}
             </span>
           ))}
         </aside>
-        <div className="min-w-0 flex-1 bg-[#F7F9FE] p-5">
+        <div className="min-w-0 flex-1 bg-canvas p-5">
           <p className="text-base font-bold text-navy">
             Không gian thực tập của bạn
           </p>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500">
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             Đăng nhập để xem dự án, Sprint và nhiệm vụ được phân công.
           </p>
           <div className="mt-5 space-y-3">
@@ -75,19 +75,19 @@ function DashboardOverview() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="flex items-start gap-3 rounded-xl border border-slate-200/80 bg-white p-4"
+                className="flex items-start gap-3 rounded-xl border border-border/80 bg-card p-4"
               >
-                <item.icon className="h-5 w-5 shrink-0 text-blue-600" />
+                <item.icon className="h-5 w-5 shrink-0 text-brand" />
                 <div>
                   <strong className="text-xs text-navy">{item.title}</strong>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {item.text}
                   </p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="mt-5 text-xs text-slate-400">
+          <p className="mt-5 text-xs text-muted-foreground">
             Giới thiệu các chức năng · dữ liệu cá nhân hiển thị sau đăng nhập
           </p>
         </div>
@@ -101,12 +101,12 @@ export function Hero() {
     <section
       id="platform"
       aria-label="Giới thiệu nền tảng V-Intern"
-      className="relative overflow-hidden bg-[#F5F8FF] scroll-mt-20"
+      className="relative overflow-hidden bg-canvas scroll-mt-20"
     >
       {/* Soft radial gradient blobs */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-32 right-[-10%] h-[480px] w-[480px] rounded-full bg-blue-300/30 blur-3xl"
+        className="pointer-events-none absolute -top-32 right-[-10%] h-[480px] w-[480px] rounded-full bg-brand/20 blur-3xl"
       />
       <div
         aria-hidden="true"
@@ -117,7 +117,7 @@ export function Hero() {
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-12">
           {/* Left column */}
           <FadeIn>
-            <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold text-blue-700">
+            <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-brand-600">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               Nền tảng thực tập ảo ứng dụng AI
             </span>
@@ -127,10 +127,10 @@ export function Hero() {
               <br />
               Dự án thật.
               <br />
-              <span className="text-blue-600">Tương lai của bạn.</span>
+              <span className="text-brand">Tương lai của bạn.</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 md:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
               V-Intern mô phỏng môi trường làm việc thực tế, giúp sinh viên trải
               nghiệm quy trình phát triển phần mềm chuyên nghiệp với sự hỗ trợ
               của AI.
@@ -139,14 +139,14 @@ export function Hero() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-700"
+                className="inline-flex h-12 items-center gap-2 rounded-lg bg-brand px-6 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition-colors hover:bg-brand-600"
               >
                 Bắt đầu ngay
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <a
                 href="#how-it-works"
-                className="inline-flex h-12 items-center rounded-lg border border-slate-300 bg-white px-6 text-sm font-semibold text-slate-700 transition-colors hover:border-blue-300 hover:text-blue-600"
+                className="inline-flex h-12 items-center rounded-lg border border-border bg-card px-6 text-sm font-semibold text-foreground transition-colors hover:border-brand/60 hover:text-brand"
               >
                 Tìm hiểu thêm
               </a>
@@ -163,7 +163,7 @@ export function Hero() {
             </div>
 
             {/* Floating card: Đánh giá AI — nhích lên trên để không che dòng chào */}
-            <div className="absolute -top-6 right-0 hidden animate-float items-center gap-3 rounded-2xl bg-white p-3.5 shadow-xl shadow-blue-900/10 ring-1 ring-slate-900/5 sm:flex md:-top-16 md:-right-2">
+            <div className="absolute -top-6 right-0 hidden animate-float items-center gap-3 rounded-2xl bg-card p-3.5 shadow-xl shadow-blue-900/10 ring-1 ring-border/60 sm:flex md:-top-16 md:-right-2">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-100">
                 <Sparkles
                   className="h-5 w-5 text-violet-600"
@@ -172,10 +172,10 @@ export function Hero() {
               </span>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-navy">Đánh giá AI</p>
-                <p className="truncate text-[11px] text-slate-500">
+                <p className="truncate text-[11px] text-muted-foreground">
                   Gợi ý tham khảo theo công việc
                 </p>
-                <p className="text-[11px] font-bold text-blue-600">
+                <p className="text-[11px] font-bold text-brand">
                   Giảng viên chốt điểm chính thức
                 </p>
               </div>
@@ -191,7 +191,7 @@ export function Hero() {
                 className="h-28 w-auto drop-shadow-xl lg:h-32"
                 priority
               />
-              <span className="mb-10 rounded-2xl rounded-bl-md bg-white px-4 py-2.5 text-xs font-semibold text-blue-600 shadow-lg shadow-blue-900/10 ring-1 ring-slate-900/5">
+              <span className="mb-10 rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-xs font-semibold text-brand shadow-lg shadow-blue-900/10 ring-1 ring-border/60">
                 Cùng xây dựng tương lai nhé!
               </span>
             </div>
