@@ -1,26 +1,26 @@
-/* Hallmark · V-Intern · theme: "Cobalt Paper / Cobalt Noir" · shape: app screen · scope: app */
-/* Light = giấy trắng – mực xanh cobalt – nét đen; Dark = navy đêm cùng một thương hiệu. */
+/* Hallmark · V-Intern · theme: "Sky White / Emerald Noir" · shape: app screen · scope: app */
+/* Light = giấy trắng – mực xanh da trời (Sky White); Dark = Emerald Noir: nền gần đen ánh lục, brand #10b981. */
 /* Existing public-page theme values; the .dark block below flips them for the landing. */
 :root {
   --radius: 0.625rem;
   --background: #ffffff;
-  --foreground: #0b1220;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #0b1220;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #0b1220;
-  --primary: #1d4edb;
+  --popover-foreground: #0f172a;
+  --primary: #0284c7;
   --primary-foreground: #ffffff;
-  --secondary: #eef2fa;
-  --secondary-foreground: #0b1220;
-  --muted: #eef2fa;
-  --muted-foreground: #43506b;
-  --accent: #e9effb;
-  --accent-foreground: #1b3a9a;
+  --secondary: #f0f7fc;
+  --secondary-foreground: #0f172a;
+  --muted: #f0f7fc;
+  --muted-foreground: #475569;
+  --accent: #e0f2fe;
+  --accent-foreground: #075985;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(11, 18, 32, 0.1);
-  --input: rgba(11, 18, 32, 0.2);
-  --ring: #1d4edb;
+  --border: rgba(15, 23, 42, 0.1);
+  --input: rgba(15, 23, 42, 0.2);
+  --ring: #0284c7;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -36,45 +36,45 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Landing + public pages in dark: navy night instead of paper white.
+/* Landing + public pages in dark: Emerald Noir night instead of paper white.
    These tokens feed the static utilities (bg-navy, text-navy, bg-brand…) because
    Tailwind 4 emits them as custom properties — overriding here re-themes the page. */
 .dark {
-  --color-navy: #0b1324;
-  --color-brand: #4c86ff;
-  --color-brand-600: #3e6ef0;
-  --color-canvas: #0a101f;
-  --background: #0a101f;
-  --foreground: #e8edf9;
-  --card: #101728;
-  --card-foreground: #e8edf9;
-  --popover: #131b2e;
-  --popover-foreground: #e8edf9;
-  --primary: #4c86ff;
-  --primary-foreground: #081020;
-  --secondary: #151d31;
-  --secondary-foreground: #e8edf9;
-  --muted: #151d31;
-  --muted-foreground: #97a3bd;
-  --accent: #18213a;
-  --accent-foreground: #e8edf9;
+  --color-navy: #0a100e;
+  --color-brand: #10b981;
+  --color-brand-600: #34d399;
+  --color-canvas: #090c0b;
+  --background: #090c0b;
+  --foreground: #edf2ef;
+  --card: #111615;
+  --card-foreground: #edf2ef;
+  --popover: #171d1b;
+  --popover-foreground: #edf2ef;
+  --primary: #10b981;
+  --primary-foreground: #04241a;
+  --secondary: #171d1b;
+  --secondary-foreground: #edf2ef;
+  --muted: #171d1b;
+  --muted-foreground: #9aa5a0;
+  --accent: #12241d;
+  --accent-foreground: #6ee7b7;
   --destructive: #fb7185;
-  --border: rgba(232, 237, 249, 0.1);
-  --input: rgba(232, 237, 249, 0.18);
-  --ring: #4c86ff;
-  --chart-1: #4c86ff;
-  --chart-2: #34d399;
+  --border: rgba(237, 242, 239, 0.09);
+  --input: rgba(237, 242, 239, 0.16);
+  --ring: #10b981;
+  --chart-1: #10b981;
+  --chart-2: #38bdf8;
   --chart-3: #fbbf24;
   --chart-4: #a78bfa;
   --chart-5: #fb7185;
-  --sidebar: #0c1322;
-  --sidebar-foreground: #e8edf9;
-  --sidebar-primary: #4c86ff;
-  --sidebar-primary-foreground: #081020;
-  --sidebar-accent: #151d31;
-  --sidebar-accent-foreground: #e8edf9;
-  --sidebar-border: rgba(232, 237, 249, 0.1);
-  --sidebar-ring: #4c86ff;
+  --sidebar: #0d1211;
+  --sidebar-foreground: #edf2ef;
+  --sidebar-primary: #10b981;
+  --sidebar-primary-foreground: #04241a;
+  --sidebar-accent: #171d1b;
+  --sidebar-accent-foreground: #edf2ef;
+  --sidebar-border: rgba(237, 242, 239, 0.09);
+  --sidebar-ring: #10b981;
 }
 
 @theme inline {
@@ -125,18 +125,18 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   --app-neutral-800: #1e293b;
   --app-neutral-900: #0f172a;
   --app-neutral-950: #020617;
-  /* Brand ramp: cobalt (light "Cobalt Paper" brand = cobalt-600 #1d4edb). */
-  --app-primary-50: #eef4ff;
-  --app-primary-100: #e0eafe;
-  --app-primary-200: #c7d9fc;
-  --app-primary-300: #a4bcf9;
-  --app-primary-400: #7e97f5;
-  --app-primary-500: #4c6fee;
-  --app-primary-600: #1d4edb;
-  --app-primary-700: #1a41c2;
-  --app-primary-800: #1b3a9a;
-  --app-primary-900: #1c3378;
-  /* Status ramps: emerald / amber / rose, aligned with Emerald's accent hues. */
+  /* Brand ramp: sky (light "Sky White" brand = sky-600 #0284c7). */
+  --app-primary-50: #f0f9ff;
+  --app-primary-100: #e0f2fe;
+  --app-primary-200: #bae6fd;
+  --app-primary-300: #7dd3fc;
+  --app-primary-400: #38bdf8;
+  --app-primary-500: #0ea5e9;
+  --app-primary-600: #0284c7;
+  --app-primary-700: #0369a1;
+  --app-primary-800: #075985;
+  --app-primary-900: #0c4a6e;
+  /* Status ramps: emerald / amber / rose, aligned with Emerald Noir's accent hues. */
   --app-success-50: #ecfdf5;
   --app-success-100: #d1fae5;
   --app-success-500: #059669;
@@ -214,25 +214,24 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
 }
 
 :is(.workspace-ui, .app-surface) {
-  /* Light theme "Cobalt Paper": canvas #f6f8fc, panel #ffffff,
-     panel-2 #eef2fa, line ink/10%, brand cobalt-600 #1d4edb,
-     ink #0b1220 (đậm gần đen), dim #43506b, sidebar #eaf0fa. */
-  --background: #f6f8fc;
-  --foreground: #0b1220;
+  /* Light theme "Sky White": canvas #f6f9fd, panel #fff, panel-2 #f4f8fc,
+     line slate/9%, brand sky-600 #0284c7, ink #0f172a, dim #475569. */
+  --background: #f6f9fd;
+  --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: var(--foreground);
-  --popover: #ffffff;
+  --popover: #f4f8fc;
   --popover-foreground: var(--foreground);
   --primary: var(--app-primary-600);
   --primary-foreground: #ffffff;
-  --secondary: #eef2fa;
+  --secondary: #f4f8fc;
   --secondary-foreground: var(--foreground);
-  --muted: #eef2fa;
-  --muted-foreground: #43506b;
-  --accent: #e9effb;
-  --accent-foreground: var(--app-primary-800);
-  --border: rgba(11, 18, 32, 0.1);
-  --input: rgba(11, 18, 32, 0.2);
+  --muted: #f4f8fc;
+  --muted-foreground: #475569;
+  --accent: #f4f8fc;
+  --accent-foreground: var(--foreground);
+  --border: rgba(15, 23, 42, 0.09);
+  --input: rgba(15, 23, 42, 0.18);
   --ring: var(--app-primary-600);
   --destructive: var(--app-danger-600);
   --destructive-subtle: var(--app-danger-50);
@@ -242,10 +241,10 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   --warning-subtle: var(--app-warning-50);
   --info: var(--app-primary-700);
   --info-subtle: var(--app-primary-50);
-  --sidebar: #eaf0fa;
+  --sidebar: #eef4fa;
   --sidebar-foreground: var(--foreground);
-  --sidebar-accent: #e9effb;
-  --sidebar-accent-foreground: var(--app-primary-800);
+  --sidebar-accent: #f4f8fc;
+  --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
   --color-navy: var(--foreground);
@@ -295,51 +294,51 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   caret-color: var(--primary);
 }
 
-:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: rgba(29, 78, 219, 0.16); }
+:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: rgba(2, 132, 199, 0.16); }
 :is(.workspace-ui, .app-surface) :where(h1, h2, h3, h4) { font-family: var(--font-app-heading), sans-serif; min-width: 0; overflow-wrap: break-word; text-wrap: balance; }
 :is(.workspace-ui, .app-surface), :is(.workspace-ui, .app-surface) * { scrollbar-color: var(--input) var(--background); }
 :is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid var(--ring); outline-offset: var(--space-1); }
 :is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary) { transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 
 .dark :is(.workspace-ui, .app-surface) {
-  /* Dark theme "Cobalt Noir": canvas #090e1c, panel #101728,
-     panel-2 #151d31, line light/8%, brand #4c86ff, on-brand #081020,
-     ink #e8edf9, dim #97a3bd, deep sidebar #0c1322. */
-  --background: #090e1c;
-  --foreground: #e8edf9;
-  --card: #101728;
+  /* Dark theme "Emerald Noir": canvas #090c0b, panel #111615,
+     panel-2 #171d1b, line white/7%, brand #10b981, on-brand #04241a,
+     ink #edf2ef, dim #9aa5a0, deep sidebar #0d1211. */
+  --background: #090c0b;
+  --foreground: #edf2ef;
+  --card: #111615;
   --card-foreground: var(--foreground);
-  --popover: #131b2e;
-  --primary: #4478f4;
-  --primary-foreground: #ffffff;
-  --secondary: #151d31;
+  --popover: #171d1b;
+  --primary: #10b981;
+  --primary-foreground: #04241a;
+  --secondary: #171d1b;
   --secondary-foreground: var(--foreground);
-  --muted: #151d31;
-  --muted-foreground: #97a3bd;
-  --accent: #18213a;
-  --accent-foreground: #cdd9f6;
-  --border: rgba(232, 237, 249, 0.08);
-  --input: rgba(232, 237, 249, 0.16);
-  --ring: #4478f4;
+  --muted: #171d1b;
+  --muted-foreground: #9aa5a0;
+  --accent: #171d1b;
+  --accent-foreground: var(--foreground);
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #10b981;
   --destructive: #fb7185;
-  --destructive-subtle: #2a0d18;
+  --destructive-subtle: #4c0519;
   --success: #34d399;
-  --success-subtle: #06281d;
+  --success-subtle: #022c22;
   --warning: #fbbf24;
-  --warning-subtle: #2b1a03;
-  --info: #7aa5ff;
-  --info-subtle: #101c3a;
-  --sidebar: #0c1322;
+  --warning-subtle: #451a03;
+  --info: #38bdf8;
+  --info-subtle: #082f49;
+  --sidebar: #0d1211;
   --sidebar-foreground: var(--foreground);
-  --sidebar-accent: #151d31;
+  --sidebar-accent: #171d1b;
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
-  --ws-primary-hover: #6b93f8;
+  --ws-primary-hover: #34d399;
   --color-brand: var(--primary);
-  --color-brand-600: #6b93f8;
+  --color-brand-600: #34d399;
 }
 
-.dark :is(.workspace-ui, .app-surface) ::selection { background: rgba(68, 120, 244, 0.32); }
+.dark :is(.workspace-ui, .app-surface) ::selection { background: rgba(16, 185, 129, 0.28); }
 
 /* Sticky chrome must never cover scroll targets: the workspace topbar and
    the editor’s sticky action bar both overlap content scrolled into view

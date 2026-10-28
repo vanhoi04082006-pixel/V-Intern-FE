@@ -6,10 +6,10 @@
 
 @theme {
   --color-navy: #16243e;
-  --color-brand: #1d4edb;
-  --color-brand-600: #1a41c2;
+  --color-brand: #0284c7;
+  --color-brand-600: #0369a1;
   --font-handwriting: var(--font-caveat), cursive;
-  --color-canvas: #f4f6fb;
+  --color-canvas: #f6f9fd;
 }
 
 html {
