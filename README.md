@@ -1,88 +1,84 @@
-**Nghiệp vụ 28/10/2026:** [sáu kịch bản UI ba vai, lỗi tuyển dụng và gate local](docs/BUSINESS-ACCEPTANCE-20261028.md) · [skill audit Cloudflare](docs/SECURITY-AUDIT-WORKFLOW.md). BE 860 test; FE worktree local 676 test, gồm redesign đang giữ riêng. Có timeout audit đã hồi phục và hai lỗi build trước khi cache mới đạt. G7 chưa đóng mọi nhánh UI; chưa merge.
+# V-Intern Frontend — Redesign "Emerald Noir"
 
-**Nghiệp vụ 27/10/2026:** [kết quả ba vai, nhánh ngoại lệ và dịch vụ thật](docs/BUSINESS-ACCEPTANCE-20261027.md). 117 ca SQL/HTTP duy nhất đạt theo ma trận mới nhất; có một timeout ở lượt nhóm đầu, advisor chạy riêng 3/3 đạt, giữ nguyên 5 giây. Mentor Gemini thật và trace LangSmith mới đã kiểm. Redesign tạm dừng; không coi lượt này là nghiệm thu mọi trang hoặc merge PR.
+> **Tái thiết kế toàn bộ UI/UX** của nền tảng [V-Intern-FE](https://github.com/vanhoi04082006-pixel/V-Intern-FE):
+> giữ nguyên toàn bộ chức năng, thay mới 100% giao diện — chủ đề dark **"Emerald Noir"**, hiệu ứng motion
+> tinh tế, bố cục hiện đại. Backend demo mock tích hợp ngay trong app nên **chạy được độc lập, không cần API ngoài**.
 
-**Checkpoint 26/10/2026:** [nguồn kiểm chứng và việc còn mở](docs/ACCEPTANCE-CHECKPOINT-20261026.md). BE 859 / FE 660 unit tests; source và CI ghi riêng trong checkpoint. Hành trình QA thật đã hoàn thành 4/4 task, đánh giá 96,1, KPI 98,8, chứng nhận và vòng mời lại GitHub. Có cả bước UI/API; chưa nghiệm thu mọi nhánh hoặc redesign toàn bộ.
-
-**G6/T03 — quyền repository sau thay người:** [hướng dẫn trạng thái, đối chiếu và phục hồi](docs/REPOSITORY-ACCESS-RECOVERY.md). Đã kiểm QA, GitHub pending thật và đã kích hoạt cả hai DB native.
-
-# V-Intern Frontend
-
-**UI sổ tay — 26/10:** [phần đã triển khai và bằng chứng](docs/design/NOTEBOOK-FOUNDATION-20261026.md) · [inventory toàn hệ thống](tasks/ui-route-asset-manifest.md). Nhánh UI mới có 651 test, build local đạt và 15 lượt responsive trên ba trang mẫu; chưa nghiệm thu toàn bộ 78 route. Checkpoint nghiệp vụ bên dưới giữ số liệu theo source riêng của nó.
-
-**G6 — thời hạn và thay thành viên:** [quy tắc và điểm phạt](docs/PARTICIPATION.md) · [hướng dẫn tư vấn, xem trước và phê duyệt](docs/REPLACEMENT.md) · [bằng chứng QA và phần còn lại](docs/reports/g6-replacement-evidence-20261025.json). Đã kích hoạt G6 trên cả hai DB native, giữ nguyên dữ liệu cũ.
-
-**G5 — GitHub:** [lời mời, quyền cộng tác và cách mời lại](docs/GITHUB-INVITATIONS.md) · [kết quả local và phụ thuộc live](docs/reports/g5-completion-20261025.md).
-
-**G4 — phòng chờ và hẹn lại:** [hướng dẫn sinh viên, giảng viên và người bảo trì](docs/SCHEDULED-INTERVIEWS.md) · [kiểm chứng và giới hạn](docs/reports/g4-completion-20261025.md).
-
-**G3 — cổng CV và lịch hẹn:** [hướng dẫn ứng viên, giảng viên và người bảo trì](docs/CV-AND-INTERVIEW-SCHEDULING.md) · [nghiệm thu và giới hạn](docs/reports/g3-completion-20261024.md).
-
-**G2 — thư viện bài nhỏ:** [hướng dẫn Admin, giảng viên và sinh viên](docs/MINI-PROJECTS.md) · [báo cáo nghiệm thu](docs/reports/g2-completion-20261024.md).
-
-Giao diện thực tập theo dự án dành cho Sinh viên, Giảng viên và Quản trị viên. Sinh viên phỏng vấn, nhận nhiệm vụ, nộp bài và đọc phản hồi. Giảng viên chuẩn bị phiên, hướng dẫn, đánh giá và báo cáo. Dữ liệu nghiệp vụ đến từ NestJS API.
-
-## Bắt đầu từ tài liệu bàn giao
-
-**[Đọc bộ bàn giao FE](docs/HANDOVER.md)** — từ cách chạy local đến hành trình sử dụng, kiến trúc, thiết kế, lỗi thường gặp và bảo trì.
-
-Chuẩn bị bảo vệ: **[kịch bản ngắn](docs/DEMO-CHECKLIST.md)** · [hướng dẫn demo từng bước](docs/DEMO-GUIDE.md) · [nghiệm thu hai vai trò](docs/ROLEPLAY-ACCEPTANCE.md). Thông tin đăng nhập được bàn giao riêng.
-
-| Tài liệu | Trả lời câu hỏi |
+| Landing page | Không gian làm việc (Intern) |
 |---|---|
-| [Hướng dẫn bàn giao](docs/HANDOVER.md) | Người mới tiếp nhận nên làm gì, đọc gì và dùng hệ thống ra sao? |
-| [Bản đồ route](docs/ROUTE-MAP.md) | URL này nằm ở file nào, dùng component nào? |
-| [Kiến trúc](docs/ARCHITECTURE.md) | Guard, lifecycle, API client và component phối hợp thế nào? |
-| [API contracts](docs/API-CONTRACTS.md) | Frontend trao đổi với Backend theo hợp đồng nào? |
-| [Thiết kế UI](docs/UI-SYSTEM.md) | Dùng Aurora Glass và component chung như thế nào? |
-| [Kiểm thử](docs/TESTING.md) | Gate và các luồng hồi quy phải giữ là gì? |
-| [Kiểm chứng](docs/VERIFICATION.md) | Số liệu và ảnh được kiểm ở thời điểm nào? |
-| [Nhánh Git](docs/GIT-WORKFLOW.md) | Nhánh nào đã tích hợp, nhánh nào là lưu trữ? |
-| [Thư viện nghề nghiệp](docs/CAREER-ROLES.md) | Tạo nghề mới, cấu hình năng lực, mở tuyển và chuẩn bị câu hỏi ra sao? |
-| [Kho tri thức Agent](docs/KNOWLEDGE-LIBRARY.md) | Soạn Q&A nhiều đáp án, giữ nguồn, duyệt xuất bản và khôi phục lịch sử thế nào? |
-| [Bàn giao Backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feat/admin-repository-account/docs/HANDOVER.md) | Dữ liệu và quy tắc phía server hoạt động thế nào? |
+| ![Landing](public/images/readme-landing.png) | ![Dashboard](public/images/readme-dashboard.png) |
 
-## Công nghệ và phạm vi
+## Điểm nhấn của bản redesign
 
-Next.js 16.4.2, React 19, TypeScript, Tailwind CSS 4, Framer Motion và Lucide. Font đã đóng gói cục bộ. Aurora Glass áp dụng cho Sinh viên/Giảng viên và onboarding; trang chủ và Admin có phạm vi thiết kế riêng. Không thêm dữ liệu giả để làm đầy dashboard.
+| Hạng mục | Trước (main) | Sau (branch này) |
+|---|---|---|
+| Chủ đề | Aurora Glass ( sáng/tối ) | **Emerald Noir** — dark-only, nền gần đen ánh lục, brand `#10B981` |
+| Kiến trúc route | 78 route Next.js phụ thuộc NestJS `:8080` | **SPA 1 route + hash-router** (`#/intern`, `#/admin/users`…) |
+| Backend | Bắt buộc NestJS API | **Mock API ~70 endpoints** ngay trong Next.js (in-memory, seed đầy đủ) + **LLM thật** cho Mentor AI |
+| Landing | Trang chủ tĩnh | 9 khối: hero mockup dashboard động, trust marquee, bento features, AI showcase, roles, FAQ accordion |
+| Auth | Form cơ bản | Split-screen 2 cột, strength meter, checklist điều kiện mật khẩu live, 4 chip quick-fill demo |
+|Dashboard 3 vai trò | Bảng biểu đơn giản | MetricCard động, countdown, sparkline, kanban kéo-thả (dnd-kit), chat AI, ring score SVG |
 
-## Chạy trên workspace hiện tại
+## Kiến trúc
 
-```powershell
-& .\scripts\Use-ProjectStorage.ps1
-# Chạy tại thư mục gốc repository Frontend
-npm run dev
+```
+src/
+├── app/                    # 1 route duy nhất (/) + API catch-all /api/v1/[...path]
+├── components/
+│   ├── app/                # AppShell (sidebar theo role), hash-router registries
+│   ├── auth/               # Login / Register / Forgot / Verify (split-screen)
+│   ├── landing/            # 9 khối landing page
+│   ├── shared/             # Kanban, Chat, ConfirmDialog, Toolbar, Counters…
+│   ├── ui/                 # shadcn/ui đầy đủ (New York style)
+│   └── views/              # intern/ · instructor/ · admin/ · shared/
+└── lib/
+    ├── client/             # hash-router, session, http client, typed API (~1500 dòng)
+    └── server/             # mock backend: store + seed + ~15 nhóm handlers
 ```
 
-Lệnh dev mặc định dùng cổng 3001. Nếu bản local đang chạy tại đó, không mở thêm process đè cổng. Bản chính đang dùng `next start`; sau khi sửa source cần build thành công rồi restart đúng process:
+- **Design system**: xem [`docs/DESIGN.md`](docs/DESIGN.md) (token màu, utilities, motion chuẩn)
+- **Hợp đồng API mock**: xem [`docs/API.md`](docs/API.md)
 
-```powershell
-& .\scripts\Use-ProjectStorage.ps1
-npm run build
-& ..\manual-runtime\restart-owned-apps.ps1 -Frontend
+## Chạy local
+
+```bash
+npm install        # hoặc bun install / pnpm install
+npm run dev        # http://localhost:3000
 ```
 
-Mở [ứng dụng local](http://localhost:3001). API chính là `http://localhost:8080/api/v1`; Swagger tại `http://localhost:8080/api/docs`. `NEXT_PUBLIC_API_BASE_URL` được lấy khi build. Không đặt token/secret vào biến public.
+Kiểm tra chất lượng:
 
-Máy mới: xem phần chạy local trong [HANDOVER](docs/HANDOVER.md), cài bằng `npm ci` theo lockfile và cấu hình môi trường riêng. Không ghi đè .env của máy đang chạy.
-
-## Kiểm tra trước khi bàn giao
-
-```powershell
-& .\scripts\Use-ProjectStorage.ps1
+```bash
 npm run lint
 npm run typecheck
-npm test
-npm run build
-git diff --check
 ```
 
-Kiểm browser riêng cho desktop/mobile, drawer, tab, filter, form/modal, Kanban và trạng thái chưa có dữ liệu. Không coi unit test là bằng chứng đầy đủ cho layout. Số test mới nhất và giới hạn nằm trong [VERIFICATION](docs/VERIFICATION.md).
+## Tài khoản demo (password: `demo1234`)
 
-## Quy tắc tiếp nhận
+| Vai trò | Email | Trải nghiệm |
+|---|---|---|
+| Thực tập sinh (data đầy đủ) | `an.nguyen@student.edu.vn` | Sprint, kanban, task + AI Code Review, KPI 81.9, lương ảo 6.480.000₫, chứng chỉ, Mentor AI 3 hội thoại |
+| Thực tập sinh mới | `binh.tran@student.edu.vn` | Onboarding → chọn vai trò → **phỏng vấn AI 6 câu** → kết quả chấm điểm |
+| Giảng viên | `hong.le@gv.edu.vn` | 2 buổi thực tập, sprint workspace, duyệt bài (slider 6 tiêu chí), Kế hoạch AI, báo cáo |
+| Quản trị viên | `admin@vintern.edu.vn` | Dashboard hệ thống, users, ngân hàng câu hỏi, audit, system status |
 
-- Source, công cụ, dependency, cache, log và bằng chứng của dự án lưu trong workspace.
-- Giữ database và ba tài khoản gốc; không seed/reset để chụp UI.
-- Backend là nơi quyết định quyền, điểm và điều kiện chuyển trạng thái.
-- Giữ working tree có sẵn, review từng nhóm thay đổi trước commit/merge.
-- Không đưa secret hoặc `manual-runtime/private` lên repository.
+## Chức năng giữ nguyên từ bản gốc
+
+- **Sinh viên**: phỏng vấn AI đầu vào (chấm điểm heuristic theo vai trò), nhận nhiệm vụ theo sprint, kanban kéo-thả,
+  nộp bài + **AI Code Review 6 tiêu chí**, Mentor AI chat (**LLM thật**, có fallback), KPI & lương ảo minh bạch,
+  đánh giá định kỳ, chứng chỉ số + trang tra cứu công khai (`#/verify`), gợi ý phát triển, GitHub connection.
+- **Giảng viên**: thư viện dự án mẫu (blueprint sprint/nhiệm vụ), quản lý buổi thực tập + thành viên,
+  **Kế hoạch AI** (sinh sprint plan → xem nháp → công bố), duyệt bài nộp với slider 6 tiêu chí,
+  đánh giá cuối kỳ, hiệu suất nhóm, báo cáo + export CSV.
+- **Quản trị viên**: tổng quan hệ thống, quản lý users, ngân hàng câu hỏi phỏng vấn, cài đặt AI, dịch vụ,
+  hoạt động & audit log.
+
+## Ghi chú
+
+- Dữ liệu là **in-memory store** (globalThis): reset lại seed mỗi lần restart server — không cần seed thủ công.
+- Mentor AI gọi `z-ai-web-dev-sdk` ở server-side; nếu cấu hình AI không khả dụng thì tự dùng fallback nội dung mẫu.
+- Bản redesign thay toàn bộ `src/` cũ — tài liệu bàn giao của bản trước vẫn xem được ở branch `main`.
+
+## License
+
+Dự án giáo dục — demo cho mục đích học tập.

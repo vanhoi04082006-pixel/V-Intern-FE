@@ -1,57 +1,33 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import type { Metadata, Viewport } from "next";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
+import { SonnerToaster } from "@/components/shared/sonner-toaster";
 
-const geistSans = localFont({
-  src: "./fonts/geist.ttf",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const beVietnam = Be_Vietnam_Pro({
+  variable: "--font-be-vietnam",
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const geistMono = localFont({
-  src: "./fonts/geistmono.ttf",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-  preload: false,
-});
-
-const caveat = localFont({
-  src: "./fonts/caveat.ttf",
-  variable: "--font-caveat",
-  weight: "400 700",
-  display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
-  title: "V-Intern - Nền tảng thực tập ảo với AI",
+  title: "V-Intern — Nền tảng thực tập ảo với AI",
   description:
-    "V-Intern là nền tảng thực tập ảo ứng dụng AI, mô phỏng môi trường làm việc thực tế giúp sinh viên trải nghiệm quy trình phát triển phần mềm chuyên nghiệp, kết nối sinh viên - giảng viên - doanh nghiệp.",
-  keywords: [
-    "V-Intern",
-    "thực tập ảo",
-    "virtual internship",
-    "AI",
-    "sinh viên",
-    "dự án thực tế",
-    "AI Mentor",
-  ],
-  authors: [{ name: "V-Intern" }],
-  openGraph: {
-    title: "V-Intern - Nền tảng thực tập ảo với AI",
-    description:
-      "Kỹ năng thật. Dự án thật. Tương lai của bạn. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
-    siteName: "V-Intern",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "V-Intern - Nền tảng thực tập ảo với AI",
-    description:
-      "Kỹ năng thật. Dự án thật. Tương lai của bạn. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
-  },
+    "Thực tập như đi làm thật: phỏng vấn AI, dự án Sprint thực tế, AI review code, KPI minh bạch, lương ảo và chứng chỉ xác thực.",
+  keywords: ["thực tập ảo", "intern", "AI", "sprint", "code review", "chứng chỉ"],
+  icons: { icon: "/logo.svg" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#090C0B",
 };
 
 export default function RootLayout({
@@ -60,9 +36,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable}`}>
-      <body className="antialiased bg-background text-foreground">
+    <html lang="vi" suppressHydrationWarning>
+      <body
+        className={`${beVietnam.variable} ${jetbrains.variable} font-sans bg-canvas text-ink antialiased`}
+      >
         {children}
+        <Toaster />
+        <SonnerToaster />
       </body>
     </html>
   );
