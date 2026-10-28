@@ -55,6 +55,10 @@ export function KpiConsole() {
   const [editor, setEditor] = useState<KpiPeriod | "new" | null>(null);
   const [results, setResults] = useState<KpiPeriod | null>(null);
   const [notice, setNotice] = useState("");
+  const [busyPeriod, setBusyPeriod] = useState<
+    | { id: string; phase: "calculate" | "finalize" }
+    | null
+  >(null);
   const action = useAction();
 
   const periods = useResource(
@@ -68,6 +72,22 @@ export function KpiConsole() {
     setEditor(null);
     setNotice(message);
     periods.reload();
+  };
+
+  /** Run calculate/finalize for one period with its own pending row state. */
+  const runPeriodAction = (
+    period: KpiPeriod,
+    phase: "calculate" | "finalize",
+    run: () => Promise<string>,
+  ) => {
+    void action.run(async () => {
+      setBusyPeriod({ id: period.id, phase });
+      try {
+        saved(await run());
+      } finally {
+        setBusyPeriod(null);
+      }
+    });
   };
 
   return (
@@ -126,7 +146,12 @@ export function KpiConsole() {
         <ErrorState error={periods.error} onRetry={periods.reload} />
       ) : periods.data?.items.length ? (
         <ul className="divide-y divide-border border-y border-border" aria-label="Danh sách kỳ KPI">
-          {periods.data.items.map((period) => (
+          {periods.data.items.map((period) => {
+            const calculating =
+                busyPeriod?.id === period.id && busyPeriod.phase === "calculate",
+              finalizing =
+                busyPeriod?.id === period.id && busyPeriod.phase === "finalize";
+            return (
             <li
               key={period.id}
               className="grid gap-4 py-5 lg:grid-cols-[minmax(0,1fr)_13rem_auto] lg:items-center"
@@ -148,7 +173,7 @@ export function KpiConsole() {
                 <StatusDot tone={kpiStatusTones[period.status]}>
                   {kpiStatusLabels[period.status]}
                 </StatusDot>
-                {period.status === "calculating" && (
+                {(period.status === "calculating" || calculating) && (
                   <p className="text-caption text-muted-foreground">Đợt tính đang chạy…</p>
                 )}
               </div>
@@ -182,32 +207,34 @@ export function KpiConsole() {
                 {period.status === "open" && (
                   <>
                     <button
-                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline disabled:cursor-wait disabled:opacity-60"
+                      aria-label={`Tính KPI ${period.name}`}
+                      aria-busy={calculating}
                       disabled={action.busy}
                       onClick={() =>
-                        void action.run(async () => {
+                        runPeriodAction(period, "calculate", async () => {
                           const outcome = await calculateKpiPeriod(period.id);
-                          saved(
-                            `Đã tính ${outcome.calculated} kết quả, ${outcome.insufficientData} sinh viên thiếu dữ liệu.`,
-                          );
+                          return `Đã tính ${outcome.calculated} kết quả, ${outcome.insufficientData} sinh viên thiếu dữ liệu.`;
                         })
                       }
                     >
                       <Calculator size={15} aria-hidden />
-                      Tính KPI
+                      {calculating ? "Đang tính…" : "Tính KPI"}
                     </button>
                     <button
-                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline disabled:cursor-wait disabled:opacity-60"
+                      aria-label={`Chốt kỳ ${period.name}`}
+                      aria-busy={finalizing}
                       disabled={action.busy}
                       onClick={() =>
-                        void action.run(async () => {
+                        runPeriodAction(period, "finalize", async () => {
                           await finalizeKpiPeriod(period.id);
-                          saved(`Đã chốt kỳ ${period.name}.`);
+                          return `Đã chốt kỳ ${period.name}.`;
                         })
                       }
                     >
                       <Lock size={15} aria-hidden />
-                      Chốt kỳ
+                      {finalizing ? "Đang chốt…" : "Chốt kỳ"}
                     </button>
                   </>
                 )}
@@ -224,7 +251,8 @@ export function KpiConsole() {
                 </button>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       ) : (
         <Empty>Chưa có kỳ KPI nào. Tạo bản nháp để bắt đầu một kỳ đo lường.</Empty>
