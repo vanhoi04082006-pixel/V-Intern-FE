@@ -1,0 +1,213 @@
+{
+  "checkedAtUtc": "2026-10-26T04:14:02.766Z",
+  "implementationCode": "603ee3f4025714a395078dbfde8c309602257535",
+  "branch": "codex/notebook-workspace",
+  "scope": "Notifications tab refinement and UI acceptance for all three roles; other route families remain in the UI plan",
+  "quality": {
+    "files": 109,
+    "tests": 660,
+    "localWorkers": 1,
+    "focusedNotificationTests": 9,
+    "typecheck": "passed",
+    "changedFileLint": "passed",
+    "productionBuild": "passed",
+    "compilerChanged": false,
+    "testTimeoutsChanged": false,
+    "ciConfigurationChanged": false
+  },
+  "browser": {
+    "api": "Native QA API 8081; actual UI clicks and keyboard",
+    "actions": [
+      {
+        "role": "admin",
+        "action": "Read-all on an empty feed shows zero updates truthfully",
+        "result": "passed"
+      },
+      {
+        "role": "admin",
+        "action": "Task preference off then on; both acknowledgements visible and original true value restored",
+        "result": "passed"
+      },
+      {
+        "role": "instructor",
+        "action": "Enter expands and collapses full notification text without acknowledging it",
+        "result": "passed"
+      },
+      {
+        "role": "instructor",
+        "action": "Mark one QA notification read; acknowledgement and read marker visible",
+        "result": "passed"
+      },
+      {
+        "role": "intern",
+        "action": "Mark one QA invitation notification read; success visible; unread filter hides read markers; filter restored",
+        "result": "passed"
+      }
+    ],
+    "responsive": {
+      "accepted": 15,
+      "uniqueRoutes": 3,
+      "overflows": 0,
+      "cases": [
+        {
+          "role": "instructor",
+          "route": "/instructor/notifications",
+          "requestedWidth": 390,
+          "overflow": false,
+          "scrollWidth": 375,
+          "title": "Thông báo",
+          "width": 390
+        },
+        {
+          "role": "instructor",
+          "route": "/instructor/notifications",
+          "requestedWidth": 768,
+          "overflow": false,
+          "scrollWidth": 753,
+          "title": "Thông báo",
+          "width": 768
+        },
+        {
+          "role": "instructor",
+          "route": "/instructor/notifications",
+          "requestedWidth": 1024,
+          "overflow": false,
+          "scrollWidth": 1009,
+          "title": "Thông báo",
+          "width": 1024
+        },
+        {
+          "role": "instructor",
+          "route": "/instructor/notifications",
+          "requestedWidth": 1280,
+          "overflow": false,
+          "scrollWidth": 1265,
+          "title": "Thông báo",
+          "width": 1280
+        },
+        {
+          "role": "instructor",
+          "route": "/instructor/notifications",
+          "requestedWidth": 1440,
+          "overflow": false,
+          "scrollWidth": 1425,
+          "title": "Thông báo",
+          "width": 1440
+        },
+        {
+          "role": "intern",
+          "route": "/intern/notifications",
+          "requestedWidth": 390,
+          "overflow": false,
+          "scrollWidth": 375,
+          "title": "Thông báo",
+          "width": 390
+        },
+        {
+          "role": "intern",
+          "route": "/intern/notifications",
+          "requestedWidth": 768,
+          "overflow": false,
+          "scrollWidth": 753,
+          "title": "Thông báo",
+          "width": 768
+        },
+        {
+          "role": "intern",
+          "route": "/intern/notifications",
+          "requestedWidth": 1024,
+          "overflow": false,
+          "scrollWidth": 1009,
+          "title": "Thông báo",
+          "width": 1024
+        },
+        {
+          "role": "intern",
+          "route": "/intern/notifications",
+          "requestedWidth": 1280,
+          "overflow": false,
+          "scrollWidth": 1265,
+          "title": "Thông báo",
+          "width": 1280
+        },
+        {
+          "role": "intern",
+          "route": "/intern/notifications",
+          "requestedWidth": 1440,
+          "overflow": false,
+          "scrollWidth": 1425,
+          "title": "Thông báo",
+          "width": 1440
+        },
+        {
+          "role": "admin",
+          "route": "/admin/notifications",
+          "requestedWidth": 390,
+          "overflow": false,
+          "scrollWidth": 375,
+          "title": "Thông báo",
+          "width": 390
+        },
+        {
+          "role": "admin",
+          "route": "/admin/notifications",
+          "requestedWidth": 768,
+          "overflow": false,
+          "scrollWidth": 768,
+          "title": "Thông báo",
+          "width": 768
+        },
+        {
+          "role": "admin",
+          "route": "/admin/notifications",
+          "requestedWidth": 1024,
+          "overflow": false,
+          "scrollWidth": 1024,
+          "title": "Thông báo",
+          "width": 1024
+        },
+        {
+          "role": "admin",
+          "route": "/admin/notifications",
+          "requestedWidth": 1280,
+          "overflow": false,
+          "scrollWidth": 1280,
+          "title": "Thông báo",
+          "width": 1280
+        },
+        {
+          "role": "admin",
+          "route": "/admin/notifications",
+          "requestedWidth": 1440,
+          "overflow": false,
+          "scrollWidth": 1440,
+          "title": "Thông báo",
+          "width": 1440
+        }
+      ],
+      "excludedEarlierObservations": 5,
+      "exclusionReason": "The first Admin 768 request was measured before the viewport settled (actual 390); those observations are retained but excluded from accepted checks."
+    }
+  },
+  "dataChanges": {
+    "qaOnly": true,
+    "instructorNotificationsMarkedRead": 1,
+    "internNotificationsMarkedRead": 1,
+    "adminReadAllUpdated": 0,
+    "adminTaskPreferenceOriginal": true,
+    "adminTaskPreferenceRestored": true,
+    "protectedAccountsUsed": false,
+    "databasesReset": false
+  },
+  "ci": {
+    "foundationCode": "8932bef376567ca805c8a2a0cd93c5880e485bbc",
+    "foundationQuality": "https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40262952070",
+    "foundationFullStack": "https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/runs/40262952079",
+    "foundationStatus": "success",
+    "currentCodeStatus": "awaiting push"
+  },
+  "remaining": [
+    "Current code CI after push",
+    "Other route families and full-system UI acceptance"
+  ]
+}
