@@ -1,8 +1,11 @@
+"use client";
+
 import { Facebook, Github, Linkedin, Youtube } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { NewsletterForm } from "@/components/v-intern/newsletter-form";
+import { SparkleDoodle } from "@/components/v-intern/doodles";
 
 const SOCIAL_LINKS: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "LinkedIn", href: "https://www.linkedin.com", icon: Linkedin },
@@ -16,7 +19,7 @@ type FooterColumn = { heading: string; links: FooterLink[] };
 
 /**
  * `href: null` = trang đích chưa tồn tại (backend/trang con chưa có).
- * Chúng được render dạng text tĩnh, không tạo anchor giả `href="#"`.
+ * Render dạng text tĩnh kèm ghi chú "sắp ra mắt", không tạo anchor giả.
  */
 const LINK_COLUMNS: FooterColumn[] = [
   {
@@ -66,8 +69,9 @@ const LINK_COLUMNS: FooterColumn[] = [
 function FooterColumnNav({ column }: { column: FooterColumn }) {
   return (
     <nav aria-label={column.heading}>
-      <h2 className="text-xs font-bold uppercase tracking-widest text-white">
+      <h2 className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-chalk">
         {column.heading}
+        <SparkleDoodle className="h-3 w-3 text-[#7d97ff]/80" />
       </h2>
       <ul className="mt-4 space-y-2.5">
         {column.links.map((link) =>
@@ -75,7 +79,7 @@ function FooterColumnNav({ column }: { column: FooterColumn }) {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="rounded text-sm text-muted-foreground transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                className="rounded text-sm text-chalk-soft transition-colors hover:text-[#7d97ff]"
               >
                 {link.label}
               </a>
@@ -83,13 +87,16 @@ function FooterColumnNav({ column }: { column: FooterColumn }) {
           ) : (
             <li key={link.label}>
               <span
-                className="cursor-default text-sm text-muted-foreground"
+                className="cursor-default text-sm text-chalk/45"
                 title="Sắp ra mắt"
               >
                 {link.label}
               </span>
+              <span className="ml-1.5 font-hand text-[13px] text-[#7d97ff]/80">
+                (sắp ra mắt)
+              </span>
             </li>
-          )
+          ),
         )}
       </ul>
     </nav>
@@ -100,26 +107,28 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto w-full bg-navy text-white">
+    <footer className="mt-auto w-full bg-coal text-chalk">
+      {/* Viền xanh — nét mực bút chì xanh chạy ngang */}
       <div
         aria-hidden="true"
-        className="h-1 w-full bg-gradient-to-r from-[#2060F0] via-[#4D8DFF] to-[#2060F0]"
+        className="h-[3px] w-full bg-gradient-to-r from-royal/20 via-royal to-royal/20"
       />
 
       <FadeIn y={16} className="mx-auto max-w-7xl px-4 pb-12 pt-14 md:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.45fr_1fr_1fr_1fr_0.95fr] lg:gap-x-8">
           <div className="col-span-2 lg:col-span-1 lg:pr-4">
             <Logo inverse />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-chalk-soft">
               Nền tảng thực tập ảo mô phỏng quy trình làm việc thật, giúp sinh
               viên và giảng viên kết nối với cơ hội nghề nghiệp thực tế.
             </p>
 
             <div className="mt-8">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-white">
+              <h2 className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-chalk">
                 Nhận bản tin
+                <SparkleDoodle className="h-3 w-3 text-[#7d97ff]/80" />
               </h2>
-              <p className="mt-2 max-w-xs text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-2 max-w-xs text-xs leading-relaxed text-chalk-soft">
                 Nhập email nghề nghiệp và nhận bản tin ngành mới mỗi tuần.
               </p>
               <NewsletterForm />
@@ -132,7 +141,7 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-muted-foreground transition-colors hover:border-brand hover:bg-brand hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-chalk/20 bg-chalk/5 text-chalk-soft transition-all hover:-translate-y-0.5 hover:border-royal hover:bg-royal hover:text-white"
                   >
                     <span className="sr-only">{social.label}</span>
                     <social.icon className="h-4 w-4" aria-hidden="true" />
@@ -148,15 +157,18 @@ export function Footer() {
         </div>
       </FadeIn>
 
-      <div className="border-t border-white/10">
+      <div className="border-t-2 border-chalk/12">
         <div
-          className="mx-auto max-w-7xl px-4 py-6 md:px-6 lg:px-8"
+          className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 px-4 py-6 sm:flex-row sm:items-center md:px-6 lg:px-8"
           style={{
             paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))",
           }}
         >
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-chalk-soft">
             © {year} V-Intern. Bảo lưu mọi quyền.
+          </p>
+          <p className="font-hand text-[15px] text-[#7d97ff]">
+            làm bằng cả trái tim ở Việt Nam ✎
           </p>
         </div>
       </div>
