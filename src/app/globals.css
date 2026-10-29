@@ -5,11 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-navy: #16243e;
-  --color-brand: #0284c7;
-  --color-brand-600: #0369a1;
+  --color-navy: #17171c;
+  --color-brand: #2060f0;
+  --color-brand-600: #1743c4;
   --font-handwriting: var(--font-caveat), cursive;
-  --color-canvas: #f6f9fd;
+  --font-hand: var(--font-caveat), cursive;
+  --color-canvas: #fbfaf4;
 }
 
 html {
@@ -20,8 +21,8 @@ html {
    bg-navy mocks (footer, hero sidebar, avatars — always paired with text-white).
    In dark the token flips to light ink (see tokens.css); these overrides keep
    the navy SURFACES deep near-black so their white text stays readable. */
-.dark .bg-navy { background-color: #0d1512; }
-.dark .ring-offset-navy { --tw-ring-offset-color: #0d1512; }
+.dark .bg-navy { background-color: #131318; }
+.dark .ring-offset-navy { --tw-ring-offset-color: #131318; }
 
 @theme inline {
   --color-background: var(--background);
@@ -57,6 +58,26 @@ html {
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* Notebook palette ("Sổ tay hành trình") — adaptive, flips with the theme. */
+  --color-paper: var(--paper);
+  --color-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-blue: var(--blue);
+  --color-blue-deep: var(--blue-deep);
+  --color-blue-mist: var(--blue-mist);
+
+  /* Fixed colors — never flip with the theme:
+     royal = deep-blue surface with white text; coal = black surface; chalk = text on black. */
+  --color-royal: #2060f0;
+  --color-royal-deep: #1743c4;
+  --color-coal: #141419;
+  --color-coal-soft: #1f1f28;
+  --color-chalk: #f2f1e9;
+  --color-chalk-soft: #a8a8b2;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -125,10 +146,10 @@ html {
 @keyframes v-float {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-10px) rotate(var(--float-rotate, 0deg));
   }
 }
 
@@ -154,6 +175,161 @@ html {
   animation: v-float-soft 7s ease-in-out 0.8s infinite;
 }
 
+@keyframes v-wiggle {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes v-blink-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes v-spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-wiggle {
+  animation: v-wiggle 3.2s ease-in-out infinite;
+}
+
+.animate-blink-dot {
+  animation: v-blink-dot 1.3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: v-spin-slow 14s linear infinite;
+}
+
+/* ---------- Notebook utilities ("Sổ tay hành trình") ---------- */
+@layer utilities {
+  /* Nền giấy ô ly */
+  .bg-grid-paper {
+    background-image: linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  /* Nền giấy chấm bi */
+  .bg-dots-paper {
+    background-image: radial-gradient(var(--line) 1.4px, transparent 1.4px);
+    background-size: 24px 24px;
+  }
+
+  /* Nền chấm phấn — dùng trên các section đen cố định */
+  .bg-dots-chalk {
+    background-image: radial-gradient(rgba(242, 241, 233, 0.09) 1.4px, transparent 1.4px);
+    background-size: 24px 24px;
+  }
+
+  /* Làm mờ dần lưới ở mép */
+  .mask-fade-edges {
+    -webkit-mask-image: radial-gradient(
+      ellipse 90% 85% at 50% 40%,
+      black 55%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 90% 85% at 50% 40%,
+      black 55%,
+      transparent 100%
+    );
+  }
+
+  /* Dòng chữ được tô bút dạ quang xanh */
+  .marker {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    background-image: linear-gradient(
+      100deg,
+      transparent 0.5%,
+      var(--blue-mist) 2.5%,
+      var(--blue-mist) 97%,
+      transparent 99%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 88%;
+    background-position: 0 58%;
+    padding-inline: 0.12em;
+  }
+
+  /* Thẻ giấy viền mực + bóng đổ in */
+  .sketch-card {
+    background: var(--paper-raised);
+    border: 2px solid var(--ink);
+    border-radius: 1rem;
+    box-shadow: 5px 5px 0 0 var(--hard-shadow);
+  }
+
+  .sketch-card-sm {
+    background: var(--paper-raised);
+    border: 2px solid var(--ink);
+    border-radius: 0.75rem;
+    box-shadow: 3px 3px 0 0 var(--hard-shadow);
+  }
+
+  /* Nét đứt như đường cắt giấy */
+  .dashed-cut {
+    border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
+  }
+
+  /* Mẩu băng dính washi */
+  .tape {
+    position: absolute;
+    width: 96px;
+    height: 28px;
+    background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+    box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+    clip-path: polygon(
+      2% 8%,
+      98% 0%,
+      100% 82%,
+      97% 100%,
+      3% 94%,
+      0% 14%
+    );
+    opacity: 0.9;
+  }
+
+  .dark .tape {
+    background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+  }
+
+  /* Con dấu tròn kiểu mộc */
+  .stamp {
+    border: 2.5px solid currentColor;
+    border-radius: 999px;
+    mask-image: radial-gradient(
+      circle at 30% 30%,
+      black 92%,
+      transparent 98%
+    );
+  }
+
+  /* Gạch chân lượn sóng vẽ tay (dùng cho link) */
+  .underline-squiggle {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%232060F0' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: 0 100%;
+    background-size: 40px 6px;
+    padding-bottom: 7px;
+  }
+}
+
 @keyframes vintern-result-enter {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -168,7 +344,10 @@ html {
   }
   .animate-float,
   .animate-float-delayed,
-  .animate-float-soft {
+  .animate-float-soft,
+  .animate-wiggle,
+  .animate-blink-dot,
+  .animate-spin-slow {
     animation: none;
   }
 }

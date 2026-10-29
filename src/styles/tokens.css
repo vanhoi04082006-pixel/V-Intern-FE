@@ -1,42 +1,42 @@
-/* Hallmark · V-Intern · theme: "Sky White / Emerald Noir" · shape: app screen · scope: app */
-/* Light = giấy trắng – mực xanh da trời (Sky White); Dark = Emerald Noir: nền gần đen ánh lục, brand #10b981. */
+/* Hallmark · V-Intern · theme: "Sổ tay hành trình / Chalkboard" · shape: app screen · scope: app */
+/* Light = giấy kem #fbfaf4 – mực đen #17171c – mực xanh #2060f0; Dark = bảng đen #131318. */
 /* Existing public-page theme values; the .dark block below flips them for the landing. */
 :root {
-  --radius: 0.625rem;
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --radius: 0.875rem;
+  --background: #fbfaf4;
+  --foreground: #17171c;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #17171c;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0284c7;
+  --popover-foreground: #17171c;
+  --primary: #2060f0;
   --primary-foreground: #ffffff;
-  --secondary: #f0f7fc;
-  --secondary-foreground: #0f172a;
-  --muted: #f0f7fc;
-  --muted-foreground: #475569;
-  --accent: #e0f2fe;
-  --accent-foreground: #075985;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(15, 23, 42, 0.1);
-  --input: rgba(15, 23, 42, 0.2);
-  --ring: #0284c7;
+  --secondary: #e9f0fe;
+  --secondary-foreground: #17171c;
+  --muted: #efede3;
+  --muted-foreground: #5a5a64;
+  --accent: #e9f0fe;
+  --accent-foreground: #17171c;
+  --destructive: #d9304a;
+  --border: #e5e3d9;
+  --input: #e5e3d9;
+  --ring: rgba(32, 96, 240, 0.45);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #f5f3ea;
+  --sidebar-foreground: #17171c;
+  --sidebar-primary: #2060f0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e9f0fe;
+  --sidebar-accent-foreground: #17171c;
+  --sidebar-border: #e5e3d9;
+  --sidebar-ring: rgba(32, 96, 240, 0.45);
 }
 
-/* Landing + public pages in dark: Emerald Noir night instead of paper white.
+/* Landing + public pages in dark: chalkboard night instead of paper white.
    These tokens feed the static utilities (bg-navy, text-navy, bg-brand…) because
    Tailwind 4 emits them as custom properties — overriding here re-themes the page. */
 .dark {
@@ -44,41 +44,76 @@
      18 text-navy headings read on the dark canvas; the few navy SURFACES
      (bg-navy — footer, hero mock, avatars) keep a deep tone via the
      .dark .bg-navy override in globals.css. */
-  --color-navy: #edf2ef;
-  --color-brand: #10b981;
-  --color-brand-600: #34d399;
-  --color-canvas: #090c0b;
-  --background: #090c0b;
-  --foreground: #edf2ef;
-  --card: #111615;
-  --card-foreground: #edf2ef;
-  --popover: #171d1b;
-  --popover-foreground: #edf2ef;
-  --primary: #10b981;
-  --primary-foreground: #04241a;
-  --secondary: #171d1b;
-  --secondary-foreground: #edf2ef;
-  --muted: #171d1b;
-  --muted-foreground: #9aa5a0;
-  --accent: #12241d;
-  --accent-foreground: #6ee7b7;
-  --destructive: #fb7185;
-  --border: rgba(237, 242, 239, 0.09);
-  --input: rgba(237, 242, 239, 0.16);
-  --ring: #10b981;
-  --chart-1: #10b981;
+  --color-navy: #f2f1e9;
+  --color-brand: #7d97ff;
+  --color-brand-600: #99adff;
+  --color-canvas: #131318;
+  --background: #131318;
+  --foreground: #f2f1e9;
+  --card: #1c1c24;
+  --card-foreground: #f2f1e9;
+  --popover: #1c1c24;
+  --popover-foreground: #f2f1e9;
+  --primary: #7d97ff;
+  --primary-foreground: #101018;
+  --secondary: rgba(125, 151, 255, 0.16);
+  --secondary-foreground: #f2f1e9;
+  --muted: #202029;
+  --muted-foreground: #a8a8b2;
+  --accent: rgba(125, 151, 255, 0.16);
+  --accent-foreground: #f2f1e9;
+  --destructive: #ff627a;
+  --border: #2b2b35;
+  --input: #2b2b35;
+  --ring: rgba(125, 151, 255, 0.5);
+  --chart-1: #7d97ff;
   --chart-2: #38bdf8;
   --chart-3: #fbbf24;
   --chart-4: #a78bfa;
   --chart-5: #fb7185;
-  --sidebar: #0d1211;
-  --sidebar-foreground: #edf2ef;
-  --sidebar-primary: #10b981;
-  --sidebar-primary-foreground: #04241a;
-  --sidebar-accent: #171d1b;
-  --sidebar-accent-foreground: #edf2ef;
-  --sidebar-border: rgba(237, 242, 239, 0.09);
-  --sidebar-ring: #10b981;
+  --sidebar: #101016;
+  --sidebar-foreground: #f2f1e9;
+  --sidebar-primary: #7d97ff;
+  --sidebar-primary-foreground: #101018;
+  --sidebar-accent: #1c1c24;
+  --sidebar-accent-foreground: #f2f1e9;
+  --sidebar-border: #2b2b35;
+  --sidebar-ring: rgba(125, 151, 255, 0.5);
+}
+
+/* Notebook palette ("Sổ tay hành trình") exposed as utilities:
+   bg-paper, bg-raised, text-ink, border-line, text-blue… */
+:root {
+  --paper: #fbfaf4;
+  --paper-raised: #ffffff;
+  --ink: #17171c;
+  --ink-soft: #5a5a64;
+  --ink-faint: #9c9ca6;
+  --blue: #2060f0;
+  --blue-deep: #1743c4;
+  --blue-mist: #e9f0fe;
+  --line: rgba(23, 23, 28, 0.075);
+  --hard-shadow: rgba(23, 23, 28, 0.92);
+  /* Fixed across themes: deep-blue surface, coal surface, chalk text on it. */
+  --royal: #2060f0;
+  --royal-deep: #1743c4;
+  --coal: #141419;
+  --coal-soft: #1f1f28;
+  --chalk: #f2f1e9;
+  --chalk-soft: #a8a8b2;
+}
+
+.dark {
+  --paper: #131318;
+  --paper-raised: #1c1c24;
+  --ink: #f2f1e9;
+  --ink-soft: #a8a8b2;
+  --ink-faint: #70707b;
+  --blue: #7d97ff;
+  --blue-deep: #99adff;
+  --blue-mist: rgba(125, 151, 255, 0.16);
+  --line: rgba(242, 241, 233, 0.085);
+  --hard-shadow: rgba(0, 0, 0, 0.55);
 }
 
 @theme inline {
@@ -116,31 +151,31 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
 }
 
 :root {
-  /* Neutral ramp: slate (Emerald "ink" system). */
+  /* Neutral ramp: warm graphite ("ink on paper" system). */
   --app-neutral-0: #ffffff;
-  --app-neutral-50: #f8fafc;
-  --app-neutral-100: #f1f5f9;
-  --app-neutral-200: #e2e8f0;
-  --app-neutral-300: #cbd5e1;
-  --app-neutral-400: #94a3b8;
-  --app-neutral-500: #64748b;
-  --app-neutral-600: #475569;
-  --app-neutral-700: #334155;
-  --app-neutral-800: #1e293b;
-  --app-neutral-900: #0f172a;
-  --app-neutral-950: #020617;
-  /* Brand ramp: sky (light "Sky White" brand = sky-600 #0284c7). */
-  --app-primary-50: #f0f9ff;
-  --app-primary-100: #e0f2fe;
-  --app-primary-200: #bae6fd;
-  --app-primary-300: #7dd3fc;
-  --app-primary-400: #38bdf8;
-  --app-primary-500: #0ea5e9;
-  --app-primary-600: #0284c7;
-  --app-primary-700: #0369a1;
-  --app-primary-800: #075985;
-  --app-primary-900: #0c4a6e;
-  /* Status ramps: emerald / amber / rose, aligned with Emerald Noir's accent hues. */
+  --app-neutral-50: #fbfaf4;
+  --app-neutral-100: #f5f3ea;
+  --app-neutral-200: #e5e3d9;
+  --app-neutral-300: #cfcdc3;
+  --app-neutral-400: #9c9ca6;
+  --app-neutral-500: #70707b;
+  --app-neutral-600: #5a5a64;
+  --app-neutral-700: #43434c;
+  --app-neutral-800: #2b2b35;
+  --app-neutral-900: #17171c;
+  --app-neutral-950: #0c0c10;
+  /* Brand ramp: notebook blue (light brand = blue-600 #2060f0). */
+  --app-primary-50: #e9f0fe;
+  --app-primary-100: #dbe6fd;
+  --app-primary-200: #c3d4fb;
+  --app-primary-300: #9db8f8;
+  --app-primary-400: #6d92f4;
+  --app-primary-500: #3f72f2;
+  --app-primary-600: #2060f0;
+  --app-primary-700: #1743c4;
+  --app-primary-800: #183a9e;
+  --app-primary-900: #1a367d;
+  /* Status ramps: emerald / amber / rose — semantic status hues, independent of the brand palette. */
   --app-success-50: #ecfdf5;
   --app-success-100: #d1fae5;
   --app-success-500: #059669;
@@ -218,25 +253,25 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
 }
 
 :is(.workspace-ui, .app-surface) {
-  /* Light theme "Sky White": canvas #f6f9fd, panel #fff, panel-2 #f4f8fc,
-     line slate/9%, brand sky-600 #0284c7, ink #0f172a, dim #475569. */
-  --background: #f6f9fd;
-  --foreground: #0f172a;
+  /* Light theme "Sổ tay": canvas #fbfaf4, panel #fff, panel-2 #f5f3ea,
+     line #e5e3d9, brand blue-600 #2060f0, ink #17171c, dim #5a5a64. */
+  --background: #fbfaf4;
+  --foreground: #17171c;
   --card: #ffffff;
   --card-foreground: var(--foreground);
-  --popover: #f4f8fc;
+  --popover: #f5f3ea;
   --popover-foreground: var(--foreground);
   --primary: var(--app-primary-600);
   --primary-foreground: #ffffff;
-  --secondary: #f4f8fc;
+  --secondary: #f5f3ea;
   --secondary-foreground: var(--foreground);
-  --muted: #f4f8fc;
-  --muted-foreground: #475569;
-  --accent: #f4f8fc;
+  --muted: #f5f3ea;
+  --muted-foreground: #5a5a64;
+  --accent: #e9f0fe;
   --accent-foreground: var(--foreground);
-  --border: rgba(15, 23, 42, 0.09);
-  --input: rgba(15, 23, 42, 0.18);
-  --ring: var(--app-primary-600);
+  --border: #e5e3d9;
+  --input: #e5e3d9;
+  --ring: rgba(32, 96, 240, 0.45);
   --destructive: var(--app-danger-600);
   --destructive-subtle: var(--app-danger-50);
   --success: var(--app-success-600);
@@ -245,9 +280,9 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   --warning-subtle: var(--app-warning-50);
   --info: var(--app-primary-700);
   --info-subtle: var(--app-primary-50);
-  --sidebar: #eef4fa;
+  --sidebar: #f5f3ea;
   --sidebar-foreground: var(--foreground);
-  --sidebar-accent: #f4f8fc;
+  --sidebar-accent: #e9f0fe;
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
@@ -298,51 +333,51 @@ html:has(.workspace-ui, .app-surface), body:has(.workspace-ui, .app-surface) {
   caret-color: var(--primary);
 }
 
-:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: rgba(2, 132, 199, 0.16); }
+:is(.workspace-ui, .app-surface) ::selection { color: var(--foreground); background: rgba(32, 96, 240, 0.16); }
 :is(.workspace-ui, .app-surface) :where(h1, h2, h3, h4) { font-family: var(--font-app-heading), sans-serif; min-width: 0; overflow-wrap: break-word; text-wrap: balance; }
 :is(.workspace-ui, .app-surface), :is(.workspace-ui, .app-surface) * { scrollbar-color: var(--input) var(--background); }
 :is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid var(--ring); outline-offset: var(--space-1); }
 :is(.workspace-ui, .app-surface) :where(a, button, input, select, textarea, summary) { transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 
 .dark :is(.workspace-ui, .app-surface) {
-  /* Dark theme "Emerald Noir": canvas #090c0b, panel #111615,
-     panel-2 #171d1b, line white/7%, brand #10b981, on-brand #04241a,
-     ink #edf2ef, dim #9aa5a0, deep sidebar #0d1211. */
-  --background: #090c0b;
-  --foreground: #edf2ef;
-  --card: #111615;
+  /* Dark theme "Chalkboard": canvas #131318, panel #1c1c24,
+     panel-2 #202029, line #2b2b35, brand #7d97ff, on-brand #101018,
+     ink #f2f1e9, dim #a8a8b2, deep sidebar #101016. */
+  --background: #131318;
+  --foreground: #f2f1e9;
+  --card: #1c1c24;
   --card-foreground: var(--foreground);
-  --popover: #171d1b;
-  --primary: #10b981;
-  --primary-foreground: #04241a;
-  --secondary: #171d1b;
+  --popover: #202029;
+  --primary: #7d97ff;
+  --primary-foreground: #101018;
+  --secondary: #202029;
   --secondary-foreground: var(--foreground);
-  --muted: #171d1b;
-  --muted-foreground: #9aa5a0;
-  --accent: #171d1b;
+  --muted: #202029;
+  --muted-foreground: #a8a8b2;
+  --accent: rgba(125, 151, 255, 0.16);
   --accent-foreground: var(--foreground);
-  --border: rgba(255, 255, 255, 0.07);
-  --input: rgba(255, 255, 255, 0.14);
-  --ring: #10b981;
-  --destructive: #fb7185;
+  --border: #2b2b35;
+  --input: #2b2b35;
+  --ring: rgba(125, 151, 255, 0.5);
+  --destructive: #ff627a;
   --destructive-subtle: #4c0519;
   --success: #34d399;
   --success-subtle: #022c22;
   --warning: #fbbf24;
   --warning-subtle: #451a03;
-  --info: #38bdf8;
-  --info-subtle: #082f49;
-  --sidebar: #0d1211;
+  --info: #7d97ff;
+  --info-subtle: rgba(125, 151, 255, 0.16);
+  --sidebar: #101016;
   --sidebar-foreground: var(--foreground);
-  --sidebar-accent: #171d1b;
+  --sidebar-accent: #1c1c24;
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
-  --ws-primary-hover: #34d399;
+  --ws-primary-hover: #99adff;
   --color-brand: var(--primary);
-  --color-brand-600: #34d399;
+  --color-brand-600: #99adff;
 }
 
-.dark :is(.workspace-ui, .app-surface) ::selection { background: rgba(16, 185, 129, 0.28); }
+.dark :is(.workspace-ui, .app-surface) ::selection { background: rgba(125, 151, 255, 0.28); }
 
 /* Sticky chrome must never cover scroll targets: the workspace topbar and
    the editor’s sticky action bar both overlap content scrolled into view
