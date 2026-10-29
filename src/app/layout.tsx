@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Be_Vietnam_Pro,
-  JetBrains_Mono,
-  Patrick_Hand,
-} from "next/font/google";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { THEME_BOOTSTRAP } from "@/lib/theme";
 import "./globals.css";
@@ -25,9 +21,9 @@ const beVietnam = Be_Vietnam_Pro({
   display: "swap",
 });
 
-const patrickHand = Patrick_Hand({
+const patrickHand = localFont({
+  src: "./fonts/patrick-hand-regular.ttf",
   variable: "--font-patrick-hand",
-  subsets: ["latin", "vietnamese"],
   weight: "400",
   display: "swap",
 });
