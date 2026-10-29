@@ -16,8 +16,10 @@ import { Footer } from "@/components/landing/footer";
 
 import { AuthView } from "@/components/auth/auth-view";
 import { Workspace } from "@/components/workspace/workspace";
+import { ApplyView, VerifyView } from "@/components/public/apply-view";
+import { GitHubInviteView } from "@/components/public/github-invite-view";
 
-/** Trang landing — giữ nguyên thiết kế "Sổ tay hành trình". */
+/** Trang landing — thiết kế "Sổ tay hành trình". */
 function LandingView() {
   return (
     <div className="flex min-h-screen flex-col bg-paper font-sans text-ink">
@@ -42,8 +44,11 @@ function ViewSwitch() {
   useEffect(() => {
     // back/forward của trình duyệt → đồng bộ lại view theo hash
     const onHashChange = () => {
-      const next = viewFromHash(window.location.hash);
-      if (next) useAppStore.setState({ view: next });
+      const next = viewFromHash();
+      if (!next) return;
+      const { user } = useAppStore.getState();
+      if (next.view === "app" && !user) return;
+      useAppStore.setState({ view: next.view, section: next.section });
     };
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
@@ -51,10 +56,13 @@ function ViewSwitch() {
 
   if (view === "auth") return <AuthView />;
   if (view === "app") return <Workspace />;
+  if (view === "apply") return <ApplyView />;
+  if (view === "verify") return <VerifyView />;
+  if (view === "github-invite") return <GitHubInviteView />;
   return <LandingView />;
 }
 
-/** Gốc cây component — điều phối landing / auth / workspace ngay trong route "/". */
+/** Gốc cây component — điều phối mọi khung cảnh trong route "/". */
 export function VInternApp() {
   const hydrate = useAppStore((s) => s.hydrate);
   const [queryClient] = useState(
