@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
+import {
+  Be_Vietnam_Pro,
+  JetBrains_Mono,
+  Patrick_Hand,
+} from "next/font/google";
 import localFont from "next/font/local";
 import { THEME_BOOTSTRAP } from "@/lib/theme";
 import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/geist.ttf",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-  display: "swap",
-});
 
 const geistMono = localFont({
   src: "./fonts/geistmono.ttf",
@@ -19,19 +16,19 @@ const geistMono = localFont({
   preload: false,
 });
 
-const caveat = localFont({
-  src: "./fonts/caveat.ttf",
-  variable: "--font-caveat",
-  weight: "400 700",
-  display: "swap",
-  preload: false,
-});
-
-/* Emerald Noir workspace typography (homepage keeps Geist/Caveat). */
+/* Journey Notebook typography: Be Vietnam Pro for reading, Patrick Hand for
+   handwritten notes, Geist Mono for labels. Workspace keeps Be Vietnam Pro. */
 const beVietnam = Be_Vietnam_Pro({
   variable: "--font-be-vietnam",
   subsets: ["latin", "vietnamese"],
   weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const patrickHand = Patrick_Hand({
+  variable: "--font-patrick-hand",
+  subsets: ["latin", "vietnamese"],
+  weight: "400",
   display: "swap",
 });
 
@@ -77,7 +74,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${beVietnam.variable} ${jetbrains.variable}`}>
+    <html lang="vi" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistMono.variable} ${beVietnam.variable} ${patrickHand.variable} ${jetbrains.variable}`}>
       <head>
         {/* Apply the stored theme before first paint — no flash of the wrong palette. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
