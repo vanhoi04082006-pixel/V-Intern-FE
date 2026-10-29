@@ -7,56 +7,33 @@ import {
   ArrowLeft,
   ArrowRight,
   Bot,
+  Check,
   Eye,
   EyeOff,
-  GraduationCap,
   Loader2,
   Lock,
   Mail,
   Moon,
+  ShieldCheck,
   Sparkles,
   Sun,
   User,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useAppStore, type SessionUser } from "@/lib/store";
+import { useAppStore } from "@/lib/store";
+import {
+  changePassword,
+  login,
+  register,
+  type SessionUser,
+} from "@/lib/auth/auth-service";
 import { Logo } from "@/components/landing/logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FadeIn } from "@/components/landing/reveal";
 import { StarDoodle, SparkleDoodle, SquiggleUnderline } from "@/components/landing/doodles";
-
-/* ------------------------------------------------------------------ */
-/*  Tài khoản demo — bấm là điền sẵn                                   */
-/* ------------------------------------------------------------------ */
-const DEMO_ACCOUNTS = [
-  {
-    label: "Sinh viên",
-    email: "intern@v-intern.vn",
-    password: "123456",
-    hint: "Minh Anh · intern",
-  },
-  {
-    label: "Giảng viên",
-    email: "instructor@v-intern.vn",
-    password: "123456",
-    hint: "ThS. Hùng · instructor",
-  },
-  {
-    label: "Quản trị",
-    email: "admin@v-intern.vn",
-    password: "123456",
-    hint: "Ban quản trị · admin",
-  },
-];
 
 /* ------------------------------------------------------------------ */
 /*  Ô nhập kiểu "viết lên giấy"                                        */
@@ -122,40 +99,36 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mustChange, setMustChange] = useState<SessionUser | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast({
-          title: "Đăng nhập chưa thành công",
-          description: data.error ?? "Có gì đó không ổn.",
-          variant: "destructive",
-        });
-        return;
-      }
+    const result = await login({ email, password });
+    setLoading(false);
+    if (!result.ok) {
       toast({
-        title: `Chào mừng trở lại, ${data.user.name.split(" ").slice(-1)[0]}! 👋`,
-        description: "Sổ tay hành trình của bạn đã sẵn sàng.",
-      });
-      signIn(data.user as SessionUser);
-    } catch {
-      toast({
-        title: "Không kết nối được máy chủ",
-        description: "Kiểm tra mạng rồi thử lại giúp mình nhé.",
+        title: "Đăng nhập chưa thành công",
+        description: result.message,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+      return;
     }
+    const user = result.user;
+    if (user?.mustChangePassword) {
+      setMustChange(user);
+      return;
+    }
+    toast({
+      title: `Chào mừng trở lại, ${user ? user.displayName.split(" ").slice(-1)[0] : "bạn"}! 👋`,
+      description: "Sổ tay hành trình của bạn đã sẵn sàng.",
+    });
+    if (user) signIn(user);
+  }
+
+  if (mustChange) {
+    return <MustChangePasswordForm user={mustChange} />;
   }
 
   return (
@@ -165,7 +138,7 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
           id="login-email"
           type="email"
           autoComplete="email"
-          placeholder="ban@v-intern.vn"
+          placeholder="ban@vintern.edu.vn"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={inputSketch}
@@ -207,7 +180,7 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
             toast({
               title: "Quên mật khẩu?",
               description:
-                "Bản demo này dùng tài khoản demo bên dưới — mật khẩu 123456 nhé!",
+                "Hệ thống không hỗ trợ tự đặt lại. Liên hệ quản trị viên để được cấp lại mật khẩu tạm nhé!",
             })
           }
           className="text-[13px] font-semibold text-blue underline-squiggle"
@@ -237,32 +210,6 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
         )}
       </Button>
 
-      <div className="flex items-center gap-3" aria-hidden="true">
-        <span className="h-0.5 flex-1 rounded-full bg-ink/10" />
-        <span className="font-hand text-[17px] text-ink-faint">hoặc thử nhanh với</span>
-        <span className="h-0.5 flex-1 rounded-full bg-ink/10" />
-      </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        {DEMO_ACCOUNTS.map((acc) => (
-          <button
-            key={acc.email}
-            type="button"
-            onClick={() => {
-              setEmail(acc.email);
-              setPassword(acc.password);
-            }}
-            title={`${acc.email} · ${acc.hint}`}
-            className="group flex min-h-[64px] flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-dashed border-ink/25 bg-raised px-2 py-2 transition-all hover:-translate-y-0.5 hover:border-blue hover:bg-blue-mist"
-          >
-            <span className="text-xs font-bold text-ink group-hover:text-blue">
-              {acc.label}
-            </span>
-            <span className="font-mono text-[10px] text-ink-faint">123456</span>
-          </button>
-        ))}
-      </div>
-
       <p className="pt-1 text-center text-sm text-ink-soft">
         Chưa có tài khoản?{" "}
         <button
@@ -278,18 +225,130 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Form đổi mật khẩu bắt buộc (tài khoản mật khẩu tạm)                */
+/* ------------------------------------------------------------------ */
+function MustChangePasswordForm({ user }: { user: SessionUser }) {
+  const { toast } = useToast();
+  const signIn = useAppStore((s) => s.signIn);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (loading) return;
+    if (newPassword !== confirm) {
+      toast({
+        title: "Mật khẩu mới chưa khớp",
+        description: "Nhập lại phần xác nhận giúp mình nhé.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoading(true);
+    const result = await changePassword({ currentPassword, newPassword });
+    setLoading(false);
+    if (!result.ok) {
+      toast({
+        title: "Đổi mật khẩu chưa thành công",
+        description: result.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Đã đặt mật khẩu mới ✦",
+      description: "Vui lòng đăng nhập lại với mật khẩu mới nhé.",
+    });
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirm("");
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <div className="rounded-xl border-2 border-dashed border-blue/50 bg-blue-mist/60 p-4">
+        <p className="flex items-start gap-2 text-sm font-semibold leading-relaxed text-ink">
+          <ShieldCheck className="mt-0.5 h-4.5 w-4.5 shrink-0 text-blue" aria-hidden="true" />
+          Tài khoản của bạn đang dùng mật khẩu tạm. Hãy đặt mật khẩu mới (tối thiểu 12 ký tự) để tiếp tục — sau đó đăng nhập lại.
+        </p>
+      </div>
+
+      <Field id="mc-current" label="Mật khẩu tạm hiện tại" icon={Lock}>
+        <Input
+          id="mc-current"
+          type="password"
+          autoComplete="current-password"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          className={inputSketch}
+          required
+        />
+      </Field>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="mc-new" label="Mật khẩu mới" icon={Lock} hint="tối thiểu 12 ký tự">
+          <Input
+            id="mc-new"
+            type="password"
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className={inputSketch}
+            required
+            minLength={12}
+          />
+        </Field>
+        <Field id="mc-confirm" label="Xác nhận mật khẩu mới" icon={Lock}>
+          <Input
+            id="mc-confirm"
+            type="password"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            className={inputSketch}
+            required
+            minLength={12}
+          />
+        </Field>
+      </div>
+
+      <Button
+        type="submit"
+        disabled={loading}
+        className="group h-[52px] w-full rounded-xl border-2 border-ink bg-ink text-sm font-bold text-paper shadow-[4px_4px_0_0_var(--blue)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_var(--blue)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--blue)] disabled:pointer-events-none disabled:opacity-60"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Đang lưu…
+          </>
+        ) : (
+          <>
+            Đặt mật khẩu mới
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+          </>
+        )}
+      </Button>
+
+      <p className="text-center font-hand text-[15px] text-ink-faint">
+        xin chào {user.displayName.split(" ").slice(-1)[0]} — gần xong rồi! ✦
+      </p>
+    </form>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Form đăng ký                                                       */
 /* ------------------------------------------------------------------ */
 function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
   const { toast } = useToast();
-  const signIn = useAppStore((s) => s.signIn);
-  const [name, setName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [university, setUniversity] = useState("");
-  const [major, setMajor] = useState("");
-  const [role, setRole] = useState("intern");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -305,48 +364,36 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
       return;
     }
     setLoading(true);
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role, university, major }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast({
-          title: "Đăng ký chưa thành công",
-          description: data.error ?? "Có gì đó không ổn.",
-          variant: "destructive",
-        });
-        return;
-      }
+    const result = await register({ fullName, email, password, acceptedTerms });
+    setLoading(false);
+    if (!result.ok) {
       toast({
-        title: `Chào ${data.user.name.split(" ").slice(-1)[0]}, chào mừng đến V-Intern! ✦`,
-        description: "Trang đầu tiên của sổ tay đã được mở.",
-      });
-      signIn(data.user as SessionUser);
-    } catch {
-      toast({
-        title: "Không kết nối được máy chủ",
-        description: "Kiểm tra mạng rồi thử lại giúp mình nhé.",
+        title: "Đăng ký chưa thành công",
+        description: result.message,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+      return;
     }
+    toast({
+      title: "Đã tạo tài khoản sinh viên ✦",
+      description: "Đăng nhập bằng email và mật khẩu vừa đặt để bắt đầu nhé!",
+    });
+    onSwitch();
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="reg-name" label="Họ và tên" icon={User}>
+        <Field id="reg-name" label="Họ và tên" icon={User} hint="2–128 ký tự">
           <Input
             id="reg-name"
             placeholder="Nguyễn Văn A"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             className={inputSketch}
             required
+            minLength={2}
+            maxLength={128}
           />
         </Field>
         <Field id="reg-email" label="Email" icon={Mail}>
@@ -364,41 +411,7 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="reg-university" label="Trường (tùy chọn)" icon={GraduationCap}>
-          <Input
-            id="reg-university"
-            placeholder="Đại học Bách Khoa"
-            value={university}
-            onChange={(e) => setUniversity(e.target.value)}
-            className={inputSketch}
-          />
-        </Field>
-        <Field id="reg-major" label="Chuyên ngành (tùy chọn)" icon={Sparkles}>
-          <Input
-            id="reg-major"
-            placeholder="Khoa học máy tính"
-            value={major}
-            onChange={(e) => setMajor(e.target.value)}
-            className={inputSketch}
-          />
-        </Field>
-      </div>
-
-      <Field id="reg-role" label="Bạn đến với V-Intern với vai trò" icon={Bot}>
-        <Select value={role} onValueChange={setRole}>
-          <SelectTrigger id="reg-role" className={`${inputSketch} w-full font-medium`}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="intern">Sinh viên thực tập</SelectItem>
-            <SelectItem value="instructor">Giảng viên hướng dẫn</SelectItem>
-            <SelectItem value="admin">Quản trị nền tảng</SelectItem>
-          </SelectContent>
-        </Select>
-      </Field>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="reg-password" label="Mật khẩu" icon={Lock} hint="tối thiểu 6 ký tự">
+        <Field id="reg-password" label="Mật khẩu" icon={Lock} hint="tối thiểu 8 ký tự">
           <div className="relative">
             <Input
               id="reg-password"
@@ -409,7 +422,8 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
               onChange={(e) => setPassword(e.target.value)}
               className={`${inputSketch} pr-12`}
               required
-              minLength={6}
+              minLength={8}
+              maxLength={72}
             />
             <button
               type="button"
@@ -435,14 +449,30 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
             onChange={(e) => setConfirm(e.target.value)}
             className={inputSketch}
             required
-            minLength={6}
+            minLength={8}
           />
         </Field>
       </div>
 
+      <label
+        htmlFor="reg-terms"
+        className="flex cursor-pointer items-start gap-3 rounded-xl border-2 border-dashed border-ink/20 bg-raised p-3.5 transition-colors hover:border-blue/60"
+      >
+        <Checkbox
+          id="reg-terms"
+          checked={acceptedTerms}
+          onCheckedChange={(v) => setAcceptedTerms(v === true)}
+          className="mt-0.5 h-4.5 w-4.5 rounded-md border-2 border-ink/40 data-[state=checked]:border-blue data-[state=checked]:bg-blue"
+        />
+        <span className="text-[13px] leading-relaxed text-ink-soft">
+          Tôi đồng ý với điều khoản sử dụng và cam kết học thật — làm thật trong
+          chương trình thực tập ảo V-Intern.
+        </span>
+      </label>
+
       <Button
         type="submit"
-        disabled={loading}
+        disabled={loading || !acceptedTerms}
         className="group h-[52px] w-full rounded-xl border-2 border-ink bg-ink text-sm font-bold text-paper shadow-[4px_4px_0_0_var(--blue)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_var(--blue)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--blue)] disabled:pointer-events-none disabled:opacity-60"
       >
         {loading ? (
@@ -452,17 +482,15 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
           </>
         ) : (
           <>
+            <Check className="h-4 w-4" aria-hidden="true" />
             Viết trang đầu tiên
-            <ArrowRight
-              className="h-4 w-4 transition-transform group-hover:translate-x-1"
-              aria-hidden="true"
-            />
           </>
         )}
       </Button>
 
       <p className="pt-1 text-center text-sm text-ink-soft">
-        Đã có tài khoản?{" "}
+        Đăng ký công khai tạo tài khoản <strong>sinh viên thực tập</strong>. Tài
+        khoản giảng viên/quản trị do ban quản trị cấp.{" "}
         <button
           type="button"
           onClick={onSwitch}
@@ -519,8 +547,8 @@ function CoverPanel() {
 
         <div className="mt-10 grid w-full grid-cols-3 gap-3">
           {[
-            { value: "4", label: "sprint hành trình" },
-            { value: "16+", label: "nhiệm vụ thật" },
+            { value: "AI", label: "phỏng vấn đầu vào" },
+            { value: "Sprint", label: "làm việc thật" },
             { value: "1:1", label: "AI Mentor" },
           ].map((stat) => (
             <div
@@ -644,7 +672,8 @@ export function AuthView() {
               </div>
             </div>
 
-            <p className="mt-6 text-center font-hand text-[17px] text-ink-faint">
+            <p className="mt-6 flex items-center justify-center gap-1.5 text-center font-hand text-[17px] text-ink-faint">
+              <Bot className="h-4 w-4" aria-hidden="true" />
               bằng việc tiếp tục, bạn đồng ý cam kết học thật — làm thật ✦
             </p>
           </FadeIn>
