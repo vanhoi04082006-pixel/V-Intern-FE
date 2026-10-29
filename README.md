@@ -1,31 +1,46 @@
-# V-Intern — Nền tảng thực tập ảo cho sinh viên Việt
+# V-Intern FE — Giao diện nền tảng thực tập ảo
 
 > Hành trình thực tập đầu tiên, được thiết kế như một người đồng hành thật sự — không phải một dashboard lạnh lùng.
 
-V-Intern là nền tảng mô phỏng trải nghiệm thực tập chuyên nghiệp: sinh viên nhận nhiệm vụ theo sprint, làm việc trên kanban board, trò chuyện với **AI Mentor** và theo dõi quá trình phát triển của chính mình. Giảng viên và quản trị viên có góc nhìn riêng để dẫn dắt cả nhóm.
+Frontend cho [V-Intern-BE](https://github.com/vanhoi04082006-pixel/V-Intern-BE) (NestJS + SQL Server). Toàn bộ dữ liệu lấy từ **API thật của backend** qua proxy `/api/v1/*` — không còn database nội bộ.
 
 ## ✨ Tính năng
 
-- **Landing page** — hero, giới thiệu đối tượng, cách hoạt động, quy trình, demo phỏng vấn AI, CTA cuối trang, dark/light mode
-- **Đăng nhập / Đăng ký** — 3 vai trò: Intern (sinh viên), Instructor (giảng viên), Admin
-- **Dashboard** — tổng quan nhiệm vụ, tiến độ sprint, hoạt động gần đây
-- **Sprint Board** — kanban kéo-thả (dnd-kit) với Todo / In Progress / Review / Done
-- **Tasks** — quản lý nhiệm vụ theo độ ưu tiên, điểm số, hạn chót
-- **Projects** — danh mục dự án với tiến độ từng hạng mục
-- **Roster** — danh sách thành viên, lọc theo vai trò
-- **AI Mentor** — chat với AI có nhớ ngữ cảnh, hiểu nhiệm vụ đang làm của sinh viên
-- **Performance** — biểu đồ hiệu suất (recharts)
-- **Settings** — cập nhật hồ sơ cá nhân
+### Công khai (không cần đăng nhập)
+- **Landing page** — hero, cách hoạt động, demo phỏng vấn AI, dark/light mode
+- **`#/apply`** — ứng viên nộp CV vào đợt tuyển (multipart, cookie phiên ứng viên)
+- **`#/verify`** — kích hoạt link truy cập hồ sơ từ email
+- **`#/github-invite`** — trang kết quả OAuth GitHub / lời mời repository
 
-## 🎨 Design system
+### Xác thực
+- Đăng nhập / đăng ký công khai (tạo tài khoản intern)
+- Bearer JWT 15 phút + **refresh token HttpOnly cookie** (tự động xoay khi 401)
+- Đổi mật khẩu bắt buộc với tài khoản mật khẩu tạm (`mustChangePassword`)
+- Phân quyền theo **permission codes** — nav tự ẩn hiện theo quyền của user
 
-Bộ ba **Xanh dương / Trắng / Đen** làm chủ đạo:
+### Sinh viên thực tập (Intern)
+| Màn hình | Nội dung |
+|---|---|
+| Bảng điều khiển | Tổng quan nhiệm vụ, sprint hiện tại, nhiệm vụ tập trung |
+| Phỏng vấn đầu vào | Chọn vai trò nghề → phỏng vấn AI 10 câu (lưu nháp, hỏi làm rõ, nộp bài) → kết quả |
+| Đồ án của tôi | Thông tin đồ án + gói học tập |
+| Sprint | Kanban 4 cột, tự chuyển todo→doing→review |
+| Nhiệm vụ | Danh sách + chi tiết: đề bài, bàn giao PR, thảo luận, lịch sử |
+| AI Mentor | Chat nhiều hội thoại, có ngữ cảnh nhiệm vụ |
+| Hiệu suất / Đánh giá / KPI / Lương ảo / Chứng nhận | Chỉ số cá nhân, điểm rubric, bảng lương ảo, tải PDF chứng nhận |
+| Gợi ý AI | Đề xuất tập trung + hành động, làm mới theo yêu cầu |
 
-- Xanh dương (blue) — màu thương hiệu, điểm nhấn hành động
-- Trắng — không gian thoáng, nội dung là trung tâm
-- Đen — chữ, viền, dark mode đầy đủ
+### Giảng viên (Instructor)
+- Tổng quan dashboard + thẻ từng phiên
+- **Phiên thực tập**: tạo, thành viên/giảng viên, cột mốc, dòng thời gian, GitHub provisioning, chuyển trạng thái
+- **Lớp học**: buổi học, điểm danh
+- **Đồ án / Sprint**: quản lý + board + biểu đồ burndown (SVG)
+- **Nhiệm vụ**: tạo/giao/chỉnh sửa, **chấm bài nộp rubric 6 tiêu chí**, review AI
+- **Đánh giá**: kỳ đánh giá, bảng chấm điểm, Gợi ý AI, chốt điểm
+- Ứng viên, hiệu suất sinh viên, báo cáo (PDF/XLSX), chuyên cần, **lập kế hoạch sprint bằng AI**, chia sẻ truy cập
 
-Phong cách **thân thiện, có điểm nhấn vẽ tay (doodles)**, micro-interaction nhẹ tay bằng framer-motion, không "máy móc như AI".
+### Quản trị viên (Admin)
+Người dùng (kèm mật khẩu tạm), vai trò & quyền, nhóm, phiên/lớp/đồ án/sprint/nhiệm vụ, phân công, **đợt tuyển dụng + hồ sơ ứng viên**, vai trò nghề, ngân hàng câu hỏi, KPI (tính/chốt), lương ảo (sinh + điều chỉnh), chứng nhận (cấp/thu hồi/tra cứu công khai), kho tri thức, danh mục, báo cáo, nhật ký kiểm toán, AI Agents (chạy + poll), hàng đợi email, cấu hình & trạng thái hệ thống.
 
 ## 🛠 Tech stack
 
@@ -33,70 +48,82 @@ Phong cách **thân thiện, có điểm nhấn vẽ tay (doodles)**, micro-inte
 |---|---|
 | Framework | Next.js 16 (App Router) + TypeScript |
 | UI | Tailwind CSS 4 + shadcn/ui (New York) + Lucide icons |
-| Animation | framer-motion |
-| Drag & drop | dnd-kit |
-| Charts | recharts |
-| State | Zustand |
-| Database | Prisma ORM + SQLite |
-| AI | z-ai-web-dev-sdk (AI Mentor chat) |
+| State | Zustand (phiên/điều hướng) + TanStack Query (dữ liệu) |
+| API | Fetch wrapper tự viết: Bearer + auto-refresh 401, envelope `{data, meta}` |
 
 ## 🚀 Chạy dự án
 
 ```bash
-# Cài dependencies
 bun install
 
-# Khởi tạo database (SQLite) + dữ liệu mẫu
-bun run db:push
+# Chạy backend V-Intern-BE trước (port 8080 mặc định)
+# https://github.com/vanhoi04082006-pixel/V-Intern-BE
 
-# Chạy dev server
-bun run dev
+bun run dev   # port 3000
 ```
 
 Mở [http://localhost:3000](http://localhost:3000).
 
-> **Lưu ý:** Tính năng AI Mentor sử dụng `z-ai-web-dev-sdk` và cần cấu hình biến môi trường tương ứng. Các tính năng còn lại hoạt động độc lập.
+### Biến môi trường (`.env`)
 
-### Tài khoản demo
+```bash
+# Backend NestJS — mọi request /api/v1/* được proxy sang đây
+BACKEND_URL=http://localhost:8080
 
-| Vai trò | Email | Mật khẩu |
-|---|---|---|
-| Sinh viên | `intern@v-intern.vn` | `123456` |
-| Giảng viên | `instructor@v-intern.vn` | `123456` |
-| Quản trị | `admin@v-intern.vn` | `123456` |
+# (Tuỳ chọn) Browser gọi thẳng BE, bypass proxy.
+# Nếu đặt, nhớ thêm origin FE vào CORS_ORIGINS của BE.
+# NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+```
 
-Dữ liệu mẫu tự sinh khi truy cập lần đầu (seed).
+Cách hoạt động: `next.config.ts` rewrite `/api/v1/:path*` → `BACKEND_URL/api/v1/:path*`. Refresh cookie HttpOnly (`Path=/api/v1/auth`) hoạt động ngay trên origin FE.
 
-## 📁 Cấu trúc thư mục
+## 📁 Cấu trúc
 
 ```
 src/
-├── app/                  # App Router: layout, landing page, API routes
-│   ├── api/              # auth, workspace, tasks, profile, ai/chat
-│   ├── layout.tsx        # Root layout + theme provider
-│   └── page.tsx          # Entry (landing / auth / workspace)
+├── app/                      # Route "/" duy nhất (SPA hash routing)
+│   ├── layout.tsx            # Root layout + theme provider
+│   └── page.tsx              # → <VInternApp/>
 ├── components/
-│   ├── landing/          # Các section của landing page
-│   ├── workspace/        # Shell + 8 views (dashboard, sprint, tasks, ...)
-│   ├── auth/             # Đăng nhập / đăng ký
-│   └── ui/               # shadcn/ui components
-├── hooks/                # use-toast, use-mobile
-└── lib/                  # db, seed, auth (scrypt), types, store, utils
-prisma/
-└── schema.prisma         # User, Sprint, Task, Project, ChatMessage
+│   ├── app-shell.tsx         # Điều phối: landing/auth/app/apply/verify/github-invite
+│   ├── landing/              # Landing page sections
+│   ├── auth/                 # Đăng nhập / đăng ký / đổi mật khẩu
+│   ├── public/               # Apply, Verify, GitHub invite
+│   ├── shared/kit.tsx        # UI kit: PageHeader, ListTable, StatusBadge, Pager…
+│   └── workspace/
+│       ├── workspace.tsx     # Shell: sidebar theo quyền + section router
+│       └── views/            # 47 view theo vai trò + dùng chung
+├── lib/
+│   ├── api/                  # Transport + 8 domain API (contract BE)
+│   │   ├── transport.ts      # Fetch + error envelope tiếng Việt
+│   │   ├── client.ts         # request() auto-refresh 401 + pagination
+│   │   ├── intern.ts tasks.ts academic.ts evaluation.ts
+│   │   └── recruitment.ts finance.ts admin.ts insight.ts
+│   ├── auth/                 # session (in-memory + BroadcastChannel) + auth-service
+│   └── store.ts              # Zustand: view/section/user
+└── hooks/                    # use-toast, use-mobile
+```
+
+### Định tuyến SPA
+
+```
+#/                 → Landing
+#/login            → Đăng nhập / Đăng ký
+#/app/<section>    → Workspace (section theo vai trò + quyền)
+#/apply            → Nộp CV (ứng viên)
+#/verify?token=…   → Kích hoạt link ứng viên
+#/github-invite    → Kết quả OAuth GitHub
 ```
 
 ## 📜 Scripts
 
 ```bash
-bun run dev         # Dev server (port 3000)
-bun run build       # Production build
-bun run start       # Chạy production
-bun run lint        # ESLint
-bun run db:push     # Đẩy schema lên SQLite
-bun run db:generate # Sinh Prisma Client
+bun run dev     # Dev server port 3000
+bun run build   # Production build
+bun run start   # Chạy production
+bun run lint    # ESLint
 ```
 
 ---
 
-Made with 💙 — thiết kế lại toàn diện UI/UX trên nhánh `feat/ui-ux-redesign`.
+Made with 💙 — kết nối 100% API [V-Intern-BE](https://github.com/vanhoi04082006-pixel/V-Intern-BE).
