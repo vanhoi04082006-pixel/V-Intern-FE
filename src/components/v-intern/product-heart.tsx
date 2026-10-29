@@ -1,64 +1,199 @@
 "use client";
 
-import Image from "next/image";
 import { KanbanSquare } from "lucide-react";
 import { FadeIn } from "@/components/v-intern/reveal";
+import { CrossDoodle, SparkleDoodle, StarDoodle } from "@/components/v-intern/doodles";
 
-const STATS = ["Sprint 2 tuần", "Story point", "Pull request", "Đánh giá đồng nghiệp"];
+const STATS = [
+  "Sprint 2 tuần",
+  "Story point",
+  "Pull request",
+  "Đánh giá đồng nghiệp",
+];
+
+const KANBAN_COLUMNS: {
+  name: string;
+  cards: { title: string; tag: string; points: number; active?: boolean; done?: boolean }[];
+}[] = [
+  {
+    name: "Cần làm",
+    cards: [
+      { title: "Viết test cho module auth", tag: "Backend", points: 3 },
+      { title: "Thiết kế màn hình CRUD", tag: "UI", points: 2 },
+    ],
+  },
+  {
+    name: "Đang làm",
+    cards: [{ title: "API danh sách nhiệm vụ", tag: "Backend", points: 5, active: true }],
+  },
+  {
+    name: "Chờ duyệt",
+    cards: [{ title: "PR #128 — fix kanban", tag: "Frontend", points: 3 }],
+  },
+  {
+    name: "Hoàn thành",
+    cards: [
+      { title: "Khung dự án & README", tag: "DevOps", points: 2, done: true },
+      { title: "Đăng nhập JWT", tag: "Backend", points: 5, done: true },
+    ],
+  },
+];
+
+/** Bảng Kanban mô phỏng — dựng bằng HTML sắc nét trên nền đen. */
+function KanbanBoard() {
+  return (
+    <div
+      aria-hidden="true"
+      className="rotate-[1.2deg] rounded-xl border-2 border-royal/60 bg-coal-soft/80 p-3 shadow-[6px_6px_0_0_rgba(32,96,240,0.55)] transition-transform duration-500 ease-out motion-safe:hover:rotate-0"
+    >
+      <div className="flex items-center justify-between gap-3 border-b-2 border-dashed border-chalk/15 px-2 pb-2.5">
+        <p className="font-hand text-lg leading-none text-chalk">bảng sprint #4</p>
+        <span className="rounded-full border-2 border-dashed border-blue/50 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-blue">
+          Tuần 2/2
+        </span>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        {KANBAN_COLUMNS.map((column) => (
+          <div key={column.name} className="rounded-lg bg-black/40 p-2">
+            <div className="flex items-center justify-between gap-1.5 px-1 pb-2">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-wide text-chalk-soft">
+                {column.name}
+              </p>
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-blue/25 px-1 font-mono text-[9px] font-bold text-blue">
+                {column.cards.length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {column.cards.map((card) => (
+                <div
+                  key={card.title}
+                  className={
+                    card.active
+                      ? "rounded-md border-2 border-royal bg-royal p-2 text-white"
+                      : card.done
+                        ? "rounded-md border-2 border-chalk/15 bg-coal-soft p-2"
+                        : "rounded-md border-2 border-chalk/15 bg-coal-soft p-2"
+                  }
+                >
+                  <p
+                    className={
+                      "text-[11px] font-semibold leading-snug " +
+                      (card.active
+                        ? "text-white"
+                        : card.done
+                          ? "text-chalk-soft line-through decoration-royal/70"
+                          : "text-chalk")
+                    }
+                  >
+                    {card.title}
+                  </p>
+                  <div className="mt-1.5 flex items-center justify-between gap-1">
+                    <span
+                      className={
+                        "rounded px-1.5 py-px font-mono text-[9px] font-bold uppercase " +
+                        (card.active
+                          ? "bg-white/25 text-white"
+                          : "bg-royal/25 text-[#9db4ff]")
+                      }
+                    >
+                      {card.tag}
+                    </span>
+                    <span
+                      className={
+                        "font-mono text-[9px] font-bold " +
+                        (card.active ? "text-white/85" : "text-chalk/45")
+                      }
+                    >
+                      {card.points} SP
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /**
- * Trái tim sản phẩm: thẻ feature toàn khung với ảnh minh hoạ vòng đời
- * sprint làm nền, lớp phủ gradient đảm bảo độ tương phản cho khối chữ.
+ * Trái tim sản phẩm — trang sổ nền đen mực,
+ * kanban dựng bằng HTML hiển thị trọn vòng đời sprint.
  */
 export function ProductHeart() {
   return (
     <section
       id="product-heart"
-      className="bg-canvas py-20 scroll-mt-20"
+      className="relative scroll-mt-20 overflow-hidden bg-coal py-20 lg:py-24"
       aria-label="Trái tim sản phẩm"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-        <FadeIn>
-          <div className="relative h-[440px] overflow-hidden rounded-3xl shadow-2xl shadow-navy/10 ring-1 ring-border sm:h-[480px] lg:h-[520px] xl:h-[560px]">
-            <Image
-              src="/images/landing/sprint-lifecycle.png"
-              alt="Minh hoạ vòng đời sprint trên V-Intern: bảng Kanban các cột nhiệm vụ theo tuần, pull request và biểu đồ tiến độ trên nền tối"
-              fill
-              sizes="(min-width: 1024px) 100vw, 100vw"
-              className="object-cover"
-            />
-            {/* Lớp phủ gradient giúp khối chữ dưới đáy luôn đọc được */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-gradient-to-t from-canvas/95 via-canvas/25 to-transparent"
-            />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-2.5 py-1 text-[11px] font-semibold text-brand ring-1 ring-brand/30">
-                <KanbanSquare className="h-3.5 w-3.5" aria-hidden="true" />
-                Trái tim sản phẩm
+      {/* Lưới chấm mờ trên nền đen */}
+      <div
+        aria-hidden="true"
+        className="mask-fade-edges pointer-events-none absolute inset-0 bg-dots-chalk opacity-70"
+      />
+      <StarDoodle className="absolute left-[6%] top-14 hidden h-8 w-8 text-blue/40 lg:block" />
+      <CrossDoodle className="absolute bottom-16 left-[42%] hidden h-5 w-5 text-chalk/20 lg:block" />
+      <SparkleDoodle className="absolute right-[7%] top-20 hidden h-7 w-7 text-blue/50 lg:block" />
+
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <FadeIn>
+            <p className="inline-flex items-center gap-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-blue">
+              <span aria-hidden="true" className="inline-block h-[2px] w-7 rounded-full bg-blue" />
+              Trái tim sản phẩm
+            </p>
+
+            <h2 className="mt-4 text-3xl font-extrabold leading-[1.15] tracking-tight text-chalk sm:text-4xl lg:text-[42px]">
+              Sản phẩm mô phỏng{" "}
+              <span className="relative inline-block text-blue">
+                toàn diện
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 120 10"
+                  preserveAspectRatio="none"
+                  className="absolute -bottom-1.5 left-0 h-[8px] w-full text-blue"
+                >
+                  <path
+                    d="M2 7 Q 14 2.5, 27 6 T 52 5.5 T 77 6.5 T 102 5 T 118 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </svg>
               </span>
-              {/* dark: giữ màu tiêu đề theo token đảo theme — text-navy
-                  gần đen khi .dark nên bù bằng foreground để luôn đọc được */}
-              <h3 className="mt-3 text-xl font-bold leading-snug tracking-tight text-navy dark:text-foreground sm:text-2xl">
-                Sản phẩm mô phỏng toàn diện
-              </h3>
-              <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
-                Sprint 2 tuần, story point, pull request, đánh giá đồng nghiệp
-                — cả một vòng đời sản phẩm phần mềm được tái hiện trọn vẹn.
-              </p>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {STATS.map((stat) => (
-                  <li
-                    key={stat}
-                    className="rounded-full bg-card/80 px-3 py-1 text-xs font-medium text-foreground ring-1 ring-border backdrop-blur"
-                  >
-                    {stat}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </FadeIn>
+            </h2>
+
+            <p className="mt-5 text-base leading-relaxed text-chalk-soft">
+              Sprint 2 tuần, story point, pull request, đánh giá đồng nghiệp —
+              cả một vòng đời sản phẩm phần mềm được tái hiện trọn vẹn, như
+              công ty thật thu nhỏ.
+            </p>
+
+            <ul className="mt-7 flex flex-wrap gap-2.5">
+              {STATS.map((stat) => (
+                <li
+                  key={stat}
+                  className="inline-flex items-center gap-1.5 rounded-full border-2 border-dashed border-chalk/25 px-3.5 py-1.5 text-xs font-semibold text-chalk"
+                >
+                  <KanbanSquare className="h-3.5 w-3.5 text-[#7d97ff]" aria-hidden="true" />
+                  {stat}
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-7 -rotate-1 font-hand text-lg leading-snug text-[#7d97ff]">
+              nghỉ ngơi vài phút, ghim bảng sprint lên tường nhé →
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.12}>
+            <KanbanBoard />
+          </FadeIn>
+        </div>
       </div>
     </section>
   );

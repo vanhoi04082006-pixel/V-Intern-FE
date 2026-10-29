@@ -2,19 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowDownRight,
-  ArrowRight,
-  Check,
-  Droplet,
-  Sparkles,
-} from "lucide-react";
+import { ArrowDownRight, ArrowRight, Check, Sparkles } from "lucide-react";
 import { FadeIn } from "@/components/v-intern/reveal";
+import { Tape } from "@/components/v-intern/doodles";
 
 type Audience = {
   id: string;
   badge: string;
-  badgeColor: string;
   title: string;
   description: string;
   checklist: string[];
@@ -22,24 +16,17 @@ type Audience = {
   ctaHref: string;
   image: string;
   imageAlt: string;
-  visualBasis: string;
-  imagePositionClass: string;
   scriptLines: string[];
   scriptIndents: number[];
-  scriptColor: string;
-  scriptWrapClass: string;
   accent: "drop" | "sparkles";
-  gradient: string;
-  buttonColor: string;
-  checkColor: string;
+  theme: "light" | "dark";
 };
 
 const AUDIENCES: Audience[] = [
   {
     id: "students",
     badge: "Dành cho sinh viên",
-    badgeColor: "text-brand",
-    title: "Phát triển kỹ năng - Kiến tạo sự nghiệp",
+    title: "Phát triển kỹ năng — Kiến tạo sự nghiệp",
     description:
       "Trải nghiệm quy trình làm việc thực tế, học hỏi kỹ năng chuyên môn và mềm, được hỗ trợ bởi AI Mentor và kết nối với cộng đồng.",
     checklist: [
@@ -50,24 +37,17 @@ const AUDIENCES: Audience[] = [
     ],
     cta: "Bắt đầu hành trình của bạn",
     ctaHref: "/login",
-    image: "/images/student-v2.png",
-    imageAlt: "Sinh viên thực tập ảo đang làm việc với laptop và tai nghe",
-    visualBasis: "md:basis-[52%]",
-    imagePositionClass: "bottom-0 right-0 max-h-[64%] max-w-full sm:max-h-[72%]",
+    image: "/images/landing/student.png",
+    imageAlt: "Minh hoạ sinh viên thực tập ảo đang làm việc với laptop và tai nghe",
     scriptLines: ["Học", "Làm", "Vươn xa"],
     scriptIndents: [0, 16, 34],
-    scriptColor: "text-brand",
-    scriptWrapClass: "left-1 top-3 -rotate-6 sm:left-7 sm:top-5",
     accent: "drop",
-    gradient: "bg-gradient-to-br from-[#EAF1FE] to-[#F7FAFF]",
-    buttonColor: "bg-brand hover:bg-brand-600 shadow-brand/25",
-    checkColor: "bg-brand",
+    theme: "light",
   },
   {
     id: "instructors",
     badge: "Dành cho giảng viên",
-    badgeColor: "text-violet-600",
-    title: "Dễ dàng quản lý - Hiệu quả vượt trội",
+    title: "Dễ dàng quản lý — Hiệu quả vượt trội",
     description:
       "Tạo và quản lý các đợt thực tập, theo dõi tiến độ sinh viên, đánh giá năng lực và xuất báo cáo chi tiết, trực quan.",
     checklist: [
@@ -78,33 +58,30 @@ const AUDIENCES: Audience[] = [
     ],
     cta: "Khám phá tính năng",
     ctaHref: "#platform",
-    image: "/images/instructor-v3.png",
-    imageAlt: "Giảng viên quản lý lớp thực tập ảo trên tablet",
-    visualBasis: "md:basis-[46%]",
-    imagePositionClass: "bottom-0 right-0 max-h-[56%] max-w-full sm:max-h-[66%]",
+    image: "/images/landing/instructor.png",
+    imageAlt: "Minh hoạ giảng viên quản lý lớp thực tập ảo trên máy tính bảng",
     scriptLines: ["Sinh viên", "tốt hơn", "Tương lai", "rộng hơn"],
     scriptIndents: [0, 14, 6, 20],
-    scriptColor: "text-violet-600",
-    scriptWrapClass: "right-2 top-3 rotate-2 sm:right-4 sm:top-4",
     accent: "sparkles",
-    gradient: "bg-gradient-to-br from-[#F1EDFE] to-[#FAF8FF]",
-    buttonColor: "bg-violet-600 hover:bg-violet-700 shadow-violet-600/25",
-    checkColor: "bg-violet-600",
+    theme: "dark",
   },
 ];
 
-function ScriptNote({ audience }: { audience: Audience }) {
+function ScriptNote({ audience, dark }: { audience: Audience; dark: boolean }) {
   const isLast = (index: number) => index === audience.scriptLines.length - 1;
 
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute z-10 select-none font-handwriting font-bold leading-[1.05] ${audience.scriptColor} ${audience.scriptWrapClass}`}
+      className={
+        "pointer-events-none absolute left-4 top-4 z-10 select-none font-hand text-[26px] font-bold leading-[1.08] sm:left-7 sm:top-6 sm:text-[29px] -rotate-6 " +
+        (dark ? "text-blue" : "text-blue")
+      }
     >
       {audience.scriptLines.map((line, index) => (
         <span
           key={`${line}-${index}`}
-          className="block text-2xl sm:text-[28px]"
+          className="block"
           style={{ paddingLeft: `${audience.scriptIndents[index] ?? 0}px` }}
         >
           {line}
@@ -119,72 +96,111 @@ function ScriptNote({ audience }: { audience: Audience }) {
           )}
         </span>
       ))}
-
-      {audience.accent === "drop" && (
-        <Droplet className="absolute -top-3 right-2 h-4 w-4 rotate-12 fill-brand/30 opacity-70" />
-      )}
-      {audience.accent === "sparkles" && (
-        <Sparkles className="absolute -right-4 top-1/2 h-4 w-4 opacity-50" />
-      )}
     </div>
   );
 }
 
 function AudienceCard({ audience }: { audience: Audience }) {
+  const dark = audience.theme === "dark";
+
   return (
     <article
       id={audience.id === "instructors" ? "for-instructors" : undefined}
-      className={`relative flex h-full flex-col overflow-hidden rounded-3xl scroll-mt-24 md:flex-row md:items-stretch ${audience.gradient}`}
+      className={
+        "relative flex h-full scroll-mt-24 flex-col overflow-hidden rounded-3xl border-2 border-ink md:flex-row " +
+        (dark
+          ? "bg-coal text-chalk shadow-[8px_8px_0_0_rgba(32,96,240,0.9)]"
+          : "bg-blue-mist text-ink shadow-[8px_8px_0_0_var(--hard-shadow)]")
+      }
     >
-      <div className="flex flex-1 flex-col items-start p-6 sm:p-8 md:py-9 md:pl-9 md:pr-4 lg:pr-6">
-        <span className="inline-flex items-center rounded-full bg-card px-4 py-1.5 text-xs font-semibold shadow-sm">
-          <span className={audience.badgeColor}>{audience.badge}</span>
+      <Tape className="-top-1 left-1/2 z-20 -translate-x-1/2" rotate={-4} />
+
+      <div className="flex flex-1 flex-col items-start p-7 sm:p-8 md:py-10 md:pl-10 md:pr-4 lg:pr-6">
+        <span
+          className={
+            "inline-flex -rotate-1 items-center rounded-full border-2 px-4 py-1.5 text-xs font-bold " +
+            (dark
+              ? "border-blue/60 bg-blue/15 text-blue"
+              : "border-ink bg-raised text-blue")
+          }
+        >
+          {audience.badge}
         </span>
 
-        <h3 className="mt-4 text-xl font-bold leading-snug text-navy sm:text-2xl">
+        <h3
+          className={
+            "mt-5 text-[22px] font-extrabold leading-snug sm:text-2xl " +
+            (dark ? "text-chalk" : "text-ink")
+          }
+        >
           {audience.title}
         </h3>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+        <p
+          className={
+            "mt-3 text-sm leading-relaxed " +
+            (dark ? "text-chalk-soft" : "text-ink-soft")
+          }
+        >
           {audience.description}
         </p>
 
-        <ul className="mt-5 space-y-2.5">
+        <ul className="mt-6 w-full space-y-3">
           {audience.checklist.map((item) => (
-            <li key={item} className="flex items-center gap-2.5">
+            <li key={item} className="flex items-center gap-3">
               <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${audience.checkColor}`}
+                className={
+                  "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 " +
+                  (dark
+                    ? "border-royal bg-royal text-white"
+                    : "border-ink bg-royal text-white")
+                }
               >
-                <Check
-                  className="h-3 w-3 text-white"
-                  strokeWidth={3.5}
-                  aria-hidden="true"
-                />
+                <Check className="h-3.5 w-3.5" strokeWidth={3.5} aria-hidden="true" />
               </span>
-              <span className="text-sm text-foreground">{item}</span>
+              <span
+                className={
+                  "text-sm font-medium " +
+                  (dark ? "text-chalk/90" : "text-ink")
+                }
+              >
+                {item}
+              </span>
             </li>
           ))}
         </ul>
 
         <Link
           href={audience.ctaHref}
-          className={`mt-7 inline-flex h-11 items-center gap-2 rounded-lg px-5 text-sm font-semibold text-white shadow-lg transition-colors ${audience.buttonColor}`}
+          className={
+            "group mt-8 inline-flex h-12 items-center gap-2 rounded-xl border-2 px-6 text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 " +
+            (dark
+              ? "border-coal bg-chalk text-coal shadow-[4px_4px_0_0_rgba(32,96,240,0.9)] hover:shadow-[6px_6px_0_0_rgba(32,96,240,0.9)]"
+              : "border-ink bg-royal text-white shadow-[4px_4px_0_0_var(--ink)] hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)]")
+          }
         >
           {audience.cta}
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <ArrowRight
+            className="h-4 w-4 transition-transform group-hover:translate-x-1"
+            aria-hidden="true"
+          />
         </Link>
       </div>
 
-      <div
-        className={`relative mt-6 h-[300px] w-full shrink-0 sm:h-[340px] md:mt-0 md:h-auto md:self-stretch md:w-auto ${audience.visualBasis}`}
-      >
-        <Image
-          src={audience.image}
-          alt={audience.imageAlt}
-          width={864}
-          height={1152}
-          className={`absolute bottom-0 right-0 h-auto w-auto mix-blend-multiply ${audience.imagePositionClass}`}
-        />
-        <ScriptNote audience={audience} />
+      <div className="relative mt-6 h-[300px] w-full shrink-0 sm:h-[340px] md:mt-0 md:h-auto md:w-[42%] md:self-stretch">
+        <ScriptNote audience={audience} dark={dark} />
+        <div
+          className={
+            "absolute bottom-0 right-0 flex h-full w-full items-end justify-center overflow-hidden bg-white md:rounded-l-2xl"
+          }
+        >
+          <Image
+            src={audience.image}
+            alt={audience.imageAlt}
+            width={864}
+            height={1152}
+            className="h-full w-auto object-contain object-bottom drop-shadow-xl"
+          />
+        </div>
       </div>
     </article>
   );
@@ -194,15 +210,17 @@ export function AudienceCards() {
   return (
     <section
       id="for-students"
-      className="bg-card pb-20 pt-4 scroll-mt-20"
+      className="scroll-mt-20 bg-paper py-20 lg:py-24"
       aria-label="Đối tượng sử dụng V-Intern"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 md:px-6 lg:grid-cols-2 lg:px-8">
-        {AUDIENCES.map((audience, index) => (
-          <FadeIn key={audience.id} delay={index * 0.1} className="h-full">
-            <AudienceCard audience={audience} />
-          </FadeIn>
-        ))}
+      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {AUDIENCES.map((audience, index) => (
+            <FadeIn key={audience.id} delay={index * 0.12} className="h-full">
+              <AudienceCard audience={audience} />
+            </FadeIn>
+          ))}
+        </div>
       </div>
     </section>
   );

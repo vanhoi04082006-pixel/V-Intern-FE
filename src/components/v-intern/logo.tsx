@@ -1,11 +1,9 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Wordmark "V - Intern" theo ảnh thương hiệu tham chiếu:
- * - "V" màu xanh dương sáng #2060F0
- * - "- Intern" màu navy đậm #182850
- * Bản `inverse` dùng trên nền tối (footer, dashboard mockup):
- * chữ trắng, "V" xanh sáng hơn để đủ tương phản.
+ * Wordmark "V-Intern" — nét mực trên giấy.
+ * "V" xanh dương đậm kèm nét gạch chân vẽ tay, "Intern" màu mực.
+ * Bản `inverse` dùng trên nền tối (footer, thẻ đen).
  */
 export function Logo({
   className,
@@ -17,30 +15,36 @@ export function Logo({
   return (
     <span
       className={cn(
-        "inline-flex select-none items-baseline text-2xl font-extrabold leading-none tracking-tight",
+        "inline-flex select-none items-baseline text-[26px] font-extrabold leading-none tracking-tight",
         className
       )}
     >
       <span className="sr-only">V-Intern</span>
-      <span
-        aria-hidden="true"
-        className={inverse ? "text-brand" : "text-brand"}
-      >
+      <span aria-hidden="true" className="relative text-blue">
         V
+        {/* nét gạch chân vẽ tay dưới chữ V */}
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 6"
+          className="absolute -bottom-[5px] left-0 h-[6px] w-full text-blue"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M1.5 4.2 Q 7 1.2, 12.5 3.4 T 22.5 3.2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+        </svg>
       </span>
       <span
         aria-hidden="true"
-        className={cn(
-          "mx-[0.2em]",
-          inverse ? "text-white/70" : "text-navy"
-        )}
+        className={cn("mx-[0.16em]", inverse ? "text-chalk/60" : "text-ink/40")}
       >
         -
       </span>
-      <span
-        aria-hidden="true"
-        className={inverse ? "text-white" : "text-navy"}
-      >
+      <span aria-hidden="true" className={inverse ? "text-chalk" : "text-ink"}>
         Intern
       </span>
     </span>

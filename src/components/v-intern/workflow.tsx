@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
+import { Tape } from "@/components/v-intern/doodles";
+
 type Step = {
   icon: LucideIcon;
   name: string;
@@ -26,21 +29,23 @@ type Step = {
   artifact: string;
   preview: ReactNode;
 };
+
 function ArtifactFacts({ facts }: { facts: string[] }) {
   return (
-    <ul className="space-y-4">
+    <ul className="space-y-3">
       {facts.map((f) => (
         <li
           key={f}
-          className="flex items-start gap-3 rounded-lg bg-accent/60 p-3 text-xs leading-relaxed text-muted-foreground"
+          className="flex items-start gap-3 rounded-lg border-2 border-dashed border-ink/15 bg-blue-mist/60 p-3 text-xs leading-relaxed text-ink-soft"
         >
-          <CircleCheck size={16} className="shrink-0 text-brand" />
+          <CircleCheck size={16} className="shrink-0 text-blue" />
           {f}
         </li>
       ))}
     </ul>
   );
 }
+
 const STEPS: Step[] = [
   {
     icon: UserSearch,
@@ -70,10 +75,7 @@ const STEPS: Step[] = [
     range: "01–02",
     detail:
       "Sau khi đạt tuyển dụng, giảng viên phân công dự án và phiên thực tập. Không gian làm việc cập nhật theo phân công của bạn.",
-    does: [
-      "Theo dõi trạng thái chờ phân công",
-      "Đọc thông tin dự án được giao",
-    ],
+    does: ["Theo dõi trạng thái chờ phân công", "Đọc thông tin dự án được giao"],
     gets: "Dự án và người hướng dẫn phù hợp",
     artifact: "Thông tin dự án",
     preview: (
@@ -93,10 +95,7 @@ const STEPS: Step[] = [
     range: "03–05",
     detail:
       "Theo dõi Sprint hiện tại và các nhiệm vụ thuộc phạm vi thực tập. Thời gian và mục tiêu do giảng viên thiết lập.",
-    does: [
-      "Xem mục tiêu và thời gian Sprint",
-      "Theo dõi các cột trạng thái nhiệm vụ",
-    ],
+    does: ["Xem mục tiêu và thời gian Sprint", "Theo dõi các cột trạng thái nhiệm vụ"],
     gets: "Bảng Sprint và tiến độ công việc",
     artifact: "Sprint Board",
     preview: (
@@ -136,10 +135,7 @@ const STEPS: Step[] = [
     range: "03–05",
     detail:
       "Trao đổi với AI Mentor về dự án và công việc. Các gợi ý hỗ trợ bạn suy nghĩ và học tập; AI không thay giảng viên quyết định kết quả.",
-    does: [
-      "Đặt câu hỏi về công việc đang thực hiện",
-      "Xem lại các cuộc hội thoại của mình",
-    ],
+    does: ["Đặt câu hỏi về công việc đang thực hiện", "Xem lại các cuộc hội thoại của mình"],
     gets: "Hướng dẫn tham khảo cho bước tiếp theo",
     artifact: "Cuộc hội thoại",
     preview: (
@@ -159,10 +155,7 @@ const STEPS: Step[] = [
     range: "06–07",
     detail:
       "Giảng viên đánh giá theo tiêu chí và chốt điểm chính thức. AI có thể đưa gợi ý tham khảo, còn KPI và lương ảo dựa trên kết quả đã được xác nhận.",
-    does: [
-      "Đọc điểm và nhận xét đã chốt",
-      "Theo dõi hiệu suất, KPI và lương ảo",
-    ],
+    does: ["Đọc điểm và nhận xét đã chốt", "Theo dõi hiệu suất, KPI và lương ảo"],
     gets: "Kết quả đánh giá chính thức",
     artifact: "Đánh giá & KPI",
     preview: (
@@ -195,30 +188,31 @@ const STEPS: Step[] = [
     ),
   },
 ];
+
 const PHASES: { name: string; range: string; from: number; to: number }[] = [
   { name: "Bắt đầu", range: "01–02", from: 0, to: 1 },
   { name: "Thực chiến", range: "03–05", from: 2, to: 4 },
   { name: "Công nhận", range: "06–07", from: 5, to: 6 },
 ];
 
-/* ---------- Detail ---------- */
+/* ---------- Chi tiết một bước ---------- */
 
 function StepDetail({ step }: { step: Step }) {
   return (
-    <div className="mt-5 border-t border-border/80 pt-5">
-      <p className="text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
+    <div className="mt-5 border-t-2 border-dashed border-ink/15 pt-5">
+      <p className="text-sm leading-relaxed text-ink-soft">{step.detail}</p>
 
       <div className="mt-5 space-y-5">
         <div>
-          <p className="text-xs font-bold text-navy">Bạn làm</p>
+          <p className="font-hand text-lg leading-none text-blue">bạn làm</p>
           <ul className="mt-2.5 space-y-2">
             {step.does.map((item) => (
               <li
                 key={item}
-                className="flex gap-2 text-xs leading-relaxed text-muted-foreground"
+                className="flex gap-2.5 text-xs leading-relaxed text-ink-soft"
               >
                 <Check
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand"
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue"
                   strokeWidth={3}
                   aria-hidden="true"
                 />
@@ -229,10 +223,10 @@ function StepDetail({ step }: { step: Step }) {
         </div>
 
         <div>
-          <p className="text-xs font-bold text-navy">Bạn nhận</p>
-          <p className="mt-2.5 flex gap-2 text-xs leading-relaxed text-muted-foreground">
+          <p className="font-hand text-lg leading-none text-blue">bạn nhận</p>
+          <p className="mt-2.5 flex gap-2.5 text-xs leading-relaxed text-ink-soft">
             <Check
-              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand"
+              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue"
               strokeWidth={3}
               aria-hidden="true"
             />
@@ -248,13 +242,13 @@ function ArtifactPreview({ step }: { step: Step }) {
   return (
     <div
       aria-hidden="true"
-      className="rounded-2xl bg-card p-5 ring-1 ring-border"
+      className="rounded-2xl border-2 border-dashed border-ink/25 bg-raised p-5"
     >
-      <p className="font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-muted-foreground">
+      <p className="font-mono text-[10px] font-bold uppercase leading-none tracking-[0.18em] text-ink-faint">
         {step.artifact}
       </p>
-      <div className="mt-3 h-px bg-border" aria-hidden="true" />
-      <div className="mt-3.5">{step.preview}</div>
+      <div className="mt-3 h-[2px] rounded-full bg-ink/10" aria-hidden="true" />
+      <div className="mt-4">{step.preview}</div>
     </div>
   );
 }
@@ -269,31 +263,39 @@ export function Workflow() {
   return (
     <section
       id="workflow"
-      className="bg-card py-20 scroll-mt-20"
+      className="relative scroll-mt-20 overflow-hidden border-t-2 border-ink/10 bg-paper py-20 lg:py-24"
       aria-label="Quy trình thực tập ảo"
     >
-      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+      <div
+        aria-hidden="true"
+        className="mask-fade-edges pointer-events-none absolute inset-0 bg-grid-paper opacity-70"
+      />
+
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <FadeIn>
           <SectionHeading
-            title="Quy trình thực tập ảo"
+            eyebrow="Mục lục hành trình"
+            title="Quy trình"
+            highlight="thực tập ảo"
             subtitle="Bảy bước, từ lúc bạn bước vào phòng phỏng vấn đến ngày nhận chứng nhận."
           />
         </FadeIn>
 
-        <div className="mt-14 grid gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
+        <div className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-14">
+          {/* Mục lục bước */}
           <div className="relative">
             <span
               aria-hidden="true"
-              className="absolute bottom-[30px] left-[22px] top-0 w-px bg-border"
+              className="absolute bottom-[30px] left-[23px] top-0 w-0 border-l-2 border-dashed border-ink/20"
             />
 
             {PHASES.map((phase) => (
               <div key={phase.name}>
-                <div className="flex items-baseline justify-between gap-4 py-3 pl-[60px] pr-1">
-                  <h3 className="text-xs font-bold leading-none text-navy">
+                <div className="flex items-baseline justify-between gap-4 py-3 pl-[64px] pr-1">
+                  <h3 className="font-hand text-xl leading-none text-ink">
                     {phase.name}
                   </h3>
-                  <p className="font-mono text-[11px] leading-none text-muted-foreground">
+                  <p className="font-mono text-[11px] leading-none text-ink-faint">
                     {phase.range}
                   </p>
                 </div>
@@ -319,45 +321,38 @@ export function Workflow() {
                             delay: reduceMotion ? 0 : index * 0.06,
                             ease: [0.21, 0.47, 0.32, 0.98],
                           }}
-                          className="group flex w-full items-center gap-4 rounded-2xl py-2 pr-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent0 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                          className="group flex w-full items-center gap-4 rounded-2xl py-2 pr-3 text-left"
                         >
                           <span
                             className={
                               isActive
-                                ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy text-white ring-4 ring-accent"
+                                ? "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-royal text-white ring-4 ring-blue-mist transition-all"
                                 : isDone
-                                  ? "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white transition-colors"
-                                  : "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-card text-muted-foreground ring-1 ring-border transition-colors group-hover:text-brand group-hover:ring-brand/60"
+                                  ? "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-ink text-paper transition-colors"
+                                  : "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-ink/25 bg-raised text-ink-soft transition-all group-hover:-rotate-6 group-hover:border-blue group-hover:text-blue"
                             }
                           >
                             <item.icon
-                              className="h-[18px] w-[18px]"
+                              className="h-[19px] w-[19px]"
                               aria-hidden="true"
                             />
                           </span>
 
                           <span className="min-w-0 flex-1">
                             <span className="flex items-baseline gap-2">
-                              <span className="font-mono text-[11px] leading-none text-muted-foreground">
+                              <span className="font-mono text-[11px] font-bold leading-none text-ink-faint">
                                 {String(index + 1).padStart(2, "0")}
                               </span>
                               <span
                                 className={
-                                  isActive
-                                    ? "text-sm font-bold leading-none text-navy"
-                                    : "text-sm font-bold leading-none text-foreground"
+                                  "text-sm font-extrabold leading-none " +
+                                  (isActive ? "text-blue" : "text-ink")
                                 }
                               >
                                 {item.name}
                               </span>
                             </span>
-                            <span
-                              className={
-                                isActive
-                                  ? "mt-1.5 block text-xs leading-relaxed text-muted-foreground"
-                                  : "mt-1.5 block text-xs leading-relaxed text-muted-foreground"
-                              }
-                            >
+                            <span className="mt-1.5 block text-xs leading-relaxed text-ink-soft">
                               {item.summary}
                             </span>
                           </span>
@@ -365,7 +360,7 @@ export function Workflow() {
 
                         {isActive ? (
                           <div
-                            className="pb-6 pl-[60px] lg:hidden"
+                            className="pb-6 pl-[64px] lg:hidden"
                             aria-live="polite"
                           >
                             <StepDetail step={item} />
@@ -382,40 +377,45 @@ export function Workflow() {
             ))}
           </div>
 
+          {/* Trang chi tiết dính băng dính */}
           <div className="hidden lg:block">
-            <div className="sticky top-24 rounded-3xl bg-gradient-to-br from-accent to-card p-7 ring-1 ring-border/80">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={step.name}
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduceMotion ? undefined : { opacity: 0, y: -10 }}
-                  transition={{
-                    duration: reduceMotion ? 0 : 0.25,
-                    ease: [0.21, 0.47, 0.32, 0.98],
-                  }}
-                  aria-live="polite"
-                >
-                  <div className="grid gap-8 sm:grid-cols-2">
-                    <div>
-                      <p className="font-mono text-[11px] leading-none text-muted-foreground">
-                        {step.range}
-                      </p>
-                      <h3 className="mt-2 text-lg font-bold leading-tight text-navy">
-                        {step.phase}
-                      </h3>
-                      <span className="mt-4 block h-px w-10 bg-brand" />
-                      <h4 className="mt-5 text-base font-bold text-navy">
-                        {step.name}
-                      </h4>
+            <div className="sticky top-24">
+              <div className="sketch-card relative rotate-[0.5deg] p-7">
+                <Tape className="-top-3 right-10" rotate={6} />
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={step.name}
+                    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduceMotion ? undefined : { opacity: 0, y: -10 }}
+                    transition={{
+                      duration: reduceMotion ? 0 : 0.25,
+                      ease: [0.21, 0.47, 0.32, 0.98],
+                    }}
+                    aria-live="polite"
+                  >
+                    <div className="grid gap-8 sm:grid-cols-2">
+                      <div>
+                        <p className="font-mono text-[11px] font-bold leading-none text-ink-faint">
+                          {step.range}
+                        </p>
+                        <h3 className="mt-2 text-lg font-extrabold leading-tight text-ink">
+                          {step.phase}
+                        </h3>
+                        <span className="mt-4 block h-[3px] w-10 rounded-full bg-blue" />
+                        <h4 className="mt-5 flex items-center gap-2.5 text-base font-extrabold text-ink">
+                          <step.icon className="h-5 w-5 text-blue" aria-hidden="true" />
+                          {step.name}
+                        </h4>
 
-                      <StepDetail step={step} />
+                        <StepDetail step={step} />
+                      </div>
+
+                      <ArtifactPreview step={step} />
                     </div>
-
-                    <ArtifactPreview step={step} />
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
