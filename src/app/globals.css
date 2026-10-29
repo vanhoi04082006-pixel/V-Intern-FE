@@ -1,0 +1,345 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   V-INTERN — "SỔ TAY HÀNH TRÌNH" (Journey Notebook)
+   Bảng màu bắt buộc: XANH DƯƠNG · TRẮNG · ĐEN
+   - Trắng  = nền giấy (paper)
+   - Đen    = nét mực (ink)
+   - Xanh   = mực nhấn (blue)
+   Dark mode = "bảng đen phấn" (chalkboard)
+   ============================================================ */
+
+@theme inline {
+  /* shadcn semantic tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* V-Intern notebook palette (adaptive — đổi theo theme) */
+  --color-paper: var(--paper);
+  --color-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-blue: var(--blue);
+  --color-blue-deep: var(--blue-deep);
+  --color-blue-mist: var(--blue-mist);
+
+  /* Màu cố định — KHÔNG đổi theo theme:
+     royal = nền xanh đậm chữ trắng; coal = nền đen; chalk = chữ trên nền đen */
+  --color-royal: #2060f0;
+  --color-royal-deep: #1743c4;
+  --color-coal: #141419;
+  --color-coal-soft: #1f1f28;
+  --color-chalk: #f2f1e9;
+  --color-chalk-soft: #a8a8b2;
+
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-hand: var(--font-hand);
+  --font-mono: var(--font-mono);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Motion */
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-soft: float-soft 6s ease-in-out infinite;
+  --animate-wiggle: wiggle 3.2s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-blink-dot: blink-dot 1.3s ease-in-out infinite;
+}
+
+/* ---------- Light: giấy vở ---------- */
+:root {
+  --radius: 0.875rem;
+
+  --paper: #fbfaf4;
+  --paper-raised: #ffffff;
+  --ink: #17171c;
+  --ink-soft: #5a5a64;
+  --ink-faint: #9c9ca6;
+  --blue: #2060f0;
+  --blue-deep: #1743c4;
+  --blue-mist: #e9f0fe;
+  --line: rgba(23, 23, 28, 0.075);
+  --hard-shadow: rgba(23, 23, 28, 0.92);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-raised);
+  --popover-foreground: var(--ink);
+  --primary: var(--blue);
+  --primary-foreground: #ffffff;
+  --secondary: var(--blue-mist);
+  --secondary-foreground: var(--ink);
+  --muted: #efede3;
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--blue-mist);
+  --accent-foreground: var(--ink);
+  --destructive: #d9304a;
+  --border: #e5e3d9;
+  --input: #e5e3d9;
+  --ring: rgba(32, 96, 240, 0.45);
+}
+
+/* ---------- Dark: bảng đen phấn ---------- */
+.dark {
+  --paper: #131318;
+  --paper-raised: #1c1c24;
+  --ink: #f2f1e9;
+  --ink-soft: #a8a8b2;
+  --ink-faint: #70707b;
+  --blue: #7d97ff;
+  --blue-deep: #99adff;
+  --blue-mist: rgba(125, 151, 255, 0.16);
+  --line: rgba(242, 241, 233, 0.085);
+  --hard-shadow: rgba(0, 0, 0, 0.55);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-raised);
+  --popover-foreground: var(--ink);
+  --primary: var(--blue);
+  --primary-foreground: #101018;
+  --secondary: var(--blue-mist);
+  --secondary-foreground: var(--ink);
+  --muted: #202029;
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--blue-mist);
+  --accent-foreground: var(--ink);
+  --destructive: #ff627a;
+  --border: #2b2b35;
+  --input: #2b2b35;
+  --ring: rgba(125, 151, 255, 0.5);
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-12px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes blink-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+
+  /* Thanh cuộn mảnh kiểu bút chì */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: 999px;
+    border: 3px solid var(--paper);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--blue);
+  }
+}
+
+@layer utilities {
+  /* Nền giấy ô ly */
+  .bg-grid-paper {
+    background-image: linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  /* Nền giấy chấm bi */
+  .bg-dots-paper {
+    background-image: radial-gradient(var(--line) 1.4px, transparent 1.4px);
+    background-size: 24px 24px;
+  }
+
+  /* Nền chấm phấn — dùng trên các section đen cố định */
+  .bg-dots-chalk {
+    background-image: radial-gradient(rgba(242, 241, 233, 0.09) 1.4px, transparent 1.4px);
+    background-size: 24px 24px;
+  }
+
+  /* Làm mờ dần lưới ở mép */
+  .mask-fade-edges {
+    -webkit-mask-image: radial-gradient(
+      ellipse 90% 85% at 50% 40%,
+      black 55%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 90% 85% at 50% 40%,
+      black 55%,
+      transparent 100%
+    );
+  }
+
+  /* Dòng chữ được tô bút dạ quang xanh */
+  .marker {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    background-image: linear-gradient(
+      100deg,
+      transparent 0.5%,
+      var(--blue-mist) 2.5%,
+      var(--blue-mist) 97%,
+      transparent 99%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 88%;
+    background-position: 0 58%;
+    padding-inline: 0.12em;
+  }
+
+  /* Thẻ giấy viền mực + bóng đổ in */
+  .sketch-card {
+    background: var(--paper-raised);
+    border: 2px solid var(--ink);
+    border-radius: 1rem;
+    box-shadow: 5px 5px 0 0 var(--hard-shadow);
+  }
+
+  .sketch-card-sm {
+    background: var(--paper-raised);
+    border: 2px solid var(--ink);
+    border-radius: 0.75rem;
+    box-shadow: 3px 3px 0 0 var(--hard-shadow);
+  }
+
+  /* Nét đứt như đường cắt giấy */
+  .dashed-cut {
+    border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
+  }
+
+  /* Mẩu băng dính washi */
+  .tape {
+    position: absolute;
+    width: 96px;
+    height: 28px;
+    background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+    box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+    clip-path: polygon(
+      2% 8%,
+      98% 0%,
+      100% 82%,
+      97% 100%,
+      3% 94%,
+      0% 14%
+    );
+    opacity: 0.9;
+  }
+
+  .dark .tape {
+    background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+  }
+
+  /* Con dấu tròn kiểu mộc */
+  .stamp {
+    border: 2.5px solid currentColor;
+    border-radius: 999px;
+    mask-image: radial-gradient(
+      circle at 30% 30%,
+      black 92%,
+      transparent 98%
+    );
+  }
+
+  /* Gạch chân lượn sóng vẽ tay (dùng cho link) */
+  .underline-squiggle {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%232060F0' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: 0 100%;
+    background-size: 40px 6px;
+    padding-bottom: 7px;
+  }
+}
+
+/* Tôn trọng người dùng giảm chuyển động */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-soft,
+  .animate-wiggle,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+}
