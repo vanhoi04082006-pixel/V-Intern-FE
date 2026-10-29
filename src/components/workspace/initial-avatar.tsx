@@ -9,7 +9,7 @@ const AVATAR_STYLES = [
   "bg-blue text-white",
 ];
 
-/** Avatar chữ cái đầu — màu cố định theo id, không cần ảnh. */
+/** Avatar chữ cái đầu — màu cố định theo id (hoặc tên), không cần ảnh. */
 export function InitialAvatar({
   name,
   id,
@@ -17,7 +17,7 @@ export function InitialAvatar({
   className,
 }: {
   name: string;
-  id: string;
+  id?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
@@ -28,7 +28,7 @@ export function InitialAvatar({
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
   let hash = 0;
-  for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
+  for (const ch of id ?? name) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
   const style = AVATAR_STYLES[Math.abs(hash) % AVATAR_STYLES.length];
 
   return (
