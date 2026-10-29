@@ -1,0 +1,9 @@
+{
+  "name": "mock-be",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot index.ts",
+    "start": "bun index.ts"
+  }
+}
