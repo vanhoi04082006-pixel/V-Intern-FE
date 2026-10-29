@@ -166,6 +166,13 @@ export function parseTemplateAssessment(
     taskSuites,
   };
 }
+function parseVersionedAssessment(value: unknown) {
+  const row = record(value);
+  return {
+    version: number(row.version),
+    assessment: parseTemplateAssessment(row.assessment),
+  };
+}
 export function starterArchive(material: LearningPackage | null): Uint8Array {
   if (!material) return invalid();
   const parsed = parseLearningPackage(material)!;
@@ -197,13 +204,16 @@ export const getAssessment = (
 ) =>
   request(
     `/project-templates/${encodeURIComponent(id)}/${version === undefined ? "" : `revisions/${version}/`}assessment`,
-    (raw) => {
-      const row = record(raw);
-      return {
-        version: number(row.version),
-        assessment: parseTemplateAssessment(row.assessment),
-      };
-    },
+    parseVersionedAssessment,
+    { signal },
+  );
+export const getPinnedProjectAssessment = (
+  projectId: string,
+  signal?: AbortSignal,
+) =>
+  request(
+    `/projects/${encodeURIComponent(projectId)}/template-assessment`,
+    parseVersionedAssessment,
     { signal },
   );
 export const listTemplateRevisions = (id: string, signal?: AbortSignal) =>
