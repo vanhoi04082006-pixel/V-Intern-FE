@@ -1,8 +1,0 @@
-{
-  "name": "vintern-design-audit-tools",
-  "private": true,
-  "description": "Project-scoped browser adapter required by Hallmark render checks. Uses the host Chrome installation; does not download a browser.",
-  "devDependencies": {
-    "puppeteer-core": "^24.0.0"
-  }
-}
