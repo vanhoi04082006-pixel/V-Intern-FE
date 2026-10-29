@@ -1,107 +1,158 @@
 "use client";
 
 import { create } from "zustand";
+import {
+  clearSession,
+  getSessionUser,
+  primaryRole,
+  subscribeSession,
+  type SessionUser,
+} from "@/lib/auth/session";
+import { logout as apiLogout, refreshSession } from "@/lib/auth/auth-service";
 
-export type SessionUser = {
-  id: string;
-  email: string;
-  name: string;
-  role: "intern" | "instructor" | "admin";
-  university: string | null;
-  major: string | null;
-  bio: string | null;
-};
+/**
+ * SPA router — mọi khung cảnh sống trong route "/" duy nhất:
+ *   #/                 → landing
+ *   #/login            → đăng nhập / đăng ký
+ *   #/app/<section>    → workspace theo vai trò + quyền
+ *   #/apply            → nộp CV công khai (ứng viên, cookie riêng)
+ *   #/verify           → kích hoạt link truy cập ứng viên
+ *   #/github-invite    → thông báo mời GitHub
+ */
 
-export type View = "landing" | "auth" | "app";
+export type View = "landing" | "auth" | "app" | "apply" | "verify" | "github-invite";
 
-const STORAGE_KEY = "vintern-session";
-
-function readSession(): SessionUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as SessionUser;
-    if (!parsed?.id || !parsed?.email) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function writeSession(user: SessionUser | null) {
-  if (typeof window === "undefined") return;
-  if (user) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  } else {
-    window.localStorage.removeItem(STORAGE_KEY);
-  }
-}
-
-/** Đổi hash nhưng KHÔNG kích hoạt hashchange (dùng replaceState). */
-function setHash(hash: "" | "login" | "app") {
-  if (typeof window === "undefined") return;
-  const { pathname, search } = window.location;
-  const next = hash ? `${pathname}${search}#${hash}` : `${pathname}${search}`;
-  window.history.replaceState(null, "", next);
-}
-
-type AppState = {
+interface AppState {
   user: SessionUser | null;
   view: View;
+  section: string;
   hydrated: boolean;
-  /** Gọi một lần khi AppShell mount — đọc localStorage + hash hiện tại. */
+  /** Khôi phục phiên bằng refresh cookie — true khi request đang bay. */
+  restoring: boolean;
   hydrate: () => void;
-  /** Người dùng đăng nhập / đăng ký thành công. */
   signIn: (user: SessionUser) => void;
-  signOut: () => void;
-  /** Điều hướng giữa các khung cảnh. */
+  signOut: () => Promise<void>;
   navigate: (view: View) => void;
+  goSection: (section: string) => void;
+}
+
+export function parseHash(): { view: View; section: string } {
+  if (typeof window === "undefined") return { view: "landing", section: "" };
+  const raw = window.location.hash.replace(/^#\/?/, "");
+  if (raw === "login") return { view: "auth", section: "" };
+  if (raw === "app" || raw.startsWith("app/")) return { view: "app", section: raw.slice(4).replace(/^\/+/, "") };
+  if (raw === "apply") return { view: "apply", section: "" };
+  if (raw === "verify") return { view: "verify", section: "" };
+  if (raw === "github-invite") return { view: "github-invite", section: "" };
+  return { view: "landing", section: "" };
+}
+
+function setHashSilently(hash: string): void {
+  if (typeof window === "undefined") return;
+  // Chỉ bỏ các "#" thừa ở đầu — giữ nguyên "/..." phía sau (canonical: "#/app/x").
+  const clean = hash.replace(/^#+/, "");
+  const { pathname, search } = window.location;
+  window.history.replaceState(null, "", `${pathname}${search}${clean ? `#${clean}` : ""}`);
+}
+
+export const DEFAULT_SECTION: Record<"admin" | "instructor" | "intern", string> = {
+  intern: "dashboard",
+  instructor: "dashboard",
+  admin: "dashboard",
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
   user: null,
   view: "landing",
+  section: "",
   hydrated: false,
+  restoring: false,
 
   hydrate: () => {
     if (get().hydrated) return;
-    const user = readSession();
-    const hash = typeof window !== "undefined" ? window.location.hash : "";
-    let view: View = "landing";
-    if (hash === "#login") view = "auth";
-    else if (hash === "#app" && user) view = "app";
-    set({ user, view, hydrated: true });
+    set({ hydrated: true });
+
+    const { view, section } = parseHash();
+
+    // Đồng bộ khi phiên đổi từ tab khác / bị 401-clear giữa chừng.
+    subscribeSession(() => {
+      const user = getSessionUser();
+      const current = useAppStore.getState();
+      if (!user && current.view === "app") {
+        setHashSilently("");
+        set({ user: null, view: "landing", section: "" });
+      } else if (user && current.user?.id !== user.id) {
+        set({ user });
+      }
+    });
+
+    const local = getSessionUser();
+    if (local) {
+      set({
+        user: local,
+        view: view === "auth" ? "app" : view,
+        section: view === "app" ? section || DEFAULT_SECTION[primaryRole(local)] : "",
+      });
+      return;
+    }
+
+    if (view === "app") {
+      // Thử khôi phục phiên từ HttpOnly refresh cookie.
+      set({ restoring: true });
+      void refreshSession().then((ok) => {
+        const user = getSessionUser();
+        if (ok && user) {
+          set({
+            user,
+            view: "app",
+            section: section || DEFAULT_SECTION[primaryRole(user)],
+            restoring: false,
+          });
+        } else {
+          set({ user: null, view: "landing", section: "", restoring: false });
+          setHashSilently("");
+        }
+      });
+    } else {
+      set({ view, section });
+    }
   },
 
   signIn: (user) => {
-    writeSession(user);
-    setHash("app");
-    set({ user, view: "app" });
+    // Token đã được auth-service set vào session trước khi gọi signIn.
+    setHashSilently(`#/app/${DEFAULT_SECTION[primaryRole(user)]}`);
+    set({ user, view: "app", section: DEFAULT_SECTION[primaryRole(user)] });
     window.scrollTo({ top: 0 });
   },
 
-  signOut: () => {
-    writeSession(null);
-    setHash("");
-    set({ user: null, view: "landing" });
+  signOut: async () => {
+    await apiLogout();
+    clearSession();
+    setHashSilently("");
+    set({ user: null, view: "landing", section: "" });
     window.scrollTo({ top: 0 });
   },
 
   navigate: (view) => {
-    const current = get().view;
-    if (current === view) return;
-    setHash(view === "landing" ? "" : view === "auth" ? "login" : "app");
+    if (get().view === view) return;
+    setHashSilently(view === "landing" ? "" : `#/${view}`);
     set({ view });
+    window.scrollTo({ top: 0 });
+  },
+
+  goSection: (section) => {
+    if (get().section === section && get().view === "app") return;
+    setHashSilently(`#/app/${section}`);
+    set({ section, view: "app" });
     window.scrollTo({ top: 0 });
   },
 }));
 
-/** Map hash → view cho sự kiện back/forward của trình duyệt. */
-export function viewFromHash(hash: string): View | null {
-  const user = useAppStore.getState().user;
-  if (hash === "#login") return "auth";
-  if (hash === "#app" && user) return "app";
-  if (hash === "" || hash === "#" || !hash.startsWith("#")) return "landing";
-  return null;
+/** Map hash hiện tại → view cho sự kiện back/forward của trình duyệt. */
+export function viewFromHash(): { view: View; section: string } | null {
+  const parsed = parseHash();
+  if (parsed.view === "landing" && typeof window !== "undefined" && window.location.hash.replace(/^#\/?/, "") !== "") {
+    return null; // hash lạ — bỏ qua
+  }
+  return parsed;
 }
