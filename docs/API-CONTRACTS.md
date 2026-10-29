@@ -19,7 +19,7 @@ Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentia
 |---|---|
 | workspace/recruitment | Lifecycle, profile, own session (kể cả polling trạng thái), conversation next/clarify, answer, submit/retry |
 | evaluations/ai-generations | Gợi ý AI cho đánh giá: sinh, lịch sử và chi tiết từng gợi ý; kế hoạch sprint có bản nháp xem trước rồi mới confirm |
-| templates/sessions | Library/detail/create run, eligible members, Start, plan history/publish |
+| templates/sessions | Library/detail/create run, public and pinned private assessments, eligible members, Start, plan history/publish |
 | work/submissions | Own tasks/specs/comments/history, nộp/rút bài, hoàn thành phân công, báo cáo hoàn thành sprint, spec nguồn (raw, hiển thị kèm display API), AI review và rubric cuối |
 | github | Trạng thái kết nối, authorize redirect, repo/provision/invitation, webhook setup và activity phân trang |
 | sharing | Xin xem, approve/deny/revoke, snapshot chỉ đọc |
@@ -30,6 +30,8 @@ Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentia
 | knowledge-runs | Tạo/poll/cancel/resume run của knowledge agent (requestId idempotent) |
 | notifications | Danh sách/đọc/tùy chọn + unread-count cho badge topbar (60s, fails soft) |
 | burndown/replacements | Burndown sprint dựng từ sự kiện trạng thái; polling trạng thái lệnh thay thế sau approve |
+
+Tài liệu chấm riêng của template chỉ tải khi người có `templates.assessment.read` mở mục tương ứng. `/project-templates/:id/revisions/:version/assessment` đọc theo revision; `/projects/:id/template-assessment` đọc theo project đã chọn, trả `{ version, assessment }` theo version đã ghim và có thể trả `assessment: null`. UI không thay bằng tài liệu của version khác; backend tiếp tục kiểm tra quyền truy cập project.
 
 Lỗi 401 xóa phiên và yêu cầu đăng nhập;403 từ chối quyền;409 reload dữ liệu và cho xử lý xung đột;429/5xx hiển thị retry. Refresh bị throttled/transport error không giả thành logout; cookie invalid/revoked vẫn fail closed.
 

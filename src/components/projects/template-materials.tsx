@@ -6,71 +6,15 @@ import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { buttonClass, inputClass } from "@/components/product/primitives";
 import type { TemplateDetail } from "@/lib/api/templates";
 import {
-  getAssessment,
   getTemplateRevision,
   listTemplateRevisions,
   parseLearningPackage,
 } from "@/lib/api/template-materials";
-import { PackageFiles, PackagePreview } from "./package-preview";
-
-function PrivateAssessment({ id, version }: { id: string; version: number }) {
-  const resource = useResource(
-    useCallback(
-      (signal: AbortSignal) => getAssessment(id, version, signal),
-      [id, version],
-    ),
-  );
-  if (resource.loading) return <LoadingState />;
-  if (resource.error)
-    return <ErrorState error={resource.error} onRetry={resource.reload} />;
-  const assessment = resource.data?.assessment;
-  if (!assessment)
-    return (
-      <p className="text-body text-muted-foreground">
-        Phiên bản {version} chưa có tài liệu chấm riêng. Không lấy lời giải của
-        phiên bản khác để thay vào.
-      </p>
-    );
-  return (
-    <div className="space-y-5">
-      <p className="text-body leading-6 text-warning">
-        Tài liệu dành cho người chấm, v{version}. Không đưa các file này vào
-        starter hoặc gửi cho sinh viên đang làm bài.
-      </p>
-      <PackageFiles
-        files={[...assessment.solutionFiles, ...assessment.hiddenTestFiles]}
-      />
-      <table className="w-full text-left text-body">
-        <caption className="mb-3 text-left font-semibold text-foreground">
-          Rubric tham khảo, tổng 100%
-        </caption>
-        <tbody className="divide-y divide-border">
-          {assessment.rubric.map((row) => (
-            <tr key={row.criterion}>
-              <th scope="row" className="py-3 pr-4 align-top font-medium">
-                {row.criterion}
-                <p className="mt-1 font-normal leading-6 text-muted-foreground">
-                  {row.description}
-                </p>
-              </th>
-              <td className="py-3 text-right align-top tabular-nums">
-                {row.weight}%
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="text-caption leading-5 text-muted-foreground">
-        Mapping{" "}
-        {assessment.taskSuites
-          .map((row) => `${row.taskKey} → ${row.suiteId}`)
-          .join(", ")}
-        . Digest authoring không tự thay thế seal của operator theo
-        task/repository/spec.
-      </p>
-    </div>
-  );
-}
+import { PackagePreview } from "./package-preview";
+import {
+  PinnedRunAssessment,
+  PrivateAssessment,
+} from "./template-assessment";
 function RevisionPicker({
   id,
   version,
@@ -114,7 +58,9 @@ function RevisionPicker({
 export function TemplateMaterials({ source }: { source: TemplateDetail }) {
   const [version, setVersion] = useState(source.version),
     [history, setHistory] = useState(false),
-    [privateOpen, setPrivateOpen] = useState(false);
+    [privateOpen, setPrivateOpen] = useState(false),
+    [selectedRunId, setSelectedRunId] = useState("");
+  const selectedRun = source.runs.find((run) => run.id === selectedRunId);
   const resource = useResource(
     useCallback(
       (signal: AbortSignal) =>
@@ -147,6 +93,7 @@ export function TemplateMaterials({ source }: { source: TemplateDetail }) {
           version={version}
           onChange={(value) => {
             setPrivateOpen(false);
+            setSelectedRunId("");
             setVersion(value);
           }}
         />
@@ -180,6 +127,38 @@ export function TemplateMaterials({ source }: { source: TemplateDetail }) {
           </button>
           {privateOpen && (
             <PrivateAssessment key={version} id={source.id} version={version} />
+          )}
+          {source.runs.length > 0 && (
+            <div className="space-y-3 border-t border-border pt-4">
+              <h3 className="text-body font-semibold text-foreground">
+                Tài liệu chấm theo phiên đã khởi tạo
+              </h3>
+              <label className="block text-body text-muted-foreground">
+                Chọn phiên
+                <select
+                  className={`${inputClass} mt-1`}
+                  value={selectedRunId}
+                  onChange={(event) => setSelectedRunId(event.target.value)}
+                >
+                  <option value="">Chọn phiên để xem tài liệu chấm</option>
+                  {source.runs.map((run) => (
+                    <option value={run.id} key={run.id}>
+                      Phiên {run.sessionId.slice(0, 8)} · v{run.templateVersion}
+                      {run.createdAt
+                        ? ` · ${new Date(run.createdAt).toLocaleDateString("vi-VN")}`
+                        : ""}
+                    </option>
+                  ))}
+                </select>
+                <span className="mt-1 block text-caption text-muted-foreground">
+                  Tài liệu được lấy theo phiên bản đã ghim cho project của
+                  phiên.
+                </span>
+              </label>
+              {selectedRun && (
+                <PinnedRunAssessment key={selectedRun.id} run={selectedRun} />
+              )}
+            </div>
           )}
         </div>
       </Can>
