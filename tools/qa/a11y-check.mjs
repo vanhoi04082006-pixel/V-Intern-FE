@@ -18,6 +18,17 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const reportPath = path.join(repoRoot, ".qa", "a11y-report.json");
 
 const PACKS = {
+  "instructor-core": [
+    "/instructor",
+    "/instructor/sessions",
+    "/instructor/sessions/ses-0000-4000-8000-000000000050",
+    "/instructor/sessions/ses-0000-4000-8000-000000000050/setup?project=prj-0000-4000-8000-000000000050",
+    "/instructor/sprints",
+    "/instructor/sprints/spr-0000-4000-8000-000000000051",
+    "/instructor/tasks/tsk-0000-4000-8000-000000000102",
+    "/instructor/projects",
+    "/instructor/projects/prj-0000-4000-8000-000000000050",
+  ],
   "intern-work": [
     "/intern",
     "/intern/work",
@@ -62,7 +73,12 @@ if (!routes.length) {
 }
 const baseURL = String(arg("base-url", "http://localhost:3016"));
 
-const { resolveApi } = await import("./fixtures.mjs");
+const { resolveApi: resolveInternApi } = await import("./fixtures.mjs");
+const { resolveInstructorApi } = await import("./fixtures-instructor.mjs");
+const resolveApi = (method, path, search) =>
+  routes.some((r) => r.startsWith("/instructor"))
+    ? resolveInstructorApi(method, path, search)
+    : resolveInternApi(method, path, search);
 const { chromium } = await import("playwright-core");
 const axeSource = await readFile(
   path.join(repoRoot, "node_modules", "axe-core", "axe.min.js"),

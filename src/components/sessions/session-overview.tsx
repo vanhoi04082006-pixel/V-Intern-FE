@@ -265,28 +265,29 @@ export function SessionOverview({
           <dt>Sprint</dt>
           <dd>
             {session.overview.sprintCount}
+            <span className="ins-stat-hint">
+              {session.sprintProgress.filter((s) => s.status === "active").length} đang chạy
+            </span>
           </dd>
-          <p className="text-caption text-muted-foreground">
-            {session.sprintProgress.filter((s) => s.status === "active").length}{" "}
-            đang chạy
-          </p>
         </div>
         <div>
           <dt>Task</dt>
-          <dd>{totalTasks}</dd>
-          <p className="text-caption text-muted-foreground">
-            {progress.done} hoàn thành ({progress.percent}%)
-          </p>
+          <dd>
+            {totalTasks}
+            <span className="ins-stat-hint">
+              {progress.done} hoàn thành ({progress.percent}%)
+            </span>
+          </dd>
         </div>
         <div>
           <dt>Còn lại</dt>
           <dd>
             {totalTasks - progress.done}
+            <span className="ins-stat-hint">
+              {session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)}{" "}
+              chờ duyệt
+            </span>
           </dd>
-          <p className="text-caption text-muted-foreground">
-            {session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)}{" "}
-            chờ duyệt
-          </p>
         </div>
         <div>
           <dt>Kế hoạch AI</dt>
@@ -298,10 +299,10 @@ export function SessionOverview({
                 : basePath === "/instructor"
                   ? instructorPlanStatus(plans.data?.[0]?.status ?? "chưa có")
                   : (plans.data?.[0]?.status ?? "chưa có")}
+            <span className="ins-stat-hint">
+              {plans.data?.length ?? 0} bản kế hoạch
+            </span>
           </dd>
-          <p className="text-caption text-muted-foreground">
-            {plans.data?.length ?? 0} bản kế hoạch
-          </p>
         </div>
       </dl>
 
