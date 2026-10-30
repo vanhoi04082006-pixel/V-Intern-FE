@@ -134,8 +134,12 @@ try {
     .getByRole("heading", { name: "Đánh giá chính thức" })
     .waitFor();
   // The official score renders in the score hero (label + value /100 scale).
-  await page.getByText("Điểm chính thức", { exact: true }).waitFor();
-  await page.getByText("80", { exact: true }).waitFor();
+  // Scope to the hero: bare text "80" also matches criterion score cells.
+  await page
+    .locator(".student-score")
+    .filter({ hasText: "Điểm chính thức" })
+    .filter({ hasText: "80" })
+    .waitFor();
   assert.equal(await page.getByText("95", { exact: true }).count(), 0);
   await shot(page, "intern-evaluations");
   const ev = await ds.query(
