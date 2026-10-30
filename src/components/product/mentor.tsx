@@ -8,6 +8,8 @@ import {
   StudentHeading,
   StudentPanel as Panel,
 } from "@/components/intern/student-ui";
+import { NoteCard } from "@/components/workspace/notebook";
+import { Tape } from "@/components/v-intern/doodles";
 import { listTasks } from "@/lib/api/work";
 import { useCallback, useRef, useState } from "react";
 import {
@@ -68,6 +70,9 @@ export function Mentor() {
           </button>
         }
       />
+      <NoteCard tape title="AI Mentor" className="mb-4 hidden sm:block">
+        Hỏi càng cụ thể, gợi ý càng sát bài của bạn.
+      </NoteCard>
       {Boolean(error) && <ErrorState error={error} />}
       <div className="student-mentor-workbench">
         <Panel
@@ -264,7 +269,9 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
           Lưu trữ
         </button>
       }
+      className="relative group"
     >
+      <Tape className="-top-3 left-6" rotate={-5} />
       {detail.loading ? (
         <LoadingState />
       ) : detail.error ? (
