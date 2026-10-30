@@ -87,7 +87,7 @@ function FooterColumnNav({ column }: { column: FooterColumn }) {
           ) : (
             <li key={link.label}>
               <span
-                className="cursor-default text-sm text-chalk/45"
+                className="cursor-default text-sm text-chalk-soft"
                 title="Sắp ra mắt"
               >
                 {link.label}
