@@ -55,7 +55,6 @@ import {
 } from "@/lib/api/outcomes";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Tape } from "@/components/v-intern/doodles";
-import { StampMoc } from "@/components/workspace/notebook";
 import { NotificationText } from "./notification-text";
 import {
   buttonClass,
