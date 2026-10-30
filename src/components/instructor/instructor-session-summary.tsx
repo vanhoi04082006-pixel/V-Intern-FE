@@ -49,12 +49,14 @@ export function InstructorSessionSummary({
           {
             label: "Bài chờ duyệt",
             value: alertsKnown ? review : "Chưa có dữ liệu",
-            tone: "amber",
+            // Unknown data is neutral, not a warning: only real counts carry
+            // the amber/rose signal.
+            tone: alertsKnown ? "amber" : "slate",
           },
           {
             label: "Nhiệm vụ quá hạn",
             value: alertsKnown ? overdue : "Chưa có dữ liệu",
-            tone: "rose",
+            tone: alertsKnown ? "rose" : "slate",
           },
         ].map(({ label, value, tone }) => (
           <div className="ins-metric" data-tone={tone} key={label}>
@@ -92,7 +94,11 @@ export function InstructorSessionSummary({
                   </p>
                 </div>
                 <Link
-                  className="ins-queue-action"
+                  className={
+                    row.alerts!.pendingReview > 0
+                      ? "ins-queue-action ins-queue-action-primary"
+                      : "ins-queue-action"
+                  }
                   href={
                     row.alerts!.pendingReview > 0
                       ? `/instructor/sessions/${encodeURIComponent(row.id)}?taskStatus=review#session-work`

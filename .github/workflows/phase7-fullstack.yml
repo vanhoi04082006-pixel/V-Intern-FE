@@ -12,7 +12,10 @@ concurrency:
   cancel-in-progress: true
 jobs:
   sql2019:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest now resolves to 26.04, which has no Playwright
+    # ffmpeg build (npx playwright install fails with "ffmpeg on ubuntu26.04").
+    # Keep on 24.04 until Playwright publishes 26.04 browser builds.
+    runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
       LIVE_BE_ROOT: ${{ github.workspace }}/V-INTERN-BE

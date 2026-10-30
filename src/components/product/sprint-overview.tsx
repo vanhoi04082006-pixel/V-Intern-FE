@@ -12,6 +12,7 @@ import {
 import { request } from "@/lib/api/client";
 import { array, nullable, number, record, string } from "@/lib/api/parse";
 import { getBoard, getSprintCompletion } from "@/lib/api/work";
+import { fetchSprintBurndown } from "@/lib/api/delivery";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Modal, Panel, Badge, Empty, MetricCard } from "./primitives";
@@ -449,29 +450,16 @@ export function Burndown({
   id: string;
   compact?: boolean;
 }) {
+  // Single validated contract: reuse fetchSprintBurndown (delivery.ts) instead
+  // of a stale inline parser that expected a { points: [...] } wrapper — the
+  // same endpoint already had two incompatible parsers, which surfaced as an
+  // error card inside the "Tiến độ" panel.
   const data = useResource(
-    useCallback(
-      (signal: AbortSignal) =>
-        request(
-          `/dashboard/sprints/${id}/burndown`,
-          (v) =>
-            array(record(v).points, (x) => {
-              const p = record(x);
-              return {
-                date: string(p.date),
-                actual: nullable(p.actual, number),
-                ideal: number(p.ideal),
-              };
-            }),
-          { signal },
-        ),
-      [id],
-    ),
+    useCallback((signal: AbortSignal) => fetchSprintBurndown(id, signal), [id]),
   );
-  if (data.loading) return <LoadingState />;
-  if (data.error)
-    return <ErrorState error={data.error} onRetry={data.reload} />;
-  if (!data.data?.length) return null;
+  // The chart is supplementary: when the backend has no burndown yet, stay
+  // hidden instead of pushing a heavy error card into the progress panel.
+  if (data.loading || data.error || !data.data?.length) return null;
   const points = data.data,
     max = Math.max(1, ...points.flatMap((p) => [p.actual ?? 0, p.ideal]));
   const coords = (i: number, n: number) =>

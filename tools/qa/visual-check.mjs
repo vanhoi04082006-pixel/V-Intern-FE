@@ -26,6 +26,17 @@ const shotsDir = path.join(repoRoot, ".qa", "shots");
 const reportPath = path.join(repoRoot, ".qa", "report.json");
 
 const PACKS = {
+  "instructor-core": [
+    "/instructor",
+    "/instructor/sessions",
+    "/instructor/sessions/ses-0000-4000-8000-000000000050",
+    "/instructor/sessions/ses-0000-4000-8000-000000000050/setup?project=prj-0000-4000-8000-000000000050",
+    "/instructor/sprints",
+    "/instructor/sprints/spr-0000-4000-8000-000000000051",
+    "/instructor/tasks/tsk-0000-4000-8000-000000000102",
+    "/instructor/projects",
+    "/instructor/projects/prj-0000-4000-8000-000000000050",
+  ],
   "intern-work": [
     "/intern",
     "/intern/work",
@@ -74,7 +85,13 @@ const port = Number(arg("port", 3016));
 const externalBase = arg("base-url");
 const baseURL = externalBase ? String(externalBase).replace(/\/+$/, "") : `http://localhost:${port}`;
 
-const { resolveApi } = await import("./fixtures.mjs");
+const { resolveApi: resolveInternApi } = await import("./fixtures.mjs");
+const { resolveInstructorApi } = await import("./fixtures-instructor.mjs");
+// Fixtures are role-scoped: instructor surfaces authenticate as an instructor.
+const resolveApi = (method, path, search) =>
+  routes.some((r) => r.startsWith("/instructor"))
+    ? resolveInstructorApi(method, path, search)
+    : resolveInternApi(method, path, search);
 const { chromium } = await import("playwright-core");
 
 // Use an already-installed Chromium when the bundled revision is missing
@@ -185,7 +202,7 @@ try {
         }
       });
 
-      const slug = route.replaceAll("/", "_").replace(/^_/, "") || "home";
+      const slug = route.replaceAll("/", "_").replace(/^_/, "").replace(/[?&=]/g, "-") || "home";
       for (const width of viewports) {
         await page.setViewportSize({ width, height: 900 });
         const attempt = await page
