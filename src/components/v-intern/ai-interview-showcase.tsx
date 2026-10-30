@@ -123,7 +123,7 @@ export function AiInterviewShowcase() {
 
               <div className="flex items-center gap-3">
                 <InterviewerAvatar />
-                <div className="flex items-center gap-2.5 rounded-2xl rounded-tl-md border-2 border-dashed border-ink/25 bg-raised px-4 py-3">
+                <div className="dashed-cut flex items-center gap-2.5 rounded-2xl rounded-tl-md bg-raised px-4 py-3">
                   <TypingDots />
                   <span className="text-xs text-ink-soft">
                     AI đang chọn câu hỏi tiếp theo…

@@ -67,15 +67,14 @@ const AUDIENCES: Audience[] = [
   },
 ];
 
-function ScriptNote({ audience, dark }: { audience: Audience; dark: boolean }) {
+function ScriptNote({ audience }: { audience: Audience }) {
   const isLast = (index: number) => index === audience.scriptLines.length - 1;
 
   return (
     <div
       aria-hidden="true"
       className={
-        "pointer-events-none absolute left-4 top-4 z-10 select-none font-hand text-[26px] font-bold leading-[1.08] sm:left-7 sm:top-6 sm:text-[29px] -rotate-6 " +
-        (dark ? "text-blue" : "text-blue")
+        "pointer-events-none absolute left-4 top-4 z-10 select-none font-hand text-[26px] font-bold leading-[1.08] sm:left-7 sm:top-6 sm:text-[29px] -rotate-6 text-royal"
       }
     >
       {audience.scriptLines.map((line, index) => (
@@ -120,7 +119,7 @@ function AudienceCard({ audience }: { audience: Audience }) {
           className={
             "inline-flex -rotate-1 items-center rounded-full border-2 px-4 py-1.5 text-xs font-bold " +
             (dark
-              ? "border-blue/60 bg-blue/15 text-blue"
+              ? "border-chalk/40 bg-royal text-white"
               : "border-ink bg-raised text-blue")
           }
         >
@@ -187,7 +186,7 @@ function AudienceCard({ audience }: { audience: Audience }) {
       </div>
 
       <div className="relative mt-6 h-[300px] w-full shrink-0 sm:h-[340px] md:mt-0 md:h-auto md:w-[42%] md:self-stretch">
-        <ScriptNote audience={audience} dark={dark} />
+        <ScriptNote audience={audience} />
         <div
           className={
             "absolute bottom-0 right-0 flex h-full w-full items-end justify-center overflow-hidden bg-white md:rounded-l-2xl"

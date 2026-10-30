@@ -102,7 +102,7 @@ function KanbanBoard() {
                     <span
                       className={
                         "font-mono text-[9px] font-bold " +
-                        (card.active ? "text-white/85" : "text-chalk-soft")
+                        (card.active ? "text-white" : "text-chalk-soft")
                       }
                     >
                       {card.points} SP

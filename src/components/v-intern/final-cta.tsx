@@ -38,7 +38,7 @@ export function FinalCta() {
             </span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/85">
+          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/95">
             Tạo tài khoản, chọn lĩnh vực bạn yêu thích và để AI hướng bạn qua
             từng bước — hoàn toàn miễn phí cho sinh viên.
           </p>
@@ -56,7 +56,7 @@ export function FinalCta() {
             </a>
           </div>
 
-          <p className="mt-6 font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
+          <p className="mt-6 font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-white/90">
             hẹn gặp bạn bên trong ✦
           </p>
         </FadeIn>
