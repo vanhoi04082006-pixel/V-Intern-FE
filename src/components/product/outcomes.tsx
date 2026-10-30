@@ -53,6 +53,8 @@ import {
   verifyCertificate,
 } from "@/lib/api/outcomes";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Tape } from "@/components/v-intern/doodles";
+import { StampMoc } from "@/components/workspace/notebook";
 import { NotificationText } from "./notification-text";
 import {
   buttonClass,
@@ -1004,7 +1006,7 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
     }
   }
   return (
-    <div className="app-surface min-h-dvh">
+    <div className="app-surface min-h-dvh bg-grid-paper">
     <main className="mx-auto max-w-2xl px-5 py-10 sm:pt-16">
       <Link
         href="/"
@@ -1018,7 +1020,8 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
           subtitle="Nhập mã xác minh in trên chứng nhận để kiểm tra hiệu lực — kết quả đọc trực tiếp từ hệ thống."
         />
       </div>
-      <Panel title="Tra cứu theo mã">
+      <Panel title="Tra cứu theo mã" className="sketch-card relative p-6">
+        <Tape className="-top-3 right-8" rotate={-4} />
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -1055,9 +1058,10 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
       {result && (
         <div className="mt-4">
           {result.valid ? (
-            <Panel title="Chứng nhận hợp lệ">
-              <div className="mb-4">
+            <Panel title="Chứng nhận hợp lệ" className="sketch-card p-6">
+              <div className="mb-4 flex flex-wrap items-center gap-3">
                 <StatusDot tone="green">Còn hiệu lực</StatusDot>
+                <StampMoc tone="blue" thump>HỢP LỆ</StampMoc>
               </div>
               <dl className="grid gap-x-8 text-body sm:grid-cols-2">
                 <div className="border-b border-border py-4">
@@ -1099,9 +1103,10 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
               </dl>
             </Panel>
           ) : (
-            <Panel title="Chứng nhận đã thu hồi">
-              <div className="mb-4">
+            <Panel title="Chứng nhận đã thu hồi" className="sketch-card p-6">
+              <div className="mb-4 flex flex-wrap items-center gap-3">
                 <StatusDot tone="red">Không còn hiệu lực</StatusDot>
+                <StampMoc tone="red" thump>THU HỒI</StampMoc>
               </div>
               <p role="status" className="text-body leading-6 text-destructive">
                 Chứng nhận không còn hiệu lực. Ngày thu hồi:{" "}
