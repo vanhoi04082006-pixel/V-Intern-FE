@@ -9,6 +9,7 @@ import {
 } from "@/components/v-intern/icons";
 import { StudentOutcomeHeading } from "@/components/intern/student-outcome-heading";
 import { LearningIcon } from "@/components/workspace/learning-icon";
+import { MarginNote } from "@/components/workspace/notebook";
 import { errorMessage } from "@/lib/auth/api-client";
 import { refreshSession } from "@/lib/auth/auth-service";
 import { getSessionUser } from "@/lib/auth/session";
@@ -62,6 +63,11 @@ export function Profile() {
         <IconRefreshCw size={15} className={busy ? "account-refresh-icon" : undefined} aria-hidden="true" />
         {busy ? "Đang làm mới..." : "Làm mới"}
       </button>} />
+    {role === "instructor" && (
+      <MarginNote className="mb-5 max-w-md">
+        bấm làm mới để đối chiếu thông tin với hệ thống ✎
+      </MarginNote>
+    )}
     {feedback && <InlineAlert className="mb-5" tone={feedback.tone}>{feedback.text}</InlineAlert>}
     <div className="account-notebook">
       <div className="account-notebook-identity">

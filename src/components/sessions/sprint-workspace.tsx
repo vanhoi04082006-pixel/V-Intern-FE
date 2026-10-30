@@ -25,6 +25,7 @@ import {
 } from "@/components/product/primitives";
 import { SprintOverview } from "@/components/product/sprint-overview";
 import { SprintBurndown } from "@/components/workspace/workspace-charts";
+import { StampMoc } from "@/components/workspace/notebook";
 import { TaskManagement } from "@/components/product/sprint-management";
 import { ActivateButton } from "@/components/product/instructor-onboarding";
 import { TaskDetail } from "@/components/product/intern-work";
@@ -285,7 +286,15 @@ export function SprintWorkspace({
         title={sprint.name}
         description={`Chi tiết Sprint, ${sprint.code}, ${sprint.startDate ? instructorDate(sprint.startDate) : "Chưa có ngày bắt đầu"} — ${sprint.endDate ? instructorDate(sprint.endDate) : "Chưa có ngày kết thúc"}`}
         back={{ href: "/instructor/sprints", label: "Sprint & công việc" }}
-        action={<Badge>{sprintStatusLabels[sprint.status] ?? sprint.status}</Badge>}
+        action={
+          sprint.status === "completed" ? (
+            <StampMoc tone="blue" size="sm" thump>
+              {sprintStatusLabels[sprint.status] ?? sprint.status}
+            </StampMoc>
+          ) : (
+            <Badge>{sprintStatusLabels[sprint.status] ?? sprint.status}</Badge>
+          )
+        }
       />}
       <Panel
         title={basePath === "/instructor" ? "Mục tiêu Sprint" : sprint.name}
@@ -317,7 +326,7 @@ export function SprintWorkspace({
         )}
       </Panel>
       {sprint.status === "planned" && (
-        <div className="space-y-3 rounded-panel border border-border bg-warning-subtle p-4 text-body text-warning">
+        <div className="dashed-cut space-y-3 rounded-panel border border-border bg-warning-subtle p-4 text-body text-warning">
           <p>
             Sprint đã được lập kế hoạch nhưng chưa bắt đầu. Sinh viên sẽ thấy
             Sprint Board sau khi giảng viên kích hoạt Sprint này.

@@ -16,6 +16,7 @@ import {
 import { useResource } from "@/lib/api/use-resource";
 import { listSessionOverview, type SessionListQuery } from "@/lib/api/sessions";
 import { academicStatuses } from "@/lib/api/academic";
+import { MarginNote } from "@/components/workspace/notebook";
 
 const sortOptions = [
   { sortBy: "startDate", sortDirection: "desc", label: "Bắt đầu mới nhất" },
@@ -181,6 +182,11 @@ export function SessionList({
           ))}
         </select>
       </div>
+      {isInstructor && (
+        <MarginNote className="max-w-md">
+          thẻ viền đứt là phiên chờ thiết lập đội hình ✎
+        </MarginNote>
+      )}
       {data.loading ? (
         <LoadingState label="Đang tải phiên..." />
       ) : data.error ? (

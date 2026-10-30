@@ -28,6 +28,7 @@ import {
 } from "@/lib/api/reports";
 import { errorMessage } from "@/lib/auth/api-client";
 import { useResource } from "@/lib/api/use-resource";
+import { MarginNote } from "@/components/workspace/notebook";
 import { ReportScopePickers } from "./report-scope-pickers";
 import { ReportDetails } from "./report-details";
 
@@ -150,6 +151,11 @@ export function ReportsWorkspace({
           lưu giữ dữ liệu tại thời điểm tạo; khi dữ liệu thay đổi, tạo báo cáo
           mới để đối chiếu. Xuất PDF, Excel hoặc CSV từ bản đang xem.
         </InstructorNotice>
+      )}
+      {isInstructor && !embedded && (
+        <MarginNote className="max-w-md">
+          bản đã lưu là bản chụp tại thời điểm tạo ✎
+        </MarginNote>
       )}
       <div className={isInstructor && !embedded ? "workspace-report-layout" : "space-y-5"}>
       <div className={isInstructor ? "workspace-report-config" : "space-y-5"}>

@@ -1204,6 +1204,11 @@ export function Notifications() {
           </button>
         }
       />
+      {role === "instructor" && (
+        <MarginNote className="mb-4 max-w-md">
+          bật lọc “chỉ hiện chưa đọc” để xử lý thông báo gọn hơn ✎
+        </MarginNote>
+      )}
       <label
         className={
           intern
