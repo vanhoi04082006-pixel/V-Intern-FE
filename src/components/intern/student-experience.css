@@ -670,6 +670,12 @@
   background: var(--student-blue-soft);
   color: var(--student-blue-strong);
 }
+/* Dark: --primary (#7d97ff) on the accent-mist composite reads 4.08:1
+   (axe color-contrast, unread notification cards) — below AA for 12px.
+   --blue-deep flips to #99adff in dark, which restores ≥ 5:1. */
+.dark .student-badge[data-tone="blue"] {
+  color: var(--blue-deep);
+}
 .student-badge[data-tone="sky"] {
   background: var(--student-sky-soft);
   color: var(--student-sky);

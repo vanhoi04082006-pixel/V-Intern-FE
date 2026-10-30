@@ -1,5 +1,7 @@
 # Bàn giao Frontend V-Intern
 
+> **Checkpoint 30/10/2026 — Redesign "Sổ tay hành trình" hoàn tất toàn hệ thống:** 80/80 route source đã được đưa về cùng hệ thiết kế qua PR #28–#38 và PR nghiệm thu cuối (C1). Bằng chứng mỗi PR: gate `verify` + `sql2019` xanh tại merge, harness `tools/qa` (visual 5 viewport × light/dark, axe serious/critical = 0, keyboard focus-visible + Escape), VLM audit theo pack. Regression cuối: tsc 0 lỗi, eslint 0 lỗi, vitest 672/672, build OK. Tracker 9 tiêu chí/route nằm ở workspace root (`tasks/ui-redesign-progress-20261030.md`, không commit vào repo). Bảng trạng thái phase redesign: [REDESIGN-20261026](design/REDESIGN-20261026.md).
+
 > **Checkpoint 26/10/2026:** [nguồn kiểm chứng và việc còn mở](ACCEPTANCE-CHECKPOINT-20261026.md). BE 859 / FE 649 unit tests; CI xanh đúng SHA. Hành trình QA thật đã hoàn thành 4/4 task, đánh giá 96,1, KPI 98,8, chứng nhận và vòng mời lại GitHub. Có cả bước UI/API; chưa nghiệm thu mọi nhánh hoặc redesign toàn bộ.
 
 > Dành cho người tiếp nhận sản phẩm, lập trình viên và người kiểm thử. Đọc theo thứ tự nếu bạn mới vào dự án; dùng bảng dưới để đi thẳng đến phần cần tra cứu.

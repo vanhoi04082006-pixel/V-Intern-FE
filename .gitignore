@@ -37,6 +37,7 @@ Thumbs.db
 
 # Project-local caches and temporary data
 .runtime/
+.cache/
 
 # Host-specific package manager configuration
 .npmrc

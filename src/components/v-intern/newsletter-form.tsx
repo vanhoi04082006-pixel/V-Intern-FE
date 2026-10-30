@@ -60,7 +60,7 @@ export function NewsletterForm() {
             }}
             aria-invalid={state === "invalid"}
             aria-describedby="footer-newsletter-feedback"
-            className="h-11 w-full rounded-l-xl border-2 border-chalk/25 bg-chalk/10 pl-10 pr-3 text-sm text-chalk outline-none transition-colors placeholder:text-chalk/40 focus:border-[#7d97ff]"
+            className="h-11 w-full rounded-l-xl border-2 border-chalk/25 bg-chalk/10 pl-10 pr-3 text-sm text-chalk transition-colors placeholder:text-chalk/40 focus:border-[#7d97ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chalk"
           />
         </div>
         <button

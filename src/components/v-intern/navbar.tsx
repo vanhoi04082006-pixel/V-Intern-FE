@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
@@ -15,6 +15,20 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Menu mobile đóng bằng Escape và trả focus về nút bật/tắt — cùng hợp đồng
+  // bàn phím với drawer của workspace (tiêu chí responsive + a11y).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-2 border-ink/10 bg-paper/90 backdrop-blur-md">
@@ -62,6 +76,7 @@ export function Navbar() {
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
           <button
+            ref={menuButtonRef}
             type="button"
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-2 border-ink/15 bg-raised text-ink transition-colors hover:border-blue hover:text-blue"
             aria-label={open ? "Đóng menu" : "Mở menu"}
