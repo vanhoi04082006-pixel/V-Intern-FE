@@ -3,7 +3,9 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import {
+  IconMail,
+} from "@/components/v-intern/icons";
 import {
   IconArrowRight,
   IconCircleCheck,
@@ -221,7 +223,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           <AuthField
             id="register-email"
             label="Email"
-            icon={Mail}
+            icon={IconMail}
             type="email"
             name="email"
             autoComplete="email"

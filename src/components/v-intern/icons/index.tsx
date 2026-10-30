@@ -1012,3 +1012,28 @@ export function IconArchive({ size = 24, strokeWidth = 2, ...props }: NotebookIc
   );
 }
 IconArchive.displayName = "NotebookIconArchive";
+
+/* Thư — phong bì khép hở */
+export function IconMail({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.6 5.9 C 9.1 5.6, 15 5.6, 20.4 5.9 C 20.6 10.4, 20.6 15.2, 20.4 19.7 C 15 20, 9, 20, 3.5 19.7 C 3.3 15.1, 3.3 10.2, 3.6 5.9 Z" />
+      <path d="M4.1 6.7 C 7.4 9.3, 10.6 12.1, 13.9 15 C 16.1 12.3, 18.5 9.5, 21 6.8" opacity="0.9" />
+      <path d="M4 19.1 C 6.4 16.4, 8.8 13.8, 11.3 11.3" opacity="0.55" />
+      <path d="M13.6 15.2 C 16 17.1, 18.4 18.9, 20.8 20.6" opacity="0.55" />
+    </svg>
+  );
+}
+IconMail.displayName = "NotebookIconMail";
+
+/* Ẩn — con mắt khép với gạch chéo */
+export function IconEyeOff({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.4 12.1 C 6.4 7.5, 8.9 5.6, 12.1 5.6 C 15.2 5.6, 18.3 7.6, 21.1 11.6 C 18.4 16.1, 15.4 18.4, 12.1 18.4 C 8.9 18.4, 6.1 16.4, 3.4 12.1 Z" />
+      <path d="M12 8.9 C 10.1 8.8, 8.6 10.2, 8.7 12.1 C 8.8 14, 10.3 15.5, 12.2 15.4 C 14 15.3, 15.5 13.8, 15.4 12 C 15.3 10.2, 13.9 8.9, 12 8.9 Z" />
+      <path d="M4.2 4.6 C 9.3 9.5, 14.6 14.7, 19.8 19.6" />
+    </svg>
+  );
+}
+IconEyeOff.displayName = "NotebookIconEyeOff";

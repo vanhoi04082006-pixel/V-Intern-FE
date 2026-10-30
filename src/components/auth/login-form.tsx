@@ -4,7 +4,9 @@ import { useRef, useState, useSyncExternalStore } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail } from "lucide-react";
+import {
+  IconMail,
+} from "@/components/v-intern/icons";
 import { IconArrowRight } from "@/components/v-intern/icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
@@ -191,7 +193,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
           <AuthField
             id="login-identifier"
             label="Email"
-            icon={Mail}
+            icon={IconMail}
             type="text"
             name="identifier"
             inputMode="email"
