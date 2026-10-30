@@ -8,24 +8,25 @@ import {
   StudentLink,
   StudentPanel,
 } from "@/components/intern/student-ui";
-import type { LucideIcon } from "lucide-react";
+import type { IconComponent } from "@/components/v-intern/icons";
 import {
-  ArrowLeft,
-  ArrowUpRight,
-  Award,
-  Bell,
-  Check,
-  CheckCheck,
-  Copy,
-  Download,
-  FileText,
-  History,
-  Info,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  Wallet,
-} from "lucide-react";
+  IconArrowLeft,
+  IconArrowUpRight,
+  IconAward,
+  IconBell,
+  IconCheck,
+  IconCircleCheck,
+  IconClock,
+  IconCopy,
+  IconDownload,
+  IconFileText,
+  IconInfo,
+  IconShieldCheck,
+  IconSparkles,
+  IconTarget,
+  IconWallet,
+} from "@/components/v-intern/icons";
+import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -95,7 +96,7 @@ function OutcomeFrame({
 }: {
   intern: boolean;
   title: ReactNode;
-  icon?: LucideIcon;
+  icon?: IconComponent;
   action?: ReactNode;
   children: ReactNode;
 }) {
@@ -169,7 +170,7 @@ export function Evaluations({ id }: { id?: string }) {
               className="student-action student-action-secondary"
               href="/intern/evaluations"
             >
-              <ArrowLeft size={15} aria-hidden="true" />
+              <IconArrowLeft size={15} aria-hidden="true" />
               Tất cả đánh giá
             </Link>
           ) : undefined
@@ -183,7 +184,7 @@ export function Evaluations({ id }: { id?: string }) {
                 <StudentPanel
                   key={e.id}
                   className="student-outcome-record"
-                  icon={Award}
+                  icon={IconAward}
                   title="Đánh giá chính thức"
                   description={
                     e.finalizedAt
@@ -217,7 +218,9 @@ export function Evaluations({ id }: { id?: string }) {
                     </div>
                   </div>
                   <div className="student-eval-meta">
-                    <StudentBadge tone="green">Đã chốt</StudentBadge>
+                    <StampMoc tone="blue" size="sm" thump>
+                      Đã chốt
+                    </StampMoc>
                     <span>Lần hiệu chỉnh: {e.revisionNumber}</span>
                     <time>
                       {e.finalizedAt &&
@@ -273,7 +276,7 @@ export function Evaluations({ id }: { id?: string }) {
           ) : (
             <div className="student-outcome-empty-layout">
               <div className="student-panel student-empty">
-                <Award size={42} aria-hidden="true" />
+                <IconAward size={42} aria-hidden="true" />
                 <h3>Chưa có đánh giá được chốt.</h3>
                 <p>
                   Nhận xét và điểm chính thức sẽ xuất hiện sau khi giảng viên
@@ -285,7 +288,7 @@ export function Evaluations({ id }: { id?: string }) {
                   </StudentLink>
                 </div>
               </div>
-              <StudentPanel title="Đánh giá diễn ra thế nào?" icon={Info}>
+              <StudentPanel title="Đánh giá diễn ra thế nào?" icon={IconInfo}>
                 <ol className="student-step-list">
                   <li>
                     <div>
@@ -362,7 +365,7 @@ export function Kpi({ id }: { id?: string }) {
                   key={k.id}
                   className="student-outcome-record"
                   title="Kết quả KPI"
-                  icon={Target}
+                  icon={IconTarget}
                   description={`Quy tắc ${k.ruleVersion}, cập nhật ${new Date(k.calculatedAt).toLocaleString("vi-VN")}`}
                   action={
                     !id && (
@@ -390,7 +393,9 @@ export function Kpi({ id }: { id?: string }) {
                       </p>
                       {k.finalScore !== null && (
                         <div className="mt-3">
-                          <StudentBadge tone="green">Đã tổng hợp</StudentBadge>
+                          <StampMoc tone="blue" size="sm" thump>
+                            Đã tổng hợp
+                          </StampMoc>
                         </div>
                       )}
                     </div>
@@ -437,7 +442,7 @@ export function Kpi({ id }: { id?: string }) {
           ) : (
             <div className="student-dashboard-grid student-outcome-empty-grid">
               <div className="student-panel student-empty">
-                <Sparkles size={36} aria-hidden="true" />
+                <IconSparkles size={36} aria-hidden="true" />
                 <h3>Chưa có kết quả KPI</h3>
                 <p>
                   Khi có đủ dữ liệu và kết quả được tính, bạn sẽ xem được điểm,
@@ -449,7 +454,7 @@ export function Kpi({ id }: { id?: string }) {
                   </StudentLink>
                 </div>
               </div>
-              <StudentPanel title="KPI được tổng hợp thế nào?" icon={Info}>
+              <StudentPanel title="KPI được tổng hợp thế nào?" icon={IconInfo}>
                 <ol className="student-step-list">
                   <li>
                     <div>
@@ -502,7 +507,7 @@ export function Salary() {
     <div className="student-stack">
       <StudentPanel
         title="Lương ảo"
-        icon={Wallet}
+        icon={IconWallet}
         description="Đơn vị ảo, không phải tiền lương thực tế. Chỉ dùng trong chương trình thực tập."
       >
         <Resource resource={balance}>
@@ -530,7 +535,7 @@ export function Salary() {
       </StudentPanel>
       <StudentPanel
         title="Sổ giao dịch"
-        icon={History}
+        icon={IconClock}
         description="Mọi thay đổi số dư đều có nguồn và thời điểm rõ ràng."
         action={
           ledger.data ? (
@@ -593,7 +598,7 @@ export function Salary() {
                 </div>
               ) : (
                 <div className="student-empty !py-10">
-                  <Wallet size={34} aria-hidden="true" />
+                  <IconWallet size={34} aria-hidden="true" />
                   <h3>Chưa có giao dịch lương ảo</h3>
                   <p>
                     Khi KPI được chốt hoặc có điều chỉnh, giao dịch sẽ xuất hiện
@@ -672,7 +677,7 @@ export function Certificates({ id }: { id?: string }) {
               className="student-action student-action-secondary"
               href="/intern/certificates"
             >
-              <ArrowLeft size={15} aria-hidden="true" />
+              <IconArrowLeft size={15} aria-hidden="true" />
               Quay lại danh sách
             </Link>
           ) : undefined
@@ -700,7 +705,7 @@ export function Certificates({ id }: { id?: string }) {
                   <article key={c.id} className="student-cert-card">
                     <div className="student-cert-head">
                       <span className="student-cert-seal" aria-hidden="true">
-                        <Award size={24} />
+                        <IconAward size={24} />
                       </span>
                       <div className="min-w-0">
                         <h2>{c.certificateNumber}</h2>
@@ -759,7 +764,7 @@ export function Certificates({ id }: { id?: string }) {
                         disabled={busy || c.status !== "issued"}
                         onClick={() => void download(c.id, c.certificateNumber)}
                       >
-                        <Download size={15} aria-hidden="true" />
+                        <IconDownload size={15} aria-hidden="true" />
                         {busy ? "Đang tải..." : "Tải PDF"}
                       </button>
                       {!id && (
@@ -774,7 +779,7 @@ export function Certificates({ id }: { id?: string }) {
                         className="student-link ml-auto"
                         href={`/verify?code=${encodeURIComponent(c.verificationCode)}`}
                       >
-                        <ShieldCheck size={15} aria-hidden="true" />
+                        <IconShieldCheck size={15} aria-hidden="true" />
                         Xác minh công khai
                       </Link>
                     </div>
@@ -785,7 +790,7 @@ export function Certificates({ id }: { id?: string }) {
           ) : (
             <div className="student-outcome-empty-layout">
               <div className="student-panel student-empty">
-                <Award size={48} aria-hidden="true" />
+                <IconAward size={48} aria-hidden="true" />
                 <h3>Chưa có chứng nhận được cấp.</h3>
                 <p>
                   Chứng nhận được cấp theo chính sách chương trình sau khi kết
@@ -797,7 +802,7 @@ export function Certificates({ id }: { id?: string }) {
                   </StudentLink>
                 </div>
               </div>
-              <StudentPanel title="Điều kiện cấp chứng nhận" icon={ShieldCheck}>
+              <StudentPanel title="Điều kiện cấp chứng nhận" icon={IconShieldCheck}>
                 <ol className="student-step-list">
                   <li>
                     <div>
@@ -862,7 +867,7 @@ function CertificateDetail({
       >
         <div className="student-cert-document-head">
           <span className="student-cert-document-seal" aria-hidden="true">
-            <Award size={30} />
+            <IconAward size={30} />
           </span>
           <div>
             <p className="student-cert-document-brand">
@@ -873,6 +878,11 @@ function CertificateDetail({
             </p>
           </div>
         </div>
+        {issued && (
+          <StampMoc tone="red" thump rotate={7} className="student-cert-stamp">
+            Đã cấp
+          </StampMoc>
+        )}
         <h2 id="certificate-title">
           {c.projectName ?? "Chương trình thực tập V-Intern"}
         </h2>
@@ -903,7 +913,7 @@ function CertificateDetail({
       <aside className="student-cert-detail-side">
         {/* Official file panel first: the download is the page's primary
             action, so it must not sit below a long verification list. */}
-        <StudentPanel title="Tệp chính thức" icon={FileText}>
+        <StudentPanel title="Tệp chính thức" icon={IconFileText}>
           <p className="text-caption leading-6 text-muted-foreground">
             Bản PDF có cùng thông tin với chứng nhận trực tuyến và có thể lưu
             trữ hoặc chia sẻ.
@@ -915,20 +925,20 @@ function CertificateDetail({
               disabled={busy || !issued}
               onClick={onDownload}
             >
-              <Download size={15} aria-hidden="true" />
+              <IconDownload size={15} aria-hidden="true" />
               {busy ? "Đang tải..." : "Tải PDF"}
             </button>
             <Link
               className="student-action student-action-secondary"
               href={`/verify?code=${encodeURIComponent(c.verificationCode)}`}
             >
-              <ShieldCheck size={15} aria-hidden="true" />
+              <IconShieldCheck size={15} aria-hidden="true" />
               Xác minh công khai
             </Link>
           </div>
         </StudentPanel>
 
-        <StudentPanel title="Thông tin xác minh" icon={ShieldCheck}>
+        <StudentPanel title="Thông tin xác minh" icon={IconShieldCheck}>
           <dl className="student-cert-detail-list">
             <div>
               <dt>Trạng thái</dt>
@@ -962,9 +972,9 @@ function CertificateDetail({
               onClick={onCopy}
             >
               {copied ? (
-                <Check size={14} aria-hidden="true" />
+                <IconCheck size={14} aria-hidden="true" />
               ) : (
-                <Copy size={14} aria-hidden="true" />
+                <IconCopy size={14} aria-hidden="true" />
               )}
               {copied ? "Đã sao chép" : "Sao chép mã"}
             </button>
@@ -1190,7 +1200,7 @@ export function Notifications() {
             className={intern ? "student-action" : buttonClass}
             onClick={() => void read()}
           >
-            {intern && <CheckCheck size={16} aria-hidden="true" />}
+            {intern && <IconCircleCheck size={16} aria-hidden="true" />}
             {busy && !preferencePending ? 'Đang cập nhật…' : 'Đánh dấu tất cả đã đọc'}
           </button>
         }
@@ -1220,7 +1230,7 @@ export function Notifications() {
       >
         <OutcomeFrame
           intern={intern}
-          icon={Bell}
+          icon={IconBell}
           title={
             <span className="flex items-center gap-2">
               Thông báo của bạn
@@ -1310,7 +1320,7 @@ export function Notifications() {
                                 >
                                   Mở nội dung
                                   {intern && (
-                                    <ArrowUpRight
+                                    <IconArrowUpRight
                                       size={14}
                                       aria-hidden="true"
                                     />
@@ -1330,7 +1340,7 @@ export function Notifications() {
                                 >
                                   Đánh dấu đã đọc
                                 </button>
-                              ) : <span className="notebook-notification-read"><CheckCheck size={13} aria-hidden="true" />Đã đọc</span>}
+                              ) : <span className="notebook-notification-read"><IconCircleCheck size={13} aria-hidden="true" />Đã đọc</span>}
                             </div>
                           </div>
                         </article>
@@ -1339,7 +1349,7 @@ export function Notifications() {
                   </div>
                 ) : intern ? (
                   <div className="student-empty !py-12">
-                    <Bell size={34} aria-hidden="true" />
+                    <IconBell size={34} aria-hidden="true" />
                     <h3>Chưa có thông báo phù hợp</h3>
                     <p>
                       {unread
@@ -1358,7 +1368,7 @@ export function Notifications() {
         <div>
           <OutcomeFrame
             intern={intern}
-            icon={Bell}
+            icon={IconBell}
             title="Tùy chọn nhận thông báo"
           >
             {role === "intern" && (
@@ -1455,7 +1465,7 @@ export function Recommendations() {
             disabled={busy}
             onClick={() => void refresh()}
           >
-            <Sparkles size={16} aria-hidden="true" />
+            <IconSparkles size={16} aria-hidden="true" />
             {busy ? "Đang cập nhật..." : "Cập nhật khuyến nghị"}
           </button>
         }
@@ -1465,7 +1475,7 @@ export function Recommendations() {
       recommendations.error.statusCode === 404 ? (
         <div className="student-dashboard-grid">
           <div className="student-panel student-chat-welcome">
-            <Sparkles size={42} className="text-primary" aria-hidden="true" />
+            <IconSparkles size={42} className="text-primary" aria-hidden="true" />
             <h2>Một kế hoạch phát triển dành cho bạn</h2>
             <p>
               Chưa có khuyến nghị. Cập nhật để yêu cầu AI phân tích dữ liệu hiện
@@ -1477,7 +1487,7 @@ export function Recommendations() {
               </StudentLink>
             </div>
           </div>
-          <StudentPanel title="Dữ liệu được dùng" icon={Info}>
+          <StudentPanel title="Dữ liệu được dùng" icon={IconInfo}>
             <ol className="student-step-list">
               <li>
                 <div>
@@ -1519,20 +1529,24 @@ export function Recommendations() {
             <div className="student-stack">
               <StudentPanel
                 title="Tổng hợp AI"
-                icon={Sparkles}
+                icon={IconSparkles}
                 className="student-panel-accent"
                 description={`Tạo lúc ${new Date(data.createdAt).toLocaleString("vi-VN")}`}
               >
                 <p className="text-small leading-8 text-muted-foreground">
                   {data.summary}
                 </p>
+                <MarginNote className="mt-3">
+                  gợi ý của AI — chỉ để tham khảo, giảng viên mới là người chốt
+                  đánh giá chính thức
+                </MarginNote>
               </StudentPanel>
               {data.recommendations.map((r, i) => (
                 <StudentPanel
                   key={i}
                   className="student-recommendation-record"
                   title={r.title}
-                  icon={Target}
+                  icon={IconTarget}
                   action={
                     <StudentBadge
                       tone={

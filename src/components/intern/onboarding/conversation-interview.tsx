@@ -1,7 +1,12 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from 'next/link';
-import { Bot, Send, User, RefreshCw } from "lucide-react";
+import {
+  IconBot,
+  IconRefreshCw,
+  IconSend,
+  IconUserRound,
+} from "@/components/v-intern/icons";
 import {
   conversationNext,
   conversationView,
@@ -141,7 +146,7 @@ export function ConversationInterview() {
     <section className="mx-auto max-w-4xl overflow-hidden rounded-panel border border-border bg-card shadow-app-xs">
       <header className="flex flex-wrap items-center gap-4 border-b border-border bg-background p-5">
         <span className="grid size-12 place-items-center rounded-panel bg-primary text-primary-foreground">
-          <Bot aria-hidden="true" />
+          <IconBot aria-hidden="true" />
         </span>
         <div className="flex-1">
           <h1 className="text-section font-bold text-foreground">
@@ -192,7 +197,7 @@ export function ConversationInterview() {
               aria-label={m.role === "assistant" ? "AI Recruiter" : "Bạn"}
               className={`grid size-8 shrink-0 place-items-center rounded-full ${m.role === "assistant" ? "bg-accent text-primary" : "bg-muted text-muted-foreground"}`}
             >
-              {m.role === "assistant" ? <Bot size={16} /> : <User size={16} />}
+              {m.role === "assistant" ? <IconBot size={16} /> : <IconUserRound size={16} />}
             </span>
             <div
               className={`max-w-[85%] whitespace-pre-wrap rounded-panel px-4 py-3 text-body leading-7 ${m.role === "assistant" ? "bg-background text-foreground" : "bg-primary text-primary-foreground"}`}
@@ -284,7 +289,7 @@ export function ConversationInterview() {
                   disabled={disabled || expired || !draft.trim()}
                   className="flex items-center gap-2 rounded-panel bg-primary px-5 py-3 text-body font-semibold text-primary-foreground disabled:opacity-40"
                 >
-                  <Send size={16} />
+                  <IconSend size={16} />
                   Gửi câu trả lời
                 </button>
               </div>
@@ -324,7 +329,7 @@ export function ConversationInterview() {
           }}
           className="mt-4 flex items-center gap-2 text-body text-primary"
         >
-          <RefreshCw size={14} />
+          <IconRefreshCw size={14} />
           Tải lại trạng thái
         </button>
       </div>

@@ -1,6 +1,9 @@
 "use client";
 
-import { Bot, Sparkles } from "lucide-react";
+import {
+  IconBot,
+  IconSparkles,
+} from "@/components/v-intern/icons";
 
 import type { RecruitmentResultData } from "./recruitment-model";
 import { TagPill } from "./onboarding-primitives";
@@ -28,7 +31,7 @@ export function RecruiterFeedback({
         id="result-feedback-heading"
         className="flex items-center gap-2 text-body font-bold tracking-tight text-foreground"
       >
-        <Bot className="size-5 text-primary" aria-hidden="true" />
+        <IconBot className="size-5 text-primary" aria-hidden="true" />
         Nhận xét từ AI Recruiter
       </h2>
       <ul className="mt-3 flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-primary/50">
@@ -57,7 +60,7 @@ export function RoleRecommendation({
         id="result-recommendation-heading"
         className="flex items-center gap-2 text-body font-bold tracking-tight text-foreground"
       >
-        <Sparkles className="size-5 text-warning" aria-hidden="true" />
+        <IconSparkles className="size-5 text-warning" aria-hidden="true" />
         Đề xuất từ AI Recruiter
       </h2>
 

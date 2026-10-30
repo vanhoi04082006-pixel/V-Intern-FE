@@ -1,7 +1,11 @@
 "use client";
 import { StudentHeading } from "../student-ui";
 import { StudentScore } from "../student-score";
-import { CircleCheck, Lightbulb } from "lucide-react";
+import {
+  IconCircleCheck,
+  IconLightbulb,
+} from "@/components/v-intern/icons";
+import { StampMoc } from "@/components/workspace/notebook";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRecruitmentFlow } from "./recruitment-provider";
@@ -57,6 +61,11 @@ export function RecruitmentResult() {
                     ? "Đã hoàn tất đánh giá"
                   : roleGuidance ? alternativeRole ? "Khám phá hướng phù hợp hơn" : "Cần định hướng thêm" : "Chuẩn bị cho lần tiếp theo"}
                 </span>
+                {result.decision === "passed" ? (
+                  <StampMoc tone="blue" thump rotate={-5} className="mb-4">
+                    Trúng tuyển
+                  </StampMoc>
+                ) : null}
                 <h2
                   className={`text-page font-bold ${result.decision === "passed" ? "text-success" : "text-warning"}`}
                 >
@@ -111,7 +120,7 @@ export function RecruitmentResult() {
               {result.strengths.length > 0 && (
                 <>
                   <h3 className="mt-5 flex items-center gap-2 font-semibold text-success">
-                    <CircleCheck size={17} aria-hidden="true" />
+                    <IconCircleCheck size={17} aria-hidden="true" />
                     Điểm mạnh
                   </h3>
                   <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 text-muted-foreground">
@@ -124,7 +133,7 @@ export function RecruitmentResult() {
               {result.weaknesses.length > 0 && (
                 <>
                   <h3 className="mt-5 flex items-center gap-2 font-semibold text-warning">
-                    <Lightbulb size={17} aria-hidden="true" />
+                    <IconLightbulb size={17} aria-hidden="true" />
                     Cần cải thiện
                   </h3>
                   <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 text-muted-foreground">

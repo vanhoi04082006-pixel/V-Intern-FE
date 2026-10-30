@@ -1,4 +1,7 @@
-import { CheckCircle2, TrendingDown } from "lucide-react";
+import {
+  IconCircleCheck,
+  IconTrendingDown,
+} from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 import { OVERALL_FORMULA_LABEL } from "./recruitment-scoring";
@@ -107,9 +110,9 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
             )}
           >
             {passed ? (
-              <CheckCircle2 className="size-4" aria-hidden="true" />
+              <IconCircleCheck className="size-4" aria-hidden="true" />
             ) : (
-              <TrendingDown className="size-4" aria-hidden="true" />
+              <IconTrendingDown className="size-4" aria-hidden="true" />
             )}
             {passed ? "Đạt yêu cầu" : "Chưa đạt"}
           </span>

@@ -350,20 +350,20 @@
 /* ------------------------------------------------------------------ */
 /* 8. Tables — zebra giấy ấm, header đậm, hover rửa mực                */
 /* ------------------------------------------------------------------ */
-.aurora-workspace :is(.product-table, .workspace-table) {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) {
   border-collapse: collapse;
 }
-.aurora-workspace :is(.product-table, .workspace-table) thead th {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) thead th {
   color: var(--ink-soft);
   font-weight: var(--weight-semibold);
   text-transform: none;
   letter-spacing: 0;
   border-bottom: calc(var(--nb-border-width) + 0.5px) solid color-mix(in srgb, var(--ink) 45%, transparent);
 }
-.aurora-workspace :is(.product-table, .workspace-table) tbody tr:nth-child(even) {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:nth-child(even) {
   background: color-mix(in srgb, var(--ink) 2.5%, transparent);
 }
-.aurora-workspace :is(.product-table, .workspace-table) tbody tr:hover {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:hover {
   background: color-mix(in srgb, var(--blue) 6%, transparent);
 }
 .aurora-workspace .workspace-table-wrap {
@@ -479,6 +479,55 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* 14b. Chứng chỉ — mộc đỏ góc phải tài liệu                           */
+/* ------------------------------------------------------------------ */
+[data-workspace-role="intern"] .student-cert-document .student-cert-stamp {
+  position: absolute;
+  top: clamp(1rem, 3vw, 1.75rem);
+  right: clamp(1rem, 3vw, 1.75rem);
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* 15. PRINT VIEW — chứng chỉ: trắng giấy, mực đen, mộc đỏ             */
+/* In/tải chứng chỉ chỉ giữ tài liệu, bỏ toàn bộ chrome workspace.     */
+/* ------------------------------------------------------------------ */
+@media print {
+  :is(.student-experience, .aurora-workspace) :is(aside, header, .workspace-viewbar, .student-cert-detail-side, .student-route-frame > nav) {
+    display: none !important;
+  }
+  .aurora-shell-content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  :is(.student-experience, .aurora-workspace) main {
+    padding: 0 !important;
+  }
+  .student-cert-detail {
+    display: block;
+  }
+  .student-cert-document {
+    border: 2.5px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+    width: 100% !important;
+    max-width: none !important;
+    break-inside: avoid;
+  }
+  .student-cert-document :is(h2, p, dt, dd, span, code) {
+    color: #000 !important;
+  }
+  .student-cert-document .stamp-moc,
+  .student-cert-document .stamp-moc::after {
+    color: #c0272d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* 14. Ghi chú tay & chi tiết vi mô                                    */
 /* ------------------------------------------------------------------ */
 .note-card-title {
@@ -504,4 +553,50 @@
   background-position: 0 62%;
   background-repeat: no-repeat;
   box-decoration-break: clone;
+}
+
+/* Hero kết quả tuyển dụng (onboarding): băng dính góc — giấy công bố kết quả. */
+[data-workspace-role="intern"] .student-result-hero {
+  position: relative;
+}
+[data-workspace-role="intern"] .student-result-hero::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  right: 30px;
+  width: 82px;
+  height: 22px;
+  transform: rotate(3.5deg);
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+}
+.dark [data-workspace-role="intern"] .student-result-hero::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+
+/* CTA onboarding (class Tailwind thô): đưa về ngôn ngữ nút mực xanh nét đậm. */
+.workspace-onboarding :is(a, button).bg-primary {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 8px 10px 9px 10px;
+  box-shadow: var(--nb-shadow);
+  transition:
+    box-shadow var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease);
+}
+.workspace-onboarding :is(a, button).bg-primary:not(:disabled):hover {
+  box-shadow: var(--nb-shadow-hover);
+  transform: translate(-1px, -1px);
+}
+.workspace-onboarding :is(a, button).bg-primary:not(:disabled):active {
+  transform: translate(0, 0);
+  box-shadow: var(--nb-shadow);
+}
+.workspace-onboarding :is(a, button).border-border {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 8px 10px 9px 10px;
+  background: var(--paper-raised);
+  box-shadow: var(--nb-shadow);
 }

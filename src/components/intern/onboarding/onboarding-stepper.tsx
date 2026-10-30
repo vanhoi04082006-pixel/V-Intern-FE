@@ -1,4 +1,6 @@
-import { Check } from "lucide-react";
+import {
+  IconCheck,
+} from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 import { ONBOARDING_STEPS } from "./recruitment-presentation";
@@ -44,7 +46,7 @@ function StepCircle({
         state === "pending" && "border-border bg-card text-muted-foreground",
       )}
     >
-      {state === "completed" ? <Check className="size-4" /> : position}
+      {state === "completed" ? <IconCheck className="size-4" /> : position}
     </span>
   );
 }
