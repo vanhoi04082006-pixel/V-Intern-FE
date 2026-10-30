@@ -8,6 +8,7 @@ import { priorityLabels } from "@/lib/api/work";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorState } from "@/components/shared/data-state";
 import { Empty, buttonClass, inputClass } from "@/components/product/primitives";
+import { StampMoc } from "@/components/workspace/notebook";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { PlanEditor } from "./plan-editor";
@@ -341,12 +342,17 @@ function AiPlanWorkspace({
                   {action.busy ? "Đang publish..." : "Xác nhận & publish"}
                 </button>
               ) : (
-                <p
-                  role="status"
-                  className="text-caption font-medium text-success"
-                >
-                  Kế hoạch đã được phát hành thành Sprint và nhiệm vụ.
-                </p>
+                <>
+                  <StampMoc tone="blue" size="sm" thump>
+                    Đã phát hành
+                  </StampMoc>
+                  <p
+                    role="status"
+                    className="text-caption font-medium text-success"
+                  >
+                    Kế hoạch đã được phát hành thành Sprint và nhiệm vụ.
+                  </p>
+                </>
               )}
             </div>
           ) : (
@@ -381,7 +387,7 @@ function SprintPlanPreview({
 }) {
   if (!preview) return null;
   return (
-    <div className="space-y-2 rounded-control border border-border bg-card p-3">
+    <div className="dashed-cut space-y-2 rounded-control border border-border bg-card p-3">
       <p className="text-body font-semibold">Bản nháp chưa lưu</p>
       <p className="text-caption text-muted-foreground">
         Bản nháp chỉ để xem trước — chưa ghi vào hệ thống. Chọn “Tạo lại” hoặc

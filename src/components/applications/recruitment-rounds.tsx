@@ -33,6 +33,7 @@ import {
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { ApplicationTimeline } from "./public-application";
 import { InterviewRebooking } from './interview-rebooking';
+import { StampMoc } from "@/components/workspace/notebook";
 const localIso = (value: FormDataEntryValue | null) =>
   new Date(String(value)).toISOString();
 export function RecruitmentRounds() {
@@ -199,7 +200,9 @@ function RoundWorkspace({
   const round = state.data;
   return (
     <section className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        className={`flex flex-wrap items-start justify-between gap-4${round.status === "draft" ? " dashed-cut" : ""}`}
+      >
         <div>
           <h2 className="text-section font-semibold text-foreground">{round.name}</h2>
           <p className="mt-2 text-caption text-muted-foreground">
@@ -212,13 +215,15 @@ function RoundWorkspace({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <StatusDot tone={round.status === "open" ? "green" : "slate"}>
-            {round.status === "open"
-              ? "Đang nhận CV"
-              : round.status === "closed"
-                ? "Đã đóng"
-                : "Bản nháp"}
-          </StatusDot>
+          {round.status === "closed" ? (
+            <StampMoc tone="blue" size="sm" thump>
+              Đã đóng
+            </StampMoc>
+          ) : (
+            <StatusDot tone={round.status === "open" ? "green" : "slate"}>
+              {round.status === "open" ? "Đang nhận CV" : "Bản nháp"}
+            </StatusDot>
+          )}
           <button
             className={buttonClass}
             disabled={action.busy}

@@ -17,6 +17,7 @@ import {
   type ParticipationIncident,
 } from "@/lib/api/participation";
 import { useResource } from "@/lib/api/use-resource";
+import { MarginNote } from "@/components/workspace/notebook";
 import { IncidentList } from "./incident-list";
 import { IncidentActionDialog, type IncidentAction } from "./incident-action";
 import { PolicyEditor } from "./policy-editor";
@@ -45,6 +46,9 @@ export function InstructorParticipation({
         title="Thời hạn & kỷ luật"
         description="Cấu hình quy tắc, đối chiếu bằng chứng và xử lý từng trường hợp trong phiên bạn phụ trách."
       />
+      <MarginNote className="max-w-2xl">
+        lần nộp hợp lệ đầu tiên quyết định trễ hạn ✎
+      </MarginNote>
       {sessions.loading && <LoadingState label="Đang tải phiên thực tập…" />}
       {Boolean(sessions.error) && (
         <ErrorState error={sessions.error} onRetry={sessions.reload} />
@@ -144,7 +148,9 @@ function SessionReport({ sessionId }: { sessionId: string }) {
       )}
       {report.data && (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
+          <div
+            className={`flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6${report.data.policy.configured ? "" : " dashed-cut"}`}
+          >
             <div>
               <h2 className="text-section font-semibold text-foreground">
                 Chính sách phiên

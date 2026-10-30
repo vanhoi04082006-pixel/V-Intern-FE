@@ -4,6 +4,7 @@ import {
   InstructorHeading,
   InstructorNotice,
 } from "@/components/instructor/instructor-ui";
+import { MarginNote } from "@/components/workspace/notebook";
 import { SessionSection } from "@/components/sessions/session-section";
 export default function Page() {
   return (
@@ -12,6 +13,9 @@ export default function Page() {
         title="Kết nối GitHub"
         description="Liên kết danh tính giảng viên để tham gia repository của phiên. Hệ thống tạo repository bằng tài khoản chung do Admin cấu hình."
       />
+      <MarginNote className="max-w-2xl">
+        kiểm tra lời mời repository trước khi nhận bài ✎
+      </MarginNote>
       <div className="ins-github-layout">
         <div>
           <GithubConnection />

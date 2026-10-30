@@ -12,6 +12,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
 import { Metrics } from "./outcomes";
+import { MarginNote } from "@/components/workspace/notebook";
 import { StudentPerformanceDetail } from "./student-performance-detail";
 import {
   Empty,
@@ -116,6 +117,11 @@ export function MemberPerformance({
             </button>
           }
         />
+      )}
+      {!embedded && basePath === "/instructor" && (
+        <MarginNote className="max-w-md">
+          chỉ số tính từ nhiệm vụ và đánh giá đã chốt ✎
+        </MarginNote>
       )}
       {basePath === "/instructor" &&
         rows.data &&

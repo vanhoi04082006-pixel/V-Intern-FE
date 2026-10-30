@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { SessionOverviewRow } from "@/lib/api/sessions";
 import { StatusDot } from "@/components/product/primitives";
+import { StampMoc } from "@/components/workspace/notebook";
 import { instructorDate } from "./instructor-ui";
 
 export function InstructorSessionRow({
@@ -13,7 +14,9 @@ export function InstructorSessionRow({
   onManage?: (id: string) => void;
 }) {
   return (
-    <article className="workspace-collection-row workspace-session-row">
+    <article
+      className={`workspace-collection-row workspace-session-row${row.status === "upcoming" ? " dashed-cut" : ""}`}
+    >
       <div>
         <h3><Link href={`/instructor/sessions/${row.id}`}>{row.name}</Link></h3>
         <p className="workspace-session-meta">
@@ -55,7 +58,13 @@ export function InstructorSessionRow({
         )}
       </div>
       <div>
-        <StatusDot tone={status.tone}>{status.label}</StatusDot>
+        {row.status === "completed" ? (
+          <StampMoc tone="blue" size="sm" thump>
+            {status.label}
+          </StampMoc>
+        ) : (
+          <StatusDot tone={status.tone}>{status.label}</StatusDot>
+        )}
       </div>
       <div className="workspace-session-progress">
         <span>Hoàn thành nhiệm vụ</span>

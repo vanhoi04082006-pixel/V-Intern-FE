@@ -13,7 +13,7 @@ import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics } from "./collection-insights";
-import { StampMoc } from "@/components/workspace/notebook";
+import { StampMoc, MarginNote } from "@/components/workspace/notebook";
 import {
   Badge,
   btn,
@@ -115,6 +115,9 @@ export function EvaluationManagement() {
             chốt khi bạn đã kiểm tra đủ minh chứng. Gợi ý AI được hiển thị riêng
             để tham khảo.
           </InstructorNotice>
+          <MarginNote className="mt-3 max-w-md">
+            mực xanh “đã chốt” là điểm chính thức ✎
+          </MarginNote>
         </div>
       )}
       <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
@@ -216,7 +219,7 @@ export function EvaluationManagement() {
                     {evaluations.data.items.map((e) => (
                       <article
                         key={e.id}
-                        className="flex flex-wrap items-center justify-between gap-4 border-b border-border py-5"
+                        className={`flex flex-wrap items-center justify-between gap-4 border-b border-border py-5${e.status === "submitted" ? " dashed-cut" : ""}`}
                       >
                         <div>
                           {e.status === "finalized" ? (

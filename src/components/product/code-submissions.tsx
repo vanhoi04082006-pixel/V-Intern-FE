@@ -20,6 +20,7 @@ import { ApiError, errorMessage, isRecord } from "@/lib/auth/api-client";
 import { getSessionUser } from "@/lib/auth/session";
 import type { Task } from "@/lib/api/work";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { StampMoc } from "@/components/workspace/notebook";
 import { Badge, buttonClass, Empty, inputClass, Panel } from "./primitives";
 
 const statuses = {
@@ -278,9 +279,17 @@ function SubmissionReview({
     }
   }
   return (
-    <article className="border-b border-border py-5">
+    <article
+      className={`border-b border-border py-5${submission.status === "submitted" ? " dashed-cut" : ""}`}
+    >
       <div className="flex flex-wrap items-center gap-3">
-        <Badge>{statuses[submission.status]}</Badge>
+        {submission.status === "approved" ? (
+          <StampMoc tone="blue" size="sm" thump>
+            {statuses[submission.status]}
+          </StampMoc>
+        ) : (
+          <Badge>{statuses[submission.status]}</Badge>
+        )}
         <span className="text-caption text-muted-foreground">
           {new Date(submission.submittedAt).toLocaleString("vi-VN")}
         </span>
