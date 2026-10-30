@@ -54,7 +54,9 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
             <StudentLink secondary href="/intern/work">
               Công việc của tôi
             </StudentLink>
-            <StudentLink href="/intern/sprint">Mở Sprint Board</StudentLink>
+            <StudentLink secondary href="/intern/sprint">
+              Mở Sprint Board
+            </StudentLink>
           </>
         }
       />

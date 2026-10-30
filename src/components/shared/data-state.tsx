@@ -33,9 +33,14 @@ export function ErrorState({
             </ul>
           )}
           {onRetry && (
-            <button type="button" onClick={onRetry} className={`mt-4 ${btn("secondary", "sm")}`}>
-              Thử lại
-            </button>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button type="button" onClick={onRetry} className={btn("primary", "sm")}>
+                Thử lại
+              </button>
+              <span className="text-caption text-muted-foreground">
+                Nếu lỗi lặp lại, kiểm tra kết nối hoặc quay lại sau ít phút.
+              </span>
+            </div>
           )}
         </div>
       </div>

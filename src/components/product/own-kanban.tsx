@@ -216,8 +216,9 @@ function KanbanColumn({
                 <div className="mt-3">
                   <StudentProgress
                     value={t.progress}
-                    label="Tiến độ"
+                    label={`Tiến độ ${t.code}`}
                     tone={t.progress >= 100 ? "green" : "blue"}
+                    hideLabel
                   />
                 </div>
                 <div className="mt-2.5 flex items-center justify-between border-t border-border pt-2.5 text-caption text-muted-foreground">

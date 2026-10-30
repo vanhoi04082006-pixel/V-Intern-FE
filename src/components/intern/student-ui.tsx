@@ -151,16 +151,20 @@ export function StudentProgress({
   value,
   label,
   tone = "blue",
+  hideLabel = false,
 }: {
   value: number;
   label: string;
   tone?: "blue" | "green" | "amber";
+  /** Dense rows (work lists) already carry a column header — repeating the
+   * label per row is noise. The value and the progress aria-label stay. */
+  hideLabel?: boolean;
 }) {
   const safe = Math.max(0, Math.min(100, Math.round(value)));
   return (
     <div className="student-progress" data-tone={tone}>
       <div>
-        <span>{label}</span>
+        <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
         <strong>{safe}%</strong>
       </div>
       <progress aria-label={label} value={safe} max={100} />

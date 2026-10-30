@@ -413,7 +413,12 @@ export function SprintBoard({
 
       {own ? (
         <StudentPanel
-          title={`${data.sprint.code} · ${data.sprint.name}`}
+          title={
+            <>
+              <span className="student-code-inline">{data.sprint.code}</span>{" "}
+              <span aria-hidden="true">·</span> {data.sprint.name}
+            </>
+          }
           className="student-sprint-summary"
           icon={SquareKanban}
           action={

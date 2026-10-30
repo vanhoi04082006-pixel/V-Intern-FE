@@ -18,7 +18,7 @@ export function ReplacementHistory() {
           <h2 className="text-section font-semibold text-foreground">
             Thay đổi phân công
           </h2>
-          <p className="mt-1 text-body text-muted-foreground">
+          <p className="mt-1 max-w-3xl text-body text-muted-foreground">
             Quyết định liên quan trực tiếp đến bạn, kể cả khi phân công đã kết
             thúc.
           </p>

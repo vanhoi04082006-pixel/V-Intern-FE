@@ -19,7 +19,7 @@ import { RepositoryMembers } from './repository-members';
 import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Panel, Pager, Empty, buttonClass } from "./primitives";
+import { Panel, Pager, Empty, btn, buttonClass } from "./primitives";
 
 export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?: boolean }) {
   const data = useResource(
@@ -101,7 +101,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
                 <button
                   disabled={busy}
                   onClick={() => void disconnect()}
-                  className="rounded-control border border-border px-4 py-2 text-body"
+                  className={btn("secondary")}
                 >
                   Ngắt kết nối trên V-INTERN
                 </button>
