@@ -9,7 +9,20 @@ import { existsSync } from "node:fs";
 const baseURL = process.argv[2] ?? "http://localhost:3016";
 const route = process.argv[3] ?? "/intern/work";
 
-const { resolveApi } = await import("./fixtures.mjs");
+const { resolveApi: resolveInternApi } = await import("./fixtures.mjs");
+const { resolveInstructorApi } = await import("./fixtures-instructor.mjs");
+const { resolveAdminApi } = await import("./fixtures-admin.mjs");
+const fixtureScope = route.startsWith("/admin")
+  ? "admin"
+  : route.startsWith("/instructor")
+    ? "instructor"
+    : "intern";
+const resolveApi = (method, path, search) =>
+  fixtureScope === "admin"
+    ? resolveAdminApi(method, path, search)
+    : fixtureScope === "instructor"
+      ? resolveInstructorApi(method, path, search)
+      : resolveInternApi(method, path, search);
 const { chromium } = await import("playwright-core");
 const CHROMIUM_CANDIDATES = [
   process.env.QA_CHROME_PATH,

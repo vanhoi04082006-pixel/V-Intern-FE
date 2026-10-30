@@ -215,6 +215,21 @@ for (const route of routes) {
       .catch(() => null);
     await page.waitForLoadState("networkidle", { timeout: 20000 }).catch(() => null);
     await page.waitForTimeout(600);
+    // Reveal whileInView content before auditing. axe treats opacity-0
+    // containers as hidden, so without this pass below-the-fold copy would be
+    // silently excluded from the contrast and semantics rules.
+    await page.evaluate(async () => {
+      const step = Math.max(200, Math.round(window.innerHeight / 2));
+      const jump = (top) => window.scrollTo({ top, left: 0, behavior: "instant" });
+      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+        jump(y);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      jump(document.documentElement.scrollHeight);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      jump(0);
+    });
+    await page.waitForTimeout(800);
     await page.addScriptTag({ content: axeSource });
     const violations = await page.evaluate(async () => {
       const run = await window.axe.run(document, {
