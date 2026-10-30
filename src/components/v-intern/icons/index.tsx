@@ -991,10 +991,10 @@ export function IconCalculator({ size = 24, strokeWidth = 2, ...props }: Noteboo
     <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
       <path d="M5.4 3.6 C 9.5 3.4, 14.6 3.4, 18.6 3.6 C 18.8 9.1, 18.8 15, 18.6 20.4 C 14.5 20.6, 9.4 20.6, 5.3 20.4 C 5.1 14.9, 5.1 9.1, 5.4 3.6 Z" />
       <path d="M8 7.1 C 10.6 6.9, 13.4 6.9, 16 7.1" />
-      <path d="M8.2 11.6 C 8.9 11.5, 9.6 11.5, 10.2 11.6" stroke-width="2.4" />
-      <path d="M12.9 11.6 C 13.6 11.5, 14.3 11.5, 14.9 11.6" stroke-width="2.4" />
-      <path d="M8.2 15.6 C 8.9 15.5, 9.6 15.5, 10.2 15.6" stroke-width="2.4" />
-      <path d="M12.9 15.6 C 13.6 15.5, 14.3 15.5, 14.9 15.6" stroke-width="2.4" />
+      <path d="M8.2 11.6 C 8.9 11.5, 9.6 11.5, 10.2 11.6" strokeWidth="2.4" />
+      <path d="M12.9 11.6 C 13.6 11.5, 14.3 11.5, 14.9 11.6" strokeWidth="2.4" />
+      <path d="M8.2 15.6 C 8.9 15.5, 9.6 15.5, 10.2 15.6" strokeWidth="2.4" />
+      <path d="M12.9 15.6 C 13.6 15.5, 14.3 15.5, 14.9 15.6" strokeWidth="2.4" />
       <path d="M8.2 17.9 C 9.3 18.9, 10.4 19.4, 11.4 19.6" />
     </svg>
   );
