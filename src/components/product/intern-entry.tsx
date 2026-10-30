@@ -661,7 +661,8 @@ export function ProjectDetail({
     return (
       <div className="student-dashboard-grid student-project-layout">
         <div className="space-y-5">
-          <StudentPanel title={p.name} icon={IconFolderKanban} className="student-project-brief">
+          <StudentPanel title={p.name} icon={IconFolderKanban} className="student-project-brief relative group">
+            <Tape className="-top-3 left-6" rotate={-5} />
             <span className="rounded-control bg-accent px-2 py-1 text-caption font-bold text-primary">
               {p.code}
             </span>
