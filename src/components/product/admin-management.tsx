@@ -37,6 +37,16 @@ function Result<T>({
     children(r.data)
   ) : null;
 }
+/** User lifecycle states are backend codes; display them in Vietnamese with
+ * raw-code fallback so unknown states stay visible instead of blank. */
+const userStatusLabels: Record<string, string> = {
+  active: "Đang hoạt động",
+  pending: "Chờ kích hoạt",
+  locked: "Đã khóa",
+  deleted: "Đã xóa",
+};
+const userStatusOptions = ["active", "pending", "locked", "deleted"] as const;
+
 export function AdminOverview() {
   const counts = useResource(
     useCallback(async (s: AbortSignal) => {
@@ -52,7 +62,7 @@ export function AdminOverview() {
   return (
     <>
       <PageTitle
-        title="Admin Workspace"
+        title="Trang quản trị"
         subtitle="Tổng quan quản trị và hoạt động được ghi nhận trong hệ thống"
       />
       <Result resource={counts}>
@@ -308,8 +318,8 @@ export function AdminUsers() {
               }}
             >
               <option value="">Tất cả trạng thái</option>
-              {["active", "pending", "locked", "deleted"].map((s) => (
-                <option key={s}>{s}</option>
+              {userStatusOptions.map((s) => (
+                <option key={s} value={s}>{userStatusLabels[s]}</option>
               ))}
             </select>
           </div>
@@ -317,7 +327,7 @@ export function AdminUsers() {
             {(data) => (
               <>
                 {data.items.length ? (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
                     <table className="w-full text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>
@@ -347,7 +357,7 @@ export function AdminUsers() {
                             </td>
                             <td className="p-3">{u.username}</td>
                             <td className="p-3">
-                              <Badge>{u.status}</Badge>
+                              <Badge>{userStatusLabels[u.status] ?? u.status}</Badge>
                             </td>
                             <td className="p-3">
                               {u.lastLoginAt
@@ -376,9 +386,9 @@ export function AdminUsers() {
                                   )
                                 }
                               >
-                                {["active", "pending", "locked", "deleted"].map(
+                                {userStatusOptions.map(
                                   (s) => (
-                                    <option key={s}>{s}</option>
+                                    <option key={s} value={s}>{userStatusLabels[s]}</option>
                                   ),
                                 )}
                               </select>
@@ -398,7 +408,9 @@ export function AdminUsers() {
         </Panel>
         {!users.loading && !users.error && users.data && (
           <CollectionAside
-            rows={users.data.items}
+            rows={users.data.items.map((u) => ({
+              status: userStatusLabels[u.status] ?? u.status,
+            }))}
             title="Phân bố tài khoản"
             links={[
               ["/admin/groups", "Phân nhóm người dùng"],
@@ -555,7 +567,7 @@ export function AdminRoles() {
                 >
                   Tất cả quyền
                 </button>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" role="region" aria-label="Danh sách vai trò" tabIndex={0}>
                   <table className="w-full text-left text-body">
                     <thead className="bg-muted/50"><tr>{["Vai trò", "Mã vai trò", "Mô tả"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
                     <tbody>{r.items.map(v => <tr key={v.id} className={`border-b border-border ${role?.id === v.id ? "bg-info-subtle" : ""}`}>
@@ -585,6 +597,7 @@ export function AdminRoles() {
                   >
                     <span
                       className="text-success"
+                      role="img"
                       aria-label={role ? "Đã cấp" : "Quyền hệ thống"}
                     >
                       <CheckCircle2 size={16} aria-hidden />
@@ -659,7 +672,7 @@ export function AdminGroups() {
           {(r) => (
             <>
               {r.items.length ? (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" role="region" aria-label="Danh sách nhóm" tabIndex={0}>
                   <table className="w-full text-left text-body">
                     <thead className="bg-muted/50"><tr>{["Nhóm", "Mô tả", "Quản lý"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
                     <tbody>{r.items.map(g => <tr key={g.id} className="border-b border-border">
@@ -1060,7 +1073,7 @@ export function AdminCatalogs() {
                           {v.code}, {v.value ?? "Chưa có giá trị"}
                         </p>
                       </div>
-                      <Badge>{v.isActive ? "active" : "inactive"}</Badge>
+                      <Badge>{v.isActive ? "Đang dùng" : "Đã tắt"}</Badge>
                     </button>
                   ))
                 ) : (
@@ -1500,7 +1513,7 @@ export function AdminAudit() {
             {(r) => (
               <>
                 {r.items.length ? (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto" role="region" aria-label="Nhật ký kiểm toán" tabIndex={0}>
                     <table className="w-full text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>

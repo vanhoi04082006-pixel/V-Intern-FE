@@ -100,7 +100,7 @@ export function CertificateConsole() {
       ) : certificates.error ? (
         <ErrorState error={certificates.error} onRetry={certificates.reload} />
       ) : certificates.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border">
+        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Danh sách chứng nhận" tabIndex={0}>
           <table className="product-table w-full border-collapse text-body">
             <thead>
               <tr>

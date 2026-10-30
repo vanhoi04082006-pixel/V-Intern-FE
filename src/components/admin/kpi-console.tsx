@@ -394,7 +394,7 @@ function KpiResults({ period }: { period: KpiPeriod }) {
       ) : results.error ? (
         <ErrorState error={results.error} onRetry={results.reload} />
       ) : results.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border">
+        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Kết quả KPI của kỳ" tabIndex={0}>
           <table className="product-table w-full border-collapse text-body">
             <thead>
               <tr>
@@ -502,7 +502,7 @@ function KpiResultDetail({
         {nameOf(result.userId)} · quy tắc <span className="font-mono">{result.ruleVersion}</span> ·{" "}
         {metricHint}
       </p>
-      <div className="overflow-x-auto border-y border-border">
+      <div className="overflow-x-auto border-y border-border" role="region" aria-label="Thành phần điểm KPI" tabIndex={0}>
         <table className="product-table w-full border-collapse text-body">
           <thead>
             <tr>

@@ -5,12 +5,20 @@
 import { existsSync } from "node:fs";
 const route = process.argv[2] ?? "/intern/work";
 const baseURL = process.env.QA_BASE_URL ?? "http://localhost:3016";
-const isinstructor = route.startsWith("/instructor");
+const scope = route.startsWith("/admin")
+  ? "admin"
+  : route.startsWith("/instructor")
+    ? "instructor"
+    : "intern";
 const internModule = await import("./fixtures.mjs");
 const instructorModule = await import("./fixtures-instructor.mjs");
-const resolveApi = isinstructor
-  ? instructorModule.resolveInstructorApi
-  : internModule.resolveApi;
+const adminModule = await import("./fixtures-admin.mjs");
+const resolveApi =
+  scope === "admin"
+    ? adminModule.resolveAdminApi
+    : scope === "instructor"
+      ? instructorModule.resolveInstructorApi
+      : internModule.resolveApi;
 const { chromium } = await import("playwright-core");
 const exe = "/home/z/.cache/ms-playwright/chromium-1200/chrome-linux64/chrome";
 const browser = await chromium.launch({ executablePath: existsSync(exe) ? exe : undefined });

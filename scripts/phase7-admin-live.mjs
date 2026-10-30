@@ -85,7 +85,7 @@ try {
   await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
   await page.waitForURL("**/admin");
   await page
-    .getByRole("heading", { name: "Admin Workspace", exact: true })
+    .getByRole("heading", { name: "Trang quản trị", exact: true })
     .waitFor();
   await page.goto(base + "/admin/users");
   await page
