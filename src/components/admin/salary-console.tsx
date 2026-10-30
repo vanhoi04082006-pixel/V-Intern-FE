@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { BadgeDollarSign, Coins, Plus, Wallet } from "lucide-react";
+import {
+  IconCoins,
+  IconPlus,
+  IconWallet,
+} from "@/components/v-intern/icons";
 import {
   createSalaryAdjustment,
   generateSalaryForPeriod,
@@ -103,7 +107,7 @@ export function SalaryConsole() {
               setAdjusting(true);
             }}
           >
-            <Plus size={16} aria-hidden />
+            <IconPlus size={16} aria-hidden />
             Ghi điều chỉnh
           </button>
         }
@@ -139,7 +143,7 @@ export function SalaryConsole() {
             ) : balanceUser && balance.data ? (
               <div className="space-y-3">
                 <MetricCard
-                  icon={Wallet}
+                  icon={IconWallet}
                   label="Số dư hiện tại"
                   value={vnd(balance.data.balance, balance.data.unit)}
                   sub={`Đơn vị ảo (${balance.data.unit}) · không phải tiền thật`}
@@ -340,7 +344,7 @@ function GenerateCard({
           disabled={busy || !periodId}
           onClick={() => void onGenerate(periodId)}
         >
-          <Coins size={16} aria-hidden />
+          <IconCoins size={16} aria-hidden />
           {busy ? "Đang sinh…" : "Sinh lương cho kỳ"}
         </button>
       </div>
@@ -436,7 +440,7 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
       </p>
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <button className={buttonClass} disabled={action.busy} type="submit">
-        <BadgeDollarSign size={16} aria-hidden />
+        <IconWallet size={16} aria-hidden />
         {action.busy ? "Đang ghi…" : "Ghi vào sổ"}
       </button>
     </form>
