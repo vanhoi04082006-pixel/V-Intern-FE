@@ -666,27 +666,13 @@ export function Certificates({ id }: { id?: string }) {
         }
         action={
           id ? (
-            <>
-              <button
-                type="button"
-                className="student-action"
-                disabled={busy || !certificates.data?.[0] || certificates.data[0].status !== "issued"}
-                onClick={() => {
-                  const current = certificates.data?.[0];
-                  if (current) void download(current.id, current.certificateNumber);
-                }}
-              >
-                <Download size={15} aria-hidden="true" />
-                {busy ? "Đang tải..." : "Tải PDF"}
-              </button>
-              <Link
-                className="student-action student-action-secondary"
-                href="/intern/certificates"
-              >
-                <ArrowLeft size={15} aria-hidden="true" />
-                Quay lại danh sách
-              </Link>
-            </>
+            <Link
+              className="student-action student-action-secondary"
+              href="/intern/certificates"
+            >
+              <ArrowLeft size={15} aria-hidden="true" />
+              Quay lại danh sách
+            </Link>
           ) : undefined
         }
       />
@@ -913,6 +899,33 @@ function CertificateDetail({
       </article>
 
       <aside className="student-cert-detail-side">
+        {/* Official file panel first: the download is the page's primary
+            action, so it must not sit below a long verification list. */}
+        <StudentPanel title="Tệp chính thức" icon={FileText}>
+          <p className="text-caption leading-6 text-muted-foreground">
+            Bản PDF có cùng thông tin với chứng nhận trực tuyến và có thể lưu
+            trữ hoặc chia sẻ.
+          </p>
+          <div className="student-cert-detail-actions">
+            <button
+              type="button"
+              className="student-action"
+              disabled={busy || !issued}
+              onClick={onDownload}
+            >
+              <Download size={15} aria-hidden="true" />
+              {busy ? "Đang tải..." : "Tải PDF"}
+            </button>
+            <Link
+              className="student-action student-action-secondary"
+              href={`/verify?code=${encodeURIComponent(c.verificationCode)}`}
+            >
+              <ShieldCheck size={15} aria-hidden="true" />
+              Xác minh công khai
+            </Link>
+          </div>
+        </StudentPanel>
+
         <StudentPanel title="Thông tin xác minh" icon={ShieldCheck}>
           <dl className="student-cert-detail-list">
             <div>
@@ -967,31 +980,6 @@ function CertificateDetail({
               </StudentCallout>
             </div>
           )}
-        </StudentPanel>
-
-        <StudentPanel title="Tệp chính thức" icon={FileText}>
-          <p className="text-caption leading-6 text-muted-foreground">
-            Bản PDF có cùng thông tin với chứng nhận trực tuyến và có thể lưu
-            trữ hoặc chia sẻ.
-          </p>
-          <div className="student-cert-detail-actions">
-            <button
-              type="button"
-              className="student-action"
-              disabled={busy || !issued}
-              onClick={onDownload}
-            >
-              <Download size={15} aria-hidden="true" />
-              {busy ? "Đang tải..." : "Tải PDF"}
-            </button>
-            <Link
-              className="student-action student-action-secondary"
-              href={`/verify?code=${encodeURIComponent(c.verificationCode)}`}
-            >
-              <ShieldCheck size={15} aria-hidden="true" />
-              Xác minh công khai
-            </Link>
-          </div>
         </StudentPanel>
       </aside>
     </div>

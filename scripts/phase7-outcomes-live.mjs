@@ -131,8 +131,11 @@ try {
   });
   await page.goto(base + `/intern/evaluations/${fixture.evaluationId}`);
   await page
-    .getByRole("heading", { name: "Điểm chính thức: 80/100" })
+    .getByRole("heading", { name: "Đánh giá chính thức" })
     .waitFor();
+  // The official score renders in the score hero (label + value /100 scale).
+  await page.getByText("Điểm chính thức", { exact: true }).waitFor();
+  await page.getByText("80", { exact: true }).waitFor();
   assert.equal(await page.getByText("95", { exact: true }).count(), 0);
   await shot(page, "intern-evaluations");
   const ev = await ds.query(
