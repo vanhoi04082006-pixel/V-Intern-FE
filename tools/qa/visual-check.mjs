@@ -16,7 +16,7 @@
  * This tool never changes application behaviour; the sql2019 CI gate stays
  * the authority for real backend flows.
  */
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -194,15 +194,21 @@ async function waitForServer(url, timeoutMs = 120000) {
   return false;
 }
 
+// Windows cannot spawn "npm.cmd" without a shell (EINVAL), and `npm run dev`
+// already pins -p 3001 in package.json. Invoking the Next binary with node
+// keeps one port, one process tree, and works identically on both platforms.
+const isWindows = process.platform === "win32";
+const nextBin = path.join(repoRoot, "node_modules", "next", "dist", "bin", "next");
 const server = externalBase
   ? null
   : spawn(
-      process.platform === "win32" ? "npm.cmd" : "npm",
-      ["run", "dev", "--", "-p", String(port)],
+      process.execPath,
+      [nextBin, "dev", "-p", String(port)],
       {
         cwd: repoRoot,
         env: { ...process.env, NEXT_PUBLIC_API_BASE_URL: apiBase },
         stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
       },
     );
 let serverLog = "";
@@ -211,11 +217,21 @@ if (server) {
   server.stderr.on("data", (d) => (serverLog += d.toString()));
 }
 
-const cleanup = async () => {
-  server?.kill("SIGTERM");
+const stopServer = () => {
+  if (!server || server.exitCode !== null) return;
+  // On Windows npm runs under cmd.exe; killing only the shell leaves next dev
+  // holding the port, so tear down the whole process tree.
+  if (isWindows) {
+    spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"], { stdio: "ignore" });
+  } else {
+    server.kill("SIGTERM");
+  }
 };
-process.on("SIGINT", () => { server?.kill("SIGTERM"); process.exit(130); });
-process.on("SIGTERM", () => { server?.kill("SIGTERM"); process.exit(143); });
+const cleanup = async () => {
+  stopServer();
+};
+process.on("SIGINT", () => { stopServer(); process.exit(130); });
+process.on("SIGTERM", () => { stopServer(); process.exit(143); });
 
 try {
   if (server && !(await waitForServer(baseURL))) {
@@ -227,6 +243,7 @@ try {
   const results = [];
   const interactiveErrors = [];
   const missingFixtures = [];
+  const abortedRequests = [];
 
   for (const route of routes) {
     fixtureScope = route.startsWith("/admin")
@@ -284,7 +301,16 @@ try {
       });
       page.on("pageerror", (err) => routeErrors.push(`pageerror: ${err.message}`));
       page.on("requestfailed", (request) => {
-        if (!request.url().includes("qa-be.internal")) routeErrors.push(`requestfailed: ${request.url()}`);
+        if (request.url().includes("qa-be.internal")) return;
+        const reason = request.failure()?.errorText ?? "unknown";
+        // ERR_ABORTED means the page cancelled the request itself (route
+        // prefetch during a redirect, images replaced while scrolling). It is
+        // recorded separately instead of being reported as a broken resource.
+        if (reason === "net::ERR_ABORTED") {
+          abortedRequests.push({ url: request.url(), route });
+          return;
+        }
+        routeErrors.push(`requestfailed (${reason}): ${request.url()}`);
       });
       page.on("response", (response) => {
         if (response.url().includes("qa-be.internal") && response.status() >= 500) {
@@ -311,6 +337,39 @@ try {
           continue;
         }
         await page.waitForTimeout(700);
+        // Full-page screenshots do not scroll, so lazy images never load and
+        // whileInView reveals keep their initial opacity-0 state. Scroll once
+        // through the document, then return to the top before measuring.
+        // `behavior: "instant"` is required: globals.css sets
+        // scroll-behavior: smooth, which would swallow these programmatic steps
+        // and leave the last sections permanently un-revealed.
+        await page.evaluate(async () => {
+          const step = Math.max(200, Math.round(window.innerHeight / 2));
+          const jump = (top) => window.scrollTo({ top, left: 0, behavior: "instant" });
+          for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+            jump(y);
+            await new Promise((resolve) => setTimeout(resolve, 120));
+          }
+          jump(document.documentElement.scrollHeight);
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          jump(0);
+        });
+        await page.evaluate(() =>
+          Promise.all(
+            Array.from(document.images)
+              .filter((img) => !img.complete)
+              .map(
+                (img) =>
+                  new Promise((resolve) => {
+                    img.addEventListener("load", resolve, { once: true });
+                    img.addEventListener("error", resolve, { once: true });
+                    setTimeout(resolve, 3000);
+                  }),
+              ),
+          ),
+        );
+        // Let reveal transitions (600ms) settle before the screenshot.
+        await page.waitForTimeout(900);
         // A 404 document IS the expected state for not-found verification
         // routes; the browser logs the document 404 as a console error.
         if ((attempt.status?.() ?? 200) === 404) {
@@ -324,6 +383,11 @@ try {
           bodyScrollWidth: document.body.scrollWidth,
         }));
         const overflow = metrics.scrollWidth > metrics.clientWidth + 1;
+        const brokenImages = await page.evaluate(() =>
+          Array.from(document.images)
+            .filter((img) => img.complete && img.naturalWidth === 0)
+            .map((img) => img.currentSrc || img.src),
+        );
         const shot = path.join(shotsDir, theme, `${slug}-${width}.png`);
         mkdirSync(path.dirname(shot), { recursive: true });
         await page.screenshot({ path: shot, fullPage: width === viewports[viewports.length - 1] });
@@ -334,6 +398,7 @@ try {
           ok: !overflow,
           scrollWidth: metrics.scrollWidth,
           clientWidth: metrics.clientWidth,
+          brokenImages,
           errors: routeErrors.slice(0, 10),
         });
         if (routeErrors.length) interactiveErrors.push({ route, theme, width, errors: routeErrors.slice(0, 10) });
@@ -346,10 +411,11 @@ try {
 
   await browser.close();
   mkdirSync(path.dirname(reportPath), { recursive: true });
-  writeFileSync(reportPath, JSON.stringify({ baseURL, routes, viewports, themes, results, interactiveErrors, missingFixtures: [...new Set(missingFixtures)] }, null, 2));
+  writeFileSync(reportPath, JSON.stringify({ baseURL, routes, viewports, themes, results, interactiveErrors, missingFixtures: [...new Set(missingFixtures)], abortedRequests }, null, 2));
 
   const overflowRows = results.filter((r) => r.ok === false);
   const withErrors = results.filter((r) => r.errors?.length);
+  const brokenRows = results.filter((r) => r.brokenImages?.length);
   const uniqueMissing = [...new Set(missingFixtures)];
   console.log("\n=== VISUAL QA SUMMARY ===");
   console.log(`routes: ${routes.length} | viewport shots: ${results.length}`);
@@ -357,12 +423,15 @@ try {
   for (const row of overflowRows) console.log(`  ❌ ${row.route} ${row.theme} ${row.width}: scroll ${row.scrollWidth} > ${row.clientWidth}`);
   console.log(`console/network errors: ${withErrors.length}${withErrors.length ? "" : " ✅"}`);
   for (const row of withErrors) console.log(`  ❌ ${row.route} ${row.theme} ${row.width}:`, row.errors.join(" | ").slice(0, 300));
+  console.log(`broken images: ${brokenRows.length}${brokenRows.length ? "" : " ✅"}`);
+  for (const row of brokenRows) console.log(`  ❌ ${row.route} ${row.theme} ${row.width}:`, row.brokenImages.join(" | ").slice(0, 300));
+  console.log(`cancelled requests (benign): ${abortedRequests.length}`);
   console.log(`missing fixtures: ${uniqueMissing.length}${uniqueMissing.length ? "" : " ✅"}`);
   for (const endpoint of uniqueMissing) console.log(`  ⚠️ ${endpoint}`);
   console.log(`screenshots: ${shotsDir}`);
   console.log(`report: ${reportPath}`);
-  const failed = overflowRows.length || withErrors.length;
-  server?.kill("SIGTERM");
+  const failed = overflowRows.length || withErrors.length || brokenRows.length;
+  stopServer();
   process.exit(failed ? 1 : 0);
 } finally {
   await cleanup();
