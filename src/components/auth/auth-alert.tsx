@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import {
-  AlertCircle,
-  CheckCircle2,
-  CloudOff,
-  Info,
-} from "lucide-react";
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconCircleDashed,
+  IconInfo,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 export type AuthAlertVariant = "error" | "system" | "info" | "success";
@@ -12,31 +13,31 @@ export type AuthAlertVariant = "error" | "system" | "info" | "success";
 const STYLES: Record<
   AuthAlertVariant,
   {
-    icon: typeof Info;
+    icon: IconComponent;
     box: string;
     role: "alert" | "status";
   }
 > = {
   /** Lỗi xác thực từ hệ thống (vd: sai mật khẩu) — nhẹ, không chói. */
   error: {
-    icon: AlertCircle,
+    icon: IconAlertTriangle,
     box: "border-destructive/20 bg-destructive-subtle text-destructive",
     role: "alert",
   },
   /** Lỗi hệ thống/mạng — khác bản chất với lỗi xác thực. */
   system: {
-    icon: CloudOff,
+    icon: IconCircleDashed,
     box: "border-warning/20 bg-warning-subtle text-warning",
     role: "alert",
   },
   /** Thông tin trung thực (tính năng chưa kết nối backend). */
   info: {
-    icon: Info,
+    icon: IconInfo,
     box: "border-primary/20 bg-info-subtle text-info",
     role: "status",
   },
   success: {
-    icon: CheckCircle2,
+    icon: IconCircleCheck,
     box: "border-success/20 bg-success-subtle text-success",
     role: "status",
   },

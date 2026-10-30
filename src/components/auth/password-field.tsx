@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { InputHTMLAttributes } from "react";
-import { AlertCircle, Eye, EyeOff, Lock } from "lucide-react";
+import { EyeOff } from "lucide-react";
+import { IconAlertTriangle, IconEye, IconLock } from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 interface PasswordFieldProps
@@ -45,7 +46,7 @@ export function PasswordField({
         {label}
       </label>
       <div className="relative">
-        <Lock
+        <IconLock
           aria-hidden="true"
           className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
@@ -74,7 +75,7 @@ export function PasswordField({
           {visible ? (
             <EyeOff className="size-4" aria-hidden="true" />
           ) : (
-            <Eye className="size-4" aria-hidden="true" />
+            <IconEye className="size-4" aria-hidden="true" />
           )}
         </button>
       </div>
@@ -88,7 +89,7 @@ export function PasswordField({
           id={errorId}
           className="mt-2 flex items-start gap-2 text-small font-medium text-destructive"
         >
-          <AlertCircle
+          <IconAlertTriangle
             aria-hidden="true"
             className="mt-1 size-4 shrink-0"
           />

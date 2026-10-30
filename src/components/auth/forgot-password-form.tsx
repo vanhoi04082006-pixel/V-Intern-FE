@@ -3,9 +3,11 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import { IconArrowLeft } from "@/components/v-intern/icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
+import { Spinner } from "@/components/product/primitives";
 import { requestPasswordReset } from "@/lib/auth/auth-service";
 import { validateEmail } from "@/lib/auth/validation";
 
@@ -55,7 +57,7 @@ export function ForgotPasswordForm() {
         href="/login"
         className="inline-flex items-center gap-2 rounded-sm text-body font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
-        <ArrowLeft className="size-4" aria-hidden="true" />
+        <IconArrowLeft className="size-4" aria-hidden="true" />
         Quay lại đăng nhập
       </Link>
 
@@ -99,10 +101,7 @@ export function ForgotPasswordForm() {
         >
           {isSubmitting ? (
             <>
-              <Loader2
-                className="size-4 animate-spin"
-                aria-hidden="true"
-              />
+              <Spinner />
               Đang gửi...
             </>
           ) : (

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError } from "@/lib/auth/api-client";
 import { useResource } from "@/lib/api/use-resource";
+import { Tape } from "@/components/v-intern/doodles";
 import {
   publicRounds,
   submitApplication,
@@ -44,7 +45,7 @@ export function ApplicationTimeline({
         </p>
       </div>
       {booking && booking.status === "confirmed" && (
-        <div className="border-l border-primary bg-info-subtle p-5">
+        <div className="border-l-2 border-dashed border-primary bg-info-subtle p-5">
           <h3 className="font-semibold">{booking.roleName}</h3>
           <p className="mt-2 text-section font-medium">
             {new Intl.DateTimeFormat("vi-VN", {
@@ -143,7 +144,7 @@ export function PublicApplication() {
     };
   }, []);
   return (
-    <main className="app-surface min-h-dvh bg-background px-4 py-6 sm:px-8">
+    <main className="app-surface min-h-dvh bg-grid-paper bg-background px-4 py-6 sm:px-8">
       <div className="public-application-layout space-y-8">
         <nav className="flex items-center justify-between text-body">
           <Link
@@ -168,7 +169,8 @@ export function PublicApplication() {
             onRetry={() => window.location.reload()}
           />
         ) : application ? (
-          <div className="space-y-6 bg-card p-6 sm:p-8">
+          <div className="sketch-card relative space-y-6 p-6 sm:p-8">
+            <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} />
             <ApplicationTimeline application={application} />
             <div className="flex flex-wrap items-center gap-3">
               <button
@@ -233,16 +235,22 @@ export function PublicApplication() {
             )}
           </div>
         ) : (
-          <section className="bg-card p-6 sm:p-8">
+          <section className="p-6 sm:p-8">
+            <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} />
             {rounds.loading ? (
               <LoadingState />
             ) : rounds.error ? (
               <ErrorState error={rounds.error} onRetry={rounds.reload} />
             ) : !rounds.data?.length ? (
-              <Empty
-                title="Chưa có đợt đang nhận hồ sơ"
-                description="Bạn có thể quay lại khi người phụ trách mở đợt tuyển mới."
-              />
+              <div className="dashed-cut rounded-xl p-4 sm:p-6">
+                <Empty
+                  title="Chưa có đợt đang nhận hồ sơ"
+                  description="Bạn có thể quay lại khi người phụ trách mở đợt tuyển mới."
+                />
+                <p className="font-hand mt-1 text-center text-body text-ink-soft">
+                  ghé lại sau nhé — có đợt mới sẽ dán thông báo ngay ✎
+                </p>
+              </div>
             ) : (
               <form
                 className="grid gap-5 sm:grid-cols-2"
@@ -327,7 +335,7 @@ export function PublicApplication() {
                 </div>
               </form>
             )}
-            <details className="mt-7 border-t border-border pt-5">
+            <details className="dashed-cut mt-7 rounded-xl p-5">
               <summary className="cursor-pointer text-body font-semibold text-primary">
                 Đã nộp CV? Nhận lại liên kết theo dõi
               </summary>
@@ -378,7 +386,7 @@ export function PublicApplication() {
         {notice && (
           <p
             role="status"
-            className="border-l border-success pl-4 text-body leading-6 text-success"
+            className="border-l-2 border-dashed border-success pl-4 text-body leading-6 text-success"
           >
             {notice}
           </p>

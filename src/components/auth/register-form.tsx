@@ -3,17 +3,17 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import {
-  ArrowRight,
-  CheckCircle2,
-  Loader2,
-  Mail,
-  User,
-} from "lucide-react";
+  IconArrowRight,
+  IconCircleCheck,
+  IconUserRound,
+} from "@/components/v-intern/icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
+import { Spinner } from "@/components/product/primitives";
 import { register } from "@/lib/auth/auth-service";
 import { PASSWORD_MIN_LENGTH, validateRegister } from "@/lib/auth/validation";
 import type { RegisterFieldErrors } from "@/lib/auth/validation";
@@ -124,7 +124,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         className="flex flex-col items-center py-6 text-center sm:py-8"
       >
         <div className="grid size-14 place-items-center rounded-full bg-success-subtle ring-1 ring-success/20">
-          <CheckCircle2
+          <IconCircleCheck
             className="size-7 text-success"
             aria-hidden="true"
           />
@@ -141,7 +141,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2"
         >
           Đăng nhập ngay
-          <ArrowRight className="size-4" aria-hidden="true" />
+          <IconArrowRight className="size-4" aria-hidden="true" />
         </Link>
         <p aria-live="polite" className="sr-only">
           Đăng ký thành công.
@@ -202,7 +202,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           <AuthField
             id="register-full-name"
             label="Họ và tên"
-            icon={User}
+            icon={IconUserRound}
             type="text"
             name="name"
             autoComplete="name"
@@ -348,16 +348,13 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         >
           {isSubmitting ? (
             <>
-              <Loader2
-                className="size-4 animate-spin"
-                aria-hidden="true"
-              />
+              <Spinner />
               Đang đăng ký...
             </>
           ) : (
             <>
               Đăng ký
-              <ArrowRight className="size-4" aria-hidden="true" />
+              <IconArrowRight className="size-4" aria-hidden="true" />
             </>
           )}
         </button>
