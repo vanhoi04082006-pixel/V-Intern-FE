@@ -161,6 +161,17 @@ export function Evaluations({ id }: { id?: string }) {
       <StudentOutcomeHeading
         title="Đánh giá của tôi"
         subtitle="Chỉ hiển thị kết quả đã được giảng viên chốt chính thức"
+        action={
+          id ? (
+            <Link
+              className="student-action student-action-secondary"
+              href="/intern/evaluations"
+            >
+              <ArrowLeft size={15} aria-hidden="true" />
+              Tất cả đánh giá
+            </Link>
+          ) : undefined
+        }
       />
       <Resource resource={evaluations}>
         {(data) =>
@@ -171,7 +182,12 @@ export function Evaluations({ id }: { id?: string }) {
                   key={e.id}
                   className="student-outcome-record"
                   icon={Award}
-                  title={`Điểm chính thức: ${e.overallScore ?? "Chưa có"}/100`}
+                  title="Đánh giá chính thức"
+                  description={
+                    e.finalizedAt
+                      ? `Chốt lúc ${new Date(e.finalizedAt).toLocaleString("vi-VN")}`
+                      : "Giảng viên đã gửi, chưa chốt"
+                  }
                   action={
                     !id && (
                       <StudentLink
@@ -234,12 +250,12 @@ export function Evaluations({ id }: { id?: string }) {
                                 <summary className="cursor-pointer">
                                   Mã tham chiếu
                                 </summary>
-                                <span className="break-all">
+                                <span className="student-code-inline break-all">
                                   {s.criterionId}
                                 </span>
                               </details>
                             </td>
-                            <td className="font-semibold tabular-nums">
+                            <td className="student-table-num font-semibold">
                               {s.score}
                             </td>
                             <td>{s.comment ?? "Chưa có"}</td>
@@ -536,8 +552,10 @@ export function Salary() {
                     <thead>
                       <tr>
                         {["Thời gian", "Loại", "Số tiền ảo", "Nội dung"].map(
-                          (x) => (
-                            <th key={x}>{x}</th>
+                          (x, i) => (
+                            <th key={x} className={i === 2 ? "student-table-num" : undefined}>
+                              {x}
+                            </th>
                           ),
                         )}
                       </tr>
@@ -550,7 +568,7 @@ export function Salary() {
                         };
                         return (
                           <tr key={l.id}>
-                            <td className="whitespace-nowrap">
+                            <td className="whitespace-nowrap tabular-nums">
                               {new Date(l.createdAt).toLocaleString("vi-VN")}
                             </td>
                             <td>
@@ -558,7 +576,7 @@ export function Salary() {
                                 {meta.label}
                               </StudentBadge>
                             </td>
-                            <td className="workspace-ledger-amount whitespace-nowrap font-semibold tabular-nums" data-negative={l.amount < 0 ? "true" : undefined}>
+                            <td className="workspace-ledger-amount student-table-num whitespace-nowrap font-semibold" data-negative={l.amount < 0 ? "true" : undefined}>
                               {l.amount > 0 ? "+" : ""}{l.amount.toLocaleString("vi-VN")}{" "}
                               <span className="text-caption font-normal text-muted-foreground">
                                 {l.unit === "VND_VIRTUAL" ? "đồng ảo" : l.unit}
@@ -881,6 +899,33 @@ function CertificateDetail({
       </article>
 
       <aside className="student-cert-detail-side">
+        {/* Official file panel first: the download is the page's primary
+            action, so it must not sit below a long verification list. */}
+        <StudentPanel title="Tệp chính thức" icon={FileText}>
+          <p className="text-caption leading-6 text-muted-foreground">
+            Bản PDF có cùng thông tin với chứng nhận trực tuyến và có thể lưu
+            trữ hoặc chia sẻ.
+          </p>
+          <div className="student-cert-detail-actions">
+            <button
+              type="button"
+              className="student-action"
+              disabled={busy || !issued}
+              onClick={onDownload}
+            >
+              <Download size={15} aria-hidden="true" />
+              {busy ? "Đang tải..." : "Tải PDF"}
+            </button>
+            <Link
+              className="student-action student-action-secondary"
+              href={`/verify?code=${encodeURIComponent(c.verificationCode)}`}
+            >
+              <ShieldCheck size={15} aria-hidden="true" />
+              Xác minh công khai
+            </Link>
+          </div>
+        </StudentPanel>
+
         <StudentPanel title="Thông tin xác minh" icon={ShieldCheck}>
           <dl className="student-cert-detail-list">
             <div>
@@ -935,31 +980,6 @@ function CertificateDetail({
               </StudentCallout>
             </div>
           )}
-        </StudentPanel>
-
-        <StudentPanel title="Tệp chính thức" icon={FileText}>
-          <p className="text-caption leading-6 text-muted-foreground">
-            Bản PDF có cùng thông tin với chứng nhận trực tuyến và có thể lưu
-            trữ hoặc chia sẻ.
-          </p>
-          <div className="student-cert-detail-actions">
-            <button
-              type="button"
-              className="student-action"
-              disabled={busy || !issued}
-              onClick={onDownload}
-            >
-              <Download size={15} aria-hidden="true" />
-              {busy ? "Đang tải..." : "Tải PDF"}
-            </button>
-            <Link
-              className="student-action student-action-secondary"
-              href={`/verify?code=${encodeURIComponent(c.verificationCode)}`}
-            >
-              <ShieldCheck size={15} aria-hidden="true" />
-              Xác minh công khai
-            </Link>
-          </div>
         </StudentPanel>
       </aside>
     </div>

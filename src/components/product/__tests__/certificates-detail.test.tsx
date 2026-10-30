@@ -61,10 +61,22 @@ describe("certificate detail", () => {
     expect(
       screen.getByRole("link", { name: /Xác minh công khai/ }),
     ).toHaveAttribute("href", "/verify?code=VINT-VERIFY-ABC");
+    // One download CTA, placed in the "Tệp chính thức" panel which leads the
+    // aside so the primary action is not buried below verification details.
+    expect(screen.getAllByRole("button", { name: /Tải PDF/ })).toHaveLength(1);
     expect(screen.getByRole("button", { name: /Tải PDF/ })).toBeEnabled();
     expect(
       screen.queryByRole("link", { name: "Chi tiết" }),
     ).not.toBeInTheDocument();
+    // The official-file panel renders before the verification list.
+    const officialPanel = screen.getByRole("heading", { name: "Tệp chính thức" })
+      .closest("section, div.panel, aside");
+    const verifyPanel = screen.getByRole("heading", { name: "Thông tin xác minh" })
+      .closest("section, div.panel, aside");
+    expect(
+      (officialPanel?.compareDocumentPosition(verifyPanel ?? officialPanel!) ?? 0)
+        & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("copies the verification code and announces the result", async () => {

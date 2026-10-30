@@ -131,7 +131,14 @@ try {
   });
   await page.goto(base + `/intern/evaluations/${fixture.evaluationId}`);
   await page
-    .getByRole("heading", { name: "Điểm chính thức: 80/100" })
+    .getByRole("heading", { name: "Đánh giá chính thức" })
+    .waitFor();
+  // The official score renders in the score hero (label + value /100 scale).
+  // Scope to the hero: bare text "80" also matches criterion score cells.
+  await page
+    .locator(".student-score")
+    .filter({ hasText: "Điểm chính thức" })
+    .filter({ hasText: "80" })
     .waitFor();
   assert.equal(await page.getByText("95", { exact: true }).count(), 0);
   await shot(page, "intern-evaluations");

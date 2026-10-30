@@ -2054,6 +2054,13 @@
 .student-table tbody tr:hover td {
   background: var(--card);
 }
+/* Numeric columns (scores, amounts) align right with tabular figures so
+   values are comparable down the column, ledger-style. */
+.student-table th.student-table-num,
+.student-table td.student-table-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 .student-cert-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2649,6 +2656,14 @@
   font-size: var(--type-small);
   font-variant-numeric: tabular-nums;
   color: var(--muted-foreground);
+}
+/* Value / weight / contribution columns read as one ledger: right-aligned,
+   tabular, with the value in ink rather than dimmed. */
+.student-kpi-row > div + div {
+  text-align: right;
+}
+.student-kpi-row > div + div > strong {
+  color: var(--student-navy);
 }
 .student-kpi-source {
   grid-column: 1 / -1;

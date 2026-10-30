@@ -48,20 +48,6 @@ export function StudentPerformance({
         />
       </div>
       <div className="student-dashboard-grid">
-        <div>
-          <RateComparison label="Nhìn vào quá trình" items={[
-            { label: "Hoàn thành nhiệm vụ", value: m.taskCompletionRate },
-            { label: "Hoàn thành đúng hạn", value: m.onTimeCompletionRate },
-            { label: "Tiến độ Sprint hiện tại", value: m.activeSprintProgress },
-            { label: "Hoàn thành điểm độ lớn", value: m.storyPointCompletionRate },
-          ]} />
-          <div className="mt-7 border-t border-border pt-5 text-body text-muted-foreground">
-            <strong className="text-foreground">
-              {m.completedStoryPoints}/{m.committedStoryPoints}
-            </strong>{" "}
-            điểm độ lớn đã hoàn thành / cam kết
-          </div>
-        </div>
         <StudentPanel title="Bước tiếp theo">
           <p className="mb-5 text-body leading-7 text-muted-foreground">
             {!activeAssignment
@@ -81,6 +67,20 @@ export function StudentPerformance({
             </StudentLink>
           </div>
         </StudentPanel>
+        <div>
+          <RateComparison label="Nhìn vào quá trình" items={[
+            { label: "Hoàn thành nhiệm vụ", value: m.taskCompletionRate },
+            { label: "Hoàn thành đúng hạn", value: m.onTimeCompletionRate },
+            { label: "Tiến độ Sprint hiện tại", value: m.activeSprintProgress },
+            { label: "Hoàn thành điểm độ lớn", value: m.storyPointCompletionRate },
+          ]} />
+          <div className="mt-7 border-t border-border pt-5 text-body text-muted-foreground">
+            <strong className="text-foreground tabular-nums">
+              {m.completedStoryPoints}/{m.committedStoryPoints}
+            </strong>{" "}
+            điểm độ lớn đã hoàn thành / cam kết
+          </div>
+        </div>
       </div>
       <p className="text-caption leading-6 text-muted-foreground">
         Chưa đo được nghĩa là chưa có đủ dữ liệu. Hệ thống không suy diễn xu
