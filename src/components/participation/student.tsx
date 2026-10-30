@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { StudentHeading } from "@/components/intern/student-ui";
 import { Pager, btn } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { NoteCard, PaperDivider } from "@/components/workspace/notebook";
 import { ownParticipation } from "@/lib/api/participation";
 import { useResource } from "@/lib/api/use-resource";
 import { IncidentList } from "./incident-list";
@@ -37,6 +38,13 @@ export function ParticipationStudent() {
         Thời điểm nộp hợp lệ đầu tiên quyết định đúng hạn. Thời gian giảng viên
         chấm hoặc yêu cầu sửa bài không tự tạo thêm một lần vi phạm.
       </p>
+      {/* Ghi chú tay — luật chơi ngắn cho dễ nhớ */}
+      <div className="max-w-md">
+        <NoteCard rotate={-1} title="Ghi nhớ">
+          Nộp sớm một bài đúng hạn vẫn hơn nộp muộn ba bài hoàn chỉnh — hệ
+          thống tính theo lần nộp hợp lệ đầu tiên.
+        </NoteCard>
+      </div>
       {report.loading && <LoadingState />}
       {Boolean(report.error) && (
         <ErrorState error={report.error} onRetry={report.reload} />
@@ -61,6 +69,7 @@ export function ParticipationStudent() {
           />
         </>
       )}
+      <PaperDivider />
       <ReplacementHistory />
       <RepositoryAccessStatus />
     </div>

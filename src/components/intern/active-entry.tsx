@@ -2,21 +2,22 @@
 import Link from "next/link";
 import { useCallback } from "react";
 import {
-  ArrowUpRight,
-  Bot,
-  CalendarDays,
-  CheckCheck,
-  CircleDot,
-  ClipboardList,
-  Clock,
-  CodeXml,
-  FolderKanban,
-  Hourglass,
-  ListTodo,
-  SquareKanban,
-  Target,
-  TrendingUp,
-} from "lucide-react";
+  IconArrowUpRight,
+  IconBot,
+  IconCalendarDays,
+  IconCircleCheck,
+  IconCircleDot,
+  IconClipboardCheck,
+  IconClock,
+  IconCodeXml,
+  IconFolderKanban,
+  IconHourglass,
+  IconListTodo,
+  IconSquareKanban,
+  IconTarget,
+  IconTrendingUp,
+} from "@/components/v-intern/icons";
+import { NoteCard, StampMoc } from "@/components/workspace/notebook";
 import { listTasks, type Task } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 import type { InternWorkspace } from "@/lib/api/workspace";
@@ -69,17 +70,17 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
           <h2>{assignment?.project.name}</h2>
           <div className="student-meta my-2">
             {assignment && (
-              <StudentChip icon={CalendarDays}>
+              <StudentChip icon={IconCalendarDays}>
                 {assignment.session.name}
               </StudentChip>
             )}
             {currentSprint && (
-              <StudentChip icon={SquareKanban} tone="blue">
+              <StudentChip icon={IconSquareKanban} tone="blue">
                 {currentSprint.code} ·{" "}
                 {sprintStatusLabel(currentSprint.status).label}
               </StudentChip>
             )}
-            <StudentChip icon={FolderKanban}>
+            <StudentChip icon={IconFolderKanban}>
               {assignment?.project.status === "active"
                 ? "Đang thực hiện"
                 : (assignment?.project.status ?? "Chưa xác định")}
@@ -105,7 +106,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
               className="student-action student-action-secondary"
             >
               Khám phá dự án
-              <ArrowUpRight size={15} aria-hidden="true" />
+              <IconArrowUpRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -116,33 +117,33 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
 
       <div className="student-metrics" role="group" aria-label="Tổng quan nhiệm vụ">
         <StudentMetric
-          icon={ClipboardList}
+          icon={IconClipboardCheck}
           label="Tất cả nhiệm vụ"
           value={taskSummary.total}
           hint="Công việc được giao"
         />
         <StudentMetric
-          icon={ListTodo}
+          icon={IconListTodo}
           label="Cần bắt đầu"
           value={taskSummary.todo}
           hint="Đọc yêu cầu trước khi làm"
           tone="slate"
         />
         <StudentMetric
-          icon={CircleDot}
+          icon={IconCircleDot}
           label="Đang thực hiện"
           value={taskSummary.doing}
           hint="Duy trì nhịp làm việc"
         />
         <StudentMetric
-          icon={Hourglass}
+          icon={IconHourglass}
           label="Chờ phản hồi"
           value={taskSummary.review}
           hint="Đang chờ giảng viên duyệt"
           tone="amber"
         />
         <StudentMetric
-          icon={CheckCheck}
+          icon={IconCircleCheck}
           label="Đã hoàn thành"
           value={taskSummary.done}
           hint="Được giảng viên xác nhận"
@@ -155,7 +156,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
           <WorkQueue />
           <StudentPanel
             title="Tiếp tục từ đây"
-            icon={Target}
+            icon={IconTarget}
             action={
               <Link href="/intern/work" className="student-link">
                 Xem tất cả
@@ -181,7 +182,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                   >
                     Ưu tiên {studentPriority(focusedTask.priority)}
                   </StudentChip>
-                  <StudentChip icon={CalendarDays}>
+                  <StudentChip icon={IconCalendarDays}>
                     Hạn {studentDate(focusedTask.dueDate)}
                   </StudentChip>
                 </div>
@@ -204,14 +205,14 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                     href="/intern/mentor"
                     className="student-action student-action-secondary"
                   >
-                    <Bot size={15} aria-hidden="true" />
+                    <IconBot size={15} aria-hidden="true" />
                     Hỏi Mentor
                   </Link>
                 </div>
               </div>
             ) : (
               <div className="student-empty">
-                <ClipboardList size={36} aria-hidden="true" />
+                <IconClipboardCheck size={36} aria-hidden="true" />
                 <h3>Chưa có nhiệm vụ cần tập trung</h3>
                 <p>
                   Khi có công việc được giao, bạn có thể mở chi tiết và bắt đầu
@@ -226,14 +227,14 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Link href="/intern/github" className="student-quick-link">
-              <CodeXml size={22} aria-hidden="true" />
+              <IconCodeXml size={22} aria-hidden="true" />
               <div>
                 <strong>Không gian mã nguồn</strong>
                 <p>Kiểm tra liên kết GitHub và quyền truy cập repository.</p>
               </div>
             </Link>
             <Link href="/intern/performance" className="student-quick-link">
-              <TrendingUp size={22} aria-hidden="true" />
+              <IconTrendingUp size={22} aria-hidden="true" />
               <div>
                 <strong>Nhìn lại tiến bộ</strong>
                 <p>Xem hiệu suất và kết quả thực tập của bạn.</p>
@@ -251,7 +252,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
               { label: "Hoàn thành", value: taskSummary.done, tone: "success" },
             ]}
           />
-          <StudentPanel title="Nhịp Sprint" icon={CalendarDays}>
+          <StudentPanel title="Nhịp Sprint" icon={IconCalendarDays}>
             {currentSprint ? (
               <>
                 <div className="flex flex-wrap items-center gap-2">
@@ -275,7 +276,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
                   <div className="student-info-row">
                     <dt>
                       <span className="student-info-icon">
-                        <CalendarDays size={15} aria-hidden="true" />
+                        <IconCalendarDays size={15} aria-hidden="true" />
                       </span>
                       Thời gian
                     </dt>
@@ -339,8 +340,21 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
             </ol>
           </details>
 
+          {/* Mộc đỏ khi mọi nhiệm vụ đã hoàn tất — dấu đóng vào sổ */}
+          {taskSummary.total > 0 && taskSummary.done === taskSummary.total ? (
+            <StampMoc tone="red" thump rotate={-6} className="justify-self-start">
+              Đã hoàn tất
+            </StampMoc>
+          ) : null}
+
+          {/* Ghi chú tay dán lề — nhắc nhỏ quy trình nộp bài */}
+          <NoteCard rotate={-1.1} title="Nhắc nhỏ">
+            Nộp bài kèm liên kết repo và ghi chú thay đổi — giảng viên phản hồi
+            nhanh hơn khi thấy bạn đã tự kiểm tra theo tiêu chí hoàn thành.
+          </NoteCard>
+
           <Link href="/intern/mentor" className="student-quick-link">
-            <Bot size={20} aria-hidden="true" />
+            <IconBot size={20} aria-hidden="true" />
             <div>
               <strong>Đang gặp một nút thắt?</strong>
               <p>Cùng AI Mentor tìm hướng giải quyết cho nhiệm vụ hiện tại.</p>
@@ -376,7 +390,7 @@ function WorkQueue() {
   return (
     <StudentPanel
       title="Việc nên xử lý tiếp theo"
-      icon={ListTodo}
+      icon={IconListTodo}
       action={
         <Link href="/intern/work" className="student-link">
           Mở danh sách
@@ -408,11 +422,11 @@ function WorkQueue() {
               >
                 <span className="grid size-9 shrink-0 place-items-center rounded-panel bg-background text-muted-foreground">
                   {task.status === "review" ? (
-                    <Hourglass size={16} aria-hidden="true" />
+                    <IconHourglass size={16} aria-hidden="true" />
                   ) : task.status === "doing" ? (
-                    <CircleDot size={16} aria-hidden="true" />
+                    <IconCircleDot size={16} aria-hidden="true" />
                   ) : (
-                    <ListTodo size={16} aria-hidden="true" />
+                    <IconListTodo size={16} aria-hidden="true" />
                   )}
                 </span>
                 <span className="min-w-0 flex-1">
@@ -424,7 +438,7 @@ function WorkQueue() {
                     <span>{studentStatus(task.status)}</span>
                     <span aria-hidden="true">·</span>
                     <span className="inline-flex items-center gap-1">
-                      <Clock size={11} aria-hidden="true" />
+                      <IconClock size={11} aria-hidden="true" />
                       {studentDate(task.dueDate)}
                     </span>
                   </span>

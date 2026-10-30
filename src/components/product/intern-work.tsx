@@ -22,21 +22,21 @@ import { useCallback, useEffect, useState } from "react";
 import type { OwnTaskOpenIntent } from "./use-own-task-drop";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  Bot,
-  CalendarDays,
-  CircleAlert,
-  ClipboardList,
-  FileText,
-  Gauge,
-  History,
-  MessageSquare,
-  Search,
-  SquareKanban,
-  Target,
-  TrendingUp,
-  X,
-} from "lucide-react";
+  IconAlertTriangle,
+  IconArrowLeft,
+  IconBot,
+  IconCalendarDays,
+  IconChartTrend,
+  IconClipboardCheck,
+  IconClock,
+  IconFileText,
+  IconMessageSquare,
+  IconSearch,
+  IconSquareKanban,
+  IconTarget,
+  IconTrendingUp,
+  IconX,
+} from "@/components/v-intern/icons";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
 import { managerTransitions, saveManagedTask } from "@/lib/api/management";
 import { useResource } from "@/lib/api/use-resource";
@@ -55,6 +55,7 @@ import {
   type Task,
 } from "@/lib/api/work";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { StampMoc } from "@/components/workspace/notebook";
 import {
   Badge,
   buttonClass,
@@ -109,7 +110,7 @@ export function InternWork() {
               aria-pressed={view === "list"}
               onClick={() => setView("list")}
             >
-              <ClipboardList size={15} aria-hidden="true" />
+              <IconClipboardCheck size={15} aria-hidden="true" />
               Danh sách
             </button>
             <button
@@ -117,7 +118,7 @@ export function InternWork() {
               aria-pressed={view === "board"}
               onClick={() => setView("board")}
             >
-              <SquareKanban size={15} aria-hidden="true" />
+              <IconSquareKanban size={15} aria-hidden="true" />
               Bảng Kanban
             </button>
           </div>
@@ -127,7 +128,7 @@ export function InternWork() {
 
       <section aria-label="Lọc công việc" className="student-toolbar mb-5">
         <div className="student-search-field">
-          <Search size={15} aria-hidden="true" />
+          <IconSearch size={15} aria-hidden="true" />
           <input
             aria-label="Tìm nhiệm vụ"
             placeholder="Tìm mã hoặc tên nhiệm vụ…"
@@ -190,7 +191,7 @@ export function InternWork() {
               setPage(1);
             }}
           >
-            <X size={14} aria-hidden="true" />
+            <IconX size={14} aria-hidden="true" />
             Xóa bộ lọc
           </button>
         )}
@@ -511,7 +512,7 @@ function TaskContent({
       {!managed && (
         <>
           <Link href="/intern/work" className="student-link">
-            <ArrowLeft size={14} aria-hidden="true" />
+            <IconArrowLeft size={14} aria-hidden="true" />
             Công việc của tôi
           </Link>
 
@@ -527,10 +528,10 @@ function TaskContent({
                   Ưu tiên{" "}
                   {studentPriority(task.priority).toLocaleLowerCase("vi")}
                 </StudentChip>
-                <StudentChip icon={CalendarDays}>
+                <StudentChip icon={IconCalendarDays}>
                   Hạn {studentDate(task.dueDate)}
                 </StudentChip>
-                <StudentChip icon={Gauge}>
+                <StudentChip icon={IconChartTrend}>
                   {task.storyPoints ?? "—"} điểm
                 </StudentChip>
               </div>
@@ -568,9 +569,14 @@ function TaskContent({
           <p className="mt-2 whitespace-pre-wrap text-body">
             {task.description ?? "Chưa có mô tả."}
           </p>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <Badge>{statusLabels[task.status]}</Badge>
             <Badge>{priorityLabels[task.priority]}</Badge>
+            {task.status === "done" && (
+              <StampMoc tone="blue" size="sm" thump>
+                Đã hoàn thành
+              </StampMoc>
+            )}
           </div>
           <dl className="mt-4 grid gap-3 rounded-control bg-background p-3 text-body sm:grid-cols-3">
             <div>
@@ -601,7 +607,7 @@ function TaskContent({
 
       {Boolean(error) && (
         <p role="alert" className="student-callout" data-tone="rose">
-          <CircleAlert size={17} aria-hidden="true" />
+          <IconAlertTriangle size={17} aria-hidden="true" />
           <span>{errorMessage(error)}</span>
         </p>
       )}
@@ -610,7 +616,7 @@ function TaskContent({
         <>
           <div className="student-detail-grid">
             <div className="student-stack">
-              <StudentPanel title="Mô tả công việc" icon={FileText}>
+              <StudentPanel title="Mô tả công việc" icon={IconFileText}>
                 <p className="whitespace-pre-wrap text-small leading-8 text-muted-foreground">
                   {task.description?.trim()
                     ? task.description
@@ -620,7 +626,7 @@ function TaskContent({
 
               <StudentPanel
                 title="Cập nhật tiến độ"
-                icon={TrendingUp}
+                icon={IconTrendingUp}
                 className="student-panel-accent"
               >
                 <StudentProgress
@@ -694,12 +700,12 @@ function TaskContent({
             </div>
 
             <aside className="student-stack">
-              <StudentPanel title="Thông tin nhiệm vụ" icon={ClipboardList}>
+              <StudentPanel title="Thông tin nhiệm vụ" icon={IconClipboardCheck}>
                 <dl className="student-info-list">
                   <div className="student-info-row">
                     <dt>
                       <span className="student-info-icon">
-                        <SquareKanban size={15} aria-hidden="true" />
+                        <IconSquareKanban size={15} aria-hidden="true" />
                       </span>
                       Sprint
                     </dt>
@@ -714,7 +720,7 @@ function TaskContent({
                   <div className="student-info-row">
                     <dt>
                       <span className="student-info-icon">
-                        <Gauge size={15} aria-hidden="true" />
+                        <IconChartTrend size={15} aria-hidden="true" />
                       </span>
                       Điểm độ lớn
                     </dt>
@@ -723,7 +729,7 @@ function TaskContent({
                   <div className="student-info-row">
                     <dt>
                       <span className="student-info-icon">
-                        <CalendarDays size={15} aria-hidden="true" />
+                        <IconCalendarDays size={15} aria-hidden="true" />
                       </span>
                       Hạn hoàn thành
                     </dt>
@@ -732,7 +738,7 @@ function TaskContent({
                   <div className="student-info-row">
                     <dt>
                       <span className="student-info-icon">
-                        <Target size={15} aria-hidden="true" />
+                        <IconTarget size={15} aria-hidden="true" />
                       </span>
                       Trạng thái
                     </dt>
@@ -741,7 +747,7 @@ function TaskContent({
                 </dl>
               </StudentPanel>
 
-              <StudentPanel title="Lịch sử trạng thái" icon={History} className="student-task-history">
+              <StudentPanel title="Lịch sử trạng thái" icon={IconClock} className="student-task-history">
                 {history.loading ? (
                   <LoadingState />
                 ) : history.error ? (
@@ -782,7 +788,7 @@ function TaskContent({
               </StudentPanel>
 
               <Link href="/intern/mentor" className="student-quick-link">
-                <Bot size={22} aria-hidden="true" />
+                <IconBot size={22} aria-hidden="true" />
                 <div>
                   <strong>Cần gỡ vướng?</strong>
                   <p>
@@ -812,7 +818,7 @@ function TaskContent({
                 />
               </div>
 
-              <StudentPanel title="Trao đổi" icon={MessageSquare}>
+              <StudentPanel title="Trao đổi" icon={IconMessageSquare}>
                 {comments.loading ? (
                   <LoadingState />
                 ) : comments.error ? (

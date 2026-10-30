@@ -1,10 +1,10 @@
 import Link from "next/link";
 import {
-  ArrowRight,
-  Gauge,
-  ListTodo,
-  SquareKanban,
-} from "lucide-react";
+  IconArrowRight,
+  IconChartTrend,
+  IconListTodo,
+  IconSquareKanban,
+} from "@/components/v-intern/icons";
 import type { Task } from "@/lib/api/work";
 import {
   StudentBadge,
@@ -33,7 +33,7 @@ export function StudentWorkList({
   if (!tasks.length)
     return (
       <div className="student-empty">
-        <ListTodo size={36} aria-hidden="true" />
+        <IconListTodo size={36} aria-hidden="true" />
         <h3>
           {filtered
             ? "Không tìm thấy nhiệm vụ phù hợp"
@@ -82,11 +82,11 @@ export function StudentWorkList({
                 Ưu tiên {studentPriority(task.priority).toLocaleLowerCase("vi")}
               </StudentChip>
               <span className="student-work-foot">
-                <SquareKanban size={12} aria-hidden="true" />
+                <IconSquareKanban size={12} aria-hidden="true" />
                 {task.sprint?.name ?? "Chưa gắn Sprint"}
               </span>
               <span className="student-work-foot">
-                <Gauge size={12} aria-hidden="true" />
+                <IconChartTrend size={12} aria-hidden="true" />
                 {task.storyPoints ?? "—"} điểm
               </span>
             </div>
@@ -106,7 +106,7 @@ export function StudentWorkList({
               className="student-action student-action-secondary student-action-sm"
             >
               Chi tiết
-              <ArrowRight size={14} aria-hidden="true" />
+              <IconArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
         </article>

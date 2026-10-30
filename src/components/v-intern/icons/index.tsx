@@ -866,3 +866,60 @@ export function IconTrendingUp({ size = 24, strokeWidth = 2, ...props }: Noteboo
   );
 }
 IconTrendingUp.displayName = "NotebookIconTrendingUp";
+
+/* Đang thực hiện — chấm mực giữa vòng */
+export function IconCircleDot({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 2.9 C 7 2.8, 2.9 6.9, 3 11.9 C 3.1 16.9, 7.2 21, 12.2 20.9 C 17.1 20.8, 21 16.6, 20.9 11.7 C 20.8 6.8, 16.9 2.9, 12 2.9 Z" />
+      <path d="M12 10.2 C 11.2 10.2, 10.6 10.9, 10.7 11.7 C 10.8 12.6, 11.4 13.2, 12.2 13.1 C 13 13, 13.6 12.4, 13.5 11.6 C 13.4 10.8, 12.8 10.2, 12 10.2 Z" fill="currentColor" />
+    </svg>
+  );
+}
+IconCircleDot.displayName = "NotebookIconCircleDot";
+
+/* Chờ phản hồi — đồng hồ cát vẽ tay */
+export function IconHourglass({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M6.4 3.2 C 10.1 3, 13.9 3, 17.6 3.2 C 17.5 6.4, 16.9 9.1, 15.2 11.2 C 13.9 12.8, 12.6 13.6, 12 14.1 C 11.2 13.4, 9.6 12.5, 8.4 10.9 C 6.9 9, 6.4 6.3, 6.4 3.2 Z" />
+      <path d="M6.5 20.8 C 10.2 21, 13.9 21, 17.5 20.8 C 17.5 17.6, 16.9 14.9, 15.2 12.8 C 13.9 11.3, 12.6 10.4, 12 9.9 C 11.2 10.6, 9.6 11.5, 8.4 13.1 C 6.9 15, 6.5 17.7, 6.5 20.8 Z" />
+      <path d="M8.8 20.7 C 9.9 19.4, 10.9 18.2, 11.9 17.1 C 12.9 18.3, 13.9 19.5, 14.9 20.7" opacity="0.55" />
+    </svg>
+  );
+}
+IconHourglass.displayName = "NotebookIconHourglass";
+
+/* Mục tiêu — vòng tròn đồng tâm vẽ tay */
+export function IconTarget({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 2.9 C 7 2.8, 2.9 6.9, 3 11.9 C 3.1 16.9, 7.2 21, 12.2 20.9 C 17.1 20.8, 21 16.6, 20.9 11.7 C 20.8 6.8, 16.9 2.9, 12 2.9 Z" />
+      <path d="M12 7.1 C 9.4 7, 7.2 9.1, 7.3 11.7 C 7.4 14.3, 9.5 16.5, 12.1 16.4 C 14.6 16.3, 16.8 14.2, 16.7 11.6 C 16.6 9.1, 14.5 7.1, 12 7.1 Z" />
+      <path d="M12 10.4 C 11.3 10.4, 10.7 11, 10.8 11.7 C 10.9 12.4, 11.4 13, 12.1 12.9 C 12.8 12.8, 13.4 12.3, 13.3 11.6 C 13.2 10.9, 12.7 10.4, 12 10.4 Z" fill="currentColor" />
+    </svg>
+  );
+}
+IconTarget.displayName = "NotebookIconTarget";
+
+/* Cờ — đánh dấu vướng mắc */
+export function IconFlag({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M5.4 21.4 C 5.3 15.3, 5.3 9.2, 5.4 3.1" />
+      <path d="M5.5 3.9 C 8.9 2.4, 12.2 3.8, 15.4 4.9 C 17.9 5.7, 20 5.2, 20.9 4.1 C 21 7.4, 20.9 10.4, 20.8 13.4 C 19.2 14.8, 17 15, 14.7 14.3 C 11.7 13.4, 8.6 12.2, 5.6 13.5" />
+    </svg>
+  );
+}
+IconFlag.displayName = "NotebookIconFlag";
+
+/* Bảo đảm — khiên có dấu check */
+export function IconShieldCheck({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 2.8 C 9.5 4.2, 6.7 5.3, 3.9 5.8 C 3.7 10.1, 4.4 15.2, 6.5 18.3 C 8 20.5, 9.9 21.9, 12.1 22.3 C 14.3 21.9, 16.2 20.4, 17.6 18.2 C 19.7 15.1, 20.3 10, 20.1 5.7 C 17.3 5.2, 14.5 4.2, 12 2.8 Z" />
+      <path d="M8.7 11.9 C 9.7 13, 10.7 14.2, 11.6 15.4 C 13 13.5, 14.5 11.7, 16.1 10.1" />
+    </svg>
+  );
+}
+IconShieldCheck.displayName = "NotebookIconShieldCheck";

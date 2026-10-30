@@ -1,5 +1,9 @@
 "use client";
-import { Bot, MessageSquarePlus, Send } from "lucide-react";
+import {
+  IconBot,
+  IconMessageSquare,
+  IconSend,
+} from "@/components/v-intern/icons";
 import {
   StudentHeading,
   StudentPanel as Panel,
@@ -59,7 +63,7 @@ export function Mentor() {
             disabled={busy}
             onClick={() => void create()}
           >
-            <MessageSquarePlus size={16} aria-hidden="true" />
+            <IconMessageSquare size={16} aria-hidden="true" />
             Cuộc trò chuyện mới
           </button>
         }
@@ -123,7 +127,7 @@ export function Mentor() {
                   </ul>
                 ) : (
                   <div className="student-empty !py-8">
-                    <MessageSquarePlus size={30} aria-hidden="true" />
+                    <IconMessageSquare size={30} aria-hidden="true" />
                     <h3>Chưa có cuộc trò chuyện</h3>
                     <p>
                       {status === "archived"
@@ -143,7 +147,7 @@ export function Mentor() {
           <MentorChat key={selected} id={selected} onChanged={list.reload} />
         ) : (
           <section className="student-mentor-welcome">
-            <Bot size={24} aria-hidden="true" />
+            <IconBot size={24} aria-hidden="true" />
             <h2>Bắt đầu từ điều bạn chưa hiểu</h2>
             <p>
               Mô tả mục tiêu, đoạn bạn đang mắc và những cách đã thử. Mentor có
@@ -154,7 +158,7 @@ export function Mentor() {
               disabled={busy}
               onClick={() => void create()}
             >
-              <MessageSquarePlus size={17} aria-hidden="true" />
+              <IconMessageSquare size={17} aria-hidden="true" />
               {busy ? "Đang tạo…" : "Bắt đầu trao đổi"}
             </button>
             <p className="mt-5 !text-caption">
@@ -282,7 +286,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                   >
                     {m.role === "assistant" && (
                       <span className="student-avatar-bot" aria-hidden="true">
-                        <Bot size={16} />
+                        <IconBot size={16} />
                       </span>
                     )}
                     <div>
@@ -302,7 +306,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                 ))
               ) : (
                 <div className="student-empty">
-                  <Bot size={32} aria-hidden="true" />
+                  <IconBot size={32} aria-hidden="true" />
                   <h3>Mentor đang sẵn sàng</h3>
                   <p>
                     Chọn một gợi ý bên dưới, rồi bổ sung ngữ cảnh trước khi gửi.
@@ -426,7 +430,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                     className="student-action"
                     disabled={busy || !content.trim()}
                   >
-                    <Send size={15} aria-hidden="true" />
+                    <IconSend size={15} aria-hidden="true" />
                     {busy ? "Đang chờ AI..." : "Gửi câu hỏi"}
                   </button>
                 </div>

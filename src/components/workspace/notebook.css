@@ -115,8 +115,8 @@
   box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 16%, transparent);
   font-family: var(--font-geist-mono), monospace;
 }
-/* Breadcrumb: vạch phân cách nét mực mảnh thay chevron máy in. */
-.aurora-workspace :is(.student-breadcrumb, .product-topbar) :is(li + li::before, nav [aria-hidden] + *) {
+/* Breadcrumb: icon ngăn cách màu mực nhạt — KHÔNG đụng màu chữ crumb (giữ AA). */
+.aurora-workspace :is(.student-breadcrumb, .product-topbar) nav :is(svg[aria-hidden="true"], li + li::before) {
   color: var(--ink-faint);
 }
 
@@ -273,12 +273,78 @@
 [data-workspace-role="intern"] .student-chat-welcome:hover {
   transform: rotate(0deg);
 }
+/* Hero "Dự án hiện tại" trên dashboard intern: băng dính góc trên + marker tên dự án. */
+[data-workspace-role="intern"] .student-placement-summary {
+  position: relative;
+}
+[data-workspace-role="intern"] .student-placement-summary::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 26px;
+  width: 84px;
+  height: 23px;
+  transform: rotate(-4deg);
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+}
+.dark [data-workspace-role="intern"] .student-placement-summary::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+[data-workspace-role="intern"] .student-placement-summary h2 {
+  display: inline-block;
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--blue) 15%, transparent) 3%,
+    color-mix(in srgb, var(--blue) 15%, transparent) 97%,
+    transparent 99%
+  );
+  background-size: 100% 64%;
+  background-position: 0 64%;
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+}
 /* Thẻ chờ hành động / dropzone: viền đứt đường cắt giấy. */
 [data-workspace-role="instructor"] .product-card-notebook-dashed,
 .aurora-workspace .dashed-waiting {
   border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
   border-radius: var(--nb-radius);
   background: color-mix(in srgb, var(--paper-raised) 55%, transparent);
+}
+/* Panel welcome AI Mentor: băng dính + tiêu đề viết tay. */
+[data-workspace-role="intern"] .student-mentor-welcome {
+  position: relative;
+  transform: rotate(-0.5deg);
+  transition: transform var(--motion-normal) var(--motion-ease);
+}
+[data-workspace-role="intern"] .student-mentor-welcome:hover {
+  transform: rotate(0deg);
+}
+[data-workspace-role="intern"] .student-mentor-welcome::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 80px;
+  height: 22px;
+  transform: translateX(-50%) rotate(2.5deg);
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+}
+.dark [data-workspace-role="intern"] .student-mentor-welcome::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+[data-workspace-role="intern"] .student-mentor-welcome h2 {
+  font-family: var(--font-patrick-hand), cursive;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 /* ------------------------------------------------------------------ */
