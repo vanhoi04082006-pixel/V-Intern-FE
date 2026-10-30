@@ -923,3 +923,15 @@ export function IconShieldCheck({ size = 24, strokeWidth = 2, ...props }: Notebo
   );
 }
 IconShieldCheck.displayName = "NotebookIconShieldCheck";
+
+/* Sao chép — hai tờ giấy chồng */
+export function IconCopy({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M8.8 8.4 C 7.4 8.3, 6.1 8.3, 4.9 8.4 C 4.7 12.1, 4.7 15.9, 4.9 19.6 C 8.4 19.8, 12 19.8, 15.5 19.6 C 15.7 16, 15.7 12.2, 15.5 8.5 C 13.9 8.3, 12.5 8.3, 11.1 8.4" />
+      <path d="M11.2 8.4 C 11.1 8.2, 11 8, 10.9 7.9 C 10.8 5.6, 10.8 4.4, 10.9 3.4 C 14.5 3.2, 17.4 3.2, 20.2 3.4 C 20.4 6.9, 20.4 10.5, 20.2 14 C 19.2 14.2, 18.1 14.2, 17 14.1" />
+      <path d="M8.9 8.4 C 9.7 6.7, 10.3 5.4, 10.9 4.1" />
+    </svg>
+  );
+}
+IconCopy.displayName = "NotebookIconCopy";

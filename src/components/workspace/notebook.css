@@ -350,20 +350,20 @@
 /* ------------------------------------------------------------------ */
 /* 8. Tables — zebra giấy ấm, header đậm, hover rửa mực                */
 /* ------------------------------------------------------------------ */
-.aurora-workspace :is(.product-table, .workspace-table) {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) {
   border-collapse: collapse;
 }
-.aurora-workspace :is(.product-table, .workspace-table) thead th {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) thead th {
   color: var(--ink-soft);
   font-weight: var(--weight-semibold);
   text-transform: none;
   letter-spacing: 0;
   border-bottom: calc(var(--nb-border-width) + 0.5px) solid color-mix(in srgb, var(--ink) 45%, transparent);
 }
-.aurora-workspace :is(.product-table, .workspace-table) tbody tr:nth-child(even) {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:nth-child(even) {
   background: color-mix(in srgb, var(--ink) 2.5%, transparent);
 }
-.aurora-workspace :is(.product-table, .workspace-table) tbody tr:hover {
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:hover {
   background: color-mix(in srgb, var(--blue) 6%, transparent);
 }
 .aurora-workspace .workspace-table-wrap {
@@ -476,6 +476,55 @@
 }
 [data-workspace-role="intern"] .product-shell .mt-8.rounded-panel .text-primary {
   color: color-mix(in srgb, var(--note-yellow-ink) 80%, var(--blue));
+}
+
+/* ------------------------------------------------------------------ */
+/* 14b. Chứng chỉ — mộc đỏ góc phải tài liệu                           */
+/* ------------------------------------------------------------------ */
+[data-workspace-role="intern"] .student-cert-document .student-cert-stamp {
+  position: absolute;
+  top: clamp(1rem, 3vw, 1.75rem);
+  right: clamp(1rem, 3vw, 1.75rem);
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* 15. PRINT VIEW — chứng chỉ: trắng giấy, mực đen, mộc đỏ             */
+/* In/tải chứng chỉ chỉ giữ tài liệu, bỏ toàn bộ chrome workspace.     */
+/* ------------------------------------------------------------------ */
+@media print {
+  :is(.student-experience, .aurora-workspace) :is(aside, header, .workspace-viewbar, .student-cert-detail-side, .student-route-frame > nav) {
+    display: none !important;
+  }
+  .aurora-shell-content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  :is(.student-experience, .aurora-workspace) main {
+    padding: 0 !important;
+  }
+  .student-cert-detail {
+    display: block;
+  }
+  .student-cert-document {
+    border: 2.5px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+    width: 100% !important;
+    max-width: none !important;
+    break-inside: avoid;
+  }
+  .student-cert-document :is(h2, p, dt, dd, span, code) {
+    color: #000 !important;
+  }
+  .student-cert-document .stamp-moc,
+  .student-cert-document .stamp-moc::after {
+    color: #c0272d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 /* ------------------------------------------------------------------ */
