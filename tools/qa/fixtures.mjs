@@ -46,6 +46,121 @@ const workspaceActive = {
   },
 };
 
+// QA stage marker: the onboarding flow serves ONE profile/workspace per page
+// (the provider redirects off-page states), so the harness pins the stage per
+// route visit. "default" keeps the intern workspace for all other routes.
+export const qaStage = { recruitment: "default" };
+
+const emptyTaskSummary = { todo: 0, doing: 0, review: 0, done: 0, total: 0 };
+
+const workspaceRecruitmentRequired = {
+  status: "recruitment_required",
+  hasAssignmentHistory: false,
+  assignment: null,
+  recruitment: { status: "not_started", selectedRole: null, attemptCount: 0, recruitedAt: null },
+  currentSprint: null,
+  taskSummary: emptyTaskSummary,
+  focusedTask: null,
+};
+
+const workspaceRecruitmentInProgress = {
+  status: "recruitment_in_progress",
+  hasAssignmentHistory: false,
+  assignment: null,
+  recruitment: { status: "interview_in_progress", selectedRole: "frontend", attemptCount: 1, recruitedAt: null },
+  currentSprint: null,
+  taskSummary: emptyTaskSummary,
+  focusedTask: null,
+};
+
+const recruitmentProfiles = {
+  welcome: {
+    status: "not_started",
+    selectedRole: null,
+    selectedRoleLabel: null,
+    attemptNumber: 0,
+    attemptsRemaining: 3,
+    nextEligibleAt: null,
+    currentInterviewSessionId: null,
+    recruitedAt: null,
+    result: null,
+  },
+  role: {
+    status: "role_selected",
+    selectedRole: "frontend",
+    selectedRoleLabel: "Frontend Developer",
+    attemptNumber: 0,
+    attemptsRemaining: 3,
+    nextEligibleAt: null,
+    currentInterviewSessionId: null,
+    recruitedAt: null,
+    result: null,
+  },
+  interview: {
+    status: "interview_in_progress",
+    selectedRole: "frontend",
+    selectedRoleLabel: "Frontend Developer",
+    attemptNumber: 1,
+    attemptsRemaining: 2,
+    nextEligibleAt: null,
+    currentInterviewSessionId: id("itv"),
+    recruitedAt: null,
+    result: null,
+  },
+  result: {
+    status: "passed",
+    selectedRole: "frontend",
+    selectedRoleLabel: "Frontend Developer",
+    attemptNumber: 1,
+    attemptsRemaining: 2,
+    nextEligibleAt: null,
+    currentInterviewSessionId: null,
+    recruitedAt: daysAgo(1),
+    result: {
+      id: id("res"),
+      sessionId: id("itv"),
+      technicalScore: 78,
+      softSkillScore: 82,
+      overallScore: 80,
+      decision: "passed",
+      strengths: ["Giải thích rõ suy luận kỹ thuật", "Có ví dụ thực tế cho từng câu trả lời"],
+      weaknesses: ["Cần luyện quản lý thời gian khi trả lời dài"],
+      criteria: [
+        { code: "technical_depth", score: 78, feedback: "Trình bày đúng khái niệm cốt lõi, ví dụ cụ thể." },
+        { code: "communication", score: 82, feedback: "Diễn đạt mạch lạc, cấu trúc câu trả lời rõ." },
+        { code: "problem_solving", score: 80, feedback: "Phân tích vấn đề theo bước, có đánh giá trade-off." },
+      ],
+      feedback: "Đạt ngưỡng đầu vào vai trò Frontend. Tiếp tục luyện thêm về tối ưu hiệu năng.",
+      recommendedRole: "frontend",
+      model: "glm-4.7",
+      promptVersion: "v2026.10",
+      evaluatedAt: daysAgo(1),
+    },
+  },
+};
+
+const interviewQuestions = {
+  session: {
+    id: id("itv"),
+    roleCode: "frontend",
+    status: "in_progress",
+    startedAt: daysAgo(0),
+    expiresAt: new Date(now + 40 * 60000).toISOString(),
+    submittedAt: null,
+    attemptNumber: 1,
+    questionCount: 5,
+    serverNow: new Date(now).toISOString(),
+    secondsRemaining: 2400,
+  },
+  questions: [
+    { id: id("qus", 1), position: 1, category: "technical", difficulty: "medium", prompt: "Giải thích virtual DOM và khi nào re-render là tốn kém.", answered: true, answeredAt: daysAgo(0) },
+    { id: id("qus", 2), position: 2, category: "technical", difficulty: "medium", prompt: "Khác biệt giữa useMemo và useCallback? Cho ví dụ dùng sai.", answered: true, answeredAt: daysAgo(0) },
+    { id: id("qus", 3), position: 3, category: "technical", difficulty: "hard", prompt: "Tối ưu danh sách 10.000 dòng như thế nào? Nêu các bước đo lường.", answered: false, answeredAt: null },
+    { id: id("qus", 4), position: 4, category: "soft", difficulty: "easy", prompt: "Kể một lần bạn nhận feedback khó và xử lý ra sao.", answered: false, answeredAt: null },
+    { id: id("qus", 5), position: 5, category: "soft", difficulty: "medium", prompt: "Bạn ưu tiên thế nào khi deadline gần mà còn 2 task lớn?", answered: false, answeredAt: null },
+  ],
+};
+
 const sprintSummary = {
   id: id("spr"),
   code: "SPR-03",
@@ -415,7 +530,51 @@ export function resolveApi(method, pathname, search) {
   const q = search;
   if (method === "POST" && p === "/auth/refresh") return { accessToken: "qa-token", user: internUser };
   if (method === "GET" && p === "/auth/me") return internUser;
-  if (method === "GET" && p === "/intern/me/workspace") return workspaceActive;
+  // Public apply portal: open rounds + the candidate's own application.
+  if (method === "GET" && p === "/career-roles")
+    return {
+      items: [
+        { code: "frontend", label: "Frontend Developer", description: "Xây dựng giao diện Next.js với accessibility và form phức tạp.", level: "intern", language: "TypeScript", requiredSkills: ["TypeScript", "React", "HTML/CSS"], optionalSkills: ["Vitest", "Playwright"], version: 3 },
+        { code: "backend", label: "Backend Developer", description: "Thiết kế API NestJS, bảo mật và kiểm thử tích hợp.", level: "intern", language: "TypeScript", requiredSkills: ["NestJS", "SQL", "REST"], optionalSkills: ["Docker"], version: 2 },
+        { code: "qa", label: "QA Engineer", description: "Viết kịch bản kiểm thử, theo dõi lỗi và regression.", level: "intern", language: "TypeScript", requiredSkills: ["Vitest", "Playwright"], optionalSkills: ["k6"], version: 1 },
+      ],
+    };
+  if (method === "GET" && p === "/applications/rounds")
+    return {
+      items: [
+        { id: id("rec", 1), name: "Đợt tuyển Thu 2026", closesAt: daysAhead(12) },
+        { id: id("rec", 2), name: "Đợt tuyển Xuân 2027", closesAt: daysAhead(70) },
+      ],
+    };
+  if (method === "GET" && p === "/applications/me")
+    return {
+      id: id("app", 1),
+      fullName: "Vũ Ngọc Ánh",
+      status: "queued",
+      matchedRole: "frontend",
+      revision: 2,
+      hasCv: true,
+      booking: null,
+      timeline: [
+        { kind: "submitted", message: "Nộp CV và hoàn thành form ứng tuyển.", createdAt: daysAgo(6) },
+        { kind: "analyzed", message: "Agent trích xuất facts và khớp vai trò frontend (độ tin 88%).", createdAt: daysAgo(5) },
+        { kind: "queued", message: "Hồ sơ vào hàng đợi phỏng vấn vai trò Frontend Developer.", createdAt: daysAgo(3) },
+      ],
+    };
+  if (method === "GET" && p === "/intern/me/workspace") {
+    if (qaStage.recruitment === "welcome" || qaStage.recruitment === "role")
+      return workspaceRecruitmentRequired;
+    if (qaStage.recruitment === "interview")
+      return workspaceRecruitmentInProgress;
+    return workspaceActive;
+  }
+  if (method === "GET" && p === "/recruitment/me") {
+    return recruitmentProfiles[qaStage.recruitment] ?? recruitmentProfiles.welcome;
+  }
+  const interviewQuestionsMatch = p.match(/^\/recruitment\/me\/interviews\/([^/]+)\/questions$/);
+  if (method === "GET" && interviewQuestionsMatch) return interviewQuestions;
+  if (method === "GET" && p === "/recruitment/me/result")
+    return recruitmentProfiles.result.result;
   if (method === "GET" && p === "/tasks") {
     const mine = q.get("mine") === "true";
     const pageSize = Number(q.get("pageSize") ?? 10);

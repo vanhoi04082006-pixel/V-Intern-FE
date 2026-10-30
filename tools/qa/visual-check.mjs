@@ -90,6 +90,22 @@ const PACKS = {
     "/admin/notifications",
     "/admin/profile",
   ],
+  "public-auth": [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/change-password",
+    "/apply",
+    "/verify",
+    "/github/invitation?session=ses-0000-4000-8000-000000000001",
+    "/trang-khong-ton-tai",
+  ],
+  "onboarding": [
+    "/intern/onboarding",
+    "/intern/onboarding/role",
+    "/intern/onboarding/interview",
+    "/intern/onboarding/result",
+  ],
   "intern-work": [
     "/intern",
     "/intern/work",
@@ -138,7 +154,7 @@ const port = Number(arg("port", 3016));
 const externalBase = arg("base-url");
 const baseURL = externalBase ? String(externalBase).replace(/\/+$/, "") : `http://localhost:${port}`;
 
-const { resolveApi: resolveInternApi } = await import("./fixtures.mjs");
+const { resolveApi: resolveInternApi, qaStage } = await import("./fixtures.mjs");
 const { resolveInstructorApi } = await import("./fixtures-instructor.mjs");
 const { resolveAdminApi } = await import("./fixtures-admin.mjs");
 // Fixtures are role-scoped: the resolver follows the route being checked
@@ -218,6 +234,17 @@ try {
       : route.startsWith("/instructor")
         ? "instructor"
         : "intern";
+    // Onboarding serves one profile/workspace state per page (the provider
+    // redirects off-page states); pin the stage per visited route.
+    qaStage.recruitment = route.startsWith("/intern/onboarding")
+      ? route.endsWith("/role")
+        ? "role"
+        : route.endsWith("/interview")
+          ? "interview"
+          : route.endsWith("/result")
+            ? "result"
+            : "welcome"
+      : "default";
     for (const theme of themes) {
       const context = await browser.newContext({
         viewport: { width: viewports[viewports.length - 1] ?? 1280, height: 900 },
@@ -284,6 +311,13 @@ try {
           continue;
         }
         await page.waitForTimeout(700);
+        // A 404 document IS the expected state for not-found verification
+        // routes; the browser logs the document 404 as a console error.
+        if ((attempt.status?.() ?? 200) === 404) {
+          for (let i = routeErrors.length - 1; i >= 0; i -= 1) {
+            if (routeErrors[i].includes("status of 404")) routeErrors.splice(i, 1);
+          }
+        }
         const metrics = await page.evaluate(() => ({
           scrollWidth: document.documentElement.scrollWidth,
           clientWidth: document.documentElement.clientWidth,

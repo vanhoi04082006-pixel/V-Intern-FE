@@ -154,7 +154,7 @@ export function RecruitmentResult() {
             ) : (
               <>
                 <p className="mt-3 text-body">
-                  Số lần còn lại: {profile.attemptsRemaining}
+                  Số lần phỏng vấn còn lại: {profile.attemptsRemaining}
                 </p>
                 {profile.nextEligibleAt && (
                   <p className="mt-3 text-body">
