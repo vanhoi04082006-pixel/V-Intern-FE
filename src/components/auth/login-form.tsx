@@ -4,11 +4,13 @@ import { useRef, useState, useSyncExternalStore } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import { IconArrowRight } from "@/components/v-intern/icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
+import { Spinner } from "@/components/product/primitives";
 import { login } from "@/lib/auth/auth-service";
 import { resolveLoginLanding } from "@/lib/auth/landing";
 import { errorMessage } from "@/lib/auth/api-client";
@@ -278,16 +280,13 @@ export function LoginForm({ previewState }: LoginFormProps) {
         >
           {isSubmitting ? (
             <>
-              <Loader2
-                className="size-4 animate-spin"
-                aria-hidden="true"
-              />
+              <Spinner />
               Đang đăng nhập...
             </>
           ) : (
             <>
               Đăng nhập
-              <ArrowRight className="size-4" aria-hidden="true" />
+              <IconArrowRight className="size-4" aria-hidden="true" />
             </>
           )}
         </button>

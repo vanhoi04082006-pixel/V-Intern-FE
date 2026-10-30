@@ -1,13 +1,13 @@
 import type { InputHTMLAttributes } from "react";
-import type { LucideIcon } from "lucide-react";
-import { AlertCircle } from "lucide-react";
+import { IconAlertTriangle, type IconComponent } from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 interface AuthFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "className"> {
   id: string;
   label: string;
-  icon: LucideIcon;
+  /** Icon đầu ô nhập — nhận cả icon notebook lẫn lucide (IconComponent). */
+  icon: IconComponent;
   /** Thông báo lỗi (tiếng Việt) — hiển thị inline ngay dưới input. */
   error?: string;
   /** Gợi ý tĩnh (vd: yêu cầu mật khẩu) — ẩn khi đang có lỗi. */
@@ -74,7 +74,7 @@ export function AuthField({
           id={errorId}
           className="mt-2 flex items-start gap-2 text-small font-medium text-destructive"
         >
-          <AlertCircle
+          <IconAlertTriangle
             aria-hidden="true"
             className="mt-1 size-4 shrink-0"
           />

@@ -5,6 +5,7 @@ import Link from "next/link";
  * Đây là điều hướng giữa 2 route thật (/login, /register), không phải
  * tab ẩn/hiện trong cùng một component, nên dùng semantics nav + link
  * với aria-current thay vì role="tab" (không có tabpanel thật).
+ * Gạch chân mục đang mở là nét lượn vẽ tay (support.css `.auth-tabs`).
  */
 const TABS = [
   { key: "login", label: "Đăng nhập", href: "/login" },
@@ -17,7 +18,7 @@ export function AuthTabs({ active }: { active: AuthTabKey }) {
   return (
     <nav
       aria-label="Chuyển giữa đăng nhập và đăng ký"
-      className="mb-4 border-b border-border"
+      className="auth-tabs mb-4 border-b border-border"
     >
       <ul className="flex gap-9">
         {TABS.map((tab) => {
@@ -34,12 +35,6 @@ export function AuthTabs({ active }: { active: AuthTabKey }) {
                 }`}
               >
                 {tab.label}
-                {isActive && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-primary"
-                  />
-                )}
               </Link>
             </li>
           );
