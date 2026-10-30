@@ -13,6 +13,7 @@ import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics } from "./collection-insights";
+import { StampMoc } from "@/components/workspace/notebook";
 import {
   Badge,
   btn,
@@ -218,11 +219,19 @@ export function EvaluationManagement() {
                         className="flex flex-wrap items-center justify-between gap-4 border-b border-border py-5"
                       >
                         <div>
-                          <Badge>
-                            {isInstructor
-                              ? evaluationLabels[e.status]
-                              : e.status}
-                          </Badge>
+                          {e.status === "finalized" ? (
+                            <StampMoc tone="blue" size="sm" thump>
+                              {isInstructor
+                                ? evaluationLabels[e.status]
+                                : e.status}
+                            </StampMoc>
+                          ) : (
+                            <Badge>
+                              {isInstructor
+                                ? evaluationLabels[e.status]
+                                : e.status}
+                            </Badge>
+                          )}
                           <p className="mt-2 text-body font-semibold">
                             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
                           </p>

@@ -1,6 +1,9 @@
 "use client";
 import { useCallback, useState } from "react";
-import { Github, ExternalLink } from "lucide-react";
+import {
+  IconExternalLink,
+  IconGithub,
+} from "@/components/v-intern/icons";
 import {
   githubStatus,
   connectGithub,
@@ -53,7 +56,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
     <Panel
       title={
         <span className="flex items-center gap-2">
-          <Github size={20} />
+          <IconGithub size={20} />
           Tài khoản GitHub
         </span>
       }
@@ -202,7 +205,7 @@ export function SessionRepositoryCard({
     <Panel
       title={
         <span className="flex items-center gap-2">
-          <Github size={18} />
+          <IconGithub size={18} />
           Repository của phiên
         </span>
       }
@@ -234,7 +237,7 @@ export function SessionRepositoryCard({
                   className="inline-flex items-center gap-2 text-primary"
                 >
                   Mở trên GitHub
-                  <ExternalLink size={14} />
+                  <IconExternalLink size={14} />
                 </a>
               )}
             </>
