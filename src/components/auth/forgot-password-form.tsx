@@ -3,7 +3,9 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import {
+  IconMail,
+} from "@/components/v-intern/icons";
 import { IconArrowLeft } from "@/components/v-intern/icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
@@ -79,7 +81,7 @@ export function ForgotPasswordForm() {
         <AuthField
           id="forgot-email"
           label="Email"
-          icon={Mail}
+          icon={IconMail}
           type="email"
           name="email"
           autoComplete="email"

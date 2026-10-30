@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import type { InputHTMLAttributes } from "react";
-import { EyeOff } from "lucide-react";
-import { IconAlertTriangle, IconEye, IconLock } from "@/components/v-intern/icons";
+import { IconAlertTriangle, IconEye, IconEyeOff, IconLock } from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 interface PasswordFieldProps
@@ -73,9 +72,9 @@ export function PasswordField({
           className="absolute right-1 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-control text-muted-foreground transition-colors hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           {visible ? (
-            <EyeOff className="size-4" aria-hidden="true" />
-          ) : (
             <IconEye className="size-4" aria-hidden="true" />
+          ) : (
+            <IconEyeOff className="size-4" aria-hidden="true" />
           )}
         </button>
       </div>
