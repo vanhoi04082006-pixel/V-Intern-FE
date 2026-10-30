@@ -340,6 +340,259 @@ const templateDetail = {
   runs: [{ id: id("run", 1), projectId, sessionId, templateVersion: 3, createdAt: daysAgo(35) }],
 };
 
+// ---------------------------------------------------------------------------
+// P4 — Instructor monitoring surfaces (recruitment rounds, participation,
+// evaluations, performance, reports). Shapes mirror src/lib/api parsers:
+// applications.ts, career-roles.ts, participation.ts, management.ts,
+// reports.ts, report-details.ts, imported-reviews.ts.
+// Note the envelope differences per endpoint: parsePage -> {data, meta},
+// parseItemsPage -> {items, total}, roundApplications -> {total, page, items}.
+// ---------------------------------------------------------------------------
+
+const hoursAhead = (n) => new Date(now + n * 3600000).toISOString();
+
+const recruitingCareerRoles = {
+  items: [
+    { code: "frontend", label: "Frontend Developer", description: "Xây dựng giao diện Next.js với accessibility và form phức tạp.", level: "intern", language: "TypeScript", requiredSkills: ["TypeScript", "React", "HTML/CSS"], optionalSkills: ["Vitest", "Playwright"], version: 3 },
+    { code: "backend", label: "Backend Developer", description: "Thiết kế API NestJS, bảo mật và kiểm thử tích hợp.", level: "intern", language: "TypeScript", requiredSkills: ["NestJS", "SQL", "REST"], optionalSkills: ["Docker"], version: 2 },
+    { code: "qa", label: "QA Engineer", description: "Viết kịch bản kiểm thử, theo dõi lỗi và regression.", level: "intern", language: "TypeScript", requiredSkills: ["Vitest", "Playwright"], optionalSkills: ["k6"], version: 1 },
+  ],
+};
+
+const recruitmentRound = (n) => ({
+  id: id("rec", n),
+  name: ["Đợt tuyển Thu 2026", "Đợt tuyển Xuân 2027"][n - 1] ?? `Đợt tuyển số ${n}`,
+  status: n === 1 ? "open" : "closed",
+  opensAt: daysAgo(22 - n * 6),
+  closesAt: n === 1 ? daysAhead(12) : daysAgo(2),
+});
+
+const recruitmentRoundDetail = {
+  ...recruitmentRound(1),
+  slots: [
+    { id: id("slt", 1), roleCode: "frontend", startsAt: hoursAhead(72), endsAt: hoursAhead(74), timezone: "Asia/Ho_Chi_Minh", capacity: 6, booked: 4, status: "open", minimumPreparationMinutes: 60, credentialsLeadMinutes: 30 },
+    { id: id("slt", 2), roleCode: "backend", startsAt: hoursAhead(96), endsAt: hoursAhead(98), timezone: "Asia/Ho_Chi_Minh", capacity: 4, booked: 4, status: "open", minimumPreparationMinutes: 60, credentialsLeadMinutes: 30 },
+  ],
+};
+
+const roundApplicationsPage = {
+  total: 4,
+  page: 1,
+  items: [
+    { id: id("app", 1), fullName: "Vũ Ngọc Ánh", email: "ngoc.anh@example.edu.vn", status: "booked", matchedRole: "frontend", lastCode: null },
+    { id: id("app", 2), fullName: "Hoàng Gia Bảo", email: "gia.bao@example.edu.vn", status: "waitlisted", matchedRole: "backend", lastCode: null },
+    { id: id("app", 3), fullName: "Đặng Khánh Linh", email: "khanh.linh@example.edu.vn", status: "analyzing", matchedRole: null, lastCode: null },
+    { id: id("app", 4), fullName: "Phan Tất Đạt", email: "tat.dat@example.edu.vn", status: "needs_information", matchedRole: "qa", lastCode: null },
+  ],
+};
+
+const staffApplicationDetail = {
+  id: id("app", 1),
+  fullName: "Vũ Ngọc Ánh",
+  status: "booked",
+  matchedRole: "frontend",
+  revision: 2,
+  hasCv: true,
+  booking: { id: id("bkg", 1), roleCode: "frontend", roleName: "Frontend Developer", status: "confirmed", startsAt: hoursAhead(72), endsAt: hoursAhead(74), timezone: "Asia/Ho_Chi_Minh", version: 1 },
+  timeline: [
+    { kind: "submitted", message: "Nộp CV và hoàn thành form ứng tuyển.", createdAt: daysAgo(6) },
+    { kind: "analyzed", message: "Agent trích xuất facts và khớp vai trò frontend (độ tin 88%).", createdAt: daysAgo(5) },
+    { kind: "booked", message: "Đặt khung phỏng vấn Frontend Developer, thời lượng 120 phút.", createdAt: daysAgo(2) },
+  ],
+  analysis: {
+    facts: {
+      confidence: 0.88,
+      missing: ["Kinh nghiệm làm việc nhóm"],
+      facts: [
+        { skill: "React", ref: "CV — mục Dự án", quote: "Xây dựng 2 dự án React + TypeScript." },
+        { skill: "Accessibility", ref: "CV — mục Kỹ năng", quote: "WCAG 2.1 AA cơ bản." },
+      ],
+    },
+    match: { roleCode: "frontend", confidence: 0.88, reason: "Kỹ năng React/TypeScript khớp vai trò Frontend; thiếu minh chứng làm việc nhóm." },
+  },
+  interviewPolicy: {
+    canRebook: true,
+    serverNow: new Date(now).toISOString(),
+    attemptsUsed: 0,
+    attemptsRemaining: 2,
+    nextEligibleAt: null,
+    allowedRoleCodes: ["frontend", "backend", "qa"],
+  },
+};
+
+const participationIncidents = [
+  { id: id("inc", 1), taskId: id("tsk", 2), internId: id("a1b2c3d4"), sessionId, deadlineVersion: 3, policyVersion: 2, dueAt: daysAgo(6), submittedAt: null, kind: "missing", status: "active", ordinal: 1, points: 2, recommendReplacement: false, replacementEligible: false, createdAt: daysAgo(5), reason: null, taskCode: "TASK-0203", taskTitle: "Thêm cột nhận xét theo tiêu chí", displayName: "Nguyễn Minh", sessionName: "Phiên thực tập Thu 2026", baseScore: null, latePenalty: null, score: null, submissionStatus: "missing" },
+  { id: id("inc", 2), taskId: id("tsk", 3), internId: id("other", 2), sessionId, deadlineVersion: 2, policyVersion: 2, dueAt: daysAgo(3), submittedAt: daysAgo(2), kind: "late", status: "active", ordinal: 2, points: 1, recommendReplacement: false, replacementEligible: false, createdAt: daysAgo(2), reason: null, taskCode: "TASK-0204", taskTitle: "Trang danh sách nhiệm vụ", displayName: "Trần Bảo Long", sessionName: "Phiên thực tập Thu 2026", baseScore: 7.5, latePenalty: 0.5, score: 7, submissionStatus: "late" },
+  { id: id("inc", 3), taskId: id("tsk", 5), internId: id("other", 3), sessionId, deadlineVersion: 1, policyVersion: 2, dueAt: daysAgo(10), submittedAt: daysAgo(9), kind: "late", status: "excused", ordinal: 1, points: 0, recommendReplacement: false, replacementEligible: false, createdAt: daysAgo(9), reason: "Ốm, có giấy nghỉ phép của phòng đào tạo.", taskCode: "TASK-0205", taskTitle: "Form nộp bài kèm PR", displayName: "Lê Thu Hà", sessionName: "Phiên thực tập Thu 2026", baseScore: 8, latePenalty: 0, score: 8, submissionStatus: "late" },
+];
+
+const sessionParticipationReport = {
+  items: participationIncidents,
+  summary: { total: 3, active: 2, registeredPenalty: 3 },
+  page: 1,
+  pageSize: 20,
+  policy: { version: 2, configured: true, activeFrom: daysAgo(60), warningFrom: 1, penaltyFrom: 2, replacementFrom: 3, penaltyPoints: 2, penaltyCap: 6 },
+};
+
+const evaluationCycle = (n) => ({
+  id: id("cyc", n),
+  code: `EV-2026-${String(n).padStart(2, "0")}`,
+  name: ["Đánh giá giữa kỳ", "Đánh giá cuối kỳ"][n - 1] ?? `Kỳ đánh giá ${n}`,
+  status: n === 1 ? "open" : "closed",
+  type: "session",
+  projectId,
+  sessionId,
+  startDate: daysAgo(20 - n * 5),
+  endDate: n === 1 ? daysAhead(9) : daysAgo(1),
+});
+
+const evaluationCriteria = {
+  items: [
+    { id: id("cri", 1), code: "QUALITY", name: "Chất lượng mã nguồn", weight: 30, maxScore: 10, isRequired: true },
+    { id: id("cri", 2), code: "TESTING", name: "Kiểm thử và độ phủ", weight: 25, maxScore: 10, isRequired: true },
+    { id: id("cri", 3), code: "PROCESS", name: "Quy trình làm việc", weight: 25, maxScore: 10, isRequired: true },
+    { id: id("cri", 4), code: "TEAMWORK", name: "Làm việc nhóm", weight: 20, maxScore: 10, isRequired: false },
+  ],
+};
+
+const managedEvaluation = (n) => ({
+  id: id("evl", n),
+  cycleId: id("cyc", 1),
+  internId: id("a1b2c3d4", n),
+  evaluatorId: instructorUser.id,
+  status: ["draft", "submitted", "finalized"][n - 1] ?? "draft",
+  // Draft must carry null score: the list UI shows "Chưa chấm" only when the
+  // backend has no final score yet (content-provenance rule).
+  overallScore: [null, 7.5, 8.4][n - 1] ?? null,
+  summary: [null, "Đã gửi, chờ giảng viên thứ hai xác nhận.", "Đã chốt: chất lượng tốt, cần cải thiện test."][n - 1] ?? null,
+  revisionNumber: n,
+});
+
+const evaluationDetail = {
+  evaluation: { ...managedEvaluation(1), status: "draft", overallScore: null, summary: "Bản nháp giữa kỳ; đã chấm 2/4 tiêu chí." },
+  scores: [
+    { criterionId: id("cri", 1), score: 8, comment: "Mã nguồn rõ ràng, tuân thủ quy ước đặt tên." },
+    { criterionId: id("cri", 2), score: 6, comment: "Còn 2 luồng lỗi chưa có test." },
+  ],
+};
+
+const aiSuggestionPayload = {
+  summary: "Sinh viên nắm rõ kiến trúc màn hình, điểm yếu chính là độ phủ kiểm thử cho luồng lỗi.",
+  strengths: ["Chia component hợp lý, dễ đọc.", "Form nộp bài xử lý đúng trạng thái chờ."],
+  improvementAreas: ["Bổ sung test cho luồng lỗi mạng.", "Viết nhận xét rõ ràng theo từng tiêu chí rubric."],
+  criterionSuggestions: [
+    { criterionCode: "QUALITY", suggestedScore: 8, comment: "Quy ước mã nhất quán, có nhận xét review.", evidence: ["PR #128 được duyệt với 2 nhận xét nhỏ."] },
+    { criterionCode: "TESTING", suggestedScore: 6, comment: "Độ phủ 61%, luồng lỗi chưa test.", evidence: ["Báo cáo vitest coverage 61% (30/10).", "2 luồng lỗi submit chưa có test."] },
+  ],
+};
+
+const evaluationSuggestions = {
+  items: [
+    { id: id("sug", 1), status: "generated", generatedAt: daysAgo(1), suggestion: aiSuggestionPayload },
+    { id: id("sug", 2), status: "superseded", generatedAt: daysAgo(4), suggestion: aiSuggestionPayload },
+  ],
+};
+
+const evaluationSuggestionDetail = {
+  id: id("sug", 1),
+  evaluationId: id("evl", 1),
+  status: "generated",
+  generatedAt: daysAgo(1),
+  aiRunId: id("run", 2),
+  promptVersion: "v2026.10",
+  acceptedAt: null,
+  suggestion: aiSuggestionPayload,
+};
+
+const importedReviewsPage = {
+  items: [
+    { id: id("rev", 1), projectId, studentId: id("a1b2c3d4"), sourceImage: "github-pr", title: "Gradebook: cột điểm rubric", displayName: "Nguyễn Minh", projectName: "EduScale LMS", prNumber: 128, score: 8, status: "passed", feedback: "Trả lời review nhanh, sửa đúng chỗ.", occurredAt: daysAgo(2), version: 1 },
+    { id: id("rev", 2), projectId, studentId: id("other", 2), sourceImage: "github-pr", title: "Task list: filter theo sprint", displayName: "Trần Bảo Long", projectName: "EduScale LMS", prNumber: 126, score: 6.5, status: "needs_review", feedback: null, occurredAt: daysAgo(4), version: 1 },
+    { id: id("rev", 3), projectId, studentId: id("other", 3), sourceImage: "github-pr", title: "Upload CV parser", displayName: "Lê Thu Hà", projectName: "EduScale LMS", prNumber: 121, score: 4, status: "failed", feedback: "Test fail ở 2 case, chưa đạt ngưỡng.", occurredAt: daysAgo(6), version: 1 },
+  ],
+};
+
+const performanceMembers = [
+  { userId: id("a1b2c3d4"), displayName: "Nguyễn Minh", totalTaskCount: 14, completedTaskCount: 11, taskCompletionRate: 78.6, storyPointCompletionRate: 80, averageEvaluationScore: 7.8, rank: 1 },
+  { userId: id("other", 2), displayName: "Trần Bảo Long", totalTaskCount: 13, completedTaskCount: 9, taskCompletionRate: 69.2, storyPointCompletionRate: 70, averageEvaluationScore: 7.1, rank: 2 },
+  { userId: id("other", 3), displayName: "Lê Thu Hà", totalTaskCount: 12, completedTaskCount: 7, taskCompletionRate: 58.3, storyPointCompletionRate: 55, averageEvaluationScore: 6.4, rank: 3 },
+];
+
+const memberPerformanceMetrics = {
+  metrics: {
+    totalTaskCount: 14,
+    completedTaskCount: 11,
+    taskCompletionRate: 78.6,
+    committedStoryPoints: 21,
+    completedStoryPoints: 17,
+    storyPointCompletionRate: 81,
+    onTimeCompletionRate: 72,
+    overdueOpenTaskCount: 1,
+    averageEvaluationScore: 7.8,
+    finalizedEvaluationCount: 1,
+    activeSprintProgress: 57,
+  },
+};
+
+const memberRecommendations = {
+  id: id("rec", 2),
+  createdAt: daysAgo(1),
+  reused: false,
+  recommendations: {
+    summary: "Ưu tiên đóng 1 task quá hạn và nâng độ phủ kiểm thử cho luồng lỗi.",
+    recommendations: [
+      { type: "focus", priority: "high", title: "Chốt TASK-0203 đang quá hạn 6 ngày", reason: "Đang là task quá hạn duy nhất, chặn demo cuối sprint.", actions: ["Nộp phần đã làm xong", "Xin giảng viên gia hạn có lý do"], evidenceMetricCodes: ["overdue_open"] },
+      { type: "skill", priority: "medium", title: "Bổ sung test cho trạng thái lỗi", reason: "Điểm tiêu chí TESTING 6.0 thấp hơn mức kỳ vọng 8.0.", actions: ["Thêm 2 test lỗi mạng cho form nộp bài"], evidenceMetricCodes: ["evaluation_score"] },
+    ],
+  },
+};
+
+const reportMetadata = (n) => ({
+  id: id("rpt", n),
+  title: ["Báo cáo tiến độ Sprint 3", "Hiệu suất thành viên phiên Thu", "Tổng hợp đánh giá giữa kỳ"][n - 1] ?? `Báo cáo ${n}`,
+  kind: ["progress", "performance", "evaluation"][n - 1] ?? "progress",
+  projectId,
+  projectName: "EduScale LMS",
+  createdAt: daysAgo(n),
+});
+
+const reportsList = {
+  items: [1, 2, 3].map(reportMetadata),
+  total: 3,
+  counts: [
+    { kind: "progress", count: 1, recentCount: 1 },
+    { kind: "performance", count: 1, recentCount: 1 },
+    { kind: "evaluation", count: 1, recentCount: 0 },
+  ],
+};
+
+const savedReportDetail = {
+  ...reportMetadata(1),
+  snapshot: {
+    projectName: "EduScale LMS",
+    scope: { projectId, sessionId, from: daysAgo(14), to: daysAgo(1) },
+    members: [
+      { userId: id("a1b2c3d4"), displayName: "Nguyễn Minh", totalTaskCount: 5, completedTaskCount: 4, taskCompletionRate: 80, averageEvaluationScore: 7.8, overdueOpenTaskCount: 1, submissionCount: 6, approvedCount: 4, reworkCount: 2 },
+      { userId: id("other", 2), displayName: "Trần Bảo Long", totalTaskCount: 5, completedTaskCount: 3, taskCompletionRate: 60, averageEvaluationScore: 7.1, overdueOpenTaskCount: 0, submissionCount: 5, approvedCount: 3, reworkCount: 1 },
+    ],
+    details: {
+      summary: { total: 10, completed: 7, overdue: 1, blocked: 1, unassigned: 1, risk: "medium", reasons: ["1 task quá hạn 6 ngày", "1 task bị chờ phụ thuộc"] },
+      tasks: [
+        { id: id("tsk", 2), code: "TASK-0203", title: "Thêm cột nhận xét theo tiêu chí", status: "review", assigneeId: id("a1b2c3d4"), assigneeName: "Nguyễn Minh", sprintName: "Sprint 3", dueDate: daysAgo(6), blocked: false, submissionStatus: "submitted", aiStatus: "pending_review", aiScore: 7, instructorScore: null },
+        { id: id("tsk", 3), code: "TASK-0204", title: "Trang danh sách nhiệm vụ", status: "doing", assigneeId: id("other", 2), assigneeName: "Trần Bảo Long", sprintName: "Sprint 3", dueDate: daysAhead(3), blocked: false, submissionStatus: "draft", aiStatus: null, aiScore: null, instructorScore: null },
+        { id: id("tsk", 6), code: "TASK-0206", title: "Dashboard quản trị", status: "todo", assigneeId: null, assigneeName: null, sprintName: "Sprint 3", dueDate: daysAhead(9), blocked: true, submissionStatus: null, aiStatus: null, aiScore: null, instructorScore: null },
+      ],
+      sprints: [
+        { id: id("spr", 50), name: "Sprint 3 — Bảng điểm & phản hồi", status: "active", total: 10, completed: 7, overdue: 1, blocked: 1 },
+      ],
+      timeline: [
+        { taskId: id("tsk", 2), taskCode: "TASK-0203", toStatus: "review", createdAt: daysAgo(1) },
+        { taskId: id("tsk", 3), taskCode: "TASK-0204", toStatus: "doing", createdAt: daysAgo(2) },
+      ],
+    },
+  },
+};
+
 /** Resolve instructor-surface fixtures; falls back to shared intern fixtures. */
 export function resolveInstructorApi(method, pathname, search) {
   const p = pathname.replace(/\/+$/, "");
@@ -412,5 +665,66 @@ export function resolveInstructorApi(method, pathname, search) {
     const pageSize = Number(search.get("pageSize") ?? 10);
     return page([1, 2, 3, 4, 5].map(sessionWorkTask).slice(0, pageSize), 5, Number(search.get("page") ?? 1), pageSize);
   }
+
+  // --- P4: recruitment rounds & applications (instructor monitoring) ---
+  if (method === "GET" && p === "/recruitment-rounds")
+    return { items: [1, 2].map(recruitmentRound) };
+  const roundMatch = p.match(/^\/recruitment-rounds\/([^/]+)$/);
+  if (method === "GET" && roundMatch) return recruitmentRoundDetail;
+  if (method === "GET" && p === "/career-roles") return recruitingCareerRoles;
+  const roundAppsMatch = p.match(/^\/recruitment-rounds\/([^/]+)\/applications$/);
+  if (method === "GET" && roundAppsMatch) return roundApplicationsPage;
+  const staffAppMatch = p.match(/^\/recruitment-rounds\/([^/]+)\/applications\/([^/]+)$/);
+  if (method === "GET" && staffAppMatch) return staffApplicationDetail;
+
+  // --- P4: session participation (incidents + policy) ---
+  const participationMatch = p.match(/^\/sessions\/([^/]+)\/participation$/);
+  if (method === "GET" && participationMatch) return sessionParticipationReport;
+  const sessionRepoJobsMatch = p.match(/^\/sessions\/([^/]+)\/participation\/repository-access-jobs$/);
+  if (method === "GET" && sessionRepoJobsMatch)
+    return {
+      items: [
+        { id: id("job", 1), sessionId, status: "done", displayStatus: "done", errorCode: null, attempts: 1, updatedAt: daysAgo(18), nextAttemptAt: daysAgo(18), revision: "r3", displayName: "Nguyễn Minh", sessionName: "Phiên thực tập Thu 2026", projectName: "EduScale LMS", role: "joining", outcome: "Đã cấp quyền write repository v-intern/eduscale-lms", repositoryUrl: "https://github.com/v-intern/eduscale-lms", retryAllowed: false },
+        { id: id("job", 2), sessionId, status: "waiting_user", displayStatus: "waiting_user", errorCode: null, attempts: 1, updatedAt: daysAgo(1), nextAttemptAt: daysAgo(1), revision: "r1", displayName: "Trần Bảo Long", sessionName: "Phiên thực tập Thu 2026", projectName: "EduScale LMS", role: "joining", outcome: "Đang chờ sinh viên chấp nhận lời mời trên GitHub", repositoryUrl: "https://github.com/v-intern/eduscale-lms", retryAllowed: true },
+      ],
+      summary: [
+        { status: "done", total: 1 },
+        { status: "waiting_user", total: 1 },
+      ],
+      limit: 5,
+    };
+
+  // --- P4: evaluation cycles, managed evaluations, AI suggestions ---
+  if (method === "GET" && p === "/evaluation-cycles")
+    return { items: [1, 2].map(evaluationCycle), total: 2 };
+  const criteriaMatch = p.match(/^\/evaluation-cycles\/([^/]+)\/criteria$/);
+  if (method === "GET" && criteriaMatch) return evaluationCriteria;
+  if (method === "GET" && p === "/evaluations")
+    return { items: [1, 2, 3].map(managedEvaluation), total: 3 };
+  const evaluationMatch = p.match(/^\/evaluations\/([^/]+)$/);
+  if (method === "GET" && evaluationMatch) return evaluationDetail;
+  const suggestionListMatch = p.match(/^\/evaluations\/([^/]+)\/ai-suggestions$/);
+  if (method === "GET" && suggestionListMatch) return evaluationSuggestions;
+  const suggestionMatch = p.match(/^\/evaluations\/([^/]+)\/ai-suggestions\/([^/]+)$/);
+  if (method === "GET" && suggestionMatch) return evaluationSuggestionDetail;
+  if (method === "POST" && suggestionListMatch) return evaluationSuggestionDetail;
+
+  // --- P4: imported PR reviews ---
+  if (method === "GET" && p === "/imported-reviews") return importedReviewsPage;
+
+  // --- P4: member performance + AI recommendations ---
+  if (method === "GET" && p === "/performance/interns")
+    return { items: performanceMembers, total: 3, page: Number(search.get("page") ?? 1), pageSize: Number(search.get("pageSize") ?? 10) };
+  const memberPerfMatch = p.match(/^\/performance\/interns\/([^/]+)$/);
+  if (method === "GET" && memberPerfMatch) return memberPerformanceMetrics;
+  const memberRecMatch = p.match(/^\/performance\/interns\/([^/]+)\/ai-recommendations$/);
+  if (method === "GET" && memberRecMatch) return memberRecommendations;
+
+  // --- P4: saved reports ---
+  if (method === "GET" && p === "/reports") return reportsList;
+  const reportMatch = p.match(/^\/reports\/([^/]+)$/);
+  if (method === "GET" && reportMatch) return savedReportDetail;
+  if (method === "POST" && p === "/reports") return savedReportDetail;
+
   return resolveInternApi(method, pathname, search);
 }

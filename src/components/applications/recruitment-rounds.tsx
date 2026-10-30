@@ -96,6 +96,12 @@ export function RecruitmentRounds() {
           description="Tạo đợt, thêm lịch rồi mở nhận CV. Hệ thống không tự tạo lịch ngoài các khung bạn đã mở."
         />
       )}
+      {list.data?.length && !selected && !list.loading && !list.error ? (
+        <Empty
+          title="Chọn một đợt để bắt đầu"
+          description="Khung phỏng vấn, hồ sơ ứng viên và trạng thái đợt hiển thị sau khi bạn chọn đợt. Đợt mới tạo ở trạng thái nháp cho đến khi có khung giờ hợp lệ."
+        />
+      ) : null}
       {selected && (
         <RoundWorkspace key={selected} id={selected} onUpdate={list.reload} />
       )}

@@ -1262,7 +1262,10 @@ export function Notifications() {
                               <StudentBadge tone="blue">Chưa đọc</StudentBadge>
                             )}
                             {!n.readAt && !intern && (
-                              <StatusDot tone="sky">Chưa đọc</StatusDot>
+                              /* Neutral tone: the unread article already tints
+                                 bg-accent, and an accent chip on accent fails
+                                 AA in dark mode (axe color-contrast). */
+                              <StatusDot tone="gray">Chưa đọc</StatusDot>
                             )}
                           </div>
                           <NotificationText
@@ -1284,7 +1287,7 @@ export function Notifications() {
                               className={
                                 intern
                                   ? "student-notification-time"
-                                  : "text-caption text-muted-foreground"
+                                  : "text-caption text-muted-foreground font-mono tabular-nums"
                               }
                               dateTime={n.createdAt}
                             >

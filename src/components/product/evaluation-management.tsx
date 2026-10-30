@@ -30,6 +30,14 @@ const evaluationLabels = {
   closed: "Đã đóng",
   archived: "Đã lưu trữ",
 };
+/** AI suggestion lifecycle states are backend-defined; unknown values
+ * fall back to the raw code so new states stay visible instead of blank. */
+const suggestionStatusLabels: Record<string, string> = {
+  generated: "Mới tạo",
+  accepted: "Đã áp dụng",
+  superseded: "Đã thay thế",
+  failed: "Lỗi tạo gợi ý",
+};
 export function EvaluationManagement() {
   const isInstructor = Boolean(usePathname()?.startsWith("/instructor"));
   const [page, setPage] = useState(1),
@@ -1031,7 +1039,7 @@ function SuggestionHistoryList({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-caption text-muted-foreground">
                   {new Date(row.generatedAt).toLocaleString("vi-VN")} ·{" "}
-                  {row.status}
+                  {suggestionStatusLabels[row.status] ?? row.status}
                 </span>
                 <button
                   type="button"
