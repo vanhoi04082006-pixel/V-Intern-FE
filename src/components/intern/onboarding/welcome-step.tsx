@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, BookOpen, Info } from "lucide-react";
+import {
+  IconArrowRight,
+  IconBookOpen,
+  IconInfo,
+} from "@/components/v-intern/icons";
 
 import {
   WELCOME_BREADCRUMB,
@@ -97,7 +101,7 @@ export function WelcomeStep() {
           className="inline-flex h-11 items-center gap-2 rounded-control bg-primary px-5 text-body font-semibold text-primary-foreground shadow-app-xs transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
         >
           Bắt đầu
-          <ArrowRight className="size-4" aria-hidden="true" />
+          <IconArrowRight className="size-4" aria-hidden="true" />
         </Link>
         <button
           type="button"
@@ -106,7 +110,7 @@ export function WelcomeStep() {
           onClick={() => setGuidanceOpen((open) => !open)}
           className="inline-flex h-11 items-center gap-2 rounded-control border border-border bg-card px-5 text-body font-semibold text-foreground shadow-app-xs transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
         >
-          <BookOpen className="size-4" aria-hidden="true" />
+          <IconBookOpen className="size-4" aria-hidden="true" />
           Xem hướng dẫn
         </button>
       </div>
@@ -121,7 +125,7 @@ export function WelcomeStep() {
             id="welcome-guidance-heading"
             className="flex items-center gap-2 text-subsection font-bold text-foreground"
           >
-            <Info className="size-4 text-primary" aria-hidden="true" />
+            <IconInfo className="size-4 text-primary" aria-hidden="true" />
             {WELCOME_GUIDANCE_TITLE}
           </h2>
           <ul className="mt-3 flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-primary/60">

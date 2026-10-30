@@ -935,3 +935,14 @@ export function IconCopy({ size = 24, strokeWidth = 2, ...props }: NotebookIconP
   );
 }
 IconCopy.displayName = "NotebookIconCopy";
+
+/* Giảm — đường gãy xuống */
+export function IconTrendingDown({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.4 6.1 C 5.1 8.4, 6.7 10.7, 8.4 13 C 9.6 11.8, 10.8 10.5, 12 9.2 C 14.4 12.3, 16.9 15.4, 19.6 18.4" />
+      <path d="M15 18.5 C 16.5 18.5, 18 18.4, 19.6 18.3 C 19.7 16.8, 19.7 15.3, 19.6 13.8" />
+    </svg>
+  );
+}
+IconTrendingDown.displayName = "NotebookIconTrendingDown";

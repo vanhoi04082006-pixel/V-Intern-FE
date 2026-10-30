@@ -1,4 +1,7 @@
-import { CircleCheck, Info } from "lucide-react";
+import {
+  IconCircleCheck,
+  IconInfo,
+} from "@/components/v-intern/icons";
 
 import type { RecruitmentResultData } from "./recruitment-model";
 import { TagPill } from "./onboarding-primitives";
@@ -26,7 +29,7 @@ export function NextStepsCard({
         id="result-next-steps-heading"
         className="flex items-center gap-2 text-small font-bold  text-muted-foreground"
       >
-        <CircleCheck className="size-4 text-primary" aria-hidden="true" />
+        <IconCircleCheck className="size-4 text-primary" aria-hidden="true" />
         Bước tiếp theo
       </h2>
       <ol className="mt-2 flex flex-col gap-2">
@@ -96,7 +99,7 @@ export function ResultNotesCard({ result }: { result: RecruitmentResultData }) {
         id="result-notes-heading"
         className="flex items-center gap-2 text-small font-bold  text-muted-foreground"
       >
-        <Info className="size-4 text-warning" aria-hidden="true" />
+        <IconInfo className="size-4 text-warning" aria-hidden="true" />
         Lưu ý
       </h2>
       <ul className="mt-2 flex list-disc flex-col gap-1 pl-4 text-small leading-snug text-foreground marker:text-warning">
