@@ -1,14 +1,14 @@
 "use client";
 import { useCallback, useState } from "react";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Gauge,
-  Flag,
-  GitBranch,
-  Info,
-  SquareKanban,
-} from "lucide-react";
+  IconChartTrend,
+  IconChevronLeft,
+  IconChevronRight,
+  IconFlag,
+  IconGitBranch,
+  IconInfo,
+  IconSquareKanban,
+} from "@/components/v-intern/icons";
 import {
   listTasks,
   statusLabels,
@@ -48,7 +48,7 @@ export function OwnKanban({
   return (
     <>
       <div className="student-notice">
-        <Info size={16} className="shrink-0" aria-hidden="true" />
+        <IconInfo size={16} className="shrink-0" aria-hidden="true" />
         <p>
           Kéo thẻ từ <strong>Cần làm</strong> sang <strong>Đang làm</strong>.
           Thả sang <strong>Chờ duyệt</strong> sẽ mở biểu mẫu nộp bài; thẻ chỉ
@@ -188,19 +188,19 @@ function KanbanColumn({
                           : "text-muted-foreground"
                     }`}
                   >
-                    <Flag size={11} aria-hidden="true" />
+                    <IconFlag size={11} aria-hidden="true" />
                     {priorityLabels[t.priority]}
                   </span>
                 </div>
                 <h3>{t.title}</h3>
                 <p className="student-board-card-foot">
-                  <SquareKanban size={11} aria-hidden="true" />
+                  <IconSquareKanban size={11} aria-hidden="true" />
                   <span className="inline-flex items-center gap-1">
                     Sprint: {t.sprint?.name ?? "Chưa gắn Sprint"}
                   </span>
                 </p>
                 <p className="student-board-card-foot workspace-board-repository">
-                  <GitBranch size={12} aria-hidden="true" />
+                  <IconGitBranch size={12} aria-hidden="true" />
                   <span className="min-w-0 break-words">
                     {t.repository
                       ? `${t.repository.fullName ?? "Repository"} · ${
@@ -223,8 +223,8 @@ function KanbanColumn({
                 </div>
                 <div className="mt-2.5 flex items-center justify-between border-t border-border pt-2.5 text-caption text-muted-foreground">
                   <TaskDeadline value={t.dueDate} status={t.status} compact />
-                  <span className="workspace-task-points"><Gauge size={12} aria-hidden="true" />{t.storyPoints ?? '—'} điểm</span>
-                  <ChevronRight
+                  <span className="workspace-task-points"><IconChartTrend size={12} aria-hidden="true" />{t.storyPoints ?? '—'} điểm</span>
+                  <IconChevronRight
                     size={14}
                     className="text-primary transition-transform group-hover:translate-x-0.5"
                     aria-hidden="true"
@@ -243,7 +243,7 @@ function KanbanColumn({
               className="student-action student-action-secondary student-action-sm"
               aria-label={`Trang trước, cột ${statusLabels[status]}`}
             >
-              <ChevronLeft size={13} aria-hidden="true" />
+              <IconChevronLeft size={13} aria-hidden="true" />
               Trước
             </button>
             <span className="tabular-nums">
@@ -257,7 +257,7 @@ function KanbanColumn({
               aria-label={`Trang sau, cột ${statusLabels[status]}`}
             >
               Sau
-              <ChevronRight size={13} aria-hidden="true" />
+              <IconChevronRight size={13} aria-hidden="true" />
             </button>
           </div>
         )}

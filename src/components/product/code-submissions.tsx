@@ -1,6 +1,9 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ExternalLink, GitPullRequest } from "lucide-react";
+import {
+  IconExternalLink,
+  IconGitBranch,
+} from "@/components/v-intern/icons";
 import {
   confirmCodeReview,
   listCodeReviews,
@@ -91,7 +94,7 @@ export function CodeSubmissions({
     <Panel
       title={
         <span className="flex items-center gap-2">
-          <GitPullRequest size={18} />
+          <IconGitBranch size={18} />
           Bài nộp & đánh giá code
         </span>
       }
@@ -288,7 +291,7 @@ function SubmissionReview({
           className="ml-auto inline-flex items-center gap-1 text-body text-primary"
         >
           Xem bài trên GitHub
-          <ExternalLink size={13} />
+          <IconExternalLink size={13} />
         </a>
       </div>
       <p className="my-3 whitespace-pre-wrap text-body">{submission.summary}</p>

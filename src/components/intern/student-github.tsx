@@ -1,11 +1,15 @@
 "use client";
-import { CodeXml, GitPullRequest, ShieldCheck } from "lucide-react";
+import {
+  IconCodeXml,
+  IconGitBranch,
+} from "@/components/v-intern/icons";
 import type { InternWorkspace } from "@/lib/api/workspace";
 import {
   GithubConnection,
   SessionRepositoryCard,
 } from "@/components/product/github-connection";
 import { StudentHeading, StudentPanel, StudentLink } from "./student-ui";
+import { NoteCard } from "@/components/workspace/notebook";
 
 export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
   return (
@@ -35,7 +39,10 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
               </div>
             </StudentPanel>
           ) : (
-            <StudentPanel title="Repository sẽ xuất hiện sau khi phân công">
+            <StudentPanel
+              title="Repository sẽ xuất hiện sau khi phân công"
+              className="dashed-waiting"
+            >
               <p className="text-body leading-7 text-muted-foreground">
                 Bạn có thể liên kết GitHub ngay bây giờ. Khi được phân vào dự
                 án, kiểm tra lời mời repository trên GitHub trước khi bắt đầu
@@ -46,7 +53,7 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
         </div>
         <div className="space-y-5">
           <details open className="student-help-disclosure">
-            <summary><GitPullRequest size={16} aria-hidden="true" />Từ kết nối đến bài nộp</summary>
+            <summary><IconGitBranch size={16} aria-hidden="true" />Từ kết nối đến bài nộp</summary>
             <ol className="student-step-list">
               <li>
                 <div>
@@ -85,15 +92,14 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
               </li>
             </ol>
           </details>
-          <StudentPanel title="Giữ tài khoản an toàn" icon={ShieldCheck}>
-            <p className="text-body leading-7 text-muted-foreground">
-              V-Intern không yêu cầu bạn nhập mật khẩu GitHub tại đây. Việc liên
-              kết được xác nhận trên trang GitHub.
-            </p>
-          </StudentPanel>
+          {/* Ghi chú tay về an toàn — sticky note thay panel thường */}
+          <NoteCard tape rotate={0.9} title="Giữ tài khoản an toàn">
+            V-Intern không yêu cầu bạn nhập mật khẩu GitHub tại đây. Việc liên
+            kết được xác nhận trên trang GitHub.
+          </NoteCard>
           {workspace.status === "active" && (
             <StudentLink secondary href="/intern/work">
-              <CodeXml size={16} aria-hidden="true" />
+              <IconCodeXml size={16} aria-hidden="true" />
               Đi đến công việc
             </StudentLink>
           )}

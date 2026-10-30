@@ -6,7 +6,11 @@ import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Panel } from "./primitives";
 import { roleLabel } from "@/lib/api/workspace";
 import { StudentPanel } from "@/components/intern/student-ui";
-import { ClipboardCheck, FileCode2, FileText } from "lucide-react";
+import {
+  IconClipboardCheck,
+  IconCodeXml,
+  IconFileText,
+} from "@/components/v-intern/icons";
 
 /** GET tasks/:id/spec/source — nguồn spec thô (bản chấm điểm ràng buộc), hiển thị cạnh bản đã dựng. */
 function TaskSpecSource({ id }: { id: string }) {
@@ -24,7 +28,7 @@ function TaskSpecSource({ id }: { id: string }) {
   return (
     <details className="mt-3 border-t border-border pt-3" open>
       <summary className="cursor-pointer text-body font-semibold text-primary">
-        <FileCode2 size={16} className="mr-2 inline" aria-hidden="true" />
+        <IconCodeXml size={16} className="mr-2 inline" aria-hidden="true" />
         Spec nguồn (dùng để chấm điểm)
       </summary>
       <pre className="mt-3 max-h-96 overflow-auto rounded-control bg-muted p-3 text-caption leading-6 text-foreground">
@@ -48,7 +52,7 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
     return (
       <StudentPanel
         title="Tiêu chí hoàn thành & tài liệu"
-        icon={ClipboardCheck}
+        icon={IconClipboardCheck}
       >
         <p className="whitespace-pre-wrap text-body leading-8 text-muted-foreground">
           {spec.requirements}
@@ -122,7 +126,7 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
         )}
         <details className="mt-5 border-t border-border pt-4">
           <summary className="cursor-pointer text-body font-semibold text-primary">
-            <FileText size={16} className="mr-2 inline" aria-hidden="true" />
+            <IconFileText size={16} className="mr-2 inline" aria-hidden="true" />
             Tài liệu dự án
           </summary>
           <p className="mt-4 whitespace-pre-wrap text-body leading-8 text-muted-foreground">
