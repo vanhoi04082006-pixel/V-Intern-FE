@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { THEME_BOOTSTRAP } from "@/lib/theme";
@@ -55,13 +55,31 @@ export const metadata: Metadata = {
       "Kỹ năng thật. Dự án thật. Tương lai của bạn. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
     siteName: "V-Intern",
     type: "website",
+    images: [
+      {
+        url: "/images/og-notebook.png",
+        width: 1200,
+        height: 630,
+        alt: "Trang sổ tay V-Intern: nền giấy ô ly kem với các nét vẽ tay mực xanh — mũi tên cong, ngôi sao, nét lượn và hai mẩu băng dính dán xéo.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "V-Intern - Nền tảng thực tập ảo với AI",
     description:
       "Kỹ năng thật. Dự án thật. Tương lai của bạn. - Nền tảng thực tập ảo thế hệ mới cho sinh viên CNTT.",
+    images: ["/images/og-notebook.png"],
   },
+};
+
+/* Journey Notebook theme color: giấy kem sáng / bảng đen tối (Next 16 dùng
+   viewport export cho themeColor — metadata.themeColor đã bị deprecate). */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfaf4" },
+    { media: "(prefers-color-scheme: dark)", color: "#131318" },
+  ],
 };
 
 export default function RootLayout({
