@@ -8,6 +8,23 @@ import { ownReplacements } from "@/lib/api/replacements";
 import { githubStatus, repositoryAccountStatus, sessionRepository, githubRepositoryActivity } from "@/lib/api/github";
 import { listConversations, getConversation } from "@/lib/api/mentor";
 import { getTaskSpec, getTaskSpecSource } from "@/lib/api/templates";
+import { listRecruitmentRounds, roundDetail, roundApplications, staffApplication } from "@/lib/api/applications";
+import { listRecruitingCareers } from "@/lib/api/career-roles";
+import { sessionParticipation } from "@/lib/api/participation";
+import {
+  listCycles,
+  getCriteria,
+  listManagedEvaluations,
+  getManagedEvaluation,
+  listEvaluationSuggestions,
+  getEvaluationSuggestion,
+  listPerformance,
+  getMemberPerformance,
+  getMemberRecommendations,
+} from "@/lib/api/management";
+import { listImportedReviews } from "@/lib/api/imported-reviews";
+import { listReports, getSavedReport } from "@/lib/api/reports";
+import { sessionRepositoryAccess } from "@/lib/api/repository-access";
 
 /**
  * Lock the local visual-QA fixtures (tools/qa/fixtures.mjs) to the REAL
@@ -16,6 +33,7 @@ import { getTaskSpec, getTaskSpecSource } from "@/lib/api/templates";
  * drift that wastes a whole QA cycle before someone notices.
  */
 const mod = await import("../../../../tools/qa/fixtures.mjs");
+const instructorMod = await import("../../../../tools/qa/fixtures-instructor.mjs");
 
 function stubFixtureFetch() {
   process.env.NEXT_PUBLIC_API_BASE_URL = "http://qa-be.internal/api/v1";
@@ -104,6 +122,106 @@ describe("QA fixtures match real request parsers (intern surfaces)", () => {
       expect((await getCertificates())[0]?.certificateNumber).toMatch(/^VINT-/);
       expect((await getRecommendations()).recommendations.length).toBeGreaterThan(0);
       expect((await getNotifications(1, false)).items.length).toBeGreaterThan(0);
+    });
+  });
+});
+
+async function withInstructorFixtures<T>(run: () => Promise<T>): Promise<T> {
+  process.env.NEXT_PUBLIC_API_BASE_URL = "http://qa-be.internal/api/v1";
+  vi.stubGlobal("fetch", (url: string) => {
+    const parsed = new URL(url);
+    const appPath = parsed.pathname.replace(/^\/api\/v1(?=\/|$)/, "") || "/";
+    const body = (instructorMod as { resolveInstructorApi: (m: string, p: string, s: URLSearchParams) => unknown }).resolveInstructorApi(
+      "GET",
+      appPath,
+      parsed.searchParams,
+    );
+    if (body === null) throw new Error(`No QA fixture for GET ${appPath}`);
+    return Promise.resolve(
+      new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } }),
+    );
+  });
+  try {
+    return await run();
+  } finally {
+    vi.unstubAllGlobals();
+  }
+}
+
+describe("QA fixtures match real request parsers (instructor monitoring surfaces)", () => {
+  it("recruitment rounds, slots, applications and career roles parse", async () => {
+    await withInstructorFixtures(async () => {
+      const rounds = await listRecruitmentRounds();
+      expect(rounds.length).toBeGreaterThan(0);
+      const detail = await roundDetail(rounds[0]!.id);
+      expect(detail.slots.length).toBeGreaterThan(0);
+      expect(detail.slots[0]!.capacity).toBeGreaterThan(0);
+      const careers = await listRecruitingCareers();
+      expect(careers[0]!.requiredSkills.length).toBeGreaterThan(0);
+      const apps = await roundApplications(rounds[0]!.id, 1);
+      expect(apps.items.length).toBeGreaterThan(0);
+      const staff = await staffApplication(rounds[0]!.id, apps.items[0]!.id);
+      expect(staff.analysis.match?.confidence).toBeGreaterThan(0);
+      expect(staff.interviewPolicy?.canRebook).toBe(true);
+      expect(staff.timeline.length).toBeGreaterThan(0);
+    });
+  });
+
+  it("session participation report and repository access jobs parse", async () => {
+    await withInstructorFixtures(async () => {
+      const report = await sessionParticipation("ses-0000-4000-8000-000000000050", 1);
+      expect(report.items.length).toBeGreaterThan(0);
+      expect(report.summary.active).toBeGreaterThan(0);
+      expect(report.policy.version).toBeGreaterThan(0);
+      const jobs = await sessionRepositoryAccess("ses-0000-4000-8000-000000000050");
+      expect(jobs.items.length).toBeGreaterThan(0);
+      expect(jobs.limit).toBeGreaterThan(0);
+    });
+  });
+
+  it("evaluation cycles, criteria, managed evaluations and AI suggestions parse", async () => {
+    await withInstructorFixtures(async () => {
+      const cycles = await listCycles(1);
+      expect(cycles.items.length).toBeGreaterThan(0);
+      const criteria = await getCriteria(cycles.items[0]!.id);
+      expect(criteria.length).toBeGreaterThan(0);
+      const evaluations = await listManagedEvaluations(1, cycles.items[0]!.id, "");
+      expect(evaluations.items.length).toBeGreaterThan(0);
+      const draft = evaluations.items.find((e) => e.status === "draft");
+      expect(draft?.overallScore).toBeNull();
+      const detail = await getManagedEvaluation(evaluations.items[0]!.id);
+      expect(detail.scores.length).toBeGreaterThan(0);
+      const suggestions = await listEvaluationSuggestions(evaluations.items[0]!.id);
+      expect(suggestions.length).toBeGreaterThan(0);
+      const suggestion = await getEvaluationSuggestion(evaluations.items[0]!.id, suggestions[0]!.id);
+      expect(suggestion.suggestion.criteria.length).toBeGreaterThan(0);
+      expect(suggestion.promptVersion).toBeTruthy();
+    });
+  });
+
+  it("imported reviews, member performance and recommendations parse", async () => {
+    await withInstructorFixtures(async () => {
+      const reviews = await listImportedReviews();
+      expect(reviews.length).toBeGreaterThan(0);
+      const members = await listPerformance(new URLSearchParams({ page: "1", pageSize: "10" }));
+      expect(members.items.length).toBeGreaterThan(0);
+      expect(members.items[0]!.rank).toBe(1);
+      const metrics = await getMemberPerformance(members.items[0]!.userId);
+      expect(metrics.committedStoryPoints).toBeGreaterThan(0);
+      const recs = await getMemberRecommendations(members.items[0]!.userId);
+      expect(recs.recommendations.length).toBeGreaterThan(0);
+    });
+  });
+
+  it("saved reports list and snapshot details parse", async () => {
+    await withInstructorFixtures(async () => {
+      const reports = await listReports(1, "", undefined, {});
+      expect(reports.items.length).toBeGreaterThan(0);
+      expect(reports.counts.length).toBeGreaterThan(0);
+      const detail = await getSavedReport(reports.items[0]!.id);
+      expect(detail.snapshot.members.length).toBeGreaterThan(0);
+      expect(detail.snapshot.details!.summary.total).toBeGreaterThan(0);
+      expect(detail.snapshot.details!.tasks[0]!.code).toMatch(/^TASK-/);
     });
   });
 });

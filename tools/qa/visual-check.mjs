@@ -37,6 +37,16 @@ const PACKS = {
     "/instructor/projects",
     "/instructor/projects/prj-0000-4000-8000-000000000050",
   ],
+  "instructor-monitoring": [
+    "/instructor/recruitment-rounds",
+    "/instructor/participation",
+    "/instructor/evaluations",
+    "/instructor/performance",
+    "/instructor/reports",
+    "/instructor/github",
+    "/instructor/notifications",
+    "/instructor/profile",
+  ],
   "intern-work": [
     "/intern",
     "/intern/work",

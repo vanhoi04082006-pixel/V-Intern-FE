@@ -345,9 +345,11 @@ export function ReportsWorkspace({
             onClick={() => setSelected(r.id)}
           >
             <strong>{r.title}</strong>
-            <span className="block text-caption text-muted-foreground">
+            <span className="block text-caption text-muted-foreground tabular-nums">
               {r.projectName} · {reportLabels[r.kind]} ·{" "}
-              {new Date(r.createdAt).toLocaleString("vi-VN")}
+              <time dateTime={r.createdAt} className="font-mono">
+                {new Date(r.createdAt).toLocaleString("vi-VN")}
+              </time>
             </span>
           </button>
         ))}
