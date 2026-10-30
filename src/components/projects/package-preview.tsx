@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Download, FileCode2, FolderOpen } from "lucide-react";
+import {
+  IconCodeXml,
+  IconDownload,
+  IconFolderOpen,
+} from "@/components/v-intern/icons";
 import { buttonClass } from "@/components/product/primitives";
 import {
   downloadStarter,
@@ -19,7 +23,7 @@ export function PackageFiles({ files }: { files: PackageFile[] }) {
         aria-label="Các file trong gói"
       >
         <p className="flex items-center gap-2 px-2 py-2 text-caption font-semibold  text-muted-foreground">
-          <FolderOpen size={14} aria-hidden="true" /> {files.length} file
+          <IconFolderOpen size={14} aria-hidden="true" /> {files.length} file
         </p>
         {files.map((item) => (
           <button
@@ -29,7 +33,7 @@ export function PackageFiles({ files }: { files: PackageFile[] }) {
             onClick={() => setSelected(item.path)}
             className={`flex w-full items-start gap-2 rounded-md px-2 py-2 text-left font-mono text-caption leading-5 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${file?.path === item.path ? "bg-accent text-primary" : "text-muted-foreground hover:bg-muted"}`}
           >
-            <FileCode2
+            <IconCodeXml
               size={14}
               className="mt-0.5 shrink-0"
               aria-hidden="true"
@@ -101,7 +105,7 @@ export function PackagePreview({
             }
           }}
         >
-          <Download size={15} aria-hidden="true" />
+          <IconDownload size={15} aria-hidden="true" />
           Tải starter ZIP
         </button>
       </header>

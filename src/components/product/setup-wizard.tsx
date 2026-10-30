@@ -1,7 +1,13 @@
 "use client";
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, Rocket, X } from "lucide-react";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconCircleCheck,
+  IconRocket,
+  IconX,
+} from "@/components/v-intern/icons";
 import {
   assignIntern,
   getAcademic,
@@ -339,7 +345,7 @@ export function SetupWizard({
           )}
           <div className="flex justify-end gap-2">
             <button className={buttonClass} disabled={busy || (sessionMode === "new" ? !sCode.trim() || !sName.trim() || !sStart || !sEnd : !sessionId)} onClick={() => void submitSession()}>
-              {busy ? "Đang lưu…" : <>Tiếp tục <ArrowRight size={15} className="inline" /></>}
+              {busy ? "Đang lưu…" : <>Tiếp tục <IconArrowRight size={15} className="inline" /></>}
             </button>
           </div>
         </div>
@@ -374,9 +380,9 @@ export function SetupWizard({
             </button>
           )}
           <div className="flex justify-between gap-2">
-            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(1)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(1)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
             <button className={buttonClass} disabled={busy || (projectMode === "new" ? !pCode.trim() || !pName.trim() || !pDesc.trim() : !projectPick)} onClick={() => void submitProject()}>
-              {busy ? "Đang lưu…" : <>Tiếp tục <ArrowRight size={15} className="inline" /></>}
+              {busy ? "Đang lưu…" : <>Tiếp tục <IconArrowRight size={15} className="inline" /></>}
             </button>
           </div>
         </div>
@@ -392,7 +398,7 @@ export function SetupWizard({
             onSelectionChange={(items) => setAssigneeNames(Object.fromEntries(items.map((i) => [i.userId, i.name])))}
           />
           <div className="flex flex-wrap justify-between gap-2">
-            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(2)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(2)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
             <span className="flex gap-2">
               <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => { setOutcomes([]); setStep(4); }}>Bỏ qua</button>
               <button className={buttonClass} disabled={busy || !assignees.length} onClick={() => void submitAssignment()}>
@@ -419,7 +425,7 @@ export function SetupWizard({
                 <span><strong>Kích hoạt Sprint ngay.</strong><span className="mt-0.5 block text-caption text-muted-foreground">Sprint đang hoạt động mới giao được task.</span></span>
               </label>
               <div className="flex justify-between gap-2">
-                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(3)}><ArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(3)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
                 <button className={buttonClass} disabled={busy || !spCode.trim() || !spName.trim() || !spStart || !spEnd} onClick={() => void submitSprint()}>
                   {busy ? "Đang lưu…" : "Tạo Sprint"}
                 </button>
@@ -427,7 +433,7 @@ export function SetupWizard({
             </>
           ) : (
             <>
-              <p className="flex items-center gap-2 text-body"><CheckCircle2 size={18} className="text-success" /> Sprint <strong>{sprint.code}</strong> · <StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></p>
+              <p className="flex items-center gap-2 text-body"><IconCircleCheck size={18} className="text-success" /> Sprint <strong>{sprint.code}</strong> · <StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></p>
               {sprint.status !== "active" && (
                 <button className="rounded-md border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning" disabled={busy} onClick={() => void retrySprintActivation()}>
                   Thử lại kích hoạt sprint
@@ -453,10 +459,10 @@ export function SetupWizard({
                   <button className={buttonClass} disabled={busy || !tTitle.trim()} onClick={() => void submitTask()}>{busy ? "Đang lưu…" : "Tạo task"}</button>
                 </div>
               )}
-              {task && <p className="flex items-center gap-2 text-body"><CheckCircle2 size={18} className="text-success" /> Task <strong>{task.title}</strong> đã tạo.</p>}
+              {task && <p className="flex items-center gap-2 text-body"><IconCircleCheck size={18} className="text-success" /> Task <strong>{task.title}</strong> đã tạo.</p>}
               <div className="flex justify-between gap-2">
-                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setSprint(null)}><ArrowLeft size={15} className="mr-1 inline" />Tạo sprint khác</button>
-                <button className={buttonClass} disabled={busy} onClick={() => setStep(5)}>Hoàn tất<ArrowRight size={15} className="ml-1 inline" /></button>
+                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setSprint(null)}><IconArrowLeft size={15} className="mr-1 inline" />Tạo sprint khác</button>
+                <button className={buttonClass} disabled={busy} onClick={() => setStep(5)}>Hoàn tất<IconArrowRight size={15} className="ml-1 inline" /></button>
               </div>
             </>
           )}
@@ -482,7 +488,7 @@ export function SetupWizard({
           <div className="flex flex-wrap justify-end gap-2">
             <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" onClick={requestClose}>Đóng</button>
             <Link href={`/instructor/sessions/${session.id}`} className={buttonClass} onClick={() => onFinished(session.id)}>
-              <Rocket size={16} /> Vào không gian làm việc
+              <IconRocket size={16} /> Vào không gian làm việc
             </Link>
           </div>
         </div>
@@ -490,7 +496,7 @@ export function SetupWizard({
 
       <div className="mt-5 flex justify-start">
         <button type="button" className="inline-flex items-center gap-1 text-caption text-muted-foreground hover:text-foreground" onClick={requestClose}>
-          <X size={14} /> Đóng wizard
+          <IconX size={14} /> Đóng wizard
         </button>
       </div>
     </Modal>

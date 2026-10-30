@@ -946,3 +946,30 @@ export function IconTrendingDown({ size = 24, strokeWidth = 2, ...props }: Noteb
   );
 }
 IconTrendingDown.displayName = "NotebookIconTrendingDown";
+
+/* Khởi động — tên lửa vẽ tay */
+export function IconRocket({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 2.6 C 14.2 4.6, 15.9 7.6, 16.5 11.2 C 15.4 13.4, 13.9 15.3, 12.1 16.9 C 10.2 15.4, 8.6 13.5, 7.4 11.3 C 8.1 7.7, 9.8 4.6, 12 2.6 Z" />
+      <path d="M12 8.6 C 11.1 8.5, 10.4 9.2, 10.5 10.1 C 10.6 11, 11.2 11.7, 12.1 11.6 C 13 11.5, 13.7 10.9, 13.6 10 C 13.5 9.1, 12.9 8.6, 12 8.6 Z" />
+      <path d="M7.5 13.2 C 6.3 14.1, 5.5 15.4, 5.2 17 C 6.7 16.9, 8 16.4, 9 15.5" />
+      <path d="M16.6 13.3 C 17.7 14.2, 18.5 15.5, 18.8 17.1 C 17.3 17, 16 16.5, 15 15.6" />
+      <path d="M10.4 18.6 C 9.9 19.9, 9.1 21, 8 21.9 C 7.6 20.6, 7.5 19.3, 7.7 18" />
+      <path d="M13.7 18.6 C 14.2 19.9, 15 21, 16.1 21.9 C 16.5 20.6, 16.6 19.3, 16.4 18" />
+    </svg>
+  );
+}
+IconRocket.displayName = "NotebookIconRocket";
+
+/* Thư mục đang mở */
+export function IconFolderOpen({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.3 6.2 C 4.9 6, 6.9 6, 8.6 6.2 C 9.5 7, 10.2 7.7, 11 8.4" />
+      <path d="M3.1 6.3 C 3 10.8, 3 15.1, 3.1 19.5 C 8 19.8, 16 19.8, 20.9 19.5" />
+      <path d="M3.2 19.5 C 5 16.8, 6.9 14.1, 8.9 11.5 C 12.8 11.3, 16.5 11.3, 20.2 11.6 C 18.3 14.2, 16.4 16.9, 14.6 19.6" />
+    </svg>
+  );
+}
+IconFolderOpen.displayName = "NotebookIconFolderOpen";

@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import {
+  IconArrowUpRight,
+} from "@/components/v-intern/icons";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 import { SessionList } from "./session-list";
 
@@ -30,7 +32,7 @@ export function InstructorHome() {
         action={
           <Link href="/instructor/projects" className="instructor-hero-cta">
             Khởi tạo phiên từ thư viện
-            <ArrowUpRight size={16} aria-hidden="true" />
+            <IconArrowUpRight size={16} aria-hidden="true" />
           </Link>
         }
       />
@@ -47,7 +49,7 @@ export function InstructorHome() {
                 <span className="instructor-step-text">{step.text}</span>
                 <span className="instructor-step-link">
                   Mở hướng dẫn
-                  <ArrowUpRight size={14} aria-hidden="true" />
+                  <IconArrowUpRight size={14} aria-hidden="true" />
                 </span>
               </Link>
             </li>

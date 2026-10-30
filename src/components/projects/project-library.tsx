@@ -8,7 +8,9 @@ import {
   Pager,
   inputClass,
 } from "@/components/product/primitives";
-import { ArrowUpRight } from "lucide-react";
+import {
+  IconArrowUpRight,
+} from "@/components/v-intern/icons";
 import { roleLabel } from "@/lib/api/workspace";
 import { useResource } from "@/lib/api/use-resource";
 import {
@@ -147,7 +149,7 @@ export function ProjectLibrary({
                     {t.teamSize}, {t.sprintCount} sprint theo mẫu
                   </p>
                   <Link href={`/instructor/projects/${t.id}`}>
-                    Xem chi tiết <ArrowUpRight size={16} aria-hidden="true" />
+                    Xem chi tiết <IconArrowUpRight size={16} aria-hidden="true" />
                   </Link>
                 </article>
               </li>
