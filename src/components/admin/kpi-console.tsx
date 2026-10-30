@@ -1,7 +1,13 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { CalendarRange, Calculator, Lock, Plus, Trophy } from "lucide-react";
+import {
+  IconAward,
+  IconCalculator,
+  IconCalendarDays,
+  IconLock,
+  IconPlus,
+} from "@/components/v-intern/icons";
 import {
   calculateKpiPeriod,
   createKpiPeriod,
@@ -103,7 +109,7 @@ export function KpiConsole() {
               setEditor("new");
             }}
           >
-            <Plus size={16} aria-hidden />
+            <IconPlus size={16} aria-hidden />
             Thêm kỳ KPI
           </button>
         }
@@ -164,7 +170,7 @@ export function KpiConsole() {
                   </span>
                 </div>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-muted-foreground">
-                  <CalendarRange size={14} aria-hidden />
+                  <IconCalendarDays size={14} aria-hidden />
                   {dateInput(period.startDate)} → {dateInput(period.endDate)} · quy tắc{" "}
                   <span className="font-mono">{period.ruleVersion}</span>
                 </p>
@@ -218,7 +224,7 @@ export function KpiConsole() {
                         })
                       }
                     >
-                      <Calculator size={15} aria-hidden />
+                      <IconCalculator size={15} aria-hidden />
                       {calculating ? "Đang tính…" : "Tính KPI"}
                     </button>
                     <button
@@ -233,7 +239,7 @@ export function KpiConsole() {
                         })
                       }
                     >
-                      <Lock size={15} aria-hidden />
+                      <IconLock size={15} aria-hidden />
                       {finalizing ? "Đang chốt…" : "Chốt kỳ"}
                     </button>
                   </>
@@ -246,7 +252,7 @@ export function KpiConsole() {
                     setResults(period);
                   }}
                 >
-                  <Trophy size={15} aria-hidden />
+                  <IconAward size={15} aria-hidden />
                   Kết quả
                 </button>
               </div>

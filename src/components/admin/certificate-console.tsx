@@ -1,7 +1,15 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Award, Ban, Download, ExternalLink, Plus, ShieldCheck } from "lucide-react";
+import { StampMoc } from "@/components/workspace/notebook";
+import {
+  IconAward,
+  IconBan,
+  IconDownload,
+  IconExternalLink,
+  IconPlus,
+  IconShieldCheck,
+} from "@/components/v-intern/icons";
 import {
   downloadCertificatePdf,
   issueCertificate,
@@ -61,7 +69,7 @@ export function CertificateConsole() {
               setIssuing(true);
             }}
           >
-            <Plus size={16} aria-hidden />
+            <IconPlus size={16} aria-hidden />
             Cấp chứng nhận
           </button>
         }
@@ -163,7 +171,7 @@ export function CertificateConsole() {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <ExternalLink size={14} aria-hidden />
+                        <IconExternalLink size={14} aria-hidden />
                         Trang xác minh
                       </a>
                       {certificate.status === "issued" && (
@@ -178,7 +186,7 @@ export function CertificateConsole() {
                               })
                             }
                           >
-                            <Download size={14} aria-hidden />
+                            <IconDownload size={14} aria-hidden />
                             Tải PDF
                           </button>
                           <button
@@ -189,7 +197,7 @@ export function CertificateConsole() {
                               setRevoking(certificate);
                             }}
                           >
-                            <Ban size={14} aria-hidden />
+                            <IconBan size={14} aria-hidden />
                             Thu hồi
                           </button>
                         </>
@@ -297,9 +305,14 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
           role="status"
           className="rounded-control border border-success/20 bg-success-subtle px-4 py-3 text-body text-success"
         >
-          <p className="inline-flex items-center gap-2 font-semibold">
-            <ShieldCheck size={16} aria-hidden />
-            Đã cấp {result.certificateNumber}
+          <p className="inline-flex flex-wrap items-center gap-3 font-semibold">
+            <span className="inline-flex items-center gap-2">
+              <IconShieldCheck size={16} aria-hidden />
+              Đã cấp {result.certificateNumber}
+            </span>
+            <StampMoc tone="red" size="sm" thump>
+              Đã cấp
+            </StampMoc>
           </p>
           <p className="mt-1">
             Mã xác minh <span className="font-mono">{result.verificationCode}</span> đã sẵn sàng để
@@ -316,7 +329,7 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
       )}
       {!result && (
         <button className={buttonClass} disabled={action.busy} type="submit">
-          <Award size={16} aria-hidden />
+          <IconAward size={16} aria-hidden />
           {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
         </button>
       )}

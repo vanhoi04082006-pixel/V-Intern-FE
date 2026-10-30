@@ -1,7 +1,11 @@
 "use client";
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { Archive, History, Plus } from 'lucide-react';
+import {
+  IconArchive,
+  IconClock,
+  IconPlus,
+} from '@/components/v-intern/icons';
 import { archiveCareerRole, careerStatuses, listCareerRoles, listCareerRoleRevisions, type CareerRole } from '@/lib/api/career-roles';
 import { useResource } from '@/lib/api/use-resource';
 import { ErrorState, LoadingState } from '@/components/shared/data-state';
@@ -18,7 +22,7 @@ export function CareerRoles() {
   const action = useAction();
   const saved = (message: string) => { setEditor(null); setNotice(message); state.reload(); };
   return <div className="space-y-6">
-    <PageTitle title="Thư viện nghề nghiệp" subtitle="Định nghĩa vị trí tuyển dụng, năng lực và trạng thái nhận hồ sơ. Nghề nghiệp tách biệt với vai trò và quyền tài khoản." action={<button className={buttonClass} onClick={() => { setNotice(''); setEditor('new'); }}><Plus size={16} aria-hidden />Thêm nghề nghiệp</button>} />
+    <PageTitle title="Thư viện nghề nghiệp" subtitle="Định nghĩa vị trí tuyển dụng, năng lực và trạng thái nhận hồ sơ. Nghề nghiệp tách biệt với vai trò và quyền tài khoản." action={<button className={buttonClass} onClick={() => { setNotice(''); setEditor('new'); }}><IconPlus size={16} aria-hidden />Thêm nghề nghiệp</button>} />
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
       <p className="max-w-2xl text-body leading-6 text-muted-foreground">Soạn bản nháp → hoàn thiện kỹ năng và trọng số → xuất bản → mở nhận hồ sơ. Trước khi phỏng vấn, cần đủ câu hỏi cho nghề đã chọn.</p>
       <Link className="text-body font-semibold text-primary hover:underline" href="/admin/questions">Quản lý câu hỏi</Link>
@@ -32,7 +36,7 @@ export function CareerRoles() {
       {state.data.items.map(role => <li key={role.code} className="grid gap-4 py-5 lg:grid-cols-[minmax(0,1fr)_12rem_auto] lg:items-center">
         <div className="min-w-0"><div className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h2 className="text-subsection font-semibold text-foreground">{role.name}</h2><span className="break-all font-mono text-caption text-muted-foreground">{role.code}</span></div><p className="mt-1 line-clamp-2 text-body leading-6 text-muted-foreground">{role.description || 'Chưa có mô tả. Hoàn thiện trước khi xuất bản.'}</p><p className="mt-2 text-caption text-muted-foreground">{role.requiredSkills.join(' · ') || 'Chưa xác định kỹ năng'} · Phiên bản {role.version}</p></div>
         <div className="space-y-1"><StatusDot tone={role.status === 'published' ? 'green' : role.status === 'archived' ? 'slate' : 'amber'}>{careerStatusLabels[role.status]}</StatusDot><p className="text-caption text-muted-foreground">{role.acceptingApplications ? 'Đang nhận hồ sơ' : 'Đóng nhận hồ sơ'}</p></div>
-        <div className="flex flex-wrap items-center gap-3 text-body"><button className="font-semibold text-primary hover:underline" aria-label={`Chỉnh sửa ${role.name}`} onClick={() => setEditor(role)}>Chỉnh sửa</button><button className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground" aria-label={`Lịch sử ${role.name}`} onClick={() => setHistory(role)}><History size={15} aria-hidden />Lịch sử</button>{role.status !== 'archived' && <button className="inline-flex items-center gap-1 text-muted-foreground hover:text-destructive" aria-label={`Lưu trữ ${role.name}`} onClick={() => setArchiving(role)}><Archive size={15} aria-hidden />Lưu trữ</button>}</div>
+        <div className="flex flex-wrap items-center gap-3 text-body"><button className="font-semibold text-primary hover:underline" aria-label={`Chỉnh sửa ${role.name}`} onClick={() => setEditor(role)}>Chỉnh sửa</button><button className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground" aria-label={`Lịch sử ${role.name}`} onClick={() => setHistory(role)}><IconClock size={15} aria-hidden />Lịch sử</button>{role.status !== 'archived' && <button className="inline-flex items-center gap-1 text-muted-foreground hover:text-destructive" aria-label={`Lưu trữ ${role.name}`} onClick={() => setArchiving(role)}><IconArchive size={15} aria-hidden />Lưu trữ</button>}</div>
       </li>)}
     </ul> : <Empty>Chưa có nghề nghiệp phù hợp. Thử thay đổi bộ lọc hoặc tạo bản nháp mới.</Empty>}
     {state.data && <Pager page={page} total={state.data.total} totalPages={Math.ceil(state.data.total / state.data.pageSize)} onChange={setPage} unit="nghề nghiệp" />}
