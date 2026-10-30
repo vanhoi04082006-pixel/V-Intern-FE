@@ -15,7 +15,7 @@ const student: ViewGroup[] = [
 const teacher: ViewGroup[] = [
   { label: "Tổ chức thực tập", icon: GraduationCap, kind: "workflow", items: [["sessions", "Phiên thực tập"], ["sprints", "Sprint & Task"], ["projects", "Thư viện dự án"]] },
   { label: "Theo dõi & đánh giá", icon: ChartNoAxesCombined, kind: "analytics", items: [["evaluations", "Đánh giá"], ["performance", "Hiệu suất"], ["reports", "Báo cáo"]] },
-  { label: "Cộng tác", icon: Workflow, kind: "account", items: [["sharing", "Chia sẻ dữ liệu"], ["github", "GitHub"]] },
+  { label: "Cộng tác", icon: Workflow, kind: "account", items: [["github", "GitHub"]] },
   { label: "Cá nhân", icon: UserRound, kind: "account", items: [["profile", "Hồ sơ"], ["notifications", "Thông báo"]] },
 ];
 

@@ -29,9 +29,9 @@ Màu dự kiến: mực `#253858`, xanh `#426CC7`, giấy `#FAFBFE`, nền xanh 
 | UI-06 Cá nhân/onboarding | Profile, notifications, GitHub, role/interview/result | Đang làm | Thông báo đã kiểm ba vai; GitHub có trạng thái lịch sử; còn profile/onboarding và ngoại lệ theo luồng |
 | UI-06.1 Thông báo ba vai | Danh sách gọn, mở nội dung, đọc/lọc/tùy chọn có phản hồi thật | Đạt lát triển khai | Code 603ee3f; 9 regression tests, click ba vai, 15 lượt responsive đúng kích thước, 0 tràn ngang. [Báo cáo](../docs/design/NOTIFICATIONS-20261026.md) |
 | UI-07 Giảng viên | Overview, sessions/detail/setup, sprints/detail, task/detail, projects/detail | Chưa làm | Tạo/sửa/nộp/chấm và quyền truy cập |
-| UI-08 Theo dõi giảng viên | Recruitment, participation, evaluation, performance, reports, sharing, GitHub, profile, notifications | Chưa làm | Mutation feedback và empty/error từng trang |
+| UI-08 Theo dõi giảng viên | Recruitment, participation, evaluation, performance, reports, GitHub, profile, notifications | Chưa làm | Mutation feedback và empty/error từng trang |
 | UI-09 Admin/shared | Các trang quản trị và feedback dùng chung nhất quán | Tích hợp token/shell | Admin đã dùng chung theme; còn bố cục, nội dung và hành động từng trang |
-| UI-10 Nghiệm thu | Quality gates, responsive, ba vai, ảnh/log, handover | Đang thực hiện | 109 file / 660 test, lint/typecheck/build đạt; nền chung và Thông báo có hai ma trận 15 lượt riêng, kèm click và bàn phím. Chưa đủ 78 route |
+| UI-10 Nghiệm thu | Quality gates, responsive, ba vai, ảnh/log, handover | Đang thực hiện | 109 file / 660 test, lint/typecheck/build đạt; nền chung và Thông báo có hai ma trận 15 lượt riêng, kèm click và bàn phím. Inventory 26/10 là 78; hiện tại 82 page source còn cần kiểm tra |
 
 ## Phạm vi và bảo vệ dữ liệu
 

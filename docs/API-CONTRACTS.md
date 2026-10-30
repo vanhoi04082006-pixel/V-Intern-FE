@@ -22,7 +22,6 @@ Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentia
 | templates/sessions | Library/detail/create run, public and pinned private assessments, eligible members, Start, plan history/publish |
 | work/submissions | Own tasks/specs/comments/history, nộp/rút bài, hoàn thành phân công, báo cáo hoàn thành sprint, spec nguồn (raw, hiển thị kèm display API), AI review và rubric cuối |
 | github | Trạng thái kết nối, authorize redirect, repo/provision/invitation, webhook setup và activity phân trang |
-| sharing | Xin xem, approve/deny/revoke, snapshot chỉ đọc |
 | mentor | Own conversation/history, selected own taskId |
 | reports/performance | Scope quản lý, phân trang, PDF/XLSX |
 | finance (KPI/salary/certificates) | Kỳ KPI lifecycle (draft/open/calculate/finalize) chạy thẳng từ console kèm kết quả và provenance; sinh lương ảo từ kỳ đã chốt, điều chỉnh sổ, số dư theo user; chứng nhận issue/revoke/PDF với lý do 409 có cấu trúc |

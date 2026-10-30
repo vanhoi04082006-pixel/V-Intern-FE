@@ -27,7 +27,6 @@ import {
   Lock,
   Menu,
   Settings,
-  Share2,
   Shield,
   Sparkles,
   UserRound,
@@ -107,7 +106,6 @@ const menus: Record<ProductRole, NavGroup[]> = {
       heading: "Báo cáo & kết nối",
       items: [
         ["reports", "Báo cáo"],
-        ["sharing", "Chia sẻ dữ liệu"],
         ["github", "Kết nối GitHub"],
       ],
     },
@@ -185,7 +183,6 @@ const navIcons: Record<string, LucideIcon> = {
   evaluations: ClipboardCheck,
   performance: ChartNoAxesCombined,
   reports: FileText,
-  sharing: Share2,
   github: Github,
   mentor: Bot,
   kpi: Wallet,

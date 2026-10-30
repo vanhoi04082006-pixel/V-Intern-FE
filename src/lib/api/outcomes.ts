@@ -164,7 +164,7 @@ export function safeNotificationLink(value: string | null): string | null {
       : oldDetail[1] === "assignments"
         ? "/intern/project"
         : "/intern/sprint";
-  return /^\/(intern|instructor|admin)(\/(work|sprint|project|mentor|evaluations|performance|kpi|virtual-salary|certificates|notifications|recommendations|profile|classes|sessions|projects|sprints|reports|users|roles|groups|catalogs|settings|audit|activity|services|tasks|logs|sharing|github|templates|questions|ai)(\/[a-fA-F0-9-]{36})?|\/onboarding\/(role|interview|result))?(\?[a-zA-Z0-9=&_-]*)?$/.test(
+  return /^\/(intern|instructor|admin)(\/(work|sprint|project|mentor|evaluations|performance|kpi|virtual-salary|certificates|notifications|recommendations|profile|sessions|projects|sprints|reports|users|roles|groups|catalogs|settings|audit|activity|services|tasks|logs|github|templates|questions|ai)(\/[a-fA-F0-9-]{36})?|\/onboarding\/(role|interview|result))?(\?[a-zA-Z0-9=&_-]*)?$/.test(
     value,
   )
     ? value
@@ -213,7 +213,6 @@ export function notificationLinkForRole(
     ],
     instructor: [
       "",
-      "classes",
       "sessions",
       "projects",
       "sprints",
@@ -222,7 +221,7 @@ export function notificationLinkForRole(
       "reports",
       "notifications",
       "profile",
-      "tasks", "sharing", "github",
+      "tasks", "github",
     ],
     admin: [
       "",

@@ -94,7 +94,6 @@ flowchart LR
 4. **Sprint & Task:** mở công việc thực tế, theo dõi tiến độ, bài nộp và cảnh báo quá hạn.
 5. **Đánh giá:** xem bằng chứng và gợi ý, tự đưa ra điểm cuối theo quyền được cấp.
 6. **Báo cáo:** tạo/xem bản chụp kết quả và xuất khi cần. Báo cáo cũ không tự thay đổi theo task mới.
-7. **Chia sẻ dữ liệu:** đọc phạm vi và trạng thái đồng ý trước khi chia sẻ.
 
 ### Ba điểm dễ nhầm
 

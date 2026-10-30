@@ -28,7 +28,6 @@ import { AcademicPicker } from "./academic-picker";
 import { InstructorPicker } from "./instructor-picker";
 import { ProjectChanges } from "./project-changes";
 import { AcademicMetrics, AcademicInsights } from "./academic-insights";
-import { ClassOperations } from './class-operations';
 import { AssigneeSelector } from "./assignee-selector";
 import { RowMenu } from './instructor-dashboard';
 import { ActivateButton } from './instructor-onboarding';
@@ -39,15 +38,18 @@ export function AcademicStatus({ status }: { status: string }) {
   return <StatusDot tone={tone as "green"}>{statusNames[status] ?? status}</StatusDot>;
 }
 const labels = {
-  classes: "Lớp học",
   sessions: "Phiên thực tập",
   projects: "Thư viện dự án",
+};
+const managePermission: Record<api.AcademicKind, string> = {
+  sessions: "sessions.manage",
+  projects: "projects.manage",
 };
 export function AcademicList({ kind }: { kind: api.AcademicKind }) {
   const [revision, setRevision] = useState(0);
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [claimError, setClaimError] = useState<string | null>(null);
-  const [sessionId,setSessionId] = useState(''),[projectId,setProjectId] = useState(''),[leadInstructorId,setLeadInstructorId] = useState(''),[domainCategory,setDomainCategory] = useState(''),[technology,setTechnology] = useState('');
+  const [projectId,setProjectId] = useState(''),[leadInstructorId,setLeadInstructorId] = useState(''),[domainCategory,setDomainCategory] = useState(''),[technology,setTechnology] = useState('');
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
     [status, setStatus] = useState(""),
@@ -56,9 +58,9 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
   const data = useResource(
     useCallback(
       (signal: AbortSignal) => api.listAcademic(kind, page, q, status, signal,{
-        ...(kind==='classes'&&sessionId?{sessionId}:{}),...(kind==='sessions'&&projectId?{projectId}:{}),...(kind!=='projects'&&leadInstructorId?{leadInstructorId}:{}),...(kind==='projects'&&domainCategory?{domainCategory}:{}),...(kind==='projects'&&technology?{technology}:{})
+        ...(kind==='sessions'&&projectId?{projectId}:{}),...(kind!=='projects'&&leadInstructorId?{leadInstructorId}:{}),...(kind==='projects'&&domainCategory?{domainCategory}:{}),...(kind==='projects'&&technology?{technology}:{})
       }),
-      [kind, page, q, status,sessionId,projectId,leadInstructorId,domainCategory,technology],
+      [kind, page, q, status,projectId,leadInstructorId,domainCategory,technology],
     ),
   );
   const projectOptions = useResource(useCallback((signal:AbortSignal)=>kind==='projects'?api.getProjectFilterOptions(signal):Promise.resolve({domains:[],technologies:[]}),[kind]));
@@ -84,11 +86,8 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
   }
   return (
     <>
-      <PageTitle
-        title={labels[kind]}
-        subtitle={kind === "classes" ? "Quản lý lớp học, phân công giảng viên, theo dõi sĩ số và hoạt động học tập của sinh viên." : undefined}
-      />
-      {kind !== "classes" && <PageMeta items={kind === "sessions"
+      <PageTitle title={labels[kind]} />
+      <PageMeta items={kind === "sessions"
         ? [
           { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
           { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
@@ -101,11 +100,11 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
           { icon: BookOpen, label: "Kho hiện tại", value: `${data.data?.total ?? 0} dự án` },
           { icon: Database, label: "Danh mục", value: `${projectOptions.data?.domains.length ?? 0} lĩnh vực` },
           { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
-        ]} />}
+        ]} />
       <AcademicMetrics key={kind+':'+revision+':'+data.data?.total} kind={kind}/>
       <div className="grid items-start gap-3 xl:grid-cols-[minmax(0,2.5fr)_minmax(340px,1fr)]">
         <div className="min-w-0">
-        <Panel title={`Danh sách ${labels[kind].toLowerCase()}`} action={<span className="flex items-center gap-2"><button className="rounded-md border border-primary px-3 py-2 text-caption text-primary hover:bg-accent" disabled={!data.data?.items.length} onClick={()=>exportCsv(kind+".csv",["Mã","Tên","Trạng thái"],(data.data?.items??[]).map(x=>[x.code,x.name,x.status]))}>Xuất trang</button><button className={buttonClass} onClick={() => setCreate(true)}>+ Tạo {kind === "classes" ? "lớp học" : kind === "sessions" ? "phiên mới" : "project mới"}</button></span>}>
+        <Panel title={`Danh sách ${labels[kind].toLowerCase()}`} action={<span className="flex flex-wrap items-center gap-2"><button className="rounded-md border border-primary px-3 py-2 text-caption text-primary hover:bg-accent" disabled={!data.data?.items.length} onClick={()=>exportCsv(kind+".csv",["Mã","Tên","Trạng thái"],(data.data?.items??[]).map(x=>[x.code,x.name,x.status]))}>Xuất trang</button><Can perm={managePermission[kind]}><button className={buttonClass} onClick={() => setCreate(true)}>+ Tạo {kind === "sessions" ? "phiên mới" : "project mới"}</button></Can></span>}>
           {Boolean(summaries.error) && <ErrorState error={summaries.error} onRetry={summaries.reload}/>}
           <div className="mb-4 grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <input
@@ -132,7 +131,6 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
                 <option key={s} value={s}>{statusNames[s]??({beginner:"Thấp",intermediate:"Trung bình",advanced:"Cao"} as Record<string,string>)[s]??s}</option>
               ))}
             </select>
-            {kind==='classes'&&<AcademicPicker compact kind="sessions" label="Lọc phiên thực tập" value={sessionId} onChange={v=>{setSessionId(v);setPage(1);}}/>}
             {kind==='sessions'&&<AcademicPicker compact kind="projects" label="Lọc dự án" value={projectId} onChange={v=>{setProjectId(v);setPage(1);}}/>}
             {kind!=='projects'&&<InstructorPicker compact label="Lọc giảng viên" value={leadInstructorId} onChange={v=>{setLeadInstructorId(v);setPage(1);}}/>}
             {kind==='projects'&&<><select aria-label="Lĩnh vực dự án" className={inputClass} value={domainCategory} onChange={e=>{setDomainCategory(e.target.value);setPage(1);}}><option value="">Tất cả lĩnh vực</option>{projectOptions.data?.domains.map(v=><option key={v} value={v}>{v}</option>)}</select><select aria-label="Công nghệ dự án" className={inputClass} value={technology} onChange={e=>{setTechnology(e.target.value);setPage(1);}}><option value="">Tất cả công nghệ</option>{projectOptions.data?.technologies.map(v=><option key={v} value={v}>{v}</option>)}</select></>}
@@ -154,10 +152,10 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
                 {data.data.items.length ? (
                   <div className="overflow-x-auto">
                     <table className="academic-table w-full text-left text-body">
-                      <colgroup>{(kind==='classes'?[70,145,85,48,100,90,100,125,90]:kind==='projects'?[95,175,85,120,55,100,85,90]:[120,170,55,130,85,85,85,100,90]).map((width,i)=><col key={i} style={{width}}/>)}</colgroup>
+                      <colgroup>{(kind==='projects'?[95,175,85,120,55,100,85,90]:[120,170,55,130,85,85,85,100,90]).map((width,i)=><col key={i} style={{width}}/>)}</colgroup>
                       <thead className="bg-background">
                         <tr>
-                          {(kind === 'projects' ? ['Mã dự án','Tên dự án','Lĩnh vực','Công nghệ','Sinh viên','Trạng thái','Độ khó','Hành động'] : kind === 'classes' ? ['Mã lớp','Tên lớp','Phiên thực tập','Sinh viên','Lịch học','Tiến độ','Trạng thái','Giảng viên phụ trách','Hành động'] : ['Mã phiên','Tên phiên','Sinh viên','Giảng viên phụ trách','Ngày bắt đầu','Ngày kết thúc','Tiến độ','Trạng thái','Hành động']).map(label=><th key={label} className="p-3">{label}</th>)}
+                          {(kind === 'projects' ? ['Mã dự án','Tên dự án','Lĩnh vực','Công nghệ','Sinh viên','Trạng thái','Độ khó','Hành động'] : ['Mã phiên','Tên phiên','Sinh viên','Giảng viên phụ trách','Ngày bắt đầu','Ngày kết thúc','Tiến độ','Trạng thái','Hành động']).map(label=><th key={label} className="p-3">{label}</th>)}
                         </tr>
                       </thead>
                       <tbody>
@@ -169,7 +167,7 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
                           return <tr key={x.id} className="border-b border-primary">
                             <td className="p-3 font-semibold whitespace-nowrap text-primary">{x.code}</td>
                             <td className="p-3"><strong className="block text-foreground">{x.name}</strong>{x.description&&<p className="mt-1 max-w-36 truncate text-caption text-muted-foreground" title={x.description}>{x.description}</p>}</td>
-                            {kind==='projects'?<><td className="p-3"><Badge>{x.domainCategory??'Chưa phân loại'}</Badge></td><td className="p-3 text-caption">{x.technologies.join(', ')||'Chưa có'}</td>{members}<td className="p-3"><AcademicStatus status={x.status} /></td><td className="p-3"><Badge>{{beginner:'Thấp',intermediate:'Trung bình',advanced:'Cao'}[x.difficulty??'']??'Chưa có'}</Badge></td></>:kind==='classes'?<><td className="p-3 text-primary">{summary?.sessionName??'Chưa gắn phiên'}</td>{members}<td className="p-3 whitespace-nowrap">{x.meetingSchedule??'Chưa có lịch'}<span className="mt-1 block text-caption text-muted-foreground">{x.meetingLocation}</span></td><td className="p-3"><ProgressBar value={x.progress} label={`${x.progress}%`} /></td><td className="p-3"><AcademicStatus status={x.status} /></td>{responsible}</>:<>{members}{responsible}<td className="p-3 whitespace-nowrap">{date(x.startDate)}</td><td className="p-3 whitespace-nowrap">{date(x.endDate)}</td><td className="p-3">{summary?.taskCount?<ProgressBar value={Math.round((summary.doneCount??0)/summary.taskCount*100)} />:<span className="text-caption text-muted-foreground">Chưa có task</span>}</td><td className="p-3"><AcademicStatus status={x.status} /></td></>}
+                            {kind==='projects'?<><td className="p-3"><Badge>{x.domainCategory??'Chưa phân loại'}</Badge></td><td className="p-3 text-caption">{x.technologies.join(', ')||'Chưa có'}</td>{members}<td className="p-3"><AcademicStatus status={x.status} /></td><td className="p-3"><Badge>{{beginner:'Thấp',intermediate:'Trung bình',advanced:'Cao'}[x.difficulty??'']??'Chưa có'}</Badge></td></>:<>{members}{responsible}<td className="p-3 whitespace-nowrap">{date(x.startDate)}</td><td className="p-3 whitespace-nowrap">{date(x.endDate)}</td><td className="p-3">{summary?.taskCount?<ProgressBar value={Math.round((summary.doneCount??0)/summary.taskCount*100)} />:<span className="text-caption text-muted-foreground">Chưa có task</span>}</td><td className="p-3"><AcademicStatus status={x.status} /></td></>}
                             <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Chi tiết ${x.code}`} onClick={()=>setSelected(x.id)}>Xem chi tiết</button> {kind==='projects'&&x.mentorId===null&&<Can perm="projects.manage"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Nhận dự án ${x.code}`} disabled={claimingId===x.id} onClick={()=>void claim(x)}>{claimingId===x.id?"Đang nhận...":"Nhận dự án"}</button></Can>} {(kind==='sessions'||kind==='projects')&&<ActivateButton kind={kind} id={x.id} status={x.status} onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}} />} <RowMenu label={`Thao tác ${x.code}`} onOpen={()=>setSelected(x.id)} />{kind==='sessions'&&<Link className="mt-2 block text-caption text-primary" href={`/instructor/sessions/${x.id}`}>Mở phiên</Link>}</td>
                           </tr>;
                         })}
@@ -179,12 +177,11 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
                 ) : (
                   <Empty>Chưa có dữ liệu phù hợp.</Empty>
                 )}
-                <Pager {...data.data} unit={kind === "classes" ? "lớp học" : kind === "sessions" ? "phiên" : "dự án"} onChange={setPage} />
+                <Pager {...data.data} unit={kind === "sessions" ? "phiên" : "dự án"} onChange={setPage} />
               </>
             )
           )}
         </Panel>
-        {kind === 'classes' && <ClassOperations key={revision} />}
         </div>
         <AcademicInsights key={kind+':'+revision+':'+data.data?.total} kind={kind}/>
       </div>
@@ -223,9 +220,6 @@ function AcademicForm({
   onSaved: () => void;
 }) {
   const [form, setForm] = useState<Record<string, string>>({
-      meetingSchedule: initial?.meetingSchedule ?? "",
-      meetingLocation: initial?.meetingLocation ?? "",
-      progress: String(initial?.progress ?? 0),
       code: initial?.code ?? "",
       name: initial?.name ?? "",
       description: initial?.description ?? "",
@@ -238,7 +232,6 @@ function AcademicForm({
       technologies: initial?.technologies.join(", ") ?? "",
       capacity: initial?.capacity?.toString() ?? "",
       difficulty: initial?.difficulty ?? "beginner",
-      sessionId: initial?.sessionId ?? "",
     }),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
@@ -256,9 +249,6 @@ function AcademicForm({
         type={type}
         required={required}
         maxLength={max}
-        min={key === "progress" ? 0 : undefined}
-        max={key === "progress" ? 100 : undefined}
-        step={key === "progress" ? 1 : undefined}
         value={form[key] ?? ""}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
       />
@@ -301,7 +291,6 @@ function AcademicForm({
           kind === "sessions",
         )}
       </div>
-      {kind === "classes" && <div className="grid gap-3 sm:grid-cols-3">{field("meetingSchedule", "Lịch học", "text", false, 128)}{field("meetingLocation", "Địa điểm / Hình thức học", "text", false, 128)}{field("progress", "Tiến độ (%)", "number", true)}</div>}
       <label className="block text-body">
         Mô tả
         <textarea
@@ -357,15 +346,7 @@ function AcademicForm({
           />
         </>
       )}
-      {kind === "classes" && (
-        <AcademicPicker
-          kind="sessions"
-          label="Phiên thực tập"
-          value={form.sessionId}
-          onChange={(value) => setForm({ ...form, sessionId: value })}
-        />
-      )}
-      {(kind === "sessions" || kind === "classes") && (
+      {kind === "sessions" && (
         <InstructorPicker
           label="Giảng viên phụ trách"
           value={form.leadInstructorId}
@@ -411,9 +392,11 @@ export function AcademicDetail({
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Badge>{entity.data.status}</Badge>
-              <button className={buttonClass} onClick={() => setEdit(!edit)}>
-                {edit ? "Đóng chỉnh sửa" : "Chỉnh sửa"}
-              </button>
+              <Can perm={managePermission[kind]}>
+                <button className={buttonClass} onClick={() => setEdit(!edit)}>
+                  {edit ? "Đóng chỉnh sửa" : "Chỉnh sửa"}
+                </button>
+              </Can>
               {kind === "projects" && (
                 <button className="rounded-md border border-primary px-4 py-2 text-body font-semibold text-primary hover:bg-accent" onClick={() => setSprintOpen(true)}>
                   Tạo Sprint
@@ -421,6 +404,7 @@ export function AcademicDetail({
               )}
             </div>
             {edit && (
+              <Can perm={managePermission[kind]}>
               <AcademicForm
                 kind={kind}
                 initial={entity.data}
@@ -430,6 +414,7 @@ export function AcademicDetail({
                   onChanged();
                 }}
               />
+              </Can>
             )}
             <Members kind={kind} id={id} onChanged={onChanged} />
             {kind === "projects" && <ProjectSessionsPanel id={id} />}
@@ -547,6 +532,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
                 </small>
               </span>
               {kind !== "projects" && (
+                <Can perm={managePermission[kind]}>
                 <button
                   disabled={busy}
                   className="text-destructive"
@@ -556,6 +542,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
                 >
                   Xóa thành viên
                 </button>
+                </Can>
               )}
             </li>
           ))}
@@ -564,6 +551,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
         <Empty>Chưa có thành viên.</Empty>
       )}
       {kind !== "projects" && (
+        <Can perm={managePermission[kind]}>
         <form
           className="mt-4 space-y-3"
           onSubmit={(e) => {
@@ -581,6 +569,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
             Thêm thành viên
           </button>
         </form>
+        </Can>
       )}
     </Panel>
   );
@@ -889,17 +878,7 @@ function SessionExtras({ id }: { id: string }) {
     </>
   );
 }
-function AcademicBottom({ kind, items, summaries, onOpen }: { kind: api.AcademicKind; items: api.AcademicEntity[]; summaries: { id: string; responsibleName: string | null; sessionName: string | null; memberCount: number; taskCount: number | null; doneCount: number | null }[]; onOpen: (id: string) => void }) {
-  if (kind === "classes") {
-    const rows = items.map(x => {
-      const s = summaries.find(v => v.id === x.id);
-      const rate = s?.taskCount ? Math.round((s.doneCount ?? 0) / s.taskCount * 100) : 0;
-      return { x, members: s?.memberCount ?? 0, rate };
-    }).sort((a, b) => b.rate - a.rate).slice(0, 5);
-    return <div className="mt-3"><Panel title="Hiệu quả lớp học (Top 5)" action={<span className="text-caption text-muted-foreground">Theo tỷ lệ hoàn thành</span>}>
-      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-caption"><thead className="bg-background"><tr>{["#", "Mã lớp", "Tên lớp", "Sinh viên", "Tỷ lệ HT", "Xu hướng"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-primary">{rows.map(({ x, members, rate }, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-primary">{x.code}</td><td className="px-2 py-2 text-foreground">{x.name}</td><td className="px-2 py-2">{members}</td><td className="px-2 py-2"><ProgressBar value={rate} /></td><td className="px-2 py-2 text-muted-foreground">Chưa có dữ liệu</td></tr>)}</tbody></table></div> : <Empty>Chưa có dữ liệu lớp học.</Empty>}
-    </Panel></div>;
-  }
+function AcademicBottom({ kind, items, summaries, onOpen }: { kind: api.AcademicKind; items: api.AcademicEntity[]; summaries: { id: string; responsibleName: string | null; memberCount: number; taskCount: number | null; doneCount: number | null }[]; onOpen: (id: string) => void }) {
   if (kind === "sessions") {
     const rows = items.filter(x => x.status === "ending" || (x.status === "active" && (summaries.find(s => s.id === x.id)?.taskCount ?? 0) === 0)).slice(0, 5);
     return <div className="mt-3"><Panel title="Cảnh báo & phiên cần chú ý" action={<Link href="/instructor/sessions" className="text-caption text-primary">Xem tất cả</Link>}>
@@ -943,8 +922,8 @@ export function InstructorOverview() {
         title="Instructor Workspace"
         subtitle="Theo dõi và quản lý chương trình thực tập"
       />
-      <div className="grid gap-4 sm:grid-cols-3">
-        {(["classes", "sessions", "projects"] as const).map((kind) => (
+      <div className="grid gap-4 sm:grid-cols-2">
+        {(["sessions", "projects"] as const).map((kind) => (
           <OverviewCount key={kind} kind={kind} />
         ))}
       </div>

@@ -8,9 +8,8 @@ import {
   string,
   type Page,
 } from "./parse";
-export type AcademicKind = "classes" | "sessions" | "projects";
+export type AcademicKind = "sessions" | "projects";
 export const academicStatuses: Record<AcademicKind, readonly string[]> = {
-  classes: ["upcoming", "active", "completed", "cancelled"],
   sessions: ["upcoming", "active", "ending", "completed", "cancelled"],
   projects: ["draft", "active", "completed", "archived"],
 };
@@ -34,9 +33,6 @@ export function parseAcademic(value: unknown) {
     code: string(v.code),
     name: string(v.name),
     status: string(v.status),
-    meetingSchedule: v.meetingSchedule == null ? null : string(v.meetingSchedule),
-    meetingLocation: v.meetingLocation == null ? null : string(v.meetingLocation),
-    progress: v.progress == null ? null : number(v.progress),
     domainCategory: v.domainCategory == null ? null : string(v.domainCategory),
     description: nullable(v.description, string),
     startDate: nullable(v.startDate, string),
@@ -46,7 +42,6 @@ export function parseAcademic(value: unknown) {
         ? null
         : nullable(v.leadInstructorId, string),
     mentorId: v.mentorId === undefined ? null : nullable(v.mentorId, string),
-    sessionId: v.sessionId === undefined ? null : nullable(v.sessionId, string),
     difficulty: v.difficulty === undefined ? null : string(v.difficulty),
     capacity: v.capacity === undefined ? null : nullable(v.capacity, number),
     technologies:
@@ -104,7 +99,6 @@ export function academicBody(
       .filter(Boolean);
   } else {
     if (form.leadInstructorId) body.leadInstructorId = form.leadInstructorId;
-    if (kind === "classes" && form.sessionId) body.sessionId = form.sessionId;
   }
   return body;
 }
@@ -315,7 +309,7 @@ export const getInstructors = (id: string, signal?: AbortSignal) =>
     { signal },
   );
 export const addMember = (
-  kind: "classes" | "sessions",
+  kind: "sessions",
   id: string,
   userId: string,
 ) =>
@@ -384,7 +378,7 @@ export const assignIntern = (body: {
   });
 export const getAcademicSummaries = (kind: AcademicKind, ids: string, signal?: AbortSignal) => request(`/dashboard/academic?kind=${kind}&ids=${encodeURIComponent(ids)}`, value => array(record(value).items, x => {
   const v=record(x);
-  return {id:string(v.id),responsibleName:nullable(v.responsibleName,string),sessionName:nullable(v.sessionName,string),memberCount:number(v.memberCount),taskCount:nullable(v.taskCount,number),doneCount:nullable(v.doneCount,number)};
+  return {id:string(v.id),responsibleName:nullable(v.responsibleName,string),memberCount:number(v.memberCount),taskCount:nullable(v.taskCount,number),doneCount:nullable(v.doneCount,number)};
 }), {signal});
 
 export const getProjectFilterOptions = (signal?:AbortSignal) => request('/projects/filter-options',value=>{const v=record(value);return {domains:array(v.domains,string),technologies:array(v.technologies,string)};},{signal});
