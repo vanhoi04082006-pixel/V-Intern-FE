@@ -221,7 +221,7 @@ export function SalaryConsole() {
       ) : ledger.error ? (
         <ErrorState error={ledger.error} onRetry={ledger.reload} />
       ) : ledger.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border">
+        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Sổ lương ảo theo kỳ" tabIndex={0}>
           <table className="product-table w-full border-collapse text-body">
             <thead>
               <tr>

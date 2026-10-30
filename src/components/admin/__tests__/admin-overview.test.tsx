@@ -20,7 +20,7 @@ describe("Admin root route", () => {
     render(<AdminOverview />);
     expect(await screen.findByText("17")).toBeInTheDocument();
     for (const value of ["3", "4", "28"]) expect(screen.getByText(value)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1, name: "Admin Workspace" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Trang quản trị" })).toBeInTheDocument();
     expect(api.listUsers).toHaveBeenCalledWith(1, "", "", expect.any(AbortSignal));
     expect(screen.queryByText("1.266")).not.toBeInTheDocument();
     expect(screen.queryByText("Dữ liệu mẫu")).not.toBeInTheDocument();

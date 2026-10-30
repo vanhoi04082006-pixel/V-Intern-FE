@@ -126,7 +126,7 @@ export function BusinessAgentMonitor({
       ) : resource.error ? (
         <ErrorState error={resource.error} onRetry={resource.reload} />
       ) : data?.items.length ? (
-        <div className="min-w-0 overflow-x-auto">
+        <div className="min-w-0 overflow-x-auto" role="region" aria-label="Lịch sử chạy Agent" tabIndex={0}>
           <table className="w-full min-w-[680px] text-left text-body">
             <caption className="sr-only">
               Lịch sử Agent, phiên bản, model và trạng thái thực tế

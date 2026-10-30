@@ -39,6 +39,49 @@ const PACKS = {
     "/instructor/notifications",
     "/instructor/profile",
   ],
+  "admin-rbac": [
+    "/admin",
+    "/admin/users",
+    "/admin/roles",
+    "/admin/groups",
+    "/admin/catalogs",
+    "/admin/settings",
+    "/admin/services",
+    "/admin/activity",
+    "/admin/audit",
+  ],
+  "admin-finance": [
+    "/admin/kpi",
+    "/admin/salary",
+    "/admin/certificates",
+  ],
+  "admin-authoring": [
+    "/admin/templates",
+    "/admin/questions",
+    "/admin/knowledge",
+    "/admin/knowledge/huong-dan-review-pr",
+    "/admin/knowledge/new",
+    "/admin/career-roles",
+  ],
+  "admin-ops-comms": [
+    "/admin/ai",
+    "/admin/communications",
+    "/admin/recruitment-rounds",
+  ],
+  "admin-delivery": [
+    "/admin/sessions",
+    "/admin/sessions/ses-0000-4000-8000-000000000050",
+    "/admin/sprints",
+    "/admin/sprints/spr-0000-4000-8000-000000000051",
+    "/admin/tasks",
+    "/admin/tasks/tsk-0000-4000-8000-000000000102",
+    "/admin/performance",
+    "/admin/reports",
+  ],
+  "admin-personal": [
+    "/admin/notifications",
+    "/admin/profile",
+  ],
   "intern-work": [
     "/intern",
     "/intern/work",
@@ -85,10 +128,15 @@ const baseURL = String(arg("base-url", "http://localhost:3016"));
 
 const { resolveApi: resolveInternApi } = await import("./fixtures.mjs");
 const { resolveInstructorApi } = await import("./fixtures-instructor.mjs");
+const { resolveAdminApi } = await import("./fixtures-admin.mjs");
+// Role-scoped fixtures follow the route being checked, not the whole pack.
+let fixtureScope = "intern";
 const resolveApi = (method, path, search) =>
-  routes.some((r) => r.startsWith("/instructor"))
-    ? resolveInstructorApi(method, path, search)
-    : resolveInternApi(method, path, search);
+  fixtureScope === "admin"
+    ? resolveAdminApi(method, path, search)
+    : fixtureScope === "instructor"
+      ? resolveInstructorApi(method, path, search)
+      : resolveInternApi(method, path, search);
 const { chromium } = await import("playwright-core");
 const axeSource = await readFile(
   path.join(repoRoot, "node_modules", "axe-core", "axe.min.js"),
@@ -110,6 +158,11 @@ const CONTEXTS = [
 ];
 
 for (const route of routes) {
+  fixtureScope = route.startsWith("/admin")
+    ? "admin"
+    : route.startsWith("/instructor")
+      ? "instructor"
+      : "intern";
   for (const context of CONTEXTS) {
     const browserContext = await browser.newContext({
       viewport: { width: context.width, height: context.height },
