@@ -1,5 +1,5 @@
 "use client";
-import { CircleAlert } from "lucide-react";
+import { IconAlertTriangle } from "@/components/v-intern/icons";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
 import { btn, Spinner } from "@/components/product/primitives";
 
@@ -22,7 +22,7 @@ export function ErrorState({
     >
       <div className="flex items-start gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-control bg-destructive-subtle text-destructive">
-          <CircleAlert size={20} aria-hidden="true" />
+          <IconAlertTriangle size={20} aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="font-bold text-foreground">{title}</h2>

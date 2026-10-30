@@ -1,19 +1,19 @@
 import {
-  Award,
-  Bell,
-  Bot,
-  CalendarDays,
-  ChartColumn,
-  CircleCheck,
-  ClipboardCheck,
-  Clock,
-  CodeXml,
-  FolderKanban,
-  Home,
-  ListTodo,
-  Settings,
-  SquareKanban,
-} from "lucide-react";
+  IconAward,
+  IconBell,
+  IconBot,
+  IconCalendarDays,
+  IconChartColumn,
+  IconCircleCheck,
+  IconClipboardCheck,
+  IconClock,
+  IconCodeXml,
+  IconFolderKanban,
+  IconHome,
+  IconListTodo,
+  IconSettings,
+  IconSquareKanban,
+} from "@/components/v-intern/icons";
 import type {
   InternNavGroup,
   InternNavItem,
@@ -25,7 +25,7 @@ export const INTERN_OVERVIEW_NAV_ID = "tong-quan";
 export const INTERN_BOTTOM_NAV: InternNavItem = {
   id: "cai-dat",
   label: "Cài đặt",
-  icon: Settings,
+  icon: IconSettings,
   href: "/intern/profile",
 };
 export function workspaceNav(
@@ -40,17 +40,17 @@ export function workspaceNav(
         {
           id: INTERN_OVERVIEW_NAV_ID,
           label: "Tổng quan",
-          icon: Home,
+          icon: IconHome,
           href: "/intern",
         },
         ...[
-          { id: "work", label: "Công việc của tôi", icon: ListTodo },
-          { id: "sprint", label: "Sprint Board", icon: SquareKanban },
-          { id: "project", label: "Dự án", icon: FolderKanban },
-          { id: "mentor", label: "AI Mentor", icon: Bot },
-          { id: "notifications", label: "Thông báo", icon: Bell },
-          { id: "github", label: "GitHub", icon: CodeXml },
-          { id: "participation", label: "Thời hạn & ghi nhận", icon: ClipboardCheck },
+          { id: "work", label: "Công việc của tôi", icon: IconListTodo },
+          { id: "sprint", label: "Sprint Board", icon: IconSquareKanban },
+          { id: "project", label: "Dự án", icon: IconFolderKanban },
+          { id: "mentor", label: "AI Mentor", icon: IconBot },
+          { id: "notifications", label: "Thông báo", icon: IconBell },
+          { id: "github", label: "GitHub", icon: IconCodeXml },
+          { id: "participation", label: "Thời hạn & ghi nhận", icon: IconClipboardCheck },
         ].map((item) => ({
           ...item,
           href:
@@ -66,14 +66,14 @@ export function workspaceNav(
       id: "performance",
       label: "Hiệu suất & Phát triển",
       items: [
-        { id: "evaluations", label: "Đánh giá", icon: ClipboardCheck },
-        { id: "kpi", label: "KPI & Lương ảo", icon: ChartColumn },
-        { id: "certificates", label: "Chứng nhận", icon: Award },
+        { id: "evaluations", label: "Đánh giá", icon: IconClipboardCheck },
+        { id: "kpi", label: "KPI & Lương ảo", icon: IconChartColumn },
+        { id: "certificates", label: "Chứng nhận", icon: IconAward },
         ...(outcomesAvailable
-          ? [{ id: "performance", label: "Hiệu suất", icon: ChartColumn }]
+          ? [{ id: "performance", label: "Hiệu suất", icon: IconChartColumn }]
           : []),
         ...(active
-          ? [{ id: "recommendations", label: "Gợi ý phát triển", icon: Bot }]
+          ? [{ id: "recommendations", label: "Gợi ý phát triển", icon: IconBot }]
           : []),
       ].map((item) => ({
         ...item,
@@ -119,13 +119,13 @@ export function waitingPresentation(
         {
           id: "passed",
           label: "Đã hoàn thành tuyển dụng",
-          icon: CircleCheck,
+          icon: IconCircleCheck,
           tone: "green",
         },
         {
           id: "waiting",
           label: "Đang chờ phân công",
-          icon: Clock,
+          icon: IconClock,
           tone: "blue",
         },
       ],
@@ -142,42 +142,42 @@ export function waitingPresentation(
         id: "role",
         label: "Vai trò",
         value: roleLabel(workspace.recruitment?.selectedRole ?? null),
-        icon: CodeXml,
+        icon: IconCodeXml,
         tone: "blue",
       },
       {
         id: "project",
         label: "Dự án",
         value: "Chưa phân công",
-        icon: FolderKanban,
+        icon: IconFolderKanban,
         tone: "slate",
       },
       {
         id: "session",
         label: "Phiên thực tập",
         value: "Chưa phân công",
-        icon: CalendarDays,
+        icon: IconCalendarDays,
         tone: "slate",
       },
       {
         id: "sprint",
         label: "Sprint",
         value: "Chưa có",
-        icon: SquareKanban,
+        icon: IconSquareKanban,
         tone: "slate",
       },
       {
         id: "task",
         label: "Task",
         value: "Chưa có",
-        icon: ListTodo,
+        icon: IconListTodo,
         tone: "slate",
       },
       {
         id: "status",
         label: "Trạng thái",
         value: "Đang chờ phân công",
-        icon: Clock,
+        icon: IconClock,
         tone: "amber",
       },
     ],

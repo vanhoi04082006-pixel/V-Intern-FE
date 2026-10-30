@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { IconBell } from "@/components/v-intern/icons";
 import { fetchUnreadCount } from "@/lib/api/outcomes";
 
 /**
@@ -52,11 +52,11 @@ export function NotificationBell({ href }: { href: string }) {
       href={href}
       className="relative grid size-10 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
     >
-      <Bell size={19} aria-hidden="true" />
+      <IconBell size={19} aria-hidden="true" />
       {count ? (
         <span
           aria-hidden="true"
-          className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-5 text-primary-foreground tabular-nums"
+          className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold leading-5 text-primary-foreground tabular-nums shadow-app-xs"
         >
           {count > 99 ? "99+" : count}
         </span>

@@ -9,16 +9,16 @@ import {
   studentToneForPriority,
 } from "@/components/intern/student-ui";
 import {
-  Bell,
-  CalendarDays,
-  Clock3,
-  Compass,
-  FolderKanban,
-  GitBranch,
-  Info,
-  ListChecks,
-  SquareKanban,
-} from "lucide-react";
+  IconBell,
+  IconCalendarDays,
+  IconClock,
+  IconCompass,
+  IconFolderKanban,
+  IconGitBranch,
+  IconInfo,
+  IconListChecks,
+  IconSquareKanban,
+} from "@/components/v-intern/icons";
 import { useCallback, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -133,12 +133,13 @@ function InternGate({
           renderContent()
         ) : target !== "/intern" ? (
           <>
-            <StudentHeading              title="Hoàn tất tuyển dụng"
+            <StudentHeading
+              title="Hoàn tất tuyển dụng"
               description="Bạn cần hoàn thành bước tuyển dụng trước khi mở khóa không gian thực tập."
             />
             <div className="student-dashboard-grid">
               <div className="student-panel student-chat-welcome">
-                <Compass
+                <IconCompass
                   size={42}
                   className="text-primary"
                   aria-hidden="true"
@@ -155,7 +156,7 @@ function InternGate({
                   </StudentLink>
                 </div>
               </div>
-              <StudentPanel title="Bạn sẽ trải qua" icon={ListChecks}>
+              <StudentPanel title="Bạn sẽ trải qua" icon={IconListChecks}>
                 <ol className="student-step-list">
                   <li>
                     <div>
@@ -185,18 +186,19 @@ function InternGate({
           </>
         ) : assignmentRequired && data.status !== "active" ? (
           <>
-            <StudentHeading              title="Đang chờ phân công"
+            <StudentHeading
+              title="Đang chờ phân công"
               description="Bạn đã vượt qua vòng tuyển dụng. Giảng viên sẽ phân công dự án và Sprint tiếp theo cho bạn."
               action={
                 <StudentLink secondary href="/intern/notifications">
-                  <Bell size={15} aria-hidden="true" />
+                  <IconBell size={15} aria-hidden="true" />
                   Xem thông báo
                 </StudentLink>
               }
             />
             <div className="student-dashboard-grid">
               <div className="student-panel student-chat-welcome">
-                <Clock3
+                <IconClock
                   size={42}
                   className="text-primary"
                   aria-hidden="true"
@@ -214,7 +216,7 @@ function InternGate({
                   </StudentLink>
                 </div>
               </div>
-              <StudentPanel title="Trong lúc chờ" icon={ListChecks}>
+              <StudentPanel title="Trong lúc chờ" icon={IconListChecks}>
                 <ol className="student-step-list">
                   <li>
                     <div>
@@ -262,7 +264,8 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
   const id = sprint?.id;
   return (
     <>
-      <StudentHeading        title="Sprint Board"
+      <StudentHeading
+        title="Sprint Board"
         description={
           "Xem Sprint đã lên kế hoạch, đang chạy và lịch sử trong phiên được phân công."
         }
@@ -281,12 +284,12 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
         <div className="student-dashboard-grid student-sprint-empty-grid">
           <StudentPanel
             title="Sprint Board"
-            icon={SquareKanban}
+            icon={IconSquareKanban}
             className="student-sprint-empty"
           >
             <div className="student-chat-welcome">
               <span className="student-metric-icon size-14">
-                <SquareKanban size={26} aria-hidden="true" />
+                <IconSquareKanban size={26} aria-hidden="true" />
               </span>
               <h2>Chưa có Sprint trong phiên</h2>
               <p>
@@ -305,7 +308,7 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
           <div className="student-stack">
             <StudentPanel
               title="Chuẩn bị trước khi Sprint bắt đầu"
-              icon={CalendarDays}
+              icon={IconCalendarDays}
             >
               <ol className="student-step-list">
                 <li>
@@ -336,7 +339,7 @@ export function InternSprint({ workspace }: { workspace: InternWorkspace }) {
                 </li>
               </ol>
             </StudentPanel>
-            <StudentPanel title="Bạn vẫn có thể làm việc" icon={Info}>
+            <StudentPanel title="Bạn vẫn có thể làm việc" icon={IconInfo}>
               <p className="text-small leading-7 text-muted-foreground">
                 Nhiệm vụ đã được giao vẫn hiển thị trong Công việc của tôi. Bạn
                 có thể đọc yêu cầu, cập nhật tiến độ và trao đổi với giảng viên
@@ -395,7 +398,7 @@ export function SprintBoard({
     <div className="space-y-4">
       {own && (
         <div className="student-notice">
-          <Info size={16} className="shrink-0" aria-hidden="true" />
+          <IconInfo size={16} className="shrink-0" aria-hidden="true" />
           <p>
             Kéo thả thẻ để bắt đầu công việc. Thả sang{" "}
             <strong>Chờ duyệt</strong> để mở chi tiết và nộp bài; giảng viên
@@ -420,7 +423,7 @@ export function SprintBoard({
             </>
           }
           className="student-sprint-summary"
-          icon={SquareKanban}
+          icon={IconSquareKanban}
           action={
             <StudentBadge
               tone={
@@ -445,7 +448,7 @@ export function SprintBoard({
             <div>
               <p className="student-label">Thời gian</p>
               <p className="student-chip mt-1">
-                <CalendarDays size={13} aria-hidden="true" />
+                <IconCalendarDays size={13} aria-hidden="true" />
                 {start} đến {end}
               </p>
             </div>
@@ -603,13 +606,14 @@ export function InternProject({ workspace }: { workspace: InternWorkspace }) {
   const assignment = workspace.assignment;
   return (
     <>
-      <StudentHeading        title="Dự án của tôi"
+      <StudentHeading
+        title="Dự án của tôi"
         description="Hiểu mục tiêu, công nghệ và thời gian thực hiện trước khi bắt đầu từng nhiệm vụ."
         action={<StudentLink href="/intern/work">Xem nhiệm vụ</StudentLink>}
       />
       {assignment ? (
         <>
-          <div className="student-project-assignment"><CalendarDays size={17} aria-hidden="true" /><div><span>Phiên thực tập</span><strong>{assignment.session.name}</strong></div><p>{assignment.session.code}<small>Phân công {new Date(assignment.assignedAt).toLocaleDateString("vi-VN")}</small></p></div>
+          <div className="student-project-assignment"><IconCalendarDays size={17} aria-hidden="true" /><div><span>Phiên thực tập</span><strong>{assignment.session.name}</strong></div><p>{assignment.session.code}<small>Phân công {new Date(assignment.assignedAt).toLocaleDateString("vi-VN")}</small></p></div>
           <div className="mt-5">
             <ProjectDetail id={assignment.project.id} own />
           </div>
@@ -643,7 +647,7 @@ export function ProjectDetail({
     return (
       <div className="student-dashboard-grid student-project-layout">
         <div className="space-y-5">
-          <StudentPanel title={p.name} icon={FolderKanban} className="student-project-brief">
+          <StudentPanel title={p.name} icon={IconFolderKanban} className="student-project-brief">
             <span className="rounded-control bg-accent px-2 py-1 text-caption font-bold text-primary">
               {p.code}
             </span>
@@ -651,7 +655,7 @@ export function ProjectDetail({
             <p className="whitespace-pre-wrap text-body leading-8 text-muted-foreground">
               {p.description || "Giảng viên chưa bổ sung mô tả dự án."}
             </p>
-            <h3 className="mb-3 mt-6 flex items-center gap-2 text-body font-semibold"><GitBranch size={16} aria-hidden="true" />Bộ công nghệ</h3>
+            <h3 className="mb-3 mt-6 flex items-center gap-2 text-body font-semibold"><IconGitBranch size={16} aria-hidden="true" />Bộ công nghệ</h3>
             <div className="student-project-technologies">
               {p.technologies.length ? p.technologies.join(" · ") : (
                 <p className="text-body text-muted-foreground">

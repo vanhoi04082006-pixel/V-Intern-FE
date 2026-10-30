@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Settings } from "lucide-react";
+import { IconSettings } from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/v-intern/logo";
 
@@ -157,7 +157,7 @@ export function InternSidebar({
                 <span className="student-user-role">{user.roleLabel}</span>
               </span>
               <span className="student-user-settings" aria-hidden="true">
-                <Settings className="size-4" />
+                <IconSettings className="size-4" aria-hidden="true" />
               </span>
             </Link>
           )}

@@ -3,20 +3,20 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChartNoAxesCombined, FolderKanban, GraduationCap, UserRound, Workflow, type LucideIcon } from "lucide-react";
+import { IconChartColumn, IconFolderKanban, IconGraduationCap, IconUserRound, IconUsers, type IconComponent } from "@/components/v-intern/icons";
 import { LearningIcon } from "./learning-icon";
 
-type ViewGroup = { label: string; icon: LucideIcon; kind: "workflow" | "analytics" | "account"; items: [string, string][] };
+type ViewGroup = { label: string; icon: IconComponent; kind: "workflow" | "analytics" | "account"; items: [string, string][] };
 const student: ViewGroup[] = [
-  { label: "Không gian dự án", icon: FolderKanban, kind: "workflow", items: [["work", "Công việc"], ["sprint", "Sprint Board"], ["project", "Dự án"], ["mentor", "AI Mentor"]] },
-  { label: "Năng lực & kết quả", icon: ChartNoAxesCombined, kind: "analytics", items: [["evaluations", "Đánh giá"], ["performance", "Hiệu suất"], ["kpi", "KPI"], ["virtual-salary", "Lương ảo"], ["certificates", "Chứng nhận"], ["recommendations", "Phát triển"]] },
-  { label: "Tài khoản & kết nối", icon: UserRound, kind: "account", items: [["profile", "Hồ sơ"], ["github", "GitHub"], ["notifications", "Thông báo"]] },
+  { label: "Không gian dự án", icon: IconFolderKanban, kind: "workflow", items: [["work", "Công việc"], ["sprint", "Sprint Board"], ["project", "Dự án"], ["mentor", "AI Mentor"]] },
+  { label: "Năng lực & kết quả", icon: IconChartColumn, kind: "analytics", items: [["evaluations", "Đánh giá"], ["performance", "Hiệu suất"], ["kpi", "KPI"], ["virtual-salary", "Lương ảo"], ["certificates", "Chứng nhận"], ["recommendations", "Phát triển"]] },
+  { label: "Tài khoản & kết nối", icon: IconUserRound, kind: "account", items: [["profile", "Hồ sơ"], ["github", "GitHub"], ["notifications", "Thông báo"]] },
 ];
 const teacher: ViewGroup[] = [
-  { label: "Tổ chức thực tập", icon: GraduationCap, kind: "workflow", items: [["sessions", "Phiên thực tập"], ["sprints", "Sprint & Task"], ["projects", "Thư viện dự án"]] },
-  { label: "Theo dõi & đánh giá", icon: ChartNoAxesCombined, kind: "analytics", items: [["evaluations", "Đánh giá"], ["performance", "Hiệu suất"], ["reports", "Báo cáo"]] },
-  { label: "Cộng tác", icon: Workflow, kind: "account", items: [["github", "GitHub"]] },
-  { label: "Cá nhân", icon: UserRound, kind: "account", items: [["profile", "Hồ sơ"], ["notifications", "Thông báo"]] },
+  { label: "Tổ chức thực tập", icon: IconGraduationCap, kind: "workflow", items: [["sessions", "Phiên thực tập"], ["sprints", "Sprint & Task"], ["projects", "Thư viện dự án"]] },
+  { label: "Theo dõi & đánh giá", icon: IconChartColumn, kind: "analytics", items: [["evaluations", "Đánh giá"], ["performance", "Hiệu suất"], ["reports", "Báo cáo"]] },
+  { label: "Cộng tác", icon: IconUsers, kind: "account", items: [["github", "GitHub"]] },
+  { label: "Cá nhân", icon: IconUserRound, kind: "account", items: [["profile", "Hồ sơ"], ["notifications", "Thông báo"]] },
 ];
 
 export function WorkspaceStage({ role, children, workAvailable = true, resultsAvailable = true }: {

@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { HandArrowRight } from "@/components/v-intern/doodles";
+import { NoteCard } from "@/components/workspace/notebook";
 
 const STEPS: { icon: LucideIcon; title: string; description: string }[] = [
   {
@@ -101,6 +102,17 @@ export function HowItWorks() {
                 </div>
               );
             })}
+          </div>
+        </FadeIn>
+
+        {/* Ghi chú dán lề — mẹo nhỏ cho người mới, giữ chất sổ tay */}
+        <FadeIn className="mt-10" delay={0.15}>
+          <div className="mx-auto max-w-md">
+            <NoteCard tape rotate={1.2} title="Mẹo nhỏ">
+              Không cần CV đẹp — hãy kể cho AI nghe bạn đã tự học được gì, đam
+              mê nằm ở đâu. Sổ tay này ghi lại từng bước để bạn nhìn lại hành
+              trình của mình.
+            </NoteCard>
           </div>
         </FadeIn>
       </div>

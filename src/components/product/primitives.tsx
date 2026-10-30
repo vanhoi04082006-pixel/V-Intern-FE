@@ -1,15 +1,15 @@
 ﻿"use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import {
-  X,
-  Inbox,
-  Info,
-  TriangleAlert,
-  CircleCheck,
-  CircleX,
-  ArrowLeft,
-  type LucideIcon,
-} from "lucide-react";
+  IconX,
+  IconInbox,
+  IconInfo,
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconCircleX,
+  IconArrowLeft,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import Link from "next/link";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 import { cn } from "@/lib/utils";
@@ -126,10 +126,7 @@ export function Spinner({ className }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={cn(
-        "inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent",
-        className,
-      )}
+      className={cn("spinner-hand size-4", className)}
     />
   );
 }
@@ -138,7 +135,7 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={cn("animate-pulse rounded-control bg-muted/60", className)}
+      className={cn("skeleton-pencil", className)}
     />
   );
 }
@@ -173,22 +170,22 @@ export function TableSkeleton({
 const alertTones = {
   info: {
     box: "border-primary/20 bg-accent text-primary",
-    icon: Info,
+    icon: IconInfo,
     iconClass: "text-primary",
   },
   success: {
     box: "border-success/20 bg-success-subtle text-success",
-    icon: CircleCheck,
+    icon: IconCircleCheck,
     iconClass: "text-success",
   },
   warning: {
     box: "border-warning/20 bg-warning-subtle text-warning",
-    icon: TriangleAlert,
+    icon: IconAlertTriangle,
     iconClass: "text-warning",
   },
   danger: {
     box: "border-destructive/20 bg-destructive-subtle text-destructive",
-    icon: CircleX,
+    icon: IconCircleX,
     iconClass: "text-destructive",
   },
 } as const;
@@ -241,7 +238,7 @@ export function MetricCard({
   sub,
   subTone = "text-muted-foreground",
 }: {
-  icon: LucideIcon;
+  icon: IconComponent;
   label: string;
   value: ReactNode;
   sub?: ReactNode;
@@ -342,7 +339,7 @@ export function PageTitle({
           href={back.href}
           className="mb-3 inline-flex min-h-8 items-center gap-2 rounded-control px-2 text-small font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         >
-          <ArrowLeft size={15} aria-hidden="true" />
+          <IconArrowLeft size={15} aria-hidden="true" />
           {back.label}
         </Link>
       )}
@@ -368,13 +365,13 @@ export function PageTitle({
 }
 
 export function Empty({
-  icon: Icon = Inbox,
+  icon: Icon = IconInbox,
   title,
   description,
   action,
   children,
 }: {
-  icon?: LucideIcon;
+  icon?: IconComponent;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -424,10 +421,27 @@ export type BadgeTone = keyof typeof badgeTones;
 export function Badge({
   children,
   tone = "blue",
+  stamp = false,
 }: {
   children: ReactNode;
   tone?: BadgeTone;
+  /** Mộc nhỏ — con dấu tròn nét không đều cho trạng thái quan trọng. */
+  stamp?: boolean;
 }) {
+  if (stamp) {
+    return (
+      <span
+        className={cn(
+          "product-badge stamp-moc stamp-moc-sm",
+          tone === "green" || tone === "blue"
+            ? "text-[var(--stamp-blue)]"
+            : "text-[var(--stamp-red)]",
+        )}
+      >
+        {children}
+      </span>
+    );
+  }
   return (
     <span
       className={cn(
@@ -580,7 +594,7 @@ export function Modal({
           onClick={onClose}
           className={iconButtonClass}
         >
-          <X size={20} aria-hidden="true" />
+          <IconX size={20} aria-hidden="true" />
         </button>
       </div>
       {children}
@@ -599,7 +613,7 @@ export function Modal({
 export function PageMeta({
   items,
 }: {
-  items: { icon: LucideIcon; label: string; value: ReactNode }[];
+  items: { icon: IconComponent; label: string; value: ReactNode }[];
 }) {
   return (
     <dl className="mb-4 flex flex-wrap gap-x-7 gap-y-2 text-caption text-muted-foreground">

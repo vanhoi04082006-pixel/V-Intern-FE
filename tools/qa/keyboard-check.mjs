@@ -89,14 +89,18 @@ if (noOutline.length) {
 
 // 3) Escape closes the mobile menu drawer at 390px and returns focus.
 await page.setViewportSize({ width: 390, height: 844 });
-const menuButton = page.locator('button[aria-label*="menu" i], button[aria-label*="Menu" i]').first();
+// Instructor/admin shells keep a hidden "Đóng menu" button inside the closed
+// <dialog> drawer earlier in the DOM — :visible targets the real topbar button.
+const menuButton = page.locator('button[aria-label*="menu" i]:visible, button[aria-label*="Menu" i]:visible').first();
+// Intern drawer = div[role="dialog"]; product shell drawer = native <dialog open>.
+const drawerCount = () => page.locator('div[role="dialog"], dialog[open]').count();
 if (await menuButton.count()) {
   await menuButton.click();
   await page.waitForTimeout(300);
-  const drawerRole = await page.locator('div[role="dialog"]').count();
+  const drawerRole = await drawerCount();
   await page.keyboard.press("Escape");
   await page.waitForTimeout(300);
-  const drawerAfter = await page.locator('div[role="dialog"]').count();
+  const drawerAfter = await drawerCount();
   console.log(`mobile drawer: opened=${drawerRole > 0}, closedByEscape=${drawerAfter === 0}`);
 } else {
   console.log("mobile menu button not found (route may render differently)");

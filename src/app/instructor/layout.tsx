@@ -6,6 +6,7 @@ import "@/components/instructor/instructor-experience.css";
 import "@/components/workspace/workspace.css";
 import "@/components/workspace/aurora.css";
 import "@/components/product/collection-insights.css";
+import "@/components/workspace/notebook.css";
 
 const roles = ["instructor"];
 

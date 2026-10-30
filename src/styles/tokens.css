@@ -101,6 +101,13 @@
   --coal-soft: #1f1f28;
   --chalk: #f2f1e9;
   --chalk-soft: #a8a8b2;
+  /* Notebook extras: sticky note paper, mộc đỏ, nét chì placeholder. */
+  --note-yellow: #fdf3b8;
+  --note-yellow-ink: #4a4010;
+  --note-yellow-shadow: rgba(23, 23, 28, 0.12);
+  --stamp-red: #c0272d;
+  --stamp-blue: #1743c4;
+  --pencil: #70707b;
 }
 
 .dark {
@@ -114,6 +121,13 @@
   --blue-mist: rgba(125, 151, 255, 0.16);
   --line: rgba(242, 241, 233, 0.085);
   --hard-shadow: rgba(0, 0, 0, 0.55);
+  /* Dark = chalkboard night: note vàng đậm, mộc đỏ sáng hơn để đọc trên nền tối. */
+  --note-yellow: #5d5531;
+  --note-yellow-ink: #f7f0c9;
+  --note-yellow-shadow: rgba(0, 0, 0, 0.4);
+  --stamp-red: #ff7d7d;
+  --stamp-blue: #99adff;
+  --pencil: #a8a8b2;
 }
 
 @theme inline {

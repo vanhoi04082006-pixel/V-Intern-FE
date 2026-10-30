@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { IconComponent } from "@/components/v-intern/icons";
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 
@@ -31,7 +31,7 @@ export function SectionCard({
   children,
 }: {
   id: string;
-  icon: LucideIcon;
+  icon: IconComponent;
   tone?: InternTone;
   title: string;
   /** Phần phụ sau tiêu đề, ví dụ "(Sprint 03)" — vẫn thuộc accessible name */

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
-  ArrowRight,
-  CheckCircle2,
-  CircleAlert,
-  Info,
-  type LucideIcon,
-} from "lucide-react";
+  IconAlertTriangle,
+  IconArrowRight,
+  IconCircleCheck,
+  IconInfo,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { priorityLabels, statusLabels } from "@/lib/api/work";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 
@@ -47,7 +47,7 @@ export function StudentLink({
       className={`student-action${secondary ? " student-action-secondary" : ""}`}
     >
       {children}
-      <ArrowRight size={15} aria-hidden="true" />
+      <IconArrowRight size={15} aria-hidden="true" />
     </Link>
   );
 }
@@ -63,7 +63,7 @@ export function StudentPanel({
   flush = false,
 }: {
   title: ReactNode;
-  icon?: LucideIcon;
+  icon?: IconComponent;
   children: ReactNode;
   action?: ReactNode;
   description?: ReactNode;
@@ -106,7 +106,7 @@ export function StudentMetric({
   label: string;
   value: ReactNode;
   hint?: string;
-  icon: LucideIcon;
+  icon: IconComponent;
   tone?: "blue" | "green" | "amber" | "rose" | "slate";
   progress?: number;
   trend?: string;
@@ -198,7 +198,7 @@ export function StudentChip({
 }: {
   children: ReactNode;
   tone?: "blue" | "green" | "amber" | "rose" | "sky" | "slate";
-  icon?: LucideIcon;
+  icon?: IconComponent;
 }) {
   return (
     <span className="student-chip" data-tone={tone}>
@@ -219,10 +219,10 @@ export function StudentCallout({
 }) {
   const Icon =
     tone === "amber" || tone === "rose"
-      ? CircleAlert
+      ? IconAlertTriangle
       : tone === "green"
-        ? CheckCircle2
-        : Info;
+        ? IconCircleCheck
+        : IconInfo;
   return (
     <div className="student-callout" data-tone={tone}>
       <Icon size={17} aria-hidden="true" />
@@ -240,7 +240,7 @@ export function StudentEmpty({
   children,
   action,
 }: {
-  icon: LucideIcon;
+  icon: IconComponent;
   title: string;
   children?: ReactNode;
   action?: ReactNode;

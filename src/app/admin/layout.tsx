@@ -6,6 +6,7 @@ import "@/components/workspace/workspace.css";
 import "@/components/workspace/aurora.css";
 import "@/components/admin/admin.css";
 import "@/components/product/collection-insights.css";
+import "@/components/workspace/notebook.css";
 const roles = ["admin"];
 export default function Layout({ children }: { children: ReactNode }) {
   return (
