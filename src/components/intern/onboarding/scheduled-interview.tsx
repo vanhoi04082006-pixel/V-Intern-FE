@@ -1,7 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CalendarClock, Clock3 } from "lucide-react";
+import {
+  IconCalendarDays,
+  IconClock,
+} from "@/components/v-intern/icons";
 import { useRecruitmentFlow } from "./recruitment-provider";
 
 function time(value: string | null, timezone: string | null) {
@@ -77,7 +80,7 @@ export function ScheduledInterview() {
     <section className="mx-auto max-w-4xl space-y-7">
       <header className="space-y-3">
         <p className="flex items-center gap-2 text-caption font-bold  text-primary">
-          <CalendarClock size={17} aria-hidden="true" />
+          <IconCalendarDays size={17} aria-hidden="true" />
           Lịch phỏng vấn của bạn
         </p>
         <h1 className="text-page font-bold tracking-tight text-foreground">
@@ -106,7 +109,7 @@ export function ScheduledInterview() {
         {valid && ["waiting", "ready"].includes(phase) && (
           <div className="sm:border-l sm:border-border sm:pl-8">
             <p className="flex items-center gap-2 text-body text-muted-foreground">
-              <Clock3 size={15} aria-hidden="true" />
+              <IconClock size={15} aria-hidden="true" />
               {phase === "waiting"
                 ? "Mở phòng sau"
                 : "Còn thời gian để bắt đầu"}

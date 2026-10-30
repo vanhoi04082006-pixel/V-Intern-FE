@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ArrowUpRight, RefreshCw } from "lucide-react";
+import {
+  IconArrowUpRight,
+  IconRefreshCw,
+} from "@/components/v-intern/icons";
 import { StudentOutcomeHeading } from "@/components/intern/student-outcome-heading";
 import { LearningIcon } from "@/components/workspace/learning-icon";
 import { errorMessage } from "@/lib/auth/api-client";
@@ -56,7 +59,7 @@ export function Profile() {
   return <>
     <StudentOutcomeHeading title="Hồ sơ" subtitle="Thông tin của bạn và các kết nối trong V-Intern"
       action={<button type="button" className={buttonClass} disabled={busy} onClick={() => void refresh()}>
-        <RefreshCw size={15} className={busy ? "account-refresh-icon" : undefined} aria-hidden="true" />
+        <IconRefreshCw size={15} className={busy ? "account-refresh-icon" : undefined} aria-hidden="true" />
         {busy ? "Đang làm mới..." : "Làm mới"}
       </button>} />
     {feedback && <InlineAlert className="mb-5" tone={feedback.tone}>{feedback.text}</InlineAlert>}
@@ -89,7 +92,7 @@ export function Profile() {
             <Link href={link.href}>
               <LearningIcon kind={link.kind} />
               <span><strong>{link.title}</strong><small>{link.description}</small></span>
-              <ArrowUpRight size={16} aria-hidden="true" />
+              <IconArrowUpRight size={16} aria-hidden="true" />
             </Link>
           </li>)}</ul>
           <p className="account-notebook-note">{role === "admin"
