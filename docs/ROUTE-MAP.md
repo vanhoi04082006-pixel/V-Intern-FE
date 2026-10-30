@@ -1,6 +1,6 @@
 # Bản đồ route Frontend
 
-Đối chiếu trực tiếp 81 file `src/app/**/page.tsx` ngày 28/10/2026: public 8, admin 31, instructor 19, intern 23. Đây là inventory source, không phải bằng chứng đã click kiểm thử mọi route. Các URL có `[id]`/`[code]` cần dữ liệu và quyền thật; không dùng chuỗi placeholder để nghiệm thu.
+Đối chiếu trực tiếp 80 file `src/app/**/page.tsx` ngày 29/10/2026: public 8, admin 31, instructor 18, intern 23. `/instructor/classes` chỉ là redirect tương thích sang `/instructor/projects`; không có màn quản lý lớp hoặc chia sẻ dữ liệu. Đây là inventory source, không phải bằng chứng đã click kiểm thử mọi route. Các URL có `[id]`/`[code]` cần dữ liệu và quyền thật; không dùng chuỗi placeholder để nghiệm thu.
 
 | URL | Source | Component chính |
 |---|---|---|
@@ -41,7 +41,7 @@
 | `/admin/users` | [page](../src/app/admin/users/page.tsx) | `product/admin-management` |
 | `/apply` | [page](../src/app/apply/page.tsx) | `applications/public-application` |
 | `/github/invitation` | [page](../src/app/github/invitation/page.tsx) | `auth/workspace-guard`, `product/github-connection`, `v-intern/logo`, `shared/data-state` |
-| `/instructor/classes` | [page](../src/app/instructor/classes/page.tsx) | Alias/chuyển hướng — đọc source |
+| `/instructor/classes` | [page](../src/app/instructor/classes/page.tsx) | Redirect → `/instructor/projects` |
 | `/instructor/evaluations` | [page](../src/app/instructor/evaluations/page.tsx) | `product/evaluation-management` |
 | `/instructor/github` | [page](../src/app/instructor/github/page.tsx) | `product/github-connection`, `instructor/instructor-ui`, `product/primitives` |
 | `/instructor/notifications` | [page](../src/app/instructor/notifications/page.tsx) | `product/outcomes` |
@@ -56,7 +56,6 @@
 | `/instructor/sessions/[id]` | [page](../src/app/instructor/sessions/%5Bid%5D/page.tsx) | `sessions/session-overview` |
 | `/instructor/sessions/[id]/setup` | [page](../src/app/instructor/sessions/%5Bid%5D/setup/page.tsx) | `sessions/session-setup` |
 | `/instructor/sessions` | [page](../src/app/instructor/sessions/page.tsx) | `sessions/session-list` |
-| `/instructor/sharing` | [page](../src/app/instructor/sharing/page.tsx) | `sessions/session-sharing` |
 | `/instructor/sprints/[id]` | [page](../src/app/instructor/sprints/%5Bid%5D/page.tsx) | `sessions/sprint-workspace`, `product/primitives` |
 | `/instructor/sprints` | [page](../src/app/instructor/sprints/page.tsx) | `sessions/delivery-overview` |
 | `/instructor/tasks/[id]` | [page](../src/app/instructor/tasks/%5Bid%5D/page.tsx) | `product/intern-work`, `instructor/instructor-ui` |

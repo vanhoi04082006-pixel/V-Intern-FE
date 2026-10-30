@@ -27,10 +27,11 @@ describe("Outcome truth boundaries", () => {
     const section = role === 'intern' ? 'work' : 'tasks';
     expect(notificationLinkForRole(`/${role}/${section}/${id}`, role)).toBe(`/${role}/${section}/${id}`);
   });
-  it('keeps sharing and GitHub events in their existing instructor pages', () => {
-    expect(notificationLinkForRole('/instructor/sharing', 'instructor')).toBe('/instructor/sharing');
+  it('keeps GitHub events in the instructor page', () => {
     expect(notificationLinkForRole('/instructor/github', 'instructor')).toBe('/instructor/github');
-    expect(notificationLinkForRole('/instructor/sharing', 'intern')).toBeNull();
+    expect(notificationLinkForRole('/instructor/sharing', 'instructor')).toBeNull();
+    expect(notificationLinkForRole('/instructor/classes', 'instructor')).toBeNull();
+    expect(notificationLinkForRole('/admin/classes', 'admin')).toBeNull();
   });
   it('preserves the own recruitment-result page without crossing workspace guards', () => {
     expect(notificationLinkForRole('/intern/onboarding/result', 'intern')).toBe('/intern/onboarding/result');

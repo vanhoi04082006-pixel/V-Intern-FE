@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased — 14/10/2026
+## Unreleased — 29/10/2026
+
+- Gỡ màn hình, điều hướng, adapter API và liên kết thông báo của quản lý lớp/chia sẻ phiên; `/instructor/classes` chuyển hướng về `/instructor/projects` để xử lý bookmark cũ.
+
+## 14/10/2026
 
 - Shell sinh viên thống nhất khi chưa phân công; thông báo/hồ sơ/GitHub không mở nhầm workspace học tập.
 - Phỏng vấn chat10lượt, phục hồi transcript, giải thích/retry/retake và trạng thái AI đang chấm.

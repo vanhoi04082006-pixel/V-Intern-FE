@@ -9,7 +9,7 @@ describe("Academic Nest boundaries", () => {
   const entity = {
     id: "id",
     code: "C",
-    name: "Class",
+    name: "Session",
     status: "active",
     description: null,
     startDate: null,
@@ -37,7 +37,7 @@ describe("Academic Nest boundaries", () => {
   it("does not send immutable code on update", () =>
     expect(
       academicBody(
-        "classes",
+        "sessions",
         { code: "C", name: "New", description: "", status: "active" },
         true,
       ),

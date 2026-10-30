@@ -1,6 +1,6 @@
 # Giao diện sổ tay V-Intern: nền tảng đã triển khai
 
-Đây là lát triển khai dùng chung cho Admin, giảng viên và sinh viên. **Chưa phải nghiệm thu toàn bộ 78 route hoặc hoàn tất redesign từng luồng.** Phần nghiệp vụ dùng bộ kiểm chứng riêng ở [checkpoint dịch vụ thật](../ACCEPTANCE-CHECKPOINT-20261026.md).
+Đây là lát triển khai dùng chung cho Admin, giảng viên và sinh viên. Tại thời điểm báo cáo, inventory có 78 route; source ngày 29/10/2026 hiện có 82 page source. **Lát nền này chưa phải nghiệm thu từng route hoặc hoàn tất redesign từng luồng.** Phần nghiệp vụ dùng bộ kiểm chứng riêng ở [checkpoint dịch vụ thật](../ACCEPTANCE-CHECKPOINT-20261026.md).
 
 ## Đã thay đổi những gì?
 
@@ -43,7 +43,7 @@ Code: **4808210**. Local: **108 file / 651 test đạt**, lint file đổi, type
 
 | Kiểm trên trình duyệt | Kết quả và giới hạn |
 |---|---|
-| 15 lượt responsive | Thông báo giảng viên, GitHub sinh viên, tổng quan Admin × 390/768/1024/1280/1440 px: không tràn ngang. Đây là ba trang mẫu cho nền chung, không phải 78 route |
+| 15 lượt responsive | Thông báo giảng viên, GitHub sinh viên, tổng quan Admin × 390/768/1024/1280/1440 px: không tràn ngang. Đây là ba trang mẫu cho nền chung, không phải nghiệm thu 82 page source |
 | Drawer sinh viên | Mở, Escape, trả focus đúng nút menu; điều hướng GitHub và đóng drawer |
 | Drawer Admin | Mở, Escape, trả focus đúng nút menu; ProductShell dùng chung với giảng viên |
 | Nhận xét task giảng viên | Enter mở phần AI/giảng viên riêng; điểm và PR/SHA vẫn hiện khi thu gọn |
