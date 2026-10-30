@@ -55,7 +55,8 @@ import {
   type Task,
 } from "@/lib/api/work";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { StampMoc } from "@/components/workspace/notebook";
+import { MarginNote, StampMoc } from "@/components/workspace/notebook";
+import { Tape } from "@/components/v-intern/doodles";
 import {
   Badge,
   buttonClass,
@@ -124,6 +125,9 @@ export function InternWork() {
           </div>
         }
       />
+      <MarginNote className="-mt-5 max-w-md">
+        ghim task quan trọng lên đầu nhé ✎
+      </MarginNote>
       {workspaceContext?.workspace.assignment && <details open className="student-help-disclosure student-project-materials"><summary>Tài liệu & gói dự án</summary><OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} /></details>}
 
       <section aria-label="Lọc công việc" className="student-toolbar mb-5">
@@ -205,7 +209,8 @@ export function InternWork() {
           onUpdated={tasks.reload}
         />
       ) : (
-        <section className="student-panel" aria-label="Danh sách nhiệm vụ">
+        <section className="student-panel relative group" aria-label="Danh sách nhiệm vụ">
+          <Tape className="-top-3 left-6" rotate={-5} />
           <header className="student-panel-header">
             <h2>
               Danh sách nhiệm vụ
