@@ -1,6 +1,11 @@
 "use client";
 import { useCallback, useState } from "react";
-import { Users, Layers, CalendarDays, Clock } from "lucide-react";
+import {
+  IconCalendarDays,
+  IconClock,
+  IconLayers,
+  IconUsers,
+} from "@/components/v-intern/icons";
 import {
   listSprints,
   saveSprint,
@@ -69,10 +74,10 @@ export function SprintManagement() {
     <>
       <PageTitle title="Sprint & Task" />
       <PageMeta items={[
-        { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
-        { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
-        { icon: CalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
-        { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
+        { icon: IconUsers, label: "Vai trò", value: "Giảng viên / Technical Lead" },
+        { icon: IconLayers, label: "Hệ thống", value: "V-Intern Platform" },
+        { icon: IconCalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
+        { icon: IconClock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
       ]} />
       {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="text-body font-semibold text-primary" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
       <Panel title="Các Sprint" action={<button className={buttonClass} onClick={() => setCreate(true)}>Tạo Sprint</button>}>

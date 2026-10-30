@@ -2,15 +2,13 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import {
-  Layers,
-  ClipboardList,
-  CheckCircle2,
-  Clock,
-  AlertTriangle,
-  Plus,
-} from "lucide-react";
-import { request } from "@/lib/api/client";
-import { array, nullable, number, record, string } from "@/lib/api/parse";
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconClipboardCheck,
+  IconClock,
+  IconLayers,
+  IconPlus,
+} from "@/components/v-intern/icons";
 import { getBoard, getSprintCompletion } from "@/lib/api/work";
 import { fetchSprintBurndown } from "@/lib/api/delivery";
 import { useResource } from "@/lib/api/use-resource";
@@ -107,28 +105,28 @@ export function SprintOverview({
     <>
       <div className="mb-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <MetricCard
-          icon={Layers}
+          icon={IconLayers}
           label="Sprint đang hoạt động"
           index={0}
           value={activeCount ?? (b.sprint.status === "active" ? 1 : 0)}
           sub="Trong phạm vi đang xem"
         />
         <MetricCard
-          icon={ClipboardList}
+          icon={IconClipboardCheck}
           label={instructor ? "Tổng nhiệm vụ" : "Task tổng"}
           index={1}
           value={b.total}
           sub="Trong Sprint đang chọn"
         />
         <MetricCard
-          icon={CheckCircle2}
+          icon={IconCircleCheck}
           label={instructor ? "Đã hoàn thành" : "Task hoàn thành"}
           index={2}
           value={done}
           sub={`${b.total ? Math.round((done / b.total) * 100) : 0}% Sprint đang chọn`}
         />
         <MetricCard
-          icon={Clock}
+          icon={IconClock}
           label={instructor ? "Bài chờ duyệt" : "Task / PR chờ duyệt"}
           index={3}
           value={review}
@@ -139,7 +137,7 @@ export function SprintOverview({
           }
         />
         <MetricCard
-          icon={AlertTriangle}
+          icon={IconAlertTriangle}
           label={instructor ? "Nhiệm vụ quá hạn" : "Task quá hạn"}
           index={4}
           value={overdue ?? "Chưa đo được"}
@@ -176,7 +174,7 @@ export function SprintOverview({
                   onClick={onManage}
                   className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-caption font-semibold text-primary-foreground hover:bg-primary"
                 >
-                  <Plus size={14} />
+                  <IconPlus size={14} />
                   {onManage ? "Quản lý task" : "Tạo task mới"}
                 </a>
               </Can>
