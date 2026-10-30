@@ -61,7 +61,11 @@ describe("certificate detail", () => {
     expect(
       screen.getByRole("link", { name: /Xác minh công khai/ }),
     ).toHaveAttribute("href", "/verify?code=VINT-VERIFY-ABC");
-    expect(screen.getByRole("button", { name: /Tải PDF/ })).toBeEnabled();
+    // The download CTA is surfaced twice by design: once in the page header
+    // (primary placement) and once in the "Tệp chính thức" panel.
+    const downloadButtons = screen.getAllByRole("button", { name: /Tải PDF/ });
+    expect(downloadButtons).toHaveLength(2);
+    for (const button of downloadButtons) expect(button).toBeEnabled();
     expect(
       screen.queryByRole("link", { name: "Chi tiết" }),
     ).not.toBeInTheDocument();
