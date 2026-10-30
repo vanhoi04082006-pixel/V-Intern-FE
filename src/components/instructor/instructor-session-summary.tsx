@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import {
+  IconArrowUpRight,
+} from "@/components/v-intern/icons";
 import type { SessionOverviewRow } from "@/lib/api/sessions";
 import { TaskDistribution } from "@/components/workspace/workspace-ui";
 import { SessionProgressComparison } from "@/components/workspace/workspace-charts";
@@ -108,7 +110,7 @@ export function InstructorSessionSummary({
                   {row.alerts!.pendingReview > 0
                     ? `Duyệt ${row.alerts!.pendingReview} bài`
                     : "Xem công việc"}
-                  <ArrowUpRight size={15} aria-hidden="true" />
+                  <IconArrowUpRight size={15} aria-hidden="true" />
                 </Link>
               </li>
             ))}

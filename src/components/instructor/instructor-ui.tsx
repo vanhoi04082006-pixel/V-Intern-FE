@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowLeft, Info } from "lucide-react";
+import {
+  IconArrowLeft,
+  IconInfo,
+} from "@/components/v-intern/icons";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 
 export function InstructorHeading({
@@ -24,7 +27,7 @@ export function InstructorHeading({
       back={
         back ? (
           <Link href={back.href}>
-            <ArrowLeft size={15} aria-hidden="true" />
+            <IconArrowLeft size={15} aria-hidden="true" />
             {back.label}
           </Link>
         ) : undefined
@@ -41,7 +44,7 @@ export function InstructorNotice({
 }) {
   return (
     <div className="ins-notice">
-      <Info size={18} aria-hidden="true" />
+      <IconInfo size={18} aria-hidden="true" />
       <div>
         {title && <strong>{title}</strong>}
         <p>{children}</p>
