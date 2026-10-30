@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { useEffect, useState, type ComponentType } from "react";
+import { IconMonitor, IconMoon, IconSun } from "@/components/v-intern/icons";
+import type { NotebookIconProps } from "@/components/v-intern/icons";
 import {
   readPreference,
   subscribeTheme,
@@ -11,10 +12,10 @@ import {
 } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-const OPTIONS: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
-  { value: "light", label: "Sáng", Icon: Sun },
-  { value: "dark", label: "Tối", Icon: Moon },
-  { value: "system", label: "Theo máy", Icon: Monitor },
+const OPTIONS: { value: ThemePreference; label: string; Icon: ComponentType<NotebookIconProps> }[] = [
+  { value: "light", label: "Sáng", Icon: IconSun },
+  { value: "dark", label: "Tối", Icon: IconMoon },
+  { value: "system", label: "Theo máy", Icon: IconMonitor },
 ];
 
 /**

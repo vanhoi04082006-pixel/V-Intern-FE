@@ -1,0 +1,441 @@
+/* Hallmark · V-Intern · theme: "Sổ tay hành trình" (Journey Notebook) · scope: workspace shell + primitives */
+/* Critique: chất giấy mực phủ toàn workspace theo MẬT ĐỘ THEO VAI —
+   intern đậm (giấy/mực/tape), instructor vừa (viền mực, mộc trạng thái),
+   admin nhẹ (token màu + typography, KHÔNG tape/doodle trong bảng dày).
+   File này ghi đè sau cùng (import cuối trong 3 layout) — mọi giá trị
+   đến từ tokens.css/globals.css, không hex/px mới rải rác. */
+
+/* ------------------------------------------------------------------ */
+/* 0. Mức độ trang trí theo vai (CSS vars điều khiển đậm/nhạt)         */
+/* ------------------------------------------------------------------ */
+.aurora-workspace {
+  /* Mặc định = instructor (VỪA): viền mực mảnh, bóng in nhẹ. */
+  --nb-ink-line: color-mix(in srgb, var(--ink) 55%, transparent);
+  --nb-border-width: 1.5px;
+  --nb-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+  --nb-shadow-hover: 3px 3px 0 color-mix(in srgb, var(--ink) 14%, transparent);
+  --nb-panel-bg: var(--card);
+  --nb-radius: 10px;
+}
+[data-workspace-role="intern"].aurora-workspace,
+.aurora-workspace [data-workspace-role="intern"] {
+  /* INTERN (ĐẬM): viền mực rõ, bóng in đậm hơn, giấy nổi. */
+  --nb-ink-line: color-mix(in srgb, var(--ink) 72%, transparent);
+  --nb-border-width: 2px;
+  --nb-shadow: 4px 4px 0 color-mix(in srgb, var(--ink) 13%, transparent);
+  --nb-shadow-hover: 5px 5px 0 color-mix(in srgb, var(--ink) 17%, transparent);
+}
+[data-workspace-role="admin"].aurora-workspace,
+.aurora-workspace [data-workspace-role="admin"] {
+  /* ADMIN (NHẸ): không bóng in, viền tóc, giữ mật độ bảng. */
+  --nb-ink-line: var(--border);
+  --nb-border-width: 1px;
+  --nb-shadow: none;
+  --nb-shadow-hover: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 1. Sidebar — điều hướng kiểu mục lục sổ tay                         */
+/* ------------------------------------------------------------------ */
+/* Nhóm nav: label viết tay Patrick Hand, chỉ giữ cho label ngắn. */
+.aurora-workspace :is(.student-nav-label, .workspace-nav-label, .notebook-nav-group) {
+  font-family: var(--font-patrick-hand), cursive;
+  font-size: var(--type-body);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+/* Mục đang xem: nền marker xanh + gạch chân lượn vẽ tay. */
+.aurora-workspace :is(.student-nav-item, .workspace-nav-item)[aria-current="page"] {
+  position: relative;
+  background: var(--accent);
+  color: var(--ink);
+}
+.aurora-workspace :is(.student-nav-item, .workspace-nav-item)[aria-current="page"] > :first-child {
+  color: var(--blue);
+}
+.aurora-workspace :is(.student-nav-item, .workspace-nav-item)[aria-current="page"]::before {
+  width: 3px;
+  border-radius: 3px;
+  background: var(--blue);
+  transform: rotate(0.5deg);
+}
+.aurora-workspace :is(.student-nav-item, .workspace-nav-item)[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: var(--space-9);
+  right: var(--space-3);
+  bottom: calc(var(--space-2) * 0.75);
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%232060F0' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 40px 6px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.dark .aurora-workspace :is(.student-nav-item, .workspace-nav-item)[aria-current="page"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%237d97ff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+/* Chấm chưa đọc trên nav = chấm mực xanh. */
+.aurora-workspace .student-nav-badge {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 1.5px solid var(--paper-raised);
+  border-radius: 999px 50% 48% 52%;
+  font-weight: 700;
+}
+/* Sidebar nền giấy có đường gáy đục lỗ — chỉ intern, instructor/admin giữ phẳng. */
+[data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar) {
+  background:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px) left 8px / 1px 14px repeat-y,
+    var(--sidebar);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Topbar — breadcrumb mực, ô tìm kiếm kẻ dòng, chuông chấm mực     */
+/* ------------------------------------------------------------------ */
+.aurora-workspace :is(.student-topbar, .product-topbar) {
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+}
+/* Ô tìm kiếm: giấy kẻ dòng vở — dòng kẻ mờ dưới đáy ô. */
+.aurora-workspace .student-topbar-search {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 7px,
+      color-mix(in srgb, var(--ink) 6%, transparent) 7px 8px
+    ),
+    var(--background);
+}
+.aurora-workspace .student-kbd {
+  border: 1.5px solid var(--nb-ink-line);
+  border-radius: 4px 6px 4px 6px;
+  background: var(--paper-raised);
+  box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 16%, transparent);
+  font-family: var(--font-geist-mono), monospace;
+}
+/* Breadcrumb: vạch phân cách nét mực mảnh thay chevron máy in. */
+.aurora-workspace :is(.student-breadcrumb, .product-topbar) :is(li + li::before, nav [aria-hidden] + *) {
+  color: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Drawer mobile — mở như lật góc trang                             */
+/* ------------------------------------------------------------------ */
+.aurora-workspace .product-drawer[open] {
+  animation: page-curl 240ms var(--motion-ease) both;
+  transform-origin: left center;
+  border-right: var(--nb-border-width) solid var(--nb-ink-line);
+}
+.notebook-drawer {
+  animation: page-curl 240ms var(--motion-ease) both;
+  transform-origin: left center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-workspace .product-drawer[open],
+  .notebook-drawer {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Viewbar — tab kiểu mục lục vở (squiggle dưới mục đang mở)        */
+/* ------------------------------------------------------------------ */
+.aurora-workspace .workspace-view-links a {
+  border-bottom: 0;
+  position: relative;
+}
+.aurora-workspace .workspace-view-links a[aria-current="page"] {
+  border-color: transparent;
+  color: var(--blue);
+}
+.aurora-workspace .workspace-view-links a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: var(--space-1);
+  right: var(--space-1);
+  bottom: calc(var(--space-2) * 0.75);
+  height: 5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%232060F0' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 40px 6px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.dark .aurora-workspace .workspace-view-links a[aria-current="page"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%237d97ff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.aurora-workspace .workspace-viewbar-context {
+  font-family: var(--font-patrick-hand), cursive;
+  font-size: var(--type-body);
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Buttons — mực xanh nét đậm (intern/instructor), phẳng cho admin  */
+/* ------------------------------------------------------------------ */
+.aurora-workspace .product-button-primary,
+.aurora-workspace .student-action {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  box-shadow: var(--nb-shadow);
+  border-radius: 8px 10px 9px 10px;
+  transition:
+    box-shadow var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
+}
+.aurora-workspace .product-button-primary:not(:disabled):hover,
+.aurora-workspace .student-action:not(:disabled):hover {
+  box-shadow: var(--nb-shadow-hover);
+  transform: translate(-1px, -1px);
+}
+.aurora-workspace .product-button-primary:not(:disabled):active,
+.aurora-workspace .student-action:not(:disabled):active {
+  transform: translate(0, 0);
+  box-shadow: var(--nb-shadow);
+}
+.aurora-workspace .product-button-secondary {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 8px 10px 9px 10px;
+  background: var(--paper-raised);
+  box-shadow: var(--nb-shadow);
+}
+.aurora-workspace .product-button-secondary:not(:disabled):hover {
+  box-shadow: var(--nb-shadow-hover);
+  transform: translate(-1px, -1px);
+}
+.aurora-workspace .student-action-secondary {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: var(--nb-shadow);
+  border-radius: 8px 10px 9px 10px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Inputs — ô kẻ dòng vở                                            */
+/* ------------------------------------------------------------------ */
+.aurora-workspace :is(.product-input, .student-input, .student-toolbar input, select.product-input) {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 11px,
+      color-mix(in srgb, var(--ink) 4%, transparent) 11px 12px
+    ),
+    var(--paper-raised);
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-bottom: calc(var(--nb-border-width) + 0.5px) solid color-mix(in srgb, var(--ink) 65%, transparent);
+  border-radius: 7px 9px 8px 9px;
+  box-shadow: var(--nb-shadow);
+}
+.aurora-workspace :is(.product-input, .student-input):focus {
+  border-color: var(--primary);
+  box-shadow: 2px 2px 0 color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Panels & cards — thẻ giấy viền mực (đậm/nhạt theo vai ở mục 0)   */
+/* ------------------------------------------------------------------ */
+/* Intern: panel là tờ giấy nổi. Instructor: viền mực mảnh. Admin: flat như cũ. */
+[data-workspace-role="intern"] .student-panel {
+  background: var(--nb-panel-bg);
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: var(--nb-radius);
+  box-shadow: var(--nb-shadow);
+  padding: var(--space-5);
+}
+[data-workspace-role="intern"] .student-panel-header {
+  border-bottom: 1px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+[data-workspace-role="instructor"] .product-panel {
+  background: var(--nb-panel-bg);
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: var(--nb-radius);
+  box-shadow: var(--nb-shadow);
+  padding: var(--space-5);
+}
+/* Instructor panels trước đây có header border-bottom — giữ đường xé giấy. */
+[data-workspace-role="instructor"] .product-panel-header {
+  border-bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%2317171c' stroke-opacity='.32' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 240px 8px;
+  background-position: bottom left;
+  padding-bottom: var(--space-4);
+}
+/* Panel welcome/hero intern: full sketch-card + xoay giấy dán lệch. */
+[data-workspace-role="intern"] .student-chat-welcome {
+  transform: rotate(-0.6deg);
+  transition: transform var(--motion-normal) var(--motion-ease);
+}
+[data-workspace-role="intern"] .student-chat-welcome:hover {
+  transform: rotate(0deg);
+}
+/* Thẻ chờ hành động / dropzone: viền đứt đường cắt giấy. */
+[data-workspace-role="instructor"] .product-card-notebook-dashed,
+.aurora-workspace .dashed-waiting {
+  border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
+  border-radius: var(--nb-radius);
+  background: color-mix(in srgb, var(--paper-raised) 55%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Tables — zebra giấy ấm, header đậm, hover rửa mực                */
+/* ------------------------------------------------------------------ */
+.aurora-workspace :is(.product-table, .workspace-table) {
+  border-collapse: collapse;
+}
+.aurora-workspace :is(.product-table, .workspace-table) thead th {
+  color: var(--ink-soft);
+  font-weight: var(--weight-semibold);
+  text-transform: none;
+  letter-spacing: 0;
+  border-bottom: calc(var(--nb-border-width) + 0.5px) solid color-mix(in srgb, var(--ink) 45%, transparent);
+}
+.aurora-workspace :is(.product-table, .workspace-table) tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--ink) 2.5%, transparent);
+}
+.aurora-workspace :is(.product-table, .workspace-table) tbody tr:hover {
+  background: color-mix(in srgb, var(--blue) 6%, transparent);
+}
+.aurora-workspace .workspace-table-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ink) 38%, transparent) transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. Badge & status — mộc nhỏ cho trạng thái quan trọng               */
+/* ------------------------------------------------------------------ */
+.aurora-workspace :is(.product-badge, .student-badge, .student-chip) {
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 5px 7px 6px 7px;
+}
+.aurora-workspace :is(.product-status, .product-status-dot)::before,
+.aurora-workspace .product-status > span:first-child {
+  border-radius: 50% 46% 52% 48%;
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Empty state — sticky note + doodle, viền đứt cho edge case      */
+/* ------------------------------------------------------------------ */
+.aurora-workspace .product-empty {
+  border: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+  border-radius: var(--nb-radius);
+  background: color-mix(in srgb, var(--paper-raised) 60%, transparent);
+}
+.aurora-workspace .product-empty > span:first-child {
+  border-radius: 46% 54% 50% 50%;
+  border: 2px solid var(--nb-ink-line);
+  background: var(--paper-raised);
+}
+.aurora-workspace .student-empty {
+  border: 2px dashed color-mix(in srgb, var(--ink) 32%, transparent);
+  border-radius: var(--nb-radius);
+  background: color-mix(in srgb, var(--paper-raised) 60%, transparent);
+}
+[data-workspace-role="intern"] .student-empty h3 {
+  font-family: var(--font-patrick-hand), cursive;
+  font-size: var(--type-section);
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. Skeleton & spinner — nét chì gạch chéo, vòng tròn vẽ tay        */
+/* ------------------------------------------------------------------ */
+.aurora-workspace .student-skeleton {
+  background-color: color-mix(in srgb, var(--ink) 4%, transparent);
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ink) 7%, transparent) 0 5px,
+    transparent 5px 11px
+  );
+  border-radius: 3px;
+  animation: none;
+}
+[data-workspace-role="intern"] .loading-state,
+.aurora-workspace .loading-state {
+  font-family: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* 12. Modal — tờ giấy dán tape                                        */
+/* ------------------------------------------------------------------ */
+.aurora-workspace .product-modal {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 12px 14px 13px 14px;
+  box-shadow: 6px 6px 0 color-mix(in srgb, var(--ink) 16%, transparent), var(--elevation-popover);
+  background: var(--paper-raised);
+  position: relative;
+  overflow: visible;
+}
+.aurora-workspace .product-modal::before {
+  /* Mẩu băng dính dán giữa mép trên modal — chỉ intern/instructor, không admin. */
+  content: "";
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 88px;
+  height: 24px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+}
+.dark .aurora-workspace .product-modal::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+[data-workspace-role="admin"] .aurora-workspace .product-modal::before,
+[data-workspace-role="admin"] .product-modal::before {
+  content: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 13. Footer sidebar theo vai — sticky note cho intern                */
+/* ------------------------------------------------------------------ */
+[data-workspace-role="intern"] .workspace-sidebar-account,
+[data-workspace-role="intern"] .product-shell .mt-8.rounded-panel {
+  background: var(--note-yellow);
+  color: var(--note-yellow-ink);
+  border: 1.5px solid color-mix(in srgb, var(--note-yellow-ink) 35%, transparent);
+  border-radius: 3px;
+  transform: rotate(-0.8deg);
+  box-shadow: 0 6px 14px var(--note-yellow-shadow);
+}
+[data-workspace-role="intern"] .product-shell .mt-8.rounded-panel p {
+  color: var(--note-yellow-ink);
+}
+[data-workspace-role="intern"] .product-shell .mt-8.rounded-panel .text-primary {
+  color: color-mix(in srgb, var(--note-yellow-ink) 80%, var(--blue));
+}
+
+/* ------------------------------------------------------------------ */
+/* 14. Ghi chú tay & chi tiết vi mô                                    */
+/* ------------------------------------------------------------------ */
+.note-card-title {
+  color: inherit;
+}
+.margin-note {
+  border-left: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+  padding-left: var(--space-3);
+}
+/* Kbd, chip số liệu mono giữ JetBrains — đã có sẵn. */
+/* Trang chi tiết intern: tiêu đề chính được marker sau chữ (density thấp, chỉ intern). */
+[data-workspace-role="intern"] .student-outcome-heading h1,
+[data-workspace-role="intern"] .workspace-page-header h1 {
+  display: inline-block;
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--blue) 14%, transparent) 3%,
+    color-mix(in srgb, var(--blue) 14%, transparent) 97%,
+    transparent 99%
+  );
+  background-size: 100% 62%;
+  background-position: 0 62%;
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+}

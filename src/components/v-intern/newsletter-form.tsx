@@ -23,7 +23,7 @@ export function NewsletterForm() {
 
   return state === "unavailable" ? (
     <div className="mt-4">
-      <p className="flex items-start gap-2 rounded-lg border-2 border-dashed border-royal/50 bg-royal/15 px-3.5 py-3 text-xs leading-relaxed text-[#a3b9ff]">
+      <p className="dashed-cut-chalk flex items-start gap-2 rounded-lg bg-royal/15 px-3.5 py-3 text-xs leading-relaxed text-[#a3b9ff]">
         <Info size={16} className="shrink-0" aria-hidden="true" />
         Đăng ký bản tin chưa được kết nối với hệ thống. Tính năng sẽ khả dụng
         khi backend chính thức ra mắt.

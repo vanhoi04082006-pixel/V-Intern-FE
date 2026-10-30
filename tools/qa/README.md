@@ -30,6 +30,16 @@ node tools/qa/keyboard-check.mjs http://localhost:3016 /intern/work
 Pack khả dụng: `intern-work`, `intern-results`. Ảnh và report ghi vào `.qa/`
 (đã gitignore).
 
+`visual-check` tự khởi động Next nếu không truyền `--base-url`. Trên Windows,
+harness gọi thẳng binary `next` bằng node (không spawn `npm.cmd`), và dọn cả
+process tree khi kết thúc — không để dev server giữ cổng.
+
+Trước khi đo/chụp, mỗi trang được cuộn hết một lượt (cuộn tức thời, vì
+`globals.css` đặt `scroll-behavior: smooth`) để ảnh lazy tải và các khối
+`FadeIn`/`whileInView` hiện ra; sau đó mới đo tràn ngang và chụp full-page.
+Report tách riêng `brokenImages` (lỗi thật) và `abortedRequests` (request bị
+trang tự hủy, ví dụ prefetch RSC khi redirect).
+
 ## Quy ước
 
 - Fixture mới phải kèm assertion trong

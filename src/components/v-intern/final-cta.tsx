@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { SparkleDoodle, SquiggleUnderline, StarDoodle } from "@/components/v-intern/doodles";
+import { StampMoc } from "@/components/workspace/notebook";
 
 /** Lời chào cuối trang — trang bìa xanh trước khi gấp sổ lại. */
 export function FinalCta() {
@@ -48,6 +49,13 @@ export function FinalCta() {
               />
             </a>
           </div>
+
+          {/* Mộc xác nhận trên nền xanh — dấu "MIỄN PHÍ" đóng nghiêng */}
+          <FadeIn delay={0.1} className="mt-7 flex justify-center">
+            <StampMoc tone="blue" rotate={-4} className="text-white/90">
+              Miễn phí cho sinh viên
+            </StampMoc>
+          </FadeIn>
 
           <p className="mt-6 font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
             hẹn gặp bạn bên trong ✦

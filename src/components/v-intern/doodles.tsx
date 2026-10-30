@@ -8,7 +8,14 @@ import { cn } from "@/lib/utils";
  * Mọi doodle tô màu theo `currentColor`.
  */
 
-export function SquiggleUnderline({ className }: { className?: string }) {
+export function SquiggleUnderline({
+  className,
+  draw = false,
+}: {
+  className?: string;
+  /** Vẽ dần theo scroll (pathLength chuẩn hoá 120; tôn trọng reduced-motion). */
+  draw?: boolean;
+}) {
   return (
     <svg
       aria-hidden="true"
@@ -22,6 +29,8 @@ export function SquiggleUnderline({ className }: { className?: string }) {
         stroke="currentColor"
         strokeWidth="3"
         strokeLinecap="round"
+        pathLength={120}
+        className={draw ? "squiggle-draw" : undefined}
       />
     </svg>
   );
@@ -149,7 +158,7 @@ export function CircleDoodle({ className }: { className?: string }) {
   );
 }
 
-/** Mẩu băng dính washi dán chéo */
+/** Mẩu băng dính washi dán chéo — xoay qua --tape-rotate để hover peel ăn đúng */
 export function Tape({
   className,
   rotate = -6,
@@ -160,13 +169,13 @@ export function Tape({
   return (
     <span
       aria-hidden="true"
-      className={cn("tape pointer-events-none z-20", className)}
-      style={{ transform: `rotate(${rotate}deg)` }}
+      className={cn("tape tape-peel pointer-events-none z-20", className)}
+      style={{ "--tape-rotate": `${rotate}deg` } as React.CSSProperties}
     />
   );
 }
 
-/** Con dấu mộc tròn xoay nhẹ */
+/** Con dấu mộc tròn xoay nhẹ — dùng utility .stamp-moc (nét không đều + mực loang) */
 export function StampBadge({
   children,
   className,
@@ -179,10 +188,10 @@ export function StampBadge({
   return (
     <span
       className={cn(
-        "stamp inline-flex items-center justify-center px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em]",
+        "stamp-moc inline-flex items-center justify-center px-5 py-2 font-mono text-[11px] tracking-[0.14em]",
         className,
       )}
-      style={{ transform: `rotate(${rotate}deg)` }}
+      style={{ "--stamp-rotate": `${rotate}deg` } as React.CSSProperties}
     >
       {children}
     </span>

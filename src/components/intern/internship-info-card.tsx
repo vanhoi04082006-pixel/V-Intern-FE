@@ -1,4 +1,4 @@
-import { ListTodo } from "lucide-react";
+import { IconListTodo } from "@/components/v-intern/icons";
 import { cn } from "@/lib/utils";
 
 import { SectionCard, StatusBadge } from "./intern-primitives";
@@ -23,7 +23,7 @@ export function InternshipInfoCard({
   return (
     <SectionCard
       id="thong-tin-thuc-tap"
-      icon={rows[0]?.icon ?? ListTodo}
+      icon={rows[0]?.icon ?? IconListTodo}
       tone="blue"
       title="Thông tin thực tập"
       className={className}

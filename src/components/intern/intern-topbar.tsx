@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type Ref } from "react";
 import {
-  ChevronDown,
-  ChevronRight,
-  Home,
-  Menu,
-  Search,
-} from "lucide-react";
+  IconChevronDown,
+  IconChevronRight,
+  IconHome,
+  IconMenu,
+  IconSearch,
+} from "@/components/v-intern/icons";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { NotificationBell } from "@/components/shared/notification-bell";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
@@ -82,7 +82,7 @@ export function InternTopbar({
           onClick={onOpenMenu}
           className="student-icon-button student-menu-button"
         >
-          <Menu className="size-5" aria-hidden="true" />
+          <IconMenu className="size-5" aria-hidden="true" />
         </button>
 
         {!waiting && (
@@ -93,13 +93,13 @@ export function InternTopbar({
             <ol>
               <li>
                 <Link href="/" className="truncate">
-                  <Home className="size-3.5" aria-hidden="true" />
+                  <IconHome className="size-3.5" aria-hidden="true" />
                   V-Intern
                 </Link>
               </li>
               {breadcrumb.map((crumb) => (
                 <li key={crumb.id} className="flex min-w-0 items-center gap-1">
-                  <ChevronRight
+                  <IconChevronRight
                     className="size-3.5 shrink-0 text-muted-foreground"
                     aria-hidden="true"
                   />
@@ -122,7 +122,7 @@ export function InternTopbar({
           <div
             className={cn("student-topbar-search", waiting && "mr-auto")}
           >
-            <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <IconSearch className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
             <input
               ref={searchRef}
               type="search"
@@ -185,7 +185,7 @@ export function InternTopbar({
               <span className="student-topbar-user-name">{user.name}</span>
               <span className="student-topbar-user-role">{user.roleLabel}</span>
             </span>
-            <ChevronDown
+            <IconChevronDown
               className="size-4 text-muted-foreground max-sm:hidden"
               aria-hidden="true"
             />

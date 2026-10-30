@@ -93,7 +93,7 @@ function KanbanBoard() {
                       className={
                         "rounded px-1.5 py-px font-mono text-[9px] font-bold uppercase " +
                         (card.active
-                          ? "bg-white/25 text-white"
+                          ? "bg-white text-royal-deep"
                           : "bg-royal/25 text-[#9db4ff]")
                       }
                     >
@@ -102,7 +102,7 @@ function KanbanBoard() {
                     <span
                       className={
                         "font-mono text-[9px] font-bold " +
-                        (card.active ? "text-white/85" : "text-chalk/45")
+                        (card.active ? "text-white/85" : "text-chalk-soft")
                       }
                     >
                       {card.points} SP
