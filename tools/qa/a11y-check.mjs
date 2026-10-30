@@ -82,6 +82,22 @@ const PACKS = {
     "/admin/notifications",
     "/admin/profile",
   ],
+  "public-auth": [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/change-password",
+    "/apply",
+    "/verify",
+    "/github/invitation?session=ses-0000-4000-8000-000000000001",
+    "/trang-khong-ton-tai",
+  ],
+  "onboarding": [
+    "/intern/onboarding",
+    "/intern/onboarding/role",
+    "/intern/onboarding/interview",
+    "/intern/onboarding/result",
+  ],
   "intern-work": [
     "/intern",
     "/intern/work",
@@ -126,7 +142,7 @@ if (!routes.length) {
 }
 const baseURL = String(arg("base-url", "http://localhost:3016"));
 
-const { resolveApi: resolveInternApi } = await import("./fixtures.mjs");
+const { resolveApi: resolveInternApi, qaStage } = await import("./fixtures.mjs");
 const { resolveInstructorApi } = await import("./fixtures-instructor.mjs");
 const { resolveAdminApi } = await import("./fixtures-admin.mjs");
 // Role-scoped fixtures follow the route being checked, not the whole pack.
@@ -163,6 +179,15 @@ for (const route of routes) {
     : route.startsWith("/instructor")
       ? "instructor"
       : "intern";
+  qaStage.recruitment = route.startsWith("/intern/onboarding")
+    ? route.endsWith("/role")
+      ? "role"
+      : route.endsWith("/interview")
+        ? "interview"
+        : route.endsWith("/result")
+          ? "result"
+          : "welcome"
+    : "default";
   for (const context of CONTEXTS) {
     const browserContext = await browser.newContext({
       viewport: { width: context.width, height: context.height },

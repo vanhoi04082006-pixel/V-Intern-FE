@@ -59,7 +59,7 @@ function ManualRoleSelectionStep() {
           bắt đầu phỏng vấn.
         </p>
         <p className="mt-2 text-body">
-          Số lần còn lại: {profile.attemptsRemaining}
+          Số lần phỏng vấn còn lại: {profile.attemptsRemaining}
         </p>
         {profile.nextEligibleAt && (
           <p className="mt-2 text-body">
