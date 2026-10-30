@@ -9,7 +9,7 @@ import {
   SessionRepositoryCard,
 } from "@/components/product/github-connection";
 import { StudentHeading, StudentPanel, StudentLink } from "./student-ui";
-import { NoteCard } from "@/components/workspace/notebook";
+import { MarginNote, NoteCard } from "@/components/workspace/notebook";
 
 export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
   return (
@@ -18,6 +18,9 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
         title="GitHub của bạn"
         description="Liên kết đúng tài khoản, nhận lời mời vào dự án và chuẩn bị mã nguồn để nộp bài."
       />
+      <MarginNote className="-mt-5 max-w-md">
+        kiểm tra lời mời repository trên GitHub trước khi bắt đầu code nhé ✎
+      </MarginNote>
       <div className="student-dashboard-grid student-github-workspace">
         <div className="space-y-5">
           <GithubConnection />
