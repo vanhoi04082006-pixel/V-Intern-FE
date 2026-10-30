@@ -30,8 +30,7 @@ mỗi utility có bản dark riêng.
 | `.skeleton-pencil` | skeleton nét chì gạch chéo | thay khối xám pulse |
 | `.spinner-hand` | vòng tròn vẽ tay quay | thay ring quay |
 | `.underline-squiggle` | gạch chân lượn sóng | link, tab đang mở |
-| `.notebook-scroll` | scrollbar bút chì mảnh cho vùng cuộn trong | bảng, danh sách |
-| `.notebook-table` / `.notebook-table-sticky` | zebra giấy ấm / header dính bóng mép giấy | bảng dữ liệu |
+| `.notebook-scroll` | scrollbar bút chì mảnh cho vùng cuộn trong (sidebar, drawer, bảng áp qua selector `:is(...)` trong notebook.css) | vùng cuộn |
 | `.font-hand` | Patrick Hand — CHỈ ghi chú ngắn/label/empty-state | không dùng nội dung dài/bảng |
 | Motion: `.animate-stamp-thump` `.animate-marker-sweep` `.animate-paper-settle` `.animate-page-curl` `.squiggle-draw` | hiệu ứng 120–240ms | đều tôn trọng `prefers-reduced-motion` |
 

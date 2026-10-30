@@ -118,7 +118,7 @@ export function InternShell({
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-foreground/50"
           />
-          <div className="absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-popover">
+          <div className="notebook-drawer absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-popover">
             <InternSidebar
               currentPath={pathname}
               groups={groups}

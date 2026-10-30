@@ -309,7 +309,6 @@
   box-decoration-break: clone;
 }
 /* Thẻ chờ hành động / dropzone: viền đứt đường cắt giấy. */
-[data-workspace-role="instructor"] .product-card-notebook-dashed,
 .aurora-workspace .dashed-waiting {
   border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
   border-radius: var(--nb-radius);
@@ -366,9 +365,24 @@
 .aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:hover {
   background: color-mix(in srgb, var(--blue) 6%, transparent);
 }
-.aurora-workspace .workspace-table-wrap {
+.aurora-workspace .workspace-table-wrap,
+.aurora-workspace :is(.student-sidebar-scroll, .product-sidebar nav, .product-drawer, .notebook-drawer) {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--ink) 38%, transparent) transparent;
+}
+.aurora-workspace :is(.student-sidebar-scroll, .product-sidebar nav, .product-drawer, .notebook-drawer)::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+.aurora-workspace :is(.student-sidebar-scroll, .product-sidebar nav, .product-drawer, .notebook-drawer)::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  border-radius: 7px;
+}
+.aurora-workspace :is(.student-sidebar-scroll, .product-sidebar nav, .product-drawer, .notebook-drawer)::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink) 42%, transparent);
+  border-radius: 7px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 /* ------------------------------------------------------------------ */
