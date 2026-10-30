@@ -244,7 +244,8 @@ function ArtifactPreview({ step }: { step: Step }) {
       aria-hidden="true"
       className="rounded-2xl border-2 border-dashed border-ink/25 bg-raised p-5"
     >
-      <p className="font-mono text-[10px] font-bold uppercase leading-none tracking-[0.18em] text-ink-faint">
+      {/* ink-soft: ink-faint on paper-raised fails AA (2.7:1) at 10-11px */}
+      <p className="font-mono text-[10px] font-bold uppercase leading-none tracking-[0.18em] text-ink-soft">
         {step.artifact}
       </p>
       <div className="mt-3 h-[2px] rounded-full bg-ink/10" aria-hidden="true" />
@@ -295,7 +296,7 @@ export function Workflow() {
                   <h3 className="font-hand text-xl leading-none text-ink">
                     {phase.name}
                   </h3>
-                  <p className="font-mono text-[11px] leading-none text-ink-faint">
+                  <p className="font-mono text-[11px] leading-none text-ink-soft">
                     {phase.range}
                   </p>
                 </div>
@@ -340,7 +341,7 @@ export function Workflow() {
 
                           <span className="min-w-0 flex-1">
                             <span className="flex items-baseline gap-2">
-                              <span className="font-mono text-[11px] font-bold leading-none text-ink-faint">
+                              <span className="font-mono text-[11px] font-bold leading-none text-ink-soft">
                                 {String(index + 1).padStart(2, "0")}
                               </span>
                               <span
@@ -396,7 +397,7 @@ export function Workflow() {
                   >
                     <div className="grid gap-8 sm:grid-cols-2">
                       <div>
-                        <p className="font-mono text-[11px] font-bold leading-none text-ink-faint">
+                        <p className="font-mono text-[11px] font-bold leading-none text-ink-soft">
                           {step.range}
                         </p>
                         <h3 className="mt-2 text-lg font-extrabold leading-tight text-ink">

@@ -56,9 +56,14 @@ for (let i = 0; i < 20; i++) {
       tag: el.tagName,
       outline,
       visibleOutline: style.outlineStyle !== "none" && parseFloat(style.outlineWidth) > 0,
+      // Next dev mode injects <nextjs-portal> (devtools indicator) past the
+      // app's own stops; production has no such element. Stop walking there —
+      // BODY afterwards just echoes document focus.
+      devArtifact: el.tagName === "NEXTJS-PORTAL" || el === document.body,
     };
   });
   if (!info) break;
+  if (info.devArtifact) break;
   stops.push(info);
 }
 console.log("tab stops:", stops.map((s) => `${s.tag}:"${s.label}"${s.visibleOutline ? " ✓focus" : " ✗NO-OUTLINE"}`).join("\n  "));

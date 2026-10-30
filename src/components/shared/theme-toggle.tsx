@@ -57,7 +57,10 @@ export function ThemeToggle({ className }: { className?: string }) {
             tabIndex={active || (preference === null && value === "system") ? 0 : -1}
             onClick={() => setPreference(value)}
             className={cn(
-              "grid size-7 place-items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              /* Real outline (not ring): renders in forced-colors mode and is
+                 what the keyboard QA harness measures; on workspace shells
+                 the unlayered :focus-visible rule still wins for parity. */
+              "grid size-7 place-items-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
               active
                 ? "bg-card text-primary shadow-app-xs"
                 : "text-muted-foreground hover:text-foreground",

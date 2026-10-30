@@ -52,6 +52,20 @@ describe("Navbar", () => {
     expect(screen.queryByRole("button", { name: /đóng menu/i })).toBeNull();
   });
 
+  it("Escape đóng menu mobile và trả focus về nút bật/tắt", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const toggle = screen.getByRole("button", { name: /mở menu/i });
+    await user.click(toggle);
+    expect(document.getElementById("mobile-menu")).not.toBeNull();
+
+    await user.keyboard("{Escape}");
+
+    expect(document.getElementById("mobile-menu")).toBeNull();
+    expect(screen.getByRole("button", { name: /mở menu/i })).toHaveFocus();
+  });
+
   it("không còn dead control 'Sign in' (đã bị loại trong bootstrap)", () => {
     render(<Navbar />);
 
