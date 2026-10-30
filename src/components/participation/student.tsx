@@ -4,6 +4,7 @@ import { StudentHeading } from "@/components/intern/student-ui";
 import { Pager, btn } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { NoteCard, PaperDivider } from "@/components/workspace/notebook";
+import { Tape } from "@/components/v-intern/doodles";
 import { ownParticipation } from "@/lib/api/participation";
 import { useResource } from "@/lib/api/use-resource";
 import { IncidentList } from "./incident-list";
@@ -51,7 +52,10 @@ export function ParticipationStudent() {
       )}
       {report.data && (
         <>
-          <ParticipationSummary {...report.data.summary} />
+          <div className="relative group">
+            <Tape className="-top-3 left-6" rotate={-5} />
+            <ParticipationSummary {...report.data.summary} />
+          </div>
           <p className="text-caption leading-5 text-muted-foreground">
             Điểm phạt ghi nhận là căn cứ xem xét khi chấm bài, không phải tổng
             điểm đã trừ. Điểm đã chốt hiển thị riêng theo từng bài; miễn trừ sau

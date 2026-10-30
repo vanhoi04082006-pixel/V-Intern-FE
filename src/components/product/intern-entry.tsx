@@ -49,6 +49,8 @@ import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
 import { useOwnTaskDrop } from "./use-own-task-drop";
 import { useRouter } from "next/navigation";
 import { TaskDeadline } from "@/components/workspace/task-deadline";
+import { Tape } from "@/components/v-intern/doodles";
+import { NoteCard, StampMoc } from "@/components/workspace/notebook";
 
 const INTERN_ROLES = ["intern"] as const;
 
@@ -407,6 +409,12 @@ export function SprintBoard({
           </p>
         </div>
       )}
+      {own && (
+        <NoteCard tape title="Gợi ý của AI mentor" className="max-w-md">
+          Chưa xong thì để ở Đang làm — kéo sang Chờ duyệt khi sẵn sàng nộp
+          bài.
+        </NoteCard>
+      )}
       {drop.error && <InlineAlert tone="danger">{drop.error}</InlineAlert>}
       {drop.busy && (
         <p role="status" className="text-body text-muted-foreground">
@@ -422,7 +430,7 @@ export function SprintBoard({
               <span aria-hidden="true">·</span> {data.sprint.name}
             </>
           }
-          className="student-sprint-summary"
+          className="student-sprint-summary relative group"
           icon={IconSquareKanban}
           action={
             <StudentBadge
@@ -436,6 +444,7 @@ export function SprintBoard({
             </StudentBadge>
           }
         >
+          <Tape className="-top-3 left-6" rotate={-5} />
           <div className="grid gap-5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]">
             <div>
               <p className="student-label">Tiến độ Sprint</p>
@@ -513,6 +522,11 @@ export function SprintBoard({
                     {statusLabels[column.status]}
                     <span className="student-board-count">{column.count}</span>
                   </h2>
+                  {own && column.status === "done" && (
+                    <StampMoc size="sm" thump rotate={-6}>
+                      XONG
+                    </StampMoc>
+                  )}
                   <p>{{ todo: "Đọc yêu cầu và chuẩn bị", doing: "Tập trung từng nhiệm vụ", review: "Đã nộp, chờ phản hồi", done: "Được giảng viên xác nhận" }[column.status]}</p>
                 </header>
                 {column.tasks.length ? (
@@ -647,7 +661,8 @@ export function ProjectDetail({
     return (
       <div className="student-dashboard-grid student-project-layout">
         <div className="space-y-5">
-          <StudentPanel title={p.name} icon={IconFolderKanban} className="student-project-brief">
+          <StudentPanel title={p.name} icon={IconFolderKanban} className="student-project-brief relative group">
+            <Tape className="-top-3 left-6" rotate={-5} />
             <span className="rounded-control bg-accent px-2 py-1 text-caption font-bold text-primary">
               {p.code}
             </span>
