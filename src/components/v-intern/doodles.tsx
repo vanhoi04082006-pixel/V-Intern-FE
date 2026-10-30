@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useInViewOnce } from "@/lib/ui/use-in-view-once";
 
 /**
  * Bộ doodle vẽ tay — SVG nét mực không đối xứng hoàn toàn
@@ -8,13 +9,23 @@ import { cn } from "@/lib/utils";
  * Mọi doodle tô màu theo `currentColor`.
  */
 
-export function SquiggleUnderline({ className }: { className?: string }) {
+export function SquiggleUnderline({
+  className,
+  draw = false,
+}: {
+  className?: string;
+  /** draw=true: vẽ dần nét lượn khi vào viewport (pathLength=1). */
+  draw?: boolean;
+}) {
+  const { ref, inView } = useInViewOnce<SVGSVGElement>();
   return (
     <svg
+      ref={draw ? ref : undefined}
       aria-hidden="true"
       viewBox="0 0 120 10"
       preserveAspectRatio="none"
-      className={cn("h-[10px] w-full", className)}
+      className={cn("h-[10px] w-full", draw && "squiggle-draw", className)}
+      data-inview={draw ? (inView ? "true" : "false") : undefined}
     >
       <path
         d="M2 7 Q 14 2.5, 27 6 T 52 5.5 T 77 6.5 T 102 5 T 118 6"
@@ -22,6 +33,7 @@ export function SquiggleUnderline({ className }: { className?: string }) {
         stroke="currentColor"
         strokeWidth="3"
         strokeLinecap="round"
+        pathLength={draw ? 1 : undefined}
       />
     </svg>
   );
@@ -149,40 +161,47 @@ export function CircleDoodle({ className }: { className?: string }) {
   );
 }
 
-/** Mẩu băng dính washi dán chéo */
+/** Mẩu băng dính washi dán chéo — peel=true sẽ cong nhẹ khi hover cả nhóm cha (.group) */
 export function Tape({
   className,
   rotate = -6,
+  peel = false,
 }: {
   className?: string;
   rotate?: number;
+  peel?: boolean;
 }) {
   return (
     <span
       aria-hidden="true"
-      className={cn("tape pointer-events-none z-20", className)}
+      className={cn("tape pointer-events-none z-20", peel && "tape-peel", className)}
       style={{ transform: `rotate(${rotate}deg)` }}
     />
   );
 }
 
-/** Con dấu mộc tròn xoay nhẹ */
+/** Con dấu mộc tròn — stamp-moc: viền cong không đều + vòng trong, chữ nghiêng.
+ *  thump=true: đóng xuống bảng (scale 1.4→1, xoay về -2.5deg) — khi đó
+ *  không dùng rotate riêng để animation giữ quyền xoay tới cùng. */
 export function StampBadge({
   children,
   className,
   rotate = -12,
+  thump = false,
 }: {
   children: React.ReactNode;
   className?: string;
   rotate?: number;
+  thump?: boolean;
 }) {
   return (
     <span
       className={cn(
-        "stamp inline-flex items-center justify-center px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em]",
+        "stamp-moc inline-flex items-center justify-center px-4 py-1.5 font-mono text-[11px] font-bold uppercase",
+        thump && "stamp-thump",
         className,
       )}
-      style={{ transform: `rotate(${rotate}deg)` }}
+      style={thump ? undefined : { rotate: `${rotate}deg` }}
     >
       {children}
     </span>

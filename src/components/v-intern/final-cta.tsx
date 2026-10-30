@@ -16,6 +16,13 @@ export function FinalCta() {
       <StarDoodle className="absolute bottom-16 right-[10%] hidden h-10 w-10 rotate-12 text-white/25 lg:block" />
       <SparkleDoodle className="absolute right-[22%] top-10 hidden h-7 w-7 text-white/30 lg:block" />
 
+      {/* Sticky note vàng — mẩu giấy ghi tay trên trang bìa xanh */}
+      <div className="sticky-note sticky-note-alt absolute right-[5%] top-24 hidden w-44 p-3 lg:block">
+        <p className="font-hand text-[15px] leading-6">
+          đăng ký sớm — lộ trình mở ngay ✎
+        </p>
+      </div>
+
       <div className="relative mx-auto max-w-3xl px-4 text-center md:px-6">
         <FadeIn>
           <p className="font-hand text-2xl leading-none text-white/90">

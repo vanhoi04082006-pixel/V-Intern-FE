@@ -6,7 +6,9 @@
 .workspace-ui.aurora-workspace { min-height:100dvh; background:var(--background); color:var(--foreground); }
 .aurora-workspace .product-shell { background:var(--background); color:var(--foreground); }
 .aurora-workspace :is(.product-main, #intern-main-content) { max-width:var(--layout-max); min-width:0; width:100%; margin-inline:auto; padding:var(--space-8) var(--space-8) var(--space-12); }
-.aurora-workspace :is(.student-sidebar-desktop, .product-sidebar) { inset-block:0; left:0; width:var(--layout-sidebar); height:100dvh; border:0; border-right:1px solid var(--sidebar-border); border-radius:0; background:var(--sidebar); box-shadow:none; scrollbar-width:thin; scrollbar-color:var(--input) transparent; }
+.aurora-workspace :is(.student-sidebar-desktop, .product-sidebar) { inset-block:0; left:0; width:var(--layout-sidebar); height:100dvh; border:0; border-right:1.5px solid color-mix(in srgb, var(--ink) 24%, transparent); border-radius:0; background:var(--sidebar); box-shadow:none; scrollbar-width:thin; scrollbar-color:var(--input) transparent; }
+/* Notebook: sidebar mang chất giấy chấm bi rất nhạt — màu giấy, không trang trí */
+.aurora-workspace :is(.student-sidebar-desktop, .product-sidebar) { background-image: radial-gradient(var(--line) 1.2px, transparent 1.2px); background-size: 22px 22px; }
 .aurora-workspace :is(.student-sidebar, .product-sidebar, .product-drawer) { color:var(--sidebar-foreground); background:var(--sidebar); }
 .aurora-workspace :is(.student-sidebar-brand, .workspace-brand) { display:flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:var(--space-1); min-height:var(--layout-topbar); height:var(--layout-topbar); margin:0 0 var(--space-4); padding:var(--space-3) var(--space-4); border:0; }
 .aurora-workspace :is(.student-sidebar-tagline, .student-sidebar-scope) { display:none; }
@@ -23,13 +25,31 @@
 .aurora-account-link strong { font-size:var(--type-small); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .aurora-account-link span span { color:var(--muted-foreground); font-size:var(--type-caption); }
 .aurora-account-monogram, .aurora-workspace :is(.student-avatar, .product-avatar) { display:grid; place-items:center; width:var(--space-8); height:var(--space-8); flex-shrink:0; border:0; border-radius:50%; background:var(--accent); color:var(--accent-foreground); font-size:var(--type-small); font-weight:var(--weight-semibold); box-shadow:none; }
-.aurora-workspace :is(.student-topbar, .product-topbar) { min-height:var(--layout-topbar); background:var(--card); border:0; border-bottom:1px solid var(--border); box-shadow:none; backdrop-filter:none; }
+.aurora-workspace :is(.student-topbar, .product-topbar) { min-height:var(--layout-topbar); background:var(--card); border:0; border-bottom:1.5px solid color-mix(in srgb, var(--ink) 26%, transparent); box-shadow:none; backdrop-filter:none; }
 .aurora-workspace .student-topbar-inner { min-height:var(--layout-topbar); }
-.aurora-workspace .student-topbar-search { border:1px solid var(--border); border-radius:var(--radius-control-value); background:var(--background); box-shadow:none; }
+.aurora-workspace .student-topbar-search { border:1.5px solid color-mix(in srgb, var(--ink) 30%, transparent); border-radius:var(--radius-control-value); background:var(--background); box-shadow:none; }
 .aurora-workspace .student-topbar-search input { background:transparent; }
-.aurora-workspace .product-drawer { width:min(var(--layout-drawer), 88%); max-width:100%; box-shadow:var(--elevation-popover); }
+/* Notebook: drawer mở như lật góc trang — viền mép giấy mực */
+.aurora-workspace .product-drawer { width:min(var(--layout-drawer), 88%); max-width:100%; box-shadow:var(--elevation-popover); border-right:1.5px solid color-mix(in srgb, var(--ink) 24%, transparent); }
 .aurora-workspace :is(.product-drawer, .product-modal)::backdrop { background:var(--color-overlay); }
-.aurora-workspace .product-modal { border-radius:var(--radius-dialog-value); border:0; box-shadow:var(--elevation-popover); }
+/* Notebook: modal = tờ giấy dán băng dính, mép mực đậm */
+.aurora-workspace .product-modal { border-radius:var(--radius-dialog-value); border:1.5px solid color-mix(in srgb, var(--ink) 32%, transparent); box-shadow:4px 4px 0 0 color-mix(in srgb, var(--hard-shadow) 28%, transparent); }
+.aurora-workspace .product-modal::before {
+  content:"";
+  position:absolute;
+  top:-12px;
+  left:calc(50% - 48px);
+  width:96px;
+  height:24px;
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity:.85;
+  transform: rotate(-2deg);
+}
+.dark .aurora-workspace .product-modal::before { background: color-mix(in srgb, var(--blue) 30%, #26262e 60%); }
+/* Notebook: nội dung instructor nền giấy chấm bi (vừa); admin giữ nền phẳng (nhẹ) */
+.aurora-workspace[data-workspace-role="instructor"] .aurora-shell-content,
+.student-experience .aurora-shell-content { background-image: radial-gradient(var(--line) 1.4px, transparent 1.4px); background-size: 24px 24px; }
 .aurora-workspace .product-panel { min-width:0; background:transparent; border:0; box-shadow:none; }
 .aurora-workspace .product-panel-header { padding-bottom:var(--space-3); margin-bottom:var(--space-4); border-bottom:1px solid var(--border); }
 .aurora-workspace .product-panel-title { font-size:var(--type-subsection); font-weight:var(--weight-semibold); }

@@ -91,6 +91,28 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+  /* ---- Vi mô sổ tay (Lớp 8) — phủ toàn app ---- */
+  /* Chuột quét chữ = marker xanh nhạt */
+  ::selection { background: rgba(32, 96, 240, 0.22); }
+  .dark ::selection { background: rgba(125, 151, 255, 0.3); }
+  /* Placeholder = chữ chì nhạt nghiêng nhẹ */
+  ::placeholder { color: var(--ink-faint); font-style: italic; opacity: 1; }
+  /* Bullet ::marker = mực mềm */
+  ::marker { color: var(--ink-soft); }
+  /* Focus ring = nét mực 2px offset 2px cho mọi element focus được
+     (element đã tự style ring riêng thì class của nó vẫn thắng). */
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* Scrollbar = bút chì mảnh trên rãnh giấy (webkit + firefox) */
+  * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--ink) 38%, transparent) transparent; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--ink) 42%, transparent);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--ink) 60%, transparent); background-clip: padding-box; }
 }
 
 /* ---------- Intern Waiting Workspace — desktop density tokens ----------
@@ -287,7 +309,8 @@ html {
     border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
   }
 
-  /* Mẩu băng dính washi */
+  /* Mẩu băng dính washi — xoay do component Tape đặt inline;
+     peel = cong nhẹ qua scale/translate riêng, cộng dồn với xoay bất kỳ */
   .tape {
     position: absolute;
     width: 96px;
@@ -303,31 +326,268 @@ html {
       0% 14%
     );
     opacity: 0.9;
+    transform-origin: 50% 0;
+    transition: scale 200ms var(--motion-ease, ease), translate 200ms var(--motion-ease, ease);
   }
 
   .dark .tape {
     background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
   }
 
-  /* Con dấu tròn kiểu mộc */
-  .stamp {
-    border: 2.5px solid currentColor;
-    border-radius: 999px;
-    mask-image: radial-gradient(
-      circle at 30% 30%,
-      black 92%,
-      transparent 98%
-    );
+  /* Băng dính cong nhẹ khi hover cả nhóm cha (.group) — tape luôn pointer-events-none */
+  .group:hover .tape-peel {
+    scale: 1 0.9;
+    translate: 0 -2px;
   }
 
-  /* Gạch chân lượn sóng vẽ tay (dùng cho link) */
+  /* Con dấu mộc tròn — viền nét không đều + vòng trong mảnh, chữ nghiêng.
+     Dùng cho ĐÃ DUYỆT / ĐÃ HOÀN THÀNH / PASS. Kèm .stamp-thump để "đóng" xuống.
+     Xoay mặc định -2.5deg; gọi muốn xoay khác đặt inline `rotate`. */
+  .stamp-moc {
+    --moc-ink: var(--moc-blue);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;
+    padding: 0.2rem 0.8rem;
+    border: 2px solid var(--moc-ink);
+    border-radius: 47% 53% 51% 49% / 52% 48% 53% 47%;
+    color: var(--moc-ink);
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    rotate: -2.5deg;
+    user-select: none;
+  }
+  .stamp-moc::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border: 1px solid color-mix(in srgb, var(--moc-ink) 55%, transparent);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .stamp-moc-red { --moc-ink: var(--moc-red); }
+  .stamp-moc-green { --moc-ink: var(--moc-green); }
+
+  /* Sticky note — giấy note vàng dán lệch 1–2deg, hover thẳng lại.
+     Chữ luôn --note-ink đậm để giữ AA ở cả hai theme. */
+  .sticky-note {
+    position: relative;
+    display: block;
+    background: var(--note);
+    color: var(--note-ink);
+    border: 1px solid var(--note-edge);
+    box-shadow:
+      0 1px 2px rgba(23, 23, 28, 0.09),
+      0 5px 14px rgba(23, 23, 28, 0.07);
+    rotate: -1.4deg;
+    transition: rotate 180ms var(--motion-ease, ease), box-shadow 180ms var(--motion-ease, ease);
+  }
+  .sticky-note:hover { rotate: 0deg; }
+  .sticky-note-alt { rotate: 1.6deg; }
+  .sticky-note-alt:hover { rotate: 0deg; }
+
+  /* Nút mực: đổ mực lệch + nhấn xuống giấy (transform/translate riêng, không đụng tailwind translate) */
+  .notebook-btn-ink {
+    box-shadow: 2.5px 2.5px 0 0 var(--hard-shadow);
+    transition:
+      box-shadow 200ms var(--motion-ease, ease),
+      translate 200ms var(--motion-ease, ease),
+      background-color 200ms var(--motion-ease, ease);
+  }
+  .notebook-btn-ink:hover:not(:disabled) {
+    box-shadow: 3.5px 3.5px 0 0 var(--hard-shadow);
+    translate: -1px -1px;
+  }
+  .notebook-btn-ink:active:not(:disabled) {
+    box-shadow: 1.5px 1.5px 0 0 var(--hard-shadow);
+    translate: 1px 1px;
+  }
+  .notebook-btn-ink:disabled { box-shadow: none; translate: none; }
+
+  /* Ô nhập kiểu vở: viền mực đậm hơn, nền giấy nổi */
+  .notebook-control {
+    border: 1.5px solid color-mix(in srgb, var(--ink) 62%, transparent);
+    background-color: var(--card);
+    box-shadow: 2px 2px 0 0 color-mix(in srgb, var(--hard-shadow) 16%, transparent);
+    transition: border-color 160ms var(--motion-ease, ease), box-shadow 160ms var(--motion-ease, ease);
+  }
+  .notebook-control:hover { box-shadow: 2.5px 2.5px 0 0 color-mix(in srgb, var(--hard-shadow) 24%, transparent); }
+
+  /* Dòng kẻ vở cho textarea — dòng kẻ bám line-height, cuộn theo nội dung */
+  .notebook-lines {
+    background-image: repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent calc(1lh - 1px),
+      color-mix(in srgb, var(--blue) 16%, transparent) calc(1lh - 1px),
+      color-mix(in srgb, var(--blue) 16%, transparent) 1lh
+    );
+    background-attachment: local;
+  }
+
+  /* Badge kiểu mộc nhỏ: pill viền mực màu cùng chữ */
+  .notebook-badge {
+    border: 1.5px solid color-mix(in srgb, currentColor 45%, transparent);
+    border-radius: 999px;
+  }
+
+  /* Bảng sổ tay: zebra giấy ấm xen kẽ + đầu bảng dính đổ bóng mép giấy */
+  .notebook-table { width: 100%; border-collapse: collapse; }
+  .notebook-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--ink) 3.5%, transparent); }
+  .notebook-table thead th {
+    position: sticky;
+    top: var(--notebook-sticky-top, 4.25rem);
+    z-index: 2;
+    background: var(--paper-raised);
+    box-shadow: 0 1.5px 0 color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+
+  /* Skeleton nét chì gạch chéo — chỉ thở opacity, không đụng layout */
+  .skeleton-pencil {
+    background-color: color-mix(in srgb, var(--ink) 5%, transparent);
+    background-image: repeating-linear-gradient(
+      115deg,
+      transparent 0 7px,
+      color-mix(in srgb, var(--ink) 9%, transparent) 7px 13px
+    );
+    border-radius: 3px;
+    animation: pencil-breathe 1.4s ease-in-out infinite;
+  }
+
+  /* Đường xé giấy giữa các section — mask răng cưa, màu theo theme */
+  .divider-torn {
+    height: 8px;
+    border: 0;
+    background-color: color-mix(in srgb, var(--ink) 34%, transparent);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 8' preserveAspectRatio='none'%3E%3Cpath d='M0 5.5 3.5 2.5 7 6 11 3 15 6.5 19 3.5 23 6 27 2.5 31 5.5 35 3 39 6 43 2.5 48 5.5V8H0Z' fill='black'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 8' preserveAspectRatio='none'%3E%3Cpath d='M0 5.5 3.5 2.5 7 6 11 3 15 6.5 19 3.5 23 6 27 2.5 31 5.5 35 3 39 6 43 2.5 48 5.5V8H0Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-size: 48px 8px;
+    mask-size: 48px 8px;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+  }
+
+  /* Gạch chân lượn sóng vẽ tay (dùng cho link) — mask để đổi màu theo theme */
   .underline-squiggle {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%232060F0' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: repeat-x;
-    background-position: 0 100%;
-    background-size: 40px 6px;
+    position: relative;
+    background-image: none;
     padding-bottom: 7px;
   }
+  .underline-squiggle::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+    height: 6px;
+    background-color: var(--blue);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+    -webkit-mask-size: 40px 6px;
+    mask-size: 40px 6px;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+  }
+
+  /* Vòng tròn vẽ tay bao icon empty-state (dùng trong .product-empty) */
+  .notebook-empty-icon {
+    border: 1.5px solid color-mix(in srgb, var(--ink) 32%, transparent);
+    border-radius: 47% 53% 51% 49% / 52% 48% 53% 47%;
+  }
+
+  /* Tab kiểu mục lục: gạch chân lượn squiggle dưới tab hiện tại */
+  .squiggle-tab { position: relative; }
+  .squiggle-tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 6px;
+    background-color: var(--ws-primary, var(--primary));
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 4.5 1, 9 4 T 18 4 T 27 4 T 36 4' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 4.5 1, 9 4 T 18 4 T 27 4 T 36 4' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+    -webkit-mask-size: 36px 6px;
+    mask-size: 36px 6px;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+  }
+}
+
+/* ---- Hiệu ứng riêng sổ tay (120–240ms, tôn trọng reduced-motion) ---- */
+/* Card giấy đậu xuống khi mount: rơi nhẹ 4px + xoay về 0 */
+@keyframes paper-settle {
+  from { transform: translateY(-4px) rotate(0.6deg); opacity: 0; }
+  to { transform: translateY(0) rotate(0deg); opacity: 1; }
+}
+.paper-settle { animation: paper-settle 220ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+
+/* Mộc đóng xuống bảng: scale 1.4→1 + xoay -9deg→-2.5deg như đóng dấu thật.
+   Khi dùng thump, KHÔNG đặt inline rotate riêng — animation giữ quyền xoay. */
+@keyframes stamp-thump {
+  0% { scale: 1.4; rotate: -9deg; opacity: 0; }
+  55% { scale: 0.95; rotate: -1deg; opacity: 1; }
+  100% { scale: 1; rotate: -2.5deg; }
+}
+.stamp-thump { animation: stamp-thump 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* Marker quét qua chữ khi vào viewport — dùng kèm .marker + data-inview */
+@keyframes marker-sweep {
+  from { background-size: 0% 88%; }
+  to { background-size: 100% 88%; }
+}
+.marker-sweep {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    var(--blue-mist) 2.5%,
+    var(--blue-mist) 97%,
+    transparent 99%
+  );
+  background-repeat: no-repeat;
+  background-position: 0 58%;
+  background-size: 100% 88%;
+  padding-inline: 0.12em;
+}
+.marker-sweep[data-inview="false"] { background-size: 0% 88%; }
+.marker-sweep[data-inview="true"] { animation: marker-sweep 240ms ease-out 60ms both; }
+
+/* Gạch chân lượn vẽ dần (path cần pathLength=1) — dùng kèm data-inview */
+@keyframes squiggle-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.squiggle-draw path { stroke-dasharray: 1; }
+.squiggle-draw[data-inview="false"] path { stroke-dashoffset: 1; }
+.squiggle-draw[data-inview="true"] path { animation: squiggle-draw 360ms ease-out 40ms both; }
+
+/* Drawer mở như lật góc trang */
+@keyframes page-curl {
+  from { transform: translateX(-14px) rotateY(-6deg); opacity: 0.4; }
+  to { transform: translateX(0) rotateY(0deg); opacity: 1; }
+}
+.page-curl { transform-origin: 0 50%; animation: page-curl 220ms var(--motion-ease, ease-out) both; }
+
+/* Skeleton thở nhẹ (chỉ opacity) */
+@keyframes pencil-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Spinner vòng tròn vẽ tay quay */
+@keyframes spin-hand {
+  to { rotate: 360deg; }
+}
+.spinner-hand { animation: spin-hand 700ms linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .spinner-hand { animation: pencil-breathe 1.2s ease-in-out infinite; }
 }
 
 @keyframes vintern-result-enter {
@@ -350,4 +610,29 @@ html {
   .animate-spin-slow {
     animation: none;
   }
+  /* Hiệu ứng sổ tay: đứng yên ở trạng thái cuối, không phát chuyển động */
+  .paper-settle,
+  .stamp-thump,
+  .page-curl,
+  .tape,
+  .tape-peel,
+  .notebook-btn-ink,
+  .sticky-note,
+  .sticky-note-alt {
+    animation: none;
+    transition-duration: 0ms;
+  }
+  .marker-sweep,
+  .marker-sweep[data-inview="false"],
+  .marker-sweep[data-inview="true"] {
+    background-size: 100% 88%;
+    animation: none;
+  }
+  .squiggle-draw path,
+  .squiggle-draw[data-inview="false"] path,
+  .squiggle-draw[data-inview="true"] path {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .skeleton-pencil { animation-duration: 2.8s; }
 }

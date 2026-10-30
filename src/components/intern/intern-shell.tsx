@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
+import { IconClose } from "@/components/v-intern/icons";
 import { getSessionUser } from "@/lib/auth/session";
 import { LoadingState } from "@/components/shared/data-state";
 import { InternSidebar } from "./intern-sidebar";
@@ -118,7 +118,7 @@ export function InternShell({
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-foreground/50"
           />
-          <div className="absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-popover">
+          <div className="page-curl absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-popover">
             <InternSidebar
               currentPath={pathname}
               groups={groups}
@@ -132,7 +132,7 @@ export function InternShell({
               onClick={() => setMenuOpen(false)}
               className="student-drawer-close absolute right-3 top-3"
             >
-              <X className="size-5" aria-hidden="true" />
+              <IconClose className="size-5" aria-hidden="true" />
             </button>
           </div>
         </div>

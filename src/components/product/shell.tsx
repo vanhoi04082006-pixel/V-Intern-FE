@@ -3,38 +3,37 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { WorkspaceStage } from "@/components/workspace/workspace-stage";
 import { usePathname } from "next/navigation";
+import type { UiIcon } from "@/lib/ui/icon";
 import {
-  Activity,
-  Award,
-  Bell,
-  BookOpen,
-  Bot,
-  ChartNoAxesCombined,
-  ChevronRight,
-  CircleHelp,
-  ClipboardCheck,
-  Coins,
-  FileText,
-  FolderKanban,
-  Github,
-  GraduationCap,
-  Home,
-  KanbanSquare,
-  LayoutTemplate,
-  Layers,
-  Lightbulb,
-  ListTodo,
-  Lock,
-  Menu,
-  Settings,
-  Shield,
-  Sparkles,
-  UserRound,
-  Users,
-  Wallet,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+  IconAward,
+  IconBell,
+  IconBook,
+  IconCap,
+  IconChart,
+  IconChecklist,
+  IconChevronRight,
+  IconClipboardCheck,
+  IconCoins,
+  IconFile,
+  IconFolder,
+  IconHelp,
+  IconHome,
+  IconKanban,
+  IconLayers,
+  IconBulb,
+  IconLock,
+  IconMenu,
+  IconPulse,
+  IconRobot,
+  IconShield,
+  IconSliders,
+  IconSparkles,
+  IconTemplate,
+  IconUser,
+  IconUsers,
+  IconWallet,
+  IconClose,
+} from "@/components/v-intern/icons";
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { NotificationBell } from "@/components/shared/notification-bell";
@@ -172,38 +171,38 @@ const menus: Record<ProductRole, NavGroup[]> = {
   ],
 };
 
-const navIcons: Record<string, LucideIcon> = {
-  "": Home,
-  work: ListTodo,
-  sessions: Layers,
-  projects: FolderKanban,
-  sprints: KanbanSquare,
-  tasks: ListTodo,
-  participation: ClipboardCheck,
-  evaluations: ClipboardCheck,
-  performance: ChartNoAxesCombined,
-  reports: FileText,
-  github: Github,
-  mentor: Bot,
-  kpi: Wallet,
-  salary: Coins,
-  certificates: Award,
-  recommendations: Lightbulb,
-  notifications: Bell,
-  profile: UserRound,
-  users: Users,
-  roles: Shield,
-  groups: Users,
-  catalogs: BookOpen,
-  questions: CircleHelp,
-  "career-roles": GraduationCap,
-  knowledge: BookOpen,
-  templates: LayoutTemplate,
-  ai: Sparkles,
-  settings: Settings,
-  services: Activity,
-  activity: Activity,
-  audit: FileText,
+const navIcons: Record<string, UiIcon> = {
+  "": IconHome,
+  work: IconChecklist,
+  sessions: IconLayers,
+  projects: IconFolder,
+  sprints: IconKanban,
+  tasks: IconChecklist,
+  participation: IconClipboardCheck,
+  evaluations: IconClipboardCheck,
+  performance: IconChart,
+  reports: IconFile,
+  github: IconRobot,
+  mentor: IconRobot,
+  kpi: IconWallet,
+  salary: IconCoins,
+  certificates: IconAward,
+  recommendations: IconBulb,
+  notifications: IconBell,
+  profile: IconUser,
+  users: IconUsers,
+  roles: IconShield,
+  groups: IconUsers,
+  catalogs: IconBook,
+  questions: IconHelp,
+  "career-roles": IconCap,
+  knowledge: IconBook,
+  templates: IconTemplate,
+  ai: IconSparkles,
+  settings: IconSliders,
+  services: IconPulse,
+  activity: IconPulse,
+  audit: IconFile,
 };
 
 const roleLabels: Record<ProductRole, string> = {
@@ -214,20 +213,20 @@ const roleLabels: Record<ProductRole, string> = {
 
 const roleFooters: Record<
   ProductRole,
-  { icon: LucideIcon; title: string; text: string }
+  { icon: UiIcon; title: string; text: string }
 > = {
   admin: {
-    icon: Shield,
+    icon: IconShield,
     title: "Vận hành an toàn",
     text: "Phân quyền, cấu hình và nhật ký hệ thống đều được kiểm soát tại đây.",
   },
   instructor: {
-    icon: GraduationCap,
+    icon: IconCap,
     title: "Đồng hành cùng sinh viên",
     text: "Phiên, dự án và phản hồi giúp sinh viên tiến bộ từng bước.",
   },
   intern: {
-    icon: GraduationCap,
+    icon: IconCap,
     title: "Học qua dự án thực tế",
     text: "Từng bước học tập, phản hồi và tiến bộ đều được ghi nhận.",
   },
@@ -297,7 +296,7 @@ export function ProductShell({
               const href = `/${role}${key ? `/${key}` : ""}`;
               const current =
                 path === href || Boolean(key && path.startsWith(href + "/"));
-              const Icon = navIcons[key] ?? Layers;
+              const Icon = navIcons[key] ?? IconLayers;
               const unavailable =
                 role === "intern" &&
                 !activeAssignment &&
@@ -311,7 +310,7 @@ export function ProductShell({
                 >
                   <Icon size={18} aria-hidden="true" />
                   {label}
-                  <Lock size={13} className="ml-auto" aria-hidden="true" />
+                  <IconLock size={13} className="ml-auto" aria-hidden="true" />
                 </span>
               ) : (
                 <Link
@@ -341,7 +340,7 @@ export function ProductShell({
           </div>
         </div>
       ) : (
-        <div className="mt-8 rounded-panel border border-primary bg-accent/60 p-4">
+        <div className="product-shell-footer-card mt-8 rounded-panel border border-primary/35 bg-accent/60 p-4">
           <FooterIcon
             className="mb-2 text-primary"
             size={22}
@@ -386,13 +385,13 @@ export function ProductShell({
         className="product-drawer fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
         aria-label="Menu workspace"
       >
-        <div className="flex min-h-full flex-col">
+        <div className="page-curl flex min-h-full flex-col">
           <button
             aria-label="Đóng menu"
             className="mb-3 self-start rounded-control p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => setOpen(false)}
           >
-            <X aria-hidden="true" />
+            <IconClose aria-hidden="true" />
           </button>
           {navigation}
         </div>
@@ -405,7 +404,7 @@ export function ProductShell({
               className="grid size-10 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
               onClick={() => setOpen(true)}
             >
-              <Menu aria-hidden="true" />
+              <IconMenu aria-hidden="true" />
             </button>
             <nav
               aria-label="Breadcrumb"
@@ -417,7 +416,7 @@ export function ProductShell({
               >
                 V-Intern
               </Link>
-              <ChevronRight
+              <IconChevronRight
                 size={14}
                 className="shrink-0 text-muted-foreground"
                 aria-hidden="true"
@@ -430,7 +429,7 @@ export function ProductShell({
                   >
                     {section[1]}
                   </Link>
-                  <ChevronRight
+                  <IconChevronRight
                     size={14}
                     className="shrink-0 text-muted-foreground"
                     aria-hidden="true"

@@ -203,23 +203,23 @@ export function Hero() {
             className="relative mx-auto w-full max-w-[620px] lg:max-w-none"
             delay={0.15}
           >
-            <div className="relative px-1 pt-4">
-              <Tape className="-top-1 left-8 z-20" rotate={-8} />
-              <Tape className="-top-1 right-10 z-20" rotate={7} />
+            <div className="group relative px-1 pt-4">
+              <Tape className="-top-1 left-8 z-20" rotate={-8} peel />
+              <Tape className="-top-1 right-10 z-20" rotate={7} peel />
               <DashboardPolaroid />
             </div>
 
-            {/* Sticky note "Đánh giá AI" */}
-            <div className="absolute -top-3 right-0 z-20 hidden w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] sm:-top-6 sm:flex md:-right-3 md:-top-24">
+            {/* Sticky note "Đánh giá AI" — giấy note vàng dán lệch */}
+            <div className="sticky-note absolute -top-3 right-0 z-20 hidden w-[228px] animate-float-soft items-start gap-3 rounded-lg p-3.5 sm:-top-6 sm:flex md:-right-3 md:-top-24">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
                 <Sparkles className="h-5 w-5" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-extrabold text-ink">Đánh giá AI</p>
-                <p className="mt-0.5 text-[11px] leading-snug text-ink-soft">
+                <p className="text-xs font-extrabold">Đánh giá AI</p>
+                <p className="mt-0.5 text-[11px] leading-snug text-(--note-ink-soft)">
                   Gợi ý tham khảo theo công việc
                 </p>
-                <p className="mt-1 font-hand text-[15px] leading-none text-blue">
+                <p className="mt-1 font-hand text-[15px] leading-none text-(--note-blue)">
                   giảng viên chốt điểm chính thức
                 </p>
               </div>

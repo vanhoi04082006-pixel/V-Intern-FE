@@ -139,6 +139,14 @@
   text-transform: none;
   color: var(--muted-foreground);
 }
+/* Notebook (đậm — intern): tên nhóm nav viết tay Patrick Hand */
+.student-experience .notebook-nav-group {
+  font-family: var(--font-patrick-hand), cursive;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+}
 .student-nav-list {
   display: grid;
   gap: 0;
@@ -203,7 +211,8 @@
   min-width: 20px;
   place-items: center;
   border-radius: 999px;
-  background: var(--destructive);
+  /* Chấm mực xanh — badge thông báo theo concept sổ tay */
+  background: var(--student-blue);
   padding: 0 var(--space-1);
   font-size: var(--type-caption);
   font-weight: var(--weight-heading);
@@ -509,7 +518,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  border: 1px solid var(--student-blue);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-control-value);
   background: var(--student-blue);
   padding: var(--space-2) var(--space-4);
@@ -517,30 +526,43 @@
   font-weight: var(--weight-heading);
   color: var(--card);
   text-decoration: none;
-  box-shadow: none;
+  /* Nút mực sổ tay: đổ mực lệch + nhấn xuống giấy */
+  box-shadow: 2.5px 2.5px 0 0 var(--hard-shadow);
+  transition:
+    background-color var(--motion-normal) ease,
+    border-color var(--motion-normal) ease,
+    box-shadow var(--motion-normal) ease,
+    translate var(--motion-normal) ease;
 }
 .student-action:hover {
   background: var(--student-blue-strong);
-  border-color: var(--student-blue-strong);
+  border-color: var(--ink);
   transform: none;
-  box-shadow: none;
+  box-shadow: 3.5px 3.5px 0 0 var(--hard-shadow);
+  translate: -1px -1px;
+}
+.student-action:active:not(:disabled) {
+  box-shadow: 1.5px 1.5px 0 0 var(--hard-shadow);
+  translate: 1px 1px;
 }
 .student-action:disabled {
   cursor: not-allowed;
   opacity: 0.55;
   transform: none;
+  box-shadow: none;
+  translate: none;
 }
 .student-action-secondary {
-  border-color: var(--student-line);
+  border-color: color-mix(in srgb, var(--ink) 72%, transparent);
   background: var(--card);
   color: var(--primary);
-  box-shadow: none;
+  box-shadow: 2px 2px 0 0 color-mix(in srgb, var(--hard-shadow) 42%, transparent);
 }
 .student-action-secondary:hover {
-  border-color: var(--accent);
+  border-color: var(--ink);
   background: var(--background);
   color: var(--student-blue-strong);
-  box-shadow: none;
+  box-shadow: 3px 3px 0 0 color-mix(in srgb, var(--hard-shadow) 55%, transparent);
   transform: none;
 }
 .student-action-quiet {
@@ -1528,9 +1550,11 @@
 .student-input {
   width: 100%;
   min-height: var(--control-min);
-  border: 1px solid var(--muted);
+  /* Ô kẻ vở: viền mực đậm hơn + đổ mực nhạt */
+  border: 1.5px solid color-mix(in srgb, var(--ink) 55%, transparent);
   border-radius: var(--radius-control-value);
   background: var(--card);
+  box-shadow: 2px 2px 0 0 color-mix(in srgb, var(--hard-shadow) 14%, transparent);
   padding: var(--space-2) var(--space-3);
   font-size: var(--type-small);
   color: var(--student-ink);

@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { UiIcon } from "@/lib/ui/icon";
 import type { InternTone } from "./intern-ui-tones";
 
 /**
@@ -14,7 +14,7 @@ import type { InternTone } from "./intern-ui-tones";
 export interface InternNavItem {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: UiIcon;
   /** Route thật — hiện chỉ "Tổng quan" có destination. */
   href?: string;
   /** Số chưa đọc (derive từ unread notifications). */
@@ -53,7 +53,7 @@ export interface InternWorkspaceUser {
 export interface InternWelcomeBadge {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: UiIcon;
   tone: InternTone;
 }
 
@@ -67,7 +67,7 @@ export interface InternInfoRow {
   id: string;
   label: string;
   value: string;
-  icon: LucideIcon;
+  icon: UiIcon;
   tone: InternTone;
 }
 
@@ -93,7 +93,7 @@ export interface InternAssignment {
   statusLabel: string;
   breadcrumb: { org: string; project: string; sprint: string };
   /** Meta row dưới H1: Vai trò / Lab Session / Sprint hiện tại / Trạng thái */
-  meta: { id: string; label: string; value: string; icon: LucideIcon }[];
+  meta: { id: string; label: string; value: string; icon: UiIcon }[];
 }
 
 export interface InternTask {
@@ -161,7 +161,7 @@ export interface InternPerformanceMetric {
   id: string;
   label: string;
   value: string;
-  icon: LucideIcon;
+  icon: UiIcon;
   tone: InternTone;
   /** Progress bar mini (0-100) khi metric có tỷ lệ. */
   percent?: number;
@@ -178,7 +178,7 @@ export interface InternKpi {
   id: string;
   label: string;
   value: string;
-  icon: LucideIcon;
+  icon: UiIcon;
   tone: InternTone;
   note?: string;
   noteTone?: InternTone;

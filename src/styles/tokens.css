@@ -101,6 +101,16 @@
   --coal-soft: #1f1f28;
   --chalk: #f2f1e9;
   --chalk-soft: #a8a8b2;
+  /* Notebook PACK 0: sticky note vàng + mực dấu mộc — chữ note luôn mực đậm cho AA. */
+  --note: #fdf0a0;
+  --note-ink: #17171c;
+  --note-ink-soft: #52525c;
+  --note-blue: #1743c4;
+  --note-edge: rgba(23, 23, 28, 0.18);
+  --moc-blue: var(--blue);
+  --moc-red: #d9304a;
+  --moc-green: #047857;
+  --notebook-sticky-top: 4.25rem;
 }
 
 .dark {
@@ -114,6 +124,13 @@
   --blue-mist: rgba(125, 151, 255, 0.16);
   --line: rgba(242, 241, 233, 0.085);
   --hard-shadow: rgba(0, 0, 0, 0.55);
+  /* Dark "chalkboard night": note vàng đậm hơn, mực móc chuyển tông phấn. */
+  --note: #e2c34f;
+  --note-ink: #17171c;
+  --note-edge: rgba(0, 0, 0, 0.4);
+  --moc-blue: #7d97ff;
+  --moc-red: #ff627a;
+  --moc-green: #34d399;
 }
 
 @theme inline {

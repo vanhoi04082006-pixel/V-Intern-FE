@@ -2,9 +2,60 @@
 
 ## Hướng thiết kế hiện tại
 
-Sinh viên và Giảng viên dùng **Aurora Glass**: nền lavender/mint nhẹ, sidebar nổi, surface trắng mờ và primary violet. Trang chủ và Admin giữ phạm vi riêng. Đây là lựa chọn mới ngày 22/10/2026, thay thế hướng navy/white phẳng ở bản trước.
+Toàn hệ thống dùng **Sổ tay hành trình (Journey Notebook)**: nền giấy ô ly/kem
+`--paper`, mực đen `--ink`, mực xanh notebook `--blue`; ngôn ngữ thị giác gồm
+nét đứt đường cắt giấy, băng dính washi, doodle vẽ tay, highlight marker, thẻ
+giấy dán lệch, con dấu mộc tròn, chữ viết tay Patrick Hand (chỉ cho ghi chú
+ngắn/label/empty-state). Font đọc chính: Be Vietnam Pro.
 
-Đọc [chương thiết kế trong bàn giao](HANDOVER.md#5-thiết-kế-aurora-glass) để hiểu token, cách dùng surface, chart, motion và responsive. [Token và phạm vi CSS](workspace-design-system.md) dành cho người triển khai.
+Mật độ trang trí theo vai (concept phục vụ dữ liệu, không giết density):
+
+- **Sinh viên + auth/public — đậm**: sticky note cho ghi chú/gợi ý AI, doodle
+  empty-state, tape trên panel chính, marker tiêu đề, Patrick Hand cho ghi chú ngắn.
+- **Giảng viên — vừa**: panel giữ density, lề kẻ, dashed-cut cho thẻ chờ hành
+  động, mộc cho trạng thái duyệt.
+- **Quản trị — nhẹ**: token màu giấy/mực + typography đậm, mộc cho badge quan
+  trọng, tab kiểu mục lục; tuyệt đối không tape/doodle trong bảng dữ liệu dày.
+
+Dark mode = **Chalkboard night** (bảng đen phấn xanh). In/chứng chỉ = giấy
+trắng, mực đen, mộc đỏ.
+
+### Bộ utility sổ tay (tokens.css + globals.css)
+
+| Utility | Dùng cho |
+|---|---|
+| `.bg-grid-paper` / `.bg-dots-paper` / `.bg-dots-chalk` | nền giấy ô ly / chấm bi / phấn |
+| `.sketch-card` / `.sketch-card-sm` | thẻ giấy viền mực + bóng đổ in |
+| `.dashed-cut` | viền đứt đường cắt giấy — thẻ chờ hành động, dropzone, empty-state |
+| `.tape` (+ `.tape-peel` trong `.group`) | băng dính washi; hover cong nhẹ |
+| `.marker` / `.marker-sweep` | tô bút dạ quang / quét qua chữ khi vào viewport (`data-inview`) |
+| `.sticky-note` / `.sticky-note-alt` | giấy note vàng dán lệch, hover thẳng lại |
+| `.stamp-moc` (+ `-red`/`-green`, `.stamp-thump`) | con dấu mộc tròn; thump = đóng dấu |
+| `.divider-torn` | đường xé giấy giữa các section |
+| `.notebook-table` | zebra giấy ấm + đầu bảng dính đổ bóng mép giấy |
+| `.notebook-control` / `.notebook-lines` | ô nhập viền mực / textarea kẻ dòng vở |
+| `.notebook-btn-ink` | nút mực: đổ mực lệch + nhấn xuống giấy |
+| `.notebook-badge` | badge mộc nhỏ pill viền mực màu |
+| `.skeleton-pencil` / `.spinner-hand` | skeleton nét chì gạch chéo / spinner vòng vẽ tay |
+| `.paper-settle` / `.page-curl` | card giấy đậu xuống / drawer mở như lật góc trang |
+| `.squiggle-tab` / `.underline-squiggle` | gạch chân lượn vẽ tay cho tab/link |
+| `.font-hand` | Patrick Hand (ghi chú ngắn, empty-state, label tay) |
+
+Vi mô toàn app (globals.css `@layer base`): `::selection` marker xanh,
+`::placeholder` chì nghiêng, `::marker` mực mềm, `:focus-visible` nét mực 2px
+offset 2px, scrollbar bút chì mảnh (webkit + firefox). Mọi hiệu ứng 120–240ms
+và tôn trọng `prefers-reduced-motion`.
+
+### Bộ icon notebook
+
+Icon hiển thị chính dùng bộ vẽ tay `src/components/v-intern/icons/` (42 icon,
+xem dossier `notebook-icons.md` trong thư mục đó). Icon hành động nhỏ chưa
+thay sẽ chuyển dần theo pack. Khi thay icon: giữ nguyên aria-label/aria-hidden
+và test hook cũ.
+
+Đọc [chương thiết kế trong bàn giao](HANDOVER.md#5-thiết-kế-aurora-glass) để
+hiểu token, cách dùng surface, chart, motion và responsive. [Token và phạm vi
+CSS](workspace-design-system.md) dành cho người triển khai.
 
 ## Component theo vai trò
 

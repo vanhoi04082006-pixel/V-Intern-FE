@@ -1,34 +1,40 @@
-﻿"use client";
+"use client";
 import { useEffect, useRef, type ReactNode } from "react";
-import {
-  X,
-  Inbox,
-  Info,
-  TriangleAlert,
-  CircleCheck,
-  CircleX,
-  ArrowLeft,
-  type LucideIcon,
-} from "lucide-react";
 import Link from "next/link";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
+import { useInViewOnce } from "@/lib/ui/use-in-view-once";
+import type { UiIcon } from "@/lib/ui/icon";
 import { cn } from "@/lib/utils";
+import {
+  IconArrowLeft,
+  IconCircleCheck,
+  IconCircleX,
+  IconClose,
+  IconHelp,
+  IconInbox,
+  IconInfo,
+  IconAlert,
+} from "@/components/v-intern/icons";
 
 /* ------------------------------------------------------------------ */
-/* Buttons                                                             */
+/* Buttons — nút mực sổ tay: fill mực xanh, viền mực đậm, đổ mực lệch  */
 /* ------------------------------------------------------------------ */
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const buttonBase =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-control font-semibold transition-[background-color,border-color,color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-40";
 
+/* Notebook press motion (đổ mực + nhấn giấy) nằm trong utility
+   .notebook-btn-ink — transform/translate riêng, không đụng Tailwind. */
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-primary-foreground shadow-app-xs hover:bg-primary/90",
+  primary:
+    "notebook-btn-ink border-2 border-ink bg-primary text-primary-foreground hover:bg-primary/90",
   secondary:
-    "border border-border bg-card text-foreground shadow-app-xs hover:border-input hover:bg-background",
+    "notebook-btn-ink border-2 border-ink/85 bg-card text-foreground hover:border-ink hover:bg-background",
   ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
-  danger: "bg-destructive text-primary-foreground shadow-app-xs hover:bg-destructive/90",
+  danger:
+    "notebook-btn-ink border-2 border-ink bg-destructive text-primary-foreground hover:bg-destructive/90",
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
@@ -63,15 +69,19 @@ export const iconButtonClass = cn(
 );
 
 /* ------------------------------------------------------------------ */
-/* Form controls                                                       */
+/* Form controls — ô kẻ dòng vở                                        */
 /* ------------------------------------------------------------------ */
 export const inputClass =
-  "product-input w-full min-w-0 rounded-control border border-border bg-card px-4 py-3 text-body text-foreground shadow-app-xs transition-[border-color,box-shadow] placeholder:text-muted-foreground hover:border-input focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30";
+  "product-input notebook-control w-full min-w-0 rounded-control px-4 py-3 text-body text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30";
 export const selectClass = cn(
   inputClass,
   "pr-9 cursor-pointer",
 );
-export const textareaClass = cn(inputClass, "min-h-24 resize-y");
+/** Textarea kẻ dòng vở — dòng kẻ bám line-height, cuộn theo nội dung. */
+export const textareaClass = cn(
+  inputClass,
+  "min-h-24 resize-y notebook-lines",
+);
 
 export function Field({
   label,
@@ -122,23 +132,31 @@ export function Field({
 /* ------------------------------------------------------------------ */
 /* Feedback                                                            */
 /* ------------------------------------------------------------------ */
+/** Spinner vòng tròn vẽ tay quay — reduced-motion chuyển sang nhịp thở. */
 export function Spinner({ className }: { className?: string }) {
   return (
-    <span
+    <svg
       aria-hidden="true"
-      className={cn(
-        "inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent",
-        className,
-      )}
-    />
+      viewBox="0 0 24 24"
+      fill="none"
+      className={cn("spinner-hand inline-block size-4", className)}
+    >
+      <path
+        d="M12 3.6C16.7 3.4 20.5 7.3 20.4 12c-.1 4.8-3.9 8.6-8.5 8.4C7.3 20.3 3.6 16.6 3.7 12.1 3.8 7.5 7.4 3.8 12 3.6"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
+/** Skeleton nét chì gạch chéo nhạt. */
 export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={cn("animate-pulse rounded-control bg-muted/60", className)}
+      className={cn("skeleton-pencil", className)}
     />
   );
 }
@@ -173,22 +191,22 @@ export function TableSkeleton({
 const alertTones = {
   info: {
     box: "border-primary/20 bg-accent text-primary",
-    icon: Info,
+    icon: IconInfo,
     iconClass: "text-primary",
   },
   success: {
     box: "border-success/20 bg-success-subtle text-success",
-    icon: CircleCheck,
+    icon: IconCircleCheck,
     iconClass: "text-success",
   },
   warning: {
     box: "border-warning/20 bg-warning-subtle text-warning",
-    icon: TriangleAlert,
+    icon: IconAlert,
     iconClass: "text-warning",
   },
   danger: {
     box: "border-destructive/20 bg-destructive-subtle text-destructive",
-    icon: CircleX,
+    icon: IconCircleX,
     iconClass: "text-destructive",
   },
 } as const;
@@ -241,7 +259,7 @@ export function MetricCard({
   sub,
   subTone = "text-muted-foreground",
 }: {
-  icon: LucideIcon;
+  icon: UiIcon;
   label: string;
   value: ReactNode;
   sub?: ReactNode;
@@ -250,7 +268,7 @@ export function MetricCard({
 }) {
   return (
     <section className="product-metric flex min-w-0 items-start gap-3 border-b border-border py-4">
-      <span className="grid size-10 shrink-0 place-items-center rounded-control bg-accent">
+      <span className="grid size-10 shrink-0 place-items-center rounded-control border border-primary/25 bg-accent">
         <Icon className="text-primary" size={21} aria-hidden="true" />
       </span>
       <div className="min-w-0">
@@ -324,17 +342,69 @@ export function Card({
   );
 }
 
+/** Sticky note vàng — ghi chú ngắn / gợi ý AI / lời dặn mentor (mật độ intern). */
+export function NoteCard({
+  title,
+  children,
+  className,
+  alt = false,
+}: {
+  title?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  alt?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "sticky-note rounded-[3px] p-4",
+        alt && "sticky-note-alt",
+        className,
+      )}
+    >
+      {title && (
+        <p className="font-hand text-base leading-6">{title}</p>
+      )}
+      <div className={cn("text-small leading-6", title && "mt-1")}>{children}</div>
+    </div>
+  );
+}
+
+/** Ghi chú lề — chữ viết tay, vạch mực trái, cho chú thích ngắn cạnh nội dung. */
+export function MarginNote({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        "font-hand text-[15px] leading-6 text-ink-soft [border-left:2px_solid_color-mix(in_srgb,var(--ink)_30%,transparent)] pl-3",
+        className,
+      )}
+    >
+      {children}
+    </p>
+  );
+}
+
 export function PageTitle({
   title,
   subtitle,
   action,
   back,
+  marker = false,
 }: {
   title: string;
   subtitle?: string;
   action?: ReactNode;
   back?: { href: string; label: string };
+  /** marker=true: tô bút dạ quang quét qua tiêu đề khi vào viewport (intern). */
+  marker?: boolean;
 }) {
+  const { ref, inView } = useInViewOnce<HTMLHeadingElement>();
   return (
     <div className="product-page-title mb-6">
       {back && (
@@ -342,13 +412,20 @@ export function PageTitle({
           href={back.href}
           className="mb-3 inline-flex min-h-8 items-center gap-2 rounded-control px-2 text-small font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         >
-          <ArrowLeft size={15} aria-hidden="true" />
+          <IconArrowLeft size={15} aria-hidden="true" />
           {back.label}
         </Link>
       )}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="product-page-title-heading text-page font-bold tracking-tight text-foreground sm:text-page">
+          <h1
+            ref={marker ? ref : undefined}
+            data-inview={marker ? (inView ? "true" : "false") : undefined}
+            className={cn(
+              "product-page-title-heading text-page font-bold tracking-tight text-foreground sm:text-page",
+              marker && "marker-sweep",
+            )}
+          >
             {title}
           </h1>
           {subtitle && (
@@ -367,14 +444,16 @@ export function PageTitle({
   );
 }
 
+/** Empty-state sổ tay: thẻ viền đứt (đường cắt giấy) + icon vòng vẽ tay
+ *  + tiêu đề chữ viết tay. Edge case trần: doodle dấu hỏi thay khối xám. */
 export function Empty({
-  icon: Icon = Inbox,
+  icon: Icon = IconInbox,
   title,
   description,
   action,
   children,
 }: {
-  icon?: LucideIcon;
+  icon?: UiIcon;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -384,14 +463,16 @@ export function Empty({
   return (
     <div
       role="status"
-      className="product-empty px-4 py-8 text-center"
+      className="product-empty dashed-cut rounded-xl px-4 py-8 text-center"
     >
       {hasRich && (
-        <span className="mx-auto grid size-11 place-items-center rounded-full bg-card text-muted-foreground ring-1 ring-ring/70">
+        <span className="notebook-empty-icon mx-auto grid size-11 place-items-center bg-card text-muted-foreground">
           <Icon size={20} aria-hidden="true" />
         </span>
       )}
-      {title && <p className="mt-3 text-body font-semibold text-foreground">{title}</p>}
+      {title && (
+        <p className="mt-3 font-hand text-lg leading-7 text-foreground">{title}</p>
+      )}
       {description && (
         <p className="mx-auto mt-1 max-w-md text-body leading-6 text-muted-foreground">
           {description}
@@ -399,6 +480,7 @@ export function Empty({
       )}
       {!hasRich && (
         <div className="text-body text-muted-foreground">
+          <IconHelp className="mx-auto mb-2 size-6 opacity-70" aria-hidden="true" />
           {children ?? "Chưa có dữ liệu."}
         </div>
       )}
@@ -421,6 +503,7 @@ const badgeTones = {
 } as const;
 export type BadgeTone = keyof typeof badgeTones;
 
+/** Badge = mộc nhỏ: pill viền mực màu cùng chữ. */
 export function Badge({
   children,
   tone = "blue",
@@ -431,7 +514,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "product-badge inline-flex items-center gap-1 rounded-md px-2 py-1 text-caption font-medium leading-none",
+        "product-badge notebook-badge inline-flex items-center gap-1 px-2.5 py-1 text-caption font-medium leading-none",
         badgeTones[tone],
       )}
     >
@@ -460,7 +543,7 @@ export function StatusDot({
   return (
     <span
       className={cn(
-        "product-status inline-flex items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-caption font-medium",
+        "product-status notebook-badge inline-flex items-center gap-2 whitespace-nowrap rounded-full px-2 py-1 text-caption font-medium",
         statusDotTones[tone],
       )}
     >
@@ -524,7 +607,7 @@ export function Pager({
 }
 
 /* ------------------------------------------------------------------ */
-/* Modal                                                               */
+/* Modal — tờ giấy dán băng dính, đậu xuống khi mở                    */
 /* ------------------------------------------------------------------ */
 export function Modal({
   title,
@@ -563,7 +646,7 @@ export function Modal({
         onClose();
       }}
       aria-label={title}
-      className={`product-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-panel border border-border bg-card p-5 shadow-popover backdrop:bg-foreground/50`}
+      className={`product-modal paper-settle fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-panel border border-border bg-card p-5 shadow-popover backdrop:bg-foreground/50`}
     >
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -580,7 +663,7 @@ export function Modal({
           onClick={onClose}
           className={iconButtonClass}
         >
-          <X size={20} aria-hidden="true" />
+          <IconClose size={20} aria-hidden="true" />
         </button>
       </div>
       {children}
@@ -599,7 +682,7 @@ export function Modal({
 export function PageMeta({
   items,
 }: {
-  items: { icon: LucideIcon; label: string; value: ReactNode }[];
+  items: { icon: UiIcon; label: string; value: ReactNode }[];
 }) {
   return (
     <dl className="mb-4 flex flex-wrap gap-x-7 gap-y-2 text-caption text-muted-foreground">
@@ -665,13 +748,13 @@ export function ProgressBar({
 }
 
 /* ------------------------------------------------------------------ */
-/* Table classes — dùng cho bảng thủ công để đồng bộ style             */
+/* Table classes — bảng sổ tay: zebra giấy ấm + đầu bảng đổ bóng mép   */
 /* ------------------------------------------------------------------ */
 export const tableWrapClass =
   "workspace-table-wrap overflow-x-auto border-y border-border";
-export const tableClass = "product-table w-full border-collapse text-body";
+export const tableClass = "product-table notebook-table w-full border-collapse text-body";
 export const thClass =
-  "whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold  text-muted-foreground";
+  "whitespace-nowrap border-b border-border/70 px-4 py-3 text-left text-caption font-semibold text-muted-foreground";
 export const tdClass =
   "border-b border-border px-4 py-3 align-top text-foreground";
 export const tableRowClass = "transition-colors hover:bg-background/70";

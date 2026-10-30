@@ -53,8 +53,8 @@ export function AiInterviewShowcase() {
           {/* Tấm polaroid buổi phỏng vấn */}
           <FadeIn className="relative">
             <div className="relative mx-auto max-w-[640px]">
-              <Tape className="-top-2.5 left-1/2 z-20 -translate-x-1/2" rotate={-3} />
-              <figure className="sketch-card rotate-[-1.6deg] bg-raised p-3 pb-0 transition-transform duration-500 ease-out motion-safe:hover:rotate-0">
+              <Tape className="-top-2.5 left-1/2 z-20 ml-[-48px]" rotate={-3} peel />
+              <figure className="sketch-card group rotate-[-1.6deg] bg-raised p-3 pb-0 transition-transform duration-500 ease-out motion-safe:hover:rotate-0">
                 <Image
                   src="/images/landing/ai-interview.png"
                   alt="Sinh viên trong buổi phỏng vấn AI trên V-Intern, xung quanh là bong bóng hội thoại và biểu tượng tích xanh"
@@ -67,7 +67,7 @@ export function AiInterviewShowcase() {
                   <span className="font-hand text-lg leading-tight text-ink-soft">
                     một buổi phỏng vấn thật dễ chịu
                   </span>
-                  <StampBadge className="shrink-0 text-blue" rotate={-8}>
+                  <StampBadge className="shrink-0" rotate={-8}>
                     Tiêu biểu
                   </StampBadge>
                 </figcaption>
