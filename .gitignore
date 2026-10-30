@@ -47,3 +47,6 @@ Thumbs.db
 .impeccable/review/
 .impeccable/mocks/
 .impeccable/config.local.json
+
+# Local visual QA harness output (screenshots + reports)
+.qa/

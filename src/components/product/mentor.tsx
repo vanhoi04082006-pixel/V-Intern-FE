@@ -55,7 +55,7 @@ export function Mentor() {
         description="Gỡ vướng bằng câu hỏi cụ thể, hiểu cách làm và tự hoàn thiện bài tập. Gợi ý AI hỗ trợ bạn; giảng viên quyết định đánh giá chính thức."
         action={
           <button
-            className="student-action"
+            className="student-action student-action-secondary"
             disabled={busy}
             onClick={() => void create()}
           >

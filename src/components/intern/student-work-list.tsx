@@ -94,8 +94,9 @@ export function StudentWorkList({
           <div className="student-work-progress">
             <StudentProgress
               value={task.progress}
-              label="Tiến độ"
+              label={`Tiến độ ${task.code}`}
               tone={task.progress >= 100 ? "green" : "blue"}
+              hideLabel
             />
           </div>
           <div className="student-work-actions">
