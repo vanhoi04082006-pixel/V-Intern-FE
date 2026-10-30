@@ -20,7 +20,7 @@ export function WorkspacePageHeader({
       {back && <div className="workspace-back">{back}</div>}
       <div className="workspace-page-header-row">
         <div>
-          <h1>{title}</h1>
+          <h1 className="animate-marker-sweep">{title}</h1>
           {description && <p>{description}</p>}
         </div>
         {action && <div className="workspace-page-actions">{action}</div>}
