@@ -13,6 +13,9 @@ export function SessionTaskDelivery({ data }: { data: ReturnType<typeof parseSes
       {sub.status === 'approved' ? (
         /* Duyệt là quyết định cuối — đóng mực xanh thay cho badge thường. */
         <p className="font-semibold"><StampMoc tone="blue" size="sm" thump>{submissionLabels[sub.status]}</StampMoc></p>
+      ) : sub.status === 'rework' ? (
+        /* Bút đỏ chấm "cần sửa" — đúng ngôn ngữ chấm bài của giảng viên. */
+        <p className="font-semibold"><span className="marker-red">{submissionLabels[sub.status]}</span></p>
       ) : (
         <p className="font-semibold">{submissionLabels[sub.status]}</p>
       )}
