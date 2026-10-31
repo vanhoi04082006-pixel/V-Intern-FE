@@ -85,7 +85,7 @@ function FooterColumnNav({ column }: { column: FooterColumn }) {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="rounded text-sm text-chalk-soft transition-colors hover:text-[#7d97ff]"
+                className="rounded text-sm text-chalk-soft transition-colors hover:text-[#7d97ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7d97ff] focus-visible:ring-offset-2 focus-visible:ring-offset-coal"
               >
                 {link.label}
               </a>
@@ -146,7 +146,7 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-chalk/20 bg-chalk/5 text-chalk-soft transition-all hover:-translate-y-0.5 hover:border-royal hover:bg-royal hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-chalk/20 bg-chalk/5 text-chalk-soft transition-all hover:-translate-y-0.5 hover:border-royal hover:bg-royal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7d97ff] focus-visible:ring-offset-2 focus-visible:ring-offset-coal"
                   >
                     <span className="sr-only">{social.label}</span>
                     <social.icon className="h-4 w-4" aria-hidden="true" />

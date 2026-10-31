@@ -324,7 +324,7 @@ export function Workflow() {
                             delay: reduceMotion ? 0 : index * 0.06,
                             ease: [0.21, 0.47, 0.32, 0.98],
                           }}
-                          className="group flex w-full items-center gap-4 rounded-2xl py-2 pr-3 text-left"
+                          className="group flex w-full items-center gap-4 rounded-2xl py-2 pr-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
                         >
                           <span
                             className={

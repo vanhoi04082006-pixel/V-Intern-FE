@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { btn } from "@/components/product/primitives";
 import { IconAlertTriangle } from "@/components/v-intern/icons";
-import { CoffeeStainDoodle, StampBadge, Tape } from "@/components/v-intern/doodles";
+import {
+  CoffeeStainDoodle,
+  InkSplatDoodle,
+  StampBadge,
+  Tape,
+} from "@/components/v-intern/doodles";
 
 /**
  * Error boundary cấp app (Next 16 `retry` prop). Hiển thị thông điệp an toàn,
@@ -40,6 +45,9 @@ export default function AppError({
       <CoffeeStainDoodle
         className="pointer-events-none absolute -right-4 top-14 h-20 w-20 rotate-12 text-ink/[0.05]"
       />
+      <InkSplatDoodle
+        className="pointer-events-none absolute bottom-16 left-10 hidden text-primary/15 sm:block"
+      />
       <div className="relative w-full max-w-lg">
         <div className="sketch-card group relative animate-paper-settle px-6 py-10 text-center sm:px-10">
           <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="candy" />
@@ -64,7 +72,7 @@ export default function AppError({
               Mã lỗi: <span className="font-mono">{error.digest}</span>
             </p>
           )}
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button type="button" onClick={() => retry()} className={btn("primary")}>
               Thử lại
             </button>

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import Link from "next/link";
 
 /**
  * Global error boundary (Lớp 6) — thay cả root layout nên phải tự render
@@ -53,6 +54,13 @@ export default function GlobalError({
     boxShadow: "3px 3px 0 rgba(23, 23, 28, 0.35)",
   };
 
+  const linkStyle: Record<string, string | number> = {
+    ...buttonStyle,
+    background: "#ffffff",
+    color: "#17171c",
+    textDecoration: "none",
+  };
+
   return (
     <html lang="vi">
       <body
@@ -63,12 +71,29 @@ export default function GlobalError({
           alignItems: "center",
           justifyContent: "center",
           background: "#fbfaf4",
+          backgroundImage:
+            "linear-gradient(rgba(23,23,28,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(23,23,28,0.05) 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
           color: "#17171c",
           fontFamily:
             "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
           padding: "24px",
         }}
       >
+        {/* Focus ring + nhấn lún cho nút — inline vì không tải được global CSS */}
+        <style>{`
+          .nb-global-error-btn:focus-visible {
+            outline: 3px solid #2060f0;
+            outline-offset: 2px;
+          }
+          .nb-global-error-btn:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 1px 1px 0 rgba(23, 23, 28, 0.35);
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .nb-global-error-btn:active:not(:disabled) { transform: none; }
+          }
+        `}</style>
         <main
           style={{
             width: "100%",
@@ -103,9 +128,41 @@ export default function GlobalError({
             Đã xảy ra lỗi ở tầng hệ thống. Bạn hãy thử tải lại trang; nếu lỗi
             còn tiếp diễn, hãy quay lại sau ít phút.
           </p>
-          <button type="button" onClick={() => retry()} style={buttonStyle}>
-            Tải lại trang
-          </button>
+          {error.digest && (
+            <p
+              style={{
+                margin: "12px 0 0",
+                fontSize: "0.75rem",
+                color: "#70707b",
+              }}
+            >
+              Mã lỗi:{" "}
+              <span style={{ fontFamily: "ui-monospace, monospace" }}>
+                {error.digest}
+              </span>
+            </p>
+          )}
+          <div
+            style={{
+              marginTop: "24px",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "12px",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => retry()}
+              style={buttonStyle}
+              className="nb-global-error-btn"
+            >
+              Tải lại trang
+            </button>
+            <Link href="/" style={linkStyle} className="nb-global-error-btn">
+              Về trang chính
+            </Link>
+          </div>
         </main>
       </body>
     </html>

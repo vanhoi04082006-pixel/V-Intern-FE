@@ -43,7 +43,7 @@ export function Navbar() {
         <div className="flex items-center gap-10">
           <a
             href="#platform"
-            className="flex min-h-11 items-center transition-transform hover:-rotate-2"
+            className="flex min-h-11 items-center rounded-lg transition-transform hover:-rotate-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
             aria-label="V-Intern - Về đầu trang"
           >
             <Logo />
@@ -54,7 +54,7 @@ export function Navbar() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="inline-flex min-h-11 items-center rounded-lg px-3 py-1 text-sm font-semibold text-ink-soft transition-colors hover:text-blue"
+                  className="inline-flex min-h-11 items-center rounded-lg px-3 py-1 text-sm font-semibold text-ink-soft transition-colors hover:text-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
                 >
                   <span className="marker">{link.label}</span>
                 </a>
@@ -67,7 +67,7 @@ export function Navbar() {
           <ThemeToggle />
           <Link
             href="/login"
-            className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[5px_5px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)]"
+            className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[5px_5px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
           >
             Bắt đầu
             <IconArrowRight
@@ -82,7 +82,7 @@ export function Navbar() {
           <button
             ref={menuButtonRef}
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-2 border-ink/15 bg-raised text-ink transition-colors hover:border-blue hover:text-blue"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-2 border-ink/15 bg-raised text-ink transition-colors hover:border-blue hover:text-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
             aria-label={open ? "Đóng menu" : "Mở menu"}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -108,7 +108,7 @@ export function Navbar() {
                 <a
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-11 items-center rounded-xl border-2 border-transparent px-4 text-sm font-semibold text-ink transition-colors hover:border-blue hover:bg-blue-mist hover:text-blue"
+                  className="flex min-h-11 items-center rounded-xl border-2 border-transparent px-4 text-sm font-semibold text-ink transition-colors hover:border-blue hover:bg-blue-mist hover:text-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
                 >
                   {link.label}
                 </a>
@@ -119,7 +119,7 @@ export function Navbar() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-ink bg-royal text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)]"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-ink bg-royal text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
             >
               Bắt đầu
               <IconArrowRight className="h-4 w-4" aria-hidden="true" />

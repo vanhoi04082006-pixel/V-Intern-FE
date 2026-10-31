@@ -183,10 +183,10 @@ function AudienceCard({ audience, index = 0 }: { audience: Audience; index?: num
         <Link
           href={audience.ctaHref}
           className={
-            "group mt-8 inline-flex h-12 items-center gap-2 rounded-xl border-2 px-6 text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 " +
+            "group mt-8 inline-flex h-12 items-center gap-2 rounded-xl border-2 px-6 text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 " +
             (dark
-              ? "border-coal bg-chalk text-coal shadow-[4px_4px_0_0_rgba(32,96,240,0.9)] hover:shadow-[6px_6px_0_0_rgba(32,96,240,0.9)]"
-              : "border-ink bg-royal text-white shadow-[4px_4px_0_0_var(--ink)] hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)]")
+              ? "border-coal bg-chalk text-coal shadow-[4px_4px_0_0_rgba(32,96,240,0.9)] hover:shadow-[6px_6px_0_0_rgba(32,96,240,0.9)] focus-visible:ring-[#7d97ff] focus-visible:ring-offset-coal"
+              : "border-ink bg-royal text-white shadow-[4px_4px_0_0_var(--ink)] hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)] focus-visible:ring-offset-blue-mist")
           }
         >
           {audience.cta}
