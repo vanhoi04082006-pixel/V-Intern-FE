@@ -1,4 +1,5 @@
 "use client";
+import type { CSSProperties } from "react";
 import { StudentHeading } from "../student-ui";
 import { StudentScore } from "../student-score";
 import {
@@ -62,10 +63,14 @@ export function RecruitmentResult() {
                   : roleGuidance ? alternativeRole ? "Khám phá hướng phù hợp hơn" : "Cần định hướng thêm" : "Chuẩn bị cho lần tiếp theo"}
                 </span>
                 {result.decision === "passed" ? (
-                  <StampMoc tone="blue" thump rotate={-5} className="mb-4">
+                  <StampMoc tone="blue" thump rotate={-5} className="mb-4 text-2xl">
                     Trúng tuyển
                   </StampMoc>
-                ) : null}
+                ) : (
+                  <StampMoc tone="red" thump rotate={4} className="mb-4 text-2xl">
+                    Thử lại
+                  </StampMoc>
+                )}
                 <h2
                   className={`text-page font-bold ${result.decision === "passed" ? "text-success" : "text-warning"}`}
                 >
@@ -103,16 +108,35 @@ export function RecruitmentResult() {
                         <strong>{Number(score).toFixed(1)}</strong> /100
                       </span>
                     </div>
+                    {/* Thanh điểm vẽ tay: rãnh nét đứt mực, phần phủ mực loang —
+                        progress gốc giữ nguyên cho máy đọc (bị ẩn thị giác). */}
                     <progress
                       aria-label={String(label)}
                       max={100}
                       value={Number(score)}
+                      className="sr-only"
                     />
+                    <div
+                      aria-hidden="true"
+                      className="mt-2 h-[9px] w-full rounded-full border border-dashed border-ink/45"
+                    >
+                      <div
+                        className="h-full rounded-full bg-ink/80"
+                        style={{
+                          width: `${Math.min(100, Math.max(0, Number(score)))}%`,
+                        }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
-            <section className="workspace-interview-feedback">
+            {/* Nhận xét của AI Recruiter — mẩu giấy note hồng "cần chú ý"
+                dán lệch nhẹ, như mentor viết tay lề bài. */}
+            <section
+              className="workspace-interview-feedback sticky-note-pink mt-8 p-5 sm:p-6"
+              style={{ "--note-rotate": "-0.4deg" } as CSSProperties}
+            >
               <h2 className="text-section font-bold">Nhận xét từ AI Recruiter</h2>
               <p className="mt-3 whitespace-pre-wrap text-body leading-relaxed">
                 {result.feedback}
@@ -123,7 +147,7 @@ export function RecruitmentResult() {
                     <IconCircleCheck size={17} aria-hidden="true" />
                     Điểm mạnh
                   </h3>
-                  <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 text-muted-foreground">
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 opacity-90">
                     {result.strengths.map((s, i) => (
                       <li key={i}>{s}</li>
                     ))}
@@ -136,7 +160,7 @@ export function RecruitmentResult() {
                     <IconLightbulb size={17} aria-hidden="true" />
                     Cần cải thiện
                   </h3>
-                  <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 text-muted-foreground">
+                  <ul className="mt-3 list-disc space-y-2 pl-5 text-body leading-7 opacity-90">
                     {result.weaknesses.map((s, i) => (
                       <li key={i}>{s}</li>
                     ))}
