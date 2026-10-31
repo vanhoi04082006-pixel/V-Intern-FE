@@ -895,3 +895,145 @@
     transition: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* 19. NOTEBOOK v2 — gáy lò xo, lề đỏ tiêu đề, washi theo vai,         */
+/*     nhịp giấy nâng tầm (phủ shell chung, giữ mật độ theo mục 0)     */
+/* ------------------------------------------------------------------ */
+
+/* 19a. Gáy lò xo THẬT cho sidebar intern — lỗ đục tròn thay vạch đứt:
+   mỗi lỗ là hình tròn mực nhạt, lặp dọc mép trái sidebar desktop. */
+@media (min-width: 1024px) {
+  [data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar) {
+    padding-left: var(--space-5);
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--ink) 26%, transparent) 0 3.1px,
+        transparent 3.3px
+      ) left 5px / 9px 26px repeat-y,
+      var(--sidebar);
+  }
+  /* Khoét lỗ đục sâu hơn ở dark — màu giấy nổi trên nền tối. */
+  .dark [data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar) {
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--paper-raised) 24%, transparent) 0 3.1px,
+        transparent 3.3px
+      ) left 5px / 9px 26px repeat-y,
+      var(--sidebar);
+  }
+  /* Vành mực quanh lỗ — nét tròn mảnh bao ngoài, tạo chiều sâu đục giấy. */
+  [data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar)::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 10px;
+    bottom: 10px;
+    width: 15px;
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      transparent 0 3.1px,
+      color-mix(in srgb, var(--ink) 10%, transparent) 3.1px 3.6px,
+      transparent 3.8px
+    );
+    background-size: 15px 26px;
+    background-repeat: repeat-y;
+    pointer-events: none;
+  }
+}
+
+/* 19b. Lề đỏ truyền thống — tiêu đề trang intern mở đầu như trang sổ mới.
+   Chỉ intern (mật độ ĐẬM); instructor/admin giữ heading sạch cho dữ liệu. */
+[data-workspace-role="intern"] :is(.workspace-page-header, .student-outcome-heading) {
+  position: relative;
+  padding-left: var(--space-4);
+}
+[data-workspace-role="intern"] :is(.workspace-page-header, .student-outcome-heading)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 2.5px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 12%,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 88%,
+    transparent
+  );
+  pointer-events: none;
+}
+/* Màn chờ phân công: lề đỏ áp thẳng vào h1 (header lồng trong cột grid). */
+[data-workspace-role="intern"] .intern-waiting h1 {
+  position: relative;
+  padding-left: var(--space-4);
+}
+[data-workspace-role="intern"] .intern-waiting h1::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 2.5px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 12%,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 88%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* 19c. Panel giấy nhấc bổng khi hover — intern ĐẬM (bóng in đậm, nhấc 2px),
+   instructor VỪA (nhấc 1px), admin KHÔNG (giữ bảng dày ổn định). */
+[data-workspace-role="intern"] .product-panel,
+[data-workspace-role="instructor"] .product-panel {
+  transition:
+    transform var(--motion-slow) var(--motion-ease),
+    box-shadow var(--motion-slow) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease);
+}
+[data-workspace-role="intern"] .product-panel:hover {
+  transform: translateY(-2px) rotate(-0.15deg);
+  box-shadow: var(--nb-shadow-hover), var(--elevation-sm);
+}
+[data-workspace-role="instructor"] .product-panel:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--nb-shadow-hover);
+}
+
+/* 19d. Washi theo vai — modal intern dán băng vàng (khác instructor xanh):
+   tăng nhận diện vai trên cùng một primitive dùng chung. */
+[data-workspace-role="intern"] .aurora-workspace .product-modal::before,
+[data-workspace-role="intern"] .product-modal::before {
+  background: color-mix(in srgb, #e2a53c 46%, #ffffff 46%);
+}
+.dark [data-workspace-role="intern"] .aurora-workspace .product-modal::before,
+.dark [data-workspace-role="intern"] .product-modal::before {
+  background: color-mix(in srgb, #e2a53c 36%, #26262e 54%);
+}
+
+/* 19e. Số liệu KPI intern — con số chính được gạch mực xanh dưới chân
+   (như nét bút tổng kết tuần trong sổ). */
+[data-workspace-role="intern"] .student-metric strong {
+  text-underline-offset: 6px;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--blue) 32%, transparent);
+  text-decoration-thickness: 2.5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-workspace-role="intern"] .product-panel,
+  [data-workspace-role="instructor"] .product-panel {
+    transition: none;
+  }
+  [data-workspace-role="intern"] .product-panel:hover,
+  [data-workspace-role="instructor"] .product-panel:hover {
+    transform: none;
+  }
+}
