@@ -17,7 +17,7 @@ import {
 import { errorMessage } from "@/lib/auth/api-client";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import { NoteCard } from "@/components/workspace/notebook";
-import { Tape } from "@/components/v-intern/doodles";
+import { PaperclipDoodle, Tape } from "@/components/v-intern/doodles";
 
 const phaseLabels: Record<string, string> = {
   introduction: "Làm quen",
@@ -162,8 +162,8 @@ export function ConversationInterview() {
         </div>
         {active && (
           <div className="w-full space-y-1 text-caption text-muted-foreground sm:w-auto">
-            {remaining !== null && <p>Thời gian còn lại: <span role="timer" aria-label="Thời gian còn lại" className="font-semibold tabular-nums text-foreground">{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span></p>}
-            {chat?.session.expiresAt && <p>Hạn gửi: {new Date(chat.session.expiresAt).toLocaleTimeString("vi-VN")}</p>}
+            {remaining !== null && <p>Thời gian còn lại: <span role="timer" aria-label="Thời gian còn lại" className="font-mono font-semibold tabular-nums text-foreground">{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span></p>}
+            {chat?.session.expiresAt && <p>Hạn gửi: <span className="font-mono tabular-nums">{new Date(chat.session.expiresAt).toLocaleTimeString("vi-VN")}</span></p>}
           </div>
         )}
       </header>
@@ -188,7 +188,7 @@ export function ConversationInterview() {
         aria-label="Hội thoại phỏng vấn"
         aria-live="polite"
         tabIndex={0}
-        className="max-h-[55dvh] min-h-64 space-y-5 overflow-y-auto p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:p-6"
+        className="bg-dots-paper max-h-[55dvh] min-h-64 space-y-5 overflow-y-auto p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:p-6"
       >
         {chat?.messages.map((m, i) => (
           <article
@@ -203,7 +203,7 @@ export function ConversationInterview() {
               {m.role === "assistant" ? <IconBot size={16} /> : <IconUserRound size={16} />}
             </span>
             <div
-              className={`max-w-[85%] whitespace-pre-wrap rounded-panel px-4 py-3 text-body leading-7 ${m.role === "assistant" ? "bg-background text-foreground" : "bg-primary text-primary-foreground"}`}
+              className={`max-w-[85%] whitespace-pre-wrap px-4 py-3 text-body leading-7 ${m.role === "assistant" ? "rounded-[4px_16px_16px_16px] border border-border bg-background text-foreground" : "rounded-[16px_4px_16px_16px] bg-primary text-primary-foreground"}`}
             >
               {m.content}
             </div>
@@ -228,7 +228,9 @@ export function ConversationInterview() {
         )}
         <div ref={end} />
       </div>
-      <div className="border-t border-border bg-background p-4 sm:p-6">
+      <div className="relative border-t border-border bg-background p-4 sm:p-6">
+        {/* Kẹp giấy giữ vùng soạn tin — như tờ giấy trả lời được ghim vào sổ */}
+        <PaperclipDoodle className="absolute -top-4 right-8 z-10 h-10 w-6 text-muted-foreground/50" />
         {active && current && (
           <>
             {(current.status === "not_started" ||
