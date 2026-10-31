@@ -3234,3 +3234,53 @@
     display: inline;
   }
 }
+
+/* =========================================================================
+   v4 — "refine every stroke" (intern sweep, appended block only)
+   Các nét tinh chỉnh của đợt v4: dây nối nét đứt cho step-list, nhấn nút
+   lún nhẹ 1px. Toàn bộ bọc trong prefers-reduced-motion khi cần.
+   ========================================================================= */
+
+/* v4: step-list (danh sách bước trong disclosure) có dây chuyền nét đứt
+   xuyên qua các ô số — cùng ngôn ngữ với .student-timeline. */
+.student-step-list li {
+  position: relative;
+}
+.student-step-list li::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 32px;
+  bottom: -16px;
+  width: 0;
+  border-left: 2px dashed
+    color-mix(in srgb, var(--student-blue, var(--primary)) 45%, transparent);
+}
+.student-step-list li:last-child::after {
+  display: none;
+}
+
+/* v4: trạng thái nhấn — nút/chốt hành động lún 1px như dấu ấn ngón tay. */
+@media (prefers-reduced-motion: no-preference) {
+  .student-experience :is(.student-action, .student-link):active {
+    transform: translateY(1px);
+  }
+}
+
+/* v4: eyebrow của StudentHeading — nét gạch mực ngắn + chữ xanh, như tên
+   chương được ghi lề trên đầu trang sổ. Trước đây prop bị bỏ không render. */
+.student-heading-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  font-size: var(--type-small);
+  font-weight: var(--weight-heading);
+  color: var(--primary);
+}
+.student-heading-eyebrow::before {
+  content: "";
+  width: 24px;
+  border-top: 2px solid
+    color-mix(in srgb, var(--primary) 50%, transparent);
+}

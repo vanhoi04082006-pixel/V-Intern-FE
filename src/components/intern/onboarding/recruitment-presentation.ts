@@ -77,7 +77,7 @@ export const ONBOARDING_STEPS = [
     description: "Xem kết quả tuyển dụng",
   },
 ];
-export const WELCOME_BREADCRUMB = ["Student Entry", "Onboarding"];
+export const WELCOME_BREADCRUMB = ["Khu sinh viên", "Hành trình ứng tuyển"];
 export const WELCOME_HEADING = "Chào mừng bạn đến với V-Intern!";
 export const WELCOME_SUBTITLE =
   "Trước khi bước vào không gian thực tập, bạn sẽ trải qua vòng tuyển dụng cùng AI Recruiter để xác định vị trí phù hợp.";

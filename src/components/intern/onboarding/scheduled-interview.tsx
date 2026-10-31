@@ -79,7 +79,7 @@ export function ScheduledInterview() {
   return (
     <section className="mx-auto max-w-4xl space-y-7">
       <header className="space-y-3">
-        <p className="flex items-center gap-2 text-caption font-bold  text-primary">
+        <p className="flex items-center gap-2 text-caption font-bold text-primary">
           <IconCalendarDays size={17} aria-hidden="true" />
           Lịch phỏng vấn của bạn
         </p>
@@ -93,7 +93,7 @@ export function ScheduledInterview() {
       </header>
       <div className="grid gap-6 border-y border-border py-6 sm:grid-cols-[1fr_auto]">
         <div>
-          <p className="text-caption font-semibold  text-muted-foreground">
+          <p className="text-caption font-semibold text-muted-foreground">
             Vị trí được xếp
           </p>
           <h2 className="mt-2 text-page font-bold text-foreground">

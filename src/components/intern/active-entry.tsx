@@ -440,8 +440,8 @@ function WorkQueue() {
                     {task.title}
                   </span>
                   <span className="student-work-foot mt-1">
-                    <span>{studentStatus(task.status)}</span>
-                    <span aria-hidden="true">·</span>
+                    {/* Trạng thái đã có badge riêng bên phải — foot chỉ giữ
+                        thời hạn để khỏi lặp chữ hai lần trên một dòng. */}
                     <span className="inline-flex items-center gap-1">
                       <IconClock size={11} aria-hidden="true" />
                       {studentDate(task.dueDate)}

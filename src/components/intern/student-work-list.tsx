@@ -18,7 +18,7 @@ import {
 import { TaskDeadline } from "@/components/workspace/task-deadline";
 
 /** Danh sách nhiệm vụ của sinh viên — mỗi dòng là một "thẻ công việc" đầy đủ
- * ngữ cảnh: trạng thái, ưu tiên, sprint, điểm độ lớn, tiến độ và thời hạn. */
+ * ngữ cảnh: trạng thái, ưu tiên, sprint, story points, tiến độ và thời hạn. */
 export function StudentWorkList({
   tasks,
   onOpen,
@@ -89,7 +89,7 @@ export function StudentWorkList({
               </span>
               <span className="student-work-foot">
                 <IconChartTrend size={12} aria-hidden="true" />
-                {task.storyPoints ?? "—"} điểm
+                Story points: {task.storyPoints ?? "—"}
               </span>
             </div>
           </div>

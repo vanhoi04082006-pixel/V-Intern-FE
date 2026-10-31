@@ -68,7 +68,7 @@ export function WaitingRecruitmentSummary({
         icon={IconBadgeCheck}
         title="Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án"
         action={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             <StudentLink secondary href="/intern/notifications">
               Xem thông báo
             </StudentLink>
@@ -115,51 +115,51 @@ export function WaitingRecruitmentSummary({
             </dl>
             <details className="student-help-disclosure">
               <summary>Điểm mạnh, hướng cải thiện & tiêu chí</summary>
-            <div className="student-eval-columns">
-              <div>
-                <h3>Kỹ năng & điểm mạnh</h3>
-                {result.strengths.length ? (
-                  <ul>
-                    {result.strengths.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-caption text-muted-foreground">
-                    Chưa có nhận xét kỹ năng.
-                  </p>
-                )}
+              <div className="student-eval-columns">
+                <div>
+                  <h3>Kỹ năng & điểm mạnh</h3>
+                  {result.strengths.length ? (
+                    <ul>
+                      {result.strengths.map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-caption text-muted-foreground">
+                      Chưa có nhận xét kỹ năng.
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <h3>Định hướng cải thiện</h3>
+                  {result.weaknesses.length ? (
+                    <ul>
+                      {result.weaknesses.map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-caption text-muted-foreground">
+                      Chưa có đề xuất cải thiện.
+                    </p>
+                  )}
+                </div>
               </div>
-              <div>
-                <h3>Định hướng cải thiện</h3>
-                {result.weaknesses.length ? (
-                  <ul>
-                    {result.weaknesses.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-caption text-muted-foreground">
-                    Chưa có đề xuất cải thiện.
-                  </p>
-                )}
-              </div>
-            </div>
-            {result.criteria.length > 0 && (
-              <div className="student-criteria-grid">
-                {result.criteria.map((c, index) => (
-                  <div className="student-criterion" key={c.code}>
-                    <div>
-                      <strong>
-                        {criterionLabels[c.code] ?? `Tiêu chí ${index + 1}`}
-                      </strong>
-                      <span>{c.score}/100</span>
+              {result.criteria.length > 0 && (
+                <div className="student-criteria-grid">
+                  {result.criteria.map((c, index) => (
+                    <div className="student-criterion" key={c.code}>
+                      <div>
+                        <strong>
+                          {criterionLabels[c.code] ?? `Tiêu chí ${index + 1}`}
+                        </strong>
+                        <span>{c.score}/100</span>
+                      </div>
+                      <p>{c.feedback}</p>
                     </div>
-                    <p>{c.feedback}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
             </details>
           </>
         ) : (

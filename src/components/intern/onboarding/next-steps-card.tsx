@@ -7,13 +7,13 @@ import type { RecruitmentResultData } from "./recruitment-model";
 import { TagPill } from "./onboarding-primitives";
 
 /**
- * Cột phải (rail) của Result screen (dùng chung pass/fail) , COMPACT
+ * Cột phải (rail) của Result screen (dùng chung pass/fail), COMPACT
  * theo reference 4A/4B: rail bắt đầu gần đỉnh content, padding gọn:
- * - `NextStepsCard`: "Bước tiếp theo" , 3 bước đánh số.
- * - `HiredRoleCard`: pass-only , "Vị trí đã tuyển dụng" + tags + lưu ý
+ * - `NextStepsCard`: "Bước tiếp theo", 3 bước đánh số.
+ * - `HiredRoleCard`: pass-only, "Vị trí đã tuyển dụng" + tags + lưu ý
  *   chưa được phân công Project.
  * - `ResultNotesCard`: "Lưu ý" + quote động viên (line-clamp để rail
- *   không dài hơn main , business info luôn ưu tiên hơn quote).
+ *   không dài hơn main, business info luôn ưu tiên hơn quote).
  */
 export function NextStepsCard({
   steps,
@@ -27,7 +27,7 @@ export function NextStepsCard({
     >
       <h2
         id="result-next-steps-heading"
-        className="flex items-center gap-2 text-small font-bold  text-muted-foreground"
+        className="flex items-center gap-2 text-small font-bold text-muted-foreground"
       >
         <IconCircleCheck className="size-4 text-primary" aria-hidden="true" />
         Bước tiếp theo
@@ -67,7 +67,7 @@ export function HiredRoleCard({ result }: { result: RecruitmentResultData }) {
     >
       <h2
         id="result-hired-heading"
-        className="text-small font-bold  text-success"
+        className="text-small font-bold text-success"
       >
         Vị trí đã tuyển dụng
       </h2>
@@ -82,8 +82,8 @@ export function HiredRoleCard({ result }: { result: RecruitmentResultData }) {
         ))}
       </ul>
       <p className="mt-2 rounded-control bg-card px-3 py-2 text-small font-medium leading-snug text-success">
-        Chưa có Project nào được phân công , giảng viên sẽ phân bạn vào
-        Project và Internship Session sau khi kết quả được duyệt.
+        Chưa có Project nào được phân công, giảng viên sẽ phân bạn vào Project
+        và Internship Session sau khi kết quả được duyệt.
       </p>
     </section>
   );
@@ -97,7 +97,7 @@ export function ResultNotesCard({ result }: { result: RecruitmentResultData }) {
     >
       <h2
         id="result-notes-heading"
-        className="flex items-center gap-2 text-small font-bold  text-muted-foreground"
+        className="flex items-center gap-2 text-small font-bold text-muted-foreground"
       >
         <IconInfo className="size-4 text-warning" aria-hidden="true" />
         Lưu ý

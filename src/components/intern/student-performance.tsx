@@ -84,13 +84,13 @@ export function StudentPerformance({
             { label: "Hoàn thành nhiệm vụ", value: m.taskCompletionRate },
             { label: "Hoàn thành đúng hạn", value: m.onTimeCompletionRate },
             { label: "Tiến độ Sprint hiện tại", value: m.activeSprintProgress },
-            { label: "Hoàn thành điểm độ lớn", value: m.storyPointCompletionRate },
+            { label: "Hoàn thành story points", value: m.storyPointCompletionRate },
           ]} />
           <div className="mt-7 border-t border-border pt-5 text-body text-muted-foreground">
             <strong className="text-foreground tabular-nums">
               {m.completedStoryPoints}/{m.committedStoryPoints}
             </strong>{" "}
-            điểm độ lớn đã hoàn thành / cam kết
+            story points đã hoàn thành / cam kết
           </div>
         </div>
       </div>

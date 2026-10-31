@@ -10,9 +10,9 @@ import { NextProcessCard } from "./next-process-card";
 import { RecentActivityCard } from "./recent-activity";
 import type { InternWorkspaceState } from "./intern-workspace-types";
 import {
-  IconBookOpen,
   IconFileText,
   IconInfo,
+  IconRefreshCw,
 } from "@/components/v-intern/icons";
 
 /**
@@ -102,11 +102,7 @@ export function EmptyInternWorkspace({
                   <li key={badge.id}>
                     <StatusBadge
                       tone={badge.tone}
-                      className={
-                        badge.tone === "blue"
-                          ? "border border-border bg-card"
-                          : "border border-border bg-card"
-                      }
+                      className="border border-border bg-card"
                     >
                       <badge.icon className="size-3.5" aria-hidden="true" />
                       {badge.label}
@@ -233,7 +229,7 @@ export function EmptyInternWorkspace({
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 xl:mt-3 xl:gap-3">
               <Link
                 href="/intern/onboarding/result"
-                className="inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground"
+                className="inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
               >
                 <IconFileText className="size-4" aria-hidden="true" />
                 {emptyCard.primaryAction}
@@ -241,9 +237,9 @@ export function EmptyInternWorkspace({
               <button
                 type="button"
                 onClick={onReload}
-                className="inline-flex items-center gap-2 rounded-control border border-border px-4 py-2 text-small font-semibold text-foreground"
+                className="inline-flex items-center gap-2 rounded-control border border-border bg-card px-4 py-2 text-small font-semibold text-foreground transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
               >
-                <IconBookOpen className="size-4" aria-hidden="true" />
+                <IconRefreshCw className="size-4" aria-hidden="true" />
                 {emptyCard.secondaryAction}
               </button>
             </div>
