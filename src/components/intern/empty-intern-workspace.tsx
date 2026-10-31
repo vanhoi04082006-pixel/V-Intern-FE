@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { BookOpen, FileText, Info } from "lucide-react";
 
+import { SparkleDoodle } from "@/components/v-intern/doodles";
 import { SectionCard, StatusBadge } from "./intern-primitives";
 import { InternshipInfoCard } from "./internship-info-card";
 import { NextProcessCard } from "./next-process-card";
@@ -86,7 +87,8 @@ export function EmptyInternWorkspace({
                 id="intern-welcome"
                 className="text-section font-bold tracking-tight text-foreground sm:text-section xl:text-section"
               >
-                {welcome.greeting}
+                {welcome.greeting}{" "}
+                <SparkleDoodle className="ml-0.5 inline-block h-5 w-5 align-[-2px] text-blue" />
               </h2>
               <p className="mt-1 max-w-xl text-body leading-relaxed text-muted-foreground xl:max-w-lg xl:text-small xl:leading-[1.35]">
                 {welcome.message}
@@ -217,7 +219,7 @@ export function EmptyInternWorkspace({
             </svg>
             <h2
               id="intern-empty-assignment"
-              className="text-section font-bold tracking-tight text-foreground sm:text-page xl:text-page"
+              className="marker text-section font-bold tracking-tight text-foreground sm:text-page xl:text-page"
             >
               {emptyCard.title}
             </h2>
@@ -259,16 +261,22 @@ export function EmptyInternWorkspace({
             tone="amber"
             title="Lưu ý"
             headerClassName="xl:px-4 xl:py-2"
-            bodyClassName="bg-warning-subtle xl:px-4 xl:py-3"
+            bodyClassName="xl:px-4 xl:py-3"
           >
             <ul className="flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-warning xl:gap-1 xl:text-caption xl:leading-[var(--iw-lead)]">
               {notes.map((note) => (
                 <li key={note}>{note}</li>
               ))}
             </ul>
-            <p className="mt-3 rounded-control bg-warning-subtle px-3 py-3 text-small font-medium leading-relaxed text-warning xl:mt-2 xl:py-2 xl:text-caption xl:leading-[1.35]">
-              {state.notesFooter}
-            </p>
+            {/* Ghi chú chân card = mẩu giấy note vàng dán lệch (mức ĐẬM intern). */}
+            <aside
+              className="sticky-note mt-3 p-3 xl:mt-2 xl:p-2.5"
+              style={{ "--note-rotate": "1.2deg" } as React.CSSProperties}
+            >
+              <p className="font-hand text-small font-medium leading-relaxed xl:text-caption xl:leading-[1.35]">
+                {state.notesFooter}
+              </p>
+            </aside>
           </SectionCard>
         </div>
       </div>

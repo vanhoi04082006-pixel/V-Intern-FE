@@ -249,6 +249,42 @@
   padding-bottom: var(--space-3);
   margin-bottom: var(--space-4);
 }
+/* SectionCard intern (workspace-section): primitive card dùng chung mọi trang
+   intern — nâng viền mực + bóng in một chỗ, toàn bộ consumer hưởng (Lớp 3). */
+[data-workspace-role="intern"] .workspace-section {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: var(--nb-radius);
+  box-shadow: var(--nb-shadow);
+}
+[data-workspace-role="intern"] .workspace-section-header {
+  border-bottom: 1px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+}
+/* Welcome card màn hình chờ: băng dính góc + giấy dán lệch, hover thẳng lại. */
+[data-workspace-role="intern"] .workspace-waiting-welcome {
+  position: relative;
+  transform: rotate(-0.5deg);
+  transition: transform var(--motion-normal) var(--motion-ease);
+}
+[data-workspace-role="intern"] .workspace-waiting-welcome:hover {
+  transform: rotate(0deg);
+}
+[data-workspace-role="intern"] .workspace-waiting-welcome::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  right: 34px;
+  width: 84px;
+  height: 23px;
+  transform: rotate(3deg);
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+}
+.dark [data-workspace-role="intern"] .workspace-waiting-welcome::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
 [data-workspace-role="instructor"] .product-panel {
   background: var(--nb-panel-bg);
   border: var(--nb-border-width) solid var(--nb-ink-line);
@@ -554,7 +590,8 @@
 /* Kbd, chip số liệu mono giữ JetBrains — đã có sẵn. */
 /* Trang chi tiết intern: tiêu đề chính được marker sau chữ (density thấp, chỉ intern). */
 [data-workspace-role="intern"] .student-outcome-heading h1,
-[data-workspace-role="intern"] .workspace-page-header h1 {
+[data-workspace-role="intern"] .workspace-page-header h1,
+[data-workspace-role="intern"] .intern-waiting header h1 {
   display: inline-block;
   background-image: linear-gradient(
     100deg,
@@ -591,8 +628,8 @@
   background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 
-/* CTA onboarding (class Tailwind thô): đưa về ngôn ngữ nút mực xanh nét đậm. */
-.workspace-onboarding :is(a, button).bg-primary {
+/* CTA onboarding + màn hình chờ (class Tailwind thô): đưa về ngôn ngữ nút mực xanh nét đậm. */
+:is(.workspace-onboarding, .workspace-waiting) :is(a, button).bg-primary {
   border: var(--nb-border-width) solid var(--nb-ink-line);
   border-radius: 8px 10px 9px 10px;
   box-shadow: var(--nb-shadow);
@@ -600,15 +637,15 @@
     box-shadow var(--motion-fast) var(--motion-ease),
     transform var(--motion-fast) var(--motion-ease);
 }
-.workspace-onboarding :is(a, button).bg-primary:not(:disabled):hover {
+:is(.workspace-onboarding, .workspace-waiting) :is(a, button).bg-primary:not(:disabled):hover {
   box-shadow: var(--nb-shadow-hover);
   transform: translate(-1px, -1px);
 }
-.workspace-onboarding :is(a, button).bg-primary:not(:disabled):active {
+:is(.workspace-onboarding, .workspace-waiting) :is(a, button).bg-primary:not(:disabled):active {
   transform: translate(0, 0);
   box-shadow: var(--nb-shadow);
 }
-.workspace-onboarding :is(a, button).border-border {
+:is(.workspace-onboarding, .workspace-waiting) :is(a, button).border-border {
   border: var(--nb-border-width) solid var(--nb-ink-line);
   border-radius: 8px 10px 9px 10px;
   background: var(--paper-raised);

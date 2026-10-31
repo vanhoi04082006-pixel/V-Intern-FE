@@ -253,7 +253,9 @@ try {
         : "intern";
     // Onboarding serves one profile/workspace state per page (the provider
     // redirects off-page states); pin the stage per visited route.
-    qaStage.recruitment = route.startsWith("/intern/onboarding")
+    qaStage.recruitment = route.includes("stage=waiting")
+      ? "waiting"
+      : route.startsWith("/intern/onboarding")
       ? route.endsWith("/role")
         ? "role"
         : route.endsWith("/interview")

@@ -73,6 +73,18 @@ const workspaceRecruitmentInProgress = {
   focusedTask: null,
 };
 
+// Waiting screen (status "unassigned" + recruitment passed): màn hình đầu tiên
+// 3 tài khoản blank nhìn thấy — cần bằng chứng QA riêng (stage=waiting).
+const workspaceUnassigned = {
+  status: "unassigned",
+  hasAssignmentHistory: false,
+  assignment: null,
+  recruitment: { status: "passed", selectedRole: "frontend", attemptCount: 1, recruitedAt: daysAgo(2) },
+  currentSprint: null,
+  taskSummary: emptyTaskSummary,
+  focusedTask: null,
+};
+
 const recruitmentProfiles = {
   welcome: {
     status: "not_started",
@@ -137,6 +149,25 @@ const recruitmentProfiles = {
       evaluatedAt: daysAgo(1),
     },
   },
+};
+
+// Lịch sử phỏng vấn cho waiting summary (contract: parseInterviewHistory) —
+// result tái dùng payload đầy đủ của profile "result" để khớp parseResult.
+const recruitmentHistory = {
+  total: 1,
+  items: [
+    {
+      id: id("itv"),
+      roleCode: "frontend",
+      status: "evaluated",
+      attemptNumber: 1,
+      questionCount: 6,
+      startedAt: daysAgo(3),
+      submittedAt: daysAgo(3),
+      evaluatedAt: daysAgo(2),
+      result: recruitmentProfiles.result.result,
+    },
+  ],
 };
 
 const interviewQuestions = {
@@ -562,6 +593,7 @@ export function resolveApi(method, pathname, search) {
       ],
     };
   if (method === "GET" && p === "/intern/me/workspace") {
+    if (qaStage.recruitment === "waiting") return workspaceUnassigned;
     if (qaStage.recruitment === "welcome" || qaStage.recruitment === "role")
       return workspaceRecruitmentRequired;
     if (qaStage.recruitment === "interview")
@@ -569,7 +601,13 @@ export function resolveApi(method, pathname, search) {
     return workspaceActive;
   }
   if (method === "GET" && p === "/recruitment/me") {
-    return recruitmentProfiles[qaStage.recruitment] ?? recruitmentProfiles.welcome;
+    // Waiting screen dùng profile "passed" (đã vượt phỏng vấn, chờ phân công).
+    const profileKey =
+      qaStage.recruitment === "waiting" ? "result" : qaStage.recruitment;
+    return recruitmentProfiles[profileKey] ?? recruitmentProfiles.welcome;
+  }
+  if (method === "GET" && p === "/recruitment/me/interviews") {
+    return recruitmentHistory;
   }
   const interviewQuestionsMatch = p.match(/^\/recruitment\/me\/interviews\/([^/]+)\/questions$/);
   if (method === "GET" && interviewQuestionsMatch) return interviewQuestions;
