@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 
 import { SectionCard } from "./intern-primitives";
+import { Tape } from "@/components/v-intern/doodles";
 import type { InternNextStep } from "./intern-workspace-types";
 import {
   IconListChecks,
@@ -28,10 +29,12 @@ export function NextProcessCard({
       icon={IconListChecks}
       tone="blue"
       title="Quy trình tiếp theo"
-      className={className}
+      className={cn(className, "relative")}
       headerClassName="xl:px-4 xl:py-2"
       bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-3"
     >
+      {/* Mẩu băng dính góc card — mật độ ĐẬM intern, không đổi nhịp layout. */}
+      <Tape className="-top-3 right-5" rotate={4} variant="candy" />
       {/* Desktop: nhịp bước cố định theo R01; connector dọc nối số.
           Ba bước hiển thị cùng lúc, không giãn kín chiều cao card. */}
       <ol className="relative flex flex-col gap-4 xl:gap-8">

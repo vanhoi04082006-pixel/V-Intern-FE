@@ -4,10 +4,10 @@ import { CardLinkAction, SectionCard } from "./intern-primitives";
 import { INTERN_TONES } from "./intern-ui-tones";
 import type { InternActivityItem } from "./intern-workspace-types";
 import {
-  IconCircleCheck,
   IconHistory,
   IconMoreHorizontal,
 } from "@/components/v-intern/icons";
+import { CheckDoodle } from "@/components/v-intern/doodles";
 
 /**
  * Card "Hoạt động gần đây" (state empty): timeline các mốc trong quá trình
@@ -66,7 +66,8 @@ export function RecentActivityCard({
                 )}
               >
                 {isDone ? (
-                  <IconCircleCheck className={cn("size-4", toneStyle.icon)} />
+                  // Dấu tick vẽ tay — mực xanh như chấm bài đã xong.
+                  <CheckDoodle className={cn("h-4 w-[22px]", toneStyle.icon)} />
                 ) : (
                   // Chờ phân công: icon "⋯" đúng reference (phân biệt với
                   // mục hoàn thành bằng icon, không chỉ màu).

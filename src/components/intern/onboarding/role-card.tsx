@@ -1,11 +1,17 @@
 "use client";
 
+import { StampBadge } from "@/components/v-intern/doodles";
+
 import type { RecruitmentRole } from "./recruitment-presentation";
 
 /**
  * Card lựa chọn vai trò ứng tuyển — pattern radio thuần (input sr-only bên
  * trong label): chọn bằng click/keyboard đều hoạt động native, trạng thái
  * chọn đọc được qua radio semantics + viền/nền nổi bật (không chỉ màu).
+ *
+ * Notebook v3: viền mực/ xoayso le và hiệu ứng thẳng lại khi chạm do
+ * `.workspace-onboarding .student-role-option` đảm nhiệm; vai đang chọn
+ * đóng dấu mộc "Đã chọn" thay vì pill màu.
  */
 export function RoleCard({
   role,
@@ -42,9 +48,9 @@ export function RoleCard({
           <Icon className="size-5 text-foreground" />
         </span>
         {checked ? (
-          <span className="rounded-full bg-primary px-2 py-1 text-caption font-bold text-primary-foreground">
-            Đang chọn
-          </span>
+          <StampBadge rotate={-8} className="text-primary">
+            Đã chọn
+          </StampBadge>
         ) : null}
       </span>
       <span className="mt-3 text-body font-bold text-foreground">{role.label}</span>

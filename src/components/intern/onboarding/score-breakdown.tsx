@@ -29,7 +29,7 @@ export function ScoreBreakdown({ result }: { result: RecruitmentResultData }) {
   return (
     <section
       aria-labelledby="result-score-heading"
-      className="rounded-panel border border-border bg-card p-4 shadow-app-xs"
+      className="sketch-card-sm p-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2
@@ -181,9 +181,10 @@ function ScoreRow({
           {formatScore(value)}/100
         </dd>
       </div>
+      {/* Rãnh điểm vẽ tay — nét đứt mực, phần phủ mực theo tone */}
       <div
         aria-hidden="true"
-        className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+        className="mt-2 h-[9px] w-full rounded-full border border-dashed border-ink/45"
       >
         <div
           className={cn("h-full rounded-full", barTone)}

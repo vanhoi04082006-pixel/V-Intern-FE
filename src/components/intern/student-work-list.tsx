@@ -2,9 +2,9 @@ import Link from "next/link";
 import {
   IconArrowRight,
   IconChartTrend,
-  IconListTodo,
   IconSquareKanban,
 } from "@/components/v-intern/icons";
+import { NotebookEmpty } from "@/components/workspace/notebook";
 import type { Task } from "@/lib/api/work";
 import {
   StudentBadge,
@@ -32,27 +32,29 @@ export function StudentWorkList({
 }) {
   if (!tasks.length)
     return (
-      <div className="student-empty">
-        <IconListTodo size={36} aria-hidden="true" />
-        <h3>
-          {filtered
+      /* Trang sổ trống — artwork sổ tay, không bịa dữ liệu. */
+      <NotebookEmpty
+        title={
+          filtered
             ? "Không tìm thấy nhiệm vụ phù hợp"
-            : "Bạn chưa có nhiệm vụ được giao"}
-        </h3>
-        <p>
-          {filtered
+            : "Bạn chưa có nhiệm vụ được giao"
+        }
+        hint={
+          filtered
             ? "Thử tên ngắn hơn hoặc bỏ bộ lọc để xem lại toàn bộ công việc."
-            : "Khi giảng viên giao việc, yêu cầu và thời hạn sẽ xuất hiện tại đây."}
-        </p>
-        {filtered && (
-          <button
-            className="student-action student-action-secondary mt-5"
-            onClick={onClear}
-          >
-            Xóa bộ lọc
-          </button>
-        )}
-      </div>
+            : "Khi giảng viên giao việc, yêu cầu và thời hạn sẽ xuất hiện tại đây."
+        }
+        action={
+          filtered ? (
+            <button
+              className="student-action student-action-secondary"
+              onClick={onClear}
+            >
+              Xóa bộ lọc
+            </button>
+          ) : undefined
+        }
+      />
     );
   return (
     <div className="student-work-list">
