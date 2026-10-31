@@ -22,6 +22,7 @@ import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
 import { AdminSystemStatus } from '@/components/admin/system-status';
+import { StampMoc } from "@/components/workspace/notebook";
 function Result<T>({
   resource: r,
   children,
@@ -365,7 +366,28 @@ export function AdminUsers() {
                             </td>
                             <td className="p-3">{u.username}</td>
                             <td className="p-3">
-                              <Badge>{userStatusLabels[u.status] ?? u.status}</Badge>
+                              <Badge
+                                tone={
+                                  u.status === "locked" || u.status === "deleted"
+                                    ? "red"
+                                    : undefined
+                                }
+                              >
+                                {userStatusLabels[u.status] ?? u.status}
+                              </Badge>
+                              {/* Trạng thái cuối vòng đời (khóa/xóa) được đóng
+                                  mộc đỏ đậm — hành chính "đã chốt", không thể
+                                  đảo ngược; trạng thái khác giữ badge mềm. */}
+                              {(u.status === "locked" || u.status === "deleted") && (
+                                <StampMoc
+                                  tone="red"
+                                  size="sm"
+                                  rotate={-6}
+                                  className="nb-moc-allowed ml-2 align-middle"
+                                >
+                                  {userStatusLabels[u.status] ?? u.status}
+                                </StampMoc>
+                              )}
                             </td>
                             <td className="p-3">
                               {u.lastLoginAt
