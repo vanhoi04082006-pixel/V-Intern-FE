@@ -383,7 +383,7 @@ export function ProductShell({
           event.preventDefault();
           setOpen(false);
         }}
-        className="product-drawer fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
+        className="product-drawer animate-page-curl fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
         aria-label="Menu workspace"
       >
         <div className="flex min-h-full flex-col">

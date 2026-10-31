@@ -1,10 +1,12 @@
 import type { IconComponent } from "@/components/v-intern/icons";
 import type { ReactNode } from "react";
-import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 import { INTERN_TONES, type InternTone } from "./intern-ui-tones";
+import {
+  IconArrowRight,
+} from "@/components/v-intern/icons";
 
 /**
  * Primitives dùng chung cho Intern Workspace: card section, badge, progress
@@ -101,7 +103,7 @@ export function CardLinkAction({ label }: { label: string }) {
       className="inline-flex items-center gap-1 rounded-control text-small font-semibold text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
     >
       {label}
-      <ArrowRight className="size-4" aria-hidden="true" />
+      <IconArrowRight className="size-4" aria-hidden="true" />
     </button>
   );
 }

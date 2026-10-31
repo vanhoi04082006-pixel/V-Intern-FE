@@ -782,3 +782,102 @@
   border: 1.5px dashed color-mix(in srgb, var(--destructive) 55%, transparent);
   border-radius: 10px 12px 10px 12px;
 }
+
+/* ------------------------------------------------------------------ */
+/* 18. Role-gate mộc admin, checkbox/radio nét mực (gói R3)             */
+/* ------------------------------------------------------------------ */
+
+/* a) PHANH admin: mộc cấp card (bài nộp đã duyệt, kế hoạch đã phát hành…)
+      hạ xuống badge phẳng — mật độ admin NHẸ, không dấu mực loang ở danh
+      sách dày. Riêng mộc "badge quan trọng" (cấp chứng chỉ) giữ nguyên
+      qua class nb-moc-allowed. */
+[data-workspace-role="admin"] .stamp-moc:not(.nb-moc-allowed) {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 999px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  transform: none;
+  animation: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+[data-workspace-role="admin"] .stamp-moc:not(.nb-moc-allowed)::after {
+  content: none;
+}
+
+/* b) Checkbox/radio workspace — ô vuông nét mực, dấu check vẽ tay; radio
+      là vòng tròn mực loang lệch. Chỉ scope aurora-workspace (landing/auth
+      giữ style riêng). Focus-visible giữ outline 2px/2px chuẩn a11y. */
+.aurora-workspace input[type="checkbox"]:not(.sr-only) {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin: 0;
+  vertical-align: -0.18em;
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 4px 5px 4px 5px;
+  background: var(--paper-raised);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+.aurora-workspace input[type="checkbox"]:not(.sr-only)::before {
+  content: "";
+  width: 0.62em;
+  height: 0.34em;
+  border-left: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  margin-top: -0.12em;
+  transform: rotate(-45deg) scale(0);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.aurora-workspace input[type="checkbox"]:not(.sr-only):checked::before {
+  transform: rotate(-45deg) scale(1);
+}
+.aurora-workspace input[type="checkbox"]:not(.sr-only):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.aurora-workspace input[type="radio"]:not(.sr-only) {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin: 0;
+  vertical-align: -0.18em;
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 47% 53% 50% 50% / 52% 48% 53% 47%;
+  background: var(--paper-raised);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+.aurora-workspace input[type="radio"]:not(.sr-only)::before {
+  content: "";
+  width: 0.52em;
+  height: 0.52em;
+  border-radius: 52% 48% 55% 45%;
+  background: var(--blue);
+  transform: scale(0);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.aurora-workspace input[type="radio"]:not(.sr-only):checked::before {
+  transform: scale(1);
+}
+.aurora-workspace input[type="radio"]:not(.sr-only):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.aurora-workspace :is(input[type="checkbox"], input[type="radio"]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-workspace :is(input[type="checkbox"], input[type="radio"])::before {
+    transition: none;
+  }
+}

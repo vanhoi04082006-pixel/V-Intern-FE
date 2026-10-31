@@ -1,5 +1,7 @@
-import { CalendarDays } from 'lucide-react';
 
+import {
+  IconCalendarDays,
+} from "@/components/v-intern/icons";
 /** Calendar-day urgency; an old date on a completed task is not an open warning. */
 export function describeTaskDeadline(value: string | null | undefined, status: string, now = new Date()) {
   const dayOnly = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -17,7 +19,7 @@ export function describeTaskDeadline(value: string | null | undefined, status: s
 export function TaskDeadline({ value, status, compact = false }: { value?: string | null; status: string; compact?: boolean }) {
   const deadline = describeTaskDeadline(value, status);
   return <span className={`workspace-deadline${compact ? ' workspace-deadline-compact' : ''}`} data-tone={deadline.tone}>
-    <CalendarDays size={13} aria-hidden="true" />
+    <IconCalendarDays size={13} aria-hidden="true" />
     <time dateTime={deadline.date === 'Chưa có hạn' ? undefined : value ?? undefined} title={deadline.date}>
       {deadline.relative ?? deadline.date}
       {deadline.relative && <small>{deadline.date}</small>}

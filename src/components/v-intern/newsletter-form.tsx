@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Info, Mail } from "lucide-react";
+import {
+  IconInfo,
+  IconMail,
+} from "@/components/v-intern/icons";
 
 /**
  * Form bản tin — validate email phía client.
@@ -24,7 +27,7 @@ export function NewsletterForm() {
   return state === "unavailable" ? (
     <div className="mt-4">
       <p className="dashed-cut-chalk flex items-start gap-2 rounded-lg bg-royal/15 px-3.5 py-3 text-xs leading-relaxed text-[#a3b9ff]">
-        <Info size={16} className="shrink-0" aria-hidden="true" />
+        <IconInfo size={16} className="shrink-0" aria-hidden="true" />
         Đăng ký bản tin chưa được kết nối với hệ thống. Tính năng sẽ khả dụng
         khi backend chính thức ra mắt.
       </p>
@@ -40,7 +43,7 @@ export function NewsletterForm() {
     <form onSubmit={submit} noValidate className="mt-4">
       <div className="flex">
         <div className="relative min-w-0 flex-1">
-          <Mail
+          <IconMail
             aria-hidden="true"
             className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-chalk/50"
           />

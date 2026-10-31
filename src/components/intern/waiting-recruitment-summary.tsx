@@ -1,12 +1,16 @@
 "use client";
 import { useCallback, useState } from "react";
-import { BadgeCheck, History, RefreshCw } from "lucide-react";
 import { recruitmentApi } from "@/lib/api/recruitment";
 import { roleLabel } from "@/lib/api/workspace";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Pager } from "@/components/product/primitives";
 import { StampMoc } from "@/components/workspace/notebook";
+import {
+  IconBadgeCheck,
+  IconHistory,
+  IconRefreshCw,
+} from "@/components/v-intern/icons";
 import {
   StudentBadge,
   StudentCallout,
@@ -61,7 +65,7 @@ export function WaitingRecruitmentSummary({
   return (
     <div className="space-y-5">
       <StudentPanel
-        icon={BadgeCheck}
+        icon={IconBadgeCheck}
         title="Đã vượt qua phỏng vấn — đang chờ giảng viên phân dự án"
         action={
           <div className="flex flex-wrap items-center gap-2">
@@ -74,7 +78,7 @@ export function WaitingRecruitmentSummary({
                 className="student-action student-action-secondary student-action-sm"
                 onClick={onReload}
               >
-                <RefreshCw size={14} aria-hidden="true" />
+                <IconRefreshCw size={14} aria-hidden="true" />
                 Tải lại trạng thái
               </button>
             )}
@@ -169,7 +173,7 @@ export function WaitingRecruitmentSummary({
       </StudentPanel>
 
       <StudentPanel
-        icon={History}
+        icon={IconHistory}
         title="Lịch sử phỏng vấn"
         action={
           <StudentLink secondary href="/intern/onboarding/result">
@@ -221,7 +225,7 @@ export function WaitingRecruitmentSummary({
             ))}
           </ol>
         ) : (
-          <StudentEmpty icon={History} title="Chưa có phiên phỏng vấn">
+          <StudentEmpty icon={IconHistory} title="Chưa có phiên phỏng vấn">
             Lịch sử các lần phỏng vấn sẽ xuất hiện tại đây sau khi bạn hoàn thành.
           </StudentEmpty>
         )}

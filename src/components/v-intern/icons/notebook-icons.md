@@ -40,7 +40,7 @@ Cột "nơi dùng" cập nhật mỗi pack bổ sung consumer mới.
 | IconUsers | Users | Nav "Người dùng/Nhóm" | ẩn |
 | IconShield | Shield | Nav "Vai trò & quyền", footer admin | ẩn |
 | IconBookOpen | BookOpen | Nav "Danh mục/Kho tri thức" | ẩn |
-| IconCircleHelp | CircleHelp | Nav "Ngân hàng câu hỏi" | ẩn |
+| IconCircleHelp | CircleHelp | Nav "Ngân hàng câu hỏi", ErrorState dùng chung (R2) | ẩn |
 | IconGraduationCap | GraduationCap | Nav "Thư viện nghề nghiệp", footer vai | ẩn |
 | IconLayoutTemplate | LayoutTemplate | Nav "Project template" | ẩn |
 | IconSparkles | Sparkles | Nav "Cấu hình AI" | ẩn |
@@ -81,6 +81,10 @@ Cột "nơi dùng" cập nhật mỗi pack bổ sung consumer mới.
 | IconMessageSquare | MessageSquare | Bình luận/review | ẩn |
 | IconSend | Send | Gửi chat mentor | ẩn |
 | IconStar | Star | (dự bị — đánh giá) | ẩn |
+| IconHistory | History | Hoạt động gần đây, lịch sử phỏng vấn (waiting-recruitment-summary, recent-activity) | ẩn |
+| IconCheckCheck | CheckCheck | "Đã hoàn thành" student-performance | ẩn |
+| IconClipboardList | ClipboardList | "Nhiệm vụ được giao" student-performance | ẩn |
+| IconBadgeCheck | BadgeCheck | Tiêu chí đạt yêu cầu waiting-recruitment-summary | ẩn, kèm dải ruy băng |
 
 ## Hành động (dự bị cho PACK 4–6)
 
@@ -97,3 +101,20 @@ nút tương ứng; mỗi lần tiêu thụ cập nhật bảng này. Không xó
   đặt tên trùng lucide tương ứng để tra cứu nhanh, cập nhật bảng dossier.
 - Đổi icon tại call site: giữ aria/test-hook; chạy `vitest run` (672 floor)
   và keyboard-check trước khi mở PR.
+
+## Gói R3 — mở rộng & thay lucide
+
+Thêm 4 icon (IconHistory, IconCheckCheck, IconClipboardList, IconBadgeCheck)
+theo đúng quy ước nét; bộ lên **86 icon**. R3 thay lucide ở 17 file (14
+workspace/landing full-swap + 3 file mở khoá nhờ icon mới): intern-primitives,
+intern-shell, next-process-card, assignee-selector, collection-insights,
+task-deadline, workspace-ui, empty-intern-workspace, history-entry,
+replacement-dialog, recent-activity, student-performance,
+waiting-recruitment-summary, navbar, final-cta, newsletter-form,
+ai-interview-showcase. Còn lại **14 file** import lucide (≤15 mục tiêu):
+footer (icon mạng xã hội — không có bản vẽ tay), feature-strip, product-heart,
+hero, workflow, how-it-works, audience-cards, workspace-artwork, academic,
+academic-insights, instructor-onboarding, admin-management, repository-members,
+incident-list — icon phụ chưa có tương đương (Building2, UserSearch, Database,
+Play, Code2, KanbanSquare, Timer, Link2, FileCheck2, Newspaper, NotebookPen,
+ShoppingBag, Circle…); thay dần theo pack sau.
