@@ -37,7 +37,7 @@ export function AuthField({
       .join(" ") || undefined;
 
   return (
-    <div className={className}>
+    <div className={cn("auth-ink-field", className)}>
       <label
         htmlFor={id}
         className="mb-2 block text-body font-semibold text-foreground"
@@ -65,14 +65,14 @@ export function AuthField({
         />
       </div>
       {hint && !error && (
-        <p id={hintId} className="mt-2 text-small text-muted-foreground">
+        <p id={hintId} className="auth-field-note mt-2 text-small text-muted-foreground">
           {hint}
         </p>
       )}
       {error && (
         <p
           id={errorId}
-          className="mt-2 flex items-start gap-2 text-small font-medium text-destructive"
+          className="auth-field-note mt-2 flex items-start gap-2 text-small font-medium text-destructive"
         >
           <IconAlertTriangle
             aria-hidden="true"

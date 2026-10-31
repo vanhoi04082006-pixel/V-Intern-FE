@@ -134,6 +134,92 @@
 }
 .app-surface.support-invitation > main { max-width: 56rem; margin-inline: auto; }
 .app-surface :where(input, select, textarea)::placeholder { color: var(--muted-foreground); opacity: 1; }
+
+/* ------------------------------------------------------------------ */
+/* v4 · “Nét mực tập viết” — chi tiết form auth                         */
+/* ------------------------------------------------------------------ */
+/* Ô nhập: khi focus, nét mực xanh chạy dọc baseline dưới chữ — như   */
+/* đang viết trên dòng kẻ vở. Không gây layout shift (inset shadow). */
+.app-surface .auth-form-surface input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+.app-surface .auth-form-surface textarea:focus-visible {
+  border-color: var(--primary);
+  box-shadow:
+    inset 0 -2.5px 0 var(--primary),
+    2px 2px 0 color-mix(in srgb, var(--primary) 22%, transparent);
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+/* Icon đầu ô nhập đổi sang mực xanh khi trường đang focus. */
+.app-surface .auth-ink-field > .relative:focus-within > svg:first-child { color: var(--primary); }
+.app-surface .auth-ink-field .absolute.left-4 { transition: color .18s ease; }
+
+/* Lỗi inline: vào khung bằng một nhịp rung nhẹ như giật bút gạch đít. */
+@keyframes auth-note-in {
+  0% { opacity: 0; transform: translateY(-3px); }
+  60% { transform: translateY(1px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.app-surface .auth-field-note { animation: auth-note-in .22s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .app-surface .auth-field-note { animation: none; }
+}
+
+/* Alert hộp: trượt xuống nhẹ nhàng khi xuất hiện. */
+@keyframes auth-alert-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.app-surface .auth-form-surface [role="alert"],
+.app-surface .auth-form-surface [role="status"] {
+  animation: auth-alert-in .24s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-surface .auth-form-surface [role="alert"],
+  .app-surface .auth-form-surface [role="status"] { animation: none; }
+}
+
+/* Nút CTA chính: mực đặc + bóng in offset như con dấu; mũi tên trượt. */
+.app-surface .auth-cta {
+  position: relative;
+  border: 2px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--hard-shadow) 80%, transparent);
+  transition: transform .16s ease, box-shadow .16s ease, background-color .16s ease;
+}
+.app-surface .auth-cta:not(:disabled):hover {
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--hard-shadow) 85%, transparent);
+}
+.app-surface .auth-cta:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0 color-mix(in srgb, var(--hard-shadow) 80%, transparent);
+}
+.app-surface .auth-cta:disabled { box-shadow: none; border-color: transparent; }
+.app-surface .auth-cta .auth-cta-arrow { transition: transform .18s ease; }
+.app-surface .auth-cta:not(:disabled):hover .auth-cta-arrow { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .app-surface .auth-cta,
+  .app-surface .auth-cta .auth-cta-arrow { transition: none; }
+  .app-surface .auth-cta:not(:disabled):active { transform: none; }
+}
+
+/* Nút Google: viền mực đậm hơn khi hover, nhấn lún xuống như vẽ tay. */
+.app-surface .auth-google-btn { transition: transform .16s ease, background-color .16s ease, border-color .16s ease; }
+.app-surface .auth-google-btn:not(:disabled):hover { border-color: color-mix(in srgb, var(--ink) 45%, transparent); }
+.app-surface .auth-google-btn:not(:disabled):active { transform: translateY(1px); }
+
+/* Dashed divider “Hoặc” — nét đứt như đường cắt giấy. */
+.app-surface .auth-divider-line { border-top: 2px dashed color-mix(in srgb, var(--ink) 25%, transparent); }
+
+/* Tab auth: thêm chấm mực nhỏ trước mục đang mở. */
+.app-surface .auth-tabs a[aria-current="page"]::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  vertical-align: 2px;
+  border-radius: 45% 55% 50% 50%;
+  background: var(--primary);
+}
+
 @media (max-width: 63.99rem) {
   .app-surface .auth-layout { grid-template-columns: minmax(0, 1fr); max-width: 44rem; gap: var(--space-8); padding-top: var(--space-4); }
   .app-surface .auth-context { display: none; }

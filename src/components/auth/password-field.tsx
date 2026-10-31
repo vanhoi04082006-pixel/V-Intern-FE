@@ -37,7 +37,7 @@ export function PasswordField({
       .join(" ") || undefined;
 
   return (
-    <div className={className}>
+    <div className={cn("auth-ink-field", className)}>
       <label
         htmlFor={id}
         className="mb-2 block text-body font-semibold text-foreground"
@@ -69,7 +69,7 @@ export function PasswordField({
           onClick={() => setVisible((value) => !value)}
           aria-label={visible ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
           aria-pressed={visible}
-          className="absolute right-1 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-control text-muted-foreground transition-colors hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="absolute right-1 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           {visible ? (
             <IconEye className="size-4" aria-hidden="true" />
@@ -79,14 +79,14 @@ export function PasswordField({
         </button>
       </div>
       {hint && !error && (
-        <p id={hintId} className="mt-2 text-small text-muted-foreground">
+        <p id={hintId} className="auth-field-note mt-2 text-small text-muted-foreground">
           {hint}
         </p>
       )}
       {error && (
         <p
           id={errorId}
-          className="mt-2 flex items-start gap-2 text-small font-medium text-destructive"
+          className="auth-field-note mt-2 flex items-start gap-2 text-small font-medium text-destructive"
         >
           <IconAlertTriangle
             aria-hidden="true"

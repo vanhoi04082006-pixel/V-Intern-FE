@@ -244,7 +244,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
             />
             <span
               aria-hidden="true"
-              className="grid size-4 shrink-0 place-items-center rounded-sm border border-input bg-card transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40 peer-focus-visible:ring-offset-2"
+              className="grid size-[18px] shrink-0 place-items-center rounded-[5px] border-[1.5px] border-input bg-card transition-colors peer-checked:border-primary peer-checked:bg-primary peer-hover:border-primary/70 peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40 peer-focus-visible:ring-offset-2"
             >
               <svg
                 viewBox="0 0 12 10"
@@ -265,7 +265,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
 
           <Link
             href="/forgot-password"
-            className="shrink-0 whitespace-nowrap rounded-sm text-body font-semibold text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+            className="shrink-0 whitespace-nowrap rounded-sm text-body font-semibold text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           >
             Quên mật khẩu?
           </Link>
@@ -275,7 +275,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
           type="submit"
           disabled={!hydrated || isSubmitting}
           className={cn(
-            "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
+            "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
             "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-80",
           )}
@@ -288,15 +288,15 @@ export function LoginForm({ previewState }: LoginFormProps) {
           ) : (
             <>
               Đăng nhập
-              <IconArrowRight className="size-4" aria-hidden="true" />
+              <IconArrowRight className="auth-cta-arrow size-4" aria-hidden="true" />
             </>
           )}
         </button>
 
-        <div className="mt-4 flex items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-secondary" />
+        <div className="mt-5 flex items-center gap-4" aria-hidden="true">
+          <span className="auth-divider-line h-0 flex-1 border-t" />
           <span className="text-small text-muted-foreground">Hoặc</span>
-          <span className="h-px flex-1 bg-secondary" />
+          <span className="auth-divider-line h-0 flex-1 border-t" />
         </div>
 
         <button
@@ -306,7 +306,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
             clearBoxAlerts();
             setGoogleNotice(true);
           }}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-control border border-border bg-card text-body font-semibold text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="auth-google-btn mt-5 inline-flex h-12 w-full items-center justify-center gap-3 rounded-control border border-border bg-card text-body font-semibold text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <GoogleIcon />
           Tiếp tục với Google
@@ -322,11 +322,11 @@ export function LoginForm({ previewState }: LoginFormProps) {
         </p>
       </form>
 
-      <p className="mt-5 text-center text-body text-muted-foreground">
+      <p className="mt-6 text-center text-body text-muted-foreground">
         Chưa có tài khoản?{" "}
         <Link
           href="/register"
-          className="rounded-sm font-semibold text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="rounded-sm font-semibold text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           Đăng ký ngay
         </Link>
