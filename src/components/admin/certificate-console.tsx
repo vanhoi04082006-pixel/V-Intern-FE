@@ -29,6 +29,7 @@ import {
   StatusDot,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
+import { linkButtonClass } from "./ui-bits";
 import { PerformanceMemberPicker } from "@/components/product/performance-member-picker";
 import { ApiError } from "@/lib/auth/api-client";
 
@@ -109,7 +110,7 @@ export function CertificateConsole() {
         <ErrorState error={certificates.error} onRetry={certificates.reload} />
       ) : certificates.data?.items.length ? (
         <div className="overflow-x-auto border-y border-border" role="region" aria-label="Danh sách chứng nhận" tabIndex={0}>
-          <table className="product-table w-full border-collapse text-body">
+          <table className="product-table w-full min-w-[52rem] border-collapse text-body">
             <thead>
               <tr>
                 {["Số chứng nhận", "Người giữ", "Vai trò · Dự án", "Trạng thái", "Hành động"].map(
@@ -192,7 +193,7 @@ export function CertificateConsole() {
                   <td className="border-b border-border px-4 py-3">
                     <div className="flex flex-wrap items-center gap-3">
                       <a
-                        className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                        className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                         href={`/verify?code=${encodeURIComponent(certificate.verificationCode)}`}
                         target="_blank"
                         rel="noreferrer"
@@ -203,7 +204,7 @@ export function CertificateConsole() {
                       {certificate.status === "issued" && (
                         <>
                           <button
-                            className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                            className={`${linkButtonClass} text-primary hover:underline underline-offset-4`}
                             aria-label={`Tải PDF ${certificate.certificateNumber}`}
                             onClick={() =>
                               void action.run(async () => {
@@ -216,7 +217,7 @@ export function CertificateConsole() {
                             Tải PDF
                           </button>
                           <button
-                            className="inline-flex items-center gap-1 font-semibold text-destructive hover:underline"
+                            className={`${linkButtonClass} text-destructive hover:underline underline-offset-4`}
                             aria-label={`Thu hồi ${certificate.certificateNumber}`}
                             onClick={() => {
                               setNotice("");
@@ -236,7 +237,10 @@ export function CertificateConsole() {
           </table>
         </div>
       ) : (
-        <Empty>Chưa có chứng nhận nào. Cấp chứng nhận cho sinh viên đủ điều kiện.</Empty>
+        <Empty
+          title="Chưa có chứng nhận nào"
+          description="Cấp chứng nhận cho sinh viên đủ điều kiện; danh sách sẽ hiện tại đây."
+        />
       )}
       {certificates.data && (
         <Pager
@@ -344,20 +348,24 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
             Mã xác minh <span className="font-mono">{result.verificationCode}</span> đã sẵn sàng để
             chia sẻ.
           </p>
-          <button
-            type="button"
-            className={`${buttonClass} mt-3`}
-            onClick={() => onSaved(`Đã cấp chứng nhận ${result.certificateNumber}.`)}
-          >
-            Hoàn tất
-          </button>
+          <div className="mt-3 flex justify-end">
+            <button
+              type="button"
+              className={buttonClass}
+              onClick={() => onSaved(`Đã cấp chứng nhận ${result.certificateNumber}.`)}
+            >
+              Hoàn tất
+            </button>
+          </div>
         </div>
       )}
       {!result && (
-        <button className={buttonClass} disabled={action.busy} type="submit">
-          <IconAward size={16} aria-hidden />
-          {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
-        </button>
+        <div className="flex justify-end">
+          <button className={buttonClass} disabled={action.busy} type="submit">
+            <IconAward size={16} aria-hidden />
+            {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
+          </button>
+        </div>
       )}
     </form>
   );
@@ -409,13 +417,15 @@ function RevokeForm({
         />
       </label>
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <button
-        className={`${buttonClass} bg-destructive hover:bg-destructive/90`}
-        disabled={action.busy || !reason.trim()}
-        type="submit"
-      >
-        {action.busy ? "Đang thu hồi…" : "Xác nhận thu hồi"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          className={`${buttonClass} bg-destructive hover:bg-destructive/90`}
+          disabled={action.busy || !reason.trim()}
+          type="submit"
+        >
+          {action.busy ? "Đang thu hồi…" : "Xác nhận thu hồi"}
+        </button>
+      </div>
     </form>
   );
 }

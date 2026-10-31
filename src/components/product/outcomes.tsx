@@ -770,7 +770,7 @@ export function Certificates({ id }: { id?: string }) {
                         onClick={() => void download(c.id, c.certificateNumber)}
                       >
                         <IconDownload size={15} aria-hidden="true" />
-                        {busy ? "Đang tải..." : "Tải PDF"}
+                        {busy ? "Đang tải…" : "Tải PDF"}
                       </button>
                       {!id && (
                         <Link
@@ -931,7 +931,7 @@ function CertificateDetail({
               onClick={onDownload}
             >
               <IconDownload size={15} aria-hidden="true" />
-              {busy ? "Đang tải..." : "Tải PDF"}
+              {busy ? "Đang tải…" : "Tải PDF"}
             </button>
             <Link
               className="student-action student-action-secondary"
@@ -1061,7 +1061,7 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
             />
           </Field>
           <button disabled={busy || !code.trim()} className={buttonClass}>
-            {busy ? "Đang xác minh..." : "Xác minh"}
+            {busy ? "Đang xác minh…" : "Xác minh"}
           </button>
         </form>
       </Panel>
@@ -1368,7 +1368,14 @@ export function Notifications() {
                     </p>
                   </div>
                 ) : (
-                  <Empty>Chưa có thông báo phù hợp.</Empty>
+                  <Empty
+                    title="Chưa có thông báo phù hợp"
+                    description={
+                      unread
+                        ? "Bạn đã đọc hết thông báo. Bỏ lọc để xem lại toàn bộ."
+                        : "Cập nhật từ phiên thực tập, nhiệm vụ và đánh giá sẽ xuất hiện tại đây."
+                    }
+                  />
                 )}
                 {data.totalPages > 1 && <Pager {...data} onChange={setPage} />}
               </>
@@ -1476,7 +1483,7 @@ export function Recommendations() {
             onClick={() => void refresh()}
           >
             <IconSparkles size={16} aria-hidden="true" />
-            {busy ? "Đang cập nhật..." : "Cập nhật khuyến nghị"}
+            {busy ? "Đang cập nhật…" : "Cập nhật khuyến nghị"}
           </button>
         }
       />

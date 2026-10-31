@@ -42,20 +42,20 @@ export function ContractsCard() {
                 </div>
                 <p className="mt-1 break-words text-muted-foreground">ID: {c.suiteId ?? 'Chưa có'}, digest: {c.digest ? `${c.digest.slice(0, 12)}…${c.digest.slice(-8)}` : 'Chưa có'}</p>
                 <p className="mt-1 break-words text-caption text-muted-foreground">Phiên bản {c.operator.version ?? 'Chưa có'}, seal bởi {c.operator.reviewer ?? 'Chưa có'}, sealedAt {formatDate(c.operator.sealedAt)}, runtime {c.operator.images.runtime ?? 'Chưa có'}, tester {c.operator.images.tester ?? 'Chưa có'}</p>
-                {c.issues.length > 0 && <ul className="mt-2 space-y-1">{c.issues.map(i => <li role="alert" className="break-words text-caption text-warning" key={`${i.code}:${i.detail.slice(0, 24)}`}><strong>{i.code}</strong> , {i.detail}</li>)}</ul>}
+                {c.issues.length > 0 && <ul className="mt-2 space-y-1">{c.issues.map(i => <li role="alert" className="break-words text-caption text-warning" key={`${i.code}:${i.detail.slice(0, 24)}`}><strong>{i.code}</strong>, {i.detail}</li>)}</ul>}
               </li>
             ))}
           </ul>
         ) : (
-          <Empty>Chưa có hợp đồng nào được seal trên nền này.</Empty>
+          <Empty title="Chưa có hợp đồng nào được seal" description="Seal hợp đồng chấm điểm qua cấu hình Backend; danh sách sẽ hiện tại đây sau khi khởi động lại." />
         )}
         <div className="admin-contract-check text-body">
           <h3 className="font-semibold">Kiểm tra bản nháp trước khi seal</h3>
-          <p className="mt-1 text-caption text-muted-foreground">Chỉ phân tích cục bộ JSON backendSuites của operator , không lưu, không kích hoạt. Sau khi seal bằng cấu hình BE, khởi động lại để áp dụng.</p>
+          <p className="mt-1 text-caption text-muted-foreground">Chỉ phân tích cục bộ JSON backendSuites của operator, không lưu, không kích hoạt. Sau khi seal bằng cấu hình BE, khởi động lại để áp dụng.</p>
           <textarea aria-label="Nội dung JSON cần kiểm tra" className={`${inputClass} mt-2 h-28 font-mono text-caption`} value={draft} onChange={e => { setDraft(e.target.value); setDraftError(null); setDraftResult(null); }} />
           <button className={`${buttonClass} mt-2`} onClick={validateDraft} disabled={checking}>{checking ? 'Đang kiểm tra…' : 'Kiểm tra JSON'}</button>
           {draftError && <p role="alert" className="mt-2 text-caption text-destructive">{draftError}</p>}
-          {draftResult && <ul className="mt-3 space-y-2">{draftResult.error ? <li role="alert" className="text-caption text-destructive">{draftResult.error}</li> : draftResult.contracts.length === 0 ? <li className="text-caption text-muted-foreground">JSON rỗng , không có hợp đồng nào.</li> : draftResult.contracts.map(c => <li className="text-caption" key={c.key}><Badge>{c.status === 'active' ? 'Sẵn sàng seal' : 'Chặn seal'}</Badge> <span className="break-all">{c.key}</span>{c.issues.length > 0 && <span>, {c.issues.map(i => i.code).join(', ')}</span>}</li>)}</ul>}
+          {draftResult && <ul className="mt-3 space-y-2">{draftResult.error ? <li role="alert" className="text-caption text-destructive">{draftResult.error}</li> : draftResult.contracts.length === 0 ? <li className="text-caption text-muted-foreground">JSON rỗng, không có hợp đồng nào.</li> : draftResult.contracts.map(c => <li className="text-caption" key={c.key}><Badge>{c.status === 'active' ? 'Sẵn sàng seal' : 'Chặn seal'}</Badge> <span className="break-all">{c.key}</span>{c.issues.length > 0 && <span>, {c.issues.map(i => i.code).join(', ')}</span>}</li>)}</ul>}
         </div>
       </div>
     ) : null}

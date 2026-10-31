@@ -330,7 +330,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                     lưu dù AI chưa phản hồi.
                   </p>
                   <button
-                    className="mt-2 font-semibold underline"
+                    className="mt-2 min-h-9 rounded-control font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                     onClick={detail.reload}
                   >
                     Tải lại lịch sử
@@ -438,7 +438,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                     disabled={busy || !content.trim()}
                   >
                     <IconSend size={15} aria-hidden="true" />
-                    {busy ? "Đang chờ AI..." : "Gửi câu hỏi"}
+                    {busy ? "Đang chờ AI…" : "Gửi câu hỏi"}
                   </button>
                 </div>
                 {busy && (

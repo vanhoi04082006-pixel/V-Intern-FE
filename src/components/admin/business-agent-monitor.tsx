@@ -9,6 +9,8 @@ import {
   inputClass,
   Pager,
 } from "@/components/product/primitives";
+import { Empty } from "@/components/product/primitives";
+import { NeutralDot } from "./ui-bits";
 const names: Record<string, string> = {
   "interview-conversation": "Hội thoại phỏng vấn",
   "interview-evaluator": "Chấm phỏng vấn",
@@ -174,17 +176,13 @@ export function BusinessAgentMonitor({
                     </p>
                   </td>
                   <td className="px-3 py-4">
-                    <Badge
-                      tone={
-                        run.status === "succeeded"
-                          ? "green"
-                          : run.status === "failed"
-                            ? "red"
-                            : "gray"
-                      }
-                    >
-                      {statuses[run.status]}
-                    </Badge>
+                    {run.status === "succeeded" ? (
+                      <Badge tone="green">{statuses[run.status]}</Badge>
+                    ) : run.status === "failed" ? (
+                      <Badge tone="red">{statuses[run.status]}</Badge>
+                    ) : (
+                      <NeutralDot>{statuses[run.status]}</NeutralDot>
+                    )}
                     {run.errorCode && (
                       <p className="mt-2 max-w-44 break-all font-mono text-caption text-destructive">
                         {run.errorCode}
@@ -197,10 +195,10 @@ export function BusinessAgentMonitor({
           </table>
         </div>
       ) : (
-        <p className="border-y border-border py-8 text-body text-muted-foreground">
-          Chưa có lượt chạy trong bộ lọc này. Sử dụng một chức năng AI nghiệp vụ
-          rồi làm mới để xem dữ liệu thực.
-        </p>
+        <Empty
+          title="Chưa có lượt chạy nào"
+          description="Chưa có lượt chạy trong bộ lọc này. Sử dụng một chức năng AI nghiệp vụ rồi làm mới để xem dữ liệu thực."
+        />
       )}
       {data && (
         <Pager

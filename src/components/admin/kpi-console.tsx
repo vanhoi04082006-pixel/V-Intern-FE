@@ -33,6 +33,7 @@ import {
   StatusDot,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
+import { linkButtonClass } from "./ui-bits";
 import { useInternNames } from "./use-intern-names";
 import { StampMoc } from "@/components/workspace/notebook";
 import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
@@ -198,7 +199,7 @@ export function KpiConsole() {
               <div className="flex flex-wrap items-center gap-3 text-body">
                 {period.status === "draft" && (
                   <button
-                    className="font-semibold text-primary hover:underline"
+                    className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                     disabled={action.busy}
                     onClick={() =>
                       void action.run(async () => {
@@ -212,7 +213,7 @@ export function KpiConsole() {
                 )}
                 {(period.status === "draft" || period.status === "open") && (
                   <button
-                    className="font-semibold text-primary hover:underline"
+                    className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                     aria-label={`Sửa ${period.name}`}
                     onClick={() => {
                       setNotice("");
@@ -225,7 +226,7 @@ export function KpiConsole() {
                 {period.status === "open" && (
                   <>
                     <button
-                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline disabled:cursor-wait disabled:opacity-60"
+                      className={`${linkButtonClass} text-primary hover:underline underline-offset-4 disabled:cursor-wait disabled:opacity-60`}
                       aria-label={`Tính KPI ${period.name}`}
                       aria-busy={calculating}
                       disabled={action.busy}
@@ -240,7 +241,7 @@ export function KpiConsole() {
                       {calculating ? "Đang tính…" : "Tính KPI"}
                     </button>
                     <button
-                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline disabled:cursor-wait disabled:opacity-60"
+                      className={`${linkButtonClass} text-primary hover:underline underline-offset-4 disabled:cursor-wait disabled:opacity-60`}
                       aria-label={`Chốt kỳ ${period.name}`}
                       aria-busy={finalizing}
                       disabled={action.busy}
@@ -257,7 +258,7 @@ export function KpiConsole() {
                   </>
                 )}
                 <button
-                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                  className={`${linkButtonClass} -ml-1 text-muted-foreground hover:text-foreground`}
                   aria-label={`Kết quả ${period.name}`}
                   onClick={() => {
                     setNotice("");
@@ -273,7 +274,10 @@ export function KpiConsole() {
           })}
         </ul>
       ) : (
-        <Empty>Chưa có kỳ KPI nào. Tạo bản nháp để bắt đầu một kỳ đo lường.</Empty>
+        <Empty
+          title="Chưa có kỳ KPI nào"
+          description="Tạo bản nháp để bắt đầu một kỳ đo lường."
+        />
       )}
       {periods.data && (
         <Pager
@@ -340,7 +344,7 @@ function KpiPeriodForm({
       <label className="block text-body font-medium">
         Mã kỳ <span className="text-destructive">*</span>
         <input
-          className={inputClass}
+          className={`${inputClass} read-only:cursor-not-allowed read-only:opacity-60`}
           value={form.code}
           maxLength={64}
           required
@@ -386,9 +390,11 @@ function KpiPeriodForm({
         Mã kỳ và quy tắc tính không đổi sau khi tạo. Ngày kết thúc là độc quyền (UTC).
       </p>
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <button className={buttonClass} disabled={action.busy} type="submit">
-        {action.busy ? "Đang lưu…" : period ? "Lưu thay đổi" : "Tạo kỳ KPI"}
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy} type="submit">
+          {action.busy ? "Đang lưu…" : period ? "Lưu thay đổi" : "Tạo kỳ KPI"}
+        </button>
+      </div>
     </form>
   );
 }
@@ -413,7 +419,7 @@ function KpiResults({ period }: { period: KpiPeriod }) {
         <ErrorState error={results.error} onRetry={results.reload} />
       ) : results.data?.items.length ? (
         <div className="overflow-x-auto border-y border-border" role="region" aria-label="Kết quả KPI của kỳ" tabIndex={0}>
-          <table className="product-table w-full border-collapse text-body">
+          <table className="product-table w-full min-w-[40rem] border-collapse text-body">
             <thead>
               <tr>
                 <th className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground">
@@ -456,7 +462,7 @@ function KpiResults({ period }: { period: KpiPeriod }) {
                   </td>
                   <td className="border-b border-border px-4 py-3 text-right">
                     <button
-                      className="font-semibold text-primary hover:underline"
+                      className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                       aria-label={`Chi tiết kết quả ${nameOf(row.userId)}`}
                       onClick={() => setDetail(row)}
                     >
@@ -469,7 +475,10 @@ function KpiResults({ period }: { period: KpiPeriod }) {
           </table>
         </div>
       ) : (
-        <Empty>Chưa có kết quả. Hãy tính KPI cho kỳ này khi nó đang mở.</Empty>
+        <Empty
+          title="Chưa có kết quả"
+          description="Hãy tính KPI cho kỳ này khi nó đang mở; kết quả sẽ xuất hiện tại đây."
+        />
       )}
       {results.data && (
         <Pager
@@ -521,7 +530,7 @@ function KpiResultDetail({
         {metricHint}
       </p>
       <div className="overflow-x-auto border-y border-border" role="region" aria-label="Thành phần điểm KPI" tabIndex={0}>
-        <table className="product-table w-full border-collapse text-body">
+        <table className="product-table w-full min-w-[36rem] border-collapse text-body">
           <thead>
             <tr>
               {["Thành phần", "Giá trị gốc", "Trọng số hiệu lực", "Đóng góp"].map((label) => (
