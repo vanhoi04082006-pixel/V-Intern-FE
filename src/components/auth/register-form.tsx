@@ -302,8 +302,8 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
             <span
               aria-hidden="true"
               className={cn(
-                "mt-0.5 grid size-4 shrink-0 place-items-center rounded-sm border transition-colors",
-                "peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40 peer-focus-visible:ring-offset-2",
+                "mt-0.5 grid size-[18px] shrink-0 place-items-center rounded-[5px] border-[1.5px] transition-colors",
+                "peer-checked:border-primary peer-checked:bg-primary peer-hover:border-primary/70 peer-focus-visible:ring-2 peer-focus-visible:ring-ring/40 peer-focus-visible:ring-offset-2",
                 errors.terms ? "border-destructive/30" : "border-input"
               )}
             >
@@ -332,7 +332,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           {errors.terms && (
             <p
               id="register-terms-error"
-              className="mt-2 text-small font-medium text-destructive"
+              className="auth-field-note mt-2 text-small font-medium text-destructive"
             >
               {errors.terms}
             </p>
@@ -343,7 +343,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
+            "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
             "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-80"
           )}
@@ -356,15 +356,15 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           ) : (
             <>
               Đăng ký
-              <IconArrowRight className="size-4" aria-hidden="true" />
+              <IconArrowRight className="auth-cta-arrow size-4" aria-hidden="true" />
             </>
           )}
         </button>
 
-        <div className="mt-4 flex items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-secondary" />
+        <div className="mt-5 flex items-center gap-4" aria-hidden="true">
+          <span className="auth-divider-line h-0 flex-1 border-t" />
           <span className="text-small text-muted-foreground">Hoặc</span>
-          <span className="h-px flex-1 bg-secondary" />
+          <span className="auth-divider-line h-0 flex-1 border-t" />
         </div>
 
         <button
@@ -381,7 +381,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
               setStatusMessage("");
             }
           }}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-3 rounded-control border border-border bg-card text-body font-semibold text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="auth-google-btn mt-5 inline-flex h-12 w-full items-center justify-center gap-3 rounded-control border border-border bg-card text-body font-semibold text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <GoogleIcon />
           Tiếp tục với Google
@@ -396,11 +396,11 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         </p>
       </form>
 
-      <p className="mt-5 text-center text-body text-muted-foreground">
+      <p className="mt-6 text-center text-body text-muted-foreground">
         Đã có tài khoản?{" "}
         <Link
           href="/login"
-          className="rounded-sm font-semibold text-primary underline-offset-2 transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="rounded-sm font-semibold text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           Đăng nhập
         </Link>

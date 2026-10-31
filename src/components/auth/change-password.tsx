@@ -104,7 +104,7 @@ export function ChangePassword() {
             required
           />
         </label>
-        <button className={`${buttonClass} w-full`} disabled={action.busy}>
+        <button className={`auth-cta ${buttonClass} w-full`} disabled={action.busy}>
           {action.busy ? "Đang lưu…" : "Đổi mật khẩu & đăng nhập lại"}
         </button>
       </form>
