@@ -135,3 +135,73 @@
 .instructor-experience .ins-reference { border-top: 1px solid var(--border); padding-block: var(--space-4); }
 .instructor-experience .ins-reference > summary { cursor: pointer; padding-block: var(--space-2); font-size: var(--type-subsection); font-weight: var(--weight-semibold); color: var(--foreground); }
 .instructor-experience .ins-reference[open] > summary { margin-bottom: var(--space-3); }
+
+/* ─────────────────────────────────────────────────────────────────
+   Journey Notebook v3 · instructor home — polaroid gv + thẻ bước
+   Mật độ VỪA: viền mực, số tay, đúng 1 mẩu washi cho cả dải.
+   ───────────────────────────────────────────────────────────────── */
+/* Dải hero: header co giãn, tấm polaroid ghim góc phải (≥xl mới dựng). */
+.instructor-experience .ins-home-hero { display: flex; align-items: flex-start; gap: var(--space-6); }
+.instructor-experience .ins-home-hero .workspace-page-header { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
+.instructor-experience .ins-hero-polaroid { display: none; }
+@media (min-width: 1280px) {
+  .instructor-experience .ins-hero-polaroid {
+    display: block;
+    position: relative;
+    flex: none;
+    width: 138px;
+    margin: -2px 0 -22px;
+    rotate: 2.4deg;
+    transition: rotate 0.3s ease, translate 0.3s ease;
+  }
+  .instructor-experience .ins-hero-polaroid:hover { rotate: 0.4deg; translate: 0 -2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .instructor-experience .ins-hero-polaroid { transition: none; }
+}
+
+/* 3 thẻ "Bắt đầu một phiên thực tập" — thẻ index giấy, số khoanh tay, nghiêng nhẹ. */
+.instructor-experience .ins-workflow { border-top: 2px dashed color-mix(in srgb, var(--ink, var(--foreground)) 30%, transparent); }
+.instructor-experience .instructor-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-3); list-style: none; }
+.instructor-experience .instructor-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 2px solid var(--ink, var(--foreground));
+  border-radius: 0.75rem;
+  background: var(--paper-raised);
+  box-shadow: 3px 3px 0 0 var(--hard-shadow, rgba(28, 28, 36, 0.55));
+  color: var(--foreground);
+  transition: rotate 0.22s ease, translate 0.22s ease, box-shadow 0.22s ease;
+}
+.instructor-experience .instructor-steps li:nth-child(1) .instructor-step { rotate: -0.7deg; }
+.instructor-experience .instructor-steps li:nth-child(2) .instructor-step { rotate: 0.55deg; }
+.instructor-experience .instructor-steps li:nth-child(3) .instructor-step { rotate: -0.4deg; }
+.instructor-experience .instructor-step:hover { rotate: 0deg; translate: 0 -2px; box-shadow: 4px 5px 0 0 var(--hard-shadow, rgba(28, 28, 36, 0.55)); }
+.instructor-experience .instructor-step:focus-visible { rotate: 0deg; outline: 2px solid var(--primary); outline-offset: 2px; }
+.instructor-experience .instructor-step-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-bottom: var(--space-1);
+  border: 2px solid var(--ink, var(--foreground));
+  border-radius: 46% 54% 52% 48% / 55% 47% 53% 45%;
+  color: var(--primary);
+  font-size: 17px;
+  line-height: 1;
+}
+.instructor-experience .instructor-step-title { font-size: var(--type-body); font-weight: var(--weight-semibold); }
+.instructor-experience .instructor-step-text { color: var(--muted-foreground); font-size: var(--type-small); line-height: var(--leading-body); }
+.instructor-experience .instructor-step-link { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-2); color: var(--primary); font-size: var(--type-small); font-weight: var(--weight-semibold); }
+.instructor-experience .instructor-step-link > svg { flex: none; }
+@media (prefers-reduced-motion: reduce) {
+  .instructor-experience :is(.instructor-step, .ins-hero-polaroid) { transition: none; }
+}
+@media (max-width: 1024px) {
+  .instructor-experience .instructor-steps { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+  .instructor-experience .instructor-steps li .instructor-step { rotate: 0deg; }
+}
