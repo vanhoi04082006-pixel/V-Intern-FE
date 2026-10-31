@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useState, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import * as api from "@/lib/api/admin";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
@@ -22,6 +23,8 @@ import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
 import { AdminSystemStatus } from '@/components/admin/system-status';
+import { StampMoc } from "@/components/workspace/notebook";
+import { CheckDoodle, Tape } from "@/components/v-intern/doodles";
 function Result<T>({
   resource: r,
   children,
@@ -94,6 +97,14 @@ export function AdminOverview() {
               </Link>
             ))}
           </nav>
+          {/* Ghi chú "Vận hành an toàn" dạng giấy note menthol — giữ nguyên nội
+              dung gốc của hộp vai trò, nâng bằng chất liệu sổ tay. */}
+          <aside className="sticky-note-mint mt-6 p-4">
+            <p className="font-hand mb-1 text-lg leading-snug">Vận hành an toàn</p>
+            <p className="text-small leading-relaxed">
+              Phân quyền, cấu hình và nhật ký hệ thống đều được kiểm soát tại đây.
+            </p>
+          </aside>
         </section>
       </div>
     </>
@@ -357,7 +368,28 @@ export function AdminUsers() {
                             </td>
                             <td className="p-3">{u.username}</td>
                             <td className="p-3">
-                              <Badge>{userStatusLabels[u.status] ?? u.status}</Badge>
+                              <Badge
+                                tone={
+                                  u.status === "locked" || u.status === "deleted"
+                                    ? "red"
+                                    : undefined
+                                }
+                              >
+                                {userStatusLabels[u.status] ?? u.status}
+                              </Badge>
+                              {/* Trạng thái cuối vòng đời (khóa/xóa) được đóng
+                                  mộc đỏ đậm — hành chính "đã chốt", không thể
+                                  đảo ngược; trạng thái khác giữ badge mềm. */}
+                              {(u.status === "locked" || u.status === "deleted") && (
+                                <StampMoc
+                                  tone="red"
+                                  size="sm"
+                                  rotate={-6}
+                                  className="nb-moc-allowed ml-2 align-middle"
+                                >
+                                  {userStatusLabels[u.status] ?? u.status}
+                                </StampMoc>
+                              )}
                             </td>
                             <td className="p-3">
                               {u.lastLoginAt
@@ -1414,6 +1446,11 @@ function SettingForm({
     </form>
   );
 }
+/** Hành động "hoàn tất" trong dòng hoạt động — kết thúc bằng động từ chốt
+ * (completed/submitted/published/…): được đánh dấu bút mực xanh. Các động từ
+ * chuyển trạng thái (created/updated/locked…) giữ dòng thời gian trơn. */
+const completedAction = /\.(completed|submitted|published|finalized|approved|issued)$/;
+
 export function AdminAudit() {
   const [page, setPage] = useState(1),
     [actorId, setActorId] = useState(""),
@@ -1439,10 +1476,30 @@ export function AdminAudit() {
   );
   return (
     <>
-      <PageTitle
-        title="Audit log"
-        subtitle="Lịch sử thao tác bảo mật và thay đổi dữ liệu"
-      />
+      <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
+        <PageTitle
+          title="Audit log"
+          subtitle="Lịch sử thao tác bảo mật và thay đổi dữ liệu"
+        />
+        {/* Tấm polaroid quản trị viên đóng mộc — audit là trang thủ quỹ của
+            cuốn sổ; dán lệch một góc, chỉ hiện từ lg để không đổi nhịp trang. */}
+        <figure className="relative mb-6 hidden w-[128px] shrink-0 rotate-[2.4deg] lg:block">
+          <Tape className="-top-2.5 left-7 z-10" rotate={-5} variant="slate" />
+          <div className="sketch-card-sm dog-ear bg-raised p-1.5">
+            <Image
+              src="/images/characters/admin-stamp.png"
+              alt="Minh hoạ quản trị viên đang đóng mực đỏ lên cuốn sổ nhật ký"
+              width={128}
+              height={128}
+              sizes="128px"
+              className="w-full rounded-lg border-2 border-ink/10"
+            />
+            <figcaption className="px-0.5 pb-0.5 pt-1 font-hand text-[14px] leading-tight text-ink-soft">
+              ghi sổ xong rồi!
+            </figcaption>
+          </div>
+        </figure>
+      </div>
       {rows.data && (
         <CollectionMetrics
           values={[
@@ -1684,8 +1741,13 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
                             {new Date(v.createdAt).toLocaleString("vi-VN")}
                           </time>
                         </div>
-                        <p className="mt-2 text-body font-semibold text-foreground">
-                          {v.summary ?? v.action}
+                        <p className="mt-2 flex flex-wrap items-center gap-x-1.5 text-body font-semibold text-foreground">
+                          {completedAction.test(v.action) && (
+                            /* Dòng hoàn tất được tick bút mực xanh như đầu
+                               bài đã chấm xong. */
+                            <CheckDoodle className="h-4.5 w-6 shrink-0 text-success" />
+                          )}
+                          <span>{v.summary ?? v.action}</span>
                         </p>
                         <p className="mt-1 text-caption text-muted-foreground">
                           {v.action}
