@@ -1,5 +1,6 @@
 "use client";
 import { IconCircleHelp } from "@/components/v-intern/icons";
+import { ArrowLoopDoodle } from "@/components/v-intern/doodles";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
 import { btn, Spinner } from "@/components/product/primitives";
 
@@ -37,6 +38,10 @@ export function ErrorState({
               <button type="button" onClick={onRetry} className={btn("primary", "sm")}>
                 Thử lại
               </button>
+              {/* Mũi tên xoắn mực đỏ — “bút giáo viên” chỉ thẳng nút thử lại */}
+              <ArrowLoopDoodle
+                className="hidden h-8 w-10 shrink-0 rotate-6 text-destructive/50 sm:block"
+              />
               <span className="text-caption text-muted-foreground">
                 Nếu lỗi lặp lại, kiểm tra kết nối hoặc quay lại sau ít phút.
               </span>

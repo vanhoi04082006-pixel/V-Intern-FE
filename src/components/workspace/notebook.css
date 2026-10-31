@@ -1037,3 +1037,39 @@
     transform: none;
   }
 }
+
+/* 19f. Empty/error card v2 — chấm phá doodle mực ở góc (CSS thuần, không
+   thêm DOM): asterisk nhỏ góc phải trên, như đánh dấu chỗ cần viết tiếp. */
+.aurora-workspace :is(.product-empty, .student-empty)::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  width: 22px;
+  height: 22px;
+  opacity: 0.3;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none'%3E%3Cpath d='M13 3 C 12.6 9, 12.6 17, 13 23' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 8.5 C 8 11, 18 15, 22 17.5' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 17.5 C 8 15, 18 11, 22 8.5' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.dark .aurora-workspace :is(.product-empty, .student-empty)::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none'%3E%3Cpath d='M13 3 C 12.6 9, 12.6 17, 13 23' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 8.5 C 8 11, 18 15, 22 17.5' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 17.5 C 8 15, 18 11, 22 8.5' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+/* Lỗi inline: vết scribble mực đỏ góc phải — năng lượng “cần xử lý”. */
+.aurora-workspace .nb-error-card {
+  position: relative;
+}
+.aurora-workspace .nb-error-card::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  width: 44px;
+  height: 26px;
+  opacity: 0.22;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32' fill='none'%3E%3Cpath d='M4 25 C 10 14, 16 10, 22 15 C 27 19, 30 24, 36 17 C 40 12, 44 7, 46 4' stroke='%23c0272d' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M8 28.5 C 15 20, 22 16, 30 21 C 35 24, 40 22, 45 13' stroke='%23c0272d' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
