@@ -525,6 +525,287 @@ html {
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════ */
+/* JOURNEY NOTEBOOK v2 — nâng chất liệu lên "đẳng cấp mới":            */
+/* hạt giấy thật, washi nhiều màu, polaroid, sticker, index card,      */
+/* lề sổ, gáy xoắn, mép giấy xé và chuyển động nét mực mềm hơn.        */
+/* ══════════════════════════════════════════════════════════════════ */
+
+/* --- A. Hạt giấy (paper grain) — lớp nhiễu mịn cố định, phủ toàn trang.
+   Speck đen 5% cho theme sáng; speck trắng 6% cho bảng đen. ---------- */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+html.dark body::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+@media print {
+  body::after {
+    content: none;
+  }
+}
+
+@layer utilities {
+  /* --- B. Giấy kẻ ngang (ruled) + lề đỏ như vở học sinh ------------ */
+  .bg-ruled-paper {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 27px,
+      var(--line) 27px 28px
+    );
+  }
+
+  /* Ô ly + lề đỏ dọc bên trái (dùng cho khối hero/panel trang trí) */
+  .bg-grid-paper-margin {
+    background-image: linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px),
+      linear-gradient(
+        90deg,
+        transparent 0 44px,
+        color-mix(in srgb, var(--stamp-red, #c0272d) 26%, transparent) 44px 46px,
+        transparent 46px
+      );
+    background-size: 30px 30px, 30px 30px, 100% 100%;
+  }
+
+  /* Lề đỏ đơn — dải mảnh đặt cạnh block chữ (note màu mực truyền thống) */
+  .notebook-margin-line {
+    border-left: 2px solid color-mix(in srgb, var(--stamp-red, #c0272d) 38%, transparent);
+  }
+
+  /* --- C. Washi tape bộ sưu tập — 3 màu mới cạnh tape xanh gốc ------- */
+  .tape-warm {
+    background: color-mix(in srgb, #e2a53c 44%, #ffffff 50%);
+  }
+  html.dark .tape-warm,
+  .dark .tape-warm {
+    background: color-mix(in srgb, #e2a53c 34%, #26262e 58%);
+  }
+  .tape-candy {
+    background: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, #d9304a 34%, #ffffff 26%) 0 7px,
+      color-mix(in srgb, #ffffff 86%, #d9304a 6%) 7px 14px
+    );
+  }
+  html.dark .tape-candy,
+  .dark .tape-candy {
+    background: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, #d9304a 38%, #26262e 40%) 0 7px,
+      color-mix(in srgb, #26262e 82%, #d9304a 10%) 7px 14px
+    );
+  }
+  .tape-mint {
+    background: color-mix(in srgb, #2f9e7c 32%, #ffffff 58%);
+  }
+  html.dark .tape-mint,
+  .dark .tape-mint {
+    background: color-mix(in srgb, #2f9e7c 30%, #26262e 58%);
+  }
+
+  /* --- D. Polaroid — khung ảnh trắng, đế dày, caption viết tay -------- */
+  .polaroid {
+    position: relative;
+    background: var(--paper-raised, #fff);
+    border: 1px solid color-mix(in srgb, var(--ink, #17171c) 16%, transparent);
+    padding: 10px 10px 0;
+    box-shadow: 0 2px 4px rgba(15, 15, 25, 0.1), 0 14px 30px -12px rgba(15, 15, 25, 0.28);
+    border-radius: 3px;
+  }
+  .polaroid-caption {
+    font-family: var(--font-hand, var(--font-patrick-hand, cursive));
+    text-align: center;
+    padding: 9px 6px 12px;
+    line-height: 1.25;
+    color: color-mix(in srgb, var(--ink, #17171c) 72%, transparent);
+  }
+
+  /* --- E. Index card — thẻ ghi chú kẻ dòng, tiêu đề 2 nét đỏ ---------- */
+  .index-card {
+    position: relative;
+    background: var(--paper-raised);
+    border: 2px solid var(--ink);
+    border-radius: 8px 10px 9px 8px;
+    box-shadow: var(--nb-shadow, 4px 4px 0 0 color-mix(in srgb, var(--ink) 12%, transparent));
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 25px,
+      color-mix(in srgb, var(--blue, #2060f0) 9%, transparent) 25px 26px
+    );
+  }
+  .index-card::before {
+    content: "";
+    position: absolute;
+    inset-inline: 10px;
+    top: 34px;
+    height: 2px;
+    border-top: 2px solid color-mix(in srgb, var(--stamp-red, #c0272d) 34%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--stamp-red, #c0272d) 20%, transparent);
+    pointer-events: none;
+  }
+  .dark .index-card {
+    background-color: var(--paper-raised);
+  }
+
+  /* --- F. Sticker — tem dán viền trắng, đổ bóng nhẹ, wiggle khi hover -- */
+  .sticker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper-raised);
+    border: 3px solid var(--paper-raised);
+    outline: 2px solid var(--ink);
+    border-radius: 9999px;
+    box-shadow: 2px 3px 0 0 var(--hard-shadow);
+    transition: transform var(--motion-normal, 200ms) var(--motion-ease, ease);
+  }
+  .group:hover .sticker-wiggle,
+  .sticker-wiggle:hover {
+    animation: v-wiggle 560ms ease-in-out;
+  }
+
+  /* --- G. Gáy xoắn lò xo — dải lỗ tròn dọc, đặt cạnh mép trái sidebar -- */
+  .spiral-binding {
+    position: relative;
+  }
+  .spiral-binding::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 14px;
+    bottom: 14px;
+    width: 9px;
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--ink) 34%, transparent) 0 3.4px,
+      transparent 3.6px
+    );
+    background-size: 9px 26px;
+    background-repeat: repeat-y;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  /* --- H. Mép giấy xé (deckle) — mask răng cưa cho block nền đậm ------ */
+  .paper-deckle-top {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' preserveAspectRatio='none'%3E%3Cpath d='M0 8 L 12 3 L 25 10 L 38 4 L 52 9 L 66 3 L 80 11 L 94 5 L 108 9 L 122 3 L 136 10 L 150 4 L 164 9 L 178 3 L 192 11 L 206 5 L 220 9 L 232 4 L 240 8 L 240 14 L 0 14 Z' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: linear-gradient(to bottom, transparent 0, #000 12px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' preserveAspectRatio='none'%3E%3Cpath d='M0 8 L 12 3 L 25 10 L 38 4 L 52 9 L 66 3 L 80 11 L 94 5 L 108 9 L 122 3 L 136 10 L 150 4 L 164 9 L 178 3 L 192 11 L 206 5 L 220 9 L 232 4 L 240 8 L 240 14 L 0 14 Z' fill='%23000'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%, 240px 14px;
+    mask-size: 100% 100%, 240px 14px;
+    -webkit-mask-repeat: no-repeat, repeat-x;
+    mask-repeat: no-repeat, repeat-x;
+    -webkit-mask-composite: add;
+    mask-composite: add;
+  }
+  .paper-deckle-bottom {
+    -webkit-mask-image: linear-gradient(to top, transparent 0, #000 12px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' preserveAspectRatio='none'%3E%3Cpath d='M0 8 L 12 3 L 25 10 L 38 4 L 52 9 L 66 3 L 80 11 L 94 5 L 108 9 L 122 3 L 136 10 L 150 4 L 164 9 L 178 3 L 192 11 L 206 5 L 220 9 L 232 4 L 240 8 L 240 14 L 0 14 Z' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: linear-gradient(to top, transparent 0, #000 12px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' preserveAspectRatio='none'%3E%3Cpath d='M0 8 L 12 3 L 25 10 L 38 4 L 52 9 L 66 3 L 80 11 L 94 5 L 108 9 L 122 3 L 136 10 L 150 4 L 164 9 L 178 3 L 192 11 L 206 5 L 220 9 L 232 4 L 240 8 L 240 14 L 0 14 Z' fill='%23000'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%, 240px 14px;
+    mask-size: 100% 100%, 240px 14px;
+    -webkit-mask-repeat: no-repeat, repeat-x;
+    mask-repeat: no-repeat, repeat-x;
+    -webkit-mask-composite: add;
+    mask-composite: add;
+    -webkit-mask-position: bottom;
+    mask-position: bottom;
+  }
+
+  /* --- I. Nét bút chì quét ngang — gạch chân tiêu đề section ---------- */
+  .brush-underline {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8 C 30 3.5, 65 9.5, 96 6 C 128 3, 160 9, 197 5.5' fill='none' stroke='%232060f0' stroke-width='5' stroke-linecap='round' opacity='0.9'/%3E%3Cpath d='M10 10.5 C 45 7.5, 90 11, 150 8.5' fill='none' stroke='%232060f0' stroke-width='2.4' stroke-linecap='round' opacity='0.45'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 12px;
+    padding-bottom: 13px;
+  }
+  .brush-underline-ink {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8 C 30 3.5, 65 9.5, 96 6 C 128 3, 160 9, 197 5.5' fill='none' stroke='%2317171c' stroke-width='5' stroke-linecap='round' opacity='0.82'/%3E%3Cpath d='M10 10.5 C 45 7.5, 90 11, 150 8.5' fill='none' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* --- J. Giấy nghiêng nhẹ + nhấc bổng khi hover ---------------------- */
+  .paper-tilt-hover {
+    transform: rotate(var(--paper-tilt, -0.6deg));
+    transition: transform 260ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)),
+      box-shadow 260ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1));
+  }
+  .paper-tilt-hover:hover {
+    transform: rotate(0deg) translateY(-3px);
+  }
+}
+
+/* --- K. Chuyển động v2 ------------------------------------------------ */
+/* Nét mực vẽ dần khi mount (dùng cho SVG doodle -- đặt --ink-len = pathLength) */
+@keyframes ink-draw {
+  from {
+    stroke-dashoffset: var(--ink-len, 320);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.ink-draw :where(path, circle, line) {
+  stroke-dasharray: var(--ink-len, 320);
+  animation: ink-draw 520ms cubic-bezier(0.3, 0.7, 0.3, 1) both;
+}
+
+/* Nhún nhẹ 2px — cho sticker/badge trang trí */
+@keyframes v-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+.animate-bob {
+  animation: v-bob 3.4s ease-in-out infinite;
+}
+
+/* Card giấy "flap" mở ra từ mép trái như lật trang — dùng cho panel lớn */
+@keyframes paper-flap-in {
+  from {
+    opacity: 0;
+    transform: perspective(1100px) rotateY(-7deg) translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1100px) rotateY(0deg) translateX(0);
+  }
+}
+.animate-paper-flap-in {
+  animation: paper-flap-in 320ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+  transform-origin: left center;
+}
+
+/* Marker dạ quang loang nhẹ (dùng kèm .marker cho heading quan trọng) */
+@keyframes marker-blot {
+  0% {
+    filter: saturate(1) brightness(1);
+  }
+  30% {
+    filter: saturate(1.35) brightness(1.04);
+  }
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+}
+.animate-marker-blot {
+  animation: marker-blot 640ms var(--motion-ease, ease-out) 1 both;
+}
+
+
 /* ---------- Notebook micro-details (phủ toàn hệ thống) ---------- */
 /* Chuột quét chữ = marker xanh nhạt */
 ::selection {
@@ -632,5 +913,19 @@ html {
   }
   .squiggle-draw path {
     animation: none;
+  }
+  /* Notebook v2 — grain là chất liệu tĩnh nên giữ nguyên; mọi animation dừng. */
+  .ink-draw :where(path, circle, line),
+  .animate-bob,
+  .animate-paper-flap-in,
+  .animate-marker-blot,
+  .group:hover .sticker-wiggle,
+  .sticker-wiggle:hover {
+    animation: none;
+  }
+  .paper-tilt-hover,
+  .paper-tilt-hover:hover {
+    transform: none;
+    transition-duration: 0ms;
   }
 }

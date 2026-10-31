@@ -222,3 +222,256 @@ export function CrossDoodle({ className }: { className?: string }) {
     </svg>
   );
 }
+
+/* ══════════════════════════════════════════════════════════════════ */
+/* NOTEBOOK v2 — bộ doodle mở rộng: đồ vật học sinh & dấu hiệu tay     */
+/* ══════════════════════════════════════════════════════════════════ */
+
+/** Kẹp giấy (paperclip) vẽ tay — dán kèm thẻ/giấy cho cảm giác bàn học */
+export function PaperclipDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 28 56"
+      className={cn("h-11 w-7", className)}
+      fill="none"
+    >
+      <path
+        d="M19.5 12.5 L 19.5 38.5 C 19.5 44, 15.5 48, 10.5 48 C 5.5 48, 2.5 44, 2.5 39 L 2.5 15.5 C 2.5 10, 6 6.5, 10.5 6.5 C 15 6.5, 17.5 9.5, 17.5 13.5 L 17.5 38.5"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Vết cà phê — vòng loang mảnh, góc dưới đậm hơn như ly đặt lệch */
+export function CoffeeStainDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 80 80"
+      className={cn("h-16 w-16", className)}
+      fill="none"
+    >
+      <path
+        d="M40 8 C 58 7, 71 20, 70.5 39 C 70 58, 57 72, 39 71.5 C 21 71, 8.5 57, 9 39.5 C 9.5 22, 22 8.5, 40 8"
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+      <path
+        d="M62 52 C 65 55.5, 64.5 60.5, 61 62.5 C 57.5 64.5, 53.5 62.5, 53.5 58.5"
+        stroke="currentColor"
+        strokeWidth="4.2"
+        strokeLinecap="round"
+        opacity="0.8"
+      />
+      <path
+        d="M22 18.5 C 24 20, 23 23, 21 23.5"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+    </svg>
+  );
+}
+
+/** Trái tim vẽ tay — nét đậm + fill mờ, dùng cho ghi chú cảm xúc */
+export function HeartDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 32 30"
+      className={cn("h-6 w-[32px]", className)}
+      fill="none"
+    >
+      <path
+        d="M16 27 C 9 21, 3 16.5, 3 10.5 C 3 6.5, 6 3.5, 9.5 3.5 C 12.5 3.5, 14.5 5.5, 16 8 C 17.5 5.5, 19.5 3.5, 22.5 3.5 C 26 3.5, 29 6.5, 29 10.5 C 29 16.5, 23 21, 16 27 Z"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinejoin="round"
+        fill="currentColor"
+        fillOpacity="0.14"
+      />
+    </svg>
+  );
+}
+
+/** Dấu tick vẽ tay — 2 nét bút chì cho trạng thái hoàn thành */
+export function CheckDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 34 28"
+      className={cn("h-6 w-[34px]", className)}
+      fill="none"
+    >
+      <path
+        d="M3 15.5 C 7 17, 11 20.5, 13 24.5"
+        stroke="currentColor"
+        strokeWidth="3.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M11.5 24.5 C 16 16, 22 8, 31 3"
+        stroke="currentColor"
+        strokeWidth="3.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Mũi tên xoắn 1 vòng — nét dẫn hướng "bút đỏ của giáo viên" */
+export function ArrowLoopDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 64 56"
+      className={cn("h-12 w-16", className)}
+      fill="none"
+    >
+      <path
+        d="M6 10 C 2 22, 8 34, 20 38 C 32 42, 44 36, 45 26 C 46 17, 38 12, 30 15 C 23 18, 22 27, 28 33"
+        stroke="currentColor"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M22 27 C 25 30, 28 32.5, 32 34 C 28.5 34.5, 24.5 36, 22 38.5"
+        stroke="currentColor"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+/** Dấu sao * viết tay — chấm phá cạnh tiêu đề, dữ liệu nhỏ */
+export function AsteriskDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 26 26"
+      className={cn("h-4 w-4", className)}
+      fill="none"
+    >
+      <path
+        d="M13 3 C 12.6 9, 12.6 17, 13 23"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4 8.5 C 8 11, 18 15, 22 17.5"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4 17.5 C 8 15, 18 11, 22 8.5"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Nét scribble năng lượng — gạch chéo tập trung, cho điểm nhấn mạnh */
+export function ScribbleDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 48 32"
+      className={cn("h-6 w-12", className)}
+      fill="none"
+    >
+      <path
+        d="M4 25 C 10 14, 16 10, 22 15 C 27 19, 30 24, 36 17 C 40 12, 44 7, 46 4"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8 28.5 C 15 20, 22 16, 30 21 C 35 24, 40 22, 45 13"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+    </svg>
+  );
+}
+
+/** Washi tape nhiều màu — cùng hình dạng .tape, đổi biến thể màu.
+ *  variant: "blue" (mặc định) | "warm" | "candy" | "mint" */
+export function WashiTape({
+  className,
+  rotate = -6,
+  variant = "blue",
+}: {
+  className?: string;
+  rotate?: number;
+  variant?: "blue" | "warm" | "candy" | "mint";
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "tape tape-peel pointer-events-none z-20",
+        variant === "warm" && "tape-warm",
+        variant === "candy" && "tape-candy",
+        variant === "mint" && "tape-mint",
+        className,
+      )}
+      style={{ "--tape-rotate": `${rotate}deg` } as React.CSSProperties}
+    />
+  );
+}
+
+/** Khung polaroid chuẩn — ảnh nền trắng, đế dày + caption viết tay.
+ *  Nội dung ảnh truyền qua children; caption hiển thị dưới đế. */
+export function PolaroidFrame({
+  children,
+  caption,
+  className,
+  captionClassName,
+  tilt = -1.2,
+}: {
+  children: React.ReactNode;
+  caption?: React.ReactNode;
+  className?: string;
+  captionClassName?: string;
+  /** Độ nghiêng tấm ảnh (độ); hover sẽ vênh thẳng lại. */
+  tilt?: number;
+}) {
+  return (
+    <figure
+      className={cn(
+        "polaroid paper-tilt-hover",
+        className,
+      )}
+      style={{ "--paper-tilt": `${tilt}deg` } as React.CSSProperties}
+    >
+      {children}
+      {caption ? (
+        <figcaption className={cn("polaroid-caption", captionClassName)}>
+          {caption}
+        </figcaption>
+      ) : (
+        <figcaption className="polaroid-caption" aria-hidden="true">
+          &nbsp;
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
