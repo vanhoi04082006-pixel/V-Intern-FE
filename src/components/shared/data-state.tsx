@@ -1,5 +1,5 @@
 "use client";
-import { IconAlertTriangle } from "@/components/v-intern/icons";
+import { IconCircleHelp } from "@/components/v-intern/icons";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
 import { btn, Spinner } from "@/components/product/primitives";
 
@@ -18,11 +18,11 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="mx-auto my-8 max-w-xl rounded-panel border border-destructive/80 bg-card p-6 shadow-app-xs"
+      className="nb-error-card mx-auto my-8 max-w-xl bg-card p-6 shadow-app-xs"
     >
       <div className="flex items-start gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-control bg-destructive-subtle text-destructive">
-          <IconAlertTriangle size={20} aria-hidden="true" />
+          <IconCircleHelp size={20} aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="font-bold text-foreground">{title}</h2>

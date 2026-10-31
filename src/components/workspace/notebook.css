@@ -739,3 +739,46 @@
 .dark [data-workspace-role="intern"] .student-panel.student-ledger::before {
   background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
+
+/* ------------------------------------------------------------------ */
+/* 17. Instructor delivery + library & error card — mức VỪA (gói R2)    */
+/* ------------------------------------------------------------------ */
+
+/* a) Sprint "planned" trong danh sách delivery (instructor): thẻ giấy
+      nét đứt như đường cắt — việc còn chờ thao tác, chưa "đóng sổ". */
+[data-workspace-role="instructor"] .nb-planned-card {
+  border: 1.5px dashed color-mix(in srgb, var(--ink) 45%, transparent);
+  border-radius: 10px 12px 10px 12px;
+  padding: 0.9rem 1rem;
+  margin-block: 0.45rem;
+  background: color-mix(in srgb, var(--card) 55%, transparent);
+}
+
+/* b) Card mẫu dự án trong thư viện (instructor): viền mực mảnh + bóng in
+      nhẹ, hover nhô 1px — mức VỪA, không tape không xoay. */
+[data-workspace-role="instructor"] .workspace-project-card {
+  border: 1.5px solid var(--nb-ink-line);
+  border-radius: 10px 12px 11px 12px;
+  box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+  transition:
+    box-shadow var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease);
+}
+[data-workspace-role="instructor"] .workspace-project-card:hover {
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 14%, transparent);
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-workspace-role="instructor"] .workspace-project-card,
+  [data-workspace-role="instructor"] .workspace-project-card:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* c) Error state dùng chung: viền đỏ nét đứt như mép giấy "cắt ở đây",
+     ngữ nghĩa lỗi giữ nguyên qua màu destructive + role=alert. */
+.nb-error-card {
+  border: 1.5px dashed color-mix(in srgb, var(--destructive) 55%, transparent);
+  border-radius: 10px 12px 10px 12px;
+}

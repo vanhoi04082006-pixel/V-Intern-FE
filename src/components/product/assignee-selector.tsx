@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Search, X, Loader2 } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { listCandidates as defaultList } from "@/lib/api/academic";
 import { errorMessage } from "@/lib/auth/api-client";
-import { inputClass } from "./primitives";
+import { inputClass, Spinner } from "./primitives";
 
 export interface AssigneeCandidate {
   userId: string;
@@ -236,7 +236,7 @@ export function AssigneeSelector({
       )}
       {loading ? (
         <p role="status" className="flex items-center gap-2 p-3 text-body text-muted-foreground">
-          <Loader2 size={16} className="animate-spin" /> Đang tải danh sách ứng viên…
+          <Spinner className="size-4" /> Đang tải danh sách ứng viên…
         </p>
       ) : error ? (
         <p role="alert" className="p-3 text-body text-destructive">
