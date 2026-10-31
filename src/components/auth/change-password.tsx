@@ -7,6 +7,7 @@ import { request } from "@/lib/api/client";
 import { buttonClass, inputClass } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { useAction } from "@/components/product/use-action";
+
 export function ChangePassword() {
   const router = useRouter(),
     [ready, setReady] = useState(false),
@@ -30,10 +31,10 @@ export function ChangePassword() {
   if (loadError) return <ErrorState error={loadError} />;
   if (!ready) return <LoadingState />;
   return (
-    <div className="auth-form-surface space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-page font-semibold text-foreground">
-          Bảo vệ tài khoản của bạn
+          Bảo vệ <span className="marker">tài khoản của bạn</span>
         </h1>
         <p className="mt-2 text-body leading-6 text-muted-foreground">
           Đổi mật khẩu tạm trước khi vào hệ thống. Sau khi lưu, đăng nhập lại

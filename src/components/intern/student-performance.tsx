@@ -1,9 +1,3 @@
-import {
-  CheckCheck,
-  ClipboardList,
-  Clock,
-  TrendingUp,
-} from "lucide-react";
 import type { getPerformance } from "@/lib/api/outcomes";
 import {
   StudentLink,
@@ -13,6 +7,12 @@ import {
 import { RateComparison } from "@/components/workspace/workspace-charts";
 import { useInternWorkspaceContext } from "./intern-workspace-context";
 import { MarginNote } from "@/components/workspace/notebook";
+import {
+  IconCheckCheck,
+  IconClipboardList,
+  IconClock,
+  IconTrendingUp,
+} from "@/components/v-intern/icons";
 
 export function StudentPerformance({
   data: m,
@@ -25,24 +25,24 @@ export function StudentPerformance({
     <div className="space-y-5">
       <div className="workspace-stat-strip grid sm:grid-cols-2 xl:grid-cols-4">
         <StudentMetric
-          icon={ClipboardList}
+          icon={IconClipboardList}
           label="Nhiệm vụ được giao"
           value={m.totalTaskCount}
         />
         <StudentMetric
-          icon={CheckCheck}
+          icon={IconCheckCheck}
           label="Đã hoàn thành"
           value={m.completedTaskCount}
           tone="green"
         />
         <StudentMetric
-          icon={Clock}
+          icon={IconClock}
           label="Nhiệm vụ đang quá hạn"
           value={m.overdueOpenTaskCount}
           tone={m.overdueOpenTaskCount ? "amber" : "slate"}
         />
         <StudentMetric
-          icon={TrendingUp}
+          icon={IconTrendingUp}
           label="Điểm đánh giá trung bình"
           value={m.averageEvaluationScore ?? "—"}
           hint={`${m.finalizedEvaluationCount} đánh giá đã chốt`}

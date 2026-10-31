@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { Empty } from "./primitives";
+import {
+  IconArrowUpRight,
+} from "@/components/v-intern/icons";
 
 const colors = ["var(--primary)", "var(--success)", "var(--warning)", "var(--destructive)", "var(--muted-foreground)", "var(--foreground)"];
 
@@ -23,7 +25,7 @@ export function CollectionAside({ rows, title = "Phân bố trạng thái", link
   rows.forEach(row => counts.set(row.status, (counts.get(row.status) ?? 0) + 1));
   return <aside className="collection-aside">
     <Distribution title={title} values={[...counts]} note="Phân bố các bản ghi trên trang hiện tại; không phải toàn bộ hệ thống." />
-    <section className="collection-aside-section"><h2 className="text-subsection font-semibold text-foreground">Thao tác nhanh</h2><nav className="mt-3 divide-y divide-border">{links.map(([href, label]) => <Link key={href} href={href} className="flex min-h-11 items-center justify-between gap-3 py-3 text-small font-medium text-primary hover:underline">{label}<ArrowUpRight size={15} aria-hidden /></Link>)}</nav></section>
+    <section className="collection-aside-section"><h2 className="text-subsection font-semibold text-foreground">Thao tác nhanh</h2><nav className="mt-3 divide-y divide-border">{links.map(([href, label]) => <Link key={href} href={href} className="flex min-h-11 items-center justify-between gap-3 py-3 text-small font-medium text-primary hover:underline">{label}<IconArrowUpRight size={15} aria-hidden /></Link>)}</nav></section>
     <details className="collection-aside-section text-small"><summary className="min-h-11 cursor-pointer py-3 font-medium text-muted-foreground">Dữ liệu theo thời gian</summary><p className="pb-3 text-caption leading-relaxed text-muted-foreground">Chưa có dữ liệu lịch sử để hiển thị xu hướng.</p></details>
   </aside>;
 }

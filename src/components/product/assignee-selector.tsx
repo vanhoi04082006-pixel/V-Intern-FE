@@ -1,9 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
 import { listCandidates as defaultList } from "@/lib/api/academic";
 import { errorMessage } from "@/lib/auth/api-client";
 import { inputClass, Spinner } from "./primitives";
+import {
+  IconSearch,
+  IconX,
+} from "@/components/v-intern/icons";
 
 export interface AssigneeCandidate {
   userId: string;
@@ -194,7 +197,7 @@ export function AssigneeSelector({
       <label className="block text-body font-medium">
         {label}
         <span className="relative mt-1 block">
-          <Search size={15} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <IconSearch size={15} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             aria-label="Tìm theo tên hoặc email"
             placeholder="Tìm theo tên hoặc email..."
@@ -214,7 +217,7 @@ export function AssigneeSelector({
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
               onClick={() => setQuery("")}
             >
-              <X size={15} />
+              <IconX size={15} />
             </button>
           )}
         </span>
@@ -227,7 +230,7 @@ export function AssigneeSelector({
               <span key={id} className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-caption font-semibold text-primary">
                 {c?.displayName ?? id.slice(0, 8)}
                 <button type="button" aria-label={`Bỏ chọn ${c?.displayName ?? id}`} className="rounded-full hover:bg-accent" onClick={() => pick(id)}>
-                  <X size={12} />
+                  <IconX size={12} />
                 </button>
               </span>
             );

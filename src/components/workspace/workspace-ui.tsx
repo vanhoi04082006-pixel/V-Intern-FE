@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import { X } from "lucide-react";
+import {
+  IconX,
+} from "@/components/v-intern/icons";
 export { TaskDistribution } from "./workspace-charts";
 
 /** One heading contract for both workspaces; safe in server and client trees. */
@@ -34,6 +36,6 @@ export function WorkspaceFilterSummary({ shown, total, filtered, onClear, noun =
 }) {
   return <div className="workspace-filter-summary" role="status" aria-live="polite">
     <p><strong>{total.toLocaleString('vi-VN')}</strong> {noun}<span> · Đang hiển thị {shown.toLocaleString('vi-VN')}</span>{filtered && <span className="workspace-filter-applied">Có bộ lọc</span>}</p>
-    {filtered && <button type="button" onClick={onClear}><X size={13} aria-hidden="true" />Đặt lại bộ lọc</button>}
+    {filtered && <button type="button" onClick={onClear}><IconX size={13} aria-hidden="true" />Đặt lại bộ lọc</button>}
   </div>;
 }

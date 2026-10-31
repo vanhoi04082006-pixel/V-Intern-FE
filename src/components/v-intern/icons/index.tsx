@@ -1037,3 +1037,55 @@ export function IconEyeOff({ size = 24, strokeWidth = 2, ...props }: NotebookIco
   );
 }
 IconEyeOff.displayName = "NotebookIconEyeOff";
+
+/* Đồng hồ có mũi tên ngược — lịch sử / đã xem gần đây */
+export function IconHistory({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M7.3 4.5 C 9 3.4, 10.9 3, 12.8 3.2 C 17.4 3.7, 20.7 7.2, 20.6 11.8 C 20.5 16.4, 16.9 20.2, 12.3 20.3 C 8.6 20.4, 5.3 18, 4.2 14.5 C 4 13.2, 3.9 11.9, 4.1 10.6" />
+      <path d="M7.4 4.4 C 7.4 5.4, 7.2 6.3, 6.8 7.2" />
+      <path d="M7.4 4.4 C 6.5 4.5, 5.6 4.8, 4.8 5.2" />
+      <path d="M12 7.6 C 11.9 9.6, 11.9 11.5, 12 13.4" />
+      <path d="M12 13.2 C 13.4 13.2, 14.7 13.3, 16 13.4" />
+    </svg>
+  );
+}
+IconHistory.displayName = "NotebookIconHistory";
+
+/* Đouble check — đã xác nhận hai lần */
+export function IconCheckCheck({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.1 13 C 4.3 14.1, 5.5 15.2, 6.7 16.3 C 7.8 14.9, 9.1 13.4, 10.5 12.1" />
+      <path d="M10.3 12.6 C 11.6 14, 12.9 15.3, 14.1 16.6 C 15.5 12.8, 17.7 9, 20.7 5.6" />
+    </svg>
+  );
+}
+IconCheckCheck.displayName = "NotebookIconCheckCheck";
+
+/* Bảng kẹp giấy với danh sách dòng */
+export function IconClipboardList({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M8.6 3.9 C 7.5 3.9, 6.5 4, 5.6 4.1 C 5.4 8.9, 5.4 15.3, 5.6 20.1 C 9.8 20.4, 14.4 20.4, 18.5 20.1 C 18.7 15.3, 18.7 8.8, 18.5 4.1 C 17.5 4, 16.4 3.9, 15.3 3.9" />
+      <path d="M8.5 3.9 C 8.4 3.4, 8.4 3, 8.5 2.7 C 10.8 2.5, 13.3 2.5, 15.4 2.7 C 15.5 3.1, 15.5 3.5, 15.4 4" />
+      <path d="M8.9 9.2 C 10.9 9.1, 12.9 9.1, 14.9 9.2" />
+      <path d="M8.9 12.6 C 10.9 12.5, 12.9 12.5, 14.9 12.6" />
+      <path d="M8.9 16 C 10.3 15.9, 11.7 15.9, 13.1 16" />
+    </svg>
+  );
+}
+IconClipboardList.displayName = "NotebookIconClipboardList";
+
+/* Huy hiệu dấu triện có dải ruy băng — đã đạt / đã duyệt */
+export function IconBadgeCheck({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 4.4 C 8.1 4.3, 4.9 7.4, 5 11.3 C 5.1 15.2, 8.3 18.3, 12.2 18.2 C 16.1 18.1, 19.1 15, 19 11.1 C 18.9 7.3, 15.9 4.4, 12 4.4 Z" />
+      <path d="M9.8 17.9 C 9.4 19.3, 8.9 20.6, 8.3 21.9" />
+      <path d="M14.1 17.9 C 14.6 19.3, 15.1 20.6, 15.7 21.9" />
+      <path d="M8.9 11.6 C 9.9 12.7, 10.9 13.9, 11.8 15.1 C 12.9 13.6, 14.1 12.1, 15.5 10.8" />
+    </svg>
+  );
+}
+IconBadgeCheck.displayName = "NotebookIconBadgeCheck";

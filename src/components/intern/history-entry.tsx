@@ -1,13 +1,18 @@
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Award, ChartColumn, ClipboardCheck } from 'lucide-react';
 import { MarginNote } from '@/components/workspace/notebook';
 import { StudentHeading, StudentLink } from './student-ui';
+import {
+  IconArrowRight,
+  IconAward,
+  IconChartColumn,
+  IconClipboardCheck,
+} from "@/components/v-intern/icons";
 
 const destinations = [
-  { href: '/intern/evaluations', title: 'Xem đánh giá đã ghi nhận', description: 'Điểm và nhận xét được giảng viên lưu theo từng kỳ.', icon: ClipboardCheck },
-  { href: '/intern/kpi', title: 'Xem KPI và lương ảo', description: 'Theo dõi kết quả từng kỳ và cách hệ thống tính chỉ số.', icon: ChartColumn },
-  { href: '/intern/certificates', title: 'Xem chứng nhận', description: 'Mở các chứng nhận đã được cấp và trạng thái xác minh.', icon: Award },
+  { href: '/intern/evaluations', title: 'Xem đánh giá đã ghi nhận', description: 'Điểm và nhận xét được giảng viên lưu theo từng kỳ.', icon: IconClipboardCheck },
+  { href: '/intern/kpi', title: 'Xem KPI và lương ảo', description: 'Theo dõi kết quả từng kỳ và cách hệ thống tính chỉ số.', icon: IconChartColumn },
+  { href: '/intern/certificates', title: 'Xem chứng nhận', description: 'Mở các chứng nhận đã được cấp và trạng thái xác minh.', icon: IconAward },
 ];
 
 /** History does not imply completion: cancelled assignments can also leave this state. */
@@ -25,7 +30,7 @@ export function HistoryEntry({ onReload, refreshing }: { onReload: () => void; r
           <Link href={href} className="dashed-cut group flex h-full flex-col gap-2 rounded-panel bg-card p-4 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
             <Icon size={22} className="shrink-0 text-primary" aria-hidden="true" />
             <span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="mt-1 block text-body leading-6 text-muted-foreground">{description}</span></span>
-            <ArrowRight size={18} className="shrink-0 self-end transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            <IconArrowRight size={18} className="shrink-0 self-end transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </Link>
         </li>)}
       </ul>

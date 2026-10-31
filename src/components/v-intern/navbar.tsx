@@ -2,9 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/v-intern/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import {
+  IconArrowRight,
+  IconMenu,
+  IconX,
+} from "@/components/v-intern/icons";
 
 const NAV_LINKS = [
   { label: "Nền tảng", href: "#platform" },
@@ -66,7 +70,7 @@ export function Navbar() {
             className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[5px_5px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)]"
           >
             Bắt đầu
-            <ArrowRight
+            <IconArrowRight
               className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
               aria-hidden="true"
             />
@@ -85,9 +89,9 @@ export function Navbar() {
             onClick={() => setOpen((v) => !v)}
           >
             {open ? (
-              <X className="h-5 w-5" aria-hidden="true" />
+              <IconX className="h-5 w-5" aria-hidden="true" />
             ) : (
-              <Menu className="h-5 w-5" aria-hidden="true" />
+              <IconMenu className="h-5 w-5" aria-hidden="true" />
             )}
           </button>
         </div>
@@ -118,7 +122,7 @@ export function Navbar() {
               className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-ink bg-royal text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)]"
             >
               Bắt đầu
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <IconArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
         </div>

@@ -1,12 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
-  CheckCircle2,
-  RefreshCw,
-  Sparkles,
-} from "lucide-react";
-import {
   Modal,
   Field,
   Spinner,
@@ -15,6 +9,12 @@ import {
   textareaClass,
 } from "@/components/product/primitives";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
+import {
+  IconArrowRight,
+  IconCircleCheck,
+  IconRefreshCw,
+  IconSparkles,
+} from "@/components/v-intern/icons";
 import {
   replacementAdvice,
   prepareReplacement,
@@ -213,7 +213,7 @@ export function ReplacementDialog({
     >
       {result ? (
         <div className="space-y-4" role="status">
-          <CheckCircle2
+          <IconCircleCheck
             className="text-success"
             size={28}
             aria-hidden="true"
@@ -244,7 +244,7 @@ export function ReplacementDialog({
             disabled={Boolean(busy)}
             onClick={generate}
           >
-            <Sparkles size={16} aria-hidden="true" />
+            <IconSparkles size={16} aria-hidden="true" />
             {busy === "advice"
               ? "Agent đang đối chiếu…"
               : "Yêu cầu Agent đối chiếu"}
@@ -383,7 +383,7 @@ export function ReplacementDialog({
                   </h3>
                   <p className="mt-2 flex flex-wrap items-center gap-2 text-body">
                     <span>{preview.document.summary.oldInternName}</span>
-                    <ArrowRight size={16} aria-hidden="true" />
+                    <IconArrowRight size={16} aria-hidden="true" />
                     <strong>{preview.document.summary.candidateName}</strong>
                   </p>
                 </div>
@@ -405,7 +405,7 @@ export function ReplacementDialog({
                     {checking ? (
                       <Spinner className="size-3.5" />
                     ) : (
-                      <RefreshCw size={14} aria-hidden="true" />
+                      <IconRefreshCw size={14} aria-hidden="true" />
                     )}
                     {checking ? "Đang làm mới…" : "Làm mới trạng thái"}
                   </button>

@@ -327,7 +327,7 @@ export function AdminUsers() {
             {(data) => (
               <>
                 {data.items.length ? (
-                  <div className="overflow-x-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
+                  <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
                     <table className="w-full text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>
@@ -1513,7 +1513,7 @@ export function AdminAudit() {
             {(r) => (
               <>
                 {r.items.length ? (
-                  <div className="overflow-x-auto" role="region" aria-label="Nhật ký kiểm toán" tabIndex={0}>
+                  <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Nhật ký kiểm toán" tabIndex={0}>
                     <table className="w-full text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>

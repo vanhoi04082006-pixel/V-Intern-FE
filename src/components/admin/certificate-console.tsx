@@ -310,7 +310,7 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
               <IconShieldCheck size={16} aria-hidden />
               Đã cấp {result.certificateNumber}
             </span>
-            <StampMoc tone="red" size="sm" thump>
+            <StampMoc tone="red" size="sm" thump className="nb-moc-allowed">
               Đã cấp
             </StampMoc>
           </p>

@@ -1,13 +1,15 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
 import { getSessionUser } from "@/lib/auth/session";
 import { LoadingState } from "@/components/shared/data-state";
 import { InternSidebar } from "./intern-sidebar";
 import { InternTopbar } from "./intern-topbar";
 import { workspaceNav, workspaceUser } from "./workspace-presentation";
 import { WorkspaceStage } from "@/components/workspace/workspace-stage";
+import {
+  IconX,
+} from "@/components/v-intern/icons";
 
 export function InternShell({
   active,
@@ -132,7 +134,7 @@ export function InternShell({
               onClick={() => setMenuOpen(false)}
               className="student-drawer-close absolute right-3 top-3"
             >
-              <X className="size-5" aria-hidden="true" />
+              <IconX className="size-5" aria-hidden="true" />
             </button>
           </div>
         </div>

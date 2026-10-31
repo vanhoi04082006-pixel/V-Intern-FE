@@ -421,27 +421,10 @@ export type BadgeTone = keyof typeof badgeTones;
 export function Badge({
   children,
   tone = "blue",
-  stamp = false,
 }: {
   children: ReactNode;
   tone?: BadgeTone;
-  /** Mộc nhỏ — con dấu tròn nét không đều cho trạng thái quan trọng. */
-  stamp?: boolean;
 }) {
-  if (stamp) {
-    return (
-      <span
-        className={cn(
-          "product-badge stamp-moc stamp-moc-sm",
-          tone === "green" || tone === "blue"
-            ? "text-[var(--stamp-blue)]"
-            : "text-[var(--stamp-red)]",
-        )}
-      >
-        {children}
-      </span>
-    );
-  }
   return (
     <span
       className={cn(

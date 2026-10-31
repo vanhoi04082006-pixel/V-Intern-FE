@@ -2,7 +2,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { BookOpen, FileText, Info } from "lucide-react";
 
 import { SparkleDoodle } from "@/components/v-intern/doodles";
 import { SectionCard, StatusBadge } from "./intern-primitives";
@@ -10,6 +9,11 @@ import { InternshipInfoCard } from "./internship-info-card";
 import { NextProcessCard } from "./next-process-card";
 import { RecentActivityCard } from "./recent-activity";
 import type { InternWorkspaceState } from "./intern-workspace-types";
+import {
+  IconBookOpen,
+  IconFileText,
+  IconInfo,
+} from "@/components/v-intern/icons";
 
 /**
  * State A — UNASSIGNED/WAITING của Intern Workspace (reference "Waiting
@@ -231,7 +235,7 @@ export function EmptyInternWorkspace({
                 href="/intern/onboarding/result"
                 className="inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground"
               >
-                <FileText className="size-4" aria-hidden="true" />
+                <IconFileText className="size-4" aria-hidden="true" />
                 {emptyCard.primaryAction}
               </Link>
               <button
@@ -239,7 +243,7 @@ export function EmptyInternWorkspace({
                 onClick={onReload}
                 className="inline-flex items-center gap-2 rounded-control border border-border px-4 py-2 text-small font-semibold text-foreground"
               >
-                <BookOpen className="size-4" aria-hidden="true" />
+                <IconBookOpen className="size-4" aria-hidden="true" />
                 {emptyCard.secondaryAction}
               </button>
             </div>
@@ -257,7 +261,7 @@ export function EmptyInternWorkspace({
           {/* Lưu ý */}
           <SectionCard
             id="luu-y"
-            icon={Info}
+            icon={IconInfo}
             tone="amber"
             title="Lưu ý"
             headerClassName="xl:px-4 xl:py-2"

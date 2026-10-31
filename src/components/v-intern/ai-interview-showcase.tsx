@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Bot } from "lucide-react";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { StampBadge, Tape } from "@/components/v-intern/doodles";
+import {
+  IconBot,
+} from "@/components/v-intern/icons";
 
 /** Ba chấm nhấp nháy mô phỏng AI đang gõ — mỗi chấm trễ một nhịp. */
 function TypingDots() {
@@ -27,7 +29,7 @@ function InterviewerAvatar() {
       aria-hidden="true"
       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-blue-mist text-blue"
     >
-      <Bot className="h-4 w-4" />
+      <IconBot className="h-4 w-4" />
     </span>
   );
 }

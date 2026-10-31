@@ -45,7 +45,7 @@ Shell/primitives workspace được notebook hoá qua `src/components/workspace/
 
 ## Bộ icon notebook
 
-`src/components/v-intern/icons/index.tsx` — 68 icon SVG vẽ tay thay thế lucide
+`src/components/v-intern/icons/index.tsx` — 86 icon SVG vẽ tay thay thế lucide
 cho icon hiển thị chính. Một bộ nét: stroke 2px, bo tròn, đường cong lệch nhẹ,
 vòng tròn khép hở; màu `currentColor`; prop `size`/`className`/`strokeWidth`
 tương thích cách gọi lucide. Type dùng chung: `IconComponent`.

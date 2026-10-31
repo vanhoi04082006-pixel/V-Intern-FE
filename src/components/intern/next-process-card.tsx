@@ -1,8 +1,10 @@
-import { ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { SectionCard } from "./intern-primitives";
 import type { InternNextStep } from "./intern-workspace-types";
+import {
+  IconListChecks,
+} from "@/components/v-intern/icons";
 
 /**
  * Card "Quy trình tiếp theo" (state empty): 3 bước đánh số nối đường line
@@ -23,7 +25,7 @@ export function NextProcessCard({
   return (
     <SectionCard
       id="quy-trinh-tiep-theo"
-      icon={ListChecks}
+      icon={IconListChecks}
       tone="blue"
       title="Quy trình tiếp theo"
       className={className}

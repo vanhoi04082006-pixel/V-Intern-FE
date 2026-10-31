@@ -1,9 +1,13 @@
-import { CheckCircle2, History, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { CardLinkAction, SectionCard } from "./intern-primitives";
 import { INTERN_TONES } from "./intern-ui-tones";
 import type { InternActivityItem } from "./intern-workspace-types";
+import {
+  IconCircleCheck,
+  IconHistory,
+  IconMoreHorizontal,
+} from "@/components/v-intern/icons";
 
 /**
  * Card "Hoạt động gần đây" (state empty): timeline các mốc trong quá trình
@@ -25,7 +29,7 @@ export function RecentActivityCard({
   return (
     <SectionCard
       id="hoat-dong-gan-day"
-      icon={History}
+      icon={IconHistory}
       tone="blue"
       title="Hoạt động gần đây"
       actions={actionLabel ? <CardLinkAction label={actionLabel} /> : undefined}
@@ -62,11 +66,11 @@ export function RecentActivityCard({
                 )}
               >
                 {isDone ? (
-                  <CheckCircle2 className={cn("size-4", toneStyle.icon)} />
+                  <IconCircleCheck className={cn("size-4", toneStyle.icon)} />
                 ) : (
                   // Chờ phân công: icon "⋯" đúng reference (phân biệt với
                   // mục hoàn thành bằng icon, không chỉ màu).
-                  <MoreHorizontal className={cn("size-4", toneStyle.icon)} />
+                  <IconMoreHorizontal className={cn("size-4", toneStyle.icon)} />
                 )}
               </span>
               <div className="min-w-0 flex-1">
