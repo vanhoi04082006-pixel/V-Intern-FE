@@ -22,7 +22,6 @@ import {
   buttonClass,
   Empty,
   inputClass,
-  MetricCard,
   Modal,
   PageTitle,
   Pager,
@@ -31,6 +30,8 @@ import {
 import { useAction } from "@/components/product/use-action";
 import { PerformanceMemberPicker } from "@/components/product/performance-member-picker";
 import { useInternNames } from "./use-intern-names";
+import { InkCountUp } from "@/components/v-intern/motion";
+import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
 
 export const ledgerTypeLabels: Record<SalaryLedgerRow["type"], string> = {
   kpi_earning: "Thu nhập KPI",
@@ -126,7 +127,9 @@ export function SalaryConsole() {
           }}
         />
         <section className="product-panel min-w-0 p-6">
-          <h2 className="product-panel-title text-body font-bold leading-6 text-foreground sm:text-subsection">
+          <h2 className="product-panel-title flex items-center gap-2 text-body font-bold leading-6 text-foreground sm:text-subsection">
+            {/* Ribbon dấu trang nhỏ đánh dấu mục tra số dư trong sổ lương. */}
+            <RibbonBookmarkDoodle className="h-7 w-3.5 shrink-0 text-ink-soft" />
             Tra số dư sinh viên
           </h2>
           <p className="mt-1 text-caption leading-5 text-muted-foreground">
@@ -142,12 +145,27 @@ export function SalaryConsole() {
               <ErrorState error={balance.error} onRetry={balance.reload} />
             ) : balanceUser && balance.data ? (
               <div className="space-y-3">
-                <MetricCard
-                  icon={IconWallet}
-                  label="Số dư hiện tại"
-                  value={vnd(balance.data.balance, balance.data.unit)}
-                  sub={`Đơn vị ảo (${balance.data.unit}) · không phải tiền thật`}
-                />
+                {/* Thẻ số dư kiểu sketch-card gấp dog-ear — số tiền đếm mực. */}
+                <div className="sketch-card-sm dog-ear flex items-start gap-3 p-4">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-control bg-accent">
+                    <IconWallet className="text-primary" size={21} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-caption font-medium leading-5 text-muted-foreground">
+                      Số dư hiện tại
+                    </p>
+                    <p className="mt-1 break-words text-page font-bold tracking-tight text-foreground tabular-nums">
+                      <InkCountUp
+                        value={balance.data.balance}
+                        duration={0.6}
+                        format={(n) => vnd(n, balance.data!.unit)}
+                      />
+                    </p>
+                    <p className="mt-1 text-caption leading-5 text-muted-foreground">
+                      Đơn vị ảo ({balance.data.unit}) · không phải tiền thật
+                    </p>
+                  </div>
+                </div>
                 <p className="text-body text-muted-foreground">
                   Thu nhập kỳ đang chọn:{" "}
                   <strong className="tabular-nums text-foreground">
