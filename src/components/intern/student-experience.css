@@ -2783,8 +2783,22 @@
   background: var(--card);
   animation: none;
 }
-.student-reveal {
-  animation: none;
+/* Notebook v2: trang intern vào như tờ giấy đặt xuống bàn — 4px rơi +
+   xoay về 0, stagger 40ms qua các delay class. Tắt hẳn ở reduced-motion. */
+@keyframes student-paper-settle {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) rotate(0.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .student-reveal {
+    animation: student-paper-settle 240ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+  }
 }
 .student-reveal-delay-1 {
   animation-delay: 0.04s;

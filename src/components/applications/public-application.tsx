@@ -3,7 +3,13 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError } from "@/lib/auth/api-client";
 import { useResource } from "@/lib/api/use-resource";
-import { Tape } from "@/components/v-intern/doodles";
+import {
+  AsteriskDoodle,
+  PaperclipDoodle,
+  SparkleDoodle,
+  StarDoodle,
+  Tape,
+} from "@/components/v-intern/doodles";
 import {
   publicRounds,
   submitApplication,
@@ -72,10 +78,14 @@ export function ApplicationTimeline({
           )}
         </div>
       )}
-      <ol className="space-y-0 border-l border-border pl-5">
+      <ol className="space-y-0 border-l-2 border-dashed border-blue/30 pl-5">
         {application.timeline.map((event, i) => (
           <li className="relative pb-5" key={`${event.kind}-${i}`}>
-            <span className="absolute -left-6 top-2 size-2 rounded-full bg-info-subtle0" />
+            {/* Chấm mực xanh — nét tròn lệch tay như dấu bút trên trang sổ */}
+            <span
+              aria-hidden="true"
+              className="absolute -left-[27px] top-1.5 size-2.5 rounded-[46%_54%_50%_50%] border border-blue bg-blue/85"
+            />
             <p className="text-body leading-6 text-foreground">{event.message}</p>
             <time className="text-caption text-muted-foreground">
               {new Date(event.createdAt).toLocaleString("vi-VN")}
@@ -157,10 +167,14 @@ export function PublicApplication() {
             Đã có tài khoản? Đăng nhập
           </Link>
         </nav>
-        <PageTitle
-          title="Khởi đầu hành trình thực tập"
-          subtitle="Nộp CV một lần. Agent phân tích năng lực, đề xuất nghề phù hợp và xếp lịch trong các khung giờ được mở."
-        />
+        <div className="relative">
+          <AsteriskDoodle className="pointer-events-none absolute -top-4 right-2 h-4 w-4 text-blue/30 motion-safe:animate-bob" />
+          <SparkleDoodle className="pointer-events-none absolute -left-6 top-8 hidden h-4 w-4 text-blue/25 sm:block" />
+          <PageTitle
+            title="Khởi đầu hành trình thực tập"
+            subtitle="Nộp CV một lần. Agent phân tích năng lực, đề xuất nghề phù hợp và xếp lịch trong các khung giờ được mở."
+          />
+        </div>
         {checking ? (
           <LoadingState label="Đang kiểm tra hồ sơ..." />
         ) : initialError ? (
@@ -169,8 +183,10 @@ export function PublicApplication() {
             onRetry={() => window.location.reload()}
           />
         ) : application ? (
-          <div className="sketch-card relative space-y-6 p-6 sm:p-8">
-            <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} />
+          <div className="sketch-card group relative space-y-6 p-6 sm:p-8">
+            <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="mint" />
+            <PaperclipDoodle className="pointer-events-none absolute -right-3.5 -top-5 h-11 w-6 text-ink/30" />
+            <StarDoodle className="pointer-events-none absolute right-5 top-4 h-5 w-5 text-ink-faint/70" />
             <ApplicationTimeline application={application} />
             <div className="flex flex-wrap items-center gap-3">
               <button

@@ -159,7 +159,7 @@ export function CircleDoodle({ className }: { className?: string }) {
 }
 
 /** Mẩu băng dính washi dán chéo — xoay qua --tape-rotate để hover peel ăn đúng.
- *  variant chọn màu: "blue" (mặc định) | "warm" | "candy" | "mint". */
+ *  variant chọn màu: "blue" (mặc định) | "warm" | "candy" | "mint" | "slate". */
 export function Tape({
   className,
   rotate = -6,
@@ -167,7 +167,7 @@ export function Tape({
 }: {
   className?: string;
   rotate?: number;
-  variant?: "blue" | "warm" | "candy" | "mint";
+  variant?: "blue" | "warm" | "candy" | "mint" | "slate";
 }) {
   return (
     <span
@@ -177,6 +177,7 @@ export function Tape({
         variant === "warm" && "tape-warm",
         variant === "candy" && "tape-candy",
         variant === "mint" && "tape-mint",
+        variant === "slate" && "tape-slate",
         className,
       )}
       style={{ "--tape-rotate": `${rotate}deg` } as React.CSSProperties}

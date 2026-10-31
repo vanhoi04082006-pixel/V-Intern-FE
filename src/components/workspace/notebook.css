@@ -1073,3 +1073,65 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+
+/* 19g. Kanban board v2 — cột được “dán” bằng washi màu theo trạng thái,
+   thẻ task cắt tay (bo góc lệch) + bóng in mảnh. Chỉ intern (board cá nhân). */
+
+/* Băng washi trên đầu mỗi cột — màu theo trạng thái. */
+[data-workspace-role="intern"] .student-board-head {
+  position: relative;
+}
+[data-workspace-role="intern"] .student-board-head::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 64px;
+  height: 18px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: color-mix(in srgb, #6b7280 30%, #ffffff 60%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.85;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.16);
+  pointer-events: none;
+}
+[data-workspace-role="intern"] .student-column-doing .student-board-head::before {
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+}
+[data-workspace-role="intern"] .student-column-review .student-board-head::before {
+  background: color-mix(in srgb, #e2a53c 46%, #ffffff 44%);
+}
+[data-workspace-role="intern"] .student-column-done .student-board-head::before {
+  background: color-mix(in srgb, #2f9e7c 32%, #ffffff 58%);
+}
+.dark [data-workspace-role="intern"] .student-board-head::before {
+  background: color-mix(in srgb, #9ca3af 26%, #26262e 60%);
+}
+.dark [data-workspace-role="intern"] .student-column-doing .student-board-head::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+.dark [data-workspace-role="intern"] .student-column-review .student-board-head::before {
+  background: color-mix(in srgb, #e2a53c 36%, #26262e 54%);
+}
+.dark [data-workspace-role="intern"] .student-column-done .student-board-head::before {
+  background: color-mix(in srgb, #2f9e7c 30%, #26262e 58%);
+}
+
+/* Thẻ task: giấy cắt tay — viền mực, bo góc lệch, bóng in mảnh;
+   hover nhấc 1.5px (dnd đặt transform inline khi kéo nên không xung đột). */
+[data-workspace-role="intern"] .student-board-card {
+  border: 1.5px solid var(--nb-ink-line);
+  border-radius: 8px 11px 9px 10px;
+  box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 7%, transparent);
+}
+[data-workspace-role="intern"] .student-board-card:hover {
+  border-color: var(--primary);
+  box-shadow:
+    3px 3px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+    var(--elevation-xs);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-workspace-role="intern"] .student-board-card:hover {
+    box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 7%, transparent);
+  }
+}

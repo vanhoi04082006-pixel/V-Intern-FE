@@ -609,6 +609,13 @@ html.dark body::after {
   .dark .tape-mint {
     background: color-mix(in srgb, #2f9e7c 30%, #26262e 58%);
   }
+  .tape-slate {
+    background: color-mix(in srgb, #6b7280 30%, #ffffff 60%);
+  }
+  html.dark .tape-slate,
+  .dark .tape-slate {
+    background: color-mix(in srgb, #9ca3af 26%, #26262e 60%);
+  }
 
   /* --- D. Polaroid — khung ảnh trắng, đế dày, caption viết tay -------- */
   .polaroid {
