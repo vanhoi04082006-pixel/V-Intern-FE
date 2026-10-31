@@ -93,7 +93,8 @@
   --blue-deep: #1743c4;
   --blue-mist: #e9f0fe;
   --line: rgba(23, 23, 28, 0.075);
-  --hard-shadow: rgba(23, 23, 28, 0.92);
+  /* v3: bóng in ngả nâu ấm như mực thấm giấy cũ (thay đen lạnh 23,23,28). */
+  --hard-shadow: rgba(42, 34, 28, 0.92);
   /* Fixed across themes: deep-blue surface, coal surface, chalk text on it. */
   --royal: #2060f0;
   --royal-deep: #1743c4;
@@ -108,6 +109,18 @@
   --stamp-red: #c0272d;
   --stamp-blue: #1743c4;
   --pencil: #70707b;
+  /* v3 atmosphere: mực ấm (đổ bóng in ngả nâu như giấy cũ), vết cà phê,
+     sticky note hồng/menthol cho đa dạng màu giấy trên cùng trang. */
+  --ink-warm: #2a221c;
+  --hard-shadow-warm: rgba(42, 34, 28, 0.94);
+  --soft-shadow-warm: rgba(84, 66, 48, 0.16);
+  --soft-shadow-warm-lg: rgba(84, 66, 48, 0.24);
+  --coffee: rgba(120, 84, 40, 0.16);
+  --crease: rgba(84, 66, 48, 0.1);
+  --note-pink: #fde2ef;
+  --note-pink-ink: #5b2340;
+  --note-mint: #ddf5ea;
+  --note-mint-ink: #11463a;
 }
 
 .dark {
@@ -128,6 +141,17 @@
   --stamp-red: #ff7d7d;
   --stamp-blue: #99adff;
   --pencil: #a8a8b2;
+  /* v3 atmosphere — dark: bóng ấm đậm hơn trên bảng đen, note hồng/menthol đậm. */
+  --ink-warm: #f2f1e9;
+  --hard-shadow-warm: rgba(0, 0, 0, 0.6);
+  --soft-shadow-warm: rgba(0, 0, 0, 0.4);
+  --soft-shadow-warm-lg: rgba(0, 0, 0, 0.55);
+  --coffee: rgba(196, 154, 104, 0.2);
+  --crease: rgba(242, 241, 233, 0.09);
+  --note-pink: #4c2537;
+  --note-pink-ink: #f9d9ea;
+  --note-mint: #1c3a33;
+  --note-mint-ink: #d5f2e6;
 }
 
 @theme inline {

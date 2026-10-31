@@ -459,3 +459,190 @@ export function PolaroidFrame({
   );
 }
 
+
+/* ═══════════ Journey Notebook v3 — bộ doodle "hành trình" ═══════════
+ * Thêm chất liệu kể chuyện chuyến đi: giấy bay, la bàn, ghim bản đồ,
+ * vệt mực loang, dây kim chỉ và tear dọc. Mọi doodle tô theo currentColor. */
+
+/** Giấy bay — biểu tượng "hành trình bắt đầu", bay chéo lên phải. */
+export function PaperPlaneDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 56 48"
+      className={cn("h-10 w-12", className)}
+      fill="none"
+    >
+      <path
+        d="M4 24 L 50 6 L 34 44 L 26 30 Z"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinejoin="round"
+        fill="currentColor"
+        fillOpacity="0.14"
+      />
+      <path
+        d="M26 30 L 50 6"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M26 30 L 20 40"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        opacity="0.6"
+      />
+    </svg>
+  );
+}
+
+/** La bàn — vòng tròn + kim chỉ Nam lệch nhẹ như vẽ tay. */
+export function CompassDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 48 48"
+      className={cn("h-8 w-8", className)}
+      fill="none"
+    >
+      <circle
+        cx="24"
+        cy="24"
+        r="20"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeDasharray="3 5"
+      />
+      <path
+        d="M30 14 L 25.5 25 L 15 30 L 21.5 23.5 Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        fill="currentColor"
+        fillOpacity="0.22"
+      />
+      <circle cx="24" cy="24" r="2.4" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Ghim bản đồ — con ghim tròn đuôi nhọn, đánh dấu "điểm đến". */
+export function PushPinDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 36 48"
+      className={cn("h-9 w-7", className)}
+      fill="none"
+    >
+      <path
+        d="M18 3 C 26.5 3, 32 9, 32 16 C 32 25, 24 30, 21 36 C 20 38.5, 19.5 41, 18.5 45"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+      />
+      <circle
+        cx="18"
+        cy="16"
+        r="6.5"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        fill="currentColor"
+        fillOpacity="0.2"
+      />
+      <circle cx="18" cy="16" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Vệt mực loang — đầu bút chấm xuống loang 3 giọt, dùng cạnh CTA/con dấu. */
+export function InkSplatDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 44 32"
+      className={cn("h-6 w-10", className)}
+      fill="currentColor"
+    >
+      <path d="M21.5 2.5 C 24 2, 26 3.5, 25.5 6 C 25 8.5, 22 9, 20.5 7 C 19.2 5.2, 19.6 3, 21.5 2.5 Z" />
+      <path d="M10.5 10.5 C 14 8.5, 18 10, 17.5 13.5 C 17 17, 12 18.5, 9.5 16 C 7.6 14, 8 12, 10.5 10.5 Z" opacity="0.85" />
+      <path d="M31 12.5 C 34.5 12, 37 14, 36 17 C 35 19.5, 31 20, 29.5 17.5 C 28.4 15.4, 29 13, 31 12.5 Z" opacity="0.7" />
+      <path d="M20 20 C 24 18.5, 28 20.5, 27 24 C 26 27, 21 28, 19 25.5 C 17.4 23.4, 18 21, 20 20 Z" opacity="0.9" />
+      <path d="M6.5 24.5 C 8.5 24, 10 25.2, 9.5 27 C 9 28.6, 6.8 29, 5.8 27.5 C 5 26.2, 5.4 24.9, 6.5 24.5 Z" opacity="0.5" />
+      <path d="M36.5 25 C 38.3 24.6, 39.8 25.6, 39.3 27.2 C 38.8 28.7, 36.7 29, 35.8 27.6 C 35 26.4, 35.5 25.3, 36.5 25 Z" opacity="0.45" />
+    </svg>
+  );
+}
+
+/** Dây kim chỉ uốn lượn nối 2 điểm — đường "hành trình" chính của trang. */
+export function RouteTrailDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 160 40"
+      className={cn("h-8 w-40", className)}
+      fill="none"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M4 30 C 26 30, 34 10, 56 12 C 76 14, 84 32, 106 28 C 126 24, 134 8, 156 10"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeDasharray="1 9"
+      />
+      <circle cx="4" cy="30" r="4" fill="currentColor" />
+      <path
+        d="M150 4.5 L 158 10 L 149.5 14.5"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Ribbon dấu trang — dải băng gáy sổ treo xuống, đuôi chẻ hai. */
+export function RibbonBookmarkDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 28 56"
+      className={cn("h-12 w-6", className)}
+      fill="none"
+    >
+      <path
+        d="M5 4 C 4 22, 5 38, 6.5 52 L 14 44 L 21.5 52 C 23.5 36, 24 20, 23 4 C 17 6.5, 11 6.5, 5 4 Z"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinejoin="round"
+        fill="currentColor"
+        fillOpacity="0.16"
+      />
+    </svg>
+  );
+}
+
+/** Tear dọc — mép giấy xé chạy dọc, chia 2 cột như xé trang sổ. */
+export function VerticalTearDoodle({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 12 120"
+      className={cn("h-32 w-2", className)}
+      fill="none"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M6 0 L 3 12 L 9 24 L 4 36 L 10 48 L 5 60 L 9 72 L 3 84 L 8 96 L 4 108 L 7 120"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray="4 6"
+      />
+    </svg>
+  );
+}
