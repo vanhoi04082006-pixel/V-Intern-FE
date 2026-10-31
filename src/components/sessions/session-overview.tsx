@@ -38,6 +38,7 @@ import { SessionTaskDelivery } from "./session-task-delivery";
 import { SessionTimeline } from "./session-timeline";
 import { MemberPerformance } from "@/components/product/member-performance";
 import { ReportsWorkspace } from "./reports-workspace";
+import { InkCountUp } from "@/components/v-intern/motion";
 
 function snapshotItems(value: unknown): string[] {
   if (Array.isArray(value))
@@ -264,7 +265,7 @@ export function SessionOverview({
         <div>
           <dt>Sprint</dt>
           <dd>
-            {session.overview.sprintCount}
+            <InkCountUp value={session.overview.sprintCount} />
             <span className="ins-stat-hint">
               {session.sprintProgress.filter((s) => s.status === "active").length} đang chạy
             </span>
@@ -273,7 +274,7 @@ export function SessionOverview({
         <div>
           <dt>Task</dt>
           <dd>
-            {totalTasks}
+            <InkCountUp value={totalTasks} />
             <span className="ins-stat-hint">
               {progress.done} hoàn thành ({progress.percent}%)
             </span>
@@ -282,7 +283,7 @@ export function SessionOverview({
         <div>
           <dt>Còn lại</dt>
           <dd>
-            {totalTasks - progress.done}
+            <InkCountUp value={totalTasks - progress.done} />
             <span className="ins-stat-hint">
               {session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)}{" "}
               chờ duyệt

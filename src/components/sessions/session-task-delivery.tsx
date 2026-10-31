@@ -1,5 +1,6 @@
 import type { parseSessionWorkTask } from '@/lib/api/session-work';
 import { githubSourceLink } from '@/lib/api/session-work';
+import { StampMoc } from '@/components/workspace/notebook';
 
 const submissionLabels = { submitted: 'Đã nộp · Chờ giảng viên', approved: 'Giảng viên đã duyệt', rework: 'Giảng viên yêu cầu sửa', withdrawn: 'Đã rút bài' };
 const aiLabels = { running: 'Đang chấm', awaiting_instructor: 'Đề xuất đạt', needs_changes: 'Đề xuất sửa', inconclusive: 'Chưa đủ bằng chứng', failed: 'Chưa chấm được' };
@@ -9,7 +10,12 @@ export function SessionTaskDelivery({ data }: { data: ReturnType<typeof parseSes
   return <div className="mt-2 space-y-2 text-caption text-muted-foreground">
     {data.blocked && <p className="font-semibold text-warning">Chờ phụ thuộc</p>}
     {!sub ? <p>Chưa nộp bài.</p> : <>
-      <p className="font-semibold">{submissionLabels[sub.status]}</p>
+      {sub.status === 'approved' ? (
+        /* Duyệt là quyết định cuối — đóng mực xanh thay cho badge thường. */
+        <p className="font-semibold"><StampMoc tone="blue" size="sm" thump>{submissionLabels[sub.status]}</StampMoc></p>
+      ) : (
+        <p className="font-semibold">{submissionLabels[sub.status]}</p>
+      )}
       <div className="flex flex-wrap gap-x-5 gap-y-1">
         <p>AI: {sub.aiStatus ? aiLabels[sub.aiStatus] : 'Chưa chấm'}{sub.aiScore === null ? '' : ` · ${sub.aiScore}/100`} <span className="text-muted-foreground">(đề xuất)</span></p>
         <p>Giảng viên: {sub.instructorScore === null ? 'Chưa chấm' : `${sub.instructorScore}/100`}</p>

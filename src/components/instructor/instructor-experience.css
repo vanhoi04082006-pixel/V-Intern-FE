@@ -205,3 +205,38 @@
   .instructor-experience .instructor-steps { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
   .instructor-experience .instructor-steps li .instructor-step { rotate: 0deg; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Journey Notebook v3 · sessions — thẻ phác thảo & vệt mực thời gian
+   ───────────────────────────────────────────────────────────────── */
+/* Danh sách phiên: mỗi dòng là một tấm giấy viền mực, nghiêng nhẹ, hover ngay ngắn lại. */
+.instructor-experience.workspace-ui .workspace-session-list { display: grid; gap: var(--space-3); border-top: 0; }
+.instructor-experience .workspace-session-row { padding: var(--space-3) var(--space-4); transition: rotate 0.22s ease, translate 0.22s ease, box-shadow 0.22s ease; }
+.instructor-experience .workspace-session-row.dashed-cut { border: 2px dashed color-mix(in srgb, var(--ink, var(--foreground)) 42%, transparent); }
+.instructor-experience .workspace-session-list li:nth-child(odd) .workspace-session-row { rotate: -0.4deg; }
+.instructor-experience .workspace-session-list li:nth-child(even) .workspace-session-row { rotate: 0.35deg; }
+.instructor-experience .workspace-session-row:is(:hover, :focus-within) { rotate: 0deg; translate: 0 -1px; box-shadow: 4px 4px 0 0 var(--hard-shadow, rgba(28, 28, 36, 0.55)); }
+@media (prefers-reduced-motion: reduce) {
+  .instructor-experience .workspace-session-row { transition: none; }
+}
+
+/* Vệt mực đứt của dòng thời gian hoạt động — ngôn ngữ RouteTrailDoodle: nét đứt + chấm mực. */
+.instructor-experience .ins-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-5);
+  border-left: 2px dashed color-mix(in srgb, var(--ink, var(--foreground)) 45%, transparent);
+}
+.instructor-experience .ins-timeline-item { position: relative; padding-bottom: var(--space-4); }
+.instructor-experience .ins-timeline-item:last-child { padding-bottom: 0; }
+.instructor-experience .ins-timeline-item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-5) - 6px);
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 47% 53% 55% 45% / 52% 46% 54% 48%;
+  background: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
