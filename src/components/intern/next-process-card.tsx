@@ -62,11 +62,16 @@ export function NextProcessCard({
                   {step.order}
                 </span>
                 {!isLast ? (
-                  <span className="absolute top-8 -bottom-8 w-px bg-muted" />
+                  <span className="absolute top-8 -bottom-8 border-l border-dashed border-muted-foreground/50" />
                 ) : null}
               </span>
               <div className="min-w-0 pb-1">
-                <p className="text-body font-semibold leading-snug text-foreground">
+                <p
+                  className={cn(
+                    "text-body font-semibold leading-snug text-foreground",
+                    isNextUp && "marker",
+                  )}
+                >
                   {step.title}
                 </p>
                 <p className="mt-1 text-small leading-relaxed text-muted-foreground xl:text-caption xl:leading-[var(--iw-lead)]">

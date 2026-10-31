@@ -6,6 +6,7 @@ import { roleLabel } from "@/lib/api/workspace";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Pager } from "@/components/product/primitives";
+import { StampMoc } from "@/components/workspace/notebook";
 import {
   StudentBadge,
   StudentCallout,
@@ -86,6 +87,14 @@ export function WaitingRecruitmentSummary({
             {profile.selectedRoleLabel ?? roleLabel(profile.selectedRole)}
           </strong>
         </p>
+        {/* Mộc xác nhận kết quả phỏng vấn — trạng thái quan trọng đúng đặc tả. */}
+        {result && result.decision === "passed" && (
+          <p className="mt-3 flex justify-end">
+            <StampMoc tone="red" size="sm" thump rotate={-6}>
+              Đã duyệt
+            </StampMoc>
+          </p>
+        )}
         {result ? (
           <>
             <dl className="student-result-grid">

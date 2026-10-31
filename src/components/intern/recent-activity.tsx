@@ -51,7 +51,7 @@ export function RecentActivityCard({
               {index < activities.length - 1 ? (
                 <span
                   aria-hidden="true"
-                  className="absolute left-[13px] top-8 h-[calc(100%-2rem)] w-px bg-muted"
+                  className="absolute left-[13px] top-8 h-[calc(100%-2rem)] border-l border-dashed border-muted-foreground/40"
                 />
               ) : null}
               <span
