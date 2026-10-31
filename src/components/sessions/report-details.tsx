@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { type parseReportDetails } from '@/lib/api/report-details';
 import { Badge, Empty, Pager } from '@/components/product/primitives';
+import { InkCountUp } from '@/components/v-intern/motion';
 const states: Record<string, string> = { todo: 'Chưa bắt đầu', doing: 'Đang làm', review: 'Chờ duyệt', done: 'Hoàn thành', awaiting_instructor: 'Chờ giảng viên', needs_changes: 'Cần sửa', inconclusive: 'Chưa đủ bằng chứng', running: 'Đang chấm', failed: 'Lỗi chấm', submitted: 'Đã nộp', approved: 'Đã duyệt', rework: 'Cần làm lại', withdrawn: 'Đã rút' };
 export function ReportDetails({ data }: { data: ReturnType<typeof parseReportDetails> }) {
   const [page, setPage] = useState(1), summary = data.summary;
   return <div className="mt-5 space-y-5">
     <dl className="grid grid-cols-2 gap-5 border-y border-border py-5 sm:grid-cols-3 xl:grid-cols-5">
-      {[["Task trong phạm vi", summary.total], ["Hoàn thành", summary.completed], ["Trễ hạn", summary.overdue], ["Chờ phụ thuộc", summary.blocked], ["Chưa phân công", summary.unassigned]].map(([label, value]) => <div key={label}><dt className="text-label text-muted-foreground">{label}</dt><dd className="mt-2 text-metric font-semibold tabular-nums">{value}</dd></div>)}
+      {[["Task trong phạm vi", summary.total], ["Hoàn thành", summary.completed], ["Trễ hạn", summary.overdue], ["Chờ phụ thuộc", summary.blocked], ["Chưa phân công", summary.unassigned]].map(([label, value]) => <div key={label}><dt className="text-label text-muted-foreground">{label}</dt><dd className="mt-2 text-metric font-semibold tabular-nums"><InkCountUp value={Number(value)} /></dd></div>)}
     </dl>
     <section className={`ins-report-risk rounded-control p-4 ${summary.risk === 'high' ? 'bg-destructive-subtle text-destructive' : summary.risk === 'medium' ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success'}`}>
       <h4 className="text-subsection font-semibold">Cảnh báo tiến độ: {summary.risk === 'high' ? 'Cao' : summary.risk === 'medium' ? 'Cần theo dõi' : 'Chưa có dấu hiệu trễ'}</h4>

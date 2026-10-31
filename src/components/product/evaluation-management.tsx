@@ -14,6 +14,7 @@ import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics } from "./collection-insights";
 import { StampMoc, MarginNote } from "@/components/workspace/notebook";
+import { StampBadge } from "@/components/v-intern/doodles";
 import {
   Badge,
   btn,
@@ -792,11 +793,17 @@ export function ScoreEditor({
     >
       <div className="space-y-4">
         {Boolean(action.error) && <ErrorState error={action.error} />}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Badge>{isInstructor ? evaluationLabels[e.status] : e.status}</Badge>
           <p className="font-bold">
             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
           </p>
+          {locked && (
+            /* Điểm đã chốt là quyết định cuối — mộc xanh đóng đè bản in. */
+            <StampMoc tone="blue" size="sm" thump>
+              CHỐT ĐIỂM
+            </StampMoc>
+          )}
         </div>
         {isInstructor && (
           <ol className="ins-decision-steps" aria-label="Quy trình đánh giá">
@@ -957,6 +964,14 @@ export function ScoreEditor({
         )}
         {suggestion && (
           <div className="mt-4 space-y-3 text-body">
+            <p>
+              <StampBadge
+                className="text-[var(--stamp-red)]"
+                rotate={-8}
+              >
+                AI ĐỀ XUẤT
+              </StampBadge>
+            </p>
             <p>{suggestion.summary}</p>
             {suggestion.criteria.map((c) => (
               <article
@@ -1127,7 +1142,7 @@ function SuggestionDetail({
           )}
           {suggestionDetail.data.suggestion.improvements.length > 0 && (
             <div>
-              <strong className="text-small">Cần cải thiện</strong>
+              <strong className="marker-red text-small">Cần cải thiện</strong>
               <ul className="mt-1 list-inside list-disc text-caption">
                 {suggestionDetail.data.suggestion.improvements.map(
                   (x, i) => (

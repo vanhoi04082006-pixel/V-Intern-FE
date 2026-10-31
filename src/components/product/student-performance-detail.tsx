@@ -7,7 +7,7 @@ import { roleLabel } from '@/lib/api/workspace';
 import { ErrorState, LoadingState } from '@/components/shared/data-state';
 import { CandidateInterviewSummary } from '@/components/sessions/candidate-interview-summary';
 import { Badge, Empty, Pager, Panel } from './primitives';
-import { Metrics } from './outcomes';
+import { InkMetrics } from './member-performance';
 const status: Record<string, string> = { todo: 'Chưa bắt đầu', doing: 'Đang làm', review: 'Chờ duyệt', done: 'Hoàn thành', submitted: 'Đã nộp', approved: 'Đã duyệt', rework: 'Cần sửa', withdrawn: 'Đã rút', awaiting_instructor: 'Chờ giảng viên', needs_changes: 'Cần cải thiện', inconclusive: 'Chưa đủ bằng chứng', failed: 'Lỗi đánh giá', running: 'Đang đánh giá' };
 type Trend = ReturnType<typeof parseStudentDetail>['trend'];
 export function PerformanceTrend({ data }: { data: Trend }) {
@@ -25,7 +25,7 @@ export function StudentPerformanceDetail({ id, scope, basePath = '/instructor' }
   const { profile, interview, metrics: m, assignments, tasks, trend } = state.data;
   return <div className="space-y-5">
     <div><h3 className="text-section font-bold text-foreground">{profile.displayName ?? 'Sinh viên'}</h3><p className="break-all text-body text-muted-foreground">{profile.email}</p><p className="mt-1 text-body">{roleLabel(profile.selectedRole)}</p></div>
-    <Metrics values={[["Task", m.totalTaskCount], ["Hoàn thành", m.completedTaskCount], ["Quá hạn", m.overdueOpenTaskCount], ["Đúng hạn (%)", m.onTimeCompletionRate], ["Điểm đã chốt", m.averageEvaluationScore]]} />
+    <InkMetrics values={[["Task", m.totalTaskCount], ["Hoàn thành", m.completedTaskCount], ["Quá hạn", m.overdueOpenTaskCount], ["Đúng hạn (%)", m.onTimeCompletionRate], ["Điểm đã chốt", m.averageEvaluationScore]]} />
     <Panel title="Dự án & phiên gần nhất">{assignments.length ? <ul className="space-y-3">{assignments.map(a => <li key={a.id} className="border-b border-border py-3 text-body"><Link className="font-semibold text-primary" href={`${basePath}/sessions/${a.sessionId}`}>{a.sessionName}</Link><p className="mt-1 text-muted-foreground">{a.projectName}; {roleLabel(a.role)}; {a.status === 'active' ? 'Đang tham gia' : 'Đã hoàn tất'}</p></li>)}</ul> : <Empty>Chưa có phân công trong bộ lọc.</Empty>}</Panel>
     <Panel title="Kết quả phỏng vấn">{interview && typeof interview.overallScore === 'number' && <p className="mb-3 text-section font-bold text-primary">{interview.overallScore}/100</p>}<CandidateInterviewSummary detail={{ result: interview }} /></Panel>
     <Panel title="Xu hướng công việc; 6 tháng"><PerformanceTrend data={trend} /></Panel>

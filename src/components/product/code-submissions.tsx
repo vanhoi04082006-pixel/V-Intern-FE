@@ -436,7 +436,10 @@ function AiCodeReview({
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : review ? (
         <>
-          <p role="status" className="font-semibold text-foreground">
+          <p
+            role="status"
+            className={`font-semibold text-foreground${review.status === "needs_changes" ? " marker-red" : ""}`}
+          >
             {review.status === "awaiting_instructor" &&
             submission.status !== "submitted"
               ? `AI đề xuất đạt · ${statuses[submission.status]}`

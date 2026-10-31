@@ -11,8 +11,8 @@ import {
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
-import { Metrics } from "./outcomes";
 import { MarginNote } from "@/components/workspace/notebook";
+import { InkCountUp } from "@/components/v-intern/motion";
 import { StudentPerformanceDetail } from "./student-performance-detail";
 import {
   Empty,
@@ -21,6 +21,40 @@ import {
   inputClass,
   Pager,
 } from "./primitives";
+
+/** Bảng số liệu notebook: cùng cấu trúc Metrics nhưng số nguyên đếm dần
+ *  bằng mực (InkCountUp); số thập phân giữ nguyên độ chính xác, null giữ
+ *  dòng "Chưa đo được". */
+export function InkMetrics({
+  values,
+}: {
+  values: [string, number | null][];
+}) {
+  return (
+    <dl
+      className={`workspace-metrics workspace-stat-strip grid gap-y-4 sm:grid-cols-2 ${values.length === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}
+    >
+      {values.map(([name, value]) => (
+        <div key={name} className="min-w-0 px-4 py-3">
+          <dt className="text-caption font-medium text-muted-foreground">
+            {name}
+          </dt>
+          <dd
+            className={`mt-3 text-page font-bold tracking-tight tabular-nums ${value === null ? "text-muted-foreground" : "text-foreground"}`}
+          >
+            {value === null ? (
+              "Chưa đo được"
+            ) : Number.isInteger(value) ? (
+              <InkCountUp value={value} />
+            ) : (
+              value.toLocaleString("vi-VN")
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
 export function MemberPerformance({
   reports = false,
   initialProjectId = "",
@@ -139,7 +173,7 @@ export function MemberPerformance({
         ) : rows.error ? (
           <ErrorState error={rows.error} onRetry={rows.reload} />
         ) : (
-          <Metrics
+          <InkMetrics
             values={[
               ["Thành viên trong trang", data.length],
               ["Nhiệm vụ", total],
