@@ -7,6 +7,7 @@ import {
   IconUsers,
 } from "@/components/v-intern/icons";
 import { MarginNote } from "@/components/workspace/notebook";
+import { AsteriskDoodle, SparkleDoodle } from "@/components/v-intern/doodles";
 import { Logo } from "@/components/v-intern/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
@@ -21,7 +22,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
     <header className="support-header"><Logo /><div className="flex items-center gap-3"><ThemeToggle /><Link href="/" aria-label="Quay lại trang chủ" className="support-back"><IconArrowLeft size={16} aria-hidden />Quay lại</Link></div></header>
     <main className="auth-layout">
       <section className="auth-context" aria-label="Giới thiệu V-Intern">
-        <h2>Thực tập như một <span className="marker">lập trình viên thực thụ</span>.</h2>
+        <AsteriskDoodle
+          className="pointer-events-none absolute -right-4 -top-7 h-5 w-5 text-blue/25 animate-float motion-reduce:animate-none"
+        />
+        <SparkleDoodle
+          className="pointer-events-none absolute -left-9 top-1/3 hidden h-5 w-5 text-blue/20 animate-bob motion-reduce:animate-none xl:block"
+        />
+        <h2>Thực tập như một <span className="marker animate-marker-blot motion-reduce:animate-none">lập trình viên thực thụ</span>.</h2>
         <p>Làm việc trên dự án thực tế, nhận task, sử dụng GitHub, làm việc theo Sprint và nhận phản hồi trong suốt quá trình.</p>
         <ul className="auth-benefits">{BENEFITS.map(({ icon: Icon, title, desc }) => <li key={title}><Icon size={20} aria-hidden /><div><h3>{title}</h3><p>{desc}</p></div></li>)}</ul>
         <MarginNote className="mt-4">sổ tay này ghi lại từng bước của bạn ✎</MarginNote>
