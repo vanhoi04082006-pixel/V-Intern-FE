@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   IconArrowLeft,
   IconArrowUpRight,
@@ -7,7 +8,7 @@ import {
   IconUsers,
 } from "@/components/v-intern/icons";
 import { MarginNote } from "@/components/workspace/notebook";
-import { AsteriskDoodle, SparkleDoodle } from "@/components/v-intern/doodles";
+import { AsteriskDoodle, SparkleDoodle, Tape } from "@/components/v-intern/doodles";
 import { Logo } from "@/components/v-intern/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
@@ -33,6 +34,23 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <ul className="auth-benefits">{BENEFITS.map(({ icon: Icon, title, desc }) => <li key={title}><Icon size={20} aria-hidden /><div><h3>{title}</h3><p>{desc}</p></div></li>)}</ul>
         <MarginNote className="mt-4">sổ tay này ghi lại từng bước của bạn ✎</MarginNote>
         <Link href="/apply" className="support-context-link">Ứng tuyển chương trình thực tập<IconArrowUpRight size={16} aria-hidden /></Link>
+        {/* Tấm polaroid sinh viên bước đi — mở đầu hành trình, chỉ hiện ≥lg */}
+        <figure className="relative mt-6 hidden w-[228px] rotate-[-1.4deg] xl:block">
+          <Tape className="-top-2.5 left-8 z-10" rotate={-5} variant="mint" />
+          <div className="sketch-card-sm bg-raised p-2 dog-ear">
+            <Image
+              src="/images/characters/student-walker.png"
+              alt="Minh hoạ sinh viên đeo ba lô đang bước theo vệt mực, phía trước là cờ nhỏ"
+              width={228}
+              height={304}
+              sizes="228px"
+              className="w-full rounded-lg border-2 border-ink/10"
+            />
+            <figcaption className="px-1 pb-0.5 pt-1.5 font-hand text-[15px] leading-tight text-ink-soft">
+              trang đầu tiên bắt đầu từ đây →
+            </figcaption>
+          </div>
+        </figure>
       </section>
       <div className="auth-form-region">{children}</div>
     </main>
