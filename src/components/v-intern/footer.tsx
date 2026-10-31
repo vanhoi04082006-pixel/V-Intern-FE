@@ -11,6 +11,7 @@ import { Logo } from "@/components/v-intern/logo";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { NewsletterForm } from "@/components/v-intern/newsletter-form";
 import { SparkleDoodle } from "@/components/v-intern/doodles";
+import { StampMoc } from "@/components/workspace/notebook";
 
 const SOCIAL_LINKS: { label: string; href: string; icon: IconComponent }[] = [
   { label: "LinkedIn", href: "https://www.linkedin.com", icon: IconLinkedin },
@@ -112,7 +113,12 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="paper-deckle-top mt-auto w-full bg-coal text-chalk">
+    <footer className="paper-deckle-top relative mt-auto w-full bg-coal text-chalk">
+      {/* Bụi phấn — chấm bi trắng mờ trên bìa sau sổ tay */}
+      <div
+        aria-hidden="true"
+        className="mask-fade-edges pointer-events-none absolute inset-0 bg-dots-chalk opacity-50"
+      />
       <FadeIn y={16} className="mx-auto max-w-7xl px-4 pb-12 pt-14 md:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.45fr_1fr_1fr_1fr_0.95fr] lg:gap-x-8">
           <div className="col-span-2 lg:col-span-1 lg:pr-4">
@@ -148,6 +154,16 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+
+            {/* Mộc nhà xuất bản — con dấu tròn như ấn bản cuối sổ */}
+            <div className="mt-5 flex items-center gap-3">
+              <StampMoc tone="blue" rotate={-7} className="text-[#7d97ff]/80">
+                Ấn bản 2026
+              </StampMoc>
+              <span className="font-hand text-[15px] text-chalk-soft">
+                in tại Việt Nam ✎
+              </span>
+            </div>
           </div>
 
           {LINK_COLUMNS.map((column) => (

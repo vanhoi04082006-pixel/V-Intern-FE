@@ -14,6 +14,7 @@ import {
   type IconComponent,
 } from "@/components/v-intern/icons";
 import { FadeIn } from "@/components/v-intern/reveal";
+import { Parallax } from "@/components/v-intern/motion";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
 import {
@@ -22,6 +23,7 @@ import {
   CrossDoodle,
   HandArrowDown,
   HeartDoodle,
+  PaperPlaneDoodle,
   PaperclipDoodle,
   SparkleDoodle,
   StarDoodle,
@@ -152,7 +154,7 @@ export function Hero() {
     <section
       id="platform"
       aria-label="Giới thiệu nền tảng V-Intern"
-      className="relative scroll-mt-20 overflow-hidden bg-paper"
+      className="vignette-paper relative scroll-mt-20 overflow-hidden bg-paper"
     >
       {/* Nền giấy ô ly + lề đỏ, mờ dần ở mép */}
       <div
@@ -170,6 +172,8 @@ export function Hero() {
         <StarDoodle className="absolute left-[45%] bottom-[6%] h-5 w-5 text-ink/10 animate-float-delayed motion-reduce:animate-none" />
         {/* Vết cà phê mờ sau cụm polaroid — dấu vết “học khuya” */}
         <CoffeeStainDoodle className="absolute -bottom-2 right-[38%] h-24 w-24 text-ink/[0.05]" />
+        {/* Giấy bay mở đầu hành trình — trôi chậm quanh cụm polaroid */}
+        <PaperPlaneDoodle className="absolute right-[2%] top-[30%] h-12 w-14 animate-float-delayed text-blue/30 motion-reduce:animate-none" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-14 md:px-6 lg:px-8 lg:pb-24 lg:pt-20">
@@ -231,50 +235,83 @@ export function Hero() {
             </div>
           </FadeIn>
 
-          {/* Cột phải — tấm polaroid workspace */}
+          {/* Cột phải — collage polaroid 3 lớp sâu: bàn học (xa) + workspace (gần) */}
           <FadeIn
             className="relative mx-auto w-full max-w-[620px] lg:max-w-none"
             delay={0.15}
           >
             <div className="relative px-1 pt-4">
+              {/* Lớp xa: góc bàn học minh hoạ — polaroid nhỏ trôi chậm hơn trang */}
+              <Parallax
+                speed={0.07}
+                className="absolute -top-7 right-0 z-0 hidden w-[44%] md:block"
+              >
+                <figure className="sketch-card-sm rotate-[3deg] bg-raised p-2 shadow-warm dog-ear transition-transform duration-500 ease-out motion-safe:hover:rotate-[1.5deg]">
+                  <Image
+                    src="/images/landing/hero-desk.png"
+                    alt="Minh hoạ góc bàn học với sổ tay, laptop và cà phê"
+                    width={672}
+                    height={384}
+                    sizes="(min-width: 1024px) 24vw, 40vw"
+                    className="w-full rounded-lg border-2 border-ink/10"
+                  />
+                  <figcaption className="px-1 pb-0.5 pt-1.5 font-hand text-[15px] leading-tight text-ink-soft">
+                    góc bàn làm việc của bạn
+                  </figcaption>
+                </figure>
+              </Parallax>
+
+              {/* Lớp gần: tấm polaroid workspace chính */}
               <Tape className="-top-1 left-8 z-20" rotate={-8} variant="warm" />
               <Tape className="-top-1 right-10 z-20" rotate={7} variant="candy" />
-              <DashboardPolaroid />
-            </div>
-
-            {/* Sticky note "Đánh giá AI" — kèm kẹp giấy như gắn lên tường */}
-            <div className="absolute -top-3 right-0 z-20 hidden w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] sm:-top-6 sm:flex md:-right-3 md:-top-24 motion-reduce:animate-none">
-              <PaperclipDoodle className="absolute -left-3.5 -top-4 h-10 w-6 text-ink/45" />
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
-                <IconSparkles className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-xs font-extrabold text-ink">Đánh giá AI</p>
-                <p className="mt-0.5 text-[11px] leading-snug text-ink-soft">
-                  Gợi ý tham khảo theo công việc
-                </p>
-                <p className="mt-1 font-hand text-[15px] leading-none text-blue">
-                  giảng viên chốt điểm chính thức
-                </p>
+              <div className="relative z-10">
+                <DashboardPolaroid />
               </div>
             </div>
 
-            {/* Robot linh vật + bong bóng chat */}
-            <div className="absolute -bottom-3 left-0 z-20 hidden animate-float items-end gap-2 [--float-rotate:0deg] md:flex md:-left-6">
-              <div className="sketch-card-sm rotate-[2deg] overflow-hidden bg-raised p-1">
-                <Image
-                  src="/images/landing/robot-mascot.png"
-                  alt="Robot linh vật của V-Intern đang vẫy tay chào"
-                  width={1024}
-                  height={1024}
-                  className="h-32 w-auto lg:h-36"
-                  priority
-                />
+            {/* Sticky note "Đánh giá AI" — trôi nhanh hơn trang, kẹp giấy như gắn lên tường */}
+            <Parallax
+              speed={0.13}
+              className="absolute -top-3 right-0 z-20 hidden w-[228px] sm:-top-6 sm:block md:-right-3 md:-top-24"
+            >
+              <div className="flex w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] motion-reduce:animate-none">
+                <PaperclipDoodle className="absolute -left-3.5 -top-4 h-10 w-6 text-ink/45" />
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
+                  <IconSparkles className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-extrabold text-ink">Đánh giá AI</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-ink-soft">
+                    Gợi ý tham khảo theo công việc
+                  </p>
+                  <p className="mt-1 font-hand text-[15px] leading-none text-blue">
+                    giảng viên chốt điểm chính thức
+                  </p>
+                </div>
               </div>
-              <span className="mb-11 -rotate-2 rounded-2xl rounded-bl-sm border-2 border-ink bg-raised px-4 py-2.5 font-hand text-[17px] leading-tight text-blue shadow-[3px_3px_0_0_var(--hard-shadow)]">
-                Cùng xây dựng tương lai nhé!
-              </span>
-            </div>
+            </Parallax>
+
+            {/* Robot linh vật + bong bóng chat — trôi chậm ngược chiều trang */}
+            <Parallax
+              speed={-0.06}
+              className="absolute -bottom-3 left-0 z-20 hidden md:block md:-left-6"
+            >
+              <div className="flex animate-float items-end gap-2 [--float-rotate:0deg] motion-reduce:animate-none">
+                <div className="sketch-card-sm rotate-[2deg] overflow-hidden bg-raised p-1 shadow-warm">
+                  <Image
+                    src="/images/landing/robot-mascot.png"
+                    alt="Robot linh vật của V-Intern đang vẫy tay chào"
+                    width={1024}
+                    height={1024}
+                    className="h-32 w-auto lg:h-36"
+                    priority
+                  />
+                </div>
+                <span className="mb-11 -rotate-2 rounded-2xl rounded-bl-sm border-2 border-ink bg-raised px-4 py-2.5 font-hand text-[17px] leading-tight text-blue shadow-[3px_3px_0_0_var(--hard-shadow)]">
+                  Cùng xây dựng tương lai nhé!
+                </span>
+              </div>
+            </Parallax>
           </FadeIn>
         </div>
 
