@@ -232,6 +232,7 @@ export function ReportsWorkspace({
               required
               maxLength={256}
               disabled={busy}
+              placeholder="VD: Báo cáo tiến độ giữa kỳ"
               className={inputClass}
               value={title}
               onChange={(e) => {
@@ -348,7 +349,7 @@ export function ReportsWorkspace({
               }
             />
           ) : (
-            <Empty />
+            <Empty>Chưa có báo cáo đã lưu.</Empty>
           ))}
         {reports.data?.items.map((r) => (
           <button
@@ -428,7 +429,7 @@ export function ReportsWorkspace({
                   </tbody>
                 </table>
               </div>
-              <div className="mt-4 flex gap-2">
+              <div className="mt-4 flex flex-wrap gap-3">
                 {(["pdf", "xlsx", "csv"] as const).map((format) => (
                   <button
                     key={format}

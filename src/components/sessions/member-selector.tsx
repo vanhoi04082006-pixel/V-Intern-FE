@@ -263,7 +263,7 @@ export function MemberSelector({
                           {detail ? (
                             <CandidateInterviewSummary detail={detail} />
                           ) : (
-                            "Đang tải chi tiết phỏng vấn..."
+                            "Đang tải chi tiết phỏng vấn…"
                           )}
                         </div>
                       )}

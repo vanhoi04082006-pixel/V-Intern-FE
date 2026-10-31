@@ -51,7 +51,7 @@ export function ActivateButton({
         type="button"
         disabled={busy}
         onClick={() => void run()}
-        className="rounded border border-success bg-success-subtle px-3 py-1 text-caption font-semibold text-success hover:bg-success-subtle disabled:opacity-50"
+        className="rounded border border-success bg-success-subtle px-3 py-1 text-caption font-semibold text-success transition-colors duration-200 hover:border-success/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? "Đang kích hoạt…" : "Kích hoạt"}
       </button>
@@ -97,7 +97,7 @@ export function OnboardingChecklist({
               <p className="mt-0.5 text-caption text-muted-foreground">{s.hint}</p>
             </div>
             {!s.done && (
-              <Link href={s.href} className="shrink-0 text-caption font-semibold text-primary hover:underline">
+              <Link href={s.href} className="shrink-0 rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
                 Thực hiện
               </Link>
             )}
@@ -139,7 +139,7 @@ export function InstructorSetupPanel({
   });
   const complete = steps.every((s) => s.done);
   return (
-    <Panel title="Bắt đầu" action={onSetup && !complete ? <button className="text-caption text-primary" onClick={onSetup}>Mở wizard</button> : undefined}>
+    <Panel title="Bắt đầu" action={onSetup && !complete ? <button className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={onSetup}>Mở wizard</button> : undefined}>
       <OnboardingChecklist steps={steps} onSetup={complete ? undefined : onSetup} />
     </Panel>
   );

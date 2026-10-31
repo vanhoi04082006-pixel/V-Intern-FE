@@ -83,7 +83,7 @@ describe("context inheritance", () => {
     render(<AcademicDetail kind="projects" id="project-9" onClose={vi.fn()} onChanged={vi.fn()} />);
     expect(await screen.findByText("Dự án chín")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /tạo sprint/i }));
-    expect(await screen.findByText(/đã kế thừa, không cần chọn lại/i)).toBeInTheDocument();
+    expect(await screen.findByText(/đã được kế thừa, không cần chọn lại/i)).toBeInTheDocument();
     expect(screen.queryByRole("combobox", { name: "Dự án" })).toBeNull();
   });
 });

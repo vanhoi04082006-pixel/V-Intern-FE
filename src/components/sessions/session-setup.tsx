@@ -448,7 +448,7 @@ function SetupBody({
                       )
                     }
                   >
-                    {startAction.busy ? "Đang bắt đầu..." : "Bắt đầu phiên"}
+                    {startAction.busy ? "Đang bắt đầu…" : "Bắt đầu phiên"}
                   </button>
                 </Can>
                 {Boolean(startAction.error) && (

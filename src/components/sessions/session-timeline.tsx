@@ -11,7 +11,7 @@ export function SessionTimeline({ sessionId, load = listSessionTimeline }: { ses
   const state = useResource(useCallback((signal: AbortSignal) => load(sessionId, page, signal), [load, sessionId, page]));
   return <Panel title="Hoạt động của phiên">
     {state.loading ? <LoadingState /> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : state.data && <>
-      {state.data.items.length ? <ol className="ins-timeline">{state.data.items.map(e => <li key={e.id} className="ins-timeline-item text-body">
+      {state.data.items.length ? <ol className="ins-timeline">{state.data.items.map((e, index) => <li key={e.id} data-current={index === 0 ? "true" : undefined} className="ins-timeline-item text-body">
         <p>{e.summary ?? e.action}</p><p className="mt-1 text-caption text-muted-foreground">{e.actorName ?? 'Hệ thống'} · <time dateTime={e.createdAt}>{new Date(e.createdAt).toLocaleString('vi-VN')}</time></p>
       </li>)}</ol> : <Empty>Chưa có hoạt động được ghi nhận trong phiên.</Empty>}
       <Pager {...state.data} onChange={setPage} unit="hoạt động" />

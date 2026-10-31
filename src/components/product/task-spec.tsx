@@ -20,7 +20,7 @@ function TaskSpecSource({ id }: { id: string }) {
   if (source.loading)
     return (
       <p role="status" className="mt-3 text-body text-muted-foreground">
-        Đang tải spec nguồn...
+        Đang tải spec nguồn…
       </p>
     );
   if (source.error) return <ErrorState error={source.error} onRetry={source.reload} />;
@@ -31,7 +31,7 @@ function TaskSpecSource({ id }: { id: string }) {
         <IconCodeXml size={16} className="mr-2 inline" aria-hidden="true" />
         Spec nguồn (dùng để chấm điểm)
       </summary>
-      <pre className="mt-3 max-h-96 overflow-auto rounded-control bg-muted p-3 text-caption leading-6 text-foreground">
+      <pre className="notebook-scroll mt-3 max-h-96 overflow-auto rounded-control bg-muted p-3 text-caption leading-6 text-foreground">
         {JSON.stringify(source.data, null, 2)}
       </pre>
     </details>
@@ -144,7 +144,7 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
           type="button"
           aria-expanded={showSource}
           aria-controls="task-spec-source"
-          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent"
+          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           onClick={() => setShowSource((v) => !v)}
         >
           {showSource ? "Ẩn nguồn" : "Xem nguồn"}
@@ -154,8 +154,8 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
       <p className="mb-3 whitespace-pre-wrap text-body">{spec.requirements}</p>
       <p className="text-caption text-muted-foreground">
         Vai trò: {roleLabel(spec.role)}
-        {spec.estimatedHours ? `: Ước lượng ${spec.estimatedHours} giờ` : ""}
-        {spec.skillTags.length ? `: ${spec.skillTags.join(", ")}` : ""}
+        {spec.estimatedHours ? ` · Ước lượng ${spec.estimatedHours} giờ` : ""}
+        {spec.skillTags.length ? ` · ${spec.skillTags.join(", ")}` : ""}
       </p>
       {spec.expectedOutput && (
         <p className="mt-3 whitespace-pre-wrap text-body">
@@ -184,11 +184,25 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
           </ul>
         </div>
       )}
-      <ul className="my-3 list-inside list-disc text-body">
-        {spec.dod.map((v, i) => (
-          <li key={i}>{v}</li>
-        ))}
-      </ul>
+      {spec.dod.length ? (
+        <ol className="my-3 space-y-3">
+          {spec.dod.map((item, index) => (
+            <li
+              key={index}
+              className="flex items-start gap-3 border-b border-border py-3 text-body leading-7"
+            >
+              <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-accent text-caption font-bold text-primary">
+                {index + 1}
+              </span>
+              {item}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="my-3 text-body text-muted-foreground">
+          Chưa có danh sách tiêu chí riêng. Đối chiếu phần yêu cầu phía trên.
+        </p>
+      )}
       <details>
         <summary className="cursor-pointer text-body font-semibold text-primary">
           Tài liệu dự án

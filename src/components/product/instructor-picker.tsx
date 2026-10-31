@@ -22,10 +22,10 @@ export function InstructorPicker({
     );
   return (
     <div className={compact ? "space-y-1" : "space-y-2"}>
-      <label className="block text-sm">
+      <label className="block text-body">
         {label}
         <input
-          className={`${inputClass} mt-2`}
+          className={`${inputClass} mt-1`}
           aria-label={"Tìm " + label.toLowerCase()}
           placeholder="Tìm tên hoặc email giảng viên..."
           value={q}

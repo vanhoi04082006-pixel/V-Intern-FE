@@ -144,7 +144,7 @@ export function SprintDelivery({
         </p>
       </Panel>
       <div id="sprint-task-list" className="scroll-mt-20">
-        <Panel title="Task & bài nộp của Sprint">
+        <Panel title="Nhiệm vụ & bài nộp của Sprint">
           <div className="mb-4 grid gap-2 sm:grid-cols-2">
             <input
               aria-label="Tìm task trong Sprint"
@@ -210,7 +210,7 @@ export function SprintDelivery({
                       >
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <button
-                            className="text-left text-body font-semibold text-primary hover:underline"
+                            className="rounded-control text-left text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                             onClick={() => onOpen(t.id)}
                           >
                             {t.title}
@@ -228,7 +228,7 @@ export function SprintDelivery({
                                   t.assigneeId?.toLowerCase(),
                               )?.displayName ?? "Đã phân công")
                             : "Chưa phân công"}{" "}
-                         · {priorityLabels[t.priority]}, {t.progress}%
+                         · {priorityLabels[t.priority]} · {t.progress}%
                         </p>
                         <p className="mt-1 text-caption text-muted-foreground">
                           Hạn{" "}
@@ -241,7 +241,7 @@ export function SprintDelivery({
                     ))}
                   </ul>
                 ) : (
-                  <Empty>Không có task trong bộ lọc.</Empty>
+                  <Empty>Không có nhiệm vụ nào trong bộ lọc.</Empty>
                 )}
                 <Pager {...tasks.data} onChange={setPage} unit="task" />
               </>
@@ -284,7 +284,7 @@ export function SprintWorkspace({
     <div className="space-y-5">
       {basePath === "/instructor" && <InstructorHeading
         title={sprint.name}
-        description={`Chi tiết Sprint, ${sprint.code}, ${sprint.startDate ? instructorDate(sprint.startDate) : "Chưa có ngày bắt đầu"} — ${sprint.endDate ? instructorDate(sprint.endDate) : "Chưa có ngày kết thúc"}`}
+        description={`Chi tiết Sprint ${sprint.code} · ${sprint.startDate ? instructorDate(sprint.startDate) : "Chưa có ngày bắt đầu"} — ${sprint.endDate ? instructorDate(sprint.endDate) : "Chưa có ngày kết thúc"}`}
         back={{ href: "/instructor/sprints", label: "Sprint & công việc" }}
         action={
           sprint.status === "completed" ? (
@@ -318,7 +318,7 @@ export function SprintWorkspace({
         </p>
         {sprint.sessionId && (
           <Link
-            className="mt-3 inline-block text-body font-semibold text-primary"
+            className="mt-3 inline-block rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             href={`${basePath}/sessions/${sprint.sessionId}`}
           >
             Mở phiên thực tập →

@@ -40,6 +40,21 @@ import { RowMenu } from './instructor-dashboard';
 import { ActivateButton } from './instructor-onboarding';
 import { SprintForm } from "./sprint-management";
 const statusNames:Record<string,string>={active:"Đang hoạt động",upcoming:"Sắp bắt đầu",paused:"Tạm dừng",recruiting:"Đang tuyển",draft:"Bản nháp",ending:"Sắp kết thúc",completed:"Hoàn thành",cancelled:"Đã hủy",archived:"Đã lưu trữ"};
+/** Trạng thái ứng viên dùng cho option “Chọn sinh viên” — tránh lộ mã thô. */
+const candidateStatusNames: Record<string, string> = {
+  passed: "Đạt tuyển dụng",
+  failed: "Chưa đạt",
+  evaluation_pending: "Đang chấm",
+  interview_in_progress: "Đang phỏng vấn",
+  role_selected: "Đã chọn vị trí",
+  recruitment_required: "Chờ tuyển dụng",
+};
+/** Trạng thái mốc tiến độ — pending/in_progress chưa có trong statusNames. */
+const milestoneStatusNames: Record<string, string> = {
+  pending: "Chưa bắt đầu",
+  in_progress: "Đang thực hiện",
+  completed: "Hoàn thành",
+};
 export function AcademicStatus({ status }: { status: string }) {
   const tone = status === "active" || status === "recruiting" ? "green" : status === "paused" || status === "ending" || status === "draft" ? "amber" : status === "upcoming" ? "blue" : status === "cancelled" || status === "archived" ? "red" : "gray";
   return <StatusDot tone={tone as "green"}>{statusNames[status] ?? status}</StatusDot>;
@@ -111,7 +126,7 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
       <AcademicMetrics key={kind+':'+revision+':'+data.data?.total} kind={kind}/>
       <div className="grid items-start gap-3 xl:grid-cols-[minmax(0,2.5fr)_minmax(340px,1fr)]">
         <div className="min-w-0">
-        <Panel title={`Danh sách ${labels[kind].toLowerCase()}`} action={<span className="flex flex-wrap items-center gap-2"><button className="rounded-md border border-primary px-3 py-2 text-caption text-primary hover:bg-accent" disabled={!data.data?.items.length} onClick={()=>exportCsv(kind+".csv",["Mã","Tên","Trạng thái"],(data.data?.items??[]).map(x=>[x.code,x.name,x.status]))}>Xuất trang</button><Can perm={managePermission[kind]}><button className={buttonClass} onClick={() => setCreate(true)}>+ Tạo {kind === "sessions" ? "phiên mới" : "project mới"}</button></Can></span>}>
+        <Panel title={`Danh sách ${labels[kind].toLowerCase()}`} action={<span className="flex flex-wrap items-center gap-3"><button className="rounded-md border border-primary px-3 py-2 text-caption text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50" disabled={!data.data?.items.length} onClick={()=>exportCsv(kind+".csv",["Mã","Tên","Trạng thái"],(data.data?.items??[]).map(x=>[x.code,x.name,x.status]))}>Xuất trang</button><Can perm={managePermission[kind]}><button className={buttonClass} onClick={() => setCreate(true)}>+ Tạo {kind === "sessions" ? "phiên mới" : "dự án mới"}</button></Can></span>}>
           {Boolean(summaries.error) && <ErrorState error={summaries.error} onRetry={summaries.reload}/>}
           <div className="mb-4 grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <input
@@ -174,15 +189,15 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
                           return <tr key={x.id} className="border-b border-primary">
                             <td className="p-3 font-semibold whitespace-nowrap text-primary">{x.code}</td>
                             <td className="p-3"><strong className="block text-foreground">{x.name}</strong>{x.description&&<p className="mt-1 max-w-36 truncate text-caption text-muted-foreground" title={x.description}>{x.description}</p>}</td>
-                            {kind==='projects'?<><td className="p-3"><Badge>{x.domainCategory??'Chưa phân loại'}</Badge></td><td className="p-3 text-caption">{x.technologies.join(', ')||'Chưa có'}</td>{members}<td className="p-3"><AcademicStatus status={x.status} /></td><td className="p-3"><Badge>{{beginner:'Thấp',intermediate:'Trung bình',advanced:'Cao'}[x.difficulty??'']??'Chưa có'}</Badge></td></>:<>{members}{responsible}<td className="p-3 whitespace-nowrap">{date(x.startDate)}</td><td className="p-3 whitespace-nowrap">{date(x.endDate)}</td><td className="p-3">{summary?.taskCount?<ProgressBar value={Math.round((summary.doneCount??0)/summary.taskCount*100)} />:<span className="text-caption text-muted-foreground">Chưa có task</span>}</td><td className="p-3"><AcademicStatus status={x.status} /></td></>}
-                            <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Chi tiết ${x.code}`} onClick={()=>setSelected(x.id)}>Xem chi tiết</button> {kind==='projects'&&x.mentorId===null&&<Can perm="projects.manage"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent" aria-label={`Nhận dự án ${x.code}`} disabled={claimingId===x.id} onClick={()=>void claim(x)}>{claimingId===x.id?"Đang nhận...":"Nhận dự án"}</button></Can>} {(kind==='sessions'||kind==='projects')&&<ActivateButton kind={kind} id={x.id} status={x.status} onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}} />} <RowMenu label={`Thao tác ${x.code}`} onOpen={()=>setSelected(x.id)} />{kind==='sessions'&&<Link className="mt-2 block text-caption text-primary" href={`/instructor/sessions/${x.id}`}>Mở phiên</Link>}</td>
+                            {kind==='projects'?<><td className="p-3"><Badge>{x.domainCategory??'Chưa phân loại'}</Badge></td><td className="p-3 text-caption">{x.technologies.join(', ')||'Chưa có'}</td>{members}<td className="p-3"><AcademicStatus status={x.status} /></td><td className="p-3"><Badge>{{beginner:'Thấp',intermediate:'Trung bình',advanced:'Cao'}[x.difficulty??'']??'Chưa có'}</Badge></td></>:<>{members}{responsible}<td className="p-3 whitespace-nowrap">{date(x.startDate)}</td><td className="p-3 whitespace-nowrap">{date(x.endDate)}</td><td className="p-3">{summary?.taskCount?<ProgressBar value={Math.round((summary.doneCount??0)/summary.taskCount*100)} />:<span className="text-caption text-muted-foreground">Chưa có nhiệm vụ</span>}</td><td className="p-3"><AcademicStatus status={x.status} /></td></>}
+                            <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" aria-label={`Chi tiết ${x.code}`} onClick={()=>setSelected(x.id)}>Xem chi tiết</button> {kind==='projects'&&x.mentorId===null&&<Can perm="projects.manage"><button className="rounded border border-primary px-3 py-1 text-caption text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50" aria-label={`Nhận dự án ${x.code}`} disabled={claimingId===x.id} onClick={()=>void claim(x)}>{claimingId===x.id?"Đang nhận…":"Nhận dự án"}</button></Can>} {(kind==='sessions'||kind==='projects')&&<ActivateButton kind={kind} id={x.id} status={x.status} onChanged={()=>{data.reload();summaries.reload();setRevision(r=>r+1);}} />} <RowMenu label={`Thao tác ${x.code}`} onOpen={()=>setSelected(x.id)} />{kind==='sessions'&&<Link className="mt-2 block text-caption text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" href={`/instructor/sessions/${x.id}`}>Mở phiên</Link>}</td>
                           </tr>;
                         })}
                       </tbody>
                     </table>
                   </div>
                 ) : (
-                  <Empty>Chưa có dữ liệu phù hợp.</Empty>
+                  <Empty>Chưa có bản ghi phù hợp với bộ lọc hiện tại.</Empty>
                 )}
                 <Pager {...data.data} unit={kind === "sessions" ? "phiên" : "dự án"} onChange={setPage} />
               </>
@@ -360,9 +375,11 @@ function AcademicForm({
           onChange={(value) => setForm({ ...form, leadInstructorId: value })}
         />
       )}
-      <button className={buttonClass} disabled={busy}>
-        {busy ? "Đang lưu..." : "Lưu"}
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={busy}>
+          {busy ? "Đang lưu..." : "Lưu"}
+        </button>
+      </div>
     </form>
   );
 }
@@ -398,14 +415,14 @@ export function AcademicDetail({
               {entity.data.description ?? "Chưa có mô tả."}
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <Badge>{entity.data.status}</Badge>
+              <Badge>{statusNames[entity.data.status] ?? entity.data.status}</Badge>
               <Can perm={managePermission[kind]}>
                 <button className={buttonClass} onClick={() => setEdit(!edit)}>
                   {edit ? "Đóng chỉnh sửa" : "Chỉnh sửa"}
                 </button>
               </Can>
               {kind === "projects" && (
-                <button className="rounded-md border border-primary px-4 py-2 text-body font-semibold text-primary hover:bg-accent" onClick={() => setSprintOpen(true)}>
+                <button className="rounded-md border border-primary px-4 py-2 text-body font-semibold text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setSprintOpen(true)}>
                   Tạo Sprint
                 </button>
               )}
@@ -473,18 +490,18 @@ function CandidateSelect({
         candidates.data && (
           <>
             <label className="block text-body">
-              Chọn Intern
+              Chọn sinh viên
               <select
                 required
                 className={`${inputClass} mt-1`}
                 value={value}
-                aria-label="Chọn Intern"
+                aria-label="Chọn sinh viên"
                 onChange={(e) => onChange(e.target.value)}
               >
                 <option value="">Chọn thành viên</option>
                 {candidates.data.items.map((c) => (
                   <option key={c.userId} value={c.userId}>
-                    {c.displayName ?? c.email ?? c.userId} · {c.status}
+                    {c.displayName ?? c.email ?? c.userId} · {candidateStatusNames[c.status] ?? c.status}
                   </option>
                 ))}
               </select>
@@ -542,7 +559,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
                 <Can perm={managePermission[kind]}>
                 <button
                   disabled={busy}
-                  className="text-destructive"
+                  className="rounded-control px-1 font-semibold text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() =>
                     void mutate(() => api.removeMember(kind, id, m.userId))
                   }
@@ -560,7 +577,7 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
       {kind !== "projects" && (
         <Can perm={managePermission[kind]}>
         <form
-          className="mt-4 space-y-3"
+          className="mt-4 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             void mutate(() => api.addMember(kind, id, userId));
@@ -572,9 +589,11 @@ function Members({ kind, id, onChanged }: { kind: api.AcademicKind; id: string; 
             page={page}
             setPage={setPage}
           />
-          <button className={buttonClass} disabled={busy || !userId}>
-            Thêm thành viên
-          </button>
+          <div className="flex justify-end">
+            <button className={buttonClass} disabled={busy || !userId}>
+              Thêm thành viên
+            </button>
+          </div>
         </form>
         </Can>
       )}
@@ -610,7 +629,7 @@ export function AssignmentForm({
   return (
     <Panel title="Phân công thực tập">
       <p className="mb-3 text-body text-muted-foreground">
-        Intern phải đạt tuyển dụng. Hệ thống kiểm tra trạng thái và sức chứa
+        Sinh viên phải đạt tuyển dụng. Hệ thống kiểm tra trạng thái và sức chứa
         trước khi phân công.
       </p>
       {Boolean(error) && <ErrorState error={error} />}{" "}
@@ -619,7 +638,7 @@ export function AssignmentForm({
           role="status"
           className="mb-3 rounded-control bg-success-subtle p-3 text-success"
         >
-          Phân công thành công. Intern có thể cập nhật Workspace để nhận dự án.
+          Phân công thành công. Sinh viên có thể cập nhật Workspace để nhận dự án.
         </p>
       )}
       <form
@@ -653,12 +672,14 @@ export function AssignmentForm({
             assignable
           />
         )}
-        <button
-          className={buttonClass}
-          disabled={busy || !internId || !projectId || !sessionId}
-        >
-          Phân công
-        </button>
+        <div className="flex justify-end">
+          <button
+            className={buttonClass}
+            disabled={busy || !internId || !projectId || !sessionId}
+          >
+            Phân công
+          </button>
+        </div>
       </form>
     </Panel>
   );
@@ -695,7 +716,7 @@ function ProjectSessionsPanel({ id }: { id: string }) {
           ) : !sessions.data || sessions.data.length === 0 ? (
             <Empty>Chưa có phiên nào chạy trên dự án này.</Empty>
           ) : (
-            <ul className="max-h-96 overflow-y-auto space-y-2">
+            <ul className="notebook-scroll max-h-96 space-y-2 overflow-y-auto pr-1">
               {sessions.data.map((s: ProjectSessionSummary) => (
                 <li
                   key={s.id}
@@ -774,7 +795,7 @@ function SessionExtras({ id }: { id: string }) {
             <div key={i.userId} className="mb-2 flex justify-between text-body">
               <span>{i.displayName}</span>
               <button
-                className="text-destructive"
+                className="rounded-control px-1 font-semibold text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={busy}
                 onClick={() =>
                   void act(() => api.removeInstructor(id, i.userId))
@@ -816,7 +837,7 @@ function SessionExtras({ id }: { id: string }) {
               </span>
               <select
                 aria-label={`Trạng thái ${m.title}`}
-                className="rounded border p-1"
+                className="rounded-control border border-border bg-card px-2 py-1 text-caption focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                 disabled={busy}
                 value={m.status}
                 onChange={(e) =>
@@ -826,11 +847,11 @@ function SessionExtras({ id }: { id: string }) {
                 }
               >
                 {["pending", "in_progress", "completed"].map((s) => (
-                  <option key={s} value={s}>{statusNames[s]??({beginner:"Thấp",intermediate:"Trung bình",advanced:"Cao"} as Record<string,string>)[s]??s}</option>
+                  <option key={s} value={s}>{milestoneStatusNames[s] ?? s}</option>
                 ))}
               </select>
               <button
-                className="text-destructive"
+                className="rounded-control px-1 font-semibold text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={busy}
                 onClick={() => void act(() => api.deleteMilestone(id, m.id))}
               >
@@ -842,7 +863,7 @@ function SessionExtras({ id }: { id: string }) {
           <Empty>Chưa có mốc tiến độ.</Empty>
         )}
         <form
-          className="mt-4 space-y-3"
+          className="mt-4 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             void act(() =>
@@ -863,6 +884,7 @@ function SessionExtras({ id }: { id: string }) {
             <input
               required
               maxLength={256}
+              placeholder="VD: Duyệt kế hoạch Sprint 1"
               className={`${inputClass} mt-1`}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -877,9 +899,11 @@ function SessionExtras({ id }: { id: string }) {
               onChange={(e) => setDue(e.target.value)}
             />
           </label>
-          <button className={buttonClass} disabled={busy}>
-            Thêm mốc
-          </button>
+          <div className="flex justify-end">
+            <button className={buttonClass} disabled={busy}>
+              Thêm mốc
+            </button>
+          </div>
         </form>
       </Panel>
     </>
@@ -888,13 +912,13 @@ function SessionExtras({ id }: { id: string }) {
 function AcademicBottom({ kind, items, summaries, onOpen }: { kind: api.AcademicKind; items: api.AcademicEntity[]; summaries: { id: string; responsibleName: string | null; memberCount: number; taskCount: number | null; doneCount: number | null }[]; onOpen: (id: string) => void }) {
   if (kind === "sessions") {
     const rows = items.filter(x => x.status === "ending" || (x.status === "active" && (summaries.find(s => s.id === x.id)?.taskCount ?? 0) === 0)).slice(0, 5);
-    return <div className="mt-3"><Panel title="Cảnh báo & phiên cần chú ý" action={<Link href="/instructor/sessions" className="text-caption text-primary">Xem tất cả</Link>}>
-      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-caption"><thead className="bg-background"><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-primary">{rows.map((x, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-primary">{x.code}</td><td className="px-2 py-2">{x.status === "ending" ? "Sắp kết thúc" : "Chưa có task"}</td><td className="px-2 py-2"><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className="whitespace-nowrap px-2 py-2">{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className="px-2 py-2"><button className="rounded border border-primary px-2 py-1 text-primary" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
+    return <div className="mt-3"><Panel title="Cảnh báo & phiên cần chú ý" action={<Link href="/instructor/sessions" className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">Xem tất cả</Link>}>
+      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-caption"><thead className="bg-background"><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-primary">{rows.map((x, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-primary">{x.code}</td><td className="px-2 py-2">{x.status === "ending" ? "Sắp kết thúc" : "Chưa có nhiệm vụ"}</td><td className="px-2 py-2"><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className="whitespace-nowrap px-2 py-2">{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className="px-2 py-2"><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
     </Panel></div>;
   }
   const rows = items.map(x => ({ x, members: summaries.find(s => s.id === x.id)?.memberCount ?? 0 })).sort((a, b) => b.members - a.members).slice(0, 3);
-  return <div className="mt-3"><Panel title="Project nổi bật" action={<Link href="/instructor/projects" className="text-caption text-primary">Xem tất cả</Link>}>
-    {rows.length ? <div className="grid gap-3 md:grid-cols-3">{rows.map(({ x, members }) => <article key={x.id} className="rounded-md border border-primary p-3"><p className="mb-2 inline-block rounded bg-warning-subtle px-2 py-1 text-caption font-semibold text-warning">Nổi bật</p><h3 className="text-body font-bold text-foreground">{x.name}</h3>{x.description && <p className="mt-1 line-clamp-2 text-caption text-muted-foreground">{x.description}</p>}<p className="mt-2 text-caption text-muted-foreground">{members} sinh viên · {x.technologies.join(", ") || "Chưa có công nghệ"}</p><button className="mt-3 w-full rounded-md border border-primary py-2 text-caption text-primary hover:bg-accent" onClick={() => onOpen(x.id)}>Xem chi tiết</button></article>)}</div> : <Empty>Chưa có dự án nổi bật.</Empty>}
+  return <div className="mt-3"><Panel title="Dự án nổi bật" action={<Link href="/instructor/projects" className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">Xem tất cả</Link>}>
+    {rows.length ? <div className="grid gap-3 md:grid-cols-3">{rows.map(({ x, members }) => <article key={x.id} className="rounded-md border border-primary p-3"><p className="mb-2 inline-block rounded bg-warning-subtle px-2 py-1 text-caption font-semibold text-warning">Nổi bật</p><h3 className="text-body font-bold text-foreground">{x.name}</h3>{x.description && <p className="mt-1 line-clamp-2 text-caption text-muted-foreground">{x.description}</p>}<p className="mt-2 text-caption text-muted-foreground">{members} sinh viên · {x.technologies.join(", ") || "Chưa có công nghệ"}</p><button className="mt-3 w-full rounded-md border border-primary py-2 text-caption text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => onOpen(x.id)}>Xem chi tiết</button></article>)}</div> : <Empty>Chưa có dự án nổi bật.</Empty>}
   </Panel></div>;
 }
 function OverviewCount({ kind }: { kind: api.AcademicKind }) {

@@ -4,6 +4,7 @@ import { getProjectSlots } from "@/lib/api/academic";
 import { useResource } from "@/lib/api/use-resource";
 import type { PlannedSprint, PlannedTask, SprintPlan } from "@/lib/api/planning";
 import { inputClass } from "@/components/product/primitives";
+import { priorityLabels, priorities } from "@/lib/api/work";
 import { ErrorState } from "@/components/shared/data-state";
 
 export function PlanEditor({ projectId, draft, onChange, disabled }: {
@@ -27,7 +28,7 @@ export function PlanEditor({ projectId, draft, onChange, disabled }: {
     updateSprint(si, { tasks: draft.sprints[si].tasks.map((t, i) => i === ti ? { ...t, ...patch } : t) });
   }
   return <fieldset disabled={disabled} className="ins-plan-editor space-y-6">
-    <legend className="px-1 text-body font-semibold">Chỉnh sửa kế hoạch trước khi publish</legend>
+    <legend className="px-1 text-body font-semibold">Chỉnh sửa kế hoạch trước khi phát hành</legend>
     <p className="text-caption text-muted-foreground">Thay đổi được lưu khi xác nhận. Kiểm tra người nhận, thời hạn và tiêu chí hoàn thành từng task.</p>
     {roster.error ? <ErrorState error={roster.error} onRetry={roster.reload} /> : null}
     {(draft.milestones ?? []).map((m, mi) => <div key={m.key} className="grid gap-4 border-b border-border py-4 sm:grid-cols-2">
@@ -59,11 +60,11 @@ export function PlanEditor({ projectId, draft, onChange, disabled }: {
             <fieldset className="border-t border-border py-3"><legend className="px-1 text-caption">Cần hoàn thành trước task {key}</legend>{allTasks.filter(item => item.key && item.key !== t.key).map(item => <label key={item.key} className="flex items-center gap-2 py-1 text-caption"><input type="checkbox" checked={(t.dependsOn ?? []).includes(item.key!)} onChange={e => updateTask(si, ti, { dependsOn: e.target.checked ? [...(t.dependsOn ?? []), item.key!] : (t.dependsOn ?? []).filter(k => k !== item.key) })} />{item.title}</label>)}</fieldset></>}
             <label className="text-caption">Người nhận task {key}<select className={inputClass} value={selectedAssignee} onChange={(e) => updateTask(si, ti, { assigneeId: e.target.value || null })}>
               <option value="">Chưa gán</option>
-              {t.assigneeId && !members.some((m) => m.userId.toLowerCase() === t.assigneeId!.toLowerCase()) && <option value={t.assigneeId}>Thành viên không còn trong đội , cần gán lại</option>}
+              {t.assigneeId && !members.some((m) => m.userId.toLowerCase() === t.assigneeId!.toLowerCase()) && <option value={t.assigneeId}>Thành viên không còn trong đội, cần gán lại</option>}
               {members.map((m) => <option key={m.userId} value={m.userId}>{m.displayName ?? m.userId} · {m.role}</option>)}
             </select></label>
             <label className="text-caption">Hạn task {key}<input className={inputClass} type="date" value={t.dueDate?.slice(0, 10) ?? ""} onChange={(e) => updateTask(si, ti, { dueDate: e.target.value || null })} /></label>
-            <label className="text-caption">Ưu tiên task {key}<select className={inputClass} value={t.priority} onChange={(e) => updateTask(si, ti, { priority: e.target.value })}>{["low", "medium", "high", "critical"].map((p) => <option key={p}>{p}</option>)}</select></label>
+            <label className="text-caption">Ưu tiên task {key}<select className={inputClass} value={t.priority} onChange={(e) => updateTask(si, ti, { priority: e.target.value })}>{priorities.map((p) => <option key={p} value={p}>{priorityLabels[p]}</option>)}</select></label>
             <label className="text-caption">Story points task {key}<input className={inputClass} type="number" min={0} max={100} value={t.storyPoints ?? ""} onChange={(e) => updateTask(si, ti, { storyPoints: e.target.value === "" ? null : Number(e.target.value) })} /></label>
           </div>
         </div>;

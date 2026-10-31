@@ -45,7 +45,7 @@ describe("AiPlanPanel (M5)", () => {
     expect(toggle.closest("details")).not.toHaveAttribute("open");
     expect(screen.getByText(/không làm thay đổi kế hoạch đã phát hành/i)).toBeInTheDocument();
     expect(screen.getByText(warning, { exact: false })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Xác nhận & publish" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Xác nhận & phát hành" })).not.toBeInTheDocument();
   });
   it("discards an old session generation response after switching session scope", async () => {
     let resolveGenerate!: (value: { planId: string; status: string; deduped: boolean }) => void;
@@ -74,11 +74,11 @@ describe("AiPlanPanel (M5)", () => {
       confirm: vi.fn(() => new Promise<void>(resolve => { resolveConfirm = resolve; })),
     });
     const view = render(<AiPlanPanel sessionId="s1" projectId="p1" deps={d} onPublished={published} />);
-    fireEvent.click(await screen.findByRole("button", { name: "Xác nhận & publish" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Xác nhận & phát hành" }));
     view.rerender(<AiPlanPanel sessionId="sB" projectId="pB" deps={d} />);
-    await screen.findByRole("button", { name: "Xác nhận & publish" });
+    await screen.findByRole("button", { name: "Xác nhận & phát hành" });
     await act(async () => resolveConfirm());
-    expect(screen.queryByText("Đã publish Sprint/Task từ kế hoạch.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Đã phát hành Sprint/nhiệm vụ từ kế hoạch.")).not.toBeInTheDocument();
     expect(published).not.toHaveBeenCalled();
   });
   it('polls an active session even before the detached trigger reserves its plan', async () => {
@@ -90,7 +90,7 @@ describe("AiPlanPanel (M5)", () => {
       expect(list).toHaveBeenCalledTimes(1);
       await act(async () => { await vi.advanceTimersByTimeAsync(4000); });
       expect(list).toHaveBeenCalledTimes(2);
-      expect(screen.getByRole('button', { name: 'Xác nhận & publish' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Xác nhận & phát hành' })).toBeInTheDocument();
     } finally { view.unmount(); vi.useRealTimers(); }
   });
   it("shows empty state when no plan exists", async () => {
@@ -104,8 +104,8 @@ describe("AiPlanPanel (M5)", () => {
     expect(await screen.findByText(/Sprint 1/)).toBeInTheDocument();
     expect(screen.getByText(/FE task/)).toBeInTheDocument();
     expect(screen.getByText(/Chưa gán người/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /xác nhận & publish/i }));
-    expect(await screen.findByText(/đã publish Sprint\/Task/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /xác nhận & phát hành/i }));
+    expect(await screen.findByText(/đã phát hành Sprint\/nhiệm vụ/i)).toBeInTheDocument();
     expect(d.confirm).toHaveBeenCalledTimes(1);
     const body = (d.confirm.mock.calls as unknown as Array<[unknown]>)[0]?.[0] as
       | { projectId: string; planId: string; requestId: unknown }
@@ -131,8 +131,8 @@ describe("AiPlanPanel (M5)", () => {
     fireEvent.click(await screen.findByRole("button", { name: /chỉnh sửa bản nháp/i }));
     fireEvent.change(screen.getByLabelText("Tên task 1.1"), { target: { value: "Reviewed task" } });
     fireEvent.change(screen.getByLabelText("Mô tả task 1.1"), { target: { value: "Reviewed requirements" } });
-    fireEvent.click(screen.getByRole("button", { name: /xác nhận & publish/i }));
-    await screen.findByText(/đã publish Sprint\/Task/i);
+    fireEvent.click(screen.getByRole("button", { name: /xác nhận & phát hành/i }));
+    await screen.findByText(/đã phát hành Sprint\/nhiệm vụ/i);
     expect(d.confirm).toHaveBeenCalledWith(expect.objectContaining({
       draft: expect.objectContaining({ sprints: [expect.objectContaining({
         tasks: [expect.objectContaining({ title: "Reviewed task", description: "Reviewed requirements" }), expect.anything()],

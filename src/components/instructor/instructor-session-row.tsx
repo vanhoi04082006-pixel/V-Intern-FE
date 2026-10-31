@@ -26,9 +26,9 @@ export function InstructorSessionRow({
         <p className="workspace-session-meta">
           Dự án: {row.project?.name ?? "—"}
           {row.project?.templateVersion != null
-            ? `, mẫu v${row.project.templateVersion}`
+            ? ` · mẫu v${row.project.templateVersion}`
             : ""}{" "}
-         , {row.memberCount} thành viên, {row.sprintCount} sprint ·{" "}
+          · {row.memberCount} thành viên · {row.sprintCount} sprint ·{" "}
           {row.taskDone}/{row.taskTotal} nhiệm vụ ({row.taskPercent}%)
         </p>
         <p className="workspace-session-meta">
