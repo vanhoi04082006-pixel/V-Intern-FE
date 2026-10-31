@@ -401,6 +401,20 @@
 .aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:hover {
   background: color-mix(in srgb, var(--blue) 6%, transparent);
 }
+/* Header bảng dính mép khi cuộn vùng notebook-scroll — nền giấy đặc +
+   bóng dưới như mép giấy (Lớp 8: sticky table header). */
+.aurora-workspace .notebook-scroll table thead th,
+.aurora-workspace .workspace-table-wrap table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--paper-raised);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ink) 16%, transparent);
+}
+.dark .aurora-workspace .notebook-scroll table thead th,
+.dark .aurora-workspace .workspace-table-wrap table thead th {
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ink) 24%, transparent);
+}
 .aurora-workspace .workspace-table-wrap,
 .aurora-workspace :is(.student-sidebar-scroll, .product-sidebar nav, .product-drawer, .notebook-drawer) {
   scrollbar-width: thin;

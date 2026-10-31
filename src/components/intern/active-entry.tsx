@@ -17,6 +17,7 @@ import {
   IconTarget,
   IconTrendingUp,
 } from "@/components/v-intern/icons";
+import { StarDoodle, Tape } from "@/components/v-intern/doodles";
 import { NoteCard, StampMoc } from "@/components/workspace/notebook";
 import { listTasks, type Task } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
@@ -397,7 +398,11 @@ function WorkQueue() {
         </Link>
       }
       bodyClassName="pt-0"
+      className="relative"
     >
+      {/* Băng dính + sao vẽ tay — mật độ ĐẬM cho panel chính dashboard intern */}
+      <Tape className="tape-peel -top-3 left-7" rotate={-5} aria-hidden="true" />
+      <StarDoodle className="absolute -right-1.5 -top-3.5 h-5 w-5 text-blue/50" />
       {tasks.loading ? (
         <div className="space-y-3 pt-4" aria-hidden="true">
           {[0, 1, 2].map((row) => (

@@ -1,26 +1,31 @@
 "use client";
 
-import { Award, Bot, Building2, UserSearch } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  IconAward,
+  IconBot,
+  IconBuilding,
+  IconUserSearch,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 
-const FEATURES: { icon: LucideIcon; title: string; subtitle: string }[] = [
+const FEATURES: { icon: IconComponent; title: string; subtitle: string }[] = [
   {
-    icon: UserSearch,
+    icon: IconUserSearch,
     title: "Phỏng vấn AI",
     subtitle: "Tuyển dụng thông minh",
   },
   {
-    icon: Building2,
+    icon: IconBuilding,
     title: "Dự án thực tế",
     subtitle: "Dự án từ doanh nghiệp",
   },
   {
-    icon: Bot,
+    icon: IconBot,
     title: "AI Mentor & Đánh giá",
     subtitle: "Hỗ trợ 24/7",
   },
   {
-    icon: Award,
+    icon: IconAward,
     title: "Chứng nhận",
     subtitle: "Công nhận năng lực",
   },

@@ -1,8 +1,17 @@
-import { CalendarDays, CodeXml, GraduationCap, ListChecks, Newspaper, NotebookPen, ShoppingBag } from "lucide-react";
+import {
+  IconCalendarDays,
+  IconCodeXml,
+  IconGraduationCap,
+  IconListChecks,
+  IconNewspaper,
+  IconNotebookPen,
+  IconShoppingBag,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { NotebookCompanion } from "./notebook-companion";
 
 export type ProjectArtworkSubject = "notes" | "commerce" | "tasks" | "booking" | "publishing" | "education";
-const projectIcons = { notes: NotebookPen, commerce: ShoppingBag, tasks: ListChecks, booking: CalendarDays, publishing: Newspaper, education: GraduationCap };
+const projectIcons: Record<ProjectArtworkSubject, IconComponent> = { notes: IconNotebookPen, commerce: IconShoppingBag, tasks: IconListChecks, booking: IconCalendarDays, publishing: IconNewspaper, education: IconGraduationCap };
 
 /** Original, code-native illustrations. Decorative only: no fabricated metrics. */
 export function WorkspaceArtwork({ variant = "learn", compact = false, subject }: {
@@ -15,7 +24,7 @@ export function WorkspaceArtwork({ variant = "learn", compact = false, subject }
   }
   const isConnect = variant === "connect";
   const isAward = variant === "achievement";
-  const ProjectIcon = subject ? projectIcons[subject] : CodeXml;
+  const ProjectIcon = subject ? projectIcons[subject] : IconCodeXml;
   return (
     <svg className={`workspace-artwork${compact ? " workspace-artwork-compact" : ""}`} viewBox="0 0 240 160" fill="none" aria-hidden="true">
       <path d="M25 132 119 78l96 54-94 25Z" fill="var(--accent)" />

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Clock3, FileCheck2 } from "lucide-react";
+import { IconClock, IconFileCheck } from "@/components/v-intern/icons";
 import type { ParticipationIncident } from "@/lib/api/participation";
 import { Badge, Empty } from "@/components/product/primitives";
 const date = (value: string) => new Date(value).toLocaleString("vi-VN");
@@ -52,7 +52,7 @@ export function IncidentList({
             <div>
               <dt className="text-caption text-muted-foreground">Hạn hiệu lực</dt>
               <dd className="mt-1 flex items-center gap-2">
-                <Clock3 size={13} aria-hidden="true" />
+                <IconClock size={13} aria-hidden="true" />
                 {date(item.dueAt)}
               </dd>
             </div>
@@ -74,7 +74,7 @@ export function IncidentList({
           </dl>
           {item.baseScore !== null && (
             <p className="mt-3 flex items-center gap-2 text-body text-muted-foreground">
-              <FileCheck2 size={15} aria-hidden="true" />
+              <IconFileCheck size={15} aria-hidden="true" />
               Rubric {item.baseScore} − trễ hạn {item.latePenalty ?? 0} ={" "}
               <strong>{item.score}/100</strong>
               {item.submissionStatus === "approved" && " · Đã chốt bài"}

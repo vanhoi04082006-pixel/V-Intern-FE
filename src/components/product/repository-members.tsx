@@ -1,37 +1,37 @@
 "use client";
 import {
-  CheckCircle2,
-  Clock3,
-  ExternalLink,
-  Link2,
-  RefreshCw,
-  TriangleAlert,
-} from "lucide-react";
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconClock,
+  IconExternalLink,
+  IconLink,
+  IconRefreshCw,
+} from "@/components/v-intern/icons";
 import type { RepositoryMember } from "@/lib/api/github";
 const states = {
   pending: {
     label: "Chờ chấp nhận",
-    icon: Clock3,
+    icon: IconClock,
     tone: "text-warning bg-warning-subtle",
   },
   accepted: {
     label: "Đã có quyền",
-    icon: CheckCircle2,
+    icon: IconCircleCheck,
     tone: "text-success bg-success-subtle",
   },
   expired: {
     label: "Lời mời hết hạn",
-    icon: Clock3,
+    icon: IconClock,
     tone: "text-muted-foreground bg-muted",
   },
   failed: {
     label: "Cần kiểm tra",
-    icon: TriangleAlert,
+    icon: IconAlertTriangle,
     tone: "text-destructive bg-destructive-subtle",
   },
   not_connected: {
     label: "Chưa liên kết",
-    icon: Link2,
+    icon: IconLink,
     tone: "text-muted-foreground bg-muted",
   },
 };
@@ -69,7 +69,7 @@ export function RepositoryMembers({
             onClick={onCheck}
             className="inline-flex items-center gap-2 rounded-md px-2 py-2 text-caption font-medium text-primary transition hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-50"
           >
-            <RefreshCw size={14} aria-hidden="true" />
+            <IconRefreshCw size={14} aria-hidden="true" />
             Kiểm tra quyền GitHub của tôi
           </button>
         )}
@@ -137,7 +137,7 @@ export function RepositoryMembers({
                   className="inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline"
                 >
                   Mở lời mời GitHub
-                  <ExternalLink size={13} aria-hidden="true" />
+                  <IconExternalLink size={13} aria-hidden="true" />
                 </a>
               )}
               {manage &&

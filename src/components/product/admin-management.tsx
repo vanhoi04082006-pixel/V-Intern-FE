@@ -5,7 +5,7 @@ import * as api from "@/lib/api/admin";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { ArrowUpRight, CheckCircle2, Clock, Timer } from "lucide-react";
+import { IconArrowUpRight, IconCircleCheck, IconClock, IconTimer } from "@/components/v-intern/icons";
 import {
   Badge,
   buttonClass,
@@ -90,7 +90,7 @@ export function AdminOverview() {
                 href={"/admin/" + href}
               >
                 {label}
-                <ArrowUpRight size={16} aria-hidden />
+                <IconArrowUpRight size={16} aria-hidden />
               </Link>
             ))}
           </nav>
@@ -327,7 +327,7 @@ export function AdminUsers() {
             {(data) => (
               <>
                 {data.items.length ? (
-                  <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
+                  <div className="notebook-scroll max-h-[65vh] overflow-x-auto overflow-y-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
                     <table className="w-full text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>
@@ -600,7 +600,7 @@ export function AdminRoles() {
                       role="img"
                       aria-label={role ? "Đã cấp" : "Quyền hệ thống"}
                     >
-                      <CheckCircle2 size={16} aria-hidden />
+                      <IconCircleCheck size={16} aria-hidden />
                     </span>
                     <div>
                       <strong className="text-body">{v.name}</strong>
@@ -1513,7 +1513,7 @@ export function AdminAudit() {
             {(r) => (
               <>
                 {r.items.length ? (
-                  <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Nhật ký kiểm toán" tabIndex={0}>
+                  <div className="notebook-scroll max-h-[65vh] overflow-x-auto overflow-y-auto" role="region" aria-label="Nhật ký kiểm toán" tabIndex={0}>
                     <table className="w-full text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>
@@ -1755,12 +1755,12 @@ export function AdminServices() {
           <>
             <div className="grid gap-3 sm:grid-cols-2">
               <MetricCard
-                icon={Timer}
+                icon={IconTimer}
                 label="Độ trễ database"
                 value={`${h.latency.toLocaleString("vi-VN")} ms`}
               />
               <MetricCard
-                icon={Clock}
+                icon={IconClock}
                 label="Backend hoạt động liên tục"
                 value={formatUptime(h.uptimeSeconds)}
                 sub={`${h.uptimeSeconds.toLocaleString("vi-VN")} giây kể từ lần khởi động gần nhất`}
