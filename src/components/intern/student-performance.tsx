@@ -5,6 +5,7 @@ import {
   StudentPanel,
 } from "./student-ui";
 import { RateComparison } from "@/components/workspace/workspace-charts";
+import { InkCountUp } from "@/components/v-intern/motion";
 import { useInternWorkspaceContext } from "./intern-workspace-context";
 import { MarginNote } from "@/components/workspace/notebook";
 import {
@@ -24,21 +25,22 @@ export function StudentPerformance({
   return (
     <div className="space-y-5">
       <div className="workspace-stat-strip grid sm:grid-cols-2 xl:grid-cols-4">
+        {/* Số đếm mực loang lên như viết tay — giá trị cuối vẫn là dữ liệu thật. */}
         <StudentMetric
           icon={IconClipboardList}
           label="Nhiệm vụ được giao"
-          value={m.totalTaskCount}
+          value={<InkCountUp value={m.totalTaskCount} />}
         />
         <StudentMetric
           icon={IconCheckCheck}
           label="Đã hoàn thành"
-          value={m.completedTaskCount}
+          value={<InkCountUp value={m.completedTaskCount} />}
           tone="green"
         />
         <StudentMetric
           icon={IconClock}
           label="Nhiệm vụ đang quá hạn"
-          value={m.overdueOpenTaskCount}
+          value={<InkCountUp value={m.overdueOpenTaskCount} />}
           tone={m.overdueOpenTaskCount ? "amber" : "slate"}
         />
         <StudentMetric
