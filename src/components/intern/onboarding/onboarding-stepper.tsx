@@ -1,16 +1,20 @@
 import {
   IconCheck,
 } from "@/components/v-intern/icons";
+import { CircleDoodle, Tape } from "@/components/v-intern/doodles";
 import { cn } from "@/lib/utils";
 
 import { ONBOARDING_STEPS } from "./recruitment-presentation";
 
 /**
- * Stepper dùng chung cho Onboarding (4 bước):
+ * Stepper dùng chung cho Onboarding (4 bước) — phong cách "hành trình trong
+ * sổ tay" (Journey Notebook v3):
  * - `HorizontalStepper`: thanh ngang trên Welcome/Role (reference màn 1-2) —
- *   mobile co lại thành hàng compact có scroll ngang khi cần.
+ *   mobile co lại thành hàng compact có scroll ngang khi cần. Bước đang làm
+ *   được dán mẩu băng dính + nhãn quét marker như dòng được tô sáng.
  * - `VerticalStepper`: rail dọc bên trái Interview/Result (reference màn 3-5),
- *   kèm mascot khuyến nghị.
+ *   đường gáy đứt nét nối các bước như vệt hành trình, bước hiện tại khoanh
+ *   tròn vẽ tay (CircleDoodle) + marker, kèm mascot khuyến nghị ở shell.
  *
  * State mỗi bước: "completed" (check), "active" (đang ở đây, aria-current),
  * "pending" (chưa tới). Trạng thái KHÔNG chỉ dùng màu — completed có icon
@@ -41,9 +45,10 @@ function StepCircle({
       className={cn(
         "grid size-8 shrink-0 place-items-center rounded-full border text-body font-bold transition-colors",
         state === "completed" &&
-          "border-border bg-success-subtle text-success",
+          "border-success bg-success-subtle text-success",
         state === "active" && "border-brand bg-primary text-primary-foreground shadow-app-xs",
-        state === "pending" && "border-border bg-card text-muted-foreground",
+        // Bước chưa tới: nét chì đứt như vòng tròn phác sẵn trong sổ
+        state === "pending" && "border-dashed border-muted-foreground/50 bg-card text-muted-foreground",
       )}
     >
       {state === "completed" ? <IconCheck className="size-4" /> : position}
@@ -66,17 +71,26 @@ export function HorizontalStepper({ activeStep }: { activeStep: number }) {
               key={step.id}
               aria-current={state === "active" ? "step" : undefined}
               className={cn(
-                "flex min-w-0 flex-1 items-center gap-3 rounded-panel border px-3 py-3",
+                "relative flex min-w-0 flex-1 items-center gap-3 rounded-panel border px-3 py-3",
                 state === "active" && "border-brand/30 bg-accent",
                 state === "completed" && "border-border bg-card",
                 state === "pending" && "border-border bg-background",
               )}
             >
+              {/* Bước đang làm: dán mẩu băng dính lên đỉnh thẻ như trang đang mở */}
+              {state === "active" ? (
+                <Tape
+                  className="-top-3 left-1/2 -translate-x-1/2"
+                  rotate={-2}
+                  variant="mint"
+                />
+              ) : null}
               <StepCircle state={state} position={position} />
               <span className="min-w-0">
                 <span
                   className={cn(
                     "block truncate text-small font-bold",
+                    state === "active" ? "marker" : undefined,
                     state === "pending" ? "text-muted-foreground" : "text-foreground",
                   )}
                 >
@@ -113,21 +127,30 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
               aria-current={state === "active" ? "step" : undefined}
               className="relative flex gap-3 pb-5 last:pb-0"
             >
-              {/* Đường nối giữa các bước */}
+              {/* Gáy hành trình: đường đứt nét nối các bước như vệt bút chì */}
               {!isLast ? (
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "absolute left-4 top-9 h-[calc(100%-1.75rem)] w-px",
-                    state === "completed" ? "bg-success" : "bg-muted",
+                    "absolute left-[19px] top-11 h-[calc(100%-2.75rem)] border-l-2 border-dashed",
+                    state === "completed"
+                      ? "border-success/60"
+                      : "border-muted-foreground/30",
                   )}
                 />
               ) : null}
-              <StepCircle state={state} position={position} />
-              <span className="min-w-0 pt-1">
+              <span className="relative grid size-10 shrink-0 place-items-center">
+                {/* Bước hiện tại khoanh tròn vẽ tay — nét mực xanh nổi trên trang */}
+                {state === "active" ? (
+                  <CircleDoodle className="absolute -inset-1 h-full w-full text-primary" />
+                ) : null}
+                <StepCircle state={state} position={position} />
+              </span>
+              <span className="min-w-0 pt-1.5">
                 <span
                   className={cn(
                     "block text-body font-bold leading-tight",
+                    state === "active" ? "marker" : undefined,
                     state === "pending" ? "text-muted-foreground" : "text-foreground",
                   )}
                 >
@@ -152,7 +175,8 @@ export function VerticalStepper({ activeStep }: { activeStep: number }) {
 
 /**
  * Stepper compact cho mobile/tablet ở màn sidebar-variant (interview/result):
- * "Bước 3/4 · Phỏng vấn AI Recruiter" + dot mini theo 4 bước.
+ * "Bước 3/4 · Phỏng vấn AI Recruiter" + dot mini theo 4 bước — dot chưa tới
+ * là vòng chì đứt nét, khớp ngôn ngữ stepper dọc bên desktop.
  */
 export function MobileStepbar({
   activeStep,
@@ -167,7 +191,7 @@ export function MobileStepbar({
       className={cn(
         "flex items-center justify-between gap-3",
         variant === "bar"
-          ? "border-b border-border bg-card px-4 py-3 lg:hidden"
+          ? "ruling-red-top border-b border-border bg-card px-4 py-3 lg:hidden"
           : "rounded-panel border border-border bg-card px-4 py-3",
       )}
     >
@@ -184,10 +208,11 @@ export function MobileStepbar({
             <li
               key={step.id}
               className={cn(
-                "size-2 rounded-full",
-                state === "completed" && "bg-success",
-                state === "active" && "bg-primary",
-                state === "pending" && "bg-muted",
+                "grid place-items-center rounded-full",
+                state === "completed" && "size-2 bg-success",
+                state === "active" && "size-2.5 bg-primary",
+                state === "pending" &&
+                  "size-2 border border-dashed border-muted-foreground/60",
               )}
             />
           );
