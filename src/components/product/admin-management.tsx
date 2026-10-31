@@ -94,6 +94,14 @@ export function AdminOverview() {
               </Link>
             ))}
           </nav>
+          {/* Ghi chú "Vận hành an toàn" dạng giấy note menthol — giữ nguyên nội
+              dung gốc của hộp vai trò, nâng bằng chất liệu sổ tay. */}
+          <aside className="sticky-note-mint mt-6 p-4">
+            <p className="font-hand mb-1 text-lg leading-snug">Vận hành an toàn</p>
+            <p className="text-small leading-relaxed">
+              Phân quyền, cấu hình và nhật ký hệ thống đều được kiểm soát tại đây.
+            </p>
+          </aside>
         </section>
       </div>
     </>

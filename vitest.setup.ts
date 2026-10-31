@@ -21,7 +21,12 @@ if (typeof window !== "undefined") {
     Object.defineProperty(window, "matchMedia", {
       writable: true,
       value: (query: string): MediaQueryList => ({
-        matches: false,
+        // jsdom không đọc preference hệ điều hành. Giả lập
+        // prefers-reduced-motion: reduce để các hiệu ứng chuyển động
+        // (Reveal/InkCountUp/…) render thẳng giá trị cuối trong test —
+        // deterministic, không phụ thuộc nhịp rAF; các truy vấn khác
+        // (breakpoint, dark mode) giữ matches: false như trước.
+        matches: /prefers-reduced-motion/i.test(query),
         media: query,
         onchange: null,
         addListener: (): void => {},
@@ -37,8 +42,35 @@ if (typeof window !== "undefined") {
     readonly root: Element | null = null;
     readonly rootMargin: string = "";
     readonly thresholds: ReadonlyArray<number> = [];
+    #callback: IntersectionObserverCallback;
+    constructor(callback: IntersectionObserverCallback) {
+      this.#callback = callback;
+    }
     disconnect(): void {}
-    observe(): void {}
+    /**
+     * IO thật luôn bắn một thông báo khởi tạo cho từng phần tử mới observe
+     * (spec queue một task gọi callback với trạng thái giao hiện tại).
+     * jsdom không có layout nên mặc định isIntersecting = true — nhờ vậy
+     * useInView/whileInView của framer-motion (Reveal, InkCountUp) hoạt
+     * động trong test giống trình duyệt thật.
+     */
+    observe(target: Element): void {
+      this.#callback(
+        [
+          {
+            target,
+            isIntersecting: true,
+            intersectionRatio: 1,
+            time: 0,
+            boundingClientRect: (target as HTMLElement).getBoundingClientRect?.() ??
+              ({} as DOMRect),
+            intersectionRect: {} as DOMRect,
+            rootBounds: null,
+          } as IntersectionObserverEntry,
+        ],
+        this,
+      );
+    }
     unobserve(): void {}
     takeRecords(): IntersectionObserverEntry[] {
       return [];
