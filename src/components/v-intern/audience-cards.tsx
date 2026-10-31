@@ -2,7 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDownRight, ArrowRight, Check, Sparkles } from "lucide-react";
+import {
+  IconArrowDownRight,
+  IconArrowRight,
+  IconCheck,
+  IconSparkles,
+} from "@/components/v-intern/icons";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { Tape } from "@/components/v-intern/doodles";
 
@@ -86,13 +91,13 @@ function ScriptNote({ audience }: { audience: Audience }) {
         >
           {line}
           {isLast(index) && audience.accent === "drop" && (
-            <ArrowDownRight
+            <IconArrowDownRight
               className="ml-1 inline h-5 w-5 -translate-y-0.5"
               strokeWidth={2.5}
             />
           )}
           {isLast(index) && audience.accent === "sparkles" && (
-            <Sparkles className="ml-1 inline h-4 w-4 opacity-70" />
+            <IconSparkles className="ml-1 inline h-4 w-4 opacity-70" />
           )}
         </span>
       ))}
@@ -155,7 +160,7 @@ function AudienceCard({ audience }: { audience: Audience }) {
                     : "border-ink bg-royal text-white")
                 }
               >
-                <Check className="h-3.5 w-3.5" strokeWidth={3.5} aria-hidden="true" />
+                <IconCheck className="h-3.5 w-3.5" strokeWidth={3.5} aria-hidden="true" />
               </span>
               <span
                 className={
@@ -179,7 +184,7 @@ function AudienceCard({ audience }: { audience: Audience }) {
           }
         >
           {audience.cta}
-          <ArrowRight
+          <IconArrowRight
             className="h-4 w-4 transition-transform group-hover:translate-x-1"
             aria-hidden="true"
           />

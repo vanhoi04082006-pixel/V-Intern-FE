@@ -3,22 +3,22 @@
 import { useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
-  Award,
-  Bot,
-  CalendarDays,
-  Check,
-  CircleCheck,
-  Code2,
-  FolderOpen,
-  UserSearch,
-  type LucideIcon,
-} from "lucide-react";
+  IconAward,
+  IconBot,
+  IconCalendarDays,
+  IconCheck,
+  IconCircleCheck,
+  IconCodeXml,
+  IconFolderOpen,
+  IconUserSearch,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { Tape } from "@/components/v-intern/doodles";
 
 type Step = {
-  icon: LucideIcon;
+  icon: IconComponent;
   name: string;
   summary: string;
   phase: string;
@@ -38,7 +38,7 @@ function ArtifactFacts({ facts }: { facts: string[] }) {
           key={f}
           className="flex items-start gap-3 rounded-lg border-2 border-dashed border-ink/15 bg-blue-mist/60 p-3 text-xs leading-relaxed text-ink-soft"
         >
-          <CircleCheck size={16} className="shrink-0 text-blue" />
+          <IconCircleCheck size={16} className="shrink-0 text-blue" />
           {f}
         </li>
       ))}
@@ -48,7 +48,7 @@ function ArtifactFacts({ facts }: { facts: string[] }) {
 
 const STEPS: Step[] = [
   {
-    icon: UserSearch,
+    icon: IconUserSearch,
     name: "Phỏng vấn",
     summary: "Khám phá năng lực ban đầu",
     phase: "Bắt đầu",
@@ -68,7 +68,7 @@ const STEPS: Step[] = [
     ),
   },
   {
-    icon: FolderOpen,
+    icon: IconFolderOpen,
     name: "Dự án",
     summary: "Nhận phân công từ giảng viên",
     phase: "Bắt đầu",
@@ -88,7 +88,7 @@ const STEPS: Step[] = [
     ),
   },
   {
-    icon: CalendarDays,
+    icon: IconCalendarDays,
     name: "Sprint",
     summary: "Theo dõi chu kỳ công việc",
     phase: "Thực chiến",
@@ -108,7 +108,7 @@ const STEPS: Step[] = [
     ),
   },
   {
-    icon: Code2,
+    icon: IconCodeXml,
     name: "Nhiệm vụ",
     summary: "Thực hiện và gửi duyệt",
     phase: "Thực chiến",
@@ -128,7 +128,7 @@ const STEPS: Step[] = [
     ),
   },
   {
-    icon: Bot,
+    icon: IconBot,
     name: "AI Mentor",
     summary: "Hỗ trợ học tập theo ngữ cảnh",
     phase: "Thực chiến",
@@ -148,7 +148,7 @@ const STEPS: Step[] = [
     ),
   },
   {
-    icon: Check,
+    icon: IconCheck,
     name: "Đánh giá",
     summary: "Giảng viên chốt kết quả chính thức",
     phase: "Công nhận",
@@ -168,7 +168,7 @@ const STEPS: Step[] = [
     ),
   },
   {
-    icon: Award,
+    icon: IconAward,
     name: "Chứng nhận",
     summary: "Tra cứu và chia sẻ chứng nhận",
     phase: "Công nhận",
@@ -211,7 +211,7 @@ function StepDetail({ step }: { step: Step }) {
                 key={item}
                 className="flex gap-2.5 text-xs leading-relaxed text-ink-soft"
               >
-                <Check
+                <IconCheck
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue"
                   strokeWidth={3}
                   aria-hidden="true"
@@ -225,7 +225,7 @@ function StepDetail({ step }: { step: Step }) {
         <div>
           <p className="font-hand text-lg leading-none text-blue">bạn nhận</p>
           <p className="mt-2.5 flex gap-2.5 text-xs leading-relaxed text-ink-soft">
-            <Check
+            <IconCheck
               className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue"
               strokeWidth={3}
               aria-hidden="true"

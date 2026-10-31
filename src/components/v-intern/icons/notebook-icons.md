@@ -118,3 +118,38 @@ academic-insights, instructor-onboarding, admin-management, repository-members,
 incident-list — icon phụ chưa có tương đương (Building2, UserSearch, Database,
 Play, Code2, KanbanSquare, Timer, Link2, FileCheck2, Newspaper, NotebookPen,
 ShoppingBag, Circle…); thay dần theo pack sau.
+
+## Gói final-gaps — thanh toán hết lucide còn lại
+
+Thêm 17 icon mới (IconUserSearch, IconBuilding, IconTimer, IconDatabase,
+IconPlay, IconFileCheck, IconNewspaper, IconNotebookPen, IconShoppingBag,
+IconArrowDownRight, IconCircle, IconLink, IconBug, IconLayoutDashboard,
+IconFacebook, IconLinkedin, IconYoutube) — bộ lên **103 icon** (IconFolderOpen
+đã có sẵn từ trước, phát hiện trùng khi thêm nên giữ bản gốc). Map đặc biệt:
+Code2 → IconCodeXml · Clock3 → IconClock · KanbanSquare → IconSquareKanban ·
+CheckCircle2 → IconCircleCheck · TriangleAlert → IconAlertTriangle ·
+Link2 → IconLink.
+
+Thanh toán 15 file cuối (lucide = **0 file** ngoài `src/components/ui/` —
+thư viện shadcn nền, không phải icon hiển thị chính):
+
+| File | Icon thay |
+|---|---|
+| v-intern/feature-strip | IconUserSearch, IconBuilding, IconBot, IconAward |
+| v-intern/how-it-works | IconUserSearch, IconBuilding, IconCodeXml, IconBot, IconBadgeCheck |
+| v-intern/workflow | IconUserSearch, IconFolderOpen, IconCalendarDays, IconCodeXml, IconBot, IconCheck, IconAward (+ IconCircleCheck trong ArtifactFacts) |
+| v-intern/hero | IconLayoutDashboard, IconListTodo, IconCalendarDays, IconFolderKanban, IconBot, IconTrendingUp, IconSettings, IconSparkles, IconArrowRight |
+| v-intern/audience-cards | IconArrowDownRight, IconSparkles, IconCheck, IconArrowRight |
+| v-intern/product-heart | IconSquareKanban |
+| v-intern/footer | IconLinkedin, IconGithub, IconYoutube, IconFacebook (mạng xã hội vẽ tay) |
+| workspace/workspace-artwork | IconNotebookPen, IconShoppingBag, IconListChecks, IconCalendarDays, IconNewspaper, IconGraduationCap, IconCodeXml |
+| participation/incident-list | IconClock, IconFileCheck |
+| product/instructor-onboarding | IconCircleCheck, IconCircle, IconRocket |
+| product/admin-management | IconArrowUpRight, IconCircleCheck, IconClock, IconTimer |
+| product/academic | IconUsers, IconLayers, IconCalendarDays, IconClock, IconBookOpen, IconDatabase |
+| product/academic-insights | IconCalendarDays, IconLayers, IconUsers, IconCircleCheck, IconClock, IconPlay, IconBookOpen, IconChevronLeft, IconChevronRight |
+| product/repository-members | IconClock, IconCircleCheck, IconAlertTriangle, IconLink, IconRefreshCw, IconExternalLink |
+| intern/onboarding/recruitment-presentation | IconCodeXml, IconDatabase, IconBug, IconClipboardList, IconCompass, IconTarget, IconBot, IconAward |
+
+Mọi call site giữ nguyên aria-label/aria-hidden/test-hook cũ — gate vitest
+672/672 không đổi.

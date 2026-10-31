@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Circle, Rocket } from "lucide-react";
+import { IconCircle, IconCircleCheck, IconRocket } from "@/components/v-intern/icons";
 import { listAcademic } from "@/lib/api/academic";
 import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
@@ -85,9 +85,9 @@ export function OnboardingChecklist({
             className="flex items-start gap-3 rounded-md border border-primary p-2.5"
           >
             {s.done ? (
-              <CheckCircle2 size={19} className="mt-0.5 shrink-0 text-success" aria-label="Hoàn thành" />
+              <IconCircleCheck size={19} className="mt-0.5 shrink-0 text-success" aria-label="Hoàn thành" />
             ) : (
-              <Circle size={19} className="mt-0.5 shrink-0 text-muted-foreground" aria-label={`Bước ${i + 1}`} />
+              <IconCircle size={19} className="mt-0.5 shrink-0 text-muted-foreground" aria-label={`Bước ${i + 1}`} />
             )}
             <div className="min-w-0 flex-1">
               <p className="text-body font-semibold text-foreground">
@@ -106,7 +106,7 @@ export function OnboardingChecklist({
       </ol>
       {onSetup && (
         <button className={buttonClass} onClick={onSetup}>
-          <Rocket size={16} /> Khởi tạo đợt thực tập
+          <IconRocket size={16} /> Khởi tạo đợt thực tập
         </button>
       )}
     </div>

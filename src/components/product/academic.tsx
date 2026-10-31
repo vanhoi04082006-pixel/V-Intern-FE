@@ -1,7 +1,14 @@
 "use client";
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { Users, Layers, CalendarDays, Clock, BookOpen, Database } from "lucide-react";
+import {
+  IconBookOpen,
+  IconCalendarDays,
+  IconClock,
+  IconDatabase,
+  IconLayers,
+  IconUsers,
+} from "@/components/v-intern/icons";
 import { Person, exportCsv } from "./identity";
 import { useResource } from "@/lib/api/use-resource";
 import { getProjectSessions, claimProject, type ProjectSessionSummary } from "@/lib/api/project-sessions";
@@ -89,17 +96,17 @@ export function AcademicList({ kind }: { kind: api.AcademicKind }) {
       <PageTitle title={labels[kind]} />
       <PageMeta items={kind === "sessions"
         ? [
-          { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
-          { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
-          { icon: CalendarDays, label: "Học kỳ hiện tại", value: data.data?.items[0]?.code ?? "Chưa có" },
-          { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
+          { icon: IconUsers, label: "Vai trò", value: "Giảng viên / Technical Lead" },
+          { icon: IconLayers, label: "Hệ thống", value: "V-Intern Platform" },
+          { icon: IconCalendarDays, label: "Học kỳ hiện tại", value: data.data?.items[0]?.code ?? "Chưa có" },
+          { icon: IconClock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
         ]
         : [
-          { icon: Users, label: "Vai trò", value: "Giảng viên / Technical Lead" },
-          { icon: Layers, label: "Hệ thống", value: "V-Intern Platform" },
-          { icon: BookOpen, label: "Kho hiện tại", value: `${data.data?.total ?? 0} dự án` },
-          { icon: Database, label: "Danh mục", value: `${projectOptions.data?.domains.length ?? 0} lĩnh vực` },
-          { icon: Clock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
+          { icon: IconUsers, label: "Vai trò", value: "Giảng viên / Technical Lead" },
+          { icon: IconLayers, label: "Hệ thống", value: "V-Intern Platform" },
+          { icon: IconBookOpen, label: "Kho hiện tại", value: `${data.data?.total ?? 0} dự án` },
+          { icon: IconDatabase, label: "Danh mục", value: `${projectOptions.data?.domains.length ?? 0} lĩnh vực` },
+          { icon: IconClock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
         ]} />
       <AcademicMetrics key={kind+':'+revision+':'+data.data?.total} kind={kind}/>
       <div className="grid items-start gap-3 xl:grid-cols-[minmax(0,2.5fr)_minmax(340px,1fr)]">

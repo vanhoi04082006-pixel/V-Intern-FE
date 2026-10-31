@@ -30,7 +30,7 @@ mỗi utility có bản dark riêng.
 | `.skeleton-pencil` | skeleton nét chì gạch chéo | thay khối xám pulse |
 | `.spinner-hand` | vòng tròn vẽ tay quay | thay ring quay |
 | `.underline-squiggle` | gạch chân lượn sóng | link, tab đang mở |
-| `.notebook-scroll` | scrollbar bút chì mảnh cho vùng cuộn trong (sidebar, drawer, bảng áp qua selector `:is(...)` trong notebook.css) | vùng cuộn |
+| `.notebook-scroll` | scrollbar bút chì mảnh cho vùng cuộn trong (sidebar, drawer, bảng áp qua selector `:is(...)` trong notebook.css) | vùng cuộn; bảng bên trong có `thead th` sticky + bóng mép giấy khi cuộn dọc |
 | `.font-hand` | Patrick Hand — CHỈ ghi chú ngắn/label/empty-state | không dùng nội dung dài/bảng |
 | Motion: `.animate-stamp-thump` `.animate-marker-sweep` `.animate-paper-settle` `.animate-page-curl` `.squiggle-draw` | hiệu ứng 120–240ms | đều tôn trọng `prefers-reduced-motion` |
 
@@ -45,8 +45,9 @@ Shell/primitives workspace được notebook hoá qua `src/components/workspace/
 
 ## Bộ icon notebook
 
-`src/components/v-intern/icons/index.tsx` — 86 icon SVG vẽ tay thay thế lucide
-cho icon hiển thị chính. Một bộ nét: stroke 2px, bo tròn, đường cong lệch nhẹ,
+`src/components/v-intern/icons/index.tsx` — 103 icon SVG vẽ tay thay thế lucide
+cho **mọi** icon hiển thị chính (lucide chỉ còn trong `src/components/ui/` —
+thư viện shadcn nền). Một bộ nét: stroke 2px, bo tròn, đường cong lệch nhẹ,
 vòng tròn khép hở; màu `currentColor`; prop `size`/`className`/`strokeWidth`
 tương thích cách gọi lucide. Type dùng chung: `IconComponent`.
 

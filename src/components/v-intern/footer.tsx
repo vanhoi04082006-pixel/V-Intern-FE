@@ -1,17 +1,22 @@
 "use client";
 
-import { Facebook, Github, Linkedin, Youtube } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  IconFacebook,
+  IconGithub,
+  IconLinkedin,
+  IconYoutube,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { Logo } from "@/components/v-intern/logo";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { NewsletterForm } from "@/components/v-intern/newsletter-form";
 import { SparkleDoodle } from "@/components/v-intern/doodles";
 
-const SOCIAL_LINKS: { label: string; href: string; icon: LucideIcon }[] = [
-  { label: "LinkedIn", href: "https://www.linkedin.com", icon: Linkedin },
-  { label: "GitHub", href: "https://github.com", icon: Github },
-  { label: "YouTube", href: "https://www.youtube.com", icon: Youtube },
-  { label: "Facebook", href: "https://www.facebook.com", icon: Facebook },
+const SOCIAL_LINKS: { label: string; href: string; icon: IconComponent }[] = [
+  { label: "LinkedIn", href: "https://www.linkedin.com", icon: IconLinkedin },
+  { label: "GitHub", href: "https://github.com", icon: IconGithub },
+  { label: "YouTube", href: "https://www.youtube.com", icon: IconYoutube },
+  { label: "Facebook", href: "https://www.facebook.com", icon: IconFacebook },
 ];
 
 type FooterLink = { label: string; href: string | null };

@@ -2,16 +2,17 @@
 
 import Image from "next/image";
 import {
-  ArrowRight,
-  Bot,
-  CalendarDays,
-  FolderKanban,
-  LayoutDashboard,
-  ListTodo,
-  Settings,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+  IconArrowRight,
+  IconBot,
+  IconCalendarDays,
+  IconFolderKanban,
+  IconLayoutDashboard,
+  IconListTodo,
+  IconSettings,
+  IconSparkles,
+  IconTrendingUp,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
@@ -22,31 +23,35 @@ import {
   Tape,
 } from "@/components/v-intern/doodles";
 
-const SIDEBAR_ITEMS = [
-  { label: "Bảng điều khiển", icon: LayoutDashboard, active: true },
-  { label: "Nhiệm vụ của tôi", icon: ListTodo, active: false },
-  { label: "Sprint", icon: CalendarDays, active: false },
-  { label: "Dự án", icon: FolderKanban, active: false },
-  { label: "AI Mentor", icon: Bot, active: false },
-  { label: "Hiệu suất", icon: TrendingUp, active: false },
-  { label: "Cài đặt", icon: Settings, active: false },
+const SIDEBAR_ITEMS: { label: string; icon: IconComponent; active: boolean }[] = [
+  { label: "Bảng điều khiển", icon: IconLayoutDashboard, active: true },
+  { label: "Nhiệm vụ của tôi", icon: IconListTodo, active: false },
+  { label: "Sprint", icon: IconCalendarDays, active: false },
+  { label: "Dự án", icon: IconFolderKanban, active: false },
+  { label: "AI Mentor", icon: IconBot, active: false },
+  { label: "Hiệu suất", icon: IconTrendingUp, active: false },
+  { label: "Cài đặt", icon: IconSettings, active: false },
 ];
 
-const OVERVIEW_ITEMS = [
+const OVERVIEW_ITEMS: {
+  title: string;
+  text: string;
+  icon: IconComponent;
+}[] = [
   {
     title: "Dự án & Sprint",
     text: "Theo dõi mục tiêu và công việc được giao",
-    icon: FolderKanban,
+    icon: IconFolderKanban,
   },
   {
     title: "Nhiệm vụ",
     text: "Cập nhật tiến độ, trao đổi và gửi duyệt",
-    icon: ListTodo,
+    icon: IconListTodo,
   },
   {
     title: "AI Mentor",
     text: "Nhận hướng dẫn tham khảo khi cần hỗ trợ",
-    icon: Bot,
+    icon: IconBot,
   },
 ];
 
@@ -147,7 +152,7 @@ export function Hero() {
           {/* Cột trái */}
           <FadeIn>
             <span className="inline-flex -rotate-1 items-center gap-2 rounded-full border-2 border-ink bg-raised px-4 py-1.5 text-xs font-bold text-ink shadow-[2px_2px_0_0_var(--hard-shadow)]">
-              <Sparkles className="h-3.5 w-3.5 text-blue" aria-hidden="true" />
+              <IconSparkles className="h-3.5 w-3.5 text-blue" aria-hidden="true" />
               Nền tảng thực tập ảo ứng dụng AI
             </span>
 
@@ -174,7 +179,7 @@ export function Hero() {
                 className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)]"
               >
                 Bắt đầu ngay
-                <ArrowRight
+                <IconArrowRight
                   className="h-4 w-4 transition-transform group-hover:translate-x-1"
                   aria-hidden="true"
                 />
@@ -212,7 +217,7 @@ export function Hero() {
             {/* Sticky note "Đánh giá AI" */}
             <div className="absolute -top-3 right-0 z-20 hidden w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] sm:-top-6 sm:flex md:-right-3 md:-top-24">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
-                <Sparkles className="h-5 w-5" aria-hidden="true" />
+                <IconSparkles className="h-5 w-5" aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <p className="text-xs font-extrabold text-ink">Đánh giá AI</p>

@@ -1,35 +1,41 @@
 "use client";
 
-import { BadgeCheck, Bot, Building2, Code2, UserSearch } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  IconBadgeCheck,
+  IconBot,
+  IconBuilding,
+  IconCodeXml,
+  IconUserSearch,
+  type IconComponent,
+} from "@/components/v-intern/icons";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { HandArrowRight } from "@/components/v-intern/doodles";
 import { NoteCard } from "@/components/workspace/notebook";
 
-const STEPS: { icon: LucideIcon; title: string; description: string }[] = [
+const STEPS: { icon: IconComponent; title: string; description: string }[] = [
   {
-    icon: UserSearch,
+    icon: IconUserSearch,
     title: "Tuyển dụng AI",
     description: "Phỏng vấn AI, đánh giá năng lực và phản hồi tự động.",
   },
   {
-    icon: Building2,
+    icon: IconBuilding,
     title: "Môi trường làm việc ảo",
     description: "Làm việc trong môi trường công ty ảo chuyên nghiệp.",
   },
   {
-    icon: Code2,
+    icon: IconCodeXml,
     title: "Nhiệm vụ thực tế",
     description: "Thực hiện các tác vụ thực tế từ doanh nghiệp.",
   },
   {
-    icon: Bot,
+    icon: IconBot,
     title: "Đánh giá AI",
     description: "Đồng nghiệp AI đánh giá, nhận phản hồi chi tiết và cải thiện.",
   },
   {
-    icon: BadgeCheck,
+    icon: IconBadgeCheck,
     title: "Hiệu suất",
     description: "Theo dõi tiến độ, KPI và nhận chứng nhận hoàn thành.",
   },

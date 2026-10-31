@@ -1089,3 +1089,235 @@ export function IconBadgeCheck({ size = 24, strokeWidth = 2, ...props }: Noteboo
   );
 }
 IconBadgeCheck.displayName = "NotebookIconBadgeCheck";
+
+/* =====================================================================
+ * Gói final-gaps — icon bổ sung để thay hết lucide còn lại (landing,
+ * artwork workspace, bảng admin, footer xã hội). Cùng bộ nét trên.
+ * ===================================================================== */
+
+/* Tìm người — đầu/vai + kính lúp */
+export function IconUserSearch({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M6.4 10.9 C 6.3 8.1, 8 5.9, 10.4 5.9 C 12.8 5.9, 14.5 8.1, 14.4 10.9 C 14.3 13.7, 12.7 15.9, 10.4 15.9 C 8 15.9, 6.5 13.7, 6.4 10.9 Z" />
+      <path d="M3.4 20.6 C 3.7 17.4, 5.4 15.2, 7.8 14.2" />
+      <path d="M14.4 14.9 C 15.5 13.7, 16.6 12.6, 17.7 11.5 C 18.9 12.7, 20.1 13.9, 21.2 15.1 C 20 16.2, 18.9 17.3, 17.7 18.4 C 16.6 17.3, 15.5 16.1, 14.4 14.9 Z" />
+      <path d="M16.3 19.6 C 17.3 20.4, 18.3 21.3, 19.2 22.2" />
+    </svg>
+  );
+}
+IconUserSearch.displayName = "NotebookIconUserSearch";
+
+/* Doanh nghiệp — toà nhà hai khối */
+export function IconBuilding({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4.4 20.7 C 4.3 15, 4.3 9.1, 4.4 3.6 C 7.6 3.4, 10.9 3.4, 14 3.6 C 14.1 9.1, 14.1 15, 14 20.6" />
+      <path d="M14 9.4 C 15.8 9.3, 17.6 9.3, 19.4 9.4 C 19.5 13.2, 19.5 16.9, 19.4 20.6" />
+      <path d="M2.8 20.6 C 8.9 20.9, 15.2 20.9, 21.3 20.6" />
+      <path d="M7.3 7.2 C 8.1 7.1, 8.9 7.1, 9.7 7.2" />
+      <path d="M11.1 7.2 C 11.5 7.1, 11.9 7.1, 12.3 7.2" />
+      <path d="M7.2 11.2 C 8 11.1, 8.9 11.1, 9.7 11.2" />
+      <path d="M11.1 11.2 C 11.5 11.1, 11.9 11.1, 12.3 11.2" />
+      <path d="M7.2 15.1 C 8 15, 8.9 15, 9.7 15.1" />
+      <path d="M11.1 15.1 C 11.5 15, 11.9 15, 12.3 15.1" />
+      <path d="M16.1 12.9 C 16.5 12.8, 17 12.8, 17.4 12.9" />
+      <path d="M16.1 16.6 C 16.5 16.5, 17 16.5, 17.4 16.6" />
+    </svg>
+  );
+}
+IconBuilding.displayName = "NotebookIconBuilding";
+
+/* Bấm giờ — đồng hồ bấm giây */
+export function IconTimer({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M9.6 2.9 C 11.2 2.7, 12.9 2.7, 14.5 2.9" />
+      <path d="M12 2.9 C 11.9 3.8, 11.9 4.6, 12 5.4" />
+      <path d="M12 5.5 C 7.9 5.6, 4.6 8.9, 4.7 13 C 4.8 17.1, 8.1 20.4, 12.2 20.3 C 16.2 20.2, 19.4 16.9, 19.3 12.9 C 19.2 8.9, 16 5.5, 12 5.5 Z" />
+      <path d="M12 10 C 11.9 11.3, 11.9 12.6, 12 13.9" />
+      <path d="M12 13.7 C 13.2 13.7, 14.3 13.7, 15.5 13.8" />
+      <path d="M17.6 7.2 C 18.2 6.6, 18.8 6, 19.4 5.4" />
+    </svg>
+  );
+}
+IconTimer.displayName = "NotebookIconTimer";
+
+/* Cơ sở dữ liệu — chồng trụ */
+export function IconDatabase({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4.4 5.4 C 4.3 4.3, 7.7 3.5, 12 3.5 C 16.3 3.5, 19.7 4.3, 19.6 5.4 C 19.5 6.5, 16.3 7.3, 12 7.3 C 7.7 7.3, 4.5 6.5, 4.4 5.4 Z" />
+      <path d="M4.4 5.6 C 4.3 9.5, 4.3 14.7, 4.4 18.6 C 4.5 19.7, 7.7 20.5, 12 20.5 C 16.3 20.5, 19.5 19.7, 19.6 18.6 C 19.7 14.7, 19.7 9.5, 19.6 5.6" />
+      <path d="M4.5 12.1 C 5.9 13, 8.8 13.6, 12 13.6 C 15.2 13.6, 18.1 13, 19.5 12.1" />
+    </svg>
+  );
+}
+IconDatabase.displayName = "NotebookIconDatabase";
+
+/* Nút phát — tam giác bo góc */
+export function IconPlay({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M7.4 4.9 C 7.2 4.7, 6.9 4.8, 6.8 5.1 C 6.6 9.5, 6.6 14.6, 6.8 19 C 6.9 19.3, 7.2 19.4, 7.4 19.2 C 11.4 16.7, 15.6 14.1, 19.1 11.8 C 19.4 11.6, 19.4 11.2, 19.1 11 C 15.6 8.8, 11.4 6.4, 7.4 4.9 Z" />
+    </svg>
+  );
+}
+IconPlay.displayName = "NotebookIconPlay";
+
+/* Tệp duyệt — giấy gấp cạnh + dấu tick */
+export function IconFileCheck({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M5.2 4.3 C 5.1 4, 5.3 3.7, 5.6 3.6 C 9.4 3.4, 12.4 3.4, 15.4 3.6 C 16.6 4.8, 17.9 6.1, 19.1 7.4 C 19.3 11.5, 19.3 15.6, 19.1 19.7 C 14.5 20, 9.6 20, 5.3 19.7 C 5.1 14.7, 5.1 9.3, 5.2 4.3 Z" />
+      <path d="M15.3 3.7 C 15.4 5, 15.4 6.2, 15.5 7.4 C 16.7 7.5, 18 7.5, 19.2 7.4" />
+      <path d="M8.7 14.2 C 9.7 15.3, 10.7 16.5, 11.6 17.7 C 13.1 15.5, 14.7 13.3, 16.3 11.3" />
+    </svg>
+  );
+}
+IconFileCheck.displayName = "NotebookIconFileCheck";
+
+/* Báo — tờ báo gấp mép */
+export function IconNewspaper({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.4 4.6 C 3.3 4.3, 3.5 4, 3.8 3.9 C 9.1 3.7, 14.6 3.7, 19.8 3.9 C 20.1 4, 20.3 4.3, 20.2 4.6 C 20.4 9.8, 20.4 15, 20.2 20.2 C 14.7 20.5, 9.1 20.5, 3.6 20.2 C 3.4 15, 3.3 9.8, 3.4 4.6 Z" />
+      <path d="M6.4 6.9 C 9.9 6.7, 13.5 6.7, 17 6.9 C 17.1 8.1, 17.1 9.3, 17 10.5 C 13.5 10.7, 9.9 10.7, 6.4 10.5 C 6.3 9.3, 6.3 8.1, 6.4 6.9 Z" />
+      <path d="M6.4 13.4 C 7.6 13.3, 8.9 13.3, 10.1 13.4" />
+      <path d="M6.4 16.7 C 7.6 16.6, 8.9 16.6, 10.1 16.7" />
+      <path d="M13.4 13.4 C 14.6 13.3, 15.8 13.3, 17 13.4" />
+      <path d="M13.4 16.7 C 14.6 16.6, 15.8 16.6, 17 16.7" />
+    </svg>
+  );
+}
+IconNewspaper.displayName = "NotebookIconNewspaper";
+
+/* Sổ tay + bút — gáy xoắn + bút chéo */
+export function IconNotebookPen({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4.9 4.5 C 4.8 4.2, 5 3.9, 5.3 3.8 C 8.1 3.6, 10.9 3.6, 13.6 3.8 C 13.9 3.9, 14.1 4.2, 14 4.5 C 14.1 9.5, 14.1 14.6, 14 19.6 C 10.9 19.9, 8.1 19.9, 5.1 19.6 C 4.9 14.6, 4.8 9.5, 4.9 4.5 Z" />
+      <path d="M6.8 5.6 C 6.7 5, 6.7 4.5, 6.8 3.9" />
+      <path d="M6.8 9.7 C 6.7 9.2, 6.7 8.6, 6.8 8.1" />
+      <path d="M6.8 13.8 C 6.7 13.2, 6.7 12.7, 6.8 12.2" />
+      <path d="M6.8 17.9 C 6.7 17.4, 6.7 16.8, 6.8 16.3" />
+      <path d="M12.9 16.2 C 15.3 13.7, 17.8 11.1, 20.3 8.6 C 20.8 9.1, 21.3 9.6, 21.7 10.2 C 19.2 12.7, 16.7 15.1, 14.2 17.6" />
+      <path d="M12.4 19.9 C 13.2 19.2, 14 18.4, 14.8 17.6" />
+    </svg>
+  );
+}
+IconNotebookPen.displayName = "NotebookIconNotebookPen";
+
+/* Túi mua sắm — túi giấy + quai */
+export function IconShoppingBag({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4.9 7.6 C 9.5 7.3, 14.6 7.3, 19.2 7.6 C 19.6 11.7, 19.6 15.9, 19.4 20 C 14.5 20.4, 9.4 20.4, 4.6 20 C 4.5 15.9, 4.6 11.7, 4.9 7.6 Z" />
+      <path d="M8.4 10.1 C 8.3 8.2, 8.4 6.4, 8.6 4.6 C 9.1 3.5, 9.8 2.9, 10.7 3 C 11.5 3.1, 12.1 3.6, 12.2 4.7 C 12.4 6.5, 12.5 8.3, 12.4 10.1" />
+      <path d="M15.6 10.1 C 15.5 8.3, 15.6 6.5, 15.8 4.7 C 16 3.7, 16.6 3.1, 17.4 3 C 18.2 2.9, 18.9 3.5, 19.3 4.6" />
+    </svg>
+  );
+}
+IconShoppingBag.displayName = "NotebookIconShoppingBag";
+
+/* Mũi tên chéo xuống phải */
+export function IconArrowDownRight({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M6.2 5.8 C 9.9 9.4, 13.6 13.1, 17.3 16.8" />
+      <path d="M7.9 16.9 C 11.1 16.8, 14.3 16.8, 17.5 16.9 C 17.6 13.7, 17.6 10.5, 17.7 7.3" />
+    </svg>
+  );
+}
+IconArrowDownRight.displayName = "NotebookIconArrowDownRight";
+
+/* Vòng tròn trơn — bước chưa hoàn thành */
+export function IconCircle({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 3.6 C 7.2 3.5, 3.4 7.3, 3.5 12.1 C 3.6 16.9, 7.4 20.7, 12.2 20.6 C 17 20.5, 20.7 16.7, 20.6 11.9 C 20.5 7.2, 16.8 3.6, 12 3.6 Z" />
+    </svg>
+  );
+}
+IconCircle.displayName = "NotebookIconCircle";
+
+/* Liên kết — hai vòng xích chéo */
+export function IconLink({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M9.6 13.9 C 8.4 15.1, 7.2 16.3, 6 17.5 C 4.5 18.6, 2.9 17.9, 2.6 16.4 C 2.4 15.4, 2.8 14.6, 3.5 13.9 C 4.9 12.6, 6.2 11.3, 7.6 10" />
+      <path d="M14.5 9.4 C 15.6 8.2, 16.8 7, 18 5.9 C 19.4 4.8, 21 5.5, 21.3 7 C 21.5 8, 21.1 8.8, 20.4 9.5 C 19.1 10.8, 17.8 12.1, 16.4 13.4" />
+      <path d="M8.9 14.9 C 10.9 12.9, 13 10.8, 15 8.8" />
+    </svg>
+  );
+}
+IconLink.displayName = "NotebookIconLink";
+
+/* Côn trùng — thân bug + râu + chân */
+export function IconBug({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 8.2 C 14.9 8.1, 17.2 10.4, 17.1 13.4 C 17 16.7, 14.9 19.2, 12 19.1 C 9.1 19, 7 16.5, 7.1 13.4 C 7.2 10.4, 9.1 8.2, 12 8.2 Z" />
+      <path d="M12 8.4 C 11.9 6.9, 11.9 5.4, 12 3.9" />
+      <path d="M9.2 5.4 C 9.8 6.2, 10.4 7, 11 7.8" />
+      <path d="M14.8 5.3 C 14.2 6.1, 13.6 6.9, 13 7.7" />
+      <path d="M7.1 10.7 C 5.9 10.1, 4.7 9.5, 3.5 8.9" />
+      <path d="M16.9 10.7 C 18.1 10.1, 19.3 9.5, 20.5 8.9" />
+      <path d="M7.1 14.6 C 5.9 14.5, 4.7 14.4, 3.5 14.3" />
+      <path d="M16.9 14.6 C 18.1 14.5, 19.3 14.4, 20.5 14.3" />
+      <path d="M8.4 18.1 C 7.5 18.9, 6.6 19.7, 5.7 20.5" />
+      <path d="M15.6 18.1 C 16.5 18.9, 17.4 19.7, 18.3 20.5" />
+      <path d="M12 12.6 C 11.9 14.3, 11.9 16, 12 17.7" />
+    </svg>
+  );
+}
+IconBug.displayName = "NotebookIconBug";
+
+/* Bảng điều khiển — khung chia cột kiểu dashboard */
+export function IconLayoutDashboard({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.9 4.2 C 9.2 3.9, 14.9 3.9, 20.1 4.2 C 20.4 9.2, 20.4 14.9, 20.1 19.9 C 14.8 20.2, 9.1 20.2, 3.8 19.9 C 3.6 14.9, 3.6 9.1, 3.9 4.2 Z" />
+      <path d="M10.1 4.3 C 10 9.5, 10 14.7, 10.1 19.8" />
+      <path d="M10.2 12.1 C 13.5 12, 16.9 12, 20.2 12.1" />
+    </svg>
+  );
+}
+IconLayoutDashboard.displayName = "NotebookIconLayoutDashboard";
+
+/* Facebook — ô bo + chữ f vẽ tay */
+export function IconFacebook({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4.4 4.5 C 4.3 4.2, 4.5 3.9, 4.8 3.8 C 9.6 3.6, 14.5 3.6, 19.3 3.8 C 19.6 3.9, 19.8 4.2, 19.7 4.5 C 19.9 9.5, 19.9 14.6, 19.7 19.6 C 14.6 19.9, 9.5 19.9, 4.5 19.6 C 4.3 14.6, 4.2 9.5, 4.4 4.5 Z" />
+      <path d="M14.9 7.9 C 14.3 7.7, 13.6 7.7, 13.1 8.1 C 12.5 8.6, 12.3 9.4, 12.3 10.2 C 12.3 12.1, 12.3 14, 12.4 15.9" />
+      <path d="M9.9 12.3 C 11.6 12.2, 13.3 12.2, 15.1 12.3" />
+    </svg>
+  );
+}
+IconFacebook.displayName = "NotebookIconFacebook";
+
+/* LinkedIn — ô bo + chữ in vẽ tay */
+export function IconLinkedin({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4.4 4.5 C 4.3 4.2, 4.5 3.9, 4.8 3.8 C 9.6 3.6, 14.5 3.6, 19.3 3.8 C 19.6 3.9, 19.8 4.2, 19.7 4.5 C 19.9 9.5, 19.9 14.6, 19.7 19.6 C 14.6 19.9, 9.5 19.9, 4.5 19.6 C 4.3 14.6, 4.2 9.5, 4.4 4.5 Z" />
+      <path d="M8.1 10.4 C 8 12.6, 8 14.8, 8.1 17" />
+      <path d="M8.1 7.3 C 8 7.7, 8 8.1, 8.1 8.5" />
+      <path d="M11.5 17 C 11.4 14.8, 11.4 12.6, 11.5 10.4" />
+      <path d="M11.5 12.1 C 12 11, 12.9 10.3, 14 10.4 C 15.3 10.5, 16 11.5, 16.1 12.9 C 16.2 14.3, 16.2 15.7, 16.1 17" />
+    </svg>
+  );
+}
+IconLinkedin.displayName = "NotebookIconLinkedin";
+
+/* YouTube — ô bo + nút phát */
+export function IconYoutube({ size = 24, strokeWidth = 2, ...props }: NotebookIconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M2.9 7.4 C 2.7 5.9, 3.7 4.7, 5.2 4.5 C 9.7 4.2, 14.4 4.2, 18.9 4.5 C 20.3 4.7, 21.3 5.9, 21.2 7.4 C 21.4 10.4, 21.4 13.7, 21.2 16.7 C 21.3 18.1, 20.3 19.3, 18.9 19.5 C 14.4 19.8, 9.7 19.8, 5.2 19.5 C 3.7 19.3, 2.7 18.1, 2.9 16.7 C 2.7 13.7, 2.7 10.4, 2.9 7.4 Z" />
+      <path d="M10.2 8.9 C 10 8.7, 9.7 8.8, 9.6 9.1 C 9.5 10.9, 9.5 13.1, 9.6 14.9 C 9.7 15.2, 10 15.3, 10.2 15.1 C 11.8 14.2, 13.4 13.2, 14.9 12.2 C 15.2 12, 15.2 11.6, 14.9 11.4 C 13.4 10.5, 11.8 9.6, 10.2 8.9 Z" />
+    </svg>
+  );
+}
+IconYoutube.displayName = "NotebookIconYoutube";

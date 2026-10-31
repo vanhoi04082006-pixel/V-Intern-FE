@@ -1,6 +1,6 @@
 "use client";
 
-import { KanbanSquare } from "lucide-react";
+import { IconSquareKanban } from "@/components/v-intern/icons";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { CrossDoodle, SparkleDoodle, StarDoodle } from "@/components/v-intern/doodles";
 
@@ -179,7 +179,7 @@ export function ProductHeart() {
                   key={stat}
                   className="inline-flex items-center gap-1.5 rounded-full border-2 border-dashed border-chalk/25 px-3.5 py-1.5 text-xs font-semibold text-chalk"
                 >
-                  <KanbanSquare className="h-3.5 w-3.5 text-[#7d97ff]" aria-hidden="true" />
+                  <IconSquareKanban className="h-3.5 w-3.5 text-[#7d97ff]" aria-hidden="true" />
                   {stat}
                 </li>
               ))}
