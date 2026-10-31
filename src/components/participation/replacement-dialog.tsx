@@ -9,6 +9,7 @@ import {
 import {
   Modal,
   Field,
+  Spinner,
   btn,
   inputClass,
   textareaClass,
@@ -401,7 +402,11 @@ export function ReplacementDialog({
                     disabled={Boolean(busy) || checking}
                     onClick={checkNow}
                   >
-                    <RefreshCw size={14} aria-hidden="true" className={checking ? "animate-spin" : undefined} />
+                    {checking ? (
+                      <Spinner className="size-3.5" />
+                    ) : (
+                      <RefreshCw size={14} aria-hidden="true" />
+                    )}
                     {checking ? "Đang làm mới…" : "Làm mới trạng thái"}
                   </button>
                 </div>

@@ -346,9 +346,11 @@ export function DeliveryOverview({
         {data && data.items.length === 0 && <Empty />}
         {kind === "sprints" && (
           <ul className="divide-y divide-border">
-            {sprints.data?.items.map((s) => (
+            {sprints.data?.items.map((s) => {
+              const isPlanned = basePath === "/instructor" && s.status === "planned";
+              return (
               <li key={s.id}>
-                <div className="min-w-0 border-b border-border py-4">
+                <div className={isPlanned ? "nb-planned-card min-w-0" : "min-w-0 border-b border-border py-4"}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
@@ -377,7 +379,8 @@ export function DeliveryOverview({
                   )}
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ul>
         )}
         {kind === "tasks" && (
