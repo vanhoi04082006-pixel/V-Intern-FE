@@ -651,3 +651,91 @@
   background: var(--paper-raised);
   box-shadow: var(--nb-shadow);
 }
+
+/* ------------------------------------------------------------------ */
+/* 16. Onboarding bước 2–3 & outcomes — mức ĐẬM (gói R1)                */
+/* ------------------------------------------------------------------ */
+
+/* a) Tiêu đề từng bước onboarding — quét marker dạ quang sau chữ,
+      đồng bộ cả 4 bước (welcome / role / interview / conversation / result). */
+.workspace-onboarding main h1 {
+  display: inline-block;
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--blue) 16%, transparent) 3%,
+    color-mix(in srgb, var(--blue) 16%, transparent) 97%,
+    transparent 99%
+  );
+  background-size: 100% 62%;
+  background-position: 0 62%;
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+  padding-inline: 0.12em;
+}
+
+/* b) Card vai (bước 2) — thẻ giấy sketch viền mực, xoay nhẹ như dán lên
+      sổ; chạm vào (hover/focus) là thẳng lại và nhô lên. */
+.workspace-onboarding .student-role-option {
+  border: var(--nb-border-width) solid var(--nb-ink-line);
+  border-radius: 10px 12px 11px 12px;
+  background: var(--paper-raised);
+  box-shadow: var(--nb-shadow);
+  transition:
+    transform var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease);
+}
+.workspace-onboarding .student-role-option:nth-child(odd) {
+  transform: rotate(-0.7deg);
+}
+.workspace-onboarding .student-role-option:nth-child(even) {
+  transform: rotate(0.8deg);
+}
+.workspace-onboarding .student-role-option:hover {
+  transform: rotate(0deg) translate(-1px, -1px);
+  box-shadow: var(--nb-shadow-hover);
+}
+.workspace-onboarding .student-role-option:focus-within {
+  transform: rotate(0deg);
+  /* Box-shadow sketch (đậm hơn) lấn át ring Tailwind — dùng outline cho
+     focus indicator để giữ 2px/2px chuẩn a11y. */
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.workspace-onboarding .student-role-option:has(input:checked) {
+  border-color: var(--blue);
+  border-width: 2.5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-onboarding .student-role-option,
+  .workspace-onboarding .student-role-option:hover,
+  .workspace-onboarding .student-role-option:focus-within {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* c) Panel "Sổ giao dịch" (lương ảo) — băng dính góc như quyển sổ kế toán
+      được dán lại sau mỗi lần đối chiếu. */
+[data-workspace-role="intern"] .student-panel.student-ledger {
+  position: relative;
+}
+[data-workspace-role="intern"] .student-panel.student-ledger::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  right: 34px;
+  width: 82px;
+  height: 22px;
+  transform: rotate(3.5deg);
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+  z-index: 2;
+}
+.dark [data-workspace-role="intern"] .student-panel.student-ledger::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}

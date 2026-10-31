@@ -16,6 +16,8 @@ import {
 } from "@/lib/api/recruitment";
 import { errorMessage } from "@/lib/auth/api-client";
 import { useRecruitmentFlow } from "./recruitment-provider";
+import { NoteCard } from "@/components/workspace/notebook";
+import { Tape } from "@/components/v-intern/doodles";
 
 const phaseLabels: Record<string, string> = {
   introduction: "Làm quen",
@@ -143,8 +145,9 @@ export function ConversationInterview() {
   const remaining = chat ? remainingSeconds(chat.session, elapsed) : null;
   const expired = remaining === 0;
   return (
-    <section className="mx-auto max-w-4xl overflow-hidden rounded-panel border border-border bg-card shadow-app-xs">
-      <header className="flex flex-wrap items-center gap-4 border-b border-border bg-background p-5">
+    <section className="sketch-card mx-auto max-w-4xl overflow-hidden">
+      <header className="relative flex flex-wrap items-center gap-4 border-b border-border bg-background p-5">
+        <Tape className="-top-3 right-8 z-20" rotate={3} />
         <span className="grid size-12 place-items-center rounded-panel bg-primary text-primary-foreground">
           <IconBot aria-hidden="true" />
         </span>
@@ -244,10 +247,14 @@ export function ConversationInterview() {
             {current.kind !== 'follow_up' && <button
               disabled={disabled || expired}
               onClick={() => void clarify()}
-              className="mb-3 text-body text-primary disabled:opacity-40"
+              className="underline-squiggle mb-3 text-body text-primary disabled:opacity-40"
             >
               Giải thích lại câu hỏi
             </button>}
+            <NoteCard tape title="Gợi ý từ AI" className="mb-4" rotate={-0.6}>
+              Chưa chắc chỗ nào cứ nói rõ — AI sẽ hỏi thêm để hiểu câu trả lời
+              của bạn, không cần trả lời cho hoàn hảo.
+            </NoteCard>
             <form
               onSubmit={(e) => {
                 e.preventDefault();

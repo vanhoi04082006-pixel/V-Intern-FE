@@ -192,6 +192,44 @@ const interviewQuestions = {
   ],
 };
 
+// Conversation interview (questionCount === 10): màn phỏng vấn hội thoại —
+// stage=conversation. currentQuestion.status = "ready" để component không
+// tự gọi POST /conversation/next khi tải trang.
+const conversationInterview = {
+  session: {
+    ...interviewQuestions.session,
+    questionCount: 10,
+  },
+  questions: Array.from({ length: 10 }, (_, i) => ({
+    id: id("cqs", i + 1),
+    position: i + 1,
+    category: i % 2 === 0 ? "technical" : "soft",
+    difficulty: "medium",
+    prompt: `Câu hỏi hội thoại mẫu ${i + 1}.`,
+    answered: i < 4,
+    answeredAt: i < 4 ? daysAgo(0) : null,
+  })),
+};
+const conversationViewData = {
+  session: conversationInterview.session,
+  answeredCount: 4,
+  messages: [
+    { role: "assistant", questionId: id("cqs", 1), position: 1, content: "Chào bạn! Mình là AI Recruiter. Để bắt đầu, bạn kể ngắn gắn về một dự án frontend bạn tâm đắc nhất nhé." },
+    { role: "user", questionId: id("cqs", 1), position: 1, content: "Em từng làm một bảng điểm học phần realtime: WebSocket sync giữa mentor và intern, em phụ trách phần state và cache." },
+    { role: "assistant", questionId: id("cqs", 2), position: 2, content: "Nghe thú vị! Khi hai client cùng sửa một dòng điểm, bạn xử lý xung đột thế nào?" },
+    { role: "user", questionId: id("cqs", 2), position: 2, content: "Em dùng last-write-wins kèm version tag, và hiển thị toast cảnh báo khi version lệch." },
+    { role: "assistant", questionId: id("cqs", 3), position: 3, content: "Rõ rồi. Giờ sang chuyên môn: useMemo và useCallback khác nhau chỗ nào, cho mình một ví dụ dùng sai?" },
+  ],
+  currentQuestion: {
+    id: id("cqs", 3),
+    position: 3,
+    phase: "technical",
+    kind: "main",
+    status: "ready",
+    errorCode: null,
+  },
+};
+
 const sprintSummary = {
   id: id("spr"),
   code: "SPR-03",
@@ -596,21 +634,28 @@ export function resolveApi(method, pathname, search) {
     if (qaStage.recruitment === "waiting") return workspaceUnassigned;
     if (qaStage.recruitment === "welcome" || qaStage.recruitment === "role")
       return workspaceRecruitmentRequired;
-    if (qaStage.recruitment === "interview")
+    if (qaStage.recruitment === "interview" || qaStage.recruitment === "conversation")
       return workspaceRecruitmentInProgress;
     return workspaceActive;
   }
   if (method === "GET" && p === "/recruitment/me") {
     // Waiting screen dùng profile "passed" (đã vượt phỏng vấn, chờ phân công).
     const profileKey =
-      qaStage.recruitment === "waiting" ? "result" : qaStage.recruitment;
+      qaStage.recruitment === "waiting"
+        ? "result"
+        : qaStage.recruitment === "conversation"
+          ? "interview"
+          : qaStage.recruitment;
     return recruitmentProfiles[profileKey] ?? recruitmentProfiles.welcome;
   }
   if (method === "GET" && p === "/recruitment/me/interviews") {
     return recruitmentHistory;
   }
   const interviewQuestionsMatch = p.match(/^\/recruitment\/me\/interviews\/([^/]+)\/questions$/);
-  if (method === "GET" && interviewQuestionsMatch) return interviewQuestions;
+  if (method === "GET" && interviewQuestionsMatch)
+    return qaStage.recruitment === "conversation" ? conversationInterview : interviewQuestions;
+  const interviewConversationMatch = p.match(/^\/recruitment\/me\/interviews\/([^/]+)\/conversation$/);
+  if (method === "GET" && interviewConversationMatch) return conversationViewData;
   if (method === "GET" && p === "/recruitment/me/result")
     return recruitmentProfiles.result.result;
   if (method === "GET" && p === "/tasks") {

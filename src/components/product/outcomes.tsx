@@ -533,13 +533,19 @@ export function Salary() {
         </Resource>
       </StudentPanel>
       <StudentPanel
+        className="student-ledger"
         title="Sổ giao dịch"
         icon={IconClock}
         description="Mọi thay đổi số dư đều có nguồn và thời điểm rõ ràng."
         action={
           ledger.data ? (
-            <span className="student-badge" data-tone="slate">
-              {ledger.data.total} giao dịch
+            <span className="flex flex-wrap items-center gap-2">
+              <span className="student-badge" data-tone="slate">
+                {ledger.data.total} giao dịch
+              </span>
+              <StampMoc tone="blue" size="sm" thump>
+                Đã đối chiếu
+              </StampMoc>
             </span>
           ) : undefined
         }

@@ -6,6 +6,8 @@ import { RecruitmentPolicy } from "./recruitment-policy";
 import { roleLabel } from "@/lib/api/workspace";
 import { ConversationInterview } from "./conversation-interview";
 import { ScheduledInterview } from './scheduled-interview';
+import { Spinner } from "@/components/product/primitives";
+import { NoteCard } from "@/components/workspace/notebook";
 function InterviewCountdown({ session }: { session: InterviewSession }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -41,9 +43,9 @@ export function InterviewStep() {
   const [draft, setDraft] = useState("");
   if (!interview && profile.interviewSchedule) return <ScheduledInterview/>;
   if (evaluating) return (
-    <section className="mx-auto max-w-xl rounded-panel border border-border bg-card p-10 text-center shadow-app-xs" aria-busy="true">
+    <section className="sketch-card mx-auto max-w-xl p-10 text-center" aria-busy="true">
       <div role="status" aria-label="AI đang chấm bài" aria-live="polite">
-        <span aria-hidden="true" className="mx-auto mb-6 block size-12 rounded-full border-4 border-border border-t-brand motion-safe:animate-spin" />
+        <Spinner className="mx-auto mb-6 block size-12 text-primary" />
         <h1 className="text-page font-bold text-foreground">Đã kết thúc phỏng vấn</h1>
         <p className="mt-3 text-muted-foreground">Buổi phỏng vấn đã kết thúc. Vui lòng chờ hệ thống đánh giá kết quả.</p>
       </div>
@@ -117,7 +119,7 @@ export function InterviewStep() {
       <div className="mt-6 grid gap-5 xl:grid-cols-[220px_minmax(0,1fr)]">
         <nav
           aria-label="Danh sách câu hỏi"
-          className="rounded-panel border border-border bg-card p-3"
+          className="sketch-card p-3"
         >
           <ol className="space-y-2">
             {questions.map((q) => (
@@ -140,7 +142,7 @@ export function InterviewStep() {
             ))}
           </ol>
         </nav>
-        <section className="rounded-panel border border-border bg-card p-5">
+        <section className="sketch-card p-5">
           {question ? (
             <>
               <h2 className="text-section font-bold text-foreground">
@@ -221,10 +223,10 @@ export function InterviewStep() {
           Tải lại trạng thái
         </button>
       </div>
-      <p className="mt-3 text-caption text-muted-foreground">
+      <NoteCard tape title="Lưu ý nhỏ" className="mt-5 max-w-xl">
         Đồng hồ chỉ hiển thị thời gian từ hệ thống. Hệ thống kiểm tra thời hạn
         khi lưu và nộp bài.
-      </p>
+      </NoteCard>
     </div>
   );
 }
