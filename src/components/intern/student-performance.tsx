@@ -12,6 +12,7 @@ import {
 } from "./student-ui";
 import { RateComparison } from "@/components/workspace/workspace-charts";
 import { useInternWorkspaceContext } from "./intern-workspace-context";
+import { MarginNote } from "@/components/workspace/notebook";
 
 export function StudentPerformance({
   data: m,
@@ -66,6 +67,15 @@ export function StudentPerformance({
               Gợi ý phát triển
             </StudentLink>
           </div>
+          <MarginNote className="mt-4">
+            {!activeAssignment
+              ? "Kỳ này đã khép sổ — đọc kỹ nhận xét để chuẩn bị chặng sau."
+              : m.overdueOpenTaskCount > 0
+                ? "Dọn mấy việc quá hạn trước đã nhé, đừng để dồn lại!"
+                : m.totalTaskCount === 0
+                  ? "Chưa có số liệu là chuyện thường — có việc là có điểm."
+                  : "Giữ nhịp này là đẹp — đừng quên đọc nhận xét của giảng viên."}
+          </MarginNote>
         </StudentPanel>
         <div>
           <RateComparison label="Nhìn vào quá trình" items={[

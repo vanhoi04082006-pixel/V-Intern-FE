@@ -12,6 +12,8 @@ import { HorizontalStepper, MobileStepbar } from "./onboarding-stepper";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import type { RecruitmentRole } from "@/lib/api/workspace";
 import { ScheduledInterview } from './scheduled-interview';
+import { Tape } from "@/components/v-intern/doodles";
+import { MarginNote } from "@/components/workspace/notebook";
 export function RoleSelectionStep() {
   const {profile}=useRecruitmentFlow();
   return profile.interviewSchedule ? <ScheduledInterview/> : <ManualRoleSelectionStep/>;
@@ -52,15 +54,16 @@ function ManualRoleSelectionStep() {
           ))}
         </div>
       </fieldset>
-      <section className="mt-8 border-t border-border pt-6">
-        <h2 className="font-semibold">Trước khi bắt đầu</h2>
+      <section className="relative mt-8 border-t border-border pt-6">
+        <Tape className="-top-3 left-8" rotate={4} />
+        <h2 className="font-hand text-xl leading-snug text-foreground">Trước khi bắt đầu</h2>
         <p className="mt-2 text-body text-muted-foreground">
           Vai trò sẽ được lưu vào hệ thống. Bạn chỉ có thể thay đổi trước khi
           bắt đầu phỏng vấn.
         </p>
-        <p className="mt-2 text-body">
+        <MarginNote className="mt-3">
           Số lần phỏng vấn còn lại: {profile.attemptsRemaining}
-        </p>
+        </MarginNote>
         {profile.nextEligibleAt && (
           <p className="mt-2 text-body">
             Có thể thử lại sau:{" "}

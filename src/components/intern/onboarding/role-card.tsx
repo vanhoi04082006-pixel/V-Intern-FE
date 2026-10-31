@@ -51,7 +51,9 @@ export function RoleCard({
       <span className="mt-1 text-small leading-relaxed text-muted-foreground">
         {role.tagline}
       </span>
-      <span className="mt-3 text-caption text-muted-foreground">{role.tags.join(", ")}</span>
+      <span className="font-hand mt-3 text-[15px] leading-snug text-muted-foreground">
+        {role.tags.join(", ")}
+      </span>
     </label>
   );
 }

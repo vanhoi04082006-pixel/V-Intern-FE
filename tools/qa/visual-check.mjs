@@ -255,6 +255,8 @@ try {
     // redirects off-page states); pin the stage per visited route.
     qaStage.recruitment = route.includes("stage=waiting")
       ? "waiting"
+      : route.includes("stage=conversation")
+      ? "conversation"
       : route.startsWith("/intern/onboarding")
       ? route.endsWith("/role")
         ? "role"
