@@ -1135,3 +1135,92 @@
     box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 7%, transparent);
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════ */
+/* JOURNEY NOTEBOOK v3 — WORKSPACE ATMOSPHERE (phủ shell mọi vai).     */
+/* Admin nâng từ "nhẹ" lên "vừa": viền mực mảnh + giấy ấm + gáy xé,   */
+/* vẫn KHÔNG tape/doodle trong bảng dày để giữ mật độ dữ liệu.         */
+/* ══════════════════════════════════════════════════════════════════ */
+
+/* 1. Gáy thương hiệu — mép xé giấy thay border liền dưới logo sidebar. */
+.aurora-workspace .workspace-brand {
+  border-bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%2317171c' stroke-opacity='.5' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 240px 8px;
+  background-position: bottom left;
+  padding-bottom: calc(var(--space-5) + 8px);
+}
+.dark .aurora-workspace .workspace-brand {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%23f2f1e9' stroke-opacity='.45' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+/* 2. Sidebar giảng viên/admin — nền chấm bi giấy như trang mục lục. */
+.aurora-workspace .product-sidebar {
+  background-image: radial-gradient(
+    rgba(23, 23, 28, 0.11) 1.4px,
+    transparent 1.4px
+  );
+  background-size: 22px 22px;
+}
+.dark .aurora-workspace .product-sidebar {
+  background-image: radial-gradient(
+    rgba(242, 241, 233, 0.12) 1.4px,
+    transparent 1.4px
+  );
+}
+
+/* 3. Admin panel — viền mực hairline + bóng in nhẹ, nâng chất giấy mà
+      không phá mật độ bảng (admin vẫn "vừa", không "đậm" như intern). */
+.admin-workspace .product-panel {
+  background: var(--card);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 52%, transparent);
+  border-radius: var(--nb-radius);
+  box-shadow: 2px 3px 0 color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.dark .admin-workspace .product-panel {
+  border-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* 4. Header panel admin — gáy xé giấy như panel giảng viên. */
+.admin-workspace .product-panel-header {
+  border-bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%2317171c' stroke-opacity='.46' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 240px 8px;
+  background-position: bottom left;
+  padding-bottom: calc(var(--space-4) + 7px);
+}
+.dark .admin-workspace .product-panel-header {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%23f2f1e9' stroke-opacity='.4' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+/* 5. Tiêu đề trang admin — kẻ đôi đỏ như trang vở học sinh. */
+.admin-workspace .product-main h1 {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding-bottom: var(--space-3);
+  border-bottom: 4px double color-mix(in srgb, var(--stamp-red) 42%, transparent);
+}
+.dark .admin-workspace .product-main h1 {
+  border-bottom-color: color-mix(in srgb, var(--stamp-red) 66%, transparent);
+}
+
+/* 6. Nav heading giảng viên/admin — viết tay nhỏ thay caption thường. */
+.aurora-workspace:not([data-workspace-role="intern"]) .workspace-nav-label {
+  font-family: var(--font-patrick-hand), cursive;
+  font-size: 1.12rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+/* 7. Zebra giấy ấm — bảng admin dựng không dùng .product-table cũng được
+      sọc như vở: đảm bảo mọi bảng dày trong admin đều dễ soi theo dòng. */
+.admin-workspace .product-panel table:not(.product-table):not(.admin-coverage-table) tbody tr:nth-child(even) > td {
+  background: color-mix(in srgb, var(--muted) 100%, transparent);
+}
+.admin-workspace .product-panel table:not(.product-table):not(.admin-coverage-table) tbody tr:nth-child(even):hover > td {
+  background: color-mix(in srgb, var(--muted) 100%, transparent);
+}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Tape } from "@/components/v-intern/doodles";
 
@@ -96,4 +97,52 @@ export function StampMoc({
 /** Đường xé giấy — phân mục giữa các section thay border liền. */
 export function PaperDivider({ className }: { className?: string }) {
   return <hr aria-hidden="true" className={cn("divider-torn my-6", className)} />;
+}
+
+/** Trang sổ trống — artwork "open notebook" cho empty state mọi vai.
+ *  Dùng cho danh sách rỗng/chưa có dữ liệu: kèm tiêu đề, gợi ý và slot hành động.
+ */
+export function NotebookEmpty({
+  title,
+  hint,
+  action,
+  className,
+  artClassName,
+}: {
+  /** Tiêu đề chính (VD: "Chưa có nhiệm vụ nào"). */
+  title: ReactNode;
+  /** Dòng gợi ý viết tay bên dưới. */
+  hint?: ReactNode;
+  /** Nút/hành động tùy chọn (VD: link "Xem thư viện dự án"). */
+  action?: ReactNode;
+  className?: string;
+  artClassName?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center gap-4 rounded-panel border border-dashed bg-card/60 p-8 text-center",
+        className,
+      )}
+    >
+      <Image
+        src="/images/empty-states/open-notebook.png"
+        alt=""
+        width={220}
+        height={220}
+        aria-hidden="true"
+        sizes="220px"
+        className={cn("h-36 w-auto opacity-90", artClassName)}
+      />
+      <div className="max-w-sm">
+        <p className="font-semibold text-foreground">{title}</p>
+        {hint ? (
+          <p className="mt-1.5 font-hand text-[17px] leading-snug text-muted-foreground">
+            {hint}
+          </p>
+        ) : null}
+      </div>
+      {action ? <div className="mt-1">{action}</div> : null}
+    </div>
+  );
 }
