@@ -112,13 +112,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto w-full bg-coal text-chalk">
-      {/* Viền xanh — nét mực bút chì xanh chạy ngang */}
-      <div
-        aria-hidden="true"
-        className="h-[3px] w-full bg-gradient-to-r from-royal/20 via-royal to-royal/20"
-      />
-
+    <footer className="paper-deckle-top mt-auto w-full bg-coal text-chalk">
       <FadeIn y={16} className="mx-auto max-w-7xl px-4 pb-12 pt-14 md:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.45fr_1fr_1fr_1fr_0.95fr] lg:gap-x-8">
           <div className="col-span-2 lg:col-span-1 lg:pr-4">

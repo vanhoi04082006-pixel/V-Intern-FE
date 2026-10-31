@@ -17,10 +17,16 @@ import { FadeIn } from "@/components/v-intern/reveal";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
 import {
+  AsteriskDoodle,
+  CoffeeStainDoodle,
+  CrossDoodle,
   HandArrowDown,
+  HeartDoodle,
+  PaperclipDoodle,
   SparkleDoodle,
   StarDoodle,
   Tape,
+  PolaroidFrame,
 } from "@/components/v-intern/doodles";
 
 const SIDEBAR_ITEMS: { label: string; icon: IconComponent; active: boolean }[] = [
@@ -58,7 +64,14 @@ const OVERVIEW_ITEMS: {
 /** Khung "polaroid" chứa ảnh chụp màn hình workspace — như tấm hình được dán lên sổ. */
 function DashboardPolaroid() {
   return (
-    <div className="sketch-card rotate-[-1.2deg] p-2.5 transition-transform duration-500 ease-out motion-safe:hover:rotate-0">
+    <PolaroidFrame
+      tilt={-1.2}
+      caption={
+        <>
+          một ngày tại V-Intern ✎ <span className="sr-only">— ảnh minh hoạ không gian làm việc</span>
+        </>
+      }
+    >
       <div className="flex overflow-hidden rounded-xl border-2 border-ink/10">
         {/* Thanh bên mô phỏng */}
         <aside
@@ -130,7 +143,7 @@ function DashboardPolaroid() {
           </p>
         </div>
       </div>
-    </div>
+    </PolaroidFrame>
   );
 }
 
@@ -141,11 +154,23 @@ export function Hero() {
       aria-label="Giới thiệu nền tảng V-Intern"
       className="relative scroll-mt-20 overflow-hidden bg-paper"
     >
-      {/* Nền giấy ô ly, mờ dần ở mép */}
+      {/* Nền giấy ô ly + lề đỏ, mờ dần ở mép */}
       <div
         aria-hidden="true"
         className="mask-fade-edges pointer-events-none absolute inset-0 bg-grid-paper"
       />
+
+      {/* Chòm doodle trôi nổi — như dấu vết bút vẽ trên trang sổ */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden lg:block">
+        <AsteriskDoodle className="absolute left-[3%] top-[16%] h-5 w-5 text-blue/25 animate-float motion-reduce:animate-none" />
+        <CrossDoodle className="absolute left-[7%] bottom-[30%] h-5 w-5 text-ink/15 animate-float-delayed motion-reduce:animate-none" />
+        <StarDoodle className="absolute left-[24%] top-[8%] h-6 w-6 text-blue/20 animate-wiggle motion-reduce:animate-none" />
+        <SparkleDoodle className="absolute right-[4%] top-[10%] h-6 w-6 text-blue/30 animate-float-soft motion-reduce:animate-none" />
+        <CrossDoodle className="absolute right-[8%] bottom-[24%] h-4 w-4 text-ink/15 animate-bob motion-reduce:animate-none" />
+        <StarDoodle className="absolute left-[45%] bottom-[6%] h-5 w-5 text-ink/10 animate-float-delayed motion-reduce:animate-none" />
+        {/* Vết cà phê mờ sau cụm polaroid — dấu vết “học khuya” */}
+        <CoffeeStainDoodle className="absolute -bottom-2 right-[38%] h-24 w-24 text-ink/[0.05]" />
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-14 md:px-6 lg:px-8 lg:pb-24 lg:pt-20">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,46fr)_minmax(0,54fr)] lg:gap-12">
@@ -162,8 +187,8 @@ export function Hero() {
               Dự án thật.
               <br />
               <span className="relative inline-block">
-                <span className="marker">Tương lai của bạn.</span>
-                <StarDoodle className="absolute -right-9 -top-4 hidden h-7 w-7 animate-wiggle text-blue sm:block" />
+                <span className="marker animate-marker-blot motion-reduce:animate-none">Tương lai của bạn.</span>
+                <StarDoodle className="absolute -right-9 -top-4 hidden h-7 w-7 animate-wiggle text-blue sm:block motion-reduce:animate-none" />
               </span>
             </h1>
 
@@ -199,6 +224,9 @@ export function Hero() {
                 <br />
                 chỉ cần mang theo tinh thần học hỏi!
               </p>
+              <span className="mt-3 flex items-center gap-1 text-blue/80">
+                <HeartDoodle className="h-4 w-[18px] animate-bob motion-reduce:animate-none" />
+              </span>
               <HandArrowDown className="ml-1 mt-1 h-14 w-10 rotate-[24deg] text-blue/80" />
             </div>
           </FadeIn>
@@ -209,13 +237,14 @@ export function Hero() {
             delay={0.15}
           >
             <div className="relative px-1 pt-4">
-              <Tape className="-top-1 left-8 z-20" rotate={-8} />
-              <Tape className="-top-1 right-10 z-20" rotate={7} />
+              <Tape className="-top-1 left-8 z-20" rotate={-8} variant="warm" />
+              <Tape className="-top-1 right-10 z-20" rotate={7} variant="candy" />
               <DashboardPolaroid />
             </div>
 
-            {/* Sticky note "Đánh giá AI" */}
-            <div className="absolute -top-3 right-0 z-20 hidden w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] sm:-top-6 sm:flex md:-right-3 md:-top-24">
+            {/* Sticky note "Đánh giá AI" — kèm kẹp giấy như gắn lên tường */}
+            <div className="absolute -top-3 right-0 z-20 hidden w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] sm:-top-6 sm:flex md:-right-3 md:-top-24 motion-reduce:animate-none">
+              <PaperclipDoodle className="absolute -left-3.5 -top-4 h-10 w-6 text-ink/45" />
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
                 <IconSparkles className="h-5 w-5" aria-hidden="true" />
               </span>

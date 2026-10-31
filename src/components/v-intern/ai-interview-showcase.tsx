@@ -55,7 +55,7 @@ export function AiInterviewShowcase() {
           {/* Tấm polaroid buổi phỏng vấn */}
           <FadeIn className="relative">
             <div className="relative mx-auto max-w-[640px]">
-              <Tape className="-top-2.5 left-1/2 z-20 -translate-x-1/2" rotate={-3} />
+              <Tape className="-top-2.5 left-1/2 z-20 -translate-x-1/2" rotate={-3} variant="warm" />
               <figure className="sketch-card rotate-[-1.6deg] bg-raised p-3 pb-0 transition-transform duration-500 ease-out motion-safe:hover:rotate-0">
                 <Image
                   src="/images/landing/ai-interview.png"

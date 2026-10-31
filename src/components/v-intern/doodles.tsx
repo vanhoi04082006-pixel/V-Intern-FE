@@ -158,18 +158,27 @@ export function CircleDoodle({ className }: { className?: string }) {
   );
 }
 
-/** Mẩu băng dính washi dán chéo — xoay qua --tape-rotate để hover peel ăn đúng */
+/** Mẩu băng dính washi dán chéo — xoay qua --tape-rotate để hover peel ăn đúng.
+ *  variant chọn màu: "blue" (mặc định) | "warm" | "candy" | "mint". */
 export function Tape({
   className,
   rotate = -6,
+  variant = "blue",
 }: {
   className?: string;
   rotate?: number;
+  variant?: "blue" | "warm" | "candy" | "mint";
 }) {
   return (
     <span
       aria-hidden="true"
-      className={cn("tape tape-peel pointer-events-none z-20", className)}
+      className={cn(
+        "tape tape-peel pointer-events-none z-20",
+        variant === "warm" && "tape-warm",
+        variant === "candy" && "tape-candy",
+        variant === "mint" && "tape-mint",
+        className,
+      )}
       style={{ "--tape-rotate": `${rotate}deg` } as React.CSSProperties}
     />
   );
@@ -408,32 +417,6 @@ export function ScribbleDoodle({ className }: { className?: string }) {
         opacity="0.55"
       />
     </svg>
-  );
-}
-
-/** Washi tape nhiều màu — cùng hình dạng .tape, đổi biến thể màu.
- *  variant: "blue" (mặc định) | "warm" | "candy" | "mint" */
-export function WashiTape({
-  className,
-  rotate = -6,
-  variant = "blue",
-}: {
-  className?: string;
-  rotate?: number;
-  variant?: "blue" | "warm" | "candy" | "mint";
-}) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "tape tape-peel pointer-events-none z-20",
-        variant === "warm" && "tape-warm",
-        variant === "candy" && "tape-candy",
-        variant === "mint" && "tape-mint",
-        className,
-      )}
-      style={{ "--tape-rotate": `${rotate}deg` } as React.CSSProperties}
-    />
   );
 }
 

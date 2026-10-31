@@ -10,7 +10,7 @@ import {
 } from "@/components/v-intern/icons";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
-import { HandArrowRight } from "@/components/v-intern/doodles";
+import { HandArrowRight, Tape } from "@/components/v-intern/doodles";
 import { NoteCard } from "@/components/workspace/notebook";
 
 const STEPS: { icon: IconComponent; title: string; description: string }[] = [
@@ -72,6 +72,8 @@ export function HowItWorks() {
                 "rotate-2",
                 "-rotate-2",
               ];
+              /* Băng keo xen kẽ màu — mỗi “tấm vé” dán bằng một cuộn washi khác */
+              const tapeVariants = ["blue", "warm", "mint", "candy", "blue"] as const;
               return (
                 <div key={step.title} className="contents">
                   {index > 0 ? (
@@ -90,6 +92,11 @@ export function HowItWorks() {
                       (index > 0 ? " lg:ml-3" : "")
                     }
                   >
+                    <Tape
+                      className="-top-2.5 left-1/2 z-20 -translate-x-1/2"
+                      rotate={index % 2 === 0 ? -3 : 4}
+                      variant={tapeVariants[index]}
+                    />
                     <span className="font-hand text-3xl leading-none text-blue">
                       {String(index + 1).padStart(2, "0")}
                     </span>
