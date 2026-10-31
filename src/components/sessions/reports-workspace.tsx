@@ -28,7 +28,7 @@ import {
 } from "@/lib/api/reports";
 import { errorMessage } from "@/lib/auth/api-client";
 import { useResource } from "@/lib/api/use-resource";
-import { MarginNote } from "@/components/workspace/notebook";
+import { MarginNote, NotebookEmpty } from "@/components/workspace/notebook";
 import { ReportScopePickers } from "./report-scope-pickers";
 import { ReportDetails } from "./report-details";
 
@@ -336,17 +336,28 @@ export function ReportsWorkspace({
         {Boolean(reports.error) && (
           <ErrorState error={reports.error} onRetry={reports.reload} />
         )}
-        {reports.data?.items.length === 0 && (
-          <Empty
-            title={isInstructor ? "Chưa có báo cáo đã lưu" : undefined}
-            description={isInstructor ? "Chọn dự án và phiên, sau đó dùng mục Tạo báo cáo để lưu bản đầu tiên." : undefined}
-            action={isInstructor ? <a href="#report-create" className="student-link">Tạo báo cáo đầu tiên</a> : undefined}
-          />
-        )}
+        {reports.data?.items.length === 0 &&
+          (isInstructor ? (
+            <NotebookEmpty
+              title="Chưa có báo cáo đã lưu"
+              hint="chọn dự án và phiên, rồi lưu bản chụp đầu tiên nhé!"
+              action={
+                <a href="#report-create" className="student-link">
+                  Tạo báo cáo đầu tiên
+                </a>
+              }
+            />
+          ) : (
+            <Empty />
+          ))}
         {reports.data?.items.map((r) => (
           <button
             key={r.id}
-            className="block w-full border-b py-3 text-left text-primary"
+            className={
+              isInstructor
+                ? "ins-report-card dog-ear shadow-warm block w-full text-left text-primary"
+                : "block w-full border-b py-3 text-left text-primary"
+            }
             aria-pressed={selected === r.id}
             onClick={() => setSelected(r.id)}
           >
