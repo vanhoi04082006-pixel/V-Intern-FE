@@ -140,6 +140,7 @@ export function WelcomeStep() {
               width={176}
               height={235}
               sizes="176px"
+              priority
               className="w-full rounded-lg border-2 border-ink/10"
             />
             <figcaption className="px-1 pb-0.5 pt-1.5 font-hand text-[15px] leading-tight text-ink-soft">

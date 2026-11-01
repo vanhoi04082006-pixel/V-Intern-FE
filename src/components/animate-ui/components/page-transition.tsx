@@ -286,7 +286,22 @@ function pickEffect(previous?: Effect): Effect {
   return choices[Math.floor(Math.random() * choices.length)]!;
 }
 
-function frameOf(element: HTMLElement, point?: { x: number; y: number }) {
+function frameOf(
+  element: HTMLElement | null,
+  point?: { x: number; y: number },
+): Frame {
+  // Exit callbacks can fire after React detached the old page's node
+  // (fast navigation) — fall back to a viewport-sized frame so the
+  // transition still resolves instead of throwing on null.
+  if (!element) {
+    return {
+      width: innerWidth,
+      top: 0,
+      bottom: innerHeight,
+      x: point ? point.x : innerWidth / 2,
+      y: point ? point.y : innerHeight / 2,
+    };
+  }
   const rect = element.getBoundingClientRect();
   const top = Math.min(Math.max(0, -rect.top), rect.height);
   const bottom = Math.max(top, Math.min(rect.height, innerHeight - rect.top));
@@ -429,7 +444,7 @@ function PageTransition({
     markRoot();
     refreshStyle();
     const named = types.find((type): type is Effect => type in EFFECTS);
-    const enter = frameOf(localRef.current!, pointRef.current);
+    const enter = frameOf(localRef.current, pointRef.current);
     return EFFECTS[reduce ? 'fade' : (named ?? effectRef.current)](
       types.includes('nav-back'),
       enter,
