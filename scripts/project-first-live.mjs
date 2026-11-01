@@ -199,10 +199,10 @@ try {
   await expect(page.getByLabel(/^Hạn task\s+1\.1$/)).toHaveValue(startDate);
   await unpublished("pre-confirm");
   const publication = page.waitForResponse(r => r.url().endsWith("/ai-generations/sprint-plan/confirm") && r.request().method() === "POST");
-  await page.getByRole("button", { name: "Xác nhận & publish", exact: true }).click();
+  await page.getByRole("button", { name: "Xác nhận & phát hành", exact: true }).click();
   const published = await publication; assert.equal(published.status(), 201);
   const publishBody = published.request().postDataJSON(), summary = await published.json();
-  await expect(page.getByText("Đã publish Sprint/Task từ kế hoạch.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Đã phát hành Sprint/nhiệm vụ từ kế hoạch.", { exact: true })).toBeVisible();
   assert.equal(publishBody.sessionId.toLowerCase(), scope.sessionId.toLowerCase());
   assert.equal(publishBody.projectId.toLowerCase(), scope.projectId.toLowerCase());
   assert.equal(publishBody.planId.toLowerCase(), plan.planId.toLowerCase());
@@ -236,7 +236,7 @@ try {
     const url = new URL(r.url());
     return url.pathname === "/api/v1/tasks" && url.searchParams.get("projectId")?.toLowerCase() === created.projectId.toLowerCase() && url.searchParams.get("sessionId")?.toLowerCase() === created.sessionId.toLowerCase() && url.searchParams.get("search") === edited.title && url.searchParams.get("status") === "todo";
   });
-  await page.getByLabel("Tìm Task", { exact: true }).fill(edited.title);
+  await page.getByLabel("Tìm nhiệm vụ", { exact: true }).fill(edited.title);
   await page.getByLabel("Trạng thái", { exact: true }).selectOption("todo");
   const scopedTaskResult = await (await scopedTasks).json();
   assert.ok(scopedTaskResult.data.some(t => t.id.toLowerCase() === edited.id.toLowerCase()));

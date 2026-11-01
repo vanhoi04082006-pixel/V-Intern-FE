@@ -177,7 +177,7 @@ try {
     .getByLabel("Thành viên nhóm", { exact: true })
     .selectOption(user.id);
   await mutate(page, `/groups/${group.id}/members`, "POST", () =>
-    dialog.getByRole("button", { name: "Thêm thành viên nhóm" }).click(),
+    dialog.getByRole("button", { name: "Thêm thành viên" }).click(),
   );
   await dialog.getByText(email, { exact: true }).waitFor();
   await dialog.getByRole("checkbox", { name: /intern/ }).check();
