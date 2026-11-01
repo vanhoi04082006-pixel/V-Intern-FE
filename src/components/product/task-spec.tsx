@@ -119,7 +119,7 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
                 <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-accent text-caption font-bold text-primary">
                   {index + 1}
                 </span>
-                {item}
+                <span className="min-w-0">{item}</span>
               </li>
             ))}
           </ol>
@@ -198,7 +198,7 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
               <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-accent text-caption font-bold text-primary">
                 {index + 1}
               </span>
-              {item}
+              <span className="min-w-0">{item}</span>
             </li>
           ))}
         </ol>
