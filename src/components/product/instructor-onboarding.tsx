@@ -6,7 +6,7 @@ import { listAcademic } from "@/lib/api/academic";
 import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { buttonClass, Panel } from "./primitives";
+import { buttonClass, Panel, Spinner } from "./primitives";
 import {
   activateAcademic,
   canActivate,
@@ -53,7 +53,13 @@ export function ActivateButton({
         onClick={() => void run()}
         className="rounded border border-success bg-success-subtle px-3 py-1 text-caption font-semibold text-success transition-colors duration-200 hover:border-success/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {busy ? "Đang kích hoạt…" : "Kích hoạt"}
+        {busy ? (
+          <>
+            <Spinner className="size-3" />Đang kích hoạt…
+          </>
+        ) : (
+          "Kích hoạt"
+        )}
       </button>
       {Boolean(error) && <span role="alert" className="text-caption text-destructive">{errorMessage(error)}</span>}
     </span>

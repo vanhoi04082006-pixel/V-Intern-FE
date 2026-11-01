@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
-import { Panel, buttonClass, inputClass } from "@/components/product/primitives";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Panel, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { Can } from "@/components/auth/can";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
@@ -91,7 +91,7 @@ export function TemplateDetail({
     }
   }
 
-  if (data.loading) return <p role="status" className="p-4 text-body text-muted-foreground">Đang tải mẫu dự án...</p>;
+  if (data.loading) return <LoadingState label="Đang tải mẫu dự án..." />;
   if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
   const t: TemplateDetailData = data.data;
   const def = t.definition;
@@ -232,7 +232,13 @@ export function TemplateDetail({
             {Boolean(action.error) && <ErrorState error={action.error} />}
             <div className="flex flex-col items-stretch gap-2">
               <button className={buttonClass} disabled={action.busy} onClick={() => void submitStart(t.id)}>
-                {action.busy ? "Đang tạo..." : "Khởi tạo phiên thực tập"}
+                {action.busy ? (
+                  <>
+                    <Spinner className="size-3.5" />Đang tạo...
+                  </>
+                ) : (
+                  "Khởi tạo phiên thực tập"
+                )}
               </button>
               <button
                 type="button"

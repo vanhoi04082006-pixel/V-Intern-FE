@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
-import { Empty, Pager, buttonClass, inputClass } from "@/components/product/primitives";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Empty, Pager, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { Can } from "@/components/auth/can";
@@ -219,7 +219,7 @@ export function MemberSelector({
       )}
       {Boolean(action.error) && <ErrorState error={action.error} />}
       {results.loading ? (
-        <p role="status" className="p-3 text-body text-muted-foreground">Đang tìm ứng viên...</p>
+        <LoadingState label="Đang tìm ứng viên..." />
       ) : results.error ? (
         <ErrorState error={results.error} onRetry={results.reload} />
       ) : !results.data || results.data.items.length === 0 ? (
@@ -268,7 +268,10 @@ export function MemberSelector({
                           {detail ? (
                             <CandidateInterviewSummary detail={detail} />
                           ) : (
-                            "Đang tải chi tiết phỏng vấn…"
+                            <span className="inline-flex items-center gap-2">
+                              <Spinner className="size-3.5" />
+                              Đang tải chi tiết phỏng vấn…
+                            </span>
                           )}
                         </div>
                       )}

@@ -10,6 +10,7 @@ import {
   Empty,
   inputClass,
   buttonClass,
+  Spinner,
   
   Pager,
   InlineAlert,
@@ -302,7 +303,13 @@ export function ReportsWorkspace({
               Boolean(from && to && from > to)
             }
           >
-            {busy ? "Đang xử lý…" : "Tạo và lưu báo cáo"}
+            {busy ? (
+              <>
+                <Spinner className="size-3.5" />Đang xử lý…
+              </>
+            ) : (
+              "Tạo và lưu báo cáo"
+            )}
           </button>
         </form>
       </Panel>

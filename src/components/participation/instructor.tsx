@@ -5,6 +5,7 @@ import {
   Field,
   Pager,
   Empty,
+  Spinner,
   btn,
   selectClass,
 } from "@/components/product/primitives";
@@ -168,7 +169,13 @@ function SessionReport({ sessionId }: { sessionId: string }) {
                 disabled={busy || report.loading}
                 onClick={refresh}
               >
-                {busy ? "Đang đối chiếu…" : "Đối chiếu ngay"}
+                {busy ? (
+                  <>
+                    <Spinner className="size-3.5" />Đang đối chiếu…
+                  </>
+                ) : (
+                  "Đối chiếu ngay"
+                )}
               </button>
               <button
                 type="button"

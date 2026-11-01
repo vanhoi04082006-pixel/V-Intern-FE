@@ -8,6 +8,7 @@ import {
   IconUserRound,
 } from "@/components/v-intern/icons";
 import { Sparkles } from "@/components/animate-ui/icons/sparkles";
+import { Spinner } from "@/components/product/primitives";
 import {
   conversationNext,
   conversationView,
@@ -211,7 +212,15 @@ export function ConversationInterview() {
             </div>
           </article>
         ))}
-        {!chat && !error && <p role="status">Đang khôi phục hội thoại…</p>}
+        {!chat && !error && (
+          <p
+            role="status"
+            className="inline-flex items-center gap-2 text-body text-muted-foreground"
+          >
+            <Spinner className="size-3.5" />
+            Đang khôi phục hội thoại…
+          </p>
+        )}
         {(working || current?.status === "generating") && (
           <p
             role="status"

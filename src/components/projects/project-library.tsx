@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
   Empty,
   PageTitle,
@@ -116,9 +116,7 @@ export function ProjectLibrary({
         </select>
       </div>
       {data.loading ? (
-        <p role="status" className="p-4 text-body text-muted-foreground">
-          Đang tải thư viện...
-        </p>
+        <LoadingState label="Đang tải thư viện..." />
       ) : data.error ? (
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : !data.data || data.data.items.length === 0 ? (

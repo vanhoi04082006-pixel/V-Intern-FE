@@ -6,8 +6,8 @@ import {
 } from "@/components/instructor/instructor-ui";
 import { priorityLabels } from "@/lib/api/work";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
-import { Empty, buttonClass, inputClass } from "@/components/product/primitives";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Empty, Spinner, btn, buttonClass, inputClass } from "@/components/product/primitives";
 import { StampMoc } from "@/components/workspace/notebook";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
@@ -172,9 +172,7 @@ function AiPlanWorkspace({
   return (
     <Panel title="Kế hoạch AI">
       {plans.loading ? (
-        <p role="status" className="p-2 text-body text-muted-foreground">
-          Đang tải kế hoạch…
-        </p>
+        <LoadingState label="Đang tải kế hoạch…" />
       ) : plans.error ? (
         <ErrorState error={plans.error} onRetry={plans.reload} />
       ) : items.length === 0 ? (
@@ -194,7 +192,13 @@ function AiPlanWorkspace({
                 disabled={action.busy}
                 onClick={() => void regenerate()}
               >
-                {action.busy ? "Đang yêu cầu…" : "Tạo kế hoạch AI"}
+                {action.busy ? (
+                  <>
+                    <Spinner className="size-3.5" />Đang yêu cầu…
+                  </>
+                ) : (
+                  "Tạo kế hoạch AI"
+                )}
               </button>
             </>
           )}
@@ -222,18 +226,30 @@ function AiPlanWorkspace({
               disabled={
                 action.busy || generating || plan?.status === "confirmed"
               }
-              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
+              className={btn("secondary", "sm")}
               onClick={() => void regenerate()}
             >
-              {action.busy ? "Đang…" : "Tạo lại"}
+              {action.busy ? (
+                <>
+                  <Spinner className="size-3.5" />Đang…
+                </>
+              ) : (
+                "Tạo lại"
+              )}
             </button>
             <button
               type="button"
               disabled={action.busy || generating || plan?.status === "confirmed"}
-              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
+              className={btn("secondary", "sm")}
               onClick={() => void previewDraft()}
             >
-              {action.busy ? "Đang…" : "Xem bản nháp"}
+              {action.busy ? (
+                <>
+                  <Spinner className="size-3.5" />Đang…
+                </>
+              ) : (
+                "Xem bản nháp"
+              )}
             </button>
           </div>
           {generating && (
@@ -242,9 +258,7 @@ function AiPlanWorkspace({
             </p>
           )}
           {detail.loading ? (
-            <p role="status" className="p-2 text-caption text-muted-foreground">
-              Đang tải chi tiết…
-            </p>
+            <LoadingState label="Đang tải chi tiết…" />
           ) : detail.error ? (
             <ErrorState error={detail.error} />
           ) : plan?.status === "failed" ? (
@@ -339,7 +353,13 @@ function AiPlanWorkspace({
                   className={buttonClass}
                   onClick={() => void confirmDraft()}
                 >
-                  {action.busy ? "Đang phát hành…" : "Xác nhận & phát hành"}
+                  {action.busy ? (
+                    <>
+                      <Spinner className="size-3.5" />Đang phát hành…
+                    </>
+                  ) : (
+                    "Xác nhận & phát hành"
+                  )}
                 </button>
               ) : (
                 <>

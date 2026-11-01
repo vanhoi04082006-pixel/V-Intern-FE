@@ -22,7 +22,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import type { Task } from "@/lib/api/work";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { StampMoc } from "@/components/workspace/notebook";
-import { Badge, buttonClass, Empty, inputClass, Panel } from "./primitives";
+import { Badge, buttonClass, Empty, inputClass, Panel, Spinner } from "./primitives";
 
 const statuses = {
   submitted: "Đợi AI / giảng viên review",
@@ -174,7 +174,13 @@ export function CodeSubmissions({
           </label>
           <div className="flex justify-end">
             <button disabled={busy} className={buttonClass}>
-              {busy ? "Đang xác minh code…" : "Nộp code để review"}
+              {busy ? (
+                <>
+                  <Spinner className="size-3.5" />Đang xác minh code…
+                </>
+              ) : (
+                "Nộp code để review"
+              )}
             </button>
           </div>
           {sent && (
@@ -560,7 +566,13 @@ function AiCodeReview({
           onClick={() => void run()}
           className={buttonClass}
         >
-          {busy ? "AI đang kiểm tra…" : "Chấm / thử lại bằng AI"}
+          {busy ? (
+            <>
+              <Spinner className="size-3.5" />AI đang kiểm tra…
+            </>
+          ) : (
+            "Chấm / thử lại bằng AI"
+          )}
         </button>
       )}
       <button onClick={data.reload} className="ml-4 rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">

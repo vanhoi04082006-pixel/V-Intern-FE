@@ -12,7 +12,7 @@ import { SessionRepositoryCard } from "@/components/product/github-connection";
 import { getSessionUser } from "@/lib/auth/session";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
   Badge,
   Empty,
@@ -182,12 +182,7 @@ export function SessionOverview({
     handledSectionLink.current = true;
   }, [basePath, data.data, delivery.loading, plans.loading]);
 
-  if (data.loading)
-    return (
-      <p role="status" className="p-4 text-body text-muted-foreground">
-        Đang tải phiên…
-      </p>
-    );
+  if (data.loading) return <LoadingState label="Đang tải phiên…" />;
   if (data.error || !data.data)
     return <ErrorState error={data.error} onRetry={data.reload} />;
   const session = data.data;
@@ -339,7 +334,7 @@ export function SessionOverview({
       {delivery.error ? (
         <ErrorState error={delivery.error} onRetry={delivery.reload} />
       ) : null}
-      {delivery.loading && <p role="status">Đang tải Sprint/nhiệm vụ…</p>}
+      {delivery.loading && <LoadingState label="Đang tải Sprint/nhiệm vụ…" />}
 
       <div id="session-work" className="ins-section">
         <Panel title={`Nhiệm vụ (${totalTasks})`}>
@@ -393,7 +388,7 @@ export function SessionOverview({
             )}
           </div>
           {delivery.loading ? (
-            <p role="status">Đang tải danh sách nhiệm vụ...</p>
+            <LoadingState label="Đang tải danh sách nhiệm vụ..." />
           ) : delivery.error ? null : tasks.length === 0 ? (
             <Empty>
               {Object.values(filters).some(Boolean) ? (
@@ -471,7 +466,7 @@ export function SessionOverview({
       <div id="session-sprints" className="ins-section">
         <Panel title="Sprint">
           {delivery.loading ? (
-            <p role="status">Đang tải danh sách Sprint...</p>
+            <LoadingState label="Đang tải danh sách Sprint..." />
           ) : delivery.error ? null : sprints.length === 0 ? (
             <Empty>
               Chưa có Sprint. Xác nhận kế hoạch AI để tạo Sprint và nhiệm vụ.
