@@ -12,6 +12,21 @@
   --font-handwriting: var(--font-patrick-hand), cursive;
   --font-hand: var(--font-patrick-hand), cursive;
   --color-canvas: #fbfaf4;
+
+  /* Bậc bóng mực CTA (ink shadow ladder) — một nhịp duy nhất cho mọi nút
+     bối cảnh landing: nghỉ 4px / hover 6px / nhấn 2px, màu mực theo bối cảnh.
+     Bóng trang trí (badge, bong bóng, polaroid) vẫn viết tay theo ngữ cảnh. */
+  --shadow-ink-2: 2px 2px 0 0 var(--ink);
+  --shadow-ink-4: 4px 4px 0 0 var(--ink);
+  --shadow-ink-6: 6px 6px 0 0 var(--ink);
+  --shadow-hard-2: 2px 2px 0 0 var(--hard-shadow);
+  --shadow-hard-4: 4px 4px 0 0 var(--hard-shadow);
+  --shadow-hard-6: 6px 6px 0 0 var(--hard-shadow);
+  --shadow-coal-2: 2px 2px 0 0 var(--coal);
+  --shadow-coal-4: 4px 4px 0 0 var(--coal);
+  --shadow-coal-6: 6px 6px 0 0 var(--coal);
+  --shadow-marker-4: 4px 4px 0 0 rgba(32, 96, 240, 0.9);
+  --shadow-marker-6: 6px 6px 0 0 rgba(32, 96, 240, 0.9);
 }
 
 html {

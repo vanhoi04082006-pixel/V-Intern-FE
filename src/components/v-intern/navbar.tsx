@@ -69,7 +69,7 @@ export function Navbar() {
           <LiquidButton
             asChild
             delay="0.35s"
-            className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] hover:shadow-[5px_5px_0_0_var(--ink)] active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
+            className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-ink-4 hover:shadow-ink-6 active:shadow-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
           >
             <Link href="/login">
               Bắt đầu
@@ -123,7 +123,7 @@ export function Navbar() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-ink bg-royal text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-ink bg-royal text-sm font-bold text-white shadow-ink-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
             >
               Bắt đầu
               <IconArrowRight className="h-4 w-4" aria-hidden="true" />

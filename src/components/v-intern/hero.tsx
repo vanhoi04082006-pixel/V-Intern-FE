@@ -228,7 +228,7 @@ export function Hero() {
                 asChild
                 delay="0.35s"
                 fillHeight="4px"
-                className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-[4px_4px_0_0_var(--ink)] hover:shadow-[6px_6px_0_0_var(--ink)] active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
+                className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-ink-4 hover:shadow-ink-6 active:shadow-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
               >
                 <Link href="/login">
                   Bắt đầu ngay
@@ -242,7 +242,7 @@ export function Hero() {
                 asChild
                 delay="0.35s"
                 fillHeight="4px"
-                className="inline-flex h-[52px] items-center rounded-xl border-2 border-ink bg-raised px-7 text-sm font-bold text-ink shadow-[4px_4px_0_0_var(--hard-shadow)] hover:border-blue hover:shadow-[6px_6px_0_0_var(--hard-shadow)] active:shadow-[2px_2px_0_0_var(--hard-shadow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--paper-raised)] [--liquid-button-color:var(--blue)] hover:text-white"
+                className="inline-flex h-[52px] items-center rounded-xl border-2 border-ink bg-raised px-7 text-sm font-bold text-ink shadow-hard-4 hover:border-blue hover:shadow-hard-6 active:shadow-hard-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--paper-raised)] [--liquid-button-color:var(--blue)] hover:text-white"
               >
                 <Link href="#how-it-works">Tìm hiểu thêm</Link>
               </LiquidButton>

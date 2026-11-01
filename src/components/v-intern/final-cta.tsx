@@ -69,7 +69,7 @@ export function FinalCta() {
               asChild
               delay="0.35s"
               fillHeight="4px"
-              className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-coal bg-white px-8 text-sm font-extrabold text-coal shadow-[5px_5px_0_0_var(--coal)] hover:shadow-[7px_7px_0_0_var(--coal)] active:shadow-[2px_2px_0_0_var(--coal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-royal [--liquid-button-background-color:var(--paper)] [--liquid-button-color:var(--coal)] hover:text-white"
+              className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-coal bg-white px-8 text-sm font-extrabold text-coal shadow-coal-4 hover:shadow-coal-6 active:shadow-coal-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-royal [--liquid-button-background-color:var(--paper)] [--liquid-button-color:var(--coal)] hover:text-white"
             >
               <Link href="/login">
                 Viết trang đầu tiên
