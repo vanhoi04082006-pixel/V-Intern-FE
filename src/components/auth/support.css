@@ -9,7 +9,9 @@
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
   background-size: 30px 30px;
 }
-.app-surface .support-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); width: 100%; max-width: var(--layout-max); margin-inline: auto; padding: var(--space-5) var(--space-8); }
+/* v6 Gọn: header và lưới auth dùng chung một max-width (76rem) — mép trái
+   logo thẳng hàng với cột giới thiệu, không lệch trên màn rộng. */
+.app-surface .support-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); width: 100%; max-width: 76rem; margin-inline: auto; padding: var(--space-5) var(--space-8); }
 .app-surface .support-back { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--touch-min); border-radius: var(--radius-control-value); padding-inline: var(--space-3); font-size: var(--type-small); font-weight: var(--weight-medium); color: var(--muted-foreground); }
 .app-surface .support-back:hover { background: var(--muted); color: var(--foreground); }
 .app-surface .auth-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--space-16); max-width: 76rem; margin-inline: auto; padding: var(--space-8) var(--space-8) var(--space-16); }

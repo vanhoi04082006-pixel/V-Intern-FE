@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import {
@@ -48,7 +48,11 @@ interface RegisterFormProps {
   previewState?: RegisterFormPreviewState;
 }
 
+const hydrationSubscribe = () => () => {};
 export function RegisterForm({ previewState }: RegisterFormProps) {
+  /* v6: cùng guard hydration như login — tránh submit đôi khi HTML
+     server chưa kịp hydration (double-fire request). */
+  const hydrated = useSyncExternalStore(hydrationSubscribe, () => true, () => false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -347,7 +351,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
 
         <LiquidButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!hydrated || isSubmitting}
           delay="0.32s"
           className={cn(
             "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground",
