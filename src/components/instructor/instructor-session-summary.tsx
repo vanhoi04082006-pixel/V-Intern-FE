@@ -37,7 +37,7 @@ export function InstructorSessionSummary({
       className="ins-operations"
       aria-label="Tình hình các phiên đang hiển thị"
     >
-      <dl className="ins-metric-grid">
+      <dl className="ins-metric-grid nb-stagger">
         {[
           {
             label: "Phiên theo bộ lọc",
@@ -92,7 +92,7 @@ export function InstructorSessionSummary({
           <p>Đi thẳng đến bài chờ duyệt hoặc phiên cần theo dõi.</p>
         </header>
         {attention.length ? (
-          <ul>
+          <ul className="nb-stagger">
             {attention.map((row) => (
               <li key={row.id}>
                 <div>
