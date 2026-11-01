@@ -83,7 +83,9 @@ export function KnowledgeRunMonitor({
   );
 
   return (
-    <Panel title="Truy vấn tri thức (Agent)">
+    /* v5 Mượt: khối truy vấn tri thức vào khung chậm hơn trang một nhịp
+       (nb-rise + delay) như đặt tờ giấy phụ xuống sau trang chính. */
+    <Panel title="Truy vấn tri thức (Agent)" className="nb-rise nb-delay-2">
       <form
         className="space-y-4"
         onSubmit={(e) => {

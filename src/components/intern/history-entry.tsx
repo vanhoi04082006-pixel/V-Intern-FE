@@ -24,10 +24,11 @@ export function HistoryEntry({ onReload, refreshing }: { onReload: () => void; r
       action={<StudentLink secondary href="/intern/notifications">Xem thông báo</StudentLink>}
     />
     <section aria-label="Truy cập kết quả thực tập">
-      {/* Thẻ chờ hành động: viền đứt đường cắt giấy (đặc tả Lớp 8 — empty edge). */}
-      <ul className="grid gap-3 sm:grid-cols-3">
+      {/* Thẻ chờ hành động: viền đứt đường cắt giấy (đặc tả Lớp 8 — empty edge);
+          v5 Mượt: 3 thẻ vào khung lần lượt (nb-stagger), thẻ lún nhẹ khi nhấn (nb-press). */}
+      <ul className="grid gap-3 sm:grid-cols-3 nb-stagger">
         {destinations.map(({ href, title, description, icon: Icon }) => <li key={href}>
-          <Link href={href} className="dashed-cut group flex h-full flex-col gap-2 rounded-panel bg-card p-4 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+          <Link href={href} className="dashed-cut group flex h-full flex-col gap-2 rounded-panel bg-card p-4 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand nb-press">
             <Icon size={22} className="shrink-0 text-primary" aria-hidden="true" />
             <span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="mt-1 block text-body leading-6 text-muted-foreground">{description}</span></span>
             <IconArrowRight size={18} className="shrink-0 self-end transition-transform group-hover:translate-x-0.5" aria-hidden="true" />

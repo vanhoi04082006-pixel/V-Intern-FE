@@ -418,7 +418,7 @@ function WorkQueue() {
           để xem đầy đủ.
         </p>
       ) : open.length ? (
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-border nb-stagger">
           {open.map((task: Task) => (
             <li key={task.id}>
               <Link

@@ -15,12 +15,15 @@ export function NeutralDot({ children }: { children: ReactNode }) {
 }
 
 /** Khung nút hành động dạng dòng (Sửa, Xem, Lịch sử…) — vùng chạm tối thiểu
- *  44px + focus ring mực xanh theo v4; call-site tự thêm màu chữ. */
+ *  44px + focus ring mực xanh theo v4; call-site tự thêm màu chữ. v5: nhấn
+ *  lún 1px (nb-press) để mọi nút dòng đều có phản hồi press. */
 export const linkButtonClass =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-control px-1 text-small font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
+  "nb-press inline-flex min-h-11 items-center gap-1.5 rounded-control px-1 text-small font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
 
 /** Mục dòng thời gian — chỉ mực đứt đoạn dọc, marker đầu tiên (mới nhất) được
- *  tô đặc bằng mực xanh, các mục còn lại rỗng như đầu bài chưa chấm. */
+ *  tô đặc bằng mực xanh, các mục còn lại rỗng như đầu bài chưa chấm. v5: hover
+ *  cả mục nhấc nhẹ 2px và marker đổi mực (color shift) — phản hồi mượt, tắt khi
+ *  người dùng yêu cầu giảm chuyển động. */
 export function TimelineItem({
   current = false,
   children,
@@ -32,7 +35,7 @@ export function TimelineItem({
 }) {
   return (
     <li
-      className={`relative border-l-2 border-dashed border-primary/45 pb-6 pl-6 last:pb-0 motion-safe:animate-paper-settle ${
+      className={`group relative border-l-2 border-dashed border-primary/45 pb-6 pl-6 last:pb-0 motion-safe:animate-paper-settle transition-transform motion-safe:hover:-translate-y-0.5 ${
         className ?? ""
       }`}
     >
@@ -40,8 +43,8 @@ export function TimelineItem({
         aria-hidden="true"
         className={
           current
-            ? "absolute -left-[7px] top-0 size-4 rounded-full bg-primary ring-4 ring-primary/20"
-            : "absolute -left-[7px] top-0.5 size-4 rounded-full border-2 border-primary/45 bg-card"
+            ? "absolute -left-[7px] top-0 size-4 rounded-full bg-primary ring-4 ring-primary/20 transition-shadow motion-safe:group-hover:ring-primary/40"
+            : "absolute -left-[7px] top-0.5 size-4 rounded-full border-2 border-primary/45 bg-card transition-colors group-hover:border-primary group-hover:bg-primary/10"
         }
       />
       {children}

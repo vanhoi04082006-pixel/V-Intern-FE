@@ -63,7 +63,7 @@ async function mutate(page, suffix, method, click, expectedStatus = 201) {
   return response.json();
 }
 try {
-  const context = await browser.newContext({
+  const context = await browser.newContext({ reducedMotion: "reduce", 
       viewport: { width: 1440, height: 1000 },
     }),
     page = await context.newPage(),

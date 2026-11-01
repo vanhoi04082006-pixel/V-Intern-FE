@@ -398,6 +398,10 @@
 .aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:nth-child(even) {
   background: color-mix(in srgb, var(--ink) 2.5%, transparent);
 }
+.aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr {
+  /* v5 Mượt: hover rửa mực không còn snap — tự khai báo thay vì trông chờ baseline. */
+  transition: background-color var(--motion-fast) var(--motion-ease);
+}
 .aurora-workspace :is(.product-table, .workspace-table, .student-table) tbody tr:hover {
   background: color-mix(in srgb, var(--blue) 6%, transparent);
 }

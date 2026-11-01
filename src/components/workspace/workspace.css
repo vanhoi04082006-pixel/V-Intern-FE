@@ -463,7 +463,7 @@
 .workspace-filter-summary strong { color: var(--ws-ink); font-weight: 650; }
 .workspace-filter-summary button { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--ws-primary); min-height: 36px; padding: 0 var(--space-1); border-radius: 4px; font-weight: 600; }
 .workspace-filter-applied { display: inline-block; padding-left: var(--space-3); color: var(--ws-primary); }
-.workspace-work-columns { display: grid; grid-template-columns: minmax(0, 1fr) 164px 132px; gap: var(--space-5); padding: var(--space-2) 0 var(--space-2) var(--space-4); background: var(--ws-canvas); color: var(--ws-muted); font-size: var(--type-caption); font-weight: 600; }
+.workspace-work-columns { display: grid; grid-template-columns: minmax(0, 1fr) 164px 132px; gap: var(--space-5); padding: var(--space-2) 0; background: transparent; color: var(--ws-muted); font-size: var(--type-caption); font-weight: 600; }
 .workspace-deadline { display: inline-flex; gap: var(--space-1); align-items: flex-start; color: var(--ws-muted); font-size: var(--type-caption); text-align: left; }
 .workspace-deadline > svg { margin-top: var(--space-1); flex-shrink: 0; }
 .workspace-deadline time { display: grid; gap: var(--space-1); line-height: 1.4; }

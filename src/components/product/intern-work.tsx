@@ -620,7 +620,7 @@ function TaskContent({
       {!managed ? (
         <>
           <div className="student-detail-grid">
-            <div className="student-stack">
+            <div className="student-stack nb-stagger">
               <StudentPanel title="Mô tả công việc" icon={IconFileText}>
                 <p className="whitespace-pre-wrap text-small leading-8 text-muted-foreground">
                   {task.description?.trim()
@@ -709,7 +709,7 @@ function TaskContent({
               <TaskSpec id={task.id} own />
             </div>
 
-            <aside className="student-stack">
+            <aside className="student-stack nb-stagger">
               <StudentPanel title="Thông tin nhiệm vụ" icon={IconClipboardCheck}>
                 <dl className="student-info-list">
                   <div className="student-info-row">
@@ -868,7 +868,7 @@ function TaskContent({
                   )
                 )}
                 <form
-                  className="mt-4 space-y-2"
+                  className="mt-5 space-y-2 border-t border-border pt-4"
                   onSubmit={(e) => {
                     e.preventDefault();
                     void comment();
@@ -900,7 +900,7 @@ function TaskContent({
         </>
       ) : (
         <div className="workspace-review-layout">
-          <div className="workspace-review-main">
+          <div className="workspace-review-main nb-stagger">
           <div className="flex flex-wrap gap-2">
             {managerTransitions(task.status)
               .filter(
@@ -926,7 +926,7 @@ function TaskContent({
           <TaskSpec id={task.id} />
           <CodeSubmissions task={task} managed onUpdated={reload} />
           </div>
-          <aside className="workspace-review-aside">
+          <aside className="workspace-review-aside nb-stagger">
           <Panel title="Bình luận">
             {comments.loading ? (
               <LoadingState />
@@ -957,7 +957,7 @@ function TaskContent({
               )
             )}
             <form
-              className="mt-4 space-y-2"
+              className="mt-5 space-y-2 border-t border-border pt-4"
               onSubmit={(e) => {
                 e.preventDefault();
                 void comment();

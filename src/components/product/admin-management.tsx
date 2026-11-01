@@ -350,7 +350,7 @@ export function AdminUsers() {
                             "Đăng nhập gần nhất",
                             "Thao tác",
                           ].map((x) => (
-                            <th key={x} className="p-3">
+                            <th key={x} className={`p-3 ${x === "Thao tác" ? "text-right" : ""}`}>
                               {x}
                             </th>
                           ))}
@@ -400,9 +400,9 @@ export function AdminUsers() {
                                 : "Chưa đăng nhập"}
                             </td>
                             <td className="p-3">
-                              <div className="flex flex-col items-start gap-2">
+                              <div className="flex flex-col items-end gap-2">
                                 <button
-                                  className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
+                                  className={`${linkButtonClass} text-primary hover:underline underline-offset-4`}
                                   onClick={() => { setNotice(""); setEdit(u); }}
                                 >
                                   Sửa tài khoản

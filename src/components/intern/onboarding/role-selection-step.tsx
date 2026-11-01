@@ -43,7 +43,8 @@ function ManualRoleSelectionStep() {
       {catalog.data?.length === 0 && <NotebookEmpty className="mt-8" title="Chưa có vị trí đang tuyển" hint="Liên hệ giảng viên hoặc quay lại khi có đợt tuyển mới nhé!" />}
       <fieldset disabled={busy || catalog.loading || Boolean(catalog.error)} className="mt-8">
         <legend className="sr-only">Chọn vị trí ứng tuyển</legend>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {/* v5 Mượt: các thẻ vị trí vào khung lần lượt (nb-stagger) khi catalog tải xong. */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 nb-stagger">
           {roles.map((role) => (
             <RoleCard
               key={role.id}

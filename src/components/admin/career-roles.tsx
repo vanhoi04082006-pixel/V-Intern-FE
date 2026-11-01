@@ -22,7 +22,7 @@ export function CareerRoles() {
   const state = useResource(useCallback((signal: AbortSignal) => listCareerRoles(new URLSearchParams({ page: String(page), search, ...(status ? { status } : {}) }), signal), [page, search, status]));
   const action = useAction();
   const saved = (message: string) => { setEditor(null); setNotice(message); state.reload(); };
-  return <div className="space-y-6">
+  return <div className="nb-swap space-y-6">
     <PageTitle title="Thư viện nghề nghiệp" subtitle="Định nghĩa vị trí tuyển dụng, năng lực và trạng thái nhận hồ sơ. Nghề nghiệp tách biệt với vai trò và quyền tài khoản." action={<button className={buttonClass} onClick={() => { setNotice(''); setEditor('new'); }}><IconPlus size={16} aria-hidden />Thêm nghề nghiệp</button>} />
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
       <p className="max-w-2xl text-body leading-6 text-muted-foreground">Soạn bản nháp → hoàn thiện kỹ năng và trọng số → xuất bản → mở nhận hồ sơ. Trước khi phỏng vấn, cần đủ câu hỏi cho nghề đã chọn.</p>
@@ -33,7 +33,7 @@ export function CareerRoles() {
       <label className="min-w-0 flex-1 text-body font-medium">Tìm nghề nghiệp<input className={inputClass} placeholder="Tên hoặc mã nghề nghiệp" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} /></label>
       <label className="w-full text-body font-medium sm:w-52">Trạng thái<select className={inputClass} value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}><option value="">Tất cả trạng thái</option>{careerStatuses.map(status => <option key={status} value={status}>{careerStatusLabels[status]}</option>)}</select></label>
     </div>
-    {state.loading && !state.data ? <LoadingState /> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : state.data?.items.length ? <ul className="divide-y divide-border border-y border-border" aria-label="Danh sách nghề nghiệp">
+    {state.loading && !state.data ? <LoadingState /> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : state.data?.items.length ? <ul className="nb-stagger divide-y divide-border border-y border-border" aria-label="Danh sách nghề nghiệp">
       {state.data.items.map(role => <li key={role.code} className="grid gap-4 py-5 lg:grid-cols-[minmax(0,1fr)_12rem_auto] lg:items-center">
         <div className="min-w-0"><div className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h2 className="text-subsection font-semibold text-foreground">{role.name}</h2><span className="break-all font-mono text-caption text-muted-foreground">{role.code}</span></div><p className="mt-1 line-clamp-2 text-body leading-6 text-muted-foreground">{role.description || 'Chưa có mô tả. Hoàn thiện trước khi xuất bản.'}</p><p className="mt-2 text-caption text-muted-foreground">{role.requiredSkills.join(' · ') || 'Chưa xác định kỹ năng'} · Phiên bản {role.version}</p></div>
         <div className="space-y-1">{role.status === 'published' ? <StatusDot tone="green">{careerStatusLabels[role.status]}</StatusDot> : role.status === 'archived' ? <NeutralDot>{careerStatusLabels[role.status]}</NeutralDot> : <StatusDot tone="amber">{careerStatusLabels[role.status]}</StatusDot>}<p className="text-caption text-muted-foreground">{role.acceptingApplications ? 'Đang nhận hồ sơ' : 'Đóng nhận hồ sơ'}</p></div>

@@ -101,8 +101,10 @@ export function OnboardingProgress({
       aria-valuenow={clamped}
       className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
     >
+      {/* v5 Mượt: rút mực từ 0 tới tiến độ hiện tại (nb-fill ăn mực với
+          transform scaleX inline — keyframe from scaleX(0) thẳng tới giá trị). */}
       <div
-        className="h-full origin-left rounded-full bg-primary"
+        className="h-full origin-left rounded-full bg-primary nb-fill"
         style={{ transform: `scaleX(${clamped / 100})` }}
       />
     </div>

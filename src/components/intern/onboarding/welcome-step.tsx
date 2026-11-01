@@ -87,7 +87,8 @@ export function WelcomeStep() {
           {WELCOME_INFO_QUESTION}
         </h2>
 
-        <ul className="workspace-onboarding-facts mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {/* v5 Mượt: 4 khối giải thích vào khung lần lượt (nb-stagger). */}
+        <ul className="workspace-onboarding-facts mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 nb-stagger">
           {WELCOME_INFO_ITEMS.map((item) => (
             <li
               key={item.id}

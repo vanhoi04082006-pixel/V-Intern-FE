@@ -19,7 +19,7 @@ async function login(page) {
   await page.locator("h1").waitFor();
 }
 async function scenario(name, run) {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const context = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 900 } });
   const errors = [];
   context.on("page", page => {
     page.on("pageerror", e => errors.push(e.message));

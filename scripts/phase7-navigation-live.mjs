@@ -92,7 +92,7 @@ async function login(page, role) {
 }
 try {
   for (const role of Object.keys(routes)) {
-    const context = await browser.newContext({
+    const context = await browser.newContext({ reducedMotion: "reduce", 
       viewport: { width: 1440, height: 1000 },
     });
     const page = await context.newPage(),
@@ -251,7 +251,7 @@ try {
     });
     await context.close();
   }
-  const publicContext = await browser.newContext(),
+  const publicContext = await browser.newContext({ reducedMotion: "reduce" }),
     publicPage = await publicContext.newPage();
   for (const route of [
     "/",

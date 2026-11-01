@@ -1,0 +1,107 @@
+/* Hallmark · V-Intern · v5 "Mượt mà & Gọn gàng" — motion foundation.
+   Ba tầng:
+   1) Baseline :where() specificity 0 — mọi phần tử tương tác chuẩn đổi màu/
+      nền/viền/bóng đều mượt; không đè bất kỳ transition tự khai báo nào.
+   2) Scroll mượt + scrollbar thumb transition.
+   3) (v5 commit sau) Enter kit nb-* cho nội dung: rise/fade/stagger/press/fill. */
+
+/* ------------------------------------------------------------------ */
+/* 1. Motion baseline — chống "snap" khi hover/press/focus             */
+/* ------------------------------------------------------------------ */
+/* Audit v5 phát hiện ~55 điểm giật: state block đổi background/color/
+   box-shadow nhưng transition chỉ khai báo transform/border, hoặc không
+   có transition nào. Baseline này phủ mọi phần tử tương tác phổ biến;
+   rule tự khai báo (specificity ≥ 0,1,0) luôn thắng :where() (0). */
+:where(a, button, input, select, textarea, summary, label, [tabindex],
+  tbody tr, .workspace-session-row, .student-work-row,
+  .workspace-view-links a, .workspace-chart-legend button,
+  .workspace-document-index a, .workspace-session-comparison li > a,
+  .student-nav-item, .student-user-card, .student-breadcrumb a,
+  .student-search-results a, .student-icon-button, .student-topbar-user,
+  .student-action, .student-quick-link, .student-conversation,
+  .student-section-nav a, .student-pref-row, .student-switch,
+  .student-segmented button, .student-prompt-grid button,
+  .ins-back, .instructor-hero-cta, .ins-queue-action,
+  .ins-section-nav a, .ins-task-row, .ins-report-card,
+  .admin-selection-row, .admin-configuration-item,
+  .admin-template-actions button,
+  .support-back, .student-drawer-close, .student-help-disclosure > summary,
+  .product-panel tbody tr) {
+  transition-property:
+    color, background-color, border-color, outline-color, box-shadow,
+    transform, translate, rotate, opacity, filter, text-decoration-color;
+  transition-duration: var(--motion-fast, 160ms);
+  transition-timing-function: var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1));
+}
+
+/* Scrollbar thumb đổi nền khi hover cũng cần nhịp — audit globals.css:1073. */
+::-webkit-scrollbar-thumb {
+  transition: background-color var(--motion-fast, 160ms) var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)),
+    border-color var(--motion-fast, 160ms) var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1));
+}
+
+/* Cuộn mượt cho anchor jump / focus jump; tắt khi người dùng yêu cầu giảm chuyển động. */
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  :where(a, button, input, select, textarea, summary, label, [tabindex],
+    tbody tr, .workspace-session-row, .student-work-row) {
+    transition-duration: 0ms;
+  }
+  ::-webkit-scrollbar-thumb { transition: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Enter kit nb-* — nội dung vào khung như đặt tờ giấy xuống       */
+/* ------------------------------------------------------------------ */
+/* Dùng cho container nội dung (page/panel/list). Nhẹ: tối đa 320ms,
+   dịch 10px, ease mực. Stagger cap 10 phần tử (sau đó giữ delay cuối). */
+@keyframes nb-rise {
+  from { opacity: 0; transform: translateY(10px); }
+}
+@keyframes nb-fade {
+  from { opacity: 0; }
+}
+@keyframes nb-fill {
+  from { transform: scaleX(0); }
+}
+@keyframes nb-swap {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+.nb-rise { animation: nb-rise 320ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+.nb-fade { animation: nb-fade 240ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+.nb-swap { animation: nb-swap 200ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+/* Delay bước cho kết hợp nb-fade/nb-rise (viết sau shorthand để thắng delay 0s). */
+.nb-delay-1 { animation-delay: 70ms; }
+.nb-delay-2 { animation-delay: 140ms; }
+
+/* Thanh tiến độ rút mực từ 0 → giá trị hiện tại (scaleX, không reflow).
+   Gắn cho phần tử fill đã set width bằng inline style/attribute. */
+.nb-fill {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+
+/* Nhấn lún 1px — gắn cho chip/tag/pill/card thiếu phản hồi press. */
+.nb-press { cursor: pointer; }
+.nb-press:active { transform: translateY(1px); }
+
+/* Stagger: con trực tiếp xuất hiện lần lượt, mỗi con +45ms (cap 10). */
+.nb-stagger > * { animation: nb-rise 300ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+.nb-stagger > *:nth-child(2) { animation-delay: 45ms; }
+.nb-stagger > *:nth-child(3) { animation-delay: 90ms; }
+.nb-stagger > *:nth-child(4) { animation-delay: 135ms; }
+.nb-stagger > *:nth-child(5) { animation-delay: 180ms; }
+.nb-stagger > *:nth-child(6) { animation-delay: 225ms; }
+.nb-stagger > *:nth-child(7) { animation-delay: 270ms; }
+.nb-stagger > *:nth-child(8) { animation-delay: 315ms; }
+.nb-stagger > *:nth-child(9) { animation-delay: 360ms; }
+.nb-stagger > *:nth-child(n + 10) { animation-delay: 405ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nb-rise, .nb-fade, .nb-swap, .nb-fill { animation: none; }
+  .nb-press:active { transform: none; }
+  .nb-stagger > *, .nb-stagger > *:nth-child(n + 10) { animation: none; animation-delay: 0ms; }
+}

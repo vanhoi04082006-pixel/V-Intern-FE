@@ -32,7 +32,7 @@ const errors = [],
   viewports = [],
   code = `G2-QA-${Date.now()}`,
   name = `Bài thực hành ${code}`;
-const adminContext = await browser.newContext({ acceptDownloads: true }),
+const adminContext = await browser.newContext({ reducedMotion: "reduce",  acceptDownloads: true }),
   admin = await adminContext.newPage();
 admin.on("pageerror", (error) => errors.push(error.message));
 async function login(page, email, role) {
@@ -281,7 +281,7 @@ try {
       },
     },
   });
-  const teacherContext = await browser.newContext({ acceptDownloads: true }),
+  const teacherContext = await browser.newContext({ reducedMotion: "reduce",  acceptDownloads: true }),
     teacher = await teacherContext.newPage();
   teacher.on("pageerror", (error) => errors.push(error.message));
   await login(teacher, identities.instructor.email, "instructor");
@@ -298,7 +298,7 @@ try {
     .selectOption("2");
   await teacher.getByText("# G2-PINNED-V1", { exact: false }).waitFor();
   await snapshot(teacher, "teacher-history");
-  const learnerContext = await browser.newContext({ acceptDownloads: true }),
+  const learnerContext = await browser.newContext({ reducedMotion: "reduce",  acceptDownloads: true }),
     learner = await learnerContext.newPage();
   learner.on("pageerror", (error) => errors.push(error.message));
   const responses = [];

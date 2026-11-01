@@ -157,6 +157,11 @@
   font-weight: var(--weight-semibold);
   color: var(--muted-foreground);
   text-align: left;
+  /* v5 Mượt: đổi nền/mực khi hover và aria-current không còn giật. */
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease),
+    box-shadow var(--motion-normal) var(--motion-ease);
 }
 .student-nav-item svg {
   flex-shrink: 0;
@@ -223,6 +228,7 @@
   border-radius: var(--radius-control-value);
   padding: var(--space-2);
   color: var(--student-ink);
+  transition: background-color var(--motion-normal) var(--motion-ease);
 }
 .student-user-card:hover {
   background: var(--background);
@@ -266,6 +272,10 @@
   height: 30px;
   border-radius: var(--radius-control-value);
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    box-shadow var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-user-settings:hover {
   background: var(--card);
@@ -303,6 +313,12 @@
   border-radius: var(--radius-control-value);
   padding: var(--space-1) var(--space-1);
   color: var(--muted-foreground);
+}
+/* v5 Mượt: crumb liên kết đổi nền/mực mượt khi hover. */
+.student-breadcrumb a {
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-breadcrumb a:hover {
   background: var(--background);
@@ -385,6 +401,9 @@
   padding: var(--space-2) var(--space-3);
   font-size: var(--type-small);
   color: var(--student-navy);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-search-results a:hover,
 .student-search-results a:focus-visible {
@@ -404,6 +423,9 @@
   place-items: center;
   border-radius: var(--radius-control-value);
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 /* Nút mở drawer chỉ xuất hiện dưới breakpoint desktop (Tailwind `lg`). */
 .student-menu-button {
@@ -434,6 +456,7 @@
   gap: var(--space-2);
   border-radius: var(--radius-control-value);
   padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+  transition: background-color var(--motion-normal) var(--motion-ease);
 }
 .student-topbar-user:hover {
   background: var(--background);
@@ -518,6 +541,15 @@
   color: var(--card);
   text-decoration: none;
   box-shadow: none;
+  /* v5 Mượt: mọi biến thể (secondary/quiet/ghost/sm) đổi màu, viền, bóng,
+     transform (nhấn lún v4) và opacity (disabled) đều mượt. */
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease),
+    box-shadow var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease),
+    transform var(--motion-normal) var(--motion-ease),
+    opacity var(--motion-normal) var(--motion-ease);
 }
 .student-action:hover {
   background: var(--student-blue-strong);
@@ -563,6 +595,10 @@
   font-size: var(--type-small);
   font-weight: var(--weight-heading);
   color: var(--student-blue-strong);
+  transition:
+    color var(--motion-normal) var(--motion-ease),
+    text-decoration-color var(--motion-normal) var(--motion-ease),
+    transform var(--motion-normal) var(--motion-ease);
 }
 .student-link:hover {
   text-decoration: underline;
@@ -582,6 +618,10 @@
   font-size: var(--type-small);
   font-weight: var(--weight-semibold);
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    box-shadow var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-segmented button:hover {
   color: var(--student-navy);
@@ -815,7 +855,8 @@
 .student-metric small {
   display: block;
   margin-top: var(--space-1);
-  font-size: var(--type-caption);
+  font-size: var(--type-small);
+  font-weight: var(--weight-medium);
   line-height: 1.55;
   color: var(--muted-foreground);
 }
@@ -1031,6 +1072,7 @@
   color: var(--foreground);
   font-weight: var(--weight-semibold);
   border-radius: var(--radius-control-value);
+  transition: color var(--motion-normal) var(--motion-ease);
 }
 .student-help-disclosure > summary::after {
   content: "";
@@ -1064,6 +1106,39 @@
   display: grid;
   gap: var(--space-4);
   min-width: 0;
+}
+/* v5 Gọn: đỉnh cột phải (figure "Phân bổ nhiệm vụ") phải ăn nhịp header panel
+   cột trái — đồng bộ cỡ chữ, độ đậm và khoảng cách tới nội dung. */
+.student-stack .workspace-chart figcaption {
+  font-size: var(--type-subsection);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+.student-stack .workspace-chart figcaption > span {
+  margin-top: var(--space-1);
+}
+.student-stack .workspace-donut-layout {
+  margin-top: var(--space-4);
+}
+/* v5 Gọn: sticky note "Nhắc nhỏ" trên dashboard giảm nặng — bóng nhẹ hơn,
+   giới hạn bề rộng để không cạnh tranh với các panel trắng xung quanh. */
+.student-dashboard .sticky-note {
+  max-width: 38ch;
+  box-shadow: 0 1px 0 var(--note-yellow-shadow), 0 4px 12px var(--note-yellow-shadow);
+}
+/* v5 Mượt: fill progress bar rút mực từ 0 khi vào khung (scaleX, không reflow). */
+.student-progress progress::-webkit-progress-value {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+.student-progress progress::-moz-progress-bar {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-progress progress::-webkit-progress-value,
+  .student-progress progress::-moz-progress-bar { animation: none; }
 }
 .student-focus {
   border: 0;
@@ -1113,6 +1188,11 @@
   padding: var(--space-4) 0;
   box-shadow: none;
   border-bottom: 1px solid var(--border);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease),
+    box-shadow var(--motion-normal) var(--motion-ease),
+    transform var(--motion-normal) var(--motion-ease);
 }
 .student-quick-link:hover {
   border-color: var(--accent);
@@ -1414,7 +1494,8 @@
   transition:
     border-color var(--motion-normal) ease,
     box-shadow var(--motion-normal) ease,
-    transform var(--motion-normal) ease;
+    transform var(--motion-normal) ease,
+    background-color var(--motion-normal) var(--motion-ease);
   border-bottom: 1px solid var(--border);
   box-shadow: none;
 }
@@ -1450,6 +1531,16 @@
   align-items: flex-end;
   gap: var(--space-2);
 }
+/* v5 Gọn: cột thời hạn căn phải theo mép nút "Chi tiết" phía dưới —
+   loại đường răng cưa trái gây cảm giác lệch giữa các dòng. */
+.student-work-row .workspace-deadline {
+  justify-content: flex-end;
+  text-align: right;
+}
+.student-work-row .workspace-deadline > svg {
+  margin-top: 0;
+  order: 2;
+}
 .student-work-due {
   display: inline-flex;
   align-items: center;
@@ -1465,6 +1556,7 @@
 }
 .student-row-open {
   text-align: left;
+  transition: color var(--motion-normal) var(--motion-ease);
 }
 .student-row-open:hover {
   color: var(--student-blue-strong);
@@ -1789,6 +1881,10 @@
   line-height: 1.65;
   text-align: left;
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-prompt-grid button:hover {
   border-color: var(--primary);
@@ -1881,6 +1977,10 @@
   border-radius: var(--radius-control-value);
   padding: var(--space-2) var(--space-3);
   text-align: left;
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease),
+    box-shadow var(--motion-normal) var(--motion-ease);
 }
 .student-conversation:hover {
   background: var(--background);
@@ -1951,6 +2051,9 @@
   font-weight: var(--weight-heading);
   white-space: nowrap;
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-section-nav a:hover {
   background: var(--card);
@@ -2077,6 +2180,10 @@
   line-height: 1.6;
   vertical-align: top;
   color: var(--muted-foreground);
+}
+/* v5 Mượt: nền dòng đổi theo :hover của tr — transition nằm trên td. */
+.student-table tbody tr td {
+  transition: background-color var(--motion-normal) var(--motion-ease);
 }
 .student-table tbody tr:hover td {
   background: var(--card);
@@ -2362,6 +2469,11 @@
   font-weight: var(--weight-semibold);
   color: var(--muted-foreground);
   user-select: none;
+  /* v5 Mượt: bật/tắt bộ lọc đổi cả nền, viền và mực — không snap. */
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-filter-chip:has(input:checked) {
   border-color: var(--border);
@@ -2427,6 +2539,9 @@
   font-size: var(--type-caption);
   font-weight: var(--weight-semibold);
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease);
 }
 .student-pref-row:hover {
   border-color: var(--border);
@@ -2729,6 +2844,9 @@
   padding: var(--space-2) var(--space-3);
   font-size: var(--type-small);
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease);
 }
 .student-switch:hover {
   border-color: var(--border);
@@ -2873,6 +2991,9 @@
   place-items: center;
   border-radius: var(--radius-control-value);
   color: var(--muted-foreground);
+  transition:
+    background-color var(--motion-normal) var(--motion-ease),
+    color var(--motion-normal) var(--motion-ease);
 }
 .student-drawer-close:hover {
   background: var(--background);
@@ -3131,19 +3252,12 @@
 }
 
 /* --------------------------------------------------------- route transition --- */
+/* v5 Mượt: khung route vào mềm (nb-swap — fade + 6px rise, 200ms). Lớp gắn
+   ở src/app/intern/template.tsx; rule cũ `animation: none` (v4 tắt khi
+   student-reveal thay thế) đã nhường chỗ cho kit chung. Reduced-motion
+   guard của motion.css và khối guard dưới đây tắt hẳn hiệu ứng. */
 .student-route-frame {
   min-width: 0;
-  animation: none;
-}
-@keyframes student-route-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 8px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .student-route-frame {
@@ -3284,3 +3398,84 @@
   border-top: 2px solid
     color-mix(in srgb, var(--primary) 50%, transparent);
 }
+
+/* =========================================================================
+   v5 — "Mượt mà & Gọn gàng" (intern sweep, appended block only)
+   Bổ sung của đợt v5 cho phần intern: nhấn lún cho chip/pill/toggle,
+   rút mực cho các thanh tiến độ còn lại, và đỉnh cột biểu đồ performance
+   ăn nhịp header panel bên cạnh. Giữ prefers-reduced-motion cho từng rule.
+   ========================================================================= */
+
+/* v5 Mượt: chip/pill/toggle đóng vai nút (lọc, phân đoạn, hội thoại, tùy
+   chọn) lún 1px khi nhấn — cùng dấu ấn ngón tay với .student-action v4.
+   Các phần tử này nằm trong component ngoài scope intern (outcomes/mentor),
+   nên dùng CSS thay vì class nb-press. */
+@media (prefers-reduced-motion: no-preference) {
+  .student-experience :is(
+    .student-quick-link,
+    .student-segmented button,
+    .student-prompt-grid button,
+    .student-conversation,
+    .student-pref-row,
+    .student-switch,
+    .student-filter-chip,
+    .student-section-nav a
+  ):active {
+    transform: translateY(1px);
+  }
+}
+
+/* v5 Mượt: điểm tổng hợp (StudentScore — kết quả tuyển dụng) rút mực từ 0
+   như .student-progress ở dashboard; đôi pseudo webkit/moz + guard
+   reduced-motion riêng vì :where(*) guard không chạm vendor pseudo. */
+.student-score progress::-webkit-progress-value {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+.student-score progress::-moz-progress-bar {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-score progress::-webkit-progress-value,
+  .student-score progress::-moz-progress-bar {
+    animation: none;
+  }
+}
+
+/* v5 Mượt: track so sánh tỷ lệ (RateComparison — performance & kết quả
+   phỏng vấn) rút mực từ 0 khi vào khung, cùng nhịp dashboard. */
+.student-experience .workspace-rate-track > span {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+
+/* v5 Gọn: đỉnh cột phải trang hiệu suất (figure "Nhìn vào quá trình") ăn
+   nhịp header panel "Bước tiếp theo" bên trái — cùng cỡ chữ/độ đậm với
+   normalization .student-stack .workspace-chart figcaption ở dashboard. */
+.student-dashboard-grid .workspace-rate-chart figcaption {
+  font-size: var(--type-subsection);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+/* v5 Gọn: dải chỉ số trang hiệu suất (workspace-stat-strip đứng một mình,
+   không ghép workspace-metrics như outcomes) trước đây không có rule nào —
+   thêm viền trên/dưới đóng khung cho ăn nhịp .student-metrics dashboard,
+   và bỏ divider stray khi lưới xuống 2 cột / 1 cột. */
+.student-experience .workspace-stat-strip:not(.workspace-metrics) {
+  border-block: 1px solid var(--border);
+}
+@media (max-width: 639px) {
+  .student-experience .workspace-stat-strip:not(.workspace-metrics) .student-metric + .student-metric {
+    border-inline-start: 0;
+  }
+}
+@media (min-width: 640px) and (max-width: 1279px) {
+  .student-experience .workspace-stat-strip:not(.workspace-metrics) .student-metric:nth-child(odd) {
+    border-inline-start: 0;
+  }
+}
+
+

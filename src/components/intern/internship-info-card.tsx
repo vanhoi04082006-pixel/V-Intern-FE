@@ -30,7 +30,8 @@ export function InternshipInfoCard({
       headerClassName="xl:px-4 xl:py-2"
       bodyClassName="p-4 sm:p-5 xl:px-4 xl:py-3"
     >
-      <dl className="flex flex-col divide-y divide-border">
+      {/* v5 Mượt: từng dòng thông tin vào khung lần lượt (nb-stagger). */}
+      <dl className="flex flex-col divide-y divide-border nb-stagger">
         {rows.map((row) => {
           const toneStyle = INTERN_TONES[row.tone];
           const RowIcon = row.icon;

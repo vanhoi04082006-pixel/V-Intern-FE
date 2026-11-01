@@ -260,8 +260,9 @@ export function ProgressBar({
         className,
       )}
     >
+      {/* v5 Mượt: fill rút mực từ 0 khi vào khung (nb-fill — scaleX, không reflow). */}
       <div
-        className={cn("h-full rounded-full", INTERN_TONES[tone].bar)}
+        className={cn("h-full rounded-full nb-fill", INTERN_TONES[tone].bar)}
         style={{ width: `${clamped}%` }}
       />
     </div>

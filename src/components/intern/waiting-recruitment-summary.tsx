@@ -101,7 +101,8 @@ export function WaitingRecruitmentSummary({
         )}
         {result ? (
           <>
-            <dl className="student-result-grid">
+            {/* v5 Mượt: 3 thẻ điểm vào khung lần lượt (nb-stagger). */}
+            <dl className="student-result-grid nb-stagger">
               {[
                 ["Tổng điểm", result.overallScore],
                 ["Chuyên môn", result.technicalScore],
@@ -146,7 +147,7 @@ export function WaitingRecruitmentSummary({
                 </div>
               </div>
               {result.criteria.length > 0 && (
-                <div className="student-criteria-grid">
+                <div className="student-criteria-grid nb-stagger">
                   {result.criteria.map((c, index) => (
                     <div className="student-criterion" key={c.code}>
                       <div>
@@ -182,7 +183,7 @@ export function WaitingRecruitmentSummary({
         }
       >
         {history.items.length ? (
-          <ol className="student-timeline">
+          <ol className="student-timeline nb-stagger">
             {history.items.map((s) => (
               <li key={s.id}>
                 <span className="student-timeline-marker" aria-hidden="true">

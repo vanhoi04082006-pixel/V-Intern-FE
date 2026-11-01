@@ -15,9 +15,9 @@
   color: var(--foreground);
   background: var(--background);
 }
-.instructor-experience .ins-back { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min); color: var(--muted-foreground); font-size: var(--type-small); }
+.instructor-experience .ins-back { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min); color: var(--muted-foreground); font-size: var(--type-small); transition-property: color, background-color, border-color, outline-color, box-shadow, transform, translate, rotate, opacity, filter, text-decoration-color; transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 .instructor-experience .ins-back:hover { color: var(--primary); }
-.instructor-experience .instructor-hero-cta { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control-value); background: var(--primary); color: var(--primary-foreground); font-size: var(--type-body); font-weight: var(--weight-semibold); }
+.instructor-experience .instructor-hero-cta { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control-value); background: var(--primary); color: var(--primary-foreground); font-size: var(--type-body); font-weight: var(--weight-semibold); transition-property: color, background-color, border-color, outline-color, box-shadow, transform, translate, rotate, opacity, filter, text-decoration-color; transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 .instructor-experience .instructor-hero-cta:hover { background: color-mix(in srgb, var(--primary) 90%, var(--foreground)); }
 .instructor-experience .instructor-hero-cta > svg { flex: none; }
 .instructor-experience .ins-notice { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-control-value); background: var(--info-subtle); color: var(--info); font-size: var(--type-small); line-height: var(--leading-body); }
@@ -36,16 +36,16 @@
 .instructor-experience .ins-scope-note { margin: var(--space-2) 0 var(--space-6); color: var(--muted-foreground); font-size: var(--type-caption); }
 .instructor-experience .ins-operations-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--space-8); align-items: start; }
 .instructor-experience .ins-attention { min-width: 0; border: 0; border-radius: 0; background: transparent; overflow: visible; }
-.instructor-experience .ins-attention > header { padding: 0 0 var(--space-3); border-bottom: 1px solid var(--border); }
+.instructor-experience .ins-attention > header { padding: 0 0 var(--space-4); border-bottom: 1px solid var(--border); }
 .instructor-experience .ins-attention h2 { font-size: var(--type-section); font-weight: var(--weight-heading); }
 .instructor-experience .ins-attention header p { margin-top: var(--space-1); color: var(--muted-foreground); font-size: var(--type-small); }
 .instructor-experience .ins-attention ul { margin: 0; padding: 0; list-style: none; }
-.instructor-experience .ins-attention li { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) 0; margin: 0; border-bottom: 1px solid var(--border); }
+.instructor-experience .ins-attention li { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-5) 0; margin: 0; border-bottom: 1px solid var(--border); }
 .instructor-experience .ins-attention li > div { min-width: 0; }
 .instructor-experience .ins-attention li > div > a { color: var(--foreground); font-size: var(--type-body); font-weight: var(--weight-semibold); overflow-wrap: break-word; }
 .instructor-experience .ins-attention li p { margin-top: var(--space-1); color: var(--muted-foreground); font-size: var(--type-caption); }
 .instructor-experience .ins-attention-empty { padding: var(--space-5) 0; color: var(--muted-foreground); font-size: var(--type-small); }
-.instructor-experience .ins-queue-action { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; gap: var(--space-2); min-height: var(--control-min); padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control-value); background: var(--card); color: var(--primary); font-size: var(--type-small); font-weight: var(--weight-semibold); }
+.instructor-experience .ins-queue-action { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; gap: var(--space-2); min-height: var(--control-min); padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control-value); background: var(--card); color: var(--primary); font-size: var(--type-small); font-weight: var(--weight-semibold); transition-property: color, background-color, border-color, outline-color, box-shadow, transform, translate, rotate, opacity, filter, text-decoration-color; transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 .instructor-experience .ins-queue-action:hover { background: var(--accent); border-color: var(--input); }
 /* "Duyệt bài" là hành động chính của hàng đợi ưu tiên — nổi như CTA chính. */
 .instructor-experience .ins-queue-action-primary { border-color: transparent; background: var(--primary); color: var(--primary-foreground); }
@@ -58,7 +58,7 @@
 .instructor-experience .ins-workflow { border-top: 1px solid var(--border); padding-top: var(--space-4); }
 .instructor-experience .ins-workflow ol { margin-top: var(--space-3); }
 .instructor-experience .ins-section-nav { position: sticky; top: var(--space-16); z-index: 18; display: flex; align-items: center; gap: var(--space-2); overflow-x: auto; padding: var(--space-2) 0; margin-bottom: var(--space-5); border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: var(--card); box-shadow: none; backdrop-filter: none; }
-.instructor-experience .ins-section-nav a { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control-value); white-space: nowrap; color: var(--muted-foreground); font-size: var(--type-small); font-weight: var(--weight-medium); }
+.instructor-experience .ins-section-nav a { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control-value); white-space: nowrap; color: var(--muted-foreground); font-size: var(--type-small); font-weight: var(--weight-medium); transition-property: color, background-color, border-color, outline-color, box-shadow, transform, translate, rotate, opacity, filter, text-decoration-color; transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 .instructor-experience .ins-section-nav a:hover { color: var(--primary); background: var(--accent); }
 .instructor-experience .ins-section-nav span { min-width: var(--space-5); padding-inline: var(--space-1); text-align: center; border-radius: var(--radius-tight); background: var(--muted); font-size: var(--type-caption); font-variant-numeric: tabular-nums; }
 .instructor-experience .ins-section { scroll-margin-top: calc(var(--space-16) + var(--space-16)); }
@@ -82,7 +82,7 @@
 .instructor-experience .ins-roster-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--space-6); }
 .instructor-experience .ins-roster-list > li { min-width: 0; padding: var(--space-3) 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
 .instructor-experience .ins-task-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
-.instructor-experience .ins-task-row { min-width: 0; padding: var(--space-4) 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
+.instructor-experience .ins-task-row { min-width: 0; padding: var(--space-4) 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; transition-property: color, background-color, border-color, box-shadow, transform, translate, rotate, opacity; transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 .instructor-experience .ins-task-row:first-child { padding-top: 0; }
 .instructor-experience .ins-task-row:hover { background: transparent; }
 .instructor-experience .ins-task-row-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-3); }
@@ -271,4 +271,142 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .instructor-experience .ins-report-card { transition: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   v5 "Mượt mà & Gọn gàng" — motion + nhịp dọc cho mọi trang instructor.
+   Phần lớn markup nằm ở component dùng chung với admin (sessions/product),
+   nên các hiệu ứng nb-* được khai báo tại chỗ, scoped .instructor-experience.
+   ───────────────────────────────────────────────────────────────── */
+
+/* 1. Switch "Sprint/Task" (ins-view-switch) — tab kiểu mục lục vở:
+      gạch mực lượn dưới mục đang mở (cùng mẫu viewbar), hover có phản hồi,
+      nhấn lún 1px. Admin giữ dạng phẳng. */
+.instructor-experience .ins-view-switch { border-bottom: 1px solid var(--border); }
+.instructor-experience .ins-view-switch button {
+  position: relative;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--radius-tight) var(--radius-tight) 0 0;
+  background: transparent;
+  font-weight: var(--weight-medium);
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--motion-ease);
+}
+.instructor-experience .ins-view-switch button:hover { color: var(--foreground); background: var(--accent); }
+.instructor-experience .ins-view-switch button:active { transform: translateY(1px); }
+.instructor-experience .ins-view-switch button[aria-pressed="true"] {
+  color: var(--primary);
+  background: transparent;
+  border-bottom-color: transparent;
+  font-weight: var(--weight-semibold);
+}
+.instructor-experience .ins-view-switch button[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: calc(var(--space-2) * 0.75);
+  height: 5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%232060F0' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 40px 6px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.dark .instructor-experience .ins-view-switch button[aria-pressed="true"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 6' preserveAspectRatio='none'%3E%3Cpath d='M0 4 Q 5 1, 10 4 T 20 4 T 30 4 T 40 4' fill='none' stroke='%237d97ff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* 2. Tab semantics (role="tab" — đợt tuyển dụng): hover chuyển mực đậm,
+      nhấn lún; tab đang chọn giữ nguyên tông primary của nó. */
+.instructor-experience [role="tablist"] > [role="tab"] {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--motion-ease);
+}
+.instructor-experience [role="tablist"] > [role="tab"]:not([aria-selected="true"]):hover { color: var(--foreground); }
+.instructor-experience [role="tablist"] > [role="tab"]:active { transform: translateY(1px); }
+
+/* 3. Gọn — "X bản ghi" là chú thích của danh sách: bám sát đáy list
+      (khoảng 1 nhịp nhỏ), không còn trôi như một khối mới (trước đây
+      margin của list + margin-top của Pager chồng nhau thành khe kép). */
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list) { margin-block-end: 0; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list) + * { margin-top: var(--space-2); }
+
+/* 4. Mượt — danh sách tải theo dữ liệu vào khung lần lượt, 45ms/bước,
+      cap 10 (bản khai báo tại chỗ của .nb-stagger cho container dùng chung). */
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *,
+.instructor-experience :is(ul, ol).divide-y > * {
+  animation: nb-rise 300ms var(--motion-ease) both;
+}
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(2),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(2) { animation-delay: 45ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(3),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(3) { animation-delay: 90ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(4),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(4) { animation-delay: 135ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(5),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(5) { animation-delay: 180ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(6),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(6) { animation-delay: 225ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(7),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(7) { animation-delay: 270ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(8),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(8) { animation-delay: 315ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(9),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(9) { animation-delay: 360ms; }
+.instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *:nth-child(n + 10),
+.instructor-experience :is(ul, ol).divide-y > *:nth-child(n + 10) { animation-delay: 405ms; }
+
+/* Thẻ báo cáo đã lưu và kỳ đánh giá — không có container list riêng,
+      stagger theo nth-of-type như rút từng tờ khỏi xấp. */
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle) {
+  animation: nb-rise 300ms var(--motion-ease) both;
+}
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(2) { animation-delay: 45ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(3) { animation-delay: 90ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(4) { animation-delay: 135ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(5) { animation-delay: 180ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(6) { animation-delay: 225ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(7) { animation-delay: 270ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(8) { animation-delay: 315ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(9) { animation-delay: 360ms; }
+.instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(n + 10) { animation-delay: 405ms; }
+
+/* 5. Nhấn lún 1px cho CTA / thẻ hành động (tương đương .nb-press,
+      áp cho phần tử ở component dùng chung). */
+.instructor-experience .ins-queue-action:active,
+.instructor-experience .instructor-hero-cta:active { transform: translateY(1px); }
+.instructor-experience .instructor-step:active,
+.instructor-experience .ins-report-card:active { translate: 0 1px; }
+
+/* 6. Thanh tiến độ rút mực từ 0 khi vào khung (scaleX, không reflow) —
+      mọi progress native trong vùng instructor. */
+.instructor-experience progress::-webkit-progress-value {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease) both;
+}
+.instructor-experience progress::-moz-progress-bar {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instructor-experience :is(.workspace-session-list, .ins-task-list, .ins-sprint-list, .ins-roster-list, .ins-timeline, .workspace-project-grid, .workspace-notification-feed) > *,
+  .instructor-experience :is(ul, ol).divide-y > *,
+  .instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle),
+  .instructor-experience :is(.ins-report-card, .workspace-evaluation-cycle):nth-of-type(n + 10) {
+    animation: none;
+    animation-delay: 0ms;
+  }
+  .instructor-experience progress::-webkit-progress-value,
+  .instructor-experience progress::-moz-progress-bar { animation: none; }
+  .instructor-experience .ins-queue-action:active,
+  .instructor-experience .instructor-hero-cta:active,
+  .instructor-experience .ins-view-switch button:active,
+  .instructor-experience [role="tablist"] > [role="tab"]:active { transform: none; }
+  .instructor-experience .instructor-step:active,
+  .instructor-experience .ins-report-card:active { translate: none; }
 }

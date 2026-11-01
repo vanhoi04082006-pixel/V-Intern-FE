@@ -42,7 +42,8 @@ export function RecentActivityCard({
           Chưa có hoạt động được ghi nhận.
         </p>
       )}
-      <ol className="flex flex-col">
+      {/* v5 Mượt: các mốc hoạt động vào khung lần lượt (nb-stagger). */}
+      <ol className="flex flex-col nb-stagger">
         {activities.map((item, index) => {
           const toneStyle = INTERN_TONES[item.tone];
           const isDone = item.tone === "green";

@@ -22,7 +22,8 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
         kiểm tra lời mời repository trên GitHub trước khi bắt đầu code nhé ✎
       </MarginNote>
       <div className="student-dashboard-grid student-github-workspace">
-        <div className="space-y-5">
+        {/* v5 Mượt: các panel từng cột vào khung lần lượt (nb-stagger). */}
+        <div className="space-y-5 nb-stagger">
           <GithubConnection />
           {workspace.assignment ? (
             <SessionRepositoryCard
@@ -54,7 +55,7 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
             </StudentPanel>
           )}
         </div>
-        <div className="space-y-5">
+        <div className="space-y-5 nb-stagger">
           <details open className="student-help-disclosure">
             <summary><IconGitBranch size={16} aria-hidden="true" />Từ kết nối đến bài nộp</summary>
             <ol className="student-step-list">

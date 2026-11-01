@@ -73,7 +73,7 @@ try {
       assigneeId: intern.user.id,
       storyPoints: 5,
     });
-  const context = await browser.newContext({
+  const context = await browser.newContext({ reducedMotion: "reduce", 
       viewport: { width: 1440, height: 900 },
     }),
     page = await context.newPage(),
@@ -192,7 +192,7 @@ try {
     taskId: task.id,
     sqlTrace: rows[0],
   });
-  const mobile = await browser.newContext({
+  const mobile = await browser.newContext({ reducedMotion: "reduce", 
       viewport: { width: 390, height: 844 },
     }),
     mp = await mobile.newPage();

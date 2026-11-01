@@ -168,8 +168,9 @@ export function ConversationInterview() {
         )}
       </header>
       <div className="h-1 bg-muted">
+        {/* v5 Mượt: thanh tiến độ rút mực từ 0 tới số câu đã trả lời (nb-fill). */}
         <div
-          className="h-full origin-left bg-primary"
+          className="h-full origin-left bg-primary nb-fill"
           style={{
             transform: `scaleX(${(chat?.answeredCount ?? 0) / interview!.session.questionCount})`,
           }}
@@ -193,7 +194,7 @@ export function ConversationInterview() {
         {chat?.messages.map((m, i) => (
           <article
             key={`${m.questionId}-${m.role}-${i}`}
-            className={`flex items-start gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}
+            className={`flex items-start gap-3 nb-rise ${m.role === "user" ? "flex-row-reverse" : ""}`}
           >
             <span
               role="img"

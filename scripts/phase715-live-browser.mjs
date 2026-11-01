@@ -71,7 +71,7 @@ async function screenshot(page, file, fullPage = false) {
   await page.screenshot({ path: path.join(dir, file), fullPage });
 }
 async function scenario(name, run, viewport = { width: 1440, height: 900 }) {
-  const context = await browser.newContext({ viewport }),
+  const context = await browser.newContext({ reducedMotion: "reduce",  viewport }),
     page = await context.newPage(),
     errors = [];
   page.on("pageerror", (error) => errors.push(error.message));

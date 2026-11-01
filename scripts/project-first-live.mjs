@@ -32,7 +32,7 @@ async function call(persona, endpoint, method = "GET", body, status = 200, code)
   return data;
 }
 const browser = await chromium.launch({ channel: "chrome", headless: true });
-const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), page = await context.newPage();
+const context = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 1000 } }), page = await context.newPage();
 page.on("pageerror", e => errors.push(e.message));
 page.on("response", r => { if (r.url().startsWith(api)) network.push({ source: "browser", endpoint: new URL(r.url()).pathname, method: r.request().method(), status: r.status() }); });
 let stage = "fixtures";

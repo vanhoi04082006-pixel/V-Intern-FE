@@ -49,7 +49,8 @@ export function RecruitmentResult() {
       )}
       {result ? (
         <div className="student-recruitment-result mt-6 grid gap-8 xl:grid-cols-[minmax(0,1fr)_300px]">
-          <div className="space-y-5">
+          {/* v5 Mượt: cột chính và rail phải vào khung lần lượt (nb-stagger). */}
+          <div className="space-y-5 nb-stagger">
             <section
               className="student-result-hero"
               data-passed={result.decision === "passed"}
@@ -109,7 +110,8 @@ export function RecruitmentResult() {
                       </span>
                     </div>
                     {/* Thanh điểm vẽ tay: rãnh nét đứt mực, phần phủ mực loang —
-                        progress gốc giữ nguyên cho máy đọc (bị ẩn thị giác). */}
+                        progress gốc giữ nguyên cho máy đọc (bị ẩn thị giác);
+                        v5 Mượt: phủ mực rút từ 0 (nb-fill). */}
                     <progress
                       aria-label={String(label)}
                       max={100}
@@ -121,7 +123,7 @@ export function RecruitmentResult() {
                       className="mt-2 h-[9px] w-full rounded-full border border-dashed border-ink/45"
                     >
                       <div
-                        className="h-full rounded-full bg-ink/80"
+                        className="h-full rounded-full bg-ink/80 nb-fill"
                         style={{
                           width: `${Math.min(100, Math.max(0, Number(score)))}%`,
                         }}
@@ -170,7 +172,7 @@ export function RecruitmentResult() {
               {result.criteria.length > 0 && <div className="mt-8"><RateComparison label="Năng lực thể hiện qua phỏng vấn" unit="điểm" items={result.criteria.map((c) => ({ label: criterionLabels[c.code] ?? c.code, value: c.score }))} /><dl className="workspace-interview-criteria">{result.criteria.map((c) => <div key={c.code}><dt>{criterionLabels[c.code] ?? c.code}</dt><dd>{c.feedback}</dd></div>)}</dl></div>}
             </section>
           </div>
-          <aside className="workspace-interview-next">
+          <aside className="workspace-interview-next nb-stagger">
             <h2 className="font-bold">Bước tiếp theo</h2>
             {result.decision === "passed" ? (
               <>

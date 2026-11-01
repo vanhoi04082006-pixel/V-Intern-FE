@@ -112,7 +112,7 @@ export function Mentor() {
             list.data && (
               <>
                 {list.data.items.length ? (
-                  <ul className="student-conversation-list">
+                  <ul className="student-conversation-list nb-stagger">
                     {list.data.items.map((c) => (
                       <li key={c.id}>
                         <button
@@ -352,7 +352,7 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
               >
                 {!detail.data.messages.length && (
                   <div
-                    className="student-prompt-grid"
+                    className="student-prompt-grid nb-stagger"
                     aria-label="Gợi ý câu hỏi"
                   >
                     {[

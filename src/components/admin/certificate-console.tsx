@@ -58,7 +58,7 @@ export function CertificateConsole() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="nb-swap space-y-6">
       <PageTitle
         title="Chứng nhận"
         subtitle="Cấp và thu hồi chứng nhận hoàn thành thực tập theo chính sách V-INTERN-COMPLETE. Điều kiện cấp được kiểm định phía hệ thống, không cấp tay."
@@ -114,10 +114,12 @@ export function CertificateConsole() {
             <thead>
               <tr>
                 {["Số chứng nhận", "Người giữ", "Vai trò · Dự án", "Trạng thái", "Hành động"].map(
-                  (label) => (
+                  (label, index, labels) => (
                     <th
                       key={label}
-                      className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground"
+                      className={`whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-caption font-semibold text-muted-foreground ${
+                        index === labels.length - 1 ? "text-right" : "text-left"
+                      }`}
                     >
                       {label}
                     </th>
@@ -125,7 +127,7 @@ export function CertificateConsole() {
                 )}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="nb-stagger">
               {certificates.data.items.map((certificate) => (
                 <tr
                   key={certificate.id}
@@ -190,8 +192,8 @@ export function CertificateConsole() {
                       </p>
                     )}
                   </td>
-                  <td className="border-b border-border px-4 py-3">
-                    <div className="flex flex-wrap items-center gap-3">
+                  <td className="border-b border-border px-4 py-3 text-right">
+                    <div className="flex flex-wrap items-center justify-end gap-3">
                       <a
                         className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                         href={`/verify?code=${encodeURIComponent(certificate.verificationCode)}`}
