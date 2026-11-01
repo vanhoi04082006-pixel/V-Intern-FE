@@ -36,7 +36,7 @@
 .admin-workspace :is(.admin-template-actions, .admin-selection-row, .admin-configuration-item) button:disabled { cursor: not-allowed; opacity: .5; }
 /* V4 — mọi nút dòng (chọn loại danh mục, mục cấu hình, thao tác mẫu) đều có
    focus ring mực xanh và nhịp nhấn 1px như nút thường. */
-.admin-workspace :is(.admin-selection-row, .admin-configuration-item) { transition: background-color var(--motion-fast) var(--motion-ease), color var(--motion-fast) var(--motion-ease); }
+.admin-workspace :is(.admin-selection-row, .admin-configuration-item) { transition: background-color var(--motion-fast) var(--motion-ease), color var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); }
 .admin-workspace :is(.admin-selection-row, .admin-configuration-item):focus-visible { outline: none; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ring, var(--primary)) 40%, transparent); border-radius: var(--radius-control, 8px); }
 .admin-workspace :is(.admin-selection-row, .admin-configuration-item):active { transform: translateY(1px); }
 .admin-workspace .admin-template-actions button { border-radius: var(--radius-control, 8px); }

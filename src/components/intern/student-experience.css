@@ -1414,7 +1414,8 @@
   transition:
     border-color var(--motion-normal) ease,
     box-shadow var(--motion-normal) ease,
-    transform var(--motion-normal) ease;
+    transform var(--motion-normal) ease,
+    background-color var(--motion-normal) var(--motion-ease);
   border-bottom: 1px solid var(--border);
   box-shadow: none;
 }
