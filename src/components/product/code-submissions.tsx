@@ -4,6 +4,7 @@ import {
   IconExternalLink,
   IconGitBranch,
 } from "@/components/v-intern/icons";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
 import {
   confirmCodeReview,
   listCodeReviews,
@@ -179,10 +180,18 @@ export function CodeSubmissions({
           {sent && (
             <p
               role="status"
-              className="rounded-control border border-success bg-success-subtle p-3 text-body text-success"
+              className="flex items-start gap-2 rounded-control border border-success bg-success-subtle p-3 text-body text-success"
             >
-              Đã gửi bài. Nhiệm vụ đang được chuyển sang Chờ duyệt sau khi hệ
-              thống xác minh.
+              <CircleCheckBig
+                size={17}
+                animateOnView
+                aria-hidden="true"
+                className="mt-0.5 shrink-0"
+              />
+              <span>
+                Đã gửi bài. Nhiệm vụ đang được chuyển sang Chờ duyệt sau khi hệ
+                thống xác minh.
+              </span>
             </p>
           )}
           <p className="text-caption leading-6 text-muted-foreground">

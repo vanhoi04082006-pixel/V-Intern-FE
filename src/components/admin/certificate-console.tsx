@@ -8,8 +8,8 @@ import {
   IconDownload,
   IconExternalLink,
   IconPlus,
-  IconShieldCheck,
 } from "@/components/v-intern/icons";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
 import {
   downloadCertificatePdf,
   issueCertificate,
@@ -339,7 +339,12 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
         >
           <p className="inline-flex flex-wrap items-center gap-3 font-semibold">
             <span className="inline-flex items-center gap-2">
-              <IconShieldCheck size={16} aria-hidden />
+              <CircleCheckBig
+                size={17}
+                animateOnView
+                aria-hidden="true"
+                className="text-success"
+              />
               Đã cấp {result.certificateNumber}
             </span>
             <StampMoc tone="red" size="sm" thump className="nb-moc-allowed">

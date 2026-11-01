@@ -4,6 +4,7 @@ import {
   IconMessageSquare,
   IconSend,
 } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import {
   StudentHeading,
   StudentPanel as Panel,
@@ -442,7 +443,17 @@ function MentorChat({ id, onChanged }: { id: string; onChanged: () => void }) {
                   </button>
                 </div>
                 {busy && (
-                  <p role="status" className="text-caption text-primary">
+                  <p
+                    role="status"
+                    className="inline-flex items-center gap-2 text-caption text-primary"
+                  >
+                    <Sparkles
+                      size={14}
+                      animation="blink"
+                      animate={busy}
+                      loop
+                      aria-hidden="true"
+                    />
                     Mentor đang xử lý yêu cầu. Hãy giữ cuộc trò chuyện này mở.
                   </p>
                 )}

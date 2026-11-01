@@ -8,9 +8,9 @@ import {
 } from "@/components/v-intern/icons";
 import {
   IconArrowRight,
-  IconCircleCheck,
   IconUserRound,
 } from "@/components/v-intern/icons";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
@@ -127,9 +127,11 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         className="flex flex-col items-center py-6 text-center sm:py-8"
       >
         <div className="grid size-14 place-items-center rounded-full bg-success-subtle ring-1 ring-success/20">
-          <IconCircleCheck
-            className="size-7 text-success"
+          <CircleCheckBig
+            size={28}
+            animateOnView
             aria-hidden="true"
+            className="text-success"
           />
         </div>
         <h1 className="mt-5 text-section font-bold tracking-tight text-foreground">

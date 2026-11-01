@@ -7,6 +7,7 @@ import {
   IconSend,
   IconUserRound,
 } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import {
   conversationNext,
   conversationView,
@@ -212,7 +213,18 @@ export function ConversationInterview() {
         ))}
         {!chat && !error && <p role="status">Đang khôi phục hội thoại…</p>}
         {(working || current?.status === "generating") && (
-          <p role="status" className="text-body text-muted-foreground">
+          <p
+            role="status"
+            className="inline-flex items-center gap-2 text-body text-muted-foreground"
+          >
+            <Sparkles
+              size={14}
+              animation="blink"
+              animate
+              loop
+              aria-hidden="true"
+              className="text-primary"
+            />
             AI đang chuẩn bị câu hỏi tiếp theo…
           </p>
         )}

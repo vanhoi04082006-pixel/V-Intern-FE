@@ -26,6 +26,7 @@ import {
   IconTarget,
   IconWallet,
 } from "@/components/v-intern/icons";
+import { Sparkles as SparklesIcon } from "@/components/animate-ui/icons/sparkles";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -1492,7 +1493,12 @@ export function Recommendations() {
       recommendations.error.statusCode === 404 ? (
         <div className="student-dashboard-grid">
           <div className="student-panel student-chat-welcome">
-            <IconSparkles size={42} className="text-primary" aria-hidden="true" />
+            <SparklesIcon
+              size={42}
+              animateOnView
+              className="text-primary"
+              aria-hidden="true"
+            />
             <h2>Một kế hoạch phát triển dành cho bạn</h2>
             <p>
               Chưa có khuyến nghị. Cập nhật để yêu cầu AI phân tích dữ liệu hiện

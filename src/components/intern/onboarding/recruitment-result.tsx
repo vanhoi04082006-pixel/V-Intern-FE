@@ -6,6 +6,7 @@ import {
   IconCircleCheck,
   IconLightbulb,
 } from "@/components/v-intern/icons";
+import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
 import { StampMoc } from "@/components/workspace/notebook";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -82,8 +83,11 @@ export function RecruitmentResult() {
                 {result.decision === "passed" && (
                   <p
                     role="status"
-                    className="mt-2 font-semibold text-success"
+                    className="mt-2 inline-flex items-center gap-2 font-semibold text-success"
                   >
+                    {/* Khoảnh khắc ăn mừng — pháo giấy bung đúng một lần khi
+                        dòng chúc mừng vào khung (tự tắt khi giảm chuyển động). */}
+                    <PartyPopper size={20} animateOnView aria-hidden="true" />
                     Chúc mừng! Bạn đã vượt qua phỏng vấn.
                   </p>
                 )}

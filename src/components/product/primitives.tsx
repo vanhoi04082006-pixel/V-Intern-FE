@@ -10,6 +10,7 @@ import {
   IconArrowLeft,
   type IconComponent,
 } from "@/components/v-intern/icons";
+import { LoaderCircle } from "@/components/animate-ui/icons/loader-circle";
 import Link from "next/link";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 import { cn } from "@/lib/utils";
@@ -124,9 +125,12 @@ export function Field({
 /* ------------------------------------------------------------------ */
 export function Spinner({ className }: { className?: string }) {
   return (
-    <span
+    <LoaderCircle
+      loop
+      animate
+      size={16}
       aria-hidden="true"
-      className={cn("spinner-hand size-4", className)}
+      className={cn("size-4 shrink-0", className)}
     />
   );
 }
