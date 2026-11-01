@@ -293,14 +293,14 @@ export function SessionList({
                       </div>
                       <div className="mt-3 flex flex-wrap gap-3 border-t border-border pt-3 text-caption font-semibold">
                         <Link
-                          className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                          className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                           href={`${basePath}/sessions/${s.id}`}
                         >
                           Chi tiết
                         </Link>
                         {onManage && (
                           <button
-                            className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                            className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                             onClick={() => onManage(s.id)}
                           >
                             Quản trị thông tin

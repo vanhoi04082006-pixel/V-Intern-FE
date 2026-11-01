@@ -1058,7 +1058,7 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
     <main className="mx-auto max-w-2xl px-5 py-10 sm:pt-16">
       <Link
         href="/"
-        className="inline-flex items-center gap-2 rounded text-body font-bold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="inline-flex items-center gap-2 rounded text-body font-bold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2"
       >
         V-Intern
       </Link>
@@ -1358,7 +1358,7 @@ export function Notifications() {
                                   className={
                                     intern
                                       ? "student-action student-action-secondary student-action-sm"
-                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                                   }
                                 >
                                   Mở nội dung
@@ -1378,7 +1378,7 @@ export function Notifications() {
                                   className={
                                     intern
                                       ? "student-action student-action-ghost student-action-sm"
-                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:opacity-50"
+                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1 disabled:opacity-50"
                                   }
                                 >
                                   Đánh dấu đã đọc

@@ -710,7 +710,7 @@ function InstructorCodeDecision({
           onChange={(e) => setOverride(e.target.value)}
         />
       </label>
-      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l border-warning bg-warning-subtle/70 px-4 py-3 text-body outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l border-warning bg-warning-subtle/70 px-4 py-3 text-body outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
         <p className="font-semibold text-warning">Điểm sau khi xét thời hạn</p>
         <dl className="my-3 grid grid-cols-3 gap-3"><div><dt className="text-caption text-muted-foreground">Rubric gốc</dt><dd className="font-semibold">{penalty.baseScore}/100</dd></div><div><dt className="text-caption text-muted-foreground">Nộp trễ</dt><dd className="font-semibold text-warning">−{penalty.latePenalty}</dd></div><div><dt className="text-caption text-muted-foreground">Điểm cuối</dt><dd className="font-semibold">{penalty.score}/100</dd></div></dl>
         <label className="flex items-start gap-2 leading-6"><input type="checkbox" checked={acceptedPenalty} onChange={e => setAcceptedPenalty(e.target.checked)} className="mt-1 size-4" />Tôi xác nhận trừ {penalty.latePenalty} điểm theo bằng chứng và chính sách thời hạn của phiên.</label>

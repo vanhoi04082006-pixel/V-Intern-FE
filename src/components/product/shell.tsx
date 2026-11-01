@@ -337,7 +337,7 @@ export function ProductShell({
                   href={href}
                   onClick={() => setOpen(false)}
                   aria-current={current ? "page" : undefined}
-                  className={`workspace-nav-item flex min-h-11 items-center gap-3 rounded-control px-3 py-3 text-small font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
+                  className={`workspace-nav-item flex min-h-11 items-center gap-3 rounded-control px-3 py-3 text-small font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1 ${
                     current
                       ? "bg-accent font-semibold text-primary ring-1 ring-inset ring-ring"
                       : "text-muted-foreground hover:bg-background hover:text-foreground"
@@ -407,7 +407,7 @@ export function ProductShell({
         <div className="flex min-h-full flex-col">
           <button
             aria-label="Đóng menu"
-            className="mb-3 self-start rounded-control p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mb-3 self-start rounded-control p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             onClick={() => setOpen(false)}
           >
             <IconX aria-hidden="true" />
@@ -420,7 +420,7 @@ export function ProductShell({
           <div className="flex min-w-0 items-center gap-2 text-body">
             <button
               aria-label="Mở menu"
-              className="grid size-10 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
+              className="grid size-10 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 lg:hidden"
               onClick={() => setOpen(true)}
             >
               <IconMenu aria-hidden="true" />
@@ -431,7 +431,7 @@ export function ProductShell({
             >
               <Link
                 href={`/${role}`}
-                className="shrink-0 rounded font-medium text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                className="shrink-0 rounded font-medium text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
               >
                 V-Intern
               </Link>
@@ -444,7 +444,7 @@ export function ProductShell({
                 <>
                   <Link
                     href={`/${role}/${section[0]}`}
-                    className="truncate rounded text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                    className="truncate rounded text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                   >
                     {section[1]}
                   </Link>
