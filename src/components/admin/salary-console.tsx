@@ -96,7 +96,7 @@ export function SalaryConsole() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="nb-swap space-y-6">
       <PageTitle
         title="Lương ảo"
         subtitle="Đơn vị ảo dùng để động viên sinh viên — không phải lương thật. Số dư luôn được tính lại từ sổ ghi, không có số dư lưu sẵn."
@@ -257,7 +257,7 @@ export function SalaryConsole() {
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="nb-stagger">
               {ledger.data.items.map((row) => (
                 <tr key={row.id} className="transition-colors hover:bg-background/70">
                   <td className="whitespace-nowrap border-b border-border px-4 py-3 text-muted-foreground">

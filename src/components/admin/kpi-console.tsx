@@ -100,7 +100,7 @@ export function KpiConsole() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="nb-swap space-y-6">
       <PageTitle
         title="Kỳ KPI"
         subtitle="Tạo kỳ đo lường, tính KPI theo quy tắc kpi-v1 và chốt kỳ để sinh lương ảo cũng như cấp chứng nhận. Kỳ đã chốt không tính lại."
@@ -154,7 +154,7 @@ export function KpiConsole() {
       ) : periods.error ? (
         <ErrorState error={periods.error} onRetry={periods.reload} />
       ) : periods.data?.items.length ? (
-        <ul className="divide-y divide-border border-y border-border" aria-label="Danh sách kỳ KPI">
+        <ul className="nb-stagger divide-y divide-border border-y border-border" aria-label="Danh sách kỳ KPI">
           {periods.data.items.map((period) => {
             const calculating =
                 busyPeriod?.id === period.id && busyPeriod.phase === "calculate",
@@ -440,7 +440,7 @@ function KpiResults({ period }: { period: KpiPeriod }) {
                 <th aria-hidden />
               </tr>
             </thead>
-            <tbody>
+            <tbody className="nb-stagger">
               {results.data.items.map((row, index) => (
                 <tr key={row.id} className="transition-colors hover:bg-background/70">
                   <td className="border-b border-border px-4 py-3 tabular-nums text-muted-foreground">
@@ -543,7 +543,7 @@ function KpiResultDetail({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="nb-stagger">
             {state.data.metrics.map((metric) => (
               <tr key={metric.metricCode} className="transition-colors hover:bg-background/70">
                 <td className="border-b border-border px-4 py-3 font-medium text-foreground">

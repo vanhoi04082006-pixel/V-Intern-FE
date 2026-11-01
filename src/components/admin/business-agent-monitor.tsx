@@ -46,7 +46,7 @@ export function BusinessAgentMonitor({
   return (
     <section
       aria-label="Vận hành Agent nghiệp vụ"
-      className="min-w-0 space-y-5 border-t border-border pt-7"
+      className="nb-rise nb-delay-1 min-w-0 space-y-5 border-t border-border pt-7"
     >
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -67,7 +67,7 @@ export function BusinessAgentMonitor({
         </button>
       </header>
       {data && (
-        <dl className="grid gap-x-6 gap-y-3 border-y border-border py-4 sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="nb-stagger grid gap-x-6 gap-y-3 border-y border-border py-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.definitions.map((item) => (
             <div key={item.id}>
               <dt className="text-body font-semibold text-foreground">
@@ -147,7 +147,7 @@ export function BusinessAgentMonitor({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="nb-stagger divide-y divide-border">
               {data.items.map((run) => (
                 <tr key={run.id} className="align-top hover:bg-muted/70">
                   <td className="max-w-56 px-3 py-4">
