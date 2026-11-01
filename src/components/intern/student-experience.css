@@ -2446,7 +2446,7 @@
     align-items: start;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .student-cert-document-meta {
     grid-template-columns: 1fr;
     gap: var(--space-2);
@@ -3055,7 +3055,7 @@
     grid-row: 2;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .student-experience main {
     padding-top: var(--space-5);
     padding-bottom: var(--space-10);
