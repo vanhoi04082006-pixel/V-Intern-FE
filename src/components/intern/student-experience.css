@@ -1485,6 +1485,16 @@
   align-items: flex-end;
   gap: var(--space-2);
 }
+/* v5 Gọn: cột thời hạn căn phải theo mép nút "Chi tiết" phía dưới —
+   loại đường răng cưa trái gây cảm giác lệch giữa các dòng. */
+.student-work-row .workspace-deadline {
+  justify-content: flex-end;
+  text-align: right;
+}
+.student-work-row .workspace-deadline > svg {
+  margin-top: 0;
+  order: 2;
+}
 .student-work-due {
   display: inline-flex;
   align-items: center;

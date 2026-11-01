@@ -57,7 +57,7 @@ export function StudentWorkList({
       />
     );
   return (
-    <div className="student-work-list">
+    <div className="student-work-list nb-stagger">
       <div className="workspace-work-columns" aria-hidden="true"><span>Nhiệm vụ & yêu cầu</span><span>Tiến độ</span><span>Hạn hoàn thành</span></div>
       {tasks.map((task) => (
         <article
