@@ -1,6 +1,8 @@
 import { InternEntry } from "@/components/product/intern-entry";
 import { TaskDetail } from "@/components/product/intern-work";
 import { StudentHeading } from "@/components/intern/student-ui";
+import Link from "next/link";
+import { IconArrowLeft } from "@/components/v-intern/icons";
 export default async function Page({
   params,
   searchParams,
@@ -20,6 +22,12 @@ export default async function Page({
           submitIntent
             ? "Gửi link PR/commit và mô tả bài làm. Trạng thái chỉ chuyển sang Chờ duyệt sau khi nộp thành công."
             : "Đọc tiêu chí, cập nhật tiến độ và theo dõi bài nộp cùng phản hồi ở một nơi."
+        }
+        action={
+          <Link className="student-action student-action-secondary" href="/intern/work">
+            <IconArrowLeft size={15} aria-hidden="true" />
+            Công việc của tôi
+          </Link>
         }
       />
       <TaskDetail id={id} intent={submitIntent ? "submit" : undefined} />

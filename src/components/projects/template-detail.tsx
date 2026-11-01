@@ -5,6 +5,7 @@ import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Panel, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { Can } from "@/components/auth/can";
+import { IconArrowLeft } from "@/components/v-intern/icons";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 import { useResource } from "@/lib/api/use-resource";
 import { BlueprintArchitecture, BlueprintTask } from './blueprint-architecture';
@@ -108,7 +109,12 @@ export function TemplateDetail({
         title={t.name}
         description={`${t.code}, phiên bản ${t.version}, ${difficultyLabels[t.difficulty] ?? t.difficulty}${t.status === "archived" ? ", ĐÃ LƯU TRỮ" : ""}`}
         artwork="project"
-        action={<Link className="text-caption font-semibold text-primary hover:underline" href="/instructor/projects">← Thư viện</Link>}
+        back={
+          <Link href="/instructor/projects">
+            <IconArrowLeft size={15} aria-hidden="true" />
+            Thư viện
+          </Link>
+        }
       />
       <div className="workspace-document-layout">
       <div className="workspace-document-body">

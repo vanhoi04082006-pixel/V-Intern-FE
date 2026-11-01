@@ -23,7 +23,6 @@ import type { OwnTaskOpenIntent } from "./use-own-task-drop";
 import Link from "next/link";
 import {
   IconAlertTriangle,
-  IconArrowLeft,
   IconBot,
   IconCalendarDays,
   IconChartTrend,
@@ -516,11 +515,6 @@ function TaskContent({
     >
       {!managed && (
         <>
-          <Link href="/intern/work" className="student-link">
-            <IconArrowLeft size={14} aria-hidden="true" />
-            Công việc của tôi
-          </Link>
-
           <header className="student-detail-hero">
             <div className="min-w-0">
               <p className="student-work-code">{task.code}</p>

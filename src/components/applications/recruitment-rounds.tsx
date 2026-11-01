@@ -21,10 +21,10 @@ import {
 import { listRecruitingCareers } from "@/lib/api/career-roles";
 import { useResource } from "@/lib/api/use-resource";
 import { useAction } from "@/components/product/use-action";
+import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import {
   buttonClass,
   inputClass,
-  PageTitle,
   Empty,
   Pager,
   Modal,

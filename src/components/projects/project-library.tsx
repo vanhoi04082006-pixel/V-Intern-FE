@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import {
   Empty,
-  PageTitle,
   Pager,
   inputClass,
 } from "@/components/product/primitives";

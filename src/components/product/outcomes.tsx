@@ -359,8 +359,23 @@ export function Kpi({ id }: { id?: string }) {
   return (
     <>
       <StudentOutcomeHeading
-        title="KPI & Lương ảo"
-        subtitle="Điểm KPI có nguồn tính rõ ràng, Lương ảo phục vụ chương trình thực tập"
+        title={id ? "Nguồn tính KPI" : "KPI & Lương ảo"}
+        subtitle={
+          id
+            ? "Cách điểm KPI của kết quả này được tính từ dữ liệu thật"
+            : "Điểm KPI có nguồn tính rõ ràng, Lương ảo phục vụ chương trình thực tập"
+        }
+        action={
+          id ? (
+            <Link
+              className="student-action student-action-secondary"
+              href="/intern/kpi"
+            >
+              <IconArrowLeft size={15} aria-hidden="true" />
+              Quay lại danh sách
+            </Link>
+          ) : undefined
+        }
       />
       <Resource resource={results}>
         {(data) =>
