@@ -120,7 +120,7 @@ export function InternShell({
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-foreground/50"
           />
-          <div className="notebook-drawer absolute inset-y-0 left-0 w-[286px] max-w-[86vw] shadow-popover">
+          <div className="notebook-drawer absolute inset-y-0 left-0 w-[var(--layout-drawer)] max-w-[88vw] shadow-popover">
             <InternSidebar
               currentPath={pathname}
               groups={groups}
@@ -164,7 +164,7 @@ export function InternShell({
         />
         <main
           id="intern-main-content"
-          className={`mx-auto w-full max-w-none flex-1 px-4 py-4 sm:px-6 sm:py-5 ${compact ? "xl:min-h-0 xl:overflow-hidden xl:px-6 xl:py-2 2xl:px-8" : ""}`}
+          className={`mx-auto w-full max-w-none flex-1 ${compact ? "xl:min-h-0 xl:overflow-hidden" : ""}`}
         >
           <WorkspaceStage role="intern" workAvailable={active} resultsAvailable={outcomesAvailable}>
             {children}

@@ -401,7 +401,7 @@ export function ProductShell({
           event.preventDefault();
           setOpen(false);
         }}
-        className="product-drawer animate-page-curl fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
+        className="product-drawer animate-page-curl fixed inset-y-0 left-0 m-0 h-dvh max-h-none overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
         aria-label="Menu workspace"
       >
         <div className="flex min-h-full flex-col">
@@ -498,7 +498,7 @@ export function ProductShell({
         </header>
         <main
           id="product-content"
-          className="product-main mx-auto max-w-none p-4 sm:p-6"
+          className="product-main mx-auto max-w-none"
         >
           {role === "instructor" ? <WorkspaceStage role="instructor">{children}</WorkspaceStage> : children}
         </main>

@@ -35,7 +35,7 @@ export function ChangePassword() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-page font-semibold text-foreground">
+        <h1 className="text-page font-bold text-foreground">
           Bảo vệ <span className="marker">tài khoản của bạn</span>
         </h1>
         <p className="mt-2 text-body leading-6 text-muted-foreground">
