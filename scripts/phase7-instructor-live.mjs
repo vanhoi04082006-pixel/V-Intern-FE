@@ -75,7 +75,7 @@ async function mutation(page, suffix, method, click, status = 201) {
 }
 let failurePage;
 try {
-  const context = await browser.newContext({
+  const context = await browser.newContext({ reducedMotion: "reduce", 
       viewport: { width: 1440, height: 1000 },
     }),
     page = await context.newPage(),

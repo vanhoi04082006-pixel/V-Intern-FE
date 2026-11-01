@@ -14,7 +14,7 @@ const code = `career_${Date.now().toString(36)}`, name = `Phân tích dữ liệ
 const evidence = path.resolve('phase7-evidence/career-roles'), errors = [], viewports = [];
 fs.mkdirSync(evidence, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
-const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), page = await context.newPage();
+const context = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 1000 } }), page = await context.newPage();
 page.on('pageerror', error => errors.push(error.message));
 async function login(page, email) {
   await page.goto(`${base}/login`);
@@ -85,7 +85,7 @@ try {
   const email = `${code}@phase715.test`;
   const registered = await fetch(`${api}/auth/register`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fullName: `Career student ${code}`, email, password: process.env.LIVE_PASSWORD, acceptedTerms: true }) });
   assert.equal(registered.status, 201);
-  const studentContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), student = await studentContext.newPage();
+  const studentContext = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 1000 } }), student = await studentContext.newPage();
   student.on('pageerror', error => errors.push(error.message));
   await login(student, email);
   await student.goto(`${base}/intern/onboarding/role`);
@@ -135,7 +135,7 @@ try {
   const run = await teacherCall(`/project-templates/${template.id}/start`, 'POST', { name: cohortName, startDate: '2027-01-01T00:00:00.000Z', endDate: '2027-01-10T00:00:00.000Z', requestId: randomUUID() });
   const pinned = await teacherCall(`/projects/${run.projectId}/template-context`);
   assert.deepEqual(pinned.definition.roles, [code]);
-  const teacherContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), teacher = await teacherContext.newPage();
+  const teacherContext = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 1000 } }), teacher = await teacherContext.newPage();
   teacher.on('pageerror', error => errors.push(error.message));
   await login(teacher, teacherEmail);
   await teacher.goto(`${base}/instructor/sessions/${run.sessionId}/setup?project=${run.projectId}`);

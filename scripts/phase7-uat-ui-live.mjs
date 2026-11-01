@@ -24,7 +24,7 @@ async function ready(page) {
   await page.waitForFunction(() => ![...document.querySelectorAll('[role="status"]')].some(e => /Đang tải|Đang kiểm tra/.test(e.textContent || "")));
 }
 async function scenario(name, viewport, run) {
-  const context = await browser.newContext({ viewport }), page = await context.newPage(), errors = [];
+  const context = await browser.newContext({ reducedMotion: "reduce",  viewport }), page = await context.newPage(), errors = [];
   page.on("pageerror", e => errors.push(e.message));
   page.on("response", r => { if (r.url().startsWith(api)) network.push({ scenario: name, url: r.url().split("?")[0], method: r.request().method(), status: r.status() }); });
   try { const detail = await run(page); assert.deepEqual(errors, []); results.push({ name, status: "PASS", detail }); }

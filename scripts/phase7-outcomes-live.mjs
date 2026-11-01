@@ -64,7 +64,7 @@ async function shot(page, name) {
   });
 }
 try {
-  const context = await browser.newContext({
+  const context = await browser.newContext({ reducedMotion: "reduce", 
       viewport: { width: 1440, height: 900 },
       acceptDownloads: true,
     }),
@@ -195,7 +195,7 @@ try {
     `/intern/me/certificates/${fixture.certificateId}`,
   ])
     assert.equal((await call("required@phase715.test", route)).status, 404);
-  const publicContext = await browser.newContext(),
+  const publicContext = await browser.newContext({ reducedMotion: "reduce" }),
     publicPage = await publicContext.newPage();
   await publicPage.goto(base + `/verify?code=${fixture.verificationCode}`);
   await publicPage

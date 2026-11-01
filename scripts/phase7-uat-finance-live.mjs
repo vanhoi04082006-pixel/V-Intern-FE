@@ -9,7 +9,7 @@ req("dotenv").config({ path: path.join(be, ".env.local"), quiet: true });
 if (process.env.NODE_ENV !== "test" || !process.env.DB_NAME?.startsWith("VIntern_Phase715_")) throw Error("Disposable test environment required");
 const f = JSON.parse(fs.readFileSync("../phase7-local/uat-finance.json", "utf8"));
 const ds = req(path.join(be, "dist/database/data-source.js")).default; await ds.initialize();
-const browser = await chromium.launch({ channel: "chrome", headless: true }), context = await browser.newContext({ viewport: { width: 1440, height: 900 } }), page = await context.newPage();
+const browser = await chromium.launch({ channel: "chrome", headless: true }), context = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 900 } }), page = await context.newPage();
 const api = "http://localhost:8080/api/v1", base = "http://localhost:3001", results = [], network = [], cache = new Map();
 fs.mkdirSync("phase7-evidence/final", { recursive: true });
 page.on("response", r => { if (r.url().startsWith(api)) network.push({ source: "browser", url: r.url().split("?")[0], method: r.request().method(), status: r.status() }); });

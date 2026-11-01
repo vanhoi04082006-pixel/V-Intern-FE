@@ -13,7 +13,7 @@ const api = process.env.LIVE_API_URL || 'http://localhost:8080/api/v1', base = p
 const code = `knowledge_${Date.now().toString(36)}`, title = `Xử lý Promise ${code}`, evidence = path.resolve('phase7-evidence/knowledge-library');
 fs.mkdirSync(evidence, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
-const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), page = await context.newPage();
+const context = await browser.newContext({ reducedMotion: "reduce",  viewport: { width: 1440, height: 1000 } }), page = await context.newPage();
 const pageErrors = [], viewports = [], checks = [];
 page.on('pageerror', error => pageErrors.push(error.message));
 async function call(suffix, method = 'GET', body) {
