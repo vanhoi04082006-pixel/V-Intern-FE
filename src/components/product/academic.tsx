@@ -30,6 +30,8 @@ import {
   StatusDot,
   AvatarStack,
   ProgressBar,
+  tdClass,
+  thClass,
 } from "./primitives";
 import { AcademicPicker } from "./academic-picker";
 import { InstructorPicker } from "./instructor-picker";
@@ -913,7 +915,7 @@ function AcademicBottom({ kind, items, summaries, onOpen }: { kind: api.Academic
   if (kind === "sessions") {
     const rows = items.filter(x => x.status === "ending" || (x.status === "active" && (summaries.find(s => s.id === x.id)?.taskCount ?? 0) === 0)).slice(0, 5);
     return <div className="mt-3"><Panel title="Cảnh báo & phiên cần chú ý" action={<Link href="/instructor/sessions" className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">Xem tất cả</Link>}>
-      {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-caption"><thead className="bg-background"><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead><tbody className="divide-y divide-primary">{rows.map((x, i) => <tr key={x.id}><td className="px-2 py-2">{i + 1}</td><td className="px-2 py-2 font-semibold text-primary">{x.code}</td><td className="px-2 py-2">{x.status === "ending" ? "Sắp kết thúc" : "Chưa có nhiệm vụ"}</td><td className="px-2 py-2"><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className="whitespace-nowrap px-2 py-2">{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className="px-2 py-2"><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
+      {rows.length ? <div className="overflow-x-auto"><table className="product-table w-full min-w-[520px] border-collapse text-caption"><thead><tr>{["#", "Mã phiên", "Vấn đề", "Mức độ", "Ngày kết thúc", "Hành động"].map(h => <th key={h} className={thClass}>{h}</th>)}</tr></thead><tbody>{rows.map((x, i) => <tr key={x.id}><td className={tdClass}>{i + 1}</td><td className={`${tdClass} font-semibold text-primary`}>{x.code}</td><td className={tdClass}>{x.status === "ending" ? "Sắp kết thúc" : "Chưa có nhiệm vụ"}</td><td className={tdClass}><StatusDot tone={x.status === "ending" ? "red" : "amber"}>{x.status === "ending" ? "Cao" : "Trung bình"}</StatusDot></td><td className={`${tdClass} whitespace-nowrap`}>{x.endDate ? new Date(x.endDate).toLocaleDateString("vi-VN") : "Chưa có"}</td><td className={tdClass}><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => onOpen(x.id)}>Xem</button></td></tr>)}</tbody></table></div> : <Empty>Không có phiên nào cần chú ý.</Empty>}
     </Panel></div>;
   }
   const rows = items.map(x => ({ x, members: summaries.find(s => s.id === x.id)?.memberCount ?? 0 })).sort((a, b) => b.members - a.members).slice(0, 3);

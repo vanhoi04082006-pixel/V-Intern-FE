@@ -1175,12 +1175,14 @@
 }
 
 /* 3. Admin panel — viền mực hairline + bóng in nhẹ, nâng chất giấy mà
-      không phá mật độ bảng (admin vẫn "vừa", không "đậm" như intern). */
+      không phá mật độ bảng (admin vẫn "vừa", không "đậm" như intern).
+      Padding cùng chuẩn instructor (space-5) để nội dung không áp sát viền mực. */
 .admin-workspace .product-panel {
   background: var(--card);
   border: 1.5px solid color-mix(in srgb, var(--ink) 52%, transparent);
   border-radius: var(--nb-radius);
   box-shadow: 2px 3px 0 color-mix(in srgb, var(--ink) 9%, transparent);
+  padding: var(--space-5);
 }
 .dark .admin-workspace .product-panel {
   border-color: color-mix(in srgb, var(--ink) 40%, transparent);
