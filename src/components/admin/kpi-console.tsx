@@ -34,6 +34,8 @@ import {
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useInternNames } from "./use-intern-names";
+import { StampMoc } from "@/components/workspace/notebook";
+import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
 
 export const kpiStatusLabels: Record<KpiPeriod["status"], string> = {
   draft: "Bản nháp",
@@ -163,7 +165,9 @@ export function KpiConsole() {
               className="grid gap-4 py-5 lg:grid-cols-[minmax(0,1fr)_13rem_auto] lg:items-center"
             >
               <div className="min-w-0">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  {/* Ribbon dấu trang nhỏ — mỗi kỳ KPI như một trang sổ được gấp mép. */}
+                  <RibbonBookmarkDoodle className="h-8 w-4 shrink-0 text-ink-soft" />
                   <h2 className="text-subsection font-semibold text-foreground">{period.name}</h2>
                   <span className="break-all font-mono text-caption text-muted-foreground">
                     {period.code}
@@ -176,9 +180,17 @@ export function KpiConsole() {
                 </p>
               </div>
               <div className="space-y-1">
-                <StatusDot tone={kpiStatusTones[period.status]}>
-                  {kpiStatusLabels[period.status]}
-                </StatusDot>
+                {period.status === "finalized" ? (
+                  // Kỳ đã chốt là hành chính cuối, không tính lại — đóng mộc
+                  // đỏ đầy mực; các trạng thái chưa chốt giữ StatusDot mềm.
+                  <StampMoc tone="red" size="sm" rotate={-5} className="nb-moc-allowed">
+                    Đã chốt
+                  </StampMoc>
+                ) : (
+                  <StatusDot tone={kpiStatusTones[period.status]}>
+                    {kpiStatusLabels[period.status]}
+                  </StatusDot>
+                )}
                 {(period.status === "calculating" || calculating) && (
                   <p className="text-caption text-muted-foreground">Đợt tính đang chạy…</p>
                 )}

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   IconBadgeCheck,
   IconBot,
@@ -10,7 +11,7 @@ import {
 } from "@/components/v-intern/icons";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
-import { HandArrowRight } from "@/components/v-intern/doodles";
+import { HandArrowRight, RouteTrailDoodle, Tape } from "@/components/v-intern/doodles";
 import { NoteCard } from "@/components/workspace/notebook";
 
 const STEPS: { icon: IconComponent; title: string; description: string }[] = [
@@ -72,6 +73,8 @@ export function HowItWorks() {
                 "rotate-2",
                 "-rotate-2",
               ];
+              /* Băng keo xen kẽ màu — mỗi “tấm vé” dán bằng một cuộn washi khác */
+              const tapeVariants = ["blue", "warm", "mint", "candy", "blue"] as const;
               return (
                 <div key={step.title} className="contents">
                   {index > 0 ? (
@@ -90,6 +93,11 @@ export function HowItWorks() {
                       (index > 0 ? " lg:ml-3" : "")
                     }
                   >
+                    <Tape
+                      className="-top-2.5 left-1/2 z-20 -translate-x-1/2"
+                      rotate={index % 2 === 0 ? -3 : 4}
+                      variant={tapeVariants[index]}
+                    />
                     <span className="font-hand text-3xl leading-none text-blue">
                       {String(index + 1).padStart(2, "0")}
                     </span>
@@ -111,8 +119,35 @@ export function HowItWorks() {
           </div>
         </FadeIn>
 
+        {/* Bản đồ hành trình — polaroid rộng dán 2 cuộn washi, nét mực nối các chặng */}
+        <FadeIn className="mt-12" delay={0.12}>
+          <div className="relative mx-auto max-w-4xl">
+            <Tape variant="mint" className="-top-2.5 left-10 z-20" rotate={-4} />
+            <Tape variant="candy" className="-top-2.5 right-10 z-20" rotate={5} />
+            <figure className="sketch-card rotate-[0.4deg] bg-raised p-2.5 dog-ear">
+              <Image
+                src="/images/landing/journey-map.png"
+                alt="Bản đồ vẽ tay của hành trình V-Intern: đường mòn loang vòng qua những cột mốc sách vở, laptop, giấy chứng nhận, đến đỉnh có huy hiệu và tên lửa giấy"
+                width={1008}
+                height={576}
+                sizes="(min-width: 1024px) 60vw, 100vw"
+                className="w-full rounded-lg border-2 border-ink/10"
+              />
+              <figcaption className="flex flex-wrap items-baseline justify-between gap-2 px-1.5 pb-1 pt-2.5">
+                <span className="font-hand text-[17px] leading-tight text-ink-soft">
+                  từ trang phỏng vấn đến trang chứng nhận — mỗi chặng một vệt mực
+                </span>
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-blue">
+                  bản đồ hành trình · 7 chặng
+                </span>
+              </figcaption>
+            </figure>
+            <RouteTrailDoodle className="absolute -bottom-9 left-1/2 hidden -translate-x-1/2 text-blue/45 lg:block" />
+          </div>
+        </FadeIn>
+
         {/* Ghi chú dán lề — mẹo nhỏ cho người mới, giữ chất sổ tay */}
-        <FadeIn className="mt-10" delay={0.15}>
+        <FadeIn className="mt-12" delay={0.15}>
           <div className="mx-auto max-w-md">
             <NoteCard tape rotate={1.2} title="Mẹo nhỏ">
               Không cần CV đẹp — hãy kể cho AI nghe bạn đã tự học được gì, đam

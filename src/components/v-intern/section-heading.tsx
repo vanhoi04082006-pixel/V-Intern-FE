@@ -58,6 +58,7 @@ export function SectionHeading({
       ) : null}
 
       <SquiggleUnderline
+        draw
         className={cn(
           "mt-5 text-blue",
           align === "center" ? "mx-auto w-28" : "w-24"

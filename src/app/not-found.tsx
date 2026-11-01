@@ -5,7 +5,9 @@ import { btn } from "@/components/product/primitives";
 import { IconCompass } from "@/components/v-intern/icons";
 import {
   CircleDoodle,
+  CoffeeStainDoodle,
   CrossDoodle,
+  PaperclipDoodle,
   SquiggleUnderline,
   StarDoodle,
   Tape,
@@ -20,9 +22,14 @@ export default function NotFound() {
         aria-hidden="true"
         className="bg-grid-paper mask-fade-edges pointer-events-none absolute inset-0 opacity-80"
       />
+      {/* Vết cà phê + kẹp giấy — trang bị mất như thật */}
+      <CoffeeStainDoodle
+        className="pointer-events-none absolute -left-6 bottom-10 h-20 w-20 text-ink/[0.05]"
+      />
       <div className="relative w-full max-w-lg">
         <div className="sketch-card group relative animate-paper-settle px-6 py-10 text-center sm:px-10">
-          <Tape className="tape-peel -top-3 left-1/2 ml-[-48px]" rotate={-3} />
+          <Tape className="tape-peel -top-3 left-1/2 ml-[-48px]" rotate={-3} variant="candy" />
+          <PaperclipDoodle className="pointer-events-none absolute -right-3.5 -top-5 h-11 w-6 text-ink/30" />
           <StarDoodle className="absolute right-5 top-5 h-6 w-6 text-ink-faint" />
           <CrossDoodle className="absolute bottom-4 left-5 h-4 w-4 text-ink-faint" />
           <span className="mx-auto grid size-12 place-items-center text-blue">

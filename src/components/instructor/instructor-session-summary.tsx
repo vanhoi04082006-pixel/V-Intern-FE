@@ -5,6 +5,7 @@ import {
 import type { SessionOverviewRow } from "@/lib/api/sessions";
 import { TaskDistribution } from "@/components/workspace/workspace-ui";
 import { SessionProgressComparison } from "@/components/workspace/workspace-charts";
+import { InkCountUp } from "@/components/v-intern/motion";
 
 export function InstructorSessionSummary({
   rows,
@@ -40,30 +41,43 @@ export function InstructorSessionSummary({
         {[
           {
             label: "Phiên theo bộ lọc",
-            value: total,
+            // Số tổng là tham chiếu tĩnh — không đếm cho số liệu hệ thống.
+            text: total,
             tone: "blue",
           },
           {
             label: "Nhiệm vụ hoàn thành",
-            value: `${done} / ${tasks}`,
+            count: done,
+            suffix: ` / ${tasks}`,
             tone: "green",
           },
           {
             label: "Bài chờ duyệt",
-            value: alertsKnown ? review : "Chưa có dữ liệu",
             // Unknown data is neutral, not a warning: only real counts carry
             // the amber/rose signal.
-            tone: alertsKnown ? "amber" : "slate",
+            ...(alertsKnown
+              ? { count: review, tone: "amber" }
+              : { text: "Chưa có dữ liệu", tone: "slate" }),
           },
           {
             label: "Nhiệm vụ quá hạn",
-            value: alertsKnown ? overdue : "Chưa có dữ liệu",
-            tone: alertsKnown ? "rose" : "slate",
+            ...(alertsKnown
+              ? { count: overdue, tone: "rose" }
+              : { text: "Chưa có dữ liệu", tone: "slate" }),
           },
-        ].map(({ label, value, tone }) => (
+        ].map(({ label, tone, count, suffix, text }) => (
           <div className="ins-metric" data-tone={tone} key={label}>
             <dt>{label}</dt>
-            <dd>{value}</dd>
+            <dd>
+              {text !== undefined ? (
+                text
+              ) : (
+                <>
+                  <InkCountUp value={count ?? 0} />
+                  {suffix ?? ""}
+                </>
+              )}
+            </dd>
           </div>
         ))}
       </dl>

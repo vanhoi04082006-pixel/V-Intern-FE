@@ -50,7 +50,7 @@ export function FeatureStrip() {
             " border-ink/15"
           }
         >
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-blue-mist text-blue transition-all group-hover:-rotate-6 group-hover:bg-royal group-hover:text-white">
+          <span className="sticker sticker-wiggle h-12 w-12 shrink-0 text-blue transition-all group-hover:bg-royal group-hover:text-white">
             <feature.icon className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">

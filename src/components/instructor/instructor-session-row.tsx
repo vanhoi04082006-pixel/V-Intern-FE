@@ -15,7 +15,7 @@ export function InstructorSessionRow({
 }) {
   return (
     <article
-      className={`workspace-collection-row workspace-session-row${row.status === "upcoming" ? " dashed-cut" : ""}`}
+      className={`workspace-collection-row workspace-session-row ins-session-card sketch-card-sm${row.status === "upcoming" ? " dashed-cut" : ""}`}
     >
       <div>
         <h3><Link href={`/instructor/sessions/${row.id}`}>{row.name}</Link></h3>

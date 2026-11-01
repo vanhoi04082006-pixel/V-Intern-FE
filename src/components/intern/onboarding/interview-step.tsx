@@ -6,7 +6,7 @@ import { RecruitmentPolicy } from "./recruitment-policy";
 import { roleLabel } from "@/lib/api/workspace";
 import { ConversationInterview } from "./conversation-interview";
 import { ScheduledInterview } from './scheduled-interview';
-import { Spinner } from "@/components/product/primitives";
+import { CheckDoodle, PaperclipDoodle, Tape } from "@/components/v-intern/doodles";
 import { NoteCard } from "@/components/workspace/notebook";
 function InterviewCountdown({ session }: { session: InterviewSession }) {
   const [elapsed, setElapsed] = useState(0);
@@ -20,7 +20,10 @@ function InterviewCountdown({ session }: { session: InterviewSession }) {
   }, [session.serverNow]);
   const remaining = remainingSeconds(session, elapsed);
   return (
-    <span aria-label="Thời gian còn lại">
+    <span
+      aria-label="Thời gian còn lại"
+      className="rounded-control border border-dashed border-muted-foreground/50 bg-card px-3 py-1.5 font-mono text-body font-semibold tabular-nums text-foreground"
+    >
       {remaining === null
         ? "Không có thời gian còn lại"
         : `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`}
@@ -45,7 +48,7 @@ export function InterviewStep() {
   if (evaluating) return (
     <section className="sketch-card mx-auto max-w-xl p-10 text-center" aria-busy="true">
       <div role="status" aria-label="AI đang chấm bài" aria-live="polite">
-        <Spinner className="mx-auto mb-6 block size-12 text-primary" />
+        <span className="spinner-hand mx-auto mb-6 block size-12 text-primary" aria-hidden="true" />
         <h1 className="text-page font-bold text-foreground">Đã kết thúc phỏng vấn</h1>
         <p className="mt-3 text-muted-foreground">Buổi phỏng vấn đã kết thúc. Vui lòng chờ hệ thống đánh giá kết quả.</p>
       </div>
@@ -119,8 +122,12 @@ export function InterviewStep() {
       <div className="mt-6 grid gap-5 xl:grid-cols-[220px_minmax(0,1fr)]">
         <nav
           aria-label="Danh sách câu hỏi"
-          className="sketch-card p-3"
+          className="sketch-card relative p-3"
         >
+          <Tape className="-top-3 left-6" rotate={-4} variant="slate" />
+          <p className="font-hand mb-2 px-1 text-[15px] leading-none text-muted-foreground">
+            mục lục câu hỏi
+          </p>
           <ol className="space-y-2">
             {questions.map((q) => (
               <li key={q.id}>
@@ -132,17 +139,23 @@ export function InterviewStep() {
                     setSelectedId(q.id);
                     setDraft("");
                   }}
-                  className={`w-full rounded-control p-3 text-left text-body ${question?.id === q.id ? "bg-accent text-primary" : "text-muted-foreground"}`}
+                  className={`flex w-full items-center gap-2 rounded-control p-3 text-left text-body ${question?.id === q.id ? "bg-accent text-primary" : "text-muted-foreground"}`}
                 >
-                  Câu {q.position} ·{" "}
-                  {q.category === "technical" ? "Technical" : "Soft Skill"}{" "}
-                  {q.answered ? "✓ Đã lưu" : ""}
+                  <span className="min-w-0 flex-1">
+                    Câu {q.position} ·{" "}
+                    {q.category === "technical" ? "Technical" : "Soft Skill"}{" "}
+                    {q.answered ? "✓ Đã lưu" : ""}
+                  </span>
+                  {q.answered ? (
+                    <CheckDoodle className="h-4 w-[22px] shrink-0 text-success" />
+                  ) : null}
                 </button>
               </li>
             ))}
           </ol>
         </nav>
-        <section className="sketch-card p-5">
+        <section className="sketch-card relative p-5">
+          <PaperclipDoodle className="absolute -top-2 right-6 z-10 h-9 w-6 text-muted-foreground/50" />
           {question ? (
             <>
               <h2 className="text-section font-bold text-foreground">

@@ -4,11 +4,15 @@ import { Empty } from "./primitives";
 import {
   IconArrowUpRight,
 } from "@/components/v-intern/icons";
+import { InkCountUp } from "@/components/v-intern/motion";
 
 const colors = ["var(--primary)", "var(--success)", "var(--warning)", "var(--destructive)", "var(--muted-foreground)", "var(--foreground)"];
 
+/** Con số đếm mực: ngắn để dashboard admin đọc nhanh, không kéo dài trang. */
+const INK_COUNT_DURATION = 0.45;
+
 export function CollectionMetrics({ values, note }: { values: [string, number][]; note?: string }) {
-  return <div className="collection-summary"><dl className="collection-stat-strip">{values.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value.toLocaleString("vi-VN")}</dd></div>)}</dl>{note && <p className="mt-3 text-caption text-muted-foreground">{note}</p>}</div>;
+  return <div className="collection-summary"><dl className="collection-stat-strip">{values.map(([label, value]) => <div key={label}><dt>{label}</dt><dd><InkCountUp className="tabular-nums" value={value} duration={INK_COUNT_DURATION} /></dd></div>)}</dl>{note && <p className="mt-3 text-caption text-muted-foreground">{note}</p>}</div>;
 }
 
 export function Distribution({ title, values, note }: { title: string; values: [string, number][]; note: string }) {

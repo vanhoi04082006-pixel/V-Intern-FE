@@ -23,7 +23,7 @@ export function NextStepsCard({
   return (
     <section
       aria-labelledby="result-next-steps-heading"
-      className="rounded-panel border border-border bg-card p-4 shadow-app-xs"
+      className="sketch-card-sm p-4"
     >
       <h2
         id="result-next-steps-heading"

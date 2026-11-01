@@ -15,7 +15,7 @@ import {
 } from "@/components/v-intern/icons";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { FadeIn } from "@/components/v-intern/reveal";
-import { Tape } from "@/components/v-intern/doodles";
+import { CompassDoodle, Tape } from "@/components/v-intern/doodles";
 
 type Step = {
   icon: IconComponent;
@@ -290,6 +290,8 @@ export function Workflow() {
               className="absolute bottom-[30px] left-[23px] top-0 w-0 border-l-2 border-dashed border-ink/20"
             />
 
+            <CompassDoodle className="absolute -top-1 right-2 hidden h-9 w-9 text-blue/40 lg:block" />
+
             {PHASES.map((phase) => (
               <div key={phase.name}>
                 <div className="flex items-baseline justify-between gap-4 py-3 pl-[64px] pr-1">
@@ -381,7 +383,7 @@ export function Workflow() {
           {/* Trang chi tiết dính băng dính */}
           <div className="hidden lg:block">
             <div className="sticky top-24">
-              <div className="sketch-card relative rotate-[0.5deg] p-7">
+              <div className="sketch-card ruling-red-top relative rotate-[0.5deg] p-7 dog-ear">
                 <Tape className="-top-3 right-10" rotate={6} />
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div

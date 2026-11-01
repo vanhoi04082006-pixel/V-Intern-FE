@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type CSSProperties } from "react";
 import { StampMoc } from "@/components/workspace/notebook";
 import {
   IconAward,
@@ -131,10 +131,24 @@ export function CertificateConsole() {
                   className="align-top transition-colors hover:bg-background/70"
                 >
                   <td className="border-b border-border px-4 py-3">
-                    <span className="font-mono text-caption font-semibold text-foreground">
-                      {certificate.certificateNumber}
-                    </span>
-                    <p className="mt-1 text-caption text-muted-foreground">
+                    {/* Số chứng nhận như mảnh bi lai xé khỏi cuốn: viền mực,
+                        gấp dog-ear; bản đã thu hồi bị gạch ngang như tài liệu
+                        vô hiệu. */}
+                    <div
+                      className="sketch-card-sm dog-ear inline-block min-w-28 px-3 py-2"
+                      style={{ "--dog-ear": "12px" } as CSSProperties}
+                    >
+                      <span
+                        className={`font-mono text-caption font-semibold text-foreground ${
+                          certificate.status === "revoked"
+                            ? "line-through decoration-[2.5px] decoration-destructive/70"
+                            : ""
+                        }`}
+                      >
+                        {certificate.certificateNumber}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-caption text-muted-foreground">
                       Cấp {new Date(certificate.issuedAt).toLocaleDateString("vi-VN")}
                     </p>
                   </td>
@@ -156,6 +170,18 @@ export function CertificateConsole() {
                     <StatusDot tone={certificate.status === "issued" ? "green" : "red"}>
                       {certificate.status === "issued" ? "Đang hiệu lực" : "Đã thu hồi"}
                     </StatusDot>
+                    {/* Chứng nhận đã cấp là hành chính cuối — đóng mộc đỏ
+                        đầy mực; bản thu hồi thể hiện bằng gạch ngang số. */}
+                    {certificate.status === "issued" && (
+                      <StampMoc
+                        tone="red"
+                        size="sm"
+                        rotate={-6}
+                        className="nb-moc-allowed ml-2 align-middle"
+                      >
+                        Đã cấp
+                      </StampMoc>
+                    )}
                     {certificate.revokedAt && (
                       <p className="mt-1 max-w-44 text-caption text-muted-foreground">
                         {new Date(certificate.revokedAt).toLocaleDateString("vi-VN")} ·{" "}

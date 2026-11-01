@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { FadeIn } from "@/components/v-intern/reveal";
-import { StampBadge, Tape } from "@/components/v-intern/doodles";
+import { Parallax } from "@/components/v-intern/motion";
+import { InkSplatDoodle, StampBadge, Tape } from "@/components/v-intern/doodles";
 import {
   IconBot,
 } from "@/components/v-intern/icons";
@@ -55,8 +56,8 @@ export function AiInterviewShowcase() {
           {/* Tấm polaroid buổi phỏng vấn */}
           <FadeIn className="relative">
             <div className="relative mx-auto max-w-[640px]">
-              <Tape className="-top-2.5 left-1/2 z-20 -translate-x-1/2" rotate={-3} />
-              <figure className="sketch-card rotate-[-1.6deg] bg-raised p-3 pb-0 transition-transform duration-500 ease-out motion-safe:hover:rotate-0">
+              <Tape className="-top-2.5 left-1/2 z-20 -translate-x-1/2" rotate={-3} variant="warm" />
+              <figure className="sketch-card rotate-[-1.6deg] bg-raised p-3 pb-0 dog-ear transition-transform duration-500 ease-out motion-safe:hover:rotate-0">
                 <Image
                   src="/images/landing/ai-interview.png"
                   alt="Sinh viên trong buổi phỏng vấn AI trên V-Intern, xung quanh là bong bóng hội thoại và biểu tượng tích xanh"
@@ -137,6 +138,26 @@ export function AiInterviewShowcase() {
                 câu hỏi thích ứng theo từng câu trả lời — càng trả lời tốt,
                 thử thách càng thật!
               </p>
+
+              {/* Robot chấm bài đỏ — linh vật thứ 2, trôi nhẹ dưới cụm chat */}
+              <Parallax speed={0.09} className="relative mt-2 hidden justify-end sm:flex">
+                <div className="relative max-w-[300px]">
+                  <InkSplatDoodle className="absolute -left-9 top-3 h-6 w-10 text-blue/40" />
+                  <div className="sketch-card-sm rotate-[1.5deg] bg-raised p-1.5 shadow-warm">
+                    <Image
+                      src="/images/landing/robot-grader.png"
+                      alt="Robot AI đang cầm bút đỏ chấm bài trên trang giấy có dấu tích"
+                      width={512}
+                      height={512}
+                      sizes="(min-width: 1024px) 20vw, 40vw"
+                      className="h-36 w-auto lg:h-40"
+                    />
+                  </div>
+                  <p className="mt-1.5 pr-1 text-right font-hand text-[15px] leading-tight text-ink-soft">
+                    AI chấm nháp — giảng viên chốt điểm
+                  </p>
+                </div>
+              </Parallax>
             </div>
           </FadeIn>
         </div>

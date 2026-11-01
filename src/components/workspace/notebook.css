@@ -895,3 +895,332 @@
     transition: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* 19. NOTEBOOK v2 — gáy lò xo, lề đỏ tiêu đề, washi theo vai,         */
+/*     nhịp giấy nâng tầm (phủ shell chung, giữ mật độ theo mục 0)     */
+/* ------------------------------------------------------------------ */
+
+/* 19a. Gáy lò xo THẬT cho sidebar intern — lỗ đục tròn thay vạch đứt:
+   mỗi lỗ là hình tròn mực nhạt, lặp dọc mép trái sidebar desktop. */
+@media (min-width: 1024px) {
+  [data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar) {
+    padding-left: var(--space-5);
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--ink) 26%, transparent) 0 3.1px,
+        transparent 3.3px
+      ) left 5px / 9px 26px repeat-y,
+      var(--sidebar);
+  }
+  /* Khoét lỗ đục sâu hơn ở dark — màu giấy nổi trên nền tối. */
+  .dark [data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar) {
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--paper-raised) 24%, transparent) 0 3.1px,
+        transparent 3.3px
+      ) left 5px / 9px 26px repeat-y,
+      var(--sidebar);
+  }
+  /* Vành mực quanh lỗ — nét tròn mảnh bao ngoài, tạo chiều sâu đục giấy. */
+  [data-workspace-role="intern"] :is(.student-sidebar, .product-sidebar)::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 10px;
+    bottom: 10px;
+    width: 15px;
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      transparent 0 3.1px,
+      color-mix(in srgb, var(--ink) 10%, transparent) 3.1px 3.6px,
+      transparent 3.8px
+    );
+    background-size: 15px 26px;
+    background-repeat: repeat-y;
+    pointer-events: none;
+  }
+}
+
+/* 19b. Lề đỏ truyền thống — tiêu đề trang intern mở đầu như trang sổ mới.
+   Chỉ intern (mật độ ĐẬM); instructor/admin giữ heading sạch cho dữ liệu. */
+[data-workspace-role="intern"] :is(.workspace-page-header, .student-outcome-heading) {
+  position: relative;
+  padding-left: var(--space-4);
+}
+[data-workspace-role="intern"] :is(.workspace-page-header, .student-outcome-heading)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 2.5px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 12%,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 88%,
+    transparent
+  );
+  pointer-events: none;
+}
+/* Màn chờ phân công: lề đỏ áp thẳng vào h1 (header lồng trong cột grid). */
+[data-workspace-role="intern"] .intern-waiting h1 {
+  position: relative;
+  padding-left: var(--space-4);
+}
+[data-workspace-role="intern"] .intern-waiting h1::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 2.5px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 12%,
+    color-mix(in srgb, var(--stamp-red) 34%, transparent) 88%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* 19c. Panel giấy nhấc bổng khi hover — intern ĐẬM (bóng in đậm, nhấc 2px),
+   instructor VỪA (nhấc 1px), admin KHÔNG (giữ bảng dày ổn định). */
+[data-workspace-role="intern"] .product-panel,
+[data-workspace-role="instructor"] .product-panel {
+  transition:
+    transform var(--motion-slow) var(--motion-ease),
+    box-shadow var(--motion-slow) var(--motion-ease),
+    border-color var(--motion-normal) var(--motion-ease);
+}
+[data-workspace-role="intern"] .product-panel:hover {
+  transform: translateY(-2px) rotate(-0.15deg);
+  box-shadow: var(--nb-shadow-hover), var(--elevation-sm);
+}
+[data-workspace-role="instructor"] .product-panel:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--nb-shadow-hover);
+}
+
+/* 19d. Washi theo vai — modal intern dán băng vàng (khác instructor xanh):
+   tăng nhận diện vai trên cùng một primitive dùng chung. */
+[data-workspace-role="intern"] .aurora-workspace .product-modal::before,
+[data-workspace-role="intern"] .product-modal::before {
+  background: color-mix(in srgb, #e2a53c 46%, #ffffff 46%);
+}
+.dark [data-workspace-role="intern"] .aurora-workspace .product-modal::before,
+.dark [data-workspace-role="intern"] .product-modal::before {
+  background: color-mix(in srgb, #e2a53c 36%, #26262e 54%);
+}
+
+/* 19e. Số liệu KPI intern — con số chính được gạch mực xanh dưới chân
+   (như nét bút tổng kết tuần trong sổ). */
+[data-workspace-role="intern"] .student-metric strong {
+  text-underline-offset: 6px;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--blue) 32%, transparent);
+  text-decoration-thickness: 2.5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-workspace-role="intern"] .product-panel,
+  [data-workspace-role="instructor"] .product-panel {
+    transition: none;
+  }
+  [data-workspace-role="intern"] .product-panel:hover,
+  [data-workspace-role="instructor"] .product-panel:hover {
+    transform: none;
+  }
+}
+
+/* 19f. Empty/error card v2 — chấm phá doodle mực ở góc (CSS thuần, không
+   thêm DOM): asterisk nhỏ góc phải trên, như đánh dấu chỗ cần viết tiếp. */
+.aurora-workspace :is(.product-empty, .student-empty)::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  width: 22px;
+  height: 22px;
+  opacity: 0.3;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none'%3E%3Cpath d='M13 3 C 12.6 9, 12.6 17, 13 23' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 8.5 C 8 11, 18 15, 22 17.5' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 17.5 C 8 15, 18 11, 22 8.5' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.dark .aurora-workspace :is(.product-empty, .student-empty)::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none'%3E%3Cpath d='M13 3 C 12.6 9, 12.6 17, 13 23' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 8.5 C 8 11, 18 15, 22 17.5' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M4 17.5 C 8 15, 18 11, 22 8.5' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+/* Lỗi inline: vết scribble mực đỏ góc phải — năng lượng “cần xử lý”. */
+.aurora-workspace .nb-error-card {
+  position: relative;
+}
+.aurora-workspace .nb-error-card::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  width: 44px;
+  height: 26px;
+  opacity: 0.22;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32' fill='none'%3E%3Cpath d='M4 25 C 10 14, 16 10, 22 15 C 27 19, 30 24, 36 17 C 40 12, 44 7, 46 4' stroke='%23c0272d' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M8 28.5 C 15 20, 22 16, 30 21 C 35 24, 40 22, 45 13' stroke='%23c0272d' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* 19g. Kanban board v2 — cột được “dán” bằng washi màu theo trạng thái,
+   thẻ task cắt tay (bo góc lệch) + bóng in mảnh. Chỉ intern (board cá nhân). */
+
+/* Băng washi trên đầu mỗi cột — màu theo trạng thái. */
+[data-workspace-role="intern"] .student-board-head {
+  position: relative;
+}
+[data-workspace-role="intern"] .student-board-head::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 64px;
+  height: 18px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: color-mix(in srgb, #6b7280 30%, #ffffff 60%);
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.85;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.16);
+  pointer-events: none;
+}
+[data-workspace-role="intern"] .student-column-doing .student-board-head::before {
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+}
+[data-workspace-role="intern"] .student-column-review .student-board-head::before {
+  background: color-mix(in srgb, #e2a53c 46%, #ffffff 44%);
+}
+[data-workspace-role="intern"] .student-column-done .student-board-head::before {
+  background: color-mix(in srgb, #2f9e7c 32%, #ffffff 58%);
+}
+.dark [data-workspace-role="intern"] .student-board-head::before {
+  background: color-mix(in srgb, #9ca3af 26%, #26262e 60%);
+}
+.dark [data-workspace-role="intern"] .student-column-doing .student-board-head::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+.dark [data-workspace-role="intern"] .student-column-review .student-board-head::before {
+  background: color-mix(in srgb, #e2a53c 36%, #26262e 54%);
+}
+.dark [data-workspace-role="intern"] .student-column-done .student-board-head::before {
+  background: color-mix(in srgb, #2f9e7c 30%, #26262e 58%);
+}
+
+/* Thẻ task: giấy cắt tay — viền mực, bo góc lệch, bóng in mảnh;
+   hover nhấc 1.5px (dnd đặt transform inline khi kéo nên không xung đột). */
+[data-workspace-role="intern"] .student-board-card {
+  border: 1.5px solid var(--nb-ink-line);
+  border-radius: 8px 11px 9px 10px;
+  box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 7%, transparent);
+}
+[data-workspace-role="intern"] .student-board-card:hover {
+  border-color: var(--primary);
+  box-shadow:
+    3px 3px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+    var(--elevation-xs);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-workspace-role="intern"] .student-board-card:hover {
+    box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 7%, transparent);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════ */
+/* JOURNEY NOTEBOOK v3 — WORKSPACE ATMOSPHERE (phủ shell mọi vai).     */
+/* Admin nâng từ "nhẹ" lên "vừa": viền mực mảnh + giấy ấm + gáy xé,   */
+/* vẫn KHÔNG tape/doodle trong bảng dày để giữ mật độ dữ liệu.         */
+/* ══════════════════════════════════════════════════════════════════ */
+
+/* 1. Gáy thương hiệu — mép xé giấy thay border liền dưới logo sidebar. */
+.aurora-workspace .workspace-brand {
+  border-bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%2317171c' stroke-opacity='.5' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 240px 8px;
+  background-position: bottom left;
+  padding-bottom: calc(var(--space-5) + 8px);
+}
+.dark .aurora-workspace .workspace-brand {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%23f2f1e9' stroke-opacity='.45' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+/* 2. Sidebar giảng viên/admin — nền chấm bi giấy như trang mục lục. */
+.aurora-workspace .product-sidebar {
+  background-image: radial-gradient(
+    rgba(23, 23, 28, 0.11) 1.4px,
+    transparent 1.4px
+  );
+  background-size: 22px 22px;
+}
+.dark .aurora-workspace .product-sidebar {
+  background-image: radial-gradient(
+    rgba(242, 241, 233, 0.12) 1.4px,
+    transparent 1.4px
+  );
+}
+
+/* 3. Admin panel — viền mực hairline + bóng in nhẹ, nâng chất giấy mà
+      không phá mật độ bảng (admin vẫn "vừa", không "đậm" như intern). */
+.admin-workspace .product-panel {
+  background: var(--card);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 52%, transparent);
+  border-radius: var(--nb-radius);
+  box-shadow: 2px 3px 0 color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.dark .admin-workspace .product-panel {
+  border-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* 4. Header panel admin — gáy xé giấy như panel giảng viên. */
+.admin-workspace .product-panel-header {
+  border-bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%2317171c' stroke-opacity='.46' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 240px 8px;
+  background-position: bottom left;
+  padding-bottom: calc(var(--space-4) + 7px);
+}
+.dark .admin-workspace .product-panel-header {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4.5 L 14 2 L 27 5 L 41 3 L 56 6 L 73 3 L 88 5.5 L 104 2 L 119 6 L 135 3 L 150 5 L 166 2 L 181 6 L 198 3 L 214 5 L 228 2 L 240 4.5' fill='none' stroke='%23f2f1e9' stroke-opacity='.4' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+/* 5. Tiêu đề trang admin — kẻ đôi đỏ như trang vở học sinh. */
+.admin-workspace .product-main h1 {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding-bottom: var(--space-3);
+  border-bottom: 4px double color-mix(in srgb, var(--stamp-red) 42%, transparent);
+}
+.dark .admin-workspace .product-main h1 {
+  border-bottom-color: color-mix(in srgb, var(--stamp-red) 66%, transparent);
+}
+
+/* 6. Nav heading giảng viên/admin — viết tay nhỏ thay caption thường. */
+.aurora-workspace:not([data-workspace-role="intern"]) .workspace-nav-label {
+  font-family: var(--font-patrick-hand), cursive;
+  font-size: 1.12rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+/* 7. Zebra giấy ấm — bảng admin dựng không dùng .product-table cũng được
+      sọc như vở: đảm bảo mọi bảng dày trong admin đều dễ soi theo dòng. */
+.admin-workspace .product-panel table:not(.product-table):not(.admin-coverage-table) tbody tr:nth-child(even) > td {
+  background: color-mix(in srgb, var(--muted) 100%, transparent);
+}
+.admin-workspace .product-panel table:not(.product-table):not(.admin-coverage-table) tbody tr:nth-child(even):hover > td {
+  background: color-mix(in srgb, var(--muted) 100%, transparent);
+}

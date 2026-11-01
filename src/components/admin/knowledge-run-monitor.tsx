@@ -17,6 +17,7 @@ import {
   Panel,
 } from "@/components/product/primitives";
 import { ErrorState } from "@/components/shared/data-state";
+import { StampMoc } from "@/components/workspace/notebook";
 
 const statuses: Record<string, string> = {
   queued: "Đang chờ",
@@ -175,17 +176,20 @@ export function KnowledgeRunMonitor({
       {run && (
         <div className="mt-5 space-y-3 border-t border-border pt-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge
-              tone={
-                run.status === "succeeded"
-                  ? "green"
-                  : run.status === "failed"
-                    ? "red"
-                    : "sky"
-              }
-            >
-              {statuses[run.status] ?? run.status}
-            </Badge>
+            {/* Trạng thái cuối của lượt chạy (thành công / lỗi / hủy) là kết
+                quả chốt — đóng mộc; lượt đang chờ hoặc đang chạy giữ badge
+                mềm cho tới khi dừng hẳn. */}
+            {run.status === "succeeded" ? (
+              <StampMoc tone="blue" size="sm" rotate={-4} className="nb-moc-allowed">
+                {statuses[run.status] ?? run.status}
+              </StampMoc>
+            ) : run.status === "failed" || run.status === "cancelled" ? (
+              <StampMoc tone="red" size="sm" rotate={4} className="nb-moc-allowed">
+                {statuses[run.status] ?? run.status}
+              </StampMoc>
+            ) : (
+              <Badge tone="sky">{statuses[run.status] ?? run.status}</Badge>
+            )}
             <Badge tone="gray">
               {run.attempts} lượt thực thi · {run.steps} bước
             </Badge>

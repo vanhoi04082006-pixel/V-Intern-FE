@@ -105,8 +105,10 @@ function ScriptNote({ audience }: { audience: Audience }) {
   );
 }
 
-function AudienceCard({ audience }: { audience: Audience }) {
+function AudienceCard({ audience, index = 0 }: { audience: Audience; index?: number }) {
   const dark = audience.theme === "dark";
+  /* Băng keo mỗi thẻ một cuộn — xanh / vàng so-le */
+  const tapeVariant = index % 2 === 0 ? "blue" : "warm";
 
   return (
     <article
@@ -118,7 +120,11 @@ function AudienceCard({ audience }: { audience: Audience }) {
           : "bg-blue-mist text-ink shadow-[8px_8px_0_0_var(--hard-shadow)]")
       }
     >
-      <Tape className="-top-1 left-1/2 z-20 -translate-x-1/2" rotate={-4} />
+      <Tape
+        className="-top-1 left-1/2 z-20 -translate-x-1/2"
+        rotate={-4}
+        variant={tapeVariant}
+      />
 
       <div className="flex flex-1 flex-col items-start p-7 sm:p-8 md:py-10 md:pl-10 md:pr-4 lg:pr-6">
         <span
@@ -222,7 +228,7 @@ export function AudienceCards() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {AUDIENCES.map((audience, index) => (
             <FadeIn key={audience.id} delay={index * 0.12} className="h-full">
-              <AudienceCard audience={audience} />
+              <AudienceCard audience={audience} index={index} />
             </FadeIn>
           ))}
         </div>

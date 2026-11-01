@@ -1,7 +1,13 @@
 "use client";
 
 import { FadeIn } from "@/components/v-intern/reveal";
-import { SparkleDoodle, SquiggleUnderline, StarDoodle } from "@/components/v-intern/doodles";
+import {
+  PaperPlaneDoodle,
+  RouteTrailDoodle,
+  SparkleDoodle,
+  SquiggleUnderline,
+  StarDoodle,
+} from "@/components/v-intern/doodles";
 import { StampMoc } from "@/components/workspace/notebook";
 import {
   IconArrowRight,
@@ -14,10 +20,18 @@ export function FinalCta() {
       className="relative overflow-hidden bg-royal py-20 lg:py-24"
       aria-label="Bắt đầu hành trình với V-Intern"
     >
+      {/* Nền phấn — chấm bi trắng mờ như bảng đen */}
+      <div
+        aria-hidden="true"
+        className="mask-fade-edges pointer-events-none absolute inset-0 bg-dots-chalk opacity-60"
+      />
       <StarDoodle className="absolute left-[8%] top-12 hidden h-8 w-8 text-white/30 lg:block" />
       <SparkleDoodle className="absolute bottom-12 left-[18%] hidden h-6 w-6 text-white/25 lg:block" />
       <StarDoodle className="absolute bottom-16 right-[10%] hidden h-10 w-10 rotate-12 text-white/25 lg:block" />
       <SparkleDoodle className="absolute right-[22%] top-10 hidden h-7 w-7 text-white/30 lg:block" />
+      {/* Đường bay hành trình — giấy bay lớn phía trên headline */}
+      <RouteTrailDoodle className="absolute left-1/2 top-6 hidden w-[520px] -translate-x-1/2 text-white/25 lg:block" />
+      <PaperPlaneDoodle className="absolute right-[14%] top-14 hidden h-14 w-16 animate-float text-white/40 motion-reduce:animate-none lg:block" />
 
       <div className="relative mx-auto max-w-3xl px-4 text-center md:px-6">
         <FadeIn>

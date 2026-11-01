@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import {
   IconBot,
   IconSparkles,
@@ -10,8 +11,8 @@ import { TagPill } from "./onboarding-primitives";
 
 /**
  * Các card "AI Recruiter nói gì" trên Result screen (dùng chung pass/fail):
- * - `RecruiterFeedback`: nhận xét chi tiết của AI Recruiter — compact
- *   (3 bullet) nằm dưới score card ở cột chính.
+ * - `RecruiterFeedback`: nhận xét chi tiết của AI Recruiter — mẩu giấy
+ *   note hồng "cần chú ý" dán lệch, compact (3 bullet) nằm dưới score card.
  * - `RoleRecommendation`: chỉ render khi fail — card THÔNG TIN compact nằm
  *   trong RAIL PHẢI theo reference 4B (không còn full-width dưới main);
  *   CTA "Tiếp tục với {vai trò}" nằm ở hàng CTA chính của recruitment-result.
@@ -25,7 +26,8 @@ export function RecruiterFeedback({
   return (
     <section
       aria-labelledby="result-feedback-heading"
-      className="rounded-panel border border-border bg-card p-4 shadow-app-xs"
+      className="sticky-note-pink p-4 sm:p-5"
+      style={{ "--note-rotate": "0.6deg" } as CSSProperties}
     >
       <h2
         id="result-feedback-heading"

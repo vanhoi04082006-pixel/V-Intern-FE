@@ -2,7 +2,7 @@
 
 import { IconSquareKanban } from "@/components/v-intern/icons";
 import { FadeIn } from "@/components/v-intern/reveal";
-import { CrossDoodle, SparkleDoodle, StarDoodle } from "@/components/v-intern/doodles";
+import { CrossDoodle, InkSplatDoodle, SparkleDoodle, StarDoodle } from "@/components/v-intern/doodles";
 
 const STATS = [
   "Sprint 2 tuần",
@@ -44,7 +44,7 @@ function KanbanBoard() {
   return (
     <div
       aria-hidden="true"
-      className="rotate-[1.2deg] rounded-xl border-2 border-royal/60 bg-coal-soft/80 p-3 shadow-[6px_6px_0_0_rgba(32,96,240,0.55)] transition-transform duration-500 ease-out motion-safe:hover:rotate-0"
+      className="rotate-[1.2deg] rounded-xl border-2 border-royal/60 bg-coal-soft/80 p-3 dog-ear shadow-[6px_6px_0_0_rgba(32,96,240,0.55)] transition-transform duration-500 ease-out motion-safe:hover:rotate-0"
     >
       <div className="flex items-center justify-between gap-3 border-b-2 border-dashed border-chalk/15 px-2 pb-2.5">
         <p className="font-hand text-lg leading-none text-chalk">bảng sprint #4</p>
@@ -149,7 +149,7 @@ export function ProductHeart() {
             <h2 className="mt-4 text-3xl font-extrabold leading-[1.15] tracking-tight text-chalk sm:text-4xl lg:text-[42px]">
               Sản phẩm mô phỏng{" "}
               <span className="relative inline-block text-blue">
-                toàn diện
+                <span className="marker-yellow">toàn diện</span>
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 120 10"
@@ -188,6 +188,7 @@ export function ProductHeart() {
             <p className="mt-7 -rotate-1 font-hand text-lg leading-snug text-[#7d97ff]">
               nghỉ ngơi vài phút, ghim bảng sprint lên tường nhé →
             </p>
+            <InkSplatDoodle className="mt-3 h-6 w-10 text-blue/50" />
           </FadeIn>
 
           <FadeIn delay={0.12}>

@@ -7,7 +7,7 @@ import { presentCareer } from "./recruitment-presentation";
 import { listRecruitingCareers } from '@/lib/api/career-roles';
 import { useResource } from '@/lib/api/use-resource';
 import { ErrorState, LoadingState } from '@/components/shared/data-state';
-import { Empty } from '@/components/product/primitives';
+import { NotebookEmpty } from '@/components/workspace/notebook';
 import { HorizontalStepper, MobileStepbar } from "./onboarding-stepper";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import type { RecruitmentRole } from "@/lib/api/workspace";
@@ -40,7 +40,7 @@ function ManualRoleSelectionStep() {
       </div>
       {catalog.loading && !catalog.data && <LoadingState />}
       {Boolean(catalog.error) && <ErrorState error={catalog.error} onRetry={catalog.reload} />}
-      {catalog.data?.length === 0 && <Empty>Chưa có vị trí đang tuyển. Hãy liên hệ giảng viên hoặc quay lại khi có đợt mới.</Empty>}
+      {catalog.data?.length === 0 && <NotebookEmpty className="mt-8" title="Chưa có vị trí đang tuyển" hint="liên hệ giảng viên hoặc quay lại khi có đợt mới nhé!" />}
       <fieldset disabled={busy || catalog.loading || Boolean(catalog.error)} className="mt-8">
         <legend className="sr-only">Chọn vị trí ứng tuyển</legend>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -76,7 +76,7 @@ function ManualRoleSelectionStep() {
           {notice}
         </p>
       )}
-      <div className="student-selection-bar">
+      <div className="student-selection-bar ruling-red-top">
         <p className="mr-auto text-body text-muted-foreground">
           {chosen ? (
             <>
