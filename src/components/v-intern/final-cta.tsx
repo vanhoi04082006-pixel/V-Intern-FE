@@ -1,6 +1,7 @@
 "use client";
 
 import { FadeIn } from "@/components/v-intern/reveal";
+import { GradientBackground } from "@/components/animate-ui/backgrounds/gradient";
 import {
   PaperPlaneDoodle,
   RouteTrailDoodle,
@@ -17,9 +18,17 @@ import {
 export function FinalCta() {
   return (
     <section
-      className="relative overflow-hidden bg-royal py-20 lg:py-24"
+      className="relative overflow-hidden py-20 lg:py-24"
       aria-label="Bắt đầu hành trình với V-Intern"
     >
+      {/* Lớp mực xanh loang chậm — gradient royal trôi nhẹ như tiết mực
+          trên trang bìa, 18s/vòng, tự ngắt khi giảm chuyển động. */}
+      <GradientBackground
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-br from-[#5b8df6] via-[#2060f0] to-[#0f2a86] bg-[length:200%_200%]"
+        transition={{ duration: 18, ease: "easeInOut", repeat: Infinity }}
+      />
+
       {/* Nền phấn — chấm bi trắng mờ như bảng đen */}
       <div
         aria-hidden="true"

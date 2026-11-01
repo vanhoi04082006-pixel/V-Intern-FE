@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 /**
  * Theme store — one source of truth for light/dark across the whole app
  * (landing, auth and all three workspaces).
@@ -78,3 +80,21 @@ export function watchSystemTheme() {
  * Kept as a string so the bundler never tree-shakes it.
  */
 export const THEME_BOOTSTRAP = `(function(){try{var s=localStorage.getItem("${STORAGE_KEY}");var d=s==="dark"||(s!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var r=document.documentElement;r.classList.toggle("dark",d);r.style.colorScheme=d?"dark":"light";}catch(e){}})();`;
+
+/**
+ * v6 — React hook cho các hiệu ứng animate-ui cần màu theo chủ đề (topography
+ * lineColor, glyph shapeColor…): theo dõi class `.dark` trên <html> qua store
+ * theme. Khởi tạo `false` để SSR ổn định; đồng bộ lại trong effect sau mount.
+ */
+export function useIsDarkTheme(): boolean {
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const sync = () =>
+      setDark(document.documentElement.classList.contains("dark"));
+    sync();
+    return subscribeTheme(sync);
+  }, []);
+
+  return dark;
+}

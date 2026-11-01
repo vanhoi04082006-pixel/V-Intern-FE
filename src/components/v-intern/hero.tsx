@@ -17,6 +17,8 @@ import { FadeIn } from "@/components/v-intern/reveal";
 import { Parallax } from "@/components/v-intern/motion";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
+import { TopographyBackground } from "@/components/animate-ui/backgrounds/topography";
+import { useIsDarkTheme } from "@/lib/theme";
 import {
   AsteriskDoodle,
   CoffeeStainDoodle,
@@ -150,6 +152,8 @@ function DashboardPolaroid() {
 }
 
 export function Hero() {
+  const dark = useIsDarkTheme();
+
   return (
     <section
       id="platform"
@@ -160,6 +164,19 @@ export function Hero() {
       <div
         aria-hidden="true"
         className="mask-fade-edges pointer-events-none absolute inset-0 bg-grid-paper"
+      />
+
+      {/* Đường đồng mức sống — bản đồ hành trình dưới nền giấy: rê chuột
+          nhấc các đường cong lên nhẹ, click xuống thả một vòng sóng nhỏ. */}
+      <TopographyBackground
+        aria-hidden="true"
+        className="mask-fade-edges absolute inset-0"
+        lineColor={dark ? "rgba(125, 151, 255, 0.30)" : "rgba(32, 96, 240, 0.26)"}
+        levels={14}
+        speed={0.5}
+        scale={1.2}
+        peak={0.75}
+        interactive
       />
 
       {/* Chòm doodle trôi nổi — như dấu vết bút vẽ trên trang sổ */}

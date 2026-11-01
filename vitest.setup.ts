@@ -83,4 +83,19 @@ if (typeof window !== "undefined") {
       value: IntersectionObserverStub,
     });
   }
+
+  /* jsdom cũng không có ResizeObserver — animate-ui backgrounds (topography
+     2D fallback) tạo observer trước cả guard WebGL. Stub rỗng để component
+     render an toàn trong test (canvas 2D/webgl đều null trong jsdom). */
+  if (!window.ResizeObserver) {
+    class ResizeObserverStub implements ResizeObserver {
+      observe(): void {}
+      unobserve(): void {}
+      disconnect(): void {}
+    }
+    Object.defineProperty(window, "ResizeObserver", {
+      writable: true,
+      value: ResizeObserverStub,
+    });
+  }
 }
