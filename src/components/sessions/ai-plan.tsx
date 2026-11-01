@@ -9,6 +9,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Empty, Spinner, btn, buttonClass, inputClass } from "@/components/product/primitives";
 import { Sparkles } from "@/components/animate-ui/icons/sparkles";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
+import { cn } from "@/lib/utils";
 import { StampMoc } from "@/components/workspace/notebook";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
@@ -188,8 +190,12 @@ function AiPlanWorkspace({
                 Nếu quá trình tự động chưa bắt đầu, bạn có thể yêu cầu tạo kế
                 hoạch. Backend sẽ dùng lại yêu cầu đang chạy.
               </p>
-              <button
-                className={buttonClass}
+              <LiquidButton
+                className={cn(
+                  buttonClass,
+                  "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+                )}
+                delay="0.32s"
                 disabled={action.busy}
                 onClick={() => void regenerate()}
               >
@@ -200,7 +206,7 @@ function AiPlanWorkspace({
                 ) : (
                   "Tạo kế hoạch AI"
                 )}
-              </button>
+              </LiquidButton>
             </>
           )}
           {Boolean(action.error) && <ErrorState error={action.error} />}

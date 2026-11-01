@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useCallback } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Empty, Spinner, buttonClass } from "@/components/product/primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
+import { cn } from "@/lib/utils";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import {
@@ -435,10 +437,14 @@ function SetupBody({
                   </p>
                 )}
                 <Can perm="sessions.manage">
-                  <button
+                  <LiquidButton
                     type="button"
                     disabled={startAction.busy}
-                    className={buttonClass}
+                    delay="0.32s"
+                    className={cn(
+                      buttonClass,
+                      "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+                    )}
                     onClick={() =>
                       void startAction.run(() =>
                         transitionSession(sessionId, "active"),
@@ -452,7 +458,7 @@ function SetupBody({
                     ) : (
                       "Bắt đầu phiên"
                     )}
-                  </button>
+                  </LiquidButton>
                 </Can>
                 {Boolean(startAction.error) && (
                   <ErrorState error={startAction.error} />

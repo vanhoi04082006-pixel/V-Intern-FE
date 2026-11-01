@@ -10,6 +10,7 @@ import {
   IconPlus,
 } from "@/components/v-intern/icons";
 import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import {
   downloadCertificatePdf,
   issueCertificate,
@@ -372,10 +373,18 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
       )}
       {!result && (
         <div className="flex justify-end">
-          <button className={buttonClass} disabled={action.busy} type="submit">
+          <LiquidButton
+            className={cn(
+              buttonClass,
+              "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+            )}
+            delay="0.32s"
+            disabled={action.busy}
+            type="submit"
+          >
             <IconAward size={16} aria-hidden />
             {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
-          </button>
+          </LiquidButton>
         </div>
       )}
     </form>

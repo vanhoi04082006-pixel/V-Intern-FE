@@ -23,6 +23,8 @@ import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Panel, Pager, Empty, Spinner, btn, buttonClass } from "./primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
+import { cn } from "@/lib/utils";
 import { linkButtonClass, TimelineItem } from "@/components/admin/ui-bits";
 
 export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?: boolean }) {
@@ -93,9 +95,13 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
               </p>
             )}
             <div className="flex flex-wrap gap-3">
-              <button
+              <LiquidButton
                 disabled={busy || !data.data.configured}
-                className={buttonClass}
+                delay="0.32s"
+                className={cn(
+                  buttonClass,
+                  "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+                )}
                 onClick={() => void connect()}
               >
                 {busy
@@ -107,7 +113,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
                   : data.data.connected
                     ? "Kết nối lại GitHub"
                     : "Kết nối GitHub"}
-              </button>
+              </LiquidButton>
               {data.data.connected && (
                 <button
                   disabled={busy}

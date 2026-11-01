@@ -84,7 +84,7 @@ function LiquidButtonContent({
           background:
             'linear-gradient(var(--liquid-button-color) 0 0) no-repeat calc(200% - var(--liquid-button-fill-width, -1%)) 100% / 200% var(--liquid-button-fill-height, 0.2em)',
           backgroundColor: 'var(--liquid-button-background-color)',
-          transition: `background ${delay} var(--liquid-button-delay, 0s), color ${delay} ${delay}, background-position ${delay} calc(${delay} - var(--liquid-button-delay, 0s))`,
+          transition: `box-shadow var(--motion-fast, 160ms) var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)), border-color var(--motion-fast, 160ms) var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)), background ${delay} var(--liquid-button-delay, 0s), color ${delay} ${delay}, background-position ${delay} calc(${delay} - var(--liquid-button-delay, 0s))`,
           ...style,
         } as React.CSSProperties
       }
