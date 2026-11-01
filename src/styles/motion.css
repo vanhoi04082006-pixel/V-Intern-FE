@@ -73,6 +73,9 @@ html { scroll-behavior: smooth; }
 .nb-rise { animation: nb-rise 320ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
 .nb-fade { animation: nb-fade 240ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
 .nb-swap { animation: nb-swap 200ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+/* Delay bước cho kết hợp nb-fade/nb-rise (viết sau shorthand để thắng delay 0s). */
+.nb-delay-1 { animation-delay: 70ms; }
+.nb-delay-2 { animation-delay: 140ms; }
 
 /* Thanh tiến độ rút mực từ 0 → giá trị hiện tại (scaleX, không reflow).
    Gắn cho phần tử fill đã set width bằng inline style/attribute. */

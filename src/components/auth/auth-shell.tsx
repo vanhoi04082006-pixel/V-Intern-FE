@@ -22,7 +22,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   return <div className="app-surface auth-surface">
     <header className="support-header"><Logo /><div className="flex items-center gap-3"><ThemeToggle /><Link href="/" aria-label="Quay lại trang chủ" className="support-back"><IconArrowLeft size={16} aria-hidden />Quay lại</Link></div></header>
     <main className="auth-layout">
-      <section className="auth-context" aria-label="Giới thiệu V-Intern">
+      <section className="auth-context nb-fade nb-delay-1" aria-label="Giới thiệu V-Intern">
         <AsteriskDoodle
           className="pointer-events-none absolute -right-4 -top-7 h-5 w-5 text-blue/25 animate-float motion-reduce:animate-none"
         />
