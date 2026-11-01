@@ -43,6 +43,8 @@ import {
   Pager,
   Panel,
   StatusDot,
+  tdClass,
+  thClass,
 } from "./primitives";
 import { Person } from "./identity";
 import { RowMenu } from "./instructor-dashboard";
@@ -541,14 +543,13 @@ export function TaskManagement({
           tasks.data && (
             <>
               {tasks.data.items.length ? (
-                <div className="notebook-scroll overflow-x-auto"><table className="w-full min-w-[860px] text-left text-caption"><thead className="bg-background"><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>
+                <div className="notebook-scroll overflow-x-auto"><table className="product-table w-full min-w-[860px] border-collapse text-caption"><thead><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className={thClass}>{label}</th>)}</tr></thead><tbody>
                   {tasks.data.items.map((t, i) => (
                     <tr
                       key={t.id}
-                      className="border-b border-border"
                     >
-                      <td className="p-3 text-muted-foreground">{(page - 1) * 10 + i + 1}</td>
-                      <td className="max-w-52 p-3">
+                      <td className={`${tdClass} text-muted-foreground`}>{(page - 1) * 10 + i + 1}</td>
+                      <td className={`${tdClass} max-w-52`}>
                         <button
                           className="block rounded-control text-left text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                           onClick={() => setDetail(t.id)}
@@ -557,12 +558,12 @@ export function TaskManagement({
                         </button>
                         <span className="mt-1 line-clamp-1 block text-caption text-foreground">{t.title}</span>
                       </td>
-                      <td className="max-w-40 p-3"><Person name={memberName(t.assigneeId)} /></td>
-                      <td className="p-3"><TaskStatusPill status={t.status} /></td>
-                      <td className="p-3"><PriorityBadge priority={t.priority} /></td>
-                      <td className="p-3 whitespace-nowrap">{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
-                      <td className="p-3"><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
-                      <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
+                      <td className={`${tdClass} max-w-40`}><Person name={memberName(t.assigneeId)} /></td>
+                      <td className={tdClass}><TaskStatusPill status={t.status} /></td>
+                      <td className={tdClass}><PriorityBadge priority={t.priority} /></td>
+                      <td className={`${tdClass} whitespace-nowrap`}>{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
+                      <td className={tdClass}><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
+                      <td className={`${tdClass} whitespace-nowrap`}><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
                     </tr>
                   ))}
                 </tbody></table></div>

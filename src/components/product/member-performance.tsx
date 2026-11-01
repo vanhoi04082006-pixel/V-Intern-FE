@@ -21,6 +21,8 @@ import {
   buttonClass,
   inputClass,
   Pager,
+  tdClass,
+  thClass,
 } from "./primitives";
 
 /** Bảng số liệu notebook: cùng cấu trúc Metrics nhưng số nguyên đếm dần
@@ -274,8 +276,8 @@ export function MemberPerformance({
               <Empty>Chưa có thành viên hoặc dữ liệu trong bộ lọc này.</Empty>
             ) : (
               <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Hiệu suất thành viên theo bộ lọc" tabIndex={0}>
-                <table className="workspace-table w-full min-w-[760px] text-left text-body">
-                  <thead className="bg-muted">
+                <table className="product-table w-full min-w-[760px] border-collapse text-body">
+                  <thead>
                     <tr>
                       {[
                         "Thành viên",
@@ -284,7 +286,7 @@ export function MemberPerformance({
                         "Story points (%)",
                         "Đánh giá",
                       ].map((x) => (
-                        <th key={x} className="p-3">
+                        <th key={x} className={thClass}>
                           {x}
                         </th>
                       ))}
@@ -292,8 +294,8 @@ export function MemberPerformance({
                   </thead>
                   <tbody>
                     {data.map((m) => (
-                      <tr key={m.userId} className="border-b border-border">
-                        <td className="p-3">
+                      <tr key={m.userId}>
+                        <td className={tdClass}>
                           <button
                             className="rounded-control font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                             onClick={() => setSelected(m.userId)}
@@ -301,16 +303,16 @@ export function MemberPerformance({
                             {m.displayName ?? m.userId}
                           </button>
                         </td>
-                        <td className="p-3">
+                        <td className={tdClass}>
                           {m.completedTaskCount}/{m.totalTaskCount}
                         </td>
-                        <td className="p-3">
+                        <td className={tdClass}>
                           {m.taskCompletionRate ?? "Chưa đo được"}
                         </td>
-                        <td className="p-3">
+                        <td className={tdClass}>
                           {m.storyPointCompletionRate ?? "Chưa đo được"}
                         </td>
-                        <td className="p-3">
+                        <td className={tdClass}>
                           {m.averageEvaluationScore ?? "Chưa chấm"}
                         </td>
                       </tr>
