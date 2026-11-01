@@ -9,116 +9,19 @@ import {
   useSpring,
   useTransform,
   animate,
-  type Variants,
 } from "framer-motion";
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 /**
  * Journey Notebook v3 — bộ chuyển động "mực & giấy".
  * Nguyên tắc: entrance dùng spring (vật lý thật, không ease tuyến tính),
  * scroll parallax chạy trên transform, mọi hiệu ứng tôn trọng
  * prefers-reduced-motion bằng cách render tĩnh.
+ *
+ * v6 Gọn: Reveal/RevealStagger/RevealItem/PressSpring không còn nơi dùng
+ * (landing đã chuyển qua FadeIn + nb-* kit) nên đã dọn; file này chỉ còn
+ * Parallax và InkCountUp.
  */
-
-/* Spring chuẩn của sổ tay: nhẹ, nhanh dừng, không nảy quá. */
-const PAPER_SPRING = { type: "spring", stiffness: 240, damping: 26, mass: 0.9 } as const;
-
-/** Reveal một phần tử: rơi nhẹ như tờ giấy đặt xuống, spring thay vì ease. */
-export function Reveal({
-  children,
-  className,
-  delay = 0,
-  y = 26,
-  once = true,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-  y?: number;
-  once?: boolean;
-}) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-72px" }}
-      transition={{ ...PAPER_SPRING, delay }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-const STAGGER_PARENT: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
-};
-
-const STAGGER_ITEM: Variants = {
-  hidden: { opacity: 0, y: 22, rotate: 0.4 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    rotate: 0,
-    transition: PAPER_SPRING,
-  },
-};
-
-/** Nhóm reveal so le: từng "tấm giấy" rơi xuống lần lượt như người ta dán từng tờ. */
-export function RevealStagger({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      variants={STAGGER_PARENT}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-64px" }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-/** Mỗi item trong RevealStagger — dùng bên trong component con. */
-export function RevealItem({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div className={className} variants={STAGGER_ITEM}>
-      {children}
-    </motion.div>
-  );
-}
 
 /**
  * Parallax theo scroll: phần tử trôi nhanh/chậm hơn trang như các lớp giấy
@@ -220,36 +123,5 @@ export function InkCountUp({
     <motion.span ref={ref} className={className}>
       {text}
     </motion.span>
-  );
-}
-
-/**
- * Nút/thẻ nhấn với spring vật lý: press lún nhẹ, thả nảy về như giấy.
- * Bọc bên ngoài phần tử tương tác; không đổi behaviour của children.
- */
-export function PressSpring({
-  children,
-  className,
-  scaleOnTap = 0.97,
-}: {
-  children: ReactNode;
-  className?: string;
-  scaleOnTap?: number;
-}) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <div className={cn("inline-block", className)}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={cn("inline-block", className)}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: scaleOnTap, y: 0 }}
-      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-    >
-      {children}
-    </motion.div>
   );
 }

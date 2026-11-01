@@ -9,6 +9,7 @@ import {
   IconSparkles,
 } from "@/components/v-intern/icons";
 import { FadeIn } from "@/components/v-intern/reveal";
+import { SectionHeading } from "@/components/v-intern/section-heading";
 import { Tape } from "@/components/v-intern/doodles";
 
 type Audience = {
@@ -225,7 +226,17 @@ export function AudienceCards() {
       aria-label="Đối tượng sử dụng V-Intern"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        {/* v6 Gọn: mọi section nội dung đều có mục lục mở đầu — đúng
+            nhịp SectionHeading như how-it-works / workflow. */}
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Đối tượng sử dụng"
+            title="Hai vai trò"
+            highlight="một hành trình"
+            subtitle="Sinh viên viết trang kỹ năng, giảng viên viết trang quản lý — cùng một cuốn sổ V-Intern."
+          />
+        </FadeIn>
+        <div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {AUDIENCES.map((audience, index) => (
             <FadeIn key={audience.id} delay={index * 0.12} className="h-full">
               <AudienceCard audience={audience} index={index} />

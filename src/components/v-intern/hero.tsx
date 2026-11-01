@@ -195,7 +195,9 @@ export function Hero() {
         <PaperPlaneDoodle className="absolute right-[2%] top-[30%] h-12 w-14 animate-float-delayed text-blue/30 motion-reduce:animate-none" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-14 md:px-6 lg:px-8 lg:pb-24 lg:pt-20">
+      {/* v6 Gọn: thống nhất nhịp dọc các section landing — py-20/lg:py-24
+          như how-it-works, audience, workflow, final-cta. */}
+      <div className="relative mx-auto max-w-7xl px-4 py-20 md:px-6 lg:px-8 lg:py-24">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,46fr)_minmax(0,54fr)] lg:gap-12">
           {/* Cột trái */}
           <FadeIn>

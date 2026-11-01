@@ -32,7 +32,7 @@ const LINK_COLUMNS: FooterColumn[] = [
     heading: "Sản phẩm",
     links: [
       { label: "Nền tảng V-Intern", href: "#platform" },
-      { label: "Phỏng vấn AI", href: "#how-it-works" },
+      { label: "Phỏng vấn AI", href: "#ai-interview" },
       { label: "Dự án thực tế", href: "#workflow" },
       { label: "AI Mentor & Đánh giá", href: "#how-it-works" },
       { label: "Chứng nhận", href: "#workflow" },
@@ -173,12 +173,7 @@ export function Footer() {
       </FadeIn>
 
       <div className="border-t-2 border-chalk/12">
-        <div
-          className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 px-4 py-6 sm:flex-row sm:items-center md:px-6 lg:px-8"
-          style={{
-            paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))",
-          }}
-        >
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 px-4 pt-6 sm:flex-row sm:items-center md:px-6 lg:px-8 [padding-bottom:calc(1.5rem_+_env(safe-area-inset-bottom))]">
           <p className="text-sm text-chalk-soft">
             © {year} V-Intern. Bảo lưu mọi quyền.
           </p>

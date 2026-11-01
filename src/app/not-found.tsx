@@ -29,7 +29,7 @@ export default function NotFound() {
       />
       <div className="relative w-full max-w-lg">
         <div className="sketch-card group relative animate-paper-settle px-6 py-10 text-center sm:px-10">
-          <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="candy" />
+          <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={-3} variant="candy" />
           {/* Dải băng dấu trang treo khỏi mép sổ — trang bị "lạc" giữa cuốn */}
           <RibbonBookmarkDoodle className="pointer-events-none absolute -top-6 left-8 h-14 w-7 text-blue/50" />
           <PaperclipDoodle className="pointer-events-none absolute -right-3.5 -top-5 h-11 w-6 text-ink/30" />
