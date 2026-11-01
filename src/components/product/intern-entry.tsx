@@ -530,7 +530,7 @@ export function SprintBoard({
                   <p>{{ todo: "Đọc yêu cầu và chuẩn bị", doing: "Tập trung từng nhiệm vụ", review: "Đã nộp, chờ phản hồi", done: "Được giảng viên xác nhận" }[column.status]}</p>
                 </header>
                 {column.tasks.length ? (
-                  <div className="space-y-3">
+                  <div className="space-y-3 nb-stagger">
                     {column.tasks.map((t) => (
                       <article
                         key={t.id}
@@ -582,7 +582,7 @@ export function SprintBoard({
             ) : (
               <Panel title={`${statusLabels[column.status]} · ${column.count}`}>
                 {column.tasks.length ? (
-                  <div className="space-y-3">
+                  <div className="space-y-3 nb-stagger">
                     {column.tasks.map((t) => (
                       <article
                         key={t.id}

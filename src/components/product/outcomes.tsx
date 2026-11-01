@@ -128,7 +128,7 @@ function Resource<T>({
 export function Metrics({ values }: { values: [string, number | null][] }) {
   return (
     <dl
-      className={`workspace-metrics workspace-stat-strip grid gap-y-4 sm:grid-cols-2 ${values.length === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}
+      className={`workspace-metrics workspace-stat-strip grid gap-y-4 sm:grid-cols-2 nb-stagger ${values.length === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}
     >
       {values.map(([name, value]) => (
         <div
@@ -400,7 +400,7 @@ export function Kpi({ id }: { id?: string }) {
                     </div>
                   </div>
                   {"metrics" in k && Array.isArray(k.metrics) && (
-                    <div className="student-kpi-metrics">
+                    <div className="student-kpi-metrics nb-stagger">
                       {k.metrics.map((m) => (
                         <div key={m.metricCode} className="student-kpi-row">
                           <div className="student-kpi-name">
@@ -1256,7 +1256,7 @@ export function Notifications() {
             {(data) => (
               <>
                 {data.items.length ? (
-                  <div className="workspace-notification-feed">
+                  <div className="workspace-notification-feed nb-stagger">
                     {data.items
                       .map((n) => ({
                         ...n,
@@ -1397,7 +1397,7 @@ export function Notifications() {
             <Resource resource={preferences}>
               {(data) => (
                 <div
-                  className="grid gap-x-6 sm:grid-cols-2 xl:grid-cols-1"
+                  className="grid gap-x-6 sm:grid-cols-2 xl:grid-cols-1 nb-stagger"
                 >
                   {data.map((p) => (
                     <label

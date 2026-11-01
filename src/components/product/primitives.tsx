@@ -487,14 +487,14 @@ export function Pager({
   // buttons read as a broken control, not as "there is nothing more".
   if (last <= 1)
     return (
-      <p className="mt-4 text-body text-muted-foreground">
+      <p className="mt-2 text-body text-muted-foreground">
         <span className="tabular-nums">
           {total} {unit}
         </span>
       </p>
     );
   return (
-    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-body text-muted-foreground">
+    <div className="mt-2 flex flex-wrap items-center justify-between gap-3 text-body text-muted-foreground">
       <span className="tabular-nums">
         {total} {unit} · Trang {page}/{last}
       </span>
