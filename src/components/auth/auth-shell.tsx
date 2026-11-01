@@ -11,6 +11,7 @@ import { MarginNote } from "@/components/workspace/notebook";
 import { AsteriskDoodle, SparkleDoodle, Tape } from "@/components/v-intern/doodles";
 import { Logo } from "@/components/v-intern/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { AuthGlyphLayer } from "@/components/auth/auth-glyph-layer";
 
 const BENEFITS = [
   { icon: IconCodeXml, title: "Dự án thực tế", desc: "Làm việc với các project mô phỏng doanh nghiệp." },
@@ -19,7 +20,7 @@ const BENEFITS = [
 ] as const;
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
-  return <div className="app-surface auth-surface">
+  return <AuthGlyphLayer>
     <header className="support-header"><Logo /><div className="flex items-center gap-3"><ThemeToggle /><Link href="/" aria-label="Quay lại trang chủ" className="support-back"><IconArrowLeft size={16} aria-hidden />Quay lại</Link></div></header>
     <main className="auth-layout">
       <section className="auth-context nb-fade nb-delay-1" aria-label="Giới thiệu V-Intern">
@@ -54,5 +55,5 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       </section>
       <div className="auth-form-region">{children}</div>
     </main>
-  </div>;
+  </AuthGlyphLayer>;
 }
