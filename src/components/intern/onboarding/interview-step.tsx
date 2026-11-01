@@ -168,7 +168,7 @@ export function InterviewStep() {
                 {question.prompt}
               </p>
               {question.answered && (
-                <p className="mt-3 text-body text-success">
+                <p className="mt-3 border-l border-success pl-3 text-body text-success">
                   Câu trả lời đã được lưu trên hệ thống. Nội dung đã lưu không
                   được API trả về; bạn có thể nhập câu trả lời mới để cập nhật.
                 </p>

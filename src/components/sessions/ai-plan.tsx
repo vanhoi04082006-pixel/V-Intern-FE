@@ -348,7 +348,7 @@ function AiPlanWorkspace({
                   </StampMoc>
                   <p
                     role="status"
-                    className="text-caption font-medium text-success"
+                    className="border-l border-success pl-3 text-body text-success"
                   >
                     Kế hoạch đã được phát hành thành Sprint và nhiệm vụ.
                   </p>
@@ -363,7 +363,7 @@ function AiPlanWorkspace({
           {notice && (
             <p
               role="status"
-              className="rounded bg-success-subtle p-2 text-caption text-success"
+              className="border-l border-success pl-3 text-body text-success"
             >
               {notice}
             </p>

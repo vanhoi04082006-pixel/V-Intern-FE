@@ -84,7 +84,10 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
               </p>
             )}
             {data.data.connected && (
-              <p className="rounded-control bg-success-subtle p-4 text-body">
+              <p
+                role="status"
+                className="border-l border-success pl-3 text-body text-success"
+              >
                 Đã liên kết: <strong>@{data.data.login}</strong>
                 {data.data.reconnectRequired ? " · Cần kết nối lại" : ""}
               </p>
@@ -168,10 +171,12 @@ export function SessionRepositoryCard({
     ),
   );
   const [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState("");
+    [notice, setNotice] = useState(""),
+    [failure, setFailure] = useState("");
   async function action(invite = false) {
     setBusy(true);
     setNotice("");
+    setFailure("");
     try {
       if (invite) {
         const result = await inviteRepositoryMembers(sessionId);
@@ -180,27 +185,27 @@ export function SessionRepositoryCard({
       else await provisionRepository(sessionId);
       data.reload();
     } catch (e) {
-      setNotice(errorMessage(e));
+      setFailure(errorMessage(e));
     } finally {
       setBusy(false);
     }
   }
   async function updateWebhook() {
-    setBusy(true); setNotice('');
+    setBusy(true); setNotice(''); setFailure('');
     try { await configureGithubWebhook(sessionId); data.reload(); }
-    catch (e) { setNotice(errorMessage(e)); }
+    catch (e) { setFailure(errorMessage(e)); }
     finally { setBusy(false); }
   }
   async function inviteOne(userId: string) {
-    setBusy(true); setNotice('');
+    setBusy(true); setNotice(''); setFailure('');
     try { await inviteRepositoryMember(sessionId, userId); data.reload(); setNotice('Đã đối chiếu và xử lý lời mời của thành viên.'); }
-    catch (cause) { setNotice(errorMessage(cause)); }
+    catch (cause) { setFailure(errorMessage(cause)); }
     finally { setBusy(false); }
   }
   async function checkMine() {
-    setBusy(true); setNotice('');
+    setBusy(true); setNotice(''); setFailure('');
     try { await reconcileRepositoryAccess(sessionId); data.reload(); setNotice('Đã đối chiếu quyền truy cập với GitHub.'); }
-    catch (cause) { setNotice(errorMessage(cause)); }
+    catch (cause) { setFailure(errorMessage(cause)); }
     finally { setBusy(false); }
   }
   const repo = data.data?.repository;
@@ -278,8 +283,16 @@ export function SessionRepositoryCard({
         </div>
       )}
       {notice && (
-        <p role="alert" className="mt-3 text-body text-warning">
+        <p
+          role="status"
+          className="mt-3 border-l border-success pl-3 text-body text-success"
+        >
           {notice}
+        </p>
+      )}
+      {failure && (
+        <p role="alert" className="mt-3 text-body text-destructive">
+          {failure}
         </p>
       )}
     </Panel>

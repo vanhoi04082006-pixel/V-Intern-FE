@@ -64,7 +64,7 @@ export function RepositoryAccessStatus({ sessionId }: { sessionId?: string }) {
       {notice && (
         <p
           role="status"
-          className="border-l border-border pl-3 text-body text-success"
+          className="border-l border-success pl-3 text-body text-success"
         >
           {notice}
         </p>

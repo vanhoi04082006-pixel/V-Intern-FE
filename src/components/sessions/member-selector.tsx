@@ -210,7 +210,12 @@ export function MemberSelector({
       <p className="text-caption text-muted-foreground">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
       {Boolean(careerCatalog.error) && <div role="alert" className="text-body text-warning">Không tải được danh sách nghề nghiệp. Bạn vẫn có thể tìm sinh viên theo tên. <button type="button" className="font-semibold underline" onClick={careerCatalog.reload}>Thử lại danh sách nghề</button></div>}
       {notice && (
-        <p role="status" className="rounded bg-success-subtle p-2 text-caption text-success">{notice}</p>
+        <p
+          role="status"
+          className="border-l border-success pl-3 text-body text-success"
+        >
+          {notice}
+        </p>
       )}
       {Boolean(action.error) && <ErrorState error={action.error} />}
       {results.loading ? (

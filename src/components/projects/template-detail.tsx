@@ -206,7 +206,7 @@ export function TemplateDetail({
           <p role="status" className="text-body text-muted-foreground">Mẫu đã lưu trữ — không thể khởi tạo phiên mới.</p>
         ) : started ? (
           <div role="status" className="space-y-2 text-body">
-            <p className="font-semibold text-success">
+            <p className="border-l border-success pl-3 text-success">
               {started.deduped ? "Phiên đã tồn tại (không tạo trùng)." : "Đã tạo phiên thực tập."}
             </p>
             <p>

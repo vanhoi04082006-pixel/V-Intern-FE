@@ -235,7 +235,10 @@ export function ConversationInterview() {
           </p>
         )}
         {!current && chat && (
-          <p role="status" className="rounded-panel bg-success-subtle p-4">
+          <p
+            role="status"
+            className="border-l border-success pl-3 text-body text-success"
+          >
             Bạn đã trả lời xong các câu hỏi. Bấm kết thúc để AI đánh giá.
           </p>
         )}

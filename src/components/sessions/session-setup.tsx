@@ -418,7 +418,7 @@ function SetupBody({
                 {assessment.ready ? (
                   <p
                     role="status"
-                    className="text-body font-medium text-success"
+                    className="border-l border-success pl-3 text-body text-success"
                   >
                     Đội hình đã đủ điều kiện.
                   </p>
