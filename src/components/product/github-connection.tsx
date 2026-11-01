@@ -79,7 +79,7 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
             {!data.data.configured && (
               <p
                 role="status"
-                className="rounded-control bg-warning-subtle p-4 text-body text-warning"
+                className="rounded-panel bg-warning-subtle p-4 text-body text-warning"
               >
                 Tích hợp GitHub chưa được bật. Vui lòng liên hệ quản trị viên để
                 hoàn tất cấu hình.

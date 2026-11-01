@@ -130,7 +130,7 @@ export function TemplateEditor({
         });
       }}
     >
-      <p className="rounded-panel bg-info-subtle p-3 text-body text-info">
+      <p className="rounded-panel bg-info-subtle p-4 text-body text-info">
         Sửa mẫu tạo phiên bản mới cho phiên tương lai. Các phiên đã khởi tạo giữ
         blueprint đã chụp. Có thể nhân bản một trong sáu mẫu đầy đủ rồi chỉnh
         nội dung phù hợp.

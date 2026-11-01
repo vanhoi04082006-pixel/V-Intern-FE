@@ -238,7 +238,7 @@ export function ConversationInterview() {
           </p>
         )}
         {current?.status === "failed" && (
-          <p role="status" className="rounded-panel bg-warning-subtle p-4 text-body">
+          <p role="status" className="rounded-panel bg-warning-subtle p-4 text-body text-warning">
             AI chưa gửi được câu hỏi. Câu trả lời đã gửi vẫn được giữ nguyên;
             bạn có thể thử lại.
           </p>

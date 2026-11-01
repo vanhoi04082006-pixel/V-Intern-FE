@@ -110,7 +110,7 @@ export function CodeSubmissions({
       {!managed && pending && (
         <p
           role="status"
-          className="mb-5 rounded-control border border-warning bg-warning-subtle p-4 text-body leading-7 text-warning"
+          className="mb-5 rounded-panel bg-warning-subtle p-4 text-body leading-7 text-warning"
         >
           Bạn đang có bài nộp chờ xử lý. Theo dõi đánh giá bên dưới; nếu cần
           thay đổi code, rút bài hiện tại rồi nộp lại để hệ thống kiểm tra đúng
