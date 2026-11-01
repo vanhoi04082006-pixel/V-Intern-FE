@@ -7,6 +7,7 @@ import { roleLabel } from "@/lib/api/workspace";
 import { ConversationInterview } from "./conversation-interview";
 import { ScheduledInterview } from './scheduled-interview';
 import { CheckDoodle, PaperclipDoodle, Tape } from "@/components/v-intern/doodles";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { NoteCard } from "@/components/workspace/notebook";
 function InterviewCountdown({ session }: { session: InterviewSession }) {
   const [elapsed, setElapsed] = useState(0);
@@ -48,7 +49,14 @@ export function InterviewStep() {
   if (evaluating) return (
     <section className="sketch-card mx-auto max-w-xl p-10 text-center" aria-busy="true">
       <div role="status" aria-label="AI đang chấm bài" aria-live="polite">
-        <span className="spinner-hand mx-auto mb-6 block size-12 text-primary" aria-hidden="true" />
+        <Sparkles
+          size={48}
+          animation="blink"
+          animate
+          loop
+          aria-hidden="true"
+          className="mx-auto mb-6 block text-primary"
+        />
         <h1 className="text-page font-bold text-foreground">Đã kết thúc phỏng vấn</h1>
         <p className="mt-3 text-muted-foreground">Buổi phỏng vấn đã kết thúc. Vui lòng chờ hệ thống đánh giá kết quả.</p>
       </div>

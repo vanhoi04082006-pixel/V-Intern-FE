@@ -5,6 +5,7 @@ import {
   IconGitBranch,
 } from "@/components/v-intern/icons";
 import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import {
   confirmCodeReview,
   listCodeReviews,
@@ -455,8 +456,17 @@ function AiCodeReview({
         <>
           <p
             role="status"
-            className={`font-semibold text-foreground${review.status === "needs_changes" ? " marker-red" : ""}`}
+            className={`inline-flex items-center gap-2 font-semibold text-foreground${review.status === "needs_changes" ? " marker-red" : ""}`}
           >
+            {review.status === "running" && (
+              <Sparkles
+                size={14}
+                animation="blink"
+                animate
+                loop
+                aria-hidden="true"
+              />
+            )}
             {review.status === "awaiting_instructor" &&
             submission.status !== "submitted"
               ? `AI đề xuất đạt · ${statuses[submission.status]}`

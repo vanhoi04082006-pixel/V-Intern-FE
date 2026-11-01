@@ -7,6 +7,7 @@ import {
   IconLightbulb,
 } from "@/components/v-intern/icons";
 import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { StampMoc } from "@/components/workspace/notebook";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -143,7 +144,10 @@ export function RecruitmentResult() {
               className="workspace-interview-feedback sticky-note-pink mt-8 p-5 sm:p-6"
               style={{ "--note-rotate": "-0.4deg" } as CSSProperties}
             >
-              <h2 className="text-section font-bold">Nhận xét từ AI Recruiter</h2>
+              <h2 className="flex items-center gap-2 text-section font-bold">
+                <Sparkles size={20} aria-hidden="true" />
+                Nhận xét từ AI Recruiter
+              </h2>
               <p className="mt-3 whitespace-pre-wrap text-body leading-relaxed">
                 {result.feedback}
               </p>

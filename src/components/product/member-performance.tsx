@@ -1,5 +1,6 @@
 "use client";
 import { SessionSection as Panel } from "@/components/sessions/session-section";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/lib/auth/api-client";
@@ -422,7 +423,14 @@ function MemberDetail({
         scope={scope}
         basePath={basePath}
       />
-      <Panel title="Khuyến nghị AI">
+      <Panel
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Sparkles size={15} aria-hidden="true" />
+            Khuyến nghị AI
+          </span>
+        }
+      >
         {ai.loading ? (
           <LoadingState />
         ) : ai.error instanceof ApiError && ai.error.statusCode === 404 ? (

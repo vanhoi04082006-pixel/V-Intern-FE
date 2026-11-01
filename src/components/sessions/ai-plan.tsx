@@ -8,6 +8,7 @@ import { priorityLabels } from "@/lib/api/work";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Empty, Spinner, btn, buttonClass, inputClass } from "@/components/product/primitives";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { StampMoc } from "@/components/workspace/notebook";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
@@ -253,7 +254,17 @@ function AiPlanWorkspace({
             </button>
           </div>
           {generating && (
-            <p role="status" className="text-caption text-primary">
+            <p
+              role="status"
+              className="inline-flex items-center gap-2 text-caption text-primary"
+            >
+              <Sparkles
+                size={14}
+                animation="blink"
+                animate
+                loop
+                aria-hidden="true"
+              />
               AI đang lập kế hoạch, tự động làm mới…
             </p>
           )}

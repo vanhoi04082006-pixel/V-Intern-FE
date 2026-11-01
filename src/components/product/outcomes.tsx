@@ -22,7 +22,6 @@ import {
   IconFileText,
   IconInfo,
   IconShieldCheck,
-  IconSparkles,
   IconTarget,
   IconWallet,
 } from "@/components/v-intern/icons";
@@ -74,6 +73,12 @@ const kpiMetricLabels: Record<string, string> = {
   quality: "Chất lượng",
   timeliness: "Đúng hạn",
 };
+
+/** Icon Sparkles (animate-ui) dạng IconComponent cho StudentPanel. */
+const SparklesPanelIcon: IconComponent = ({ size }) => (
+  <SparklesIcon size={typeof size === "number" ? size : 24} aria-hidden="true" />
+);
+
 const ledgerMeta: Record<
   string,
   { label: string; tone: "green" | "blue" | "amber" | "rose" | "slate" }
@@ -442,7 +447,7 @@ export function Kpi({ id }: { id?: string }) {
           ) : (
             <div className="student-dashboard-grid student-outcome-empty-grid">
               <div className="student-panel student-empty">
-                <IconSparkles size={36} aria-hidden="true" />
+                <SparklesIcon size={36} animateOnView aria-hidden="true" />
                 <h3>Chưa có kết quả KPI</h3>
                 <p>
                   Khi có đủ dữ liệu và kết quả được tính, bạn sẽ xem được điểm,
@@ -1483,7 +1488,13 @@ export function Recommendations() {
             disabled={busy}
             onClick={() => void refresh()}
           >
-            <IconSparkles size={16} aria-hidden="true" />
+            <SparklesIcon
+              size={16}
+              animation="blink"
+              animate={busy}
+              loop
+              aria-hidden="true"
+            />
             {busy ? "Đang cập nhật…" : "Cập nhật khuyến nghị"}
           </button>
         }
@@ -1552,7 +1563,7 @@ export function Recommendations() {
             <div className="student-stack">
               <StudentPanel
                 title="Tổng hợp AI"
-                icon={IconSparkles}
+                icon={SparklesPanelIcon}
                 className="student-panel-accent"
                 description={`Tạo lúc ${new Date(data.createdAt).toLocaleString("vi-VN")}`}
               >
