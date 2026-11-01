@@ -223,7 +223,7 @@ export function PublicApplication() {
           />
         ) : application ? (
           <div className="sketch-card animate-paper-settle group relative space-y-6 p-6 sm:p-8">
-            <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="mint" />
+            <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={-3} variant="mint" />
             <PaperclipDoodle className="pointer-events-none absolute -right-3.5 -top-5 h-11 w-6 text-ink/30" />
             <StarDoodle className="pointer-events-none absolute right-5 top-4 h-5 w-5 text-ink-faint/70" />
             <ApplicationTimeline application={application} />
@@ -293,7 +293,7 @@ export function PublicApplication() {
           </div>
         ) : (
           <section className="animate-paper-settle p-6 sm:p-8">
-            <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} />
+            <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={-3} />
             {rounds.loading ? (
               <LoadingState />
             ) : rounds.error ? (

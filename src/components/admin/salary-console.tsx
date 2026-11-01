@@ -26,6 +26,7 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  thClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { PerformanceMemberPicker } from "@/components/product/performance-member-picker";
@@ -96,7 +97,7 @@ export function SalaryConsole() {
   );
 
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Lương ảo"
         subtitle="Đơn vị ảo dùng để động viên sinh viên — không phải lương thật. Số dư luôn được tính lại từ sổ ghi, không có số dư lưu sẵn."
@@ -250,7 +251,7 @@ export function SalaryConsole() {
                 {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải"].map((label) => (
                   <th
                     key={label}
-                    className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground"
+                    className={thClass}
                   >
                     {label}
                   </th>

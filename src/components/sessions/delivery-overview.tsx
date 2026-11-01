@@ -365,7 +365,7 @@ export function DeliveryOverview({
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
-                        className="rounded text-body font-semibold text-foreground transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                        className="rounded text-body font-semibold text-foreground transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                         href={`${basePath}/sprints/${s.id}`}
                       >
                         {s.name}
@@ -381,7 +381,7 @@ export function DeliveryOverview({
                   {s.sessionId && (
                     <div className="mt-3 border-t border-border pt-3 text-caption font-semibold">
                       <Link
-                        className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                        className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                         href={`${basePath}/sessions/${s.sessionId}`}
                       >
                         Xem phiên
@@ -402,7 +402,7 @@ export function DeliveryOverview({
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
-                        className="rounded text-body font-semibold text-foreground transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                        className="rounded text-body font-semibold text-foreground transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                         href={`${basePath}/tasks/${t.id}`}
                       >
                         {t.title}
@@ -424,7 +424,7 @@ export function DeliveryOverview({
                   {t.sprintId && (
                     <div className="mt-3 border-t border-border pt-3 text-caption font-semibold">
                       <Link
-                        className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                        className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                         href={`${basePath}/sprints/${t.sprintId}`}
                       >
                         Xem Sprint

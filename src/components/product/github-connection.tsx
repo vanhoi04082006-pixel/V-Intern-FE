@@ -22,7 +22,9 @@ import { RepositoryMembers } from './repository-members';
 import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Panel, Pager, Empty, btn, buttonClass } from "./primitives";
+import { Panel, Pager, Empty, Spinner, btn, buttonClass } from "./primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
+import { cn } from "@/lib/utils";
 import { linkButtonClass, TimelineItem } from "@/components/admin/ui-bits";
 
 export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?: boolean }) {
@@ -77,30 +79,41 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
             {!data.data.configured && (
               <p
                 role="status"
-                className="rounded-control bg-warning-subtle p-4 text-body text-warning"
+                className="rounded-panel bg-warning-subtle p-4 text-body text-warning"
               >
                 Tích hợp GitHub chưa được bật. Vui lòng liên hệ quản trị viên để
                 hoàn tất cấu hình.
               </p>
             )}
             {data.data.connected && (
-              <p className="rounded-control bg-success-subtle p-4 text-body">
+              <p
+                role="status"
+                className="border-l border-success pl-3 text-body text-success"
+              >
                 Đã liên kết: <strong>@{data.data.login}</strong>
                 {data.data.reconnectRequired ? " · Cần kết nối lại" : ""}
               </p>
             )}
             <div className="flex flex-wrap gap-3">
-              <button
+              <LiquidButton
                 disabled={busy || !data.data.configured}
-                className={buttonClass}
+                delay="0.32s"
+                className={cn(
+                  buttonClass,
+                  "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+                )}
                 onClick={() => void connect()}
               >
                 {busy
-                  ? "Đang xử lý…"
+                  ? (
+                    <>
+                      <Spinner className="size-3.5" />Đang xử lý…
+                    </>
+                  )
                   : data.data.connected
                     ? "Kết nối lại GitHub"
                     : "Kết nối GitHub"}
-              </button>
+              </LiquidButton>
               {data.data.connected && (
                 <button
                   disabled={busy}
@@ -145,7 +158,7 @@ export function GithubRepositoryAdmin() {
         <p className="text-body">{account.data?.configured ? `Tài khoản đã chọn: @${account.data.login ?? 'cần kết nối lại'} · ${account.data.ready ? 'Sẵn sàng' : 'Cần Admin kiểm tra kết nối/quyền'}` : 'Chưa chọn tài khoản tạo repository chung.'}</p>
         <p className="my-3 text-body text-muted-foreground">Sau khi kết nối đúng tài khoản ở trên, chọn làm tài khoản chung. Các phiên đang chạy sẽ được tự đồng bộ. Repo cũ giữ nguyên chủ sở hữu và đường dẫn.</p>
         <div className="flex flex-wrap items-center gap-3">
-          <button className={buttonClass} disabled={busy} onClick={() => void select()}>{busy ? 'Đang lưu…' : 'Dùng GitHub đã liên kết của tôi làm tài khoản chung'}</button>
+          <button className={buttonClass} disabled={busy} onClick={() => void select()}>{busy ? (<><Spinner className="size-3.5" />Đang lưu…</>) : 'Dùng GitHub đã liên kết của tôi làm tài khoản chung'}</button>
           <button className={btn("secondary")} disabled={busy} onClick={account.reload}>Tải lại cấu hình</button>
         </div>
         <p className="mt-3 text-caption text-muted-foreground">Tên repo: vintern-dự-án-tên-phiên-ngày-bắt-đầu-mã-phiên. Không đưa email hoặc tên sinh viên vào tên repository public.</p>
@@ -168,10 +181,12 @@ export function SessionRepositoryCard({
     ),
   );
   const [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState("");
+    [notice, setNotice] = useState(""),
+    [failure, setFailure] = useState("");
   async function action(invite = false) {
     setBusy(true);
     setNotice("");
+    setFailure("");
     try {
       if (invite) {
         const result = await inviteRepositoryMembers(sessionId);
@@ -180,27 +195,27 @@ export function SessionRepositoryCard({
       else await provisionRepository(sessionId);
       data.reload();
     } catch (e) {
-      setNotice(errorMessage(e));
+      setFailure(errorMessage(e));
     } finally {
       setBusy(false);
     }
   }
   async function updateWebhook() {
-    setBusy(true); setNotice('');
+    setBusy(true); setNotice(''); setFailure('');
     try { await configureGithubWebhook(sessionId); data.reload(); }
-    catch (e) { setNotice(errorMessage(e)); }
+    catch (e) { setFailure(errorMessage(e)); }
     finally { setBusy(false); }
   }
   async function inviteOne(userId: string) {
-    setBusy(true); setNotice('');
+    setBusy(true); setNotice(''); setFailure('');
     try { await inviteRepositoryMember(sessionId, userId); data.reload(); setNotice('Đã đối chiếu và xử lý lời mời của thành viên.'); }
-    catch (cause) { setNotice(errorMessage(cause)); }
+    catch (cause) { setFailure(errorMessage(cause)); }
     finally { setBusy(false); }
   }
   async function checkMine() {
-    setBusy(true); setNotice('');
+    setBusy(true); setNotice(''); setFailure('');
     try { await reconcileRepositoryAccess(sessionId); data.reload(); setNotice('Đã đối chiếu quyền truy cập với GitHub.'); }
-    catch (cause) { setNotice(errorMessage(cause)); }
+    catch (cause) { setFailure(errorMessage(cause)); }
     finally { setBusy(false); }
   }
   const repo = data.data?.repository;
@@ -278,8 +293,16 @@ export function SessionRepositoryCard({
         </div>
       )}
       {notice && (
-        <p role="alert" className="mt-3 text-body text-warning">
+        <p
+          role="status"
+          className="mt-3 border-l border-success pl-3 text-body text-success"
+        >
           {notice}
+        </p>
+      )}
+      {failure && (
+        <p role="alert" className="mt-3 text-body text-destructive">
+          {failure}
         </p>
       )}
     </Panel>
@@ -292,7 +315,7 @@ function RepositoryActivity({ sessionId }: { sessionId: string }) {
   const actionLabels: Record<string, string> = { synchronize: 'Cập nhật code', opened: 'Mở PR', reopened: 'Mở lại PR', closed: 'Đóng PR', pushed: 'Push commit', completed: 'Cập nhật CI', requested: 'Yêu cầu chạy CI', ping: 'Kiểm tra kết nối', received: 'Nhận sự kiện' };
   return <section aria-label="Hoạt động GitHub của phiên" className="mt-4 border-t border-border pt-4">
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-semibold">Hoạt động GitHub gần đây</h3><button className={`${linkButtonClass} text-caption text-primary hover:underline underline-offset-4`} onClick={state.reload}>Tải lại hoạt động</button></div>
-    {state.loading ? <p role="status" className="text-body text-muted-foreground">Đang tải hoạt động…</p> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : !state.data?.items.length ? <Empty title="Chưa ghi nhận sự kiện GitHub" description="Sự kiện push, pull request và CI của phiên sẽ hiện tại đây khi có." /> : <>
+    {state.loading ? <LoadingState label="Đang tải hoạt động…" /> : state.error ? <ErrorState error={state.error} onRetry={state.reload} /> : !state.data?.items.length ? <Empty title="Chưa ghi nhận sự kiện GitHub" description="Sự kiện push, pull request và CI của phiên sẽ hiện tại đây khi có." /> : <>
       <ol className="min-w-0" aria-label="Danh sách sự kiện GitHub">{state.data.items.map((e, index) => <TimelineItem key={e.id} current={index === 0}><p>{actionLabels[e.action] ?? 'Cập nhật GitHub'}{e.pullNumber ? ` · PR #${e.pullNumber}` : ''}{e.branch ? ` · ${e.branch}` : ''}</p>{e.headSha && <p className="mt-1 break-all font-mono text-caption text-muted-foreground">{e.headSha}</p>}<time className="text-caption text-muted-foreground">{new Date(e.receivedAt).toLocaleString('vi-VN')}</time></TimelineItem>)}</ol>
       {state.data.total > 5 && <Pager page={page} totalPages={Math.ceil(state.data.total / 5)} total={state.data.total} onChange={setPage} unit="sự kiện" />}
     </>}

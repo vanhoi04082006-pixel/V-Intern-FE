@@ -10,6 +10,7 @@ import {
   IconArrowLeft,
   type IconComponent,
 } from "@/components/v-intern/icons";
+import { LoaderCircle } from "@/components/animate-ui/icons/loader-circle";
 import Link from "next/link";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const buttonBase =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0";
 
 const buttonVariants: Record<ButtonVariant, string> = {
   primary: "bg-primary text-primary-foreground shadow-app-xs hover:bg-primary/90",
@@ -124,9 +125,12 @@ export function Field({
 /* ------------------------------------------------------------------ */
 export function Spinner({ className }: { className?: string }) {
   return (
-    <span
+    <LoaderCircle
+      loop
+      animate
+      size={16}
       aria-hidden="true"
-      className={cn("spinner-hand size-4", className)}
+      className={cn("size-4 shrink-0", className)}
     />
   );
 }
@@ -337,7 +341,7 @@ export function PageTitle({
       {back && (
         <Link
           href={back.href}
-          className="mb-3 inline-flex min-h-8 items-center gap-2 rounded-control px-2 text-small font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+          className="mb-3 inline-flex min-h-8 items-center gap-2 rounded-control px-2 text-small font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
         >
           <IconArrowLeft size={15} aria-hidden="true" />
           {back.label}

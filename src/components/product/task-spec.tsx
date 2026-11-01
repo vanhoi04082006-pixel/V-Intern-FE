@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { getTaskSpec, getTaskSpecSource } from "@/lib/api/templates";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Panel } from "./primitives";
+import { Panel, Spinner } from "./primitives";
 import { roleLabel } from "@/lib/api/workspace";
 import { StudentPanel } from "@/components/intern/student-ui";
 import {
@@ -19,7 +19,11 @@ function TaskSpecSource({ id }: { id: string }) {
   );
   if (source.loading)
     return (
-      <p role="status" className="mt-3 text-body text-muted-foreground">
+      <p
+        role="status"
+        className="mt-3 inline-flex items-center gap-2 text-body text-muted-foreground"
+      >
+        <Spinner className="size-3.5" />
         Đang tải spec nguồn…
       </p>
     );

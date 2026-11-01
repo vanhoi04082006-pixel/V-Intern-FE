@@ -50,7 +50,7 @@ export default function AppError({
       />
       <div className="relative w-full max-w-lg">
         <div className="sketch-card group relative animate-paper-settle px-6 py-10 text-center sm:px-10">
-          <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="candy" />
+          <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={-3} variant="candy" />
           <span className="mx-auto grid size-12 place-items-center text-destructive">
             <IconAlertTriangle size={26} aria-hidden="true" />
           </span>

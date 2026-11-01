@@ -7,6 +7,8 @@ import {
   IconSend,
   IconUserRound,
 } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
+import { Spinner } from "@/components/product/primitives";
 import {
   conversationNext,
   conversationView,
@@ -210,20 +212,42 @@ export function ConversationInterview() {
             </div>
           </article>
         ))}
-        {!chat && !error && <p role="status">Đang khôi phục hội thoại…</p>}
+        {!chat && !error && (
+          <p
+            role="status"
+            className="inline-flex items-center gap-2 text-body text-muted-foreground"
+          >
+            <Spinner className="size-3.5" />
+            Đang khôi phục hội thoại…
+          </p>
+        )}
         {(working || current?.status === "generating") && (
-          <p role="status" className="text-body text-muted-foreground">
+          <p
+            role="status"
+            className="inline-flex items-center gap-2 text-body text-muted-foreground"
+          >
+            <Sparkles
+              size={14}
+              animation="blink"
+              animate
+              loop
+              aria-hidden="true"
+              className="text-primary"
+            />
             AI đang chuẩn bị câu hỏi tiếp theo…
           </p>
         )}
         {current?.status === "failed" && (
-          <p role="status" className="rounded-panel bg-warning-subtle p-4 text-body">
+          <p role="status" className="rounded-panel bg-warning-subtle p-4 text-body text-warning">
             AI chưa gửi được câu hỏi. Câu trả lời đã gửi vẫn được giữ nguyên;
             bạn có thể thử lại.
           </p>
         )}
         {!current && chat && (
-          <p role="status" className="rounded-panel bg-success-subtle p-4">
+          <p
+            role="status"
+            className="border-l border-success pl-3 text-body text-success"
+          >
             Bạn đã trả lời xong các câu hỏi. Bấm kết thúc để AI đánh giá.
           </p>
         )}

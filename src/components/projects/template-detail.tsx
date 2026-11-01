@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
-import { Panel, buttonClass, inputClass } from "@/components/product/primitives";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Panel, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { Can } from "@/components/auth/can";
+import { IconArrowLeft } from "@/components/v-intern/icons";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 import { useResource } from "@/lib/api/use-resource";
 import { BlueprintArchitecture, BlueprintTask } from './blueprint-architecture';
@@ -91,7 +92,7 @@ export function TemplateDetail({
     }
   }
 
-  if (data.loading) return <p role="status" className="p-4 text-body text-muted-foreground">Đang tải mẫu dự án...</p>;
+  if (data.loading) return <LoadingState label="Đang tải mẫu dự án..." />;
   if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
   const t: TemplateDetailData = data.data;
   const def = t.definition;
@@ -108,7 +109,12 @@ export function TemplateDetail({
         title={t.name}
         description={`${t.code}, phiên bản ${t.version}, ${difficultyLabels[t.difficulty] ?? t.difficulty}${t.status === "archived" ? ", ĐÃ LƯU TRỮ" : ""}`}
         artwork="project"
-        action={<Link className="text-caption font-semibold text-primary hover:underline" href="/instructor/projects">← Thư viện</Link>}
+        back={
+          <Link href="/instructor/projects">
+            <IconArrowLeft size={15} aria-hidden="true" />
+            Thư viện
+          </Link>
+        }
       />
       <div className="workspace-document-layout">
       <div className="workspace-document-body">
@@ -206,7 +212,7 @@ export function TemplateDetail({
           <p role="status" className="text-body text-muted-foreground">Mẫu đã lưu trữ — không thể khởi tạo phiên mới.</p>
         ) : started ? (
           <div role="status" className="space-y-2 text-body">
-            <p className="font-semibold text-success">
+            <p className="border-l border-success pl-3 text-success">
               {started.deduped ? "Phiên đã tồn tại (không tạo trùng)." : "Đã tạo phiên thực tập."}
             </p>
             <p>
@@ -232,7 +238,13 @@ export function TemplateDetail({
             {Boolean(action.error) && <ErrorState error={action.error} />}
             <div className="flex flex-col items-stretch gap-2">
               <button className={buttonClass} disabled={action.busy} onClick={() => void submitStart(t.id)}>
-                {action.busy ? "Đang tạo..." : "Khởi tạo phiên thực tập"}
+                {action.busy ? (
+                  <>
+                    <Spinner className="size-3.5" />Đang tạo...
+                  </>
+                ) : (
+                  "Khởi tạo phiên thực tập"
+                )}
               </button>
               <button
                 type="button"

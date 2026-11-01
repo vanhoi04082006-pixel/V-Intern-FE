@@ -147,7 +147,7 @@ export function RepositoryMembers({
                     disabled={busy}
                     aria-label={`Mời lại cho ${member.displayName}`}
                     onClick={() => onInvite(member.userId)}
-                    className="rounded-md border border-border px-3 py-2 text-caption font-medium text-primary transition hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-50"
+                    className="rounded-md border border-border px-3 py-2 text-caption font-medium text-primary transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50"
                   >
                     Mời lại
                   </button>

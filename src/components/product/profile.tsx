@@ -13,7 +13,7 @@ import { MarginNote } from "@/components/workspace/notebook";
 import { errorMessage } from "@/lib/auth/api-client";
 import { refreshSession } from "@/lib/auth/auth-service";
 import { getSessionUser } from "@/lib/auth/session";
-import { buttonClass, InlineAlert } from "./primitives";
+import { buttonClass, InlineAlert, Spinner } from "./primitives";
 
 const roleLabels: Record<string, string> = {
   intern: "Sinh viên", instructor: "Giảng viên", admin: "Quản trị viên",
@@ -60,7 +60,7 @@ export function Profile() {
   return <>
     <StudentOutcomeHeading title="Hồ sơ" subtitle="Thông tin của bạn và các kết nối trong V-Intern"
       action={<button type="button" className={buttonClass} disabled={busy} onClick={() => void refresh()}>
-        <IconRefreshCw size={15} className={busy ? "account-refresh-icon" : undefined} aria-hidden="true" />
+        {busy ? <Spinner className="size-3.5" /> : <IconRefreshCw size={15} aria-hidden="true" />}
         {busy ? "Đang làm mới…" : "Làm mới"}
       </button>} />
     {role === "instructor" && (

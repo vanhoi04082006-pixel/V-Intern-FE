@@ -31,6 +31,7 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  thClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { linkButtonClass } from "./ui-bits";
@@ -100,7 +101,7 @@ export function KpiConsole() {
   };
 
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Kỳ KPI"
         subtitle="Tạo kỳ đo lường, tính KPI theo quy tắc kpi-v1 và chốt kỳ để sinh lương ảo cũng như cấp chứng nhận. Kỳ đã chốt không tính lại."
@@ -422,19 +423,19 @@ function KpiResults({ period }: { period: KpiPeriod }) {
           <table className="product-table w-full min-w-[40rem] border-collapse text-body">
             <thead>
               <tr>
-                <th className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground">
+                <th className={thClass}>
                   #
                 </th>
-                <th className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground">
+                <th className={thClass}>
                   Sinh viên
                 </th>
-                <th className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground">
+                <th className={thClass}>
                   Điểm KPI
                 </th>
-                <th className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground">
+                <th className={thClass}>
                   Trạng thái
                 </th>
-                <th className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground">
+                <th className={thClass}>
                   Tính lúc
                 </th>
                 <th aria-hidden />
@@ -536,7 +537,7 @@ function KpiResultDetail({
               {["Thành phần", "Giá trị gốc", "Trọng số hiệu lực", "Đóng góp"].map((label) => (
                 <th
                   key={label}
-                  className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground"
+                  className={thClass}
                 >
                   {label}
                 </th>

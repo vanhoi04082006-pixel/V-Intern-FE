@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import {
   IconActivity,
   IconAward,
-  IconBell,
   IconBookOpen,
   IconBot,
   IconChartColumn,
@@ -28,13 +27,14 @@ import {
   IconMenu,
   IconSettings,
   IconShield,
-  IconSparkles,
   IconUserRound,
   IconUsers,
   IconWallet,
   IconX,
   type IconComponent,
 } from "@/components/v-intern/icons";
+import { BellRing } from "@/components/animate-ui/icons/bell-ring";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { NotificationBell } from "@/components/shared/notification-bell";
@@ -172,6 +172,24 @@ const menus: Record<ProductRole, NavGroup[]> = {
   ],
 };
 
+/** Chuông thông báo (animate-ui) dạng IconComponent — reo khi rê chuột qua mục nav. */
+const BellRingNavIcon: IconComponent = ({ size }) => (
+  <BellRing
+    size={typeof size === "number" ? size : 24}
+    animateOnHover
+    aria-hidden="true"
+  />
+);
+
+/** Sparkles AI (animate-ui) dạng IconComponent — lấp lánh khi rê chuột qua mục nav. */
+const SparklesNavIcon: IconComponent = ({ size }) => (
+  <Sparkles
+    size={typeof size === "number" ? size : 24}
+    animateOnHover
+    aria-hidden="true"
+  />
+);
+
 const navIcons: Record<string, IconComponent> = {
   "": IconHome,
   work: IconListTodo,
@@ -189,7 +207,7 @@ const navIcons: Record<string, IconComponent> = {
   salary: IconCoins,
   certificates: IconAward,
   recommendations: IconLightbulb,
-  notifications: IconBell,
+  notifications: BellRingNavIcon,
   profile: IconUserRound,
   users: IconUsers,
   roles: IconShield,
@@ -199,7 +217,7 @@ const navIcons: Record<string, IconComponent> = {
   "career-roles": IconGraduationCap,
   knowledge: IconBookOpen,
   templates: IconLayoutTemplate,
-  ai: IconSparkles,
+  ai: SparklesNavIcon,
   settings: IconSettings,
   services: IconActivity,
   activity: IconActivity,
@@ -319,7 +337,7 @@ export function ProductShell({
                   href={href}
                   onClick={() => setOpen(false)}
                   aria-current={current ? "page" : undefined}
-                  className={`workspace-nav-item flex min-h-11 items-center gap-3 rounded-control px-3 py-3 text-small font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
+                  className={`workspace-nav-item flex min-h-11 items-center gap-3 rounded-control px-3 py-3 text-small font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1 ${
                     current
                       ? "bg-accent font-semibold text-primary ring-1 ring-inset ring-ring"
                       : "text-muted-foreground hover:bg-background hover:text-foreground"
@@ -383,13 +401,13 @@ export function ProductShell({
           event.preventDefault();
           setOpen(false);
         }}
-        className="product-drawer animate-page-curl fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-[280px] max-w-[85vw] overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
+        className="product-drawer animate-page-curl fixed inset-y-0 left-0 m-0 h-dvh max-h-none overflow-y-auto bg-card p-3 backdrop:bg-foreground/50"
         aria-label="Menu workspace"
       >
         <div className="flex min-h-full flex-col">
           <button
             aria-label="Đóng menu"
-            className="mb-3 self-start rounded-control p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mb-3 self-start rounded-control p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             onClick={() => setOpen(false)}
           >
             <IconX aria-hidden="true" />
@@ -402,7 +420,7 @@ export function ProductShell({
           <div className="flex min-w-0 items-center gap-2 text-body">
             <button
               aria-label="Mở menu"
-              className="grid size-10 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
+              className="grid size-10 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 lg:hidden"
               onClick={() => setOpen(true)}
             >
               <IconMenu aria-hidden="true" />
@@ -413,7 +431,7 @@ export function ProductShell({
             >
               <Link
                 href={`/${role}`}
-                className="shrink-0 rounded font-medium text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                className="shrink-0 rounded font-medium text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
               >
                 V-Intern
               </Link>
@@ -426,7 +444,7 @@ export function ProductShell({
                 <>
                   <Link
                     href={`/${role}/${section[0]}`}
-                    className="truncate rounded text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                    className="truncate rounded text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                   >
                     {section[1]}
                   </Link>
@@ -480,7 +498,7 @@ export function ProductShell({
         </header>
         <main
           id="product-content"
-          className="product-main mx-auto max-w-none p-4 sm:p-6"
+          className="product-main mx-auto max-w-none"
         >
           {role === "instructor" ? <WorkspaceStage role="instructor">{children}</WorkspaceStage> : children}
         </main>

@@ -9,7 +9,6 @@ import {
   IconLayoutDashboard,
   IconListTodo,
   IconSettings,
-  IconSparkles,
   IconTrendingUp,
   type IconComponent,
 } from "@/components/v-intern/icons";
@@ -17,6 +16,11 @@ import { FadeIn } from "@/components/v-intern/reveal";
 import { Parallax } from "@/components/v-intern/motion";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
+import { TopographyBackground } from "@/components/animate-ui/backgrounds/topography";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
+import { useIsDarkTheme } from "@/lib/theme";
+import Link from "next/link";
 import {
   AsteriskDoodle,
   CoffeeStainDoodle,
@@ -150,6 +154,8 @@ function DashboardPolaroid() {
 }
 
 export function Hero() {
+  const dark = useIsDarkTheme();
+
   return (
     <section
       id="platform"
@@ -160,6 +166,19 @@ export function Hero() {
       <div
         aria-hidden="true"
         className="mask-fade-edges pointer-events-none absolute inset-0 bg-grid-paper"
+      />
+
+      {/* Đường đồng mức sống — bản đồ hành trình dưới nền giấy: rê chuột
+          nhấc các đường cong lên nhẹ, click xuống thả một vòng sóng nhỏ. */}
+      <TopographyBackground
+        aria-hidden="true"
+        className="mask-fade-edges absolute inset-0"
+        lineColor={dark ? "rgba(125, 151, 255, 0.30)" : "rgba(32, 96, 240, 0.26)"}
+        levels={14}
+        speed={0.5}
+        scale={1.2}
+        peak={0.75}
+        interactive
       />
 
       {/* Chòm doodle trôi nổi — như dấu vết bút vẽ trên trang sổ */}
@@ -176,12 +195,14 @@ export function Hero() {
         <PaperPlaneDoodle className="absolute right-[2%] top-[30%] h-12 w-14 animate-float-delayed text-blue/30 motion-reduce:animate-none" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-14 md:px-6 lg:px-8 lg:pb-24 lg:pt-20">
+      {/* v6 Gọn: thống nhất nhịp dọc các section landing — py-20/lg:py-24
+          như how-it-works, audience, workflow, final-cta. */}
+      <div className="relative mx-auto max-w-7xl px-4 py-20 md:px-6 lg:px-8 lg:py-24">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,46fr)_minmax(0,54fr)] lg:gap-12">
           {/* Cột trái */}
           <FadeIn>
             <span className="inline-flex -rotate-1 items-center gap-2 rounded-full border-2 border-ink bg-raised px-4 py-1.5 text-xs font-bold text-ink shadow-[2px_2px_0_0_var(--hard-shadow)]">
-              <IconSparkles className="h-3.5 w-3.5 text-blue" aria-hidden="true" />
+              <Sparkles size={14} className="text-blue" animateOnView aria-hidden="true" />
               Nền tảng thực tập ảo ứng dụng AI
             </span>
 
@@ -203,22 +224,28 @@ export function Hero() {
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <a
-                href="/login"
-                className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+              <LiquidButton
+                asChild
+                delay="0.35s"
+                fillHeight="4px"
+                className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-ink-4 hover:shadow-ink-6 active:shadow-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
               >
-                Bắt đầu ngay
-                <IconArrowRight
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </a>
-              <a
-                href="#how-it-works"
-                className="inline-flex h-[52px] items-center rounded-xl border-2 border-ink bg-raised px-7 text-sm font-bold text-ink shadow-[4px_4px_0_0_var(--hard-shadow)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-blue hover:text-blue hover:shadow-[6px_6px_0_0_var(--hard-shadow)] active:translate-x-0 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+                <Link href="/login">
+                  Bắt đầu ngay
+                  <IconArrowRight
+                    className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </LiquidButton>
+              <LiquidButton
+                asChild
+                delay="0.35s"
+                fillHeight="4px"
+                className="inline-flex h-[52px] items-center rounded-xl border-2 border-ink bg-raised px-7 text-sm font-bold text-ink shadow-hard-4 hover:border-blue hover:shadow-hard-6 active:shadow-hard-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--paper-raised)] [--liquid-button-color:var(--blue)] hover:text-white"
               >
-                Tìm hiểu thêm
-              </a>
+                <Link href="#how-it-works">Tìm hiểu thêm</Link>
+              </LiquidButton>
             </div>
 
             {/* Ghi chú viết tay kèm mũi tên chỉ CTA */}
@@ -277,7 +304,7 @@ export function Hero() {
               <div className="flex w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] motion-reduce:animate-none">
                 <PaperclipDoodle className="absolute -left-3.5 -top-4 h-10 w-6 text-ink/45" />
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
-                  <IconSparkles className="h-5 w-5" aria-hidden="true" />
+                  <Sparkles size={20} animateOnView aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-xs font-extrabold text-ink">Đánh giá AI</p>

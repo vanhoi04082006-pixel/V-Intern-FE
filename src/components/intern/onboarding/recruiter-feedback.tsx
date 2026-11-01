@@ -1,10 +1,8 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import {
-  IconBot,
-  IconSparkles,
-} from "@/components/v-intern/icons";
+import { IconBot } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 
 import type { RecruitmentResultData } from "./recruitment-model";
 import { TagPill } from "./onboarding-primitives";
@@ -62,7 +60,12 @@ export function RoleRecommendation({
         id="result-recommendation-heading"
         className="flex items-center gap-2 text-body font-bold tracking-tight text-foreground"
       >
-        <IconSparkles className="size-5 text-warning" aria-hidden="true" />
+        <Sparkles
+          size={20}
+          className="text-warning"
+          animateOnView
+          aria-hidden="true"
+        />
         Đề xuất từ AI Recruiter
       </h2>
 

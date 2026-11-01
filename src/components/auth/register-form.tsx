@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import {
@@ -8,14 +8,15 @@ import {
 } from "@/components/v-intern/icons";
 import {
   IconArrowRight,
-  IconCircleCheck,
   IconUserRound,
 } from "@/components/v-intern/icons";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
 import { Spinner } from "@/components/product/primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { register } from "@/lib/auth/auth-service";
 import { PASSWORD_MIN_LENGTH, validateRegister } from "@/lib/auth/validation";
 import type { RegisterFieldErrors } from "@/lib/auth/validation";
@@ -47,7 +48,11 @@ interface RegisterFormProps {
   previewState?: RegisterFormPreviewState;
 }
 
+const hydrationSubscribe = () => () => {};
 export function RegisterForm({ previewState }: RegisterFormProps) {
+  /* v6: cùng guard hydration như login — tránh submit đôi khi HTML
+     server chưa kịp hydration (double-fire request). */
+  const hydrated = useSyncExternalStore(hydrationSubscribe, () => true, () => false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -126,9 +131,11 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
         className="flex flex-col items-center py-6 text-center sm:py-8"
       >
         <div className="grid size-14 place-items-center rounded-full bg-success-subtle ring-1 ring-success/20">
-          <IconCircleCheck
-            className="size-7 text-success"
+          <CircleCheckBig
+            size={28}
+            animateOnView
             aria-hidden="true"
+            className="text-success"
           />
         </div>
         <h1 className="mt-5 text-section font-bold tracking-tight text-foreground">
@@ -138,13 +145,16 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           Tài khoản của bạn đã được tạo. Hãy đăng nhập để bắt đầu hành trình
           thực tập.
         </p>
-        <Link
-          href="/login"
-          className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2"
+        <LiquidButton
+          asChild
+          delay="0.32s"
+          className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 [--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground"
         >
-          Đăng nhập ngay
-          <IconArrowRight className="size-4" aria-hidden="true" />
-        </Link>
+          <Link href="/login">
+            Đăng nhập ngay
+            <IconArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        </LiquidButton>
         <p aria-live="polite" className="sr-only">
           Đăng ký thành công.
         </p>
@@ -339,13 +349,15 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           )}
         </div>
 
-        <button
+        <LiquidButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!hydrated || isSubmitting}
+          delay="0.32s"
           className={cn(
-            "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
-            "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-80"
+            "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
+            "disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-80",
+            "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
           )}
         >
           {isSubmitting ? (
@@ -359,7 +371,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
               <IconArrowRight className="auth-cta-arrow size-4" aria-hidden="true" />
             </>
           )}
-        </button>
+        </LiquidButton>
 
         <div className="mt-5 flex items-center gap-4" aria-hidden="true">
           <span className="auth-divider-line h-0 flex-1 border-t" />

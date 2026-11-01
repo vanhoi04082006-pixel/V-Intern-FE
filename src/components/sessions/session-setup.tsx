@@ -7,8 +7,10 @@ import {
 import { roleLabel } from "@/lib/api/workspace";
 import Link from "next/link";
 import { useCallback } from "react";
-import { ErrorState } from "@/components/shared/data-state";
-import { Empty, buttonClass } from "@/components/product/primitives";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Empty, Spinner, buttonClass } from "@/components/product/primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
+import { cn } from "@/lib/utils";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import {
@@ -200,11 +202,7 @@ export function SessionSetup({
   // Unmounting on every reload would silently discard them.
   if (!data.data) {
     if (data.loading)
-      return (
-        <p role="status" className="p-4 text-body text-muted-foreground">
-          Đang tải phiên setup...
-        </p>
-      );
+      return <LoadingState label="Đang tải phiên setup..." />;
     return <ErrorState error={data.error} onRetry={data.reload} />;
   }
   return (
@@ -293,7 +291,8 @@ function SetupBody({
         ))}
       </ol>
       {refreshing && (
-        <p role="status" className="text-caption text-muted-foreground">
+        <p role="status" className="inline-flex items-center gap-2 text-caption text-muted-foreground">
+          <Spinner className="size-3" />
           Đang cập nhật dữ liệu...
         </p>
       )}
@@ -418,7 +417,7 @@ function SetupBody({
                 {assessment.ready ? (
                   <p
                     role="status"
-                    className="text-body font-medium text-success"
+                    className="border-l border-success pl-3 text-body text-success"
                   >
                     Đội hình đã đủ điều kiện.
                   </p>
@@ -438,18 +437,28 @@ function SetupBody({
                   </p>
                 )}
                 <Can perm="sessions.manage">
-                  <button
+                  <LiquidButton
                     type="button"
                     disabled={startAction.busy}
-                    className={buttonClass}
+                    delay="0.32s"
+                    className={cn(
+                      buttonClass,
+                      "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+                    )}
                     onClick={() =>
                       void startAction.run(() =>
                         transitionSession(sessionId, "active"),
                       )
                     }
                   >
-                    {startAction.busy ? "Đang bắt đầu…" : "Bắt đầu phiên"}
-                  </button>
+                    {startAction.busy ? (
+                      <>
+                        <Spinner className="size-3.5" />Đang bắt đầu…
+                      </>
+                    ) : (
+                      "Bắt đầu phiên"
+                    )}
+                  </LiquidButton>
                 </Can>
                 {Boolean(startAction.error) && (
                   <ErrorState error={startAction.error} />

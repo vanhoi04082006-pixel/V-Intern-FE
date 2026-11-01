@@ -8,8 +8,9 @@ import {
   IconDownload,
   IconExternalLink,
   IconPlus,
-  IconShieldCheck,
 } from "@/components/v-intern/icons";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import {
   downloadCertificatePdf,
   issueCertificate,
@@ -27,8 +28,11 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  thClass,
+  tdClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
+import { cn } from "@/lib/utils";
 import { linkButtonClass } from "./ui-bits";
 import { PerformanceMemberPicker } from "@/components/product/performance-member-picker";
 import { ApiError } from "@/lib/auth/api-client";
@@ -58,7 +62,7 @@ export function CertificateConsole() {
   );
 
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Chứng nhận"
         subtitle="Cấp và thu hồi chứng nhận hoàn thành thực tập theo chính sách V-INTERN-COMPLETE. Điều kiện cấp được kiểm định phía hệ thống, không cấp tay."
@@ -117,9 +121,10 @@ export function CertificateConsole() {
                   (label, index, labels) => (
                     <th
                       key={label}
-                      className={`whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-caption font-semibold text-muted-foreground ${
-                        index === labels.length - 1 ? "text-right" : "text-left"
-                      }`}
+                      className={cn(
+                        thClass,
+                        index === labels.length - 1 && "text-right",
+                      )}
                     >
                       {label}
                     </th>
@@ -133,7 +138,7 @@ export function CertificateConsole() {
                   key={certificate.id}
                   className="align-top transition-colors hover:bg-background/70"
                 >
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     {/* Số chứng nhận như mảnh bi lai xé khỏi cuốn: viền mực,
                         gấp dog-ear; bản đã thu hồi bị gạch ngang như tài liệu
                         vô hiệu. */}
@@ -155,7 +160,7 @@ export function CertificateConsole() {
                       Cấp {new Date(certificate.issuedAt).toLocaleDateString("vi-VN")}
                     </p>
                   </td>
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     <p className="font-medium text-foreground">
                       {certificate.holderName ?? "—"}
                     </p>
@@ -169,7 +174,7 @@ export function CertificateConsole() {
                       <span className="block text-caption">{certificate.sessionName}</span>
                     ) : null}
                   </td>
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     <StatusDot tone={certificate.status === "issued" ? "green" : "red"}>
                       {certificate.status === "issued" ? "Đang hiệu lực" : "Đã thu hồi"}
                     </StatusDot>
@@ -339,7 +344,12 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
         >
           <p className="inline-flex flex-wrap items-center gap-3 font-semibold">
             <span className="inline-flex items-center gap-2">
-              <IconShieldCheck size={16} aria-hidden />
+              <CircleCheckBig
+                size={17}
+                animateOnView
+                aria-hidden="true"
+                className="text-success"
+              />
               Đã cấp {result.certificateNumber}
             </span>
             <StampMoc tone="red" size="sm" thump className="nb-moc-allowed">
@@ -363,10 +373,18 @@ function IssueForm({ onSaved }: { onSaved: (message: string) => void }) {
       )}
       {!result && (
         <div className="flex justify-end">
-          <button className={buttonClass} disabled={action.busy} type="submit">
+          <LiquidButton
+            className={cn(
+              buttonClass,
+              "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
+            )}
+            delay="0.32s"
+            disabled={action.busy}
+            type="submit"
+          >
             <IconAward size={16} aria-hidden />
             {action.busy ? "Đang kiểm tra…" : "Kiểm tra và cấp"}
-          </button>
+          </LiquidButton>
         </div>
       )}
     </form>

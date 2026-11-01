@@ -66,13 +66,9 @@ html { scroll-behavior: smooth; }
 @keyframes nb-fill {
   from { transform: scaleX(0); }
 }
-@keyframes nb-swap {
-  from { opacity: 0; transform: translateY(6px); }
-}
 
 .nb-rise { animation: nb-rise 320ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
 .nb-fade { animation: nb-fade 240ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
-.nb-swap { animation: nb-swap 200ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
 /* Delay bước cho kết hợp nb-fade/nb-rise (viết sau shorthand để thắng delay 0s). */
 .nb-delay-1 { animation-delay: 70ms; }
 .nb-delay-2 { animation-delay: 140ms; }
@@ -101,7 +97,7 @@ html { scroll-behavior: smooth; }
 .nb-stagger > *:nth-child(n + 10) { animation-delay: 405ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .nb-rise, .nb-fade, .nb-swap, .nb-fill { animation: none; }
+  .nb-rise, .nb-fade, .nb-fill { animation: none; }
   .nb-press:active { transform: none; }
   .nb-stagger > *, .nb-stagger > *:nth-child(n + 10) { animation: none; animation-delay: 0ms; }
 }

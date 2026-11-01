@@ -13,8 +13,8 @@ import {
   IconArrowRight,
   IconCircleCheck,
   IconRefreshCw,
-  IconSparkles,
 } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import {
   replacementAdvice,
   prepareReplacement,
@@ -244,7 +244,13 @@ export function ReplacementDialog({
             disabled={Boolean(busy)}
             onClick={generate}
           >
-            <IconSparkles size={16} aria-hidden="true" />
+            <Sparkles
+              size={16}
+              animation="blink"
+              animate={busy === "advice"}
+              loop
+              aria-hidden="true"
+            />
             {busy === "advice"
               ? "Agent đang đối chiếu…"
               : "Yêu cầu Agent đối chiếu"}

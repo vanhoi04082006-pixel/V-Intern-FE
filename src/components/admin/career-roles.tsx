@@ -22,7 +22,7 @@ export function CareerRoles() {
   const state = useResource(useCallback((signal: AbortSignal) => listCareerRoles(new URLSearchParams({ page: String(page), search, ...(status ? { status } : {}) }), signal), [page, search, status]));
   const action = useAction();
   const saved = (message: string) => { setEditor(null); setNotice(message); state.reload(); };
-  return <div className="nb-swap space-y-6">
+  return <div className="space-y-6">
     <PageTitle title="Thư viện nghề nghiệp" subtitle="Định nghĩa vị trí tuyển dụng, năng lực và trạng thái nhận hồ sơ. Nghề nghiệp tách biệt với vai trò và quyền tài khoản." action={<button className={buttonClass} onClick={() => { setNotice(''); setEditor('new'); }}><IconPlus size={16} aria-hidden />Thêm nghề nghiệp</button>} />
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
       <p className="max-w-2xl text-body leading-6 text-muted-foreground">Soạn bản nháp → hoàn thiện kỹ năng và trọng số → xuất bản → mở nhận hồ sơ. Trước khi phỏng vấn, cần đủ câu hỏi cho nghề đã chọn.</p>
@@ -43,7 +43,7 @@ export function CareerRoles() {
     {state.data && <Pager page={page} total={state.data.total} totalPages={Math.ceil(state.data.total / state.data.pageSize)} onChange={setPage} unit="nghề nghiệp" />}
     {editor && <Modal title={editor === 'new' ? 'Thêm nghề nghiệp' : `Chỉnh sửa ${editor.name}`} wide onClose={() => setEditor(null)}><CareerRoleEditor role={editor === 'new' ? undefined : editor} onSaved={saved} /></Modal>}
     {history && <Modal title={`Lịch sử ${history.name}`} wide onClose={() => setHistory(null)}><CareerHistory code={history.code} /></Modal>}
-    {archiving && <Modal title={`Lưu trữ ${archiving.name}`} onClose={() => setArchiving(null)}><p className="text-body leading-6 text-muted-foreground">Dừng nhận hồ sơ và bắt đầu phỏng vấn mới cho nghề này. Những buổi phỏng vấn đã bắt đầu, kết quả và lịch sử vẫn được giữ. Bạn có thể mở lại bằng một phiên bản mới.</p>{Boolean(action.error) && <ErrorState error={action.error} />}<div className="mt-5 flex justify-end gap-3"><button className={buttonClass} disabled={action.busy} onClick={() => void action.run(async () => { await archiveCareerRole(archiving.code, archiving.version); setNotice(`Đã lưu trữ ${archiving.name}.`); setArchiving(null); state.reload(); })}>{action.busy ? 'Đang lưu…' : 'Xác nhận lưu trữ'}</button></div></Modal>}
+    {archiving && <Modal title={`Lưu trữ ${archiving.name}`} onClose={() => setArchiving(null)}><p className="text-body leading-6 text-muted-foreground">Dừng nhận hồ sơ và bắt đầu phỏng vấn mới cho nghề này. Những buổi phỏng vấn đã bắt đầu, kết quả và lịch sử vẫn được giữ. Bạn có thể mở lại bằng một phiên bản mới.</p>{Boolean(action.error) && <ErrorState error={action.error} />}<div className="mt-4 flex justify-end gap-3"><button className={buttonClass} disabled={action.busy} onClick={() => void action.run(async () => { await archiveCareerRole(archiving.code, archiving.version); setNotice(`Đã lưu trữ ${archiving.name}.`); setArchiving(null); state.reload(); })}>{action.busy ? 'Đang lưu…' : 'Xác nhận lưu trữ'}</button></div></Modal>}
   </div>;
 }
 

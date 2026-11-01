@@ -213,11 +213,7 @@ export function SessionList({
                       onManage={onManage}
                     />
                   ) : (
-                    <Card
-                      className={
-                        isInstructor ? "instructor-session-card" : undefined
-                      }
-                    >
+                    <Card>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
                           <h3 className="text-body font-bold leading-6 text-foreground sm:text-subsection">
@@ -297,14 +293,14 @@ export function SessionList({
                       </div>
                       <div className="mt-3 flex flex-wrap gap-3 border-t border-border pt-3 text-caption font-semibold">
                         <Link
-                          className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                          className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                           href={`${basePath}/sessions/${s.id}`}
                         >
                           Chi tiết
                         </Link>
                         {onManage && (
                           <button
-                            className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                            className="rounded text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                             onClick={() => onManage(s.id)}
                           >
                             Quản trị thông tin

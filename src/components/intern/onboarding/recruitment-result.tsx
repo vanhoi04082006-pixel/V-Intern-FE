@@ -6,6 +6,8 @@ import {
   IconCircleCheck,
   IconLightbulb,
 } from "@/components/v-intern/icons";
+import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { StampMoc } from "@/components/workspace/notebook";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -82,8 +84,11 @@ export function RecruitmentResult() {
                 {result.decision === "passed" && (
                   <p
                     role="status"
-                    className="mt-2 font-semibold text-success"
+                    className="mt-2 inline-flex items-center gap-2 font-semibold text-success"
                   >
+                    {/* Khoảnh khắc ăn mừng — pháo giấy bung đúng một lần khi
+                        dòng chúc mừng vào khung (tự tắt khi giảm chuyển động). */}
+                    <PartyPopper size={20} animateOnView aria-hidden="true" />
                     Chúc mừng! Bạn đã vượt qua phỏng vấn.
                   </p>
                 )}
@@ -139,7 +144,10 @@ export function RecruitmentResult() {
               className="workspace-interview-feedback sticky-note-pink mt-8 p-5 sm:p-6"
               style={{ "--note-rotate": "-0.4deg" } as CSSProperties}
             >
-              <h2 className="text-section font-bold">Nhận xét từ AI Recruiter</h2>
+              <h2 className="flex items-center gap-2 text-section font-bold">
+                <Sparkles size={20} aria-hidden="true" />
+                Nhận xét từ AI Recruiter
+              </h2>
               <p className="mt-3 whitespace-pre-wrap text-body leading-relaxed">
                 {result.feedback}
               </p>

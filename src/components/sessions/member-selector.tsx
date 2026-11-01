@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ErrorState } from "@/components/shared/data-state";
-import { Empty, Pager, buttonClass, inputClass } from "@/components/product/primitives";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { Empty, Pager, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { useResource } from "@/lib/api/use-resource";
 import { Can } from "@/components/auth/can";
@@ -210,11 +210,16 @@ export function MemberSelector({
       <p className="text-caption text-muted-foreground">Chỉ tìm sinh viên đã đậu phỏng vấn và chưa có phân công đang hoạt động.</p>
       {Boolean(careerCatalog.error) && <div role="alert" className="text-body text-warning">Không tải được danh sách nghề nghiệp. Bạn vẫn có thể tìm sinh viên theo tên. <button type="button" className="font-semibold underline" onClick={careerCatalog.reload}>Thử lại danh sách nghề</button></div>}
       {notice && (
-        <p role="status" className="rounded bg-success-subtle p-2 text-caption text-success">{notice}</p>
+        <p
+          role="status"
+          className="border-l border-success pl-3 text-body text-success"
+        >
+          {notice}
+        </p>
       )}
       {Boolean(action.error) && <ErrorState error={action.error} />}
       {results.loading ? (
-        <p role="status" className="p-3 text-body text-muted-foreground">Đang tìm ứng viên...</p>
+        <LoadingState label="Đang tìm ứng viên..." />
       ) : results.error ? (
         <ErrorState error={results.error} onRetry={results.reload} />
       ) : !results.data || results.data.items.length === 0 ? (
@@ -263,7 +268,10 @@ export function MemberSelector({
                           {detail ? (
                             <CandidateInterviewSummary detail={detail} />
                           ) : (
-                            "Đang tải chi tiết phỏng vấn…"
+                            <span className="inline-flex items-center gap-2">
+                              <Spinner className="size-3.5" />
+                              Đang tải chi tiết phỏng vấn…
+                            </span>
                           )}
                         </div>
                       )}

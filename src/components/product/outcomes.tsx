@@ -13,7 +13,6 @@ import {
   IconArrowLeft,
   IconArrowUpRight,
   IconAward,
-  IconBell,
   IconCheck,
   IconCircleCheck,
   IconClock,
@@ -22,10 +21,12 @@ import {
   IconFileText,
   IconInfo,
   IconShieldCheck,
-  IconSparkles,
   IconTarget,
   IconWallet,
 } from "@/components/v-intern/icons";
+import { Sparkles as SparklesIcon } from "@/components/animate-ui/icons/sparkles";
+import { BellRing as BellRingIcon } from "@/components/animate-ui/icons/bell-ring";
+import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -73,6 +74,17 @@ const kpiMetricLabels: Record<string, string> = {
   quality: "Chất lượng",
   timeliness: "Đúng hạn",
 };
+
+/** Icon Sparkles (animate-ui) dạng IconComponent cho StudentPanel. */
+const SparklesPanelIcon: IconComponent = ({ size }) => (
+  <SparklesIcon size={typeof size === "number" ? size : 24} aria-hidden="true" />
+);
+
+/** Icon chuông (animate-ui) dạng IconComponent cho OutcomeFrame. */
+const BellPanelIcon: IconComponent = ({ size }) => (
+  <BellRingIcon size={typeof size === "number" ? size : 24} aria-hidden="true" />
+);
+
 const ledgerMeta: Record<
   string,
   { label: string; tone: "green" | "blue" | "amber" | "rose" | "slate" }
@@ -352,8 +364,23 @@ export function Kpi({ id }: { id?: string }) {
   return (
     <>
       <StudentOutcomeHeading
-        title="KPI & Lương ảo"
-        subtitle="Điểm KPI có nguồn tính rõ ràng, Lương ảo phục vụ chương trình thực tập"
+        title={id ? "Nguồn tính KPI" : "KPI & Lương ảo"}
+        subtitle={
+          id
+            ? "Cách điểm KPI của kết quả này được tính từ dữ liệu thật"
+            : "Điểm KPI có nguồn tính rõ ràng, Lương ảo phục vụ chương trình thực tập"
+        }
+        action={
+          id ? (
+            <Link
+              className="student-action student-action-secondary"
+              href="/intern/kpi"
+            >
+              <IconArrowLeft size={15} aria-hidden="true" />
+              Quay lại danh sách
+            </Link>
+          ) : undefined
+        }
       />
       <Resource resource={results}>
         {(data) =>
@@ -441,7 +468,7 @@ export function Kpi({ id }: { id?: string }) {
           ) : (
             <div className="student-dashboard-grid student-outcome-empty-grid">
               <div className="student-panel student-empty">
-                <IconSparkles size={36} aria-hidden="true" />
+                <SparklesIcon size={36} animateOnView aria-hidden="true" />
                 <h3>Chưa có kết quả KPI</h3>
                 <p>
                   Khi có đủ dữ liệu và kết quả được tính, bạn sẽ xem được điểm,
@@ -602,7 +629,7 @@ export function Salary() {
                   </table>
                 </div>
               ) : (
-                <div className="student-empty !py-10">
+                <div className="student-empty">
                   <IconWallet size={34} aria-hidden="true" />
                   <h3>Chưa có giao dịch lương ảo</h3>
                   <p>
@@ -866,6 +893,12 @@ function CertificateDetail({
     : "Chưa ghi nhận";
   return (
     <div className="student-cert-detail">
+      {issued && (
+        <p className="inline-flex items-center gap-2 font-semibold text-success">
+          <PartyPopper size={20} animateOnView aria-hidden="true" />
+          Chúc mừng! Bạn đã hoàn thành chương trình thực tập.
+        </p>
+      )}
       <article
         className="student-cert-document"
         aria-labelledby="certificate-title"
@@ -1025,7 +1058,7 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
     <main className="mx-auto max-w-2xl px-5 py-10 sm:pt-16">
       <Link
         href="/"
-        className="inline-flex items-center gap-2 rounded text-body font-bold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="inline-flex items-center gap-2 rounded text-body font-bold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2"
       >
         V-Intern
       </Link>
@@ -1240,7 +1273,7 @@ export function Notifications() {
       >
         <OutcomeFrame
           intern={intern}
-          icon={IconBell}
+          icon={BellPanelIcon}
           title={
             <span className="flex items-center gap-2">
               Thông báo của bạn
@@ -1325,7 +1358,7 @@ export function Notifications() {
                                   className={
                                     intern
                                       ? "student-action student-action-secondary student-action-sm"
-                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
                                   }
                                 >
                                   Mở nội dung
@@ -1345,7 +1378,7 @@ export function Notifications() {
                                   className={
                                     intern
                                       ? "student-action student-action-ghost student-action-sm"
-                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:opacity-50"
+                                      : "rounded text-body font-medium text-primary transition-colors hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1 disabled:opacity-50"
                                   }
                                 >
                                   Đánh dấu đã đọc
@@ -1358,8 +1391,8 @@ export function Notifications() {
                       ))}
                   </div>
                 ) : intern ? (
-                  <div className="student-empty !py-12">
-                    <IconBell size={34} aria-hidden="true" />
+                  <div className="student-empty">
+                    <BellRingIcon size={34} animateOnView aria-hidden="true" />
                     <h3>Chưa có thông báo phù hợp</h3>
                     <p>
                       {unread
@@ -1385,7 +1418,7 @@ export function Notifications() {
         <div>
           <OutcomeFrame
             intern={intern}
-            icon={IconBell}
+            icon={BellPanelIcon}
             title="Tùy chọn nhận thông báo"
           >
             {role === "intern" && (
@@ -1482,17 +1515,28 @@ export function Recommendations() {
             disabled={busy}
             onClick={() => void refresh()}
           >
-            <IconSparkles size={16} aria-hidden="true" />
+            <SparklesIcon
+              size={16}
+              animation="blink"
+              animate={busy}
+              loop
+              aria-hidden="true"
+            />
             {busy ? "Đang cập nhật…" : "Cập nhật khuyến nghị"}
           </button>
         }
       />
-      {Boolean(error) && <ErrorState error={error} />}{" "}
+      {Boolean(error) && <ErrorState error={error} />}
       {recommendations.error instanceof ApiError &&
       recommendations.error.statusCode === 404 ? (
         <div className="student-dashboard-grid">
           <div className="student-panel student-chat-welcome">
-            <IconSparkles size={42} className="text-primary" aria-hidden="true" />
+            <SparklesIcon
+              size={42}
+              animateOnView
+              className="text-primary"
+              aria-hidden="true"
+            />
             <h2>Một kế hoạch phát triển dành cho bạn</h2>
             <p>
               Chưa có khuyến nghị. Cập nhật để yêu cầu AI phân tích dữ liệu hiện
@@ -1546,7 +1590,7 @@ export function Recommendations() {
             <div className="student-stack">
               <StudentPanel
                 title="Tổng hợp AI"
-                icon={IconSparkles}
+                icon={SparklesPanelIcon}
                 className="student-panel-accent"
                 description={`Tạo lúc ${new Date(data.createdAt).toLocaleString("vi-VN")}`}
               >

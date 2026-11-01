@@ -42,7 +42,3 @@
 @media (prefers-reduced-motion: reduce) {
   .aurora-workspace .account-notebook-connections a { transition: none; }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .aurora-workspace .account-refresh-icon { animation: account-refresh 1s linear infinite; }
-}
-@keyframes account-refresh { to { transform: rotate(360deg); } }

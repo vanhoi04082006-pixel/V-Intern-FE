@@ -13,6 +13,7 @@ import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics } from "./collection-insights";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { StampMoc, MarginNote } from "@/components/workspace/notebook";
 import { StampBadge } from "@/components/v-intern/doodles";
 import {
@@ -683,7 +684,7 @@ function NewEvaluation({
             });
           }}
         >
-          {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
+          {Boolean(action.error) && <ErrorState error={action.error} />}
           <PerformanceMemberPicker
             label="Intern đánh giá"
             required
@@ -947,7 +948,14 @@ export function ScoreEditor({
           )}
         </div>
       </div>
-      <Panel title="Gợi ý AI">
+      <Panel
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Sparkles size={15} aria-hidden="true" />
+            Gợi ý AI
+          </span>
+        }
+      >
         <p className="mb-3 text-caption text-muted-foreground">
           Gợi ý không ghi vào điểm chính thức. Hãy kiểm tra chứng cứ và tự chấm
           điểm.
@@ -964,7 +972,14 @@ export function ScoreEditor({
               )
             }
           >
-            Yêu cầu gợi ý AI
+            <Sparkles
+              size={15}
+              animation="blink"
+              animate={action.busy}
+              loop
+              aria-hidden="true"
+            />
+            {action.busy ? "Đang xin gợi ý…" : "Yêu cầu gợi ý AI"}
           </button>
         </Can>
         {isInstructor && locked && (

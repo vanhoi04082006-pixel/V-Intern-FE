@@ -6,9 +6,10 @@ import {
   IconArrowDownRight,
   IconArrowRight,
   IconCheck,
-  IconSparkles,
 } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { FadeIn } from "@/components/v-intern/reveal";
+import { SectionHeading } from "@/components/v-intern/section-heading";
 import { Tape } from "@/components/v-intern/doodles";
 
 type Audience = {
@@ -97,7 +98,12 @@ function ScriptNote({ audience }: { audience: Audience }) {
             />
           )}
           {isLast(index) && audience.accent === "sparkles" && (
-            <IconSparkles className="ml-1 inline h-4 w-4 opacity-70" />
+            <Sparkles
+              size={16}
+              className="ml-1 inline opacity-70"
+              animateOnView
+              aria-hidden="true"
+            />
           )}
         </span>
       ))}
@@ -185,8 +191,8 @@ function AudienceCard({ audience, index = 0 }: { audience: Audience; index?: num
           className={
             "group mt-8 inline-flex h-12 items-center gap-2 rounded-xl border-2 px-6 text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 " +
             (dark
-              ? "border-coal bg-chalk text-coal shadow-[4px_4px_0_0_rgba(32,96,240,0.9)] hover:shadow-[6px_6px_0_0_rgba(32,96,240,0.9)] focus-visible:ring-[#7d97ff] focus-visible:ring-offset-coal"
-              : "border-ink bg-royal text-white shadow-[4px_4px_0_0_var(--ink)] hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)] focus-visible:ring-offset-blue-mist")
+              ? "border-coal bg-chalk text-coal shadow-marker-4 hover:shadow-marker-6 focus-visible:ring-[#7d97ff] focus-visible:ring-offset-coal"
+              : "border-ink bg-royal text-white shadow-ink-4 hover:bg-royal-deep hover:shadow-ink-6 focus-visible:ring-offset-blue-mist")
           }
         >
           {audience.cta}
@@ -225,7 +231,17 @@ export function AudienceCards() {
       aria-label="Đối tượng sử dụng V-Intern"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        {/* v6 Gọn: mọi section nội dung đều có mục lục mở đầu — đúng
+            nhịp SectionHeading như how-it-works / workflow. */}
+        <FadeIn>
+          <SectionHeading
+            eyebrow="Đối tượng sử dụng"
+            title="Hai vai trò"
+            highlight="một hành trình"
+            subtitle="Sinh viên viết trang kỹ năng, giảng viên viết trang quản lý — cùng một cuốn sổ V-Intern."
+          />
+        </FadeIn>
+        <div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {AUDIENCES.map((audience, index) => (
             <FadeIn key={audience.id} delay={index * 0.12} className="h-full">
               <AudienceCard audience={audience} index={index} />

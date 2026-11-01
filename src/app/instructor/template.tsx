@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
 
-/** Only the page body animates; the instructor shell stays mounted.
- * nb-swap: trang mới vào khung bằng nhịp mực 200ms (tự tắt khi
- * người dùng yêu cầu giảm chuyển động — guard toàn cục trong motion.css). */
+/** Only the page body remounts on navigation; the instructor shell stays
+ * mounted (lives in `layout.tsx`).
+ *
+ * v6: nhịp enter của route đã chuyển lên root `src/app/template.tsx`
+ * (PageTransition — View Transitions API); lớp này giữ lại khung
+ * `min-width: 0` cho bố cục nhưng bỏ `.nb-swap` để không chồng fade. */
 export default function InstructorTemplate({ children }: { children: ReactNode }) {
-  return <div className="instructor-route-frame nb-swap">{children}</div>;
+  return <div className="instructor-route-frame">{children}</div>;
 }

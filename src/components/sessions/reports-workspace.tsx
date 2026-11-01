@@ -10,6 +10,9 @@ import {
   Empty,
   inputClass,
   buttonClass,
+  Spinner,
+  thClass,
+  tdClass,
   
   Pager,
   InlineAlert,
@@ -302,7 +305,13 @@ export function ReportsWorkspace({
               Boolean(from && to && from > to)
             }
           >
-            {busy ? "Đang xử lý…" : "Tạo và lưu báo cáo"}
+            {busy ? (
+              <>
+                <Spinner className="size-3.5" />Đang xử lý…
+              </>
+            ) : (
+              "Tạo và lưu báo cáo"
+            )}
           </button>
         </form>
       </Panel>
@@ -393,8 +402,8 @@ export function ReportsWorkspace({
                 {detail.data.snapshot.projectName} ·{" "}
                 {new Date(detail.data.createdAt).toLocaleString("vi-VN")}
               </p>
-              <div className="overflow-x-auto" role="region" aria-label="Thành viên trong bản chụp báo cáo" tabIndex={0}>
-                <table className="workspace-table w-full text-left text-body">
+              <div className="overflow-x-auto border-y border-border" role="region" aria-label="Thành viên trong bản chụp báo cáo" tabIndex={0}>
+                <table className="product-table w-full border-collapse text-body">
                   <thead>
                     <tr>
                       {[
@@ -404,7 +413,7 @@ export function ReportsWorkspace({
                         "Quá hạn",
                         "Bài nộp / đã duyệt",
                       ].map((h) => (
-                        <th className="p-2" key={h}>
+                        <th className={thClass} key={h}>
                           {h}
                         </th>
                       ))}
@@ -413,15 +422,15 @@ export function ReportsWorkspace({
                   <tbody>
                     {detail.data.snapshot.members.map((m) => (
                       <tr key={m.userId}>
-                        <td className="p-2">{m.displayName ?? m.userId}</td>
-                        <td className="p-2">
+                        <td className={tdClass}>{m.displayName ?? m.userId}</td>
+                        <td className={tdClass}>
                           {m.completedTaskCount}/{m.totalTaskCount}
                         </td>
-                        <td className="p-2">
+                        <td className={tdClass}>
                           {m.averageEvaluationScore ?? "Chưa chấm"}
                         </td>
-                        <td className="p-2">{m.overdueOpenTaskCount}</td>
-                        <td className="p-2">
+                        <td className={tdClass}>{m.overdueOpenTaskCount}</td>
+                        <td className={tdClass}>
                           {m.submissionCount} / {m.approvedCount}
                         </td>
                       </tr>

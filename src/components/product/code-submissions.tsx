@@ -4,6 +4,8 @@ import {
   IconExternalLink,
   IconGitBranch,
 } from "@/components/v-intern/icons";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import {
   confirmCodeReview,
   listCodeReviews,
@@ -21,7 +23,7 @@ import { getSessionUser } from "@/lib/auth/session";
 import type { Task } from "@/lib/api/work";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { StampMoc } from "@/components/workspace/notebook";
-import { Badge, buttonClass, Empty, inputClass, Panel } from "./primitives";
+import { Badge, buttonClass, Empty, inputClass, Panel, Spinner } from "./primitives";
 
 const statuses = {
   submitted: "Đợi AI / giảng viên review",
@@ -108,7 +110,7 @@ export function CodeSubmissions({
       {!managed && pending && (
         <p
           role="status"
-          className="mb-5 rounded-control border border-warning bg-warning-subtle p-4 text-body leading-7 text-warning"
+          className="mb-5 rounded-panel bg-warning-subtle p-4 text-body leading-7 text-warning"
         >
           Bạn đang có bài nộp chờ xử lý. Theo dõi đánh giá bên dưới; nếu cần
           thay đổi code, rút bài hiện tại rồi nộp lại để hệ thống kiểm tra đúng
@@ -173,16 +175,30 @@ export function CodeSubmissions({
           </label>
           <div className="flex justify-end">
             <button disabled={busy} className={buttonClass}>
-              {busy ? "Đang xác minh code…" : "Nộp code để review"}
+              {busy ? (
+                <>
+                  <Spinner className="size-3.5" />Đang xác minh code…
+                </>
+              ) : (
+                "Nộp code để review"
+              )}
             </button>
           </div>
           {sent && (
             <p
               role="status"
-              className="rounded-control border border-success bg-success-subtle p-3 text-body text-success"
+              className="flex items-start gap-2 rounded-control border border-success bg-success-subtle p-3 text-body text-success"
             >
-              Đã gửi bài. Nhiệm vụ đang được chuyển sang Chờ duyệt sau khi hệ
-              thống xác minh.
+              <CircleCheckBig
+                size={17}
+                animateOnView
+                aria-hidden="true"
+                className="mt-0.5 shrink-0"
+              />
+              <span>
+                Đã gửi bài. Nhiệm vụ đang được chuyển sang Chờ duyệt sau khi hệ
+                thống xác minh.
+              </span>
             </p>
           )}
           <p className="text-caption leading-6 text-muted-foreground">
@@ -440,8 +456,17 @@ function AiCodeReview({
         <>
           <p
             role="status"
-            className={`font-semibold text-foreground${review.status === "needs_changes" ? " marker-red" : ""}`}
+            className={`inline-flex items-center gap-2 font-semibold text-foreground${review.status === "needs_changes" ? " marker-red" : ""}`}
           >
+            {review.status === "running" && (
+              <Sparkles
+                size={14}
+                animation="blink"
+                animate
+                loop
+                aria-hidden="true"
+              />
+            )}
             {review.status === "awaiting_instructor" &&
             submission.status !== "submitted"
               ? `AI đề xuất đạt · ${statuses[submission.status]}`
@@ -551,7 +576,13 @@ function AiCodeReview({
           onClick={() => void run()}
           className={buttonClass}
         >
-          {busy ? "AI đang kiểm tra…" : "Chấm / thử lại bằng AI"}
+          {busy ? (
+            <>
+              <Spinner className="size-3.5" />AI đang kiểm tra…
+            </>
+          ) : (
+            "Chấm / thử lại bằng AI"
+          )}
         </button>
       )}
       <button onClick={data.reload} className="ml-4 rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
@@ -679,7 +710,7 @@ function InstructorCodeDecision({
           onChange={(e) => setOverride(e.target.value)}
         />
       </label>
-      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l border-warning bg-warning-subtle/70 px-4 py-3 text-body outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      {penalty && <div ref={penaltyRef} tabIndex={-1} aria-label="Xác nhận điểm trừ do nộp trễ" className="border-l border-warning bg-warning-subtle/70 px-4 py-3 text-body outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
         <p className="font-semibold text-warning">Điểm sau khi xét thời hạn</p>
         <dl className="my-3 grid grid-cols-3 gap-3"><div><dt className="text-caption text-muted-foreground">Rubric gốc</dt><dd className="font-semibold">{penalty.baseScore}/100</dd></div><div><dt className="text-caption text-muted-foreground">Nộp trễ</dt><dd className="font-semibold text-warning">−{penalty.latePenalty}</dd></div><div><dt className="text-caption text-muted-foreground">Điểm cuối</dt><dd className="font-semibold">{penalty.score}/100</dd></div></dl>
         <label className="flex items-start gap-2 leading-6"><input type="checkbox" checked={acceptedPenalty} onChange={e => setAcceptedPenalty(e.target.checked)} className="mt-1 size-4" />Tôi xác nhận trừ {penalty.latePenalty} điểm theo bằng chứng và chính sách thời hạn của phiên.</label>

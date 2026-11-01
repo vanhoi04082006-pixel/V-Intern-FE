@@ -58,7 +58,7 @@ function Invitation() {
             session,
           ) ? (
             <div className="relative">
-              <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} />
+              <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={-3} />
               <SessionRepositoryCard sessionId={session} />
             </div>
           ) : (

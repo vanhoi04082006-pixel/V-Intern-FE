@@ -21,10 +21,10 @@ import {
 import { listRecruitingCareers } from "@/lib/api/career-roles";
 import { useResource } from "@/lib/api/use-resource";
 import { useAction } from "@/components/product/use-action";
+import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import {
   buttonClass,
   inputClass,
-  PageTitle,
   Empty,
   Pager,
   Modal,
@@ -270,7 +270,10 @@ function RoundWorkspace({
         ))}
       </div>
       {notice && (
-        <p role="status" className="text-body text-success">
+        <p
+          role="status"
+          className="border-l border-success pl-3 text-body text-success"
+        >
           {notice}
         </p>
       )}
@@ -515,7 +518,10 @@ function RoundCandidates({
         </button>
       </div>
       {notice && (
-        <p role="status" className="text-body text-success">
+        <p
+          role="status"
+          className="border-l border-success pl-3 text-body text-success"
+        >
           {notice}
         </p>
       )}

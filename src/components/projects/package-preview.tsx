@@ -31,7 +31,7 @@ export function PackageFiles({ files }: { files: PackageFile[] }) {
             type="button"
             aria-pressed={file?.path === item.path}
             onClick={() => setSelected(item.path)}
-            className={`flex w-full items-start gap-2 rounded-md px-2 py-2 text-left font-mono text-caption leading-5 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${file?.path === item.path ? "bg-accent text-primary" : "text-muted-foreground hover:bg-muted"}`}
+            className={`flex w-full items-start gap-2 rounded-md px-2 py-2 text-left font-mono text-caption leading-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${file?.path === item.path ? "bg-accent text-primary" : "text-muted-foreground hover:bg-muted"}`}
           >
             <IconCodeXml
               size={14}
@@ -50,7 +50,7 @@ export function PackageFiles({ files }: { files: PackageFile[] }) {
         <pre
           tabIndex={0}
           aria-label={`Nội dung file ${file?.path ?? ""}`}
-          className="max-h-[420px] overflow-auto p-4 text-caption leading-6 focus-visible:outline-2 focus-visible:outline-ring"
+          className="max-h-[420px] overflow-auto p-4 text-caption leading-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           <code>{file?.content ?? ""}</code>
         </pre>

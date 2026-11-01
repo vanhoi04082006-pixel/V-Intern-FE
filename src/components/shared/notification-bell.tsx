@@ -2,16 +2,20 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { IconBell } from "@/components/v-intern/icons";
+import { BellRing } from "@/components/animate-ui/icons/bell-ring";
 import { fetchUnreadCount } from "@/lib/api/outcomes";
 
 /**
  * Unread badge for the workspace bell: loads once, then refreshes every 60s
  * and when the tab regains focus. Fails soft — a missing count never blocks
  * navigation, and 401s are swallowed (the shell handles re-auth elsewhere).
+ *
+ * v6: chuông là icon động animate-ui — rê chuột lên cả vùng nút thì chuông
+ * rung như có thư mới; giảm chuyển động thì đứng yên.
  */
 export function NotificationBell({ href }: { href: string }) {
   const [count, setCount] = useState<number | null>(null);
+  const [hovering, setHovering] = useState(false);
 
   const load = useCallback(async (signal: AbortSignal) => {
     try {
@@ -50,9 +54,17 @@ export function NotificationBell({ href }: { href: string }) {
     <Link
       aria-label={count ? `Thông báo, ${count} chưa đọc` : "Thông báo"}
       href={href}
-      className="relative grid size-10 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      onFocus={() => setHovering(true)}
+      onBlur={() => setHovering(false)}
+      className="relative grid size-10 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1"
     >
-      <IconBell size={19} aria-hidden="true" />
+      <BellRing
+        size={19}
+        aria-hidden="true"
+        animate={hovering ? "default" : undefined}
+      />
       {count ? (
         <span
           aria-hidden="true"
