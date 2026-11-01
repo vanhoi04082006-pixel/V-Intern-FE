@@ -24,7 +24,8 @@ export function StudentPerformance({
   const activeAssignment = !context || context.workspace.status === "active";
   return (
     <div className="space-y-5">
-      <div className="workspace-stat-strip grid sm:grid-cols-2 xl:grid-cols-4">
+      {/* v5 Mượt: dải chỉ số vào khung lần lượt (nb-stagger). */}
+      <div className="workspace-stat-strip grid sm:grid-cols-2 xl:grid-cols-4 nb-stagger">
         {/* Số đếm mực loang lên như viết tay — giá trị cuối vẫn là dữ liệu thật. */}
         <StudentMetric
           icon={IconClipboardList}
@@ -50,7 +51,8 @@ export function StudentPerformance({
           hint={`${m.finalizedEvaluationCount} đánh giá đã chốt`}
         />
       </div>
-      <div className="student-dashboard-grid">
+      {/* v5 Mượt: hai cột nội dung vào khung so le nhau (nb-stagger). */}
+      <div className="student-dashboard-grid nb-stagger">
         <StudentPanel title="Bước tiếp theo">
           <p className="mb-5 text-body leading-7 text-muted-foreground">
             {!activeAssignment

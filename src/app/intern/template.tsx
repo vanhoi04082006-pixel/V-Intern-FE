@@ -6,5 +6,5 @@ import type { ReactNode } from "react";
  * topbar; it also respects the user's reduced-motion preference in CSS.
  */
 export default function StudentTemplate({ children }: { children: ReactNode }) {
-  return <div className="student-route-frame">{children}</div>;
+  return <div className="student-route-frame nb-swap">{children}</div>;
 }

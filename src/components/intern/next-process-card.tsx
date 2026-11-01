@@ -36,8 +36,9 @@ export function NextProcessCard({
       {/* Mẩu băng dính góc card — mật độ ĐẬM intern, không đổi nhịp layout. */}
       <Tape className="-top-3 right-5" rotate={4} variant="candy" />
       {/* Desktop: nhịp bước cố định theo R01; connector dọc nối số.
-          Ba bước hiển thị cùng lúc, không giãn kín chiều cao card. */}
-      <ol className="relative flex flex-col gap-4 xl:gap-8">
+          Ba bước hiển thị cùng lúc, không giãn kín chiều cao card;
+          v5 Mượt: các bước vào khung lần lượt (nb-stagger). */}
+      <ol className="relative flex flex-col gap-4 xl:gap-8 nb-stagger">
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
           // Reference: bước 1 (sắp tới) đậm màu blue, các bước sau trung tính.

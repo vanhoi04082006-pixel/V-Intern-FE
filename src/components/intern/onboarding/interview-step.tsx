@@ -130,7 +130,8 @@ export function InterviewStep() {
           <p className="font-hand mb-2 px-1 text-[15px] leading-none text-muted-foreground">
             mục lục câu hỏi
           </p>
-          <ol className="notebook-scroll max-h-[65vh] space-y-2 overflow-y-auto pr-1">
+          {/* v5 Mượt: mục lục câu hỏi vào khung lần lượt (nb-stagger). */}
+          <ol className="notebook-scroll max-h-[65vh] space-y-2 overflow-y-auto pr-1 nb-stagger">
             {questions.map((q) => (
               <li key={q.id}>
                 <button

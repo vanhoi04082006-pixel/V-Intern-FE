@@ -97,7 +97,8 @@ export function EmptyInternWorkspace({
               <p className="mt-1 max-w-xl text-body leading-relaxed text-muted-foreground xl:max-w-lg xl:text-small xl:leading-[1.35]">
                 {welcome.message}
               </p>
-              <ul className="mt-3 flex flex-wrap items-center gap-2 xl:mt-2">
+              {/* v5 Mượt: chuỗi badge chào mừng vào khung lần lượt (nb-stagger). */}
+              <ul className="mt-3 flex flex-wrap items-center gap-2 xl:mt-2 nb-stagger">
                 {welcome.badges.map((badge) => (
                   <li key={badge.id}>
                     <StatusBadge
@@ -263,7 +264,8 @@ export function EmptyInternWorkspace({
             headerClassName="xl:px-4 xl:py-2"
             bodyClassName="xl:px-4 xl:py-3"
           >
-            <ul className="flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-warning xl:gap-1 xl:text-caption xl:leading-[var(--iw-lead)]">
+            {/* v5 Mượt: các dòng lưu ý vào khung lần lượt (nb-stagger). */}
+            <ul className="flex list-disc flex-col gap-2 pl-4 text-small leading-relaxed text-foreground marker:text-warning xl:gap-1 xl:text-caption xl:leading-[var(--iw-lead)] nb-stagger">
               {notes.map((note) => (
                 <li key={note}>{note}</li>
               ))}

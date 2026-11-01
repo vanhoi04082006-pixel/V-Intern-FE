@@ -181,13 +181,14 @@ function ScoreRow({
           {formatScore(value)}/100
         </dd>
       </div>
-      {/* Rãnh điểm vẽ tay — nét đứt mực, phần phủ mực theo tone */}
+      {/* Rãnh điểm vẽ tay — nét đứt mực, phần phủ mực theo tone;
+          v5 Mượt: rút mực từ 0 khi vào khung (nb-fill). */}
       <div
         aria-hidden="true"
         className="mt-2 h-[9px] w-full rounded-full border border-dashed border-ink/45"
       >
         <div
-          className={cn("h-full rounded-full", barTone)}
+          className={cn("h-full rounded-full nb-fill", barTone)}
           style={{ width: `${clamped}%` }}
         />
       </div>
