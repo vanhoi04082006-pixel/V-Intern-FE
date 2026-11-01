@@ -874,10 +874,7 @@ function CertificateDetail({
   return (
     <div className="student-cert-detail">
       {issued && (
-        <p
-          role="status"
-          className="inline-flex items-center gap-2 font-semibold text-success"
-        >
+        <p className="inline-flex items-center gap-2 font-semibold text-success">
           <PartyPopper size={20} animateOnView aria-hidden="true" />
           Chúc mừng! Bạn đã hoàn thành chương trình thực tập.
         </p>
