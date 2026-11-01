@@ -6,8 +6,8 @@ import {
   IconArrowDownRight,
   IconArrowRight,
   IconCheck,
-  IconSparkles,
 } from "@/components/v-intern/icons";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { SectionHeading } from "@/components/v-intern/section-heading";
 import { Tape } from "@/components/v-intern/doodles";
@@ -98,7 +98,12 @@ function ScriptNote({ audience }: { audience: Audience }) {
             />
           )}
           {isLast(index) && audience.accent === "sparkles" && (
-            <IconSparkles className="ml-1 inline h-4 w-4 opacity-70" />
+            <Sparkles
+              size={16}
+              className="ml-1 inline opacity-70"
+              animateOnView
+              aria-hidden="true"
+            />
           )}
         </span>
       ))}

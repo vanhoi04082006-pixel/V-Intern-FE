@@ -9,7 +9,6 @@ import {
   IconLayoutDashboard,
   IconListTodo,
   IconSettings,
-  IconSparkles,
   IconTrendingUp,
   type IconComponent,
 } from "@/components/v-intern/icons";
@@ -18,6 +17,7 @@ import { Parallax } from "@/components/v-intern/motion";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
 import { TopographyBackground } from "@/components/animate-ui/backgrounds/topography";
+import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { useIsDarkTheme } from "@/lib/theme";
 import Link from "next/link";
@@ -202,7 +202,7 @@ export function Hero() {
           {/* Cột trái */}
           <FadeIn>
             <span className="inline-flex -rotate-1 items-center gap-2 rounded-full border-2 border-ink bg-raised px-4 py-1.5 text-xs font-bold text-ink shadow-[2px_2px_0_0_var(--hard-shadow)]">
-              <IconSparkles className="h-3.5 w-3.5 text-blue" aria-hidden="true" />
+              <Sparkles size={14} className="text-blue" animateOnView aria-hidden="true" />
               Nền tảng thực tập ảo ứng dụng AI
             </span>
 
@@ -304,7 +304,7 @@ export function Hero() {
               <div className="flex w-[228px] animate-float-soft items-start gap-3 rounded-lg border-2 border-ink bg-blue-mist p-3.5 shadow-[4px_4px_0_0_var(--hard-shadow)] [--float-rotate:2deg] motion-reduce:animate-none">
                 <PaperclipDoodle className="absolute -left-3.5 -top-4 h-10 w-6 text-ink/45" />
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-raised text-blue">
-                  <IconSparkles className="h-5 w-5" aria-hidden="true" />
+                  <Sparkles size={20} animateOnView aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-xs font-extrabold text-ink">Đánh giá AI</p>

@@ -9,7 +9,6 @@ import {
   studentToneForPriority,
 } from "@/components/intern/student-ui";
 import {
-  IconBell,
   IconCalendarDays,
   IconClock,
   IconCompass,
@@ -19,6 +18,7 @@ import {
   IconListChecks,
   IconSquareKanban,
 } from "@/components/v-intern/icons";
+import { BellRing } from "@/components/animate-ui/icons/bell-ring";
 import { useCallback, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -193,7 +193,7 @@ function InternGate({
               description="Bạn đã vượt qua vòng tuyển dụng. Giảng viên sẽ phân công dự án và Sprint tiếp theo cho bạn."
               action={
                 <StudentLink secondary href="/intern/notifications">
-                  <IconBell size={15} aria-hidden="true" />
+                  <BellRing size={15} animateOnHover aria-hidden="true" />
                   Xem thông báo
                 </StudentLink>
               }

@@ -13,7 +13,6 @@ import {
   IconArrowLeft,
   IconArrowUpRight,
   IconAward,
-  IconBell,
   IconCheck,
   IconCircleCheck,
   IconClock,
@@ -26,6 +25,7 @@ import {
   IconWallet,
 } from "@/components/v-intern/icons";
 import { Sparkles as SparklesIcon } from "@/components/animate-ui/icons/sparkles";
+import { BellRing as BellRingIcon } from "@/components/animate-ui/icons/bell-ring";
 import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
@@ -78,6 +78,11 @@ const kpiMetricLabels: Record<string, string> = {
 /** Icon Sparkles (animate-ui) dạng IconComponent cho StudentPanel. */
 const SparklesPanelIcon: IconComponent = ({ size }) => (
   <SparklesIcon size={typeof size === "number" ? size : 24} aria-hidden="true" />
+);
+
+/** Icon chuông (animate-ui) dạng IconComponent cho OutcomeFrame. */
+const BellPanelIcon: IconComponent = ({ size }) => (
+  <BellRingIcon size={typeof size === "number" ? size : 24} aria-hidden="true" />
 );
 
 const ledgerMeta: Record<
@@ -1268,7 +1273,7 @@ export function Notifications() {
       >
         <OutcomeFrame
           intern={intern}
-          icon={IconBell}
+          icon={BellPanelIcon}
           title={
             <span className="flex items-center gap-2">
               Thông báo của bạn
@@ -1387,7 +1392,7 @@ export function Notifications() {
                   </div>
                 ) : intern ? (
                   <div className="student-empty">
-                    <IconBell size={34} aria-hidden="true" />
+                    <BellRingIcon size={34} animateOnView aria-hidden="true" />
                     <h3>Chưa có thông báo phù hợp</h3>
                     <p>
                       {unread
@@ -1413,7 +1418,7 @@ export function Notifications() {
         <div>
           <OutcomeFrame
             intern={intern}
-            icon={IconBell}
+            icon={BellPanelIcon}
             title="Tùy chọn nhận thông báo"
           >
             {role === "intern" && (
