@@ -815,7 +815,8 @@
 .student-metric small {
   display: block;
   margin-top: var(--space-1);
-  font-size: var(--type-caption);
+  font-size: var(--type-small);
+  font-weight: var(--weight-medium);
   line-height: 1.55;
   color: var(--muted-foreground);
 }
@@ -1064,6 +1065,39 @@
   display: grid;
   gap: var(--space-4);
   min-width: 0;
+}
+/* v5 Gọn: đỉnh cột phải (figure "Phân bổ nhiệm vụ") phải ăn nhịp header panel
+   cột trái — đồng bộ cỡ chữ, độ đậm và khoảng cách tới nội dung. */
+.student-stack .workspace-chart figcaption {
+  font-size: var(--type-subsection);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+.student-stack .workspace-chart figcaption > span {
+  margin-top: var(--space-1);
+}
+.student-stack .workspace-donut-layout {
+  margin-top: var(--space-4);
+}
+/* v5 Gọn: sticky note "Nhắc nhỏ" trên dashboard giảm nặng — bóng nhẹ hơn,
+   giới hạn bề rộng để không cạnh tranh với các panel trắng xung quanh. */
+.student-dashboard .sticky-note {
+  max-width: 38ch;
+  box-shadow: 0 1px 0 var(--note-yellow-shadow), 0 4px 12px var(--note-yellow-shadow);
+}
+/* v5 Mượt: fill progress bar rút mực từ 0 khi vào khung (scaleX, không reflow). */
+.student-progress progress::-webkit-progress-value {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+.student-progress progress::-moz-progress-bar {
+  transform-origin: left center;
+  animation: nb-fill 640ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-progress progress::-webkit-progress-value,
+  .student-progress progress::-moz-progress-bar { animation: none; }
 }
 .student-focus {
   border: 0;
