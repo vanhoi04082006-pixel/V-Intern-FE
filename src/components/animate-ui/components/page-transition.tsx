@@ -367,6 +367,12 @@ type PageTransitionProps = React.ComponentProps<'div'> & {
   pageKey?: React.Key;
 };
 
+/* Lưu ý tích hợp v6 (V-Intern): React 19.3 diff hydration của `style` chạy
+   sau khi resume-script đã normalize `view-transition-class` (thêm dấu `;`
+   và xoá các attr `vt-*` phục vụ guard), gây cảnh báo giả trên SSR.
+   `suppressHydrationWarning` tắt đúng diff một phần tử này — lớp transition
+   vẫn được áp dụng bình thường trên client. */
+
 function PageTransition({
   effect = 'fade',
   pageKey,
@@ -440,6 +446,7 @@ function PageTransition({
       <div
         ref={localRef}
         data-slot="page-transition"
+        suppressHydrationWarning
         {...props}
         style={{
           viewTransitionClass: `page-transition ${className}`,
