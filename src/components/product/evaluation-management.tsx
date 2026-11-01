@@ -684,7 +684,7 @@ function NewEvaluation({
             });
           }}
         >
-          {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
+          {Boolean(action.error) && <ErrorState error={action.error} />}
           <PerformanceMemberPicker
             label="Intern đánh giá"
             required

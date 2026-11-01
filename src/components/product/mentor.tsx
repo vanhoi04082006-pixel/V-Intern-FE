@@ -132,7 +132,7 @@ export function Mentor() {
                     ))}
                   </ul>
                 ) : (
-                  <div className="student-empty !py-8">
+                  <div className="student-empty">
                     <IconMessageSquare size={30} aria-hidden="true" />
                     <h3>Chưa có cuộc trò chuyện</h3>
                     <p>

@@ -85,7 +85,6 @@
 .instructor-experience .ins-task-row { min-width: 0; padding: var(--space-4) 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; transition-property: color, background-color, border-color, box-shadow, transform, translate, rotate, opacity; transition-duration: var(--motion-fast); transition-timing-function: var(--motion-ease); }
 .instructor-experience .ins-task-row:first-child { padding-top: 0; }
 .instructor-experience .ins-task-row:hover { background: transparent; }
-.instructor-experience .ins-task-row-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-3); }
 .instructor-experience .ins-sprint-list { display: grid; gap: 0; }
 .instructor-experience .ins-sprint-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); padding: var(--space-4) 0; border-bottom: 1px solid var(--border); }
 .instructor-experience .ins-decision-steps { display: flex; flex-wrap: wrap; gap: var(--space-4); border-bottom: 1px solid var(--border); }
@@ -103,8 +102,6 @@
 .instructor-experience #session-team li { padding: var(--space-3) 0; margin: 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; }
 .instructor-experience #session-project :is(p, li) { color: var(--muted-foreground); line-height: var(--leading-reading); }
 .instructor-experience #session-project h3 { margin: var(--space-4) 0 var(--space-2); color: var(--foreground); font-size: var(--type-subsection); }
-.instructor-experience .ins-access-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-10); align-items: start; }
-.instructor-experience .ins-access-entry { padding: var(--space-4) 0; border-bottom: 1px solid var(--border); }
 .instructor-experience .ins-plan-editor { margin: var(--space-4) 0; border: 0; border-block: 1px solid var(--border); padding: var(--space-5) 0; }
 .instructor-experience .ins-plan-editor > legend { padding: 0 var(--space-2) 0 0; font-size: var(--type-subsection); font-weight: var(--weight-semibold); }
 .instructor-experience .ins-plan-sprint { padding-block: var(--space-5); border-bottom: 1px solid var(--border); }
@@ -112,7 +109,7 @@
 .instructor-experience .ins-report-risk { padding: var(--space-4); border-radius: var(--radius-control-value); }
 .instructor-experience .ins-report-task { padding: var(--space-4) 0; border-bottom: 1px solid var(--border); }
 @media (max-width: 1024px) {
-  .instructor-experience :is(.ins-operations-layout, .ins-setup-context, .ins-github-layout, .ins-access-layout) { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .instructor-experience :is(.ins-operations-layout, .ins-setup-context, .ins-github-layout) { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
 }
 @media (max-width: 768px) {
   .instructor-experience :is(.ins-metric-grid, .ins-session-stat-strip) { grid-template-columns: repeat(2, minmax(0, 1fr)); }

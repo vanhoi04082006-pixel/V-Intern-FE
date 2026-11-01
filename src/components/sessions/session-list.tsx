@@ -213,11 +213,7 @@ export function SessionList({
                       onManage={onManage}
                     />
                   ) : (
-                    <Card
-                      className={
-                        isInstructor ? "instructor-session-card" : undefined
-                      }
-                    >
+                    <Card>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
                           <h3 className="text-body font-bold leading-6 text-foreground sm:text-subsection">

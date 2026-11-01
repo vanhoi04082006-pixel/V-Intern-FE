@@ -624,7 +624,7 @@ export function Salary() {
                   </table>
                 </div>
               ) : (
-                <div className="student-empty !py-10">
+                <div className="student-empty">
                   <IconWallet size={34} aria-hidden="true" />
                   <h3>Chưa có giao dịch lương ảo</h3>
                   <p>
@@ -1386,7 +1386,7 @@ export function Notifications() {
                       ))}
                   </div>
                 ) : intern ? (
-                  <div className="student-empty !py-12">
+                  <div className="student-empty">
                     <IconBell size={34} aria-hidden="true" />
                     <h3>Chưa có thông báo phù hợp</h3>
                     <p>
@@ -1521,7 +1521,7 @@ export function Recommendations() {
           </button>
         }
       />
-      {Boolean(error) && <ErrorState error={error} />}{" "}
+      {Boolean(error) && <ErrorState error={error} />}
       {recommendations.error instanceof ApiError &&
       recommendations.error.statusCode === 404 ? (
         <div className="student-dashboard-grid">
