@@ -268,22 +268,38 @@
 [data-workspace-role="intern"] .workspace-waiting-welcome:hover {
   transform: rotate(0deg);
 }
-[data-workspace-role="intern"] .workspace-waiting-welcome::before {
+/* Băng dính giấy (washi) — phần chung của 6 khối giấy dán: mực xanh pha
+   giấy, mép xé clip-path, đổ bóng nhẹ, không chắn chuột. Geometry (vị trí /
+   kích thước / góc xoay) từng khối khai báo ở block riêng ngay dưới. */
+[data-workspace-role="intern"] .workspace-waiting-welcome::before,
+[data-workspace-role="intern"] .student-placement-summary::before,
+[data-workspace-role="intern"] .student-mentor-welcome::before,
+.aurora-workspace .product-modal::before,
+[data-workspace-role="intern"] .student-result-hero::before,
+[data-workspace-role="intern"] .student-panel.student-ledger::before {
   content: "";
   position: absolute;
+  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
+  opacity: 0.9;
+  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
+  pointer-events: none;
+  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
+}
+.dark [data-workspace-role="intern"] .workspace-waiting-welcome::before,
+.dark [data-workspace-role="intern"] .student-placement-summary::before,
+.dark [data-workspace-role="intern"] .student-mentor-welcome::before,
+.dark .aurora-workspace .product-modal::before,
+.dark [data-workspace-role="intern"] .student-result-hero::before,
+.dark [data-workspace-role="intern"] .student-panel.student-ledger::before {
+  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
+}
+
+[data-workspace-role="intern"] .workspace-waiting-welcome::before {
   top: -11px;
   right: 34px;
   width: 84px;
   height: 23px;
   transform: rotate(3deg);
-  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
-  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
-  opacity: 0.9;
-  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
-  pointer-events: none;
-}
-.dark [data-workspace-role="intern"] .workspace-waiting-welcome::before {
-  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 [data-workspace-role="instructor"] .product-panel {
   background: var(--nb-panel-bg);
@@ -314,21 +330,11 @@
   position: relative;
 }
 [data-workspace-role="intern"] .student-placement-summary::before {
-  content: "";
-  position: absolute;
   top: -11px;
   left: 26px;
   width: 84px;
   height: 23px;
   transform: rotate(-4deg);
-  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
-  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
-  opacity: 0.9;
-  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
-  pointer-events: none;
-}
-.dark [data-workspace-role="intern"] .student-placement-summary::before {
-  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 [data-workspace-role="intern"] .student-placement-summary h2 {
   display: inline-block;
@@ -360,21 +366,11 @@
   transform: rotate(0deg);
 }
 [data-workspace-role="intern"] .student-mentor-welcome::before {
-  content: "";
-  position: absolute;
   top: -11px;
   left: 50%;
   width: 80px;
   height: 22px;
   transform: translateX(-50%) rotate(2.5deg);
-  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
-  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
-  opacity: 0.9;
-  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
-  pointer-events: none;
-}
-.dark [data-workspace-role="intern"] .student-mentor-welcome::before {
-  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 [data-workspace-role="intern"] .student-mentor-welcome h2 {
   font-family: var(--font-patrick-hand), cursive;
@@ -506,21 +502,11 @@
 }
 .aurora-workspace .product-modal::before {
   /* Mẩu băng dính dán giữa mép trên modal — chỉ intern/instructor, không admin. */
-  content: "";
-  position: absolute;
   top: -13px;
   left: 50%;
   width: 88px;
   height: 24px;
   transform: translateX(-50%) rotate(-2deg);
-  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
-  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
-  opacity: 0.9;
-  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
-  pointer-events: none;
-}
-.dark .aurora-workspace .product-modal::before {
-  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 [data-workspace-role="admin"] .aurora-workspace .product-modal::before,
 [data-workspace-role="admin"] .product-modal::before {
@@ -629,21 +615,11 @@
   position: relative;
 }
 [data-workspace-role="intern"] .student-result-hero::before {
-  content: "";
-  position: absolute;
   top: -11px;
   right: 30px;
   width: 82px;
   height: 22px;
   transform: rotate(3.5deg);
-  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
-  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
-  opacity: 0.9;
-  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
-  pointer-events: none;
-}
-.dark [data-workspace-role="intern"] .student-result-hero::before {
-  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 
 /* CTA onboarding + màn hình chờ (class Tailwind thô): đưa về ngôn ngữ nút mực xanh nét đậm. */
@@ -740,22 +716,12 @@
   position: relative;
 }
 [data-workspace-role="intern"] .student-panel.student-ledger::before {
-  content: "";
-  position: absolute;
   top: -11px;
   right: 34px;
   width: 82px;
   height: 22px;
   transform: rotate(3.5deg);
-  background: color-mix(in srgb, var(--blue) 26%, #ffffff 64%);
-  clip-path: polygon(2% 8%, 98% 0%, 100% 82%, 97% 100%, 3% 94%, 0% 14%);
-  opacity: 0.9;
-  box-shadow: 0 1px 3px rgba(15, 15, 25, 0.18);
-  pointer-events: none;
   z-index: 2;
-}
-.dark [data-workspace-role="intern"] .student-panel.student-ledger::before {
-  background: color-mix(in srgb, var(--blue) 30%, #26262e 60%);
 }
 
 /* ------------------------------------------------------------------ */
