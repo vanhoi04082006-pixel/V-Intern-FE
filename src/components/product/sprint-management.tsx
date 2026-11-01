@@ -73,7 +73,7 @@ export function SprintManagement() {
   const focused = rows.data?.items.find(s=>s.id===focus) ?? rows.data?.items.find(s=>s.status==='active') ?? rows.data?.items[0];
   return (
     <>
-      <PageTitle title="Sprint & Task" />
+      <PageTitle title="Sprint & Task" subtitle="Tra cứu nhanh mọi sprint và nhiệm vụ đang chạy trong các phiên thực tập." />
       <PageMeta items={[
         { icon: IconUsers, label: "Vai trò", value: "Giảng viên / Technical Lead" },
         { icon: IconLayers, label: "Hệ thống", value: "V-Intern Platform" },

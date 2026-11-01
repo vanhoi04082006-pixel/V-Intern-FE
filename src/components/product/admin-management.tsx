@@ -250,7 +250,7 @@ export function AdminUsers() {
           </Can>
         }
       />
-      {notice && !action.busy && !action.error && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
+      {notice && !action.busy && !action.error && <p role="status" className="mb-5 border-l border-success pl-3 text-body text-success">{notice}</p>}
       {!users.loading && !users.error && users.data && (
         <CollectionMetrics
           values={[
@@ -685,7 +685,7 @@ export function AdminGroups() {
           </button>
         }
       />
-      {notice && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
+      {notice && <p role="status" className="mb-5 border-l border-success pl-3 text-body text-success">{notice}</p>}
       {rows.data && (
         <CollectionMetrics
           values={[
@@ -778,7 +778,7 @@ function GroupForm({
         );
       }}
     >
-      {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
+      {Boolean(action.error) && <ErrorState error={action.error} />}
       {!group && (
         <label className="block text-body">
           Mã nhóm
@@ -1056,7 +1056,7 @@ export function AdminCatalogs() {
           </button>
         }
       />
-      {notice && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
+      {notice && <p role="status" className="mb-5 border-l border-success pl-3 text-body text-success">{notice}</p>}
       {types.data && items.data && (
         <CollectionMetrics
           values={[
@@ -1232,7 +1232,7 @@ function CatalogTypeForm({ onSaved }: { onSaved: () => void }) {
         );
       }}
     >
-      {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
+      {Boolean(action.error) && <ErrorState error={action.error} />}
       {["code", "name", "description"].map((name, i) => (
         <label key={name} className="block text-body">
           {["Mã loại", "Tên loại", "Mô tả loại"][i]}
@@ -1282,7 +1282,7 @@ function CatalogItemForm({
         );
       }}
     >
-      {Boolean(action.error) && <ErrorState error={action.error} />}{" "}
+      {Boolean(action.error) && <ErrorState error={action.error} />}
       {!item && (
         <label className="block text-body">
           Mã giá trị
@@ -1363,7 +1363,7 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
           action={createAction}
         />
       )}
-      {notice && <p role="status" className="mb-5 text-body text-success">{notice}</p>}
+      {notice && <p role="status" className="mb-5 border-l border-success pl-3 text-body text-success">{notice}</p>}
       <Panel title="Cấu hình nghiệp vụ" action={embedded ? createAction : undefined}>
         <Result resource={settings}>
           {(r) => (

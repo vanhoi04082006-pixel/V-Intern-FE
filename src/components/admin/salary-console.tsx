@@ -26,6 +26,7 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  thClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { PerformanceMemberPicker } from "@/components/product/performance-member-picker";
@@ -250,7 +251,7 @@ export function SalaryConsole() {
                 {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải"].map((label) => (
                   <th
                     key={label}
-                    className="whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold text-muted-foreground"
+                    className={thClass}
                   >
                     {label}
                   </th>
