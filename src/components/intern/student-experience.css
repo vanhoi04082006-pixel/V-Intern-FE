@@ -1230,6 +1230,20 @@
   cursor: not-allowed;
   accent-color: var(--muted-foreground);
 }
+/* v4: thang đo dưới thanh trượt — 0% / 50% / 100% như thước kẻ vở. */
+.student-range-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+  font-size: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  user-select: none;
+}
+.student-range-scale > span:nth-child(2) {
+  color: var(--muted-foreground);
+  opacity: 0.7;
+}
 .student-info-list {
   display: grid;
   gap: 0;
@@ -1284,14 +1298,15 @@
   display: flex;
   gap: var(--space-3);
 }
+/* v4: dây nối nét đứt xuyên qua các marker — timeline đọc liền mạch. */
 .student-timeline li::before {
   content: "";
   position: absolute;
-  left: 11px;
-  top: 24px;
-  bottom: -16px;
-  width: 1px;
-  background: var(--muted);
+  left: 11.5px;
+  top: 26px;
+  bottom: -18px;
+  width: 0;
+  border-left: 2px dashed color-mix(in srgb, var(--student-blue, var(--primary)) 45%, transparent);
 }
 .student-timeline li:last-child::before {
   display: none;
@@ -1307,6 +1322,12 @@
   color: var(--student-blue-strong);
   font-size: var(--type-caption);
   font-weight: var(--weight-heading);
+}
+/* v4: sự kiện mới nhất (đầu trang) mang dấu mực đặc — như dòng cuối vừa ghi. */
+.student-timeline li:first-child > .student-timeline-marker {
+  background: var(--student-blue-strong, var(--primary));
+  color: white;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--student-blue-strong, var(--primary)) 22%, transparent);
 }
 .student-timeline strong {
   font-size: var(--type-small);
@@ -3212,4 +3233,54 @@
   .student-board-touch-hint {
     display: inline;
   }
+}
+
+/* =========================================================================
+   v4 — "refine every stroke" (intern sweep, appended block only)
+   Các nét tinh chỉnh của đợt v4: dây nối nét đứt cho step-list, nhấn nút
+   lún nhẹ 1px. Toàn bộ bọc trong prefers-reduced-motion khi cần.
+   ========================================================================= */
+
+/* v4: step-list (danh sách bước trong disclosure) có dây chuyền nét đứt
+   xuyên qua các ô số — cùng ngôn ngữ với .student-timeline. */
+.student-step-list li {
+  position: relative;
+}
+.student-step-list li::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 32px;
+  bottom: -16px;
+  width: 0;
+  border-left: 2px dashed
+    color-mix(in srgb, var(--student-blue, var(--primary)) 45%, transparent);
+}
+.student-step-list li:last-child::after {
+  display: none;
+}
+
+/* v4: trạng thái nhấn — nút/chốt hành động lún 1px như dấu ấn ngón tay. */
+@media (prefers-reduced-motion: no-preference) {
+  .student-experience :is(.student-action, .student-link):active {
+    transform: translateY(1px);
+  }
+}
+
+/* v4: eyebrow của StudentHeading — nét gạch mực ngắn + chữ xanh, như tên
+   chương được ghi lề trên đầu trang sổ. Trước đây prop bị bỏ không render. */
+.student-heading-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  font-size: var(--type-small);
+  font-weight: var(--weight-heading);
+  color: var(--primary);
+}
+.student-heading-eyebrow::before {
+  content: "";
+  width: 24px;
+  border-top: 2px solid
+    color-mix(in srgb, var(--primary) 50%, transparent);
 }

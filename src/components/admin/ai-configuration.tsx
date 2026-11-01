@@ -167,7 +167,7 @@ function AiConfigurationForm({
           <ErrorState title="Không thể lưu thay đổi" error={action.error} />
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
           <button className={buttonClass} disabled={action.busy}>
             {action.busy ? "Đang lưu…" : "Lưu cấu hình AI"}
           </button>

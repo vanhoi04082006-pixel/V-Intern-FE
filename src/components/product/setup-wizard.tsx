@@ -22,9 +22,26 @@ import { errorMessage } from "@/lib/auth/api-client";
 import { AcademicPicker } from "./academic-picker";
 import { AssigneeSelector } from "./assignee-selector";
 import { activateAcademic } from "@/lib/api/instructor-setup";
-import { buttonClass, inputClass, Modal, StatusDot } from "./primitives";
+import { btn, buttonClass, inputClass, Modal, StatusDot } from "./primitives";
 
 const STEPS = ["Phiên thực tập", "Dự án", "Phân công sinh viên", "Sprint & task"];
+
+/** Hiện trạng bằng tiếng Việt; mã lạ giữ nguyên để không giấu dữ liệu. */
+const wizStatusLabels: Record<string, string> = {
+  active: "Đang hoạt động",
+  planned: "Đã lên kế hoạch",
+  completed: "Đã hoàn thành",
+  cancelled: "Đã hủy",
+  draft: "Bản nháp",
+  archived: "Đã lưu trữ",
+};
+const wizStatusLabel = (status: string) => wizStatusLabels[status] ?? status;
+const wizStatusTone = (status: string) =>
+  status === "active" || status === "completed"
+    ? "green"
+    : status === "planned" || status === "draft"
+      ? "amber"
+      : "gray";
 
 interface WizSession { id: string; code: string; name: string }
 interface WizProject { id: string; code: string; name: string; status: string }
@@ -158,7 +175,7 @@ export function SetupWizard({
           record = { ...record, status: activated.status };
         } catch (e) {
           setProject(record);
-          fail(`Đã tạo dự án ${record.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt” , sẽ không tạo trùng.`);
+          fail(`Đã tạo dự án ${record.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt”, sẽ không tạo trùng.`);
           return;
         }
       }
@@ -233,7 +250,7 @@ export function SetupWizard({
           status = moved.status;
         } catch (e) {
           setSprint({ id: created.id, code: created.code, name: created.name, status });
-          fail(`Đã tạo sprint ${created.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt sprint” , sẽ không tạo trùng.`);
+          fail(`Đã tạo sprint ${created.code} nhưng kích hoạt thất bại: ${errorMessage(e)} Dùng nút “Thử lại kích hoạt sprint”, sẽ không tạo trùng.`);
           return;
         }
       }
@@ -304,7 +321,7 @@ export function SetupWizard({
             <li
               key={label}
               aria-current={current ? "step" : undefined}
-              className={`flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-2 text-caption sm:text-caption ${current ? "bg-primary font-bold text-primary-foreground" : done ? "bg-success-subtle font-semibold text-success" : "bg-background text-muted-foreground"}`}
+              className={`flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-2 text-caption ${current ? "bg-primary font-bold text-primary-foreground" : done ? "bg-success-subtle font-semibold text-success" : "bg-background text-muted-foreground"}`}
             >
               <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-caption ${current ? "bg-card/25" : done ? "bg-success text-primary-foreground" : "bg-muted"}`}>
                 {done ? "✓" : n}
@@ -325,7 +342,7 @@ export function SetupWizard({
         <div className="space-y-4">
           <div role="group" aria-label="Cách chọn phiên" className="flex gap-2 text-body">
             {(["new", "existing"] as const).map((m) => (
-              <button key={m} type="button" aria-pressed={sessionMode === m} onClick={() => setSessionMode(m)} className={`rounded-md border px-3 py-2 ${sessionMode === m ? "border-primary bg-accent font-semibold text-primary" : "border-border"}`}>
+              <button key={m} type="button" aria-pressed={sessionMode === m} onClick={() => setSessionMode(m)} className={`min-h-11 rounded-control border px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${sessionMode === m ? "border-primary bg-accent font-semibold text-primary" : "border-border text-muted-foreground hover:border-input hover:text-foreground"}`}>
                 {m === "new" ? "Tạo phiên mới" : "Chọn phiên có sẵn"}
               </button>
             ))}
@@ -353,10 +370,10 @@ export function SetupWizard({
 
       {step === 2 && session && (
         <div className="space-y-4">
-          <p className="rounded-control bg-accent p-3 text-body text-foreground">Phiên: <strong>{session.code} · {session.name}</strong> , các bước sau dùng phiên này, không cần chọn lại.</p>
+          <p className="rounded-control bg-accent p-3 text-body text-foreground">Phiên: <strong>{session.code} · {session.name}</strong>, các bước sau dùng phiên này, không cần chọn lại.</p>
           <div role="group" aria-label="Cách chọn dự án" className="flex gap-2 text-body">
             {(["new", "existing"] as const).map((m) => (
-              <button key={m} type="button" aria-pressed={projectMode === m} onClick={() => setProjectMode(m)} className={`rounded-md border px-3 py-2 ${projectMode === m ? "border-primary bg-accent font-semibold text-primary" : "border-border"}`}>
+              <button key={m} type="button" aria-pressed={projectMode === m} onClick={() => setProjectMode(m)} className={`min-h-11 rounded-control border px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${projectMode === m ? "border-primary bg-accent font-semibold text-primary" : "border-border text-muted-foreground hover:border-input hover:text-foreground"}`}>
                 {m === "new" ? "Tạo dự án mới" : "Chọn dự án có sẵn"}
               </button>
             ))}
@@ -375,12 +392,12 @@ export function SetupWizard({
             <span><strong>Kích hoạt dự án ngay sau khi tạo/chọn.</strong><span className="mt-0.5 block text-caption text-muted-foreground">Chỉ dự án đang hoạt động mới phân công được. Bỏ tick để giữ trạng thái nháp.</span></span>
           </label>
           {project && project.status !== "active" && (
-            <button className="rounded-md border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning" disabled={busy} onClick={() => void retryActivation()}>
+            <button className="min-h-11 rounded-control border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning transition-colors hover:bg-warning-subtle/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50" disabled={busy} onClick={() => void retryActivation()}>
               Thử lại kích hoạt
             </button>
           )}
           <div className="flex justify-between gap-2">
-            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(1)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+            <button className={btn("secondary")} disabled={busy} onClick={() => setStep(1)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
             <button className={buttonClass} disabled={busy || (projectMode === "new" ? !pCode.trim() || !pName.trim() || !pDesc.trim() : !projectPick)} onClick={() => void submitProject()}>
               {busy ? "Đang lưu…" : <>Tiếp tục <IconArrowRight size={15} className="inline" /></>}
             </button>
@@ -390,17 +407,17 @@ export function SetupWizard({
 
       {step === 3 && session && project && (
         <div className="space-y-4">
-          <p className="rounded-control bg-accent p-3 text-body text-foreground">Phân công vào <strong>{project.code}</strong> · <strong>{session.code}</strong> , không cần chọn lại.</p>
+          <p className="rounded-control bg-accent p-3 text-body text-foreground">Phân công vào <strong>{project.code}</strong> · <strong>{session.code}</strong>, không cần chọn lại.</p>
           <AssigneeSelector
             value={assignees}
             multiple
             onChange={(v) => { setTouched(true); setAssignees(Array.isArray(v) ? v : v ? [v] : []); }}
             onSelectionChange={(items) => setAssigneeNames(Object.fromEntries(items.map((i) => [i.userId, i.name])))}
           />
-          <div className="flex flex-wrap justify-between gap-2">
-            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(2)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
-            <span className="flex gap-2">
-              <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => { setOutcomes([]); setStep(4); }}>Bỏ qua</button>
+          <div className="flex flex-wrap justify-between gap-3">
+            <button className={btn("secondary")} disabled={busy} onClick={() => setStep(2)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+            <span className="flex gap-3">
+              <button className={btn("secondary")} disabled={busy} onClick={() => { setOutcomes([]); setStep(4); }}>Bỏ qua</button>
               <button className={buttonClass} disabled={busy || !assignees.length} onClick={() => void submitAssignment()}>
                 {busy ? "Đang phân công…" : `Phân công ${assignees.length} sinh viên`}
               </button>
@@ -411,7 +428,7 @@ export function SetupWizard({
 
       {step === 4 && session && project && (
         <div className="space-y-4">
-          <p className="rounded-control bg-accent p-3 text-body text-foreground">Sprint thuộc <strong>{project.code}</strong> · <strong>{session.code}</strong> , đã kế thừa, không cần chọn lại.</p>
+          <p className="rounded-control bg-accent p-3 text-body text-foreground">Sprint thuộc <strong>{project.code}</strong> · <strong>{session.code}</strong>, đã kế thừa, không cần chọn lại.</p>
           {!sprint ? (
             <>
               <label className="block text-body">Mã Sprint<input required maxLength={64} className={`${inputClass} mt-1`} value={spCode} onChange={(e) => { setTouched(true); setSpCode(e.target.value); }} /></label>
@@ -425,7 +442,7 @@ export function SetupWizard({
                 <span><strong>Kích hoạt Sprint ngay.</strong><span className="mt-0.5 block text-caption text-muted-foreground">Sprint đang hoạt động mới giao được task.</span></span>
               </label>
               <div className="flex justify-between gap-2">
-                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setStep(3)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
+                <button className={btn("secondary")} disabled={busy} onClick={() => setStep(3)}><IconArrowLeft size={15} className="mr-1 inline" />Quay lại</button>
                 <button className={buttonClass} disabled={busy || !spCode.trim() || !spName.trim() || !spStart || !spEnd} onClick={() => void submitSprint()}>
                   {busy ? "Đang lưu…" : "Tạo Sprint"}
                 </button>
@@ -433,9 +450,9 @@ export function SetupWizard({
             </>
           ) : (
             <>
-              <p className="flex items-center gap-2 text-body"><IconCircleCheck size={18} className="text-success" /> Sprint <strong>{sprint.code}</strong> · <StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></p>
+              <p className="flex items-center gap-2 text-body"><IconCircleCheck size={18} className="text-success" /> Sprint <strong>{sprint.code}</strong> · <StatusDot tone={wizStatusTone(sprint.status) as "green" | "amber" | "gray"}>{wizStatusLabel(sprint.status)}</StatusDot></p>
               {sprint.status !== "active" && (
-                <button className="rounded-md border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning" disabled={busy} onClick={() => void retrySprintActivation()}>
+                <button className="min-h-11 rounded-control border border-warning bg-warning-subtle px-3 py-2 text-body font-semibold text-warning transition-colors hover:bg-warning-subtle/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50" disabled={busy} onClick={() => void retrySprintActivation()}>
                   Thử lại kích hoạt sprint
                 </button>
               )}
@@ -461,7 +478,7 @@ export function SetupWizard({
               )}
               {task && <p className="flex items-center gap-2 text-body"><IconCircleCheck size={18} className="text-success" /> Task <strong>{task.title}</strong> đã tạo.</p>}
               <div className="flex justify-between gap-2">
-                <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" disabled={busy} onClick={() => setSprint(null)}><IconArrowLeft size={15} className="mr-1 inline" />Tạo sprint khác</button>
+                <button className={btn("secondary")} disabled={busy} onClick={() => setSprint(null)}><IconArrowLeft size={15} className="mr-1 inline" />Tạo sprint khác</button>
                 <button className={buttonClass} disabled={busy} onClick={() => setStep(5)}>Hoàn tất<IconArrowRight size={15} className="ml-1 inline" /></button>
               </div>
             </>
@@ -475,18 +492,18 @@ export function SetupWizard({
           <dl className="space-y-2 rounded-control border border-primary/70 p-4 text-body">
             <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Phiên</dt><dd className="font-semibold text-foreground">{session.code} · {session.name}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Dự án</dt><dd className="font-semibold text-foreground">{project.code} · {project.name}</dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Trạng thái dự án</dt><dd><StatusDot tone={project.status === "active" ? "green" : "amber"}>{project.status}</StatusDot></dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Trạng thái dự án</dt><dd><StatusDot tone={wizStatusTone(project.status) as "green" | "amber" | "gray"}>{wizStatusLabel(project.status)}</StatusDot></dd></div>
             <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Sinh viên đã phân công</dt><dd className="font-semibold text-foreground">{assignedOk.length}</dd></div>
             {assignedFail.map((o) => (
               <div key={o.userId} className="flex justify-between gap-3 text-caption"><dt className="text-muted-foreground">{o.name}</dt><dd className="text-destructive">Thất bại: {o.message}</dd></div>
             ))}
             {!outcomes?.length && <div className="text-caption text-muted-foreground">Bỏ qua phân công ở bước 3.</div>}
             <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Sprint</dt><dd className="font-semibold text-foreground">{sprint.code} · {sprint.name}</dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Trạng thái sprint</dt><dd><StatusDot tone={sprint.status === "active" ? "green" : "gray"}>{sprint.status}</StatusDot></dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Trạng thái sprint</dt><dd><StatusDot tone={wizStatusTone(sprint.status) as "green" | "amber" | "gray"}>{wizStatusLabel(sprint.status)}</StatusDot></dd></div>
             <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Task đầu tiên</dt><dd className="font-semibold text-foreground">{task ? task.title : "Chưa tạo (có thể tạo sau)"}</dd></div>
           </dl>
-          <div className="flex flex-wrap justify-end gap-2">
-            <button className="rounded-md border border-primary px-4 py-2 text-body text-foreground" onClick={requestClose}>Đóng</button>
+          <div className="flex flex-wrap justify-end gap-3">
+            <button className={btn("secondary")} onClick={requestClose}>Đóng</button>
             <Link href={`/instructor/sessions/${session.id}`} className={buttonClass} onClick={() => onFinished(session.id)}>
               <IconRocket size={16} /> Vào không gian làm việc
             </Link>
@@ -495,7 +512,7 @@ export function SetupWizard({
       )}
 
       <div className="mt-5 flex justify-start">
-        <button type="button" className="inline-flex items-center gap-1 text-caption text-muted-foreground hover:text-foreground" onClick={requestClose}>
+        <button type="button" className="inline-flex min-h-11 items-center gap-1 rounded-control px-1 text-caption text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={requestClose}>
           <IconX size={14} /> Đóng wizard
         </button>
       </div>

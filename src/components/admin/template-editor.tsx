@@ -143,6 +143,7 @@ export function TemplateEditor({
             required
             minLength={2}
             maxLength={256}
+            placeholder="VD: Hệ thống quản lý thư viện"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -150,7 +151,7 @@ export function TemplateEditor({
         <label className="text-body">
           Mã mẫu
           <input
-            className={inputClass}
+            className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}
             required
             maxLength={64}
             disabled={Boolean(existing)}
@@ -167,6 +168,7 @@ export function TemplateEditor({
           required
           minLength={10}
           maxLength={4000}
+          placeholder="Mô tả ngắn về sản phẩm học viên sẽ làm và kỹ năng được luyện."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -211,13 +213,15 @@ export function TemplateEditor({
       {Boolean(action.error) && (
         <ErrorState title="Không thể lưu thay đổi" error={action.error} />
       )}
-      <button className={buttonClass} disabled={action.busy}>
-        {action.busy
-          ? "Đang lưu…"
-          : existing
-            ? "Lưu phiên bản mới"
-            : "Tạo project template"}
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          {action.busy
+            ? "Đang lưu…"
+            : existing
+              ? "Lưu phiên bản mới"
+              : "Tạo project template"}
+        </button>
+      </div>
     </form>
   );
 }

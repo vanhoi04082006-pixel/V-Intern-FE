@@ -185,7 +185,7 @@ export function SessionOverview({
   if (data.loading)
     return (
       <p role="status" className="p-4 text-body text-muted-foreground">
-        Đang tải phiên...
+        Đang tải phiên…
       </p>
     );
   if (data.error || !data.data)
@@ -272,7 +272,7 @@ export function SessionOverview({
           </dd>
         </div>
         <div>
-          <dt>Task</dt>
+          <dt>Nhiệm vụ</dt>
           <dd>
             <InkCountUp value={totalTasks} />
             <span className="ins-stat-hint">
@@ -294,7 +294,7 @@ export function SessionOverview({
           <dt>Kế hoạch AI</dt>
           <dd className="ins-stat-text">
             {plans.loading
-              ? "..."
+              ? "Đang tải…"
               : plans.error
                 ? "không tải được"
                 : basePath === "/instructor"
@@ -339,10 +339,10 @@ export function SessionOverview({
       {delivery.error ? (
         <ErrorState error={delivery.error} onRetry={delivery.reload} />
       ) : null}
-      {delivery.loading && <p role="status">Đang tải Sprint/Task...</p>}
+      {delivery.loading && <p role="status">Đang tải Sprint/nhiệm vụ…</p>}
 
       <div id="session-work" className="ins-section">
-        <Panel title={`Task (${totalTasks})`}>
+        <Panel title={`Nhiệm vụ (${totalTasks})`}>
           <div className="ins-task-filters mb-4 grid gap-3 md:grid-cols-3">
             <select
               className={inputClass}
@@ -385,7 +385,7 @@ export function SessionOverview({
             </select>
             {filters.sprintId && (
               <button
-                className="text-caption font-semibold text-primary"
+                className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                 onClick={() => filter("sprintId", "")}
               >
                 Bỏ lọc Sprint
@@ -401,7 +401,7 @@ export function SessionOverview({
                   <p>Không có nhiệm vụ khớp bộ lọc trong phiên này.</p>
                   <button
                     type="button"
-                    className="mt-3 font-semibold text-primary"
+                    className="mt-3 rounded-control px-1 font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                     onClick={() => {
                       setFilters({
                         status: "",
@@ -416,12 +416,12 @@ export function SessionOverview({
                   </button>
                 </>
               ) : (
-                "Chưa có task."
+                "Chưa có nhiệm vụ nào."
               )}
             </Empty>
           ) : (
             <ul
-              aria-label="Task và bài nộp trong phiên"
+              aria-label="Nhiệm vụ và bài nộp trong phiên"
               className="ins-task-list"
             >
               {tasks.map((t) => (
@@ -499,7 +499,7 @@ export function SessionOverview({
                       </p>
                     </div>
                     <button
-                      className="text-caption font-semibold text-primary hover:underline"
+                      className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                       onClick={() => filter("sprintId", s.id)}
                     >
                       Lọc task Sprint này
@@ -612,9 +612,13 @@ export function SessionOverview({
       )}
       <Panel title="Mốc thời gian">
         {session.milestones.length ? (
-          <ul className="space-y-2 text-body">
-            {session.milestones.map((m) => (
-              <li key={m.id}>
+          <ul className="ins-timeline text-body">
+            {session.milestones.map((m, index) => (
+              <li
+                key={m.id}
+                data-current={index === 0 ? "true" : undefined}
+                className="ins-timeline-item"
+              >
                 {m.title} ·{" "}
                 {basePath === "/instructor"
                   ? instructorDate(m.dueDate)
@@ -667,7 +671,7 @@ export function SessionOverview({
       <Can perm="performance.view">
         <Panel title="Hiệu suất sinh viên trong phiên">
           <button
-            className="text-body font-semibold text-primary"
+            className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             aria-expanded={showPerformance}
             onClick={() => setShowPerformance((v) => !v)}
           >
@@ -691,7 +695,7 @@ export function SessionOverview({
         <Can perm="performance.view">
           <Panel title="Báo cáo của phiên">
             <button
-              className="text-body font-semibold text-primary"
+              className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
               aria-expanded={showReports}
               onClick={() => setShowReports((v) => !v)}
             >

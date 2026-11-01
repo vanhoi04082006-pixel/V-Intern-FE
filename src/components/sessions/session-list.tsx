@@ -188,14 +188,14 @@ export function SessionList({
         </MarginNote>
       )}
       {data.loading ? (
-        <LoadingState label="Đang tải phiên..." />
+        <LoadingState label="Đang tải phiên…" />
       ) : data.error ? (
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : !data.data || data.data.items.length === 0 ? (
         <Empty>
           Chưa có phiên thực tập
           {debounced
-            ? ` phù hợp với "${debounced}"`
+            ? ` phù hợp với “${debounced}”`
             : " — hãy bắt đầu từ Thư viện dự án"}
           .
         </Empty>
@@ -268,11 +268,10 @@ export function SessionList({
                             Dự án: {s.project?.name ?? "—"}
                             {s.project?.templateVersion !== null &&
                             s.project?.templateVersion !== undefined
-                              ? `, mẫu v${s.project.templateVersion}`
-                              : ""}
-                            {", "}
-                            {s.memberCount} thành viên, {s.sprintCount} sprint
-                           , {s.taskDone}/{s.taskTotal} nhiệm vụ (
+                              ? ` · mẫu v${s.project.templateVersion}`
+                              : ""}{" "}
+                            · {s.memberCount} thành viên · {s.sprintCount}{" "}
+                            sprint · {s.taskDone}/{s.taskTotal} nhiệm vụ (
                             {s.taskPercent}%)
                           </>
                         ) : (
@@ -281,11 +280,10 @@ export function SessionList({
                             {s.project?.templateVersion !== null &&
                             s.project?.templateVersion !== undefined
                               ? `, template v${s.project.templateVersion}`
-                              : ""}
-                            {", "}
-                            {s.memberCount} thành viên, {s.sprintCount} sprints
-                           , {s.taskDone}/{s.taskTotal} tasks ({s.taskPercent}
-                            %)
+                              : ""}{" "}
+                            · {s.memberCount} thành viên · {s.sprintCount}{" "}
+                            sprints · {s.taskDone}/{s.taskTotal} tasks ({" "}
+                            {s.taskPercent}%)
                           </>
                         )}
                       </p>

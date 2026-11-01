@@ -656,8 +656,13 @@ function TaskContent({
                     }
                     disabled={busy || task.status === "done"}
                   />
+                  <span className="student-range-scale" aria-hidden="true">
+                    <span>0%</span>
+                    <span>50%</span>
+                    <span>100%</span>
+                  </span>
                 </label>
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-5 flex flex-wrap items-stretch gap-3">
                   {next && next !== "review" && (
                     <button
                       className="student-action"
@@ -670,7 +675,7 @@ function TaskContent({
                   {next === "review" && (
                     <button
                       type="button"
-                      className="student-action"
+                      className="student-action flex-1"
                       disabled={busy}
                       onClick={goToSubmission}
                     >
@@ -727,7 +732,7 @@ function TaskContent({
                       <span className="student-info-icon">
                         <IconChartTrend size={15} aria-hidden="true" />
                       </span>
-                      Điểm độ lớn
+                      Story points
                     </dt>
                     <dd>{task.storyPoints ?? "Chưa đặt"}</dd>
                   </div>
@@ -875,16 +880,19 @@ function TaskContent({
                       required
                       maxLength={2000}
                       className="student-input min-h-[92px]"
+                      placeholder="Chia sẻ tiến độ, đặt câu hỏi cho giảng viên hoặc ghi lại điều bạn học được…"
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                     />
                   </label>
-                  <button
-                    className="student-action"
-                    disabled={busy || !content.trim()}
-                  >
-                    Gửi bình luận
-                  </button>
+                  <div className="flex justify-end">
+                    <button
+                      className="student-action"
+                      disabled={busy || !content.trim()}
+                    >
+                      Gửi bình luận
+                    </button>
+                  </div>
                 </form>
               </StudentPanel>
             </div>
@@ -961,16 +969,19 @@ function TaskContent({
                   required
                   maxLength={2000}
                   className={`${inputClass} mt-2`}
+                  placeholder="Chia sẻ tiến độ, đặt câu hỏi cho giảng viên hoặc ghi lại điều bạn học được…"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                 />
               </label>
-              <button
-                className={buttonClass}
-                disabled={busy || !content.trim()}
-              >
-                Gửi bình luận
-              </button>
+              <div className="flex justify-end">
+                <button
+                  className={buttonClass}
+                  disabled={busy || !content.trim()}
+                >
+                  Gửi bình luận
+                </button>
+              </div>
             </form>
           </Panel>
           <Panel title="Lịch sử trạng thái">
@@ -985,7 +996,7 @@ function TaskContent({
                     {history.data.items.map((h) => (
                       <li
                         key={h.id}
-                        className="border-l-2 border-border pl-3 text-body"
+                        className="border-l-2 border-dashed border-primary/40 pl-3 text-body"
                       >
                         <strong>
                           {h.fromStatus

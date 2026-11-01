@@ -25,6 +25,7 @@ import {
   type Task,
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
+import { sprintStatusLabel } from "@/lib/api/sprint-status";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
@@ -79,7 +80,7 @@ export function SprintManagement() {
         { icon: IconCalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
         { icon: IconClock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
       ]} />
-      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="text-body font-semibold text-primary" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
+      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
       <Panel title="Các Sprint" action={<button className={buttonClass} onClick={() => setCreate(true)}>Tạo Sprint</button>}>
         <div className="mb-4 grid items-start gap-3 sm:grid-cols-2">
           <AcademicPicker
@@ -102,7 +103,7 @@ export function SprintManagement() {
           >
             <option value="">Tất cả trạng thái</option>
             {["planned", "active", "completed", "cancelled"].map((s) => (
-              <option key={s}>{s}</option>
+              <option key={s} value={s}>{sprintStatusLabel(s).label}</option>
             ))}
           </select>
         </div>
@@ -118,16 +119,16 @@ export function SprintManagement() {
                   {rows.data.items.map((s) => (
                     <div
                       key={s.id}
-                      className="rounded-control border border-border p-4 hover:border-primary"
+                      className="rounded-control border border-border p-4 transition-colors duration-200 hover:border-primary"
                     >
                       <button
                         onClick={() => setSelected(s)}
-                        className="block w-full text-left"
+                        className="block w-full rounded-control text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                         aria-label={`Cài đặt Sprint ${s.code}`}
                       >
                         <div className="mb-3 flex justify-between gap-2">
                           <span className="text-caption text-muted-foreground">{s.code}</span>
-                          <Badge>{s.status}</Badge>
+                          <Badge>{sprintStatusLabel(s.status).label}</Badge>
                         </div>
                         <h3 className="font-bold text-foreground">{s.name}</h3>
                         <p className="mt-2 text-body text-muted-foreground">
@@ -225,11 +226,11 @@ export function SprintForm({
         <>
           <label className="block text-body">
             Mã Sprint
-            <input required name="code" maxLength={64} className={inputClass} />
+            <input required name="code" maxLength={64} placeholder="VD: SP-01" className={inputClass} />
           </label>
           {fixedProjectId ? (
             <p className="rounded-control bg-accent p-3 text-body text-foreground">
-              Dự án: <strong>{fixedProjectName ?? fixedProjectId}</strong> đến đã kế thừa, không cần chọn lại.
+              Dự án: <strong>{fixedProjectName ?? fixedProjectId}</strong> đã được kế thừa, không cần chọn lại.
             </p>
           ) : (
             <AcademicPicker
@@ -243,7 +244,7 @@ export function SprintForm({
           )}
           {fixedSessionId ? (
             <p className="rounded-control bg-accent p-3 text-body text-foreground">
-              Phiên: <strong>{fixedSessionName ?? fixedSessionId}</strong> đến đã kế thừa, không cần chọn lại.
+              Phiên: <strong>{fixedSessionName ?? fixedSessionId}</strong> đã được kế thừa, không cần chọn lại.
             </p>
           ) : (
             <AcademicPicker
@@ -269,6 +270,13 @@ export function SprintForm({
               name === "description" ? 4000 : name === "goal" ? 512 : 256
             }
             defaultValue={value ?? ""}
+            placeholder={
+              name === "name"
+                ? "VD: Sprint 1 — Dựng khung giao diện"
+                : name === "goal"
+                  ? "Kết quả cần đạt khi kết thúc Sprint"
+                  : undefined
+            }
             className={inputClass}
           />
         </label>
@@ -290,9 +298,11 @@ export function SprintForm({
           </label>
         ))}
       </div>
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu Sprint
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu Sprint
+        </button>
+      </div>
     </form>
   );
 }
@@ -327,10 +337,10 @@ function SprintDetail({
       )}
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <div className="flex flex-wrap gap-3">
-        <Badge>{status}</Badge>
+        <Badge>{sprintStatusLabel(status).label}</Badge>
         {["planned", "active"].includes(status) && (
           <button
-            className="text-body text-primary"
+            className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             onClick={() => setEdit(!edit)}
           >
             Sửa Sprint
@@ -353,7 +363,7 @@ function SprintDetail({
               })
             }
           >
-            Chuyển Sprint sang {s}
+            Chuyển sang {sprintStatusLabel(s).label}
           </button>
         ))}
       </div>
@@ -393,13 +403,13 @@ function SprintDetail({
                     {c.tasks.map((t) => (
                       <button
                         key={t.id}
-                        className="mb-2 block w-full rounded-control bg-card p-3 text-left text-body shadow-app-sm"
+                        className="mb-2 block w-full rounded-control bg-card p-3 text-left text-body shadow-app-sm transition-[translate,box-shadow] duration-200 hover:shadow-app-xs active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                         onClick={() => setTask(t.id)}
                       >
                         <small className="text-primary">{t.code}</small>
                         <p className="mt-1 font-semibold">{t.title}</p>
                         <p className="mt-2 text-caption text-muted-foreground">
-                          {t.priority} · {t.progress}%
+                          {priorityLabels[t.priority as keyof typeof priorityLabels] ?? t.priority} · {t.progress}%
                         </p>
                       </button>
                     ))}
@@ -472,7 +482,7 @@ export function TaskManagement({
   return (
     <>
       <Panel
-        title="Danh sách task"
+        title="Danh sách nhiệm vụ"
         action={
           <button className={buttonClass} onClick={() => setCreate(true)}>
             Tạo nhiệm vụ
@@ -531,7 +541,7 @@ export function TaskManagement({
           tasks.data && (
             <>
               {tasks.data.items.length ? (
-                <div className="overflow-x-auto"><table className="w-full min-w-[860px] text-left text-caption"><thead className="bg-background"><tr>{['#','Task','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>
+                <div className="notebook-scroll overflow-x-auto"><table className="w-full min-w-[860px] text-left text-caption"><thead className="bg-background"><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className="p-3">{label}</th>)}</tr></thead><tbody>
                   {tasks.data.items.map((t, i) => (
                     <tr
                       key={t.id}
@@ -540,7 +550,7 @@ export function TaskManagement({
                       <td className="p-3 text-muted-foreground">{(page - 1) * 10 + i + 1}</td>
                       <td className="max-w-52 p-3">
                         <button
-                          className="block text-left text-body font-semibold text-primary"
+                          className="block rounded-control text-left text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                           onClick={() => setDetail(t.id)}
                         >
                           {t.code}
@@ -552,7 +562,7 @@ export function TaskManagement({
                       <td className="p-3"><PriorityBadge priority={t.priority} /></td>
                       <td className="p-3 whitespace-nowrap">{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
                       <td className="p-3"><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
-                      <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-2 py-1 text-primary" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
+                      <td className="whitespace-nowrap p-3"><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
                     </tr>
                   ))}
                 </tbody></table></div>
@@ -664,6 +674,7 @@ export function TaskForm({
           name="title"
           required
           maxLength={256}
+          placeholder="VD: Dựng trang đăng nhập"
           defaultValue={task?.title}
         />
       </label>
@@ -673,19 +684,22 @@ export function TaskForm({
           className={inputClass}
           name="description"
           maxLength={4000}
+          placeholder="Yêu cầu chi tiết, phạm vi và ghi chú cho sinh viên"
           defaultValue={task?.description ?? ""}
         />
       </label>
-      <select
-        className={inputClass}
-        aria-label="Mức ưu tiên"
-        name="priority"
-        defaultValue={task?.priority ?? "medium"}
-      >
-        {priorities.map((p) => (
-          <option key={p} value={p}>{priorityLabels[p]}</option>
-        ))}
-      </select>
+      <label className="block text-body">
+        Mức ưu tiên
+        <select
+          className={inputClass}
+          name="priority"
+          defaultValue={task?.priority ?? "medium"}
+        >
+          {priorities.map((p) => (
+            <option key={p} value={p}>{priorityLabels[p]}</option>
+          ))}
+        </select>
+      </label>
       <label className="block text-body">
         Story points
         <input
@@ -711,28 +725,32 @@ export function TaskForm({
       ) : members.error ? (
         <ErrorState error={members.error} onRetry={members.reload} />
       ) : (
-        <select
-          className={inputClass}
-          aria-label="Người thực hiện"
-          value={assigneeId}
-          onChange={(e) => setAssigneeId(e.target.value)}
-        >
-          <option value="">Chưa giao</option>
-          {members.data?.map((m) => (
-            <option key={m.userId} value={m.userId}>
-              {m.displayName} · {m.email}
-            </option>
-          ))}
-        </select>
+        <label className="block text-body">
+          Người thực hiện
+          <select
+            className={inputClass}
+            value={assigneeId}
+            onChange={(e) => setAssigneeId(e.target.value)}
+          >
+            <option value="">Chưa giao</option>
+            {members.data?.map((m) => (
+              <option key={m.userId} value={m.userId}>
+                {m.displayName} · {m.email}
+              </option>
+            ))}
+          </select>
+        </label>
       )}
-      <button
-        className={buttonClass}
-        disabled={
-          action.busy || !projectId || members.loading || Boolean(members.error)
-        }
-      >
-        Lưu nhiệm vụ
-      </button>
+      <div className="flex justify-end">
+        <button
+          className={buttonClass}
+          disabled={
+            action.busy || !projectId || members.loading || Boolean(members.error)
+          }
+        >
+          Lưu nhiệm vụ
+        </button>
+      </div>
     </form>
   );
 }

@@ -117,7 +117,7 @@ export function PrimaryAction({ children }: { children: ReactNode }) {
   return (
     <button
       type="button"
-      className="inline-flex items-center gap-2 whitespace-nowrap rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground shadow-app-xs transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+      className="inline-flex items-center gap-2 whitespace-nowrap rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground shadow-app-xs transition-all hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
     >
       {children}
     </button>
@@ -129,7 +129,7 @@ export function OutlineAction({ children }: { children: ReactNode }) {
   return (
     <button
       type="button"
-      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control border border-border bg-card px-4 py-2 text-small font-semibold text-foreground shadow-app-xs transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control border border-border bg-card px-4 py-2 text-small font-semibold text-foreground shadow-app-xs transition-all hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
     >
       {children}
     </button>
@@ -180,7 +180,10 @@ export function GhostIconButton({
       type="button"
       aria-label={label}
       className={cn(
-        "grid size-8 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
+        "relative grid size-8 shrink-0 place-items-center rounded-control text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 motion-safe:active:translate-y-px",
+        /* v4: nút icon nhỏ nhưng vùng chạm vẫn ~44px — lớp before nới
+           hit-area ra ngoài mà không đổi kích thước hiển thị. */
+        "before:absolute before:-inset-2 before:rounded-control before:content-['']",
         className,
       )}
     >

@@ -10,6 +10,7 @@ import {
 } from "@/lib/api/knowledge-runs";
 import {
   Badge,
+  btn,
   buttonClass,
   Field,
   InlineAlert,
@@ -18,6 +19,7 @@ import {
 } from "@/components/product/primitives";
 import { ErrorState } from "@/components/shared/data-state";
 import { StampMoc } from "@/components/workspace/notebook";
+import { NeutralDot } from "./ui-bits";
 
 const statuses: Record<string, string> = {
   queued: "Đang chờ",
@@ -137,7 +139,7 @@ export function KnowledgeRunMonitor({
           {run && inFlight(run) && (
             <button
               type="button"
-              className={buttonClass}
+              className={btn("secondary")}
               disabled={busy}
               onClick={() => void act(() => cancel(run.id).then(setRun))}
             >
@@ -150,7 +152,7 @@ export function KnowledgeRunMonitor({
             run.attempts < 3 && (
               <button
                 type="button"
-                className={buttonClass}
+                className={btn("secondary")}
                 disabled={busy}
                 onClick={() =>
                   void act(async () => {
@@ -190,12 +192,12 @@ export function KnowledgeRunMonitor({
             ) : (
               <Badge tone="sky">{statuses[run.status] ?? run.status}</Badge>
             )}
-            <Badge tone="gray">
+            <NeutralDot>
               {run.attempts} lượt thực thi · {run.steps} bước
-            </Badge>
-            <Badge tone="gray">
+            </NeutralDot>
+            <NeutralDot>
               Token vào/ra: {run.inputTokens ?? "—"} / {run.outputTokens ?? "—"}
-            </Badge>
+            </NeutralDot>
           </div>
           <p className="break-all font-mono text-caption text-muted-foreground">
             {run.id} · hạn xử lý {new Date(run.deadlineAt).toLocaleString("vi-VN")}

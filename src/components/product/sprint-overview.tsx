@@ -163,8 +163,8 @@ export function SprintOverview({
           title="Bảng Sprint hiện tại"
           action={
             <span className="flex flex-wrap items-center gap-3">
-              <Link href="#sprint-task-list" className="text-caption text-primary">
-                Xem tất cả task
+              <Link href="#sprint-task-list" className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
+                Xem toàn bộ nhiệm vụ
               </Link>
               <Can perm="tasks.manage">
                 <a
@@ -172,7 +172,7 @@ export function SprintOverview({
                     onManage ? "#sprint-task-management" : "#sprint-task-list"
                   }
                   onClick={onManage}
-                  className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-caption font-semibold text-primary-foreground hover:bg-primary"
+                  className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-caption font-semibold text-primary-foreground shadow-app-xs transition-[background-color,translate] duration-200 hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                 >
                   <IconPlus size={14} />
                   {onManage ? "Quản lý task" : "Tạo task mới"}
@@ -207,7 +207,7 @@ export function SprintOverview({
                         key={t.id}
                         {...draggableTask(t.id, t.status)}
                         title="Mở chi tiết, kéo sang cột được phép để chuyển trạng thái"
-                        className="mb-3 w-full rounded-md border border-primary bg-card p-3 text-left"
+                        className="mb-3 w-full rounded-md border border-primary bg-card p-3 text-left transition-[translate,box-shadow] duration-200 hover:shadow-app-xs active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                         onClick={() => setTask(t.id)}
                       >
                         <span className="flex items-center justify-between gap-2">
@@ -255,9 +255,9 @@ export function SprintOverview({
                 {c.count > 3 && (
                   <a
                     href="#sprint-task-list"
-                    className="block rounded bg-card/70 p-2 text-center text-caption font-semibold text-primary"
+                    className="block rounded bg-card/70 p-2 text-center text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                   >
-                    Xem tất cả {c.count} task
+                    Xem tất cả {c.count} nhiệm vụ
                   </a>
                 )}
               </section>
@@ -301,7 +301,7 @@ export function SprintOverview({
           <Panel
             title="Review & PR cần xử lý"
             action={
-              <a href="#sprint-task-list" className="text-caption text-primary">
+              <a href="#sprint-task-list" className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
                 Xem tất cả
               </a>
             }
@@ -321,7 +321,7 @@ export function SprintOverview({
                     </div>
                     <TaskStatusPill status="review" />
                     <button
-                      className="rounded border border-primary px-2 py-1 text-primary"
+                      className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                       onClick={() => setTask(t.id)}
                     >
                       Xem
@@ -330,7 +330,7 @@ export function SprintOverview({
                 ))}
               </ul>
             ) : (
-              <Empty>Không có task chờ review.</Empty>
+              <Empty>Chưa có bài nộp nào chờ duyệt.</Empty>
             )}
           </Panel>
           <SprintCompletionPanel
@@ -392,7 +392,7 @@ function SprintCompletionPanel({
       action={
         <button
           type="button"
-          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent"
+          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           aria-expanded={open}
           aria-controls="sprint-completion-report"
           onClick={onToggle}
@@ -433,7 +433,7 @@ function SprintCompletionPanel({
           </div>
           <p className="text-body text-muted-foreground">
             {state.data.committedStoryPoints === null
-              ? "Chưa có task nào khai báo story points — không hiển thị điểm ước lượng."
+              ? "Chưa có nhiệm vụ nào khai báo story points — không hiển thị điểm ước lượng."
               : `Story points: đã hoàn thành ${state.data.completedStoryPoints ?? 0} / cam kết ${state.data.committedStoryPoints} points.`}
           </p>
         </div>
@@ -536,7 +536,7 @@ export function Burndown({
           ngày UTC; không bao gồm task đã chuyển ra Sprint. Ngày tương lai chỉ
           có đường kế hoạch.
         </p>
-        <ul>
+        <ul className="notebook-scroll max-h-64 space-y-1 overflow-y-auto pr-1">
           {points.map((p) => (
             <li key={p.date}>
               {new Date(p.date).toLocaleDateString("vi-VN")}:{" "}

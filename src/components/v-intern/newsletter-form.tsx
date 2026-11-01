@@ -34,7 +34,7 @@ export function NewsletterForm() {
       <button
         type="button"
         onClick={() => setState("idle")}
-        className="mt-2 text-xs font-semibold text-chalk-soft underline decoration-dotted underline-offset-4 transition-colors hover:text-[#7d97ff]"
+        className="mt-2 rounded text-xs font-semibold text-chalk-soft underline decoration-dotted underline-offset-4 transition-colors hover:text-[#7d97ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7d97ff] focus-visible:ring-offset-2 focus-visible:ring-offset-coal"
       >
         Thử lại
       </button>
@@ -68,7 +68,7 @@ export function NewsletterForm() {
         </div>
         <button
           type="submit"
-          className="rounded-r-xl border-2 border-royal bg-royal px-4 text-sm font-bold text-white transition-all hover:bg-royal-deep"
+          className="rounded-r-xl border-2 border-royal bg-royal px-4 text-sm font-bold text-white transition-all hover:bg-royal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7d97ff] focus-visible:ring-offset-2 focus-visible:ring-offset-coal"
         >
           Đăng ký
         </button>

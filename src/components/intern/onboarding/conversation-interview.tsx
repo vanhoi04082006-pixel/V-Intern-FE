@@ -239,7 +239,7 @@ export function ConversationInterview() {
               <button
                 disabled={working || busy}
                 onClick={() => void next()}
-                className="mb-4 rounded-panel bg-primary px-4 py-3 text-body font-semibold text-primary-foreground disabled:opacity-50"
+                className="mb-4 rounded-panel bg-primary px-4 py-3 text-body font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
               >
                 {current.status === "failed"
                   ? "Thử lại câu hỏi"
@@ -249,7 +249,7 @@ export function ConversationInterview() {
             {current.kind !== 'follow_up' && <button
               disabled={disabled || expired}
               onClick={() => void clarify()}
-              className="underline-squiggle mb-3 text-body text-primary disabled:opacity-40"
+              className="underline-squiggle mb-3 text-body text-primary disabled:cursor-not-allowed disabled:opacity-40"
             >
               Giải thích lại câu hỏi
             </button>}
@@ -290,15 +290,15 @@ export function ConversationInterview() {
                   onClick={() =>
                     void send("[Bỏ qua câu này — tôi chưa có câu trả lời.]")
                   }
-                  className="rounded-control px-3 py-2 text-body text-muted-foreground disabled:opacity-40"
+                  className="rounded-control px-3 py-2 text-body text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Bỏ qua câu này
                 </button>
                 <button
                   disabled={disabled || expired || !draft.trim()}
-                  className="flex items-center gap-2 rounded-panel bg-primary px-5 py-3 text-body font-semibold text-primary-foreground disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-panel bg-primary px-5 py-3 text-body font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:translate-y-px"
                 >
-                  <IconSend size={16} />
+                  <IconSend size={16} aria-hidden="true" />
                   Gửi câu trả lời
                 </button>
               </div>
@@ -309,7 +309,7 @@ export function ConversationInterview() {
           <button
             disabled={busy || working}
             onClick={() => void submit()}
-            className="rounded-panel bg-primary px-5 py-3 font-semibold text-primary-foreground disabled:opacity-40"
+            className="rounded-panel bg-primary px-5 py-3 font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:translate-y-px"
           >
             Kết thúc và chờ kết quả
           </button>
@@ -318,7 +318,7 @@ export function ConversationInterview() {
           profile.interviewSchedule ? <Link href="/intern/onboarding/role" className="student-link mr-3">Xem lịch phỏng vấn tiếp theo</Link> : <button
             disabled={busy || working || profile.attemptsRemaining <= 0}
             onClick={() => void start()}
-            className="mr-3 rounded-panel bg-primary px-4 py-3 text-body font-semibold text-primary-foreground disabled:opacity-40"
+            className="mr-3 rounded-panel bg-primary px-4 py-3 text-body font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-40 motion-safe:active:translate-y-px"
           >
             Bắt đầu lần phỏng vấn mới
           </button>
@@ -336,9 +336,9 @@ export function ConversationInterview() {
             void load();
             void reload();
           }}
-          className="mt-4 flex items-center gap-2 text-body text-primary"
+          className="mt-4 flex items-center gap-2 rounded-control text-body text-primary transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <IconRefreshCw size={14} />
+          <IconRefreshCw size={14} aria-hidden="true" />
           Tải lại trạng thái
         </button>
       </div>

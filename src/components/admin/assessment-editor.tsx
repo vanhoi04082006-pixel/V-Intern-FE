@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/template-materials";
 import { ErrorState } from "@/components/shared/data-state";
 import { inputClass } from "@/components/product/primitives";
+import { linkButtonClass } from "./ui-bits";
 import { FileRows } from "./package-editor";
 export type AssessmentChange = {
   mode: "keep" | "clear" | "replace";
@@ -56,6 +57,7 @@ function AssessmentFields({
                   required
                   className={inputClass}
                   maxLength={128}
+                  placeholder="VD: Chức năng chạy đúng hợp đồng"
                   value={row.criterion}
                   onChange={(event) =>
                     onChange({
@@ -112,7 +114,7 @@ function AssessmentFields({
             </label>
             <button
               type="button"
-              className="text-caption font-semibold text-destructive"
+              className={`${linkButtonClass} -ml-1 text-caption text-destructive hover:underline underline-offset-4`}
               onClick={() =>
                 onChange({
                   ...value,
@@ -127,7 +129,7 @@ function AssessmentFields({
         <button
           type="button"
           disabled={value.rubric.length >= 20}
-          className="text-body font-semibold text-warning"
+          className={`${linkButtonClass} -ml-1 text-warning hover:underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-50`}
           onClick={() =>
             onChange({
               ...value,
@@ -181,7 +183,7 @@ function AssessmentFields({
             ))}
             <button
               type="button"
-              className="text-caption font-semibold text-destructive"
+              className={`${linkButtonClass} -ml-1 text-caption text-destructive hover:underline underline-offset-4`}
               onClick={() =>
                 onChange({
                   ...value,
@@ -196,7 +198,7 @@ function AssessmentFields({
         <button
           type="button"
           disabled={value.taskSuites.length >= 60}
-          className="text-body font-semibold text-warning"
+          className={`${linkButtonClass} -ml-1 text-warning hover:underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-50`}
           onClick={() =>
             onChange({
               ...value,
@@ -293,7 +295,7 @@ export function AssessmentEditor({
             <button
               disabled={busy}
               type="button"
-              className="text-body font-semibold text-warning underline underline-offset-4"
+              className={`${linkButtonClass} -ml-1 text-warning underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-50`}
               onClick={() => {
                 setBusy(true);
                 setError(null);

@@ -52,5 +52,5 @@ export function KnowledgePreview({ draft, code }: { draft: KnowledgeDraft; code?
 function SourceLink({ url }: { url: string }) {
   let safe = false;
   try { const value = new URL(url); safe = value.protocol === 'https:' && !!value.hostname && !value.username && !value.password; } catch { /* Render invalid drafts as inert text. */ }
-  return safe ? <a className="inline-block max-w-full break-all text-primary underline underline-offset-4 hover:text-info" href={url} target="_blank" rel="noopener noreferrer">{url}</a> : <p className="break-all text-muted-foreground">{url} · URL chưa hợp lệ</p>;
+  return safe ? <a className="inline-block max-w-full break-all rounded-sm text-primary underline underline-offset-4 hover:text-info focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" href={url} target="_blank" rel="noopener noreferrer">{url}</a> : <p className="break-all text-muted-foreground">{url} · URL chưa hợp lệ</p>;
 }

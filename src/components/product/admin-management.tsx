@@ -23,6 +23,7 @@ import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
 import { CollectionMetrics, CollectionAside } from "./collection-insights";
 import { AdminSystemStatus } from '@/components/admin/system-status';
+import { linkButtonClass, TimelineItem } from '@/components/admin/ui-bits';
 import { StampMoc } from "@/components/workspace/notebook";
 import { CheckDoodle, Tape } from "@/components/v-intern/doodles";
 function Result<T>({
@@ -139,7 +140,7 @@ export function UserPicker({
       <input
         className={inputClass}
         aria-label={"Tìm " + label.toLowerCase()}
-        placeholder="Tìm tên hoặc email..."
+        placeholder="Tìm tên hoặc email…"
         value={q}
         onChange={(e) => {
           setQ(e.target.value);
@@ -312,7 +313,7 @@ export function AdminUsers() {
             <input
               className={inputClass}
               aria-label="Tìm người dùng"
-              placeholder="Tìm tên, email hoặc username..."
+              placeholder="Tìm tên, email hoặc username…"
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);
@@ -339,7 +340,7 @@ export function AdminUsers() {
               <>
                 {data.items.length ? (
                   <div className="notebook-scroll max-h-[65vh] overflow-x-auto overflow-y-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
-                    <table className="w-full text-left text-body">
+                    <table className="w-full min-w-[52rem] text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>
                           {[
@@ -399,15 +400,16 @@ export function AdminUsers() {
                                 : "Chưa đăng nhập"}
                             </td>
                             <td className="p-3">
-                              <button
-                                className="mb-2 text-primary"
-                                onClick={() => { setNotice(""); setEdit(u); }}
-                              >
-                                Sửa tài khoản
-                              </button>
-                              <select
-                                className={inputClass}
-                                aria-label={"Trạng thái " + u.email}
+                              <div className="flex flex-col items-start gap-2">
+                                <button
+                                  className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
+                                  onClick={() => { setNotice(""); setEdit(u); }}
+                                >
+                                  Sửa tài khoản
+                                </button>
+                                <select
+                                  className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}
+                                  aria-label={"Trạng thái " + u.email}
                                 value={u.status}
                                 disabled={
                                   action.busy || u.id === getSessionUser()?.id
@@ -424,6 +426,7 @@ export function AdminUsers() {
                                   ),
                                 )}
                               </select>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -431,7 +434,10 @@ export function AdminUsers() {
                     </table>
                   </div>
                 ) : (
-                  <Empty>Không tìm thấy người dùng.</Empty>
+                  <Empty
+                    title="Không tìm thấy người dùng"
+                    description="Thử đổi từ khóa hoặc bộ lọc trạng thái, vai trò ở phía trên."
+                  />
                 )}
                 <Pager {...data} onChange={setPage} />
               </>
@@ -512,6 +518,7 @@ function UserForm({
           required
           maxLength={128}
           className={inputClass}
+          placeholder="VD: Nguyễn Thị B"
           defaultValue={user?.displayName}
         />
       </label>
@@ -524,6 +531,7 @@ function UserForm({
           maxLength={64}
           pattern="[a-z0-9_.-]{3,64}"
           className={inputClass}
+          placeholder="vd: nguyenthib"
           defaultValue={user?.username}
         />
       </label>
@@ -531,7 +539,7 @@ function UserForm({
         <>
           <label className="block text-body">
             Email
-            <input name="email" required type="email" className={inputClass} />
+            <input name="email" required type="email" className={inputClass} placeholder="vd: nguyenthib@truong.edu.vn" />
           </label>
           <label className="block text-body">
             Mật khẩu khởi tạo
@@ -543,14 +551,17 @@ function UserForm({
               minLength={10}
               maxLength={72}
               className={inputClass}
+              placeholder="Tối thiểu 10 ký tự"
             />
           </label>
           <RoleChoices value={roles} onChange={setRoles} />
         </>
       )}
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu người dùng
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu người dùng
+        </button>
+      </div>
     </form>
   );
 }
@@ -591,7 +602,7 @@ export function AdminRoles() {
             {(r) => (
               <>
                 <button
-                  className="mb-3 text-body text-primary"
+                  className={`${linkButtonClass} -ml-1 text-muted-foreground hover:text-foreground`}
                   onClick={() => {
                     setRole(undefined);
                     setPage(1);
@@ -600,10 +611,10 @@ export function AdminRoles() {
                   Tất cả quyền
                 </button>
                 <div className="overflow-x-auto" role="region" aria-label="Danh sách vai trò" tabIndex={0}>
-                  <table className="w-full text-left text-body">
+                  <table className="w-full min-w-[36rem] text-left text-body">
                     <thead className="bg-muted/50"><tr>{["Vai trò", "Mã vai trò", "Mô tả"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
                     <tbody>{r.items.map(v => <tr key={v.id} className={`border-b border-border ${role?.id === v.id ? "bg-info-subtle" : ""}`}>
-                      <td className="p-3"><button className="font-semibold text-primary" aria-label={`${v.name}, ${v.code}`} aria-pressed={role?.id === v.id} onClick={() => { setRole(v); setPage(1); }}>{v.name}</button></td>
+                      <td className="p-3"><button className="min-h-11 rounded-control px-1 text-left font-semibold text-primary hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" aria-label={`${v.name}, ${v.code}`} aria-pressed={role?.id === v.id} onClick={() => { setRole(v); setPage(1); }}>{v.name}</button></td>
                       <td className="p-3"><Badge>{v.code}</Badge></td>
                       <td className="p-3 text-muted-foreground">{v.description ?? "Chưa có mô tả"}</td>
                     </tr>)}</tbody>
@@ -693,7 +704,7 @@ export function AdminGroups() {
         <input
           className={`${inputClass} mb-4`}
           aria-label="Tìm nhóm"
-          placeholder="Tìm mã hoặc tên nhóm..."
+          placeholder="Tìm mã hoặc tên nhóm…"
           value={q}
           onChange={(e) => {
             setQ(e.target.value);
@@ -705,17 +716,20 @@ export function AdminGroups() {
             <>
               {r.items.length ? (
                 <div className="overflow-x-auto" role="region" aria-label="Danh sách nhóm" tabIndex={0}>
-                  <table className="w-full text-left text-body">
+                  <table className="w-full min-w-[32rem] text-left text-body">
                     <thead className="bg-muted/50"><tr>{["Nhóm", "Mô tả", "Quản lý"].map(label => <th key={label} className="p-3">{label}</th>)}</tr></thead>
                     <tbody>{r.items.map(g => <tr key={g.id} className="border-b border-border">
-                      <td className="p-3"><button className="text-left font-semibold text-primary" onClick={() => setSelected(g)}><span className="block">{g.name}</span><small className="mt-1 block font-normal text-muted-foreground">{g.code}</small></button></td>
+                      <td className="p-3"><button className="min-h-11 rounded-control px-1 text-left font-semibold text-primary hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setSelected(g)}><span className="block">{g.name}</span><small className="mt-1 block font-normal text-muted-foreground">{g.code}</small></button></td>
                       <td className="p-3 text-muted-foreground">{g.description ?? "Chưa có mô tả"}</td>
                       <td className="p-3 text-caption text-muted-foreground">Thành viên, Vai trò</td>
                     </tr>)}</tbody>
                   </table>
                 </div>
               ) : (
-                <Empty>Chưa có nhóm.</Empty>
+                <Empty
+                  title="Chưa có nhóm nào"
+                  description="Tạo nhóm để gán quyền kế thừa cho nhiều người dùng cùng lúc."
+                />
               )}
               <Pager {...r} onChange={setPage} />
             </>
@@ -751,7 +765,7 @@ function GroupForm({
   const action = useAction(onSaved);
   return (
     <form
-      className="space-y-3"
+      className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
@@ -773,6 +787,7 @@ function GroupForm({
             required
             pattern="[a-z0-9_.-]{3,64}"
             className={inputClass}
+            placeholder="vd: nhom-mentor"
           />
         </label>
       )}
@@ -783,6 +798,7 @@ function GroupForm({
           required
           maxLength={128}
           className={inputClass}
+          placeholder="VD: Mentor khoá 2026"
           defaultValue={group?.name}
         />
       </label>
@@ -792,12 +808,15 @@ function GroupForm({
           name="description"
           maxLength={512}
           className={inputClass}
+          placeholder="Nhóm này dùng để làm gì, ai sẽ được thêm vào?"
           defaultValue={group?.description ?? ""}
         />
       </label>
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu nhóm
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu nhóm
+        </button>
+      </div>
     </form>
   );
 }
@@ -855,7 +874,7 @@ function GroupDetail({
                       <p className="text-caption text-muted-foreground">{m.user.email}</p>
                     </div>
                     <button
-                      className="text-destructive"
+                      className={`${linkButtonClass} -ml-1 text-destructive hover:underline underline-offset-4`}
                       disabled={action.busy}
                       onClick={() =>
                         void action.run(() =>
@@ -868,7 +887,7 @@ function GroupDetail({
                   </div>
                 ))
               ) : (
-                <Empty>Chưa có thành viên.</Empty>
+                <Empty title="Chưa có thành viên" description="Thêm người dùng đầu tiên vào nhóm bằng ô tìm kiếm phía dưới." />
               )}
             </>
           )}
@@ -888,9 +907,11 @@ function GroupDetail({
             value={userId}
             onChange={setUserId}
           />
-          <button className={buttonClass} disabled={action.busy || !userId}>
-            Thêm thành viên nhóm
-          </button>
+          <div className="flex justify-end">
+            <button className={buttonClass} disabled={action.busy || !userId}>
+              Thêm thành viên
+            </button>
+          </div>
         </form>
       </Panel>
       <Panel title="Vai trò của nhóm">
@@ -968,7 +989,7 @@ function GroupPermissionSummary({ roleCodes }: { roleCodes: string }) {
               ))}
             </div>
           ) : (
-            <Empty>Nhóm chưa được cấp vai trò.</Empty>
+            <Empty title="Nhóm chưa được cấp vai trò" description="Chọn vai trò ở trên để nhóm kế thừa các quyền tương ứng." />
           )
         }
       </Result>
@@ -988,7 +1009,7 @@ function GroupRoleForm({
     action = useAction(onSaved);
   return (
     <form
-      className="space-y-3"
+      className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         void action.run(() => api.setGroupRoles(id, selected));
@@ -997,9 +1018,11 @@ function GroupRoleForm({
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <RoleChoices value={selected} onChange={setSelected} />
       <Can perm="groups.manage">
-        <button className={buttonClass} disabled={action.busy}>
-          Lưu vai trò nhóm
-        </button>
+        <div className="flex justify-end">
+          <button className={buttonClass} disabled={action.busy}>
+            Lưu vai trò nhóm
+          </button>
+        </div>
       </Can>
     </form>
   );
@@ -1109,9 +1132,14 @@ export function AdminCatalogs() {
                     </button>
                   ))
                 ) : (
-                  <Empty>
-                    {type ? "Chưa có giá trị." : "Chọn loại danh mục."}
-                  </Empty>
+                  <Empty
+                    title={type ? "Chưa có giá trị nào" : "Chưa chọn loại danh mục"}
+                    description={
+                      type
+                        ? "Tạo giá trị đầu tiên cho loại danh mục này."
+                        : "Chọn một loại danh mục bên trái để xem các giá trị."
+                    }
+                  />
                 )}
                 <Pager {...r} onChange={setItemPage} />
               </>
@@ -1148,7 +1176,7 @@ export function AdminCatalogs() {
                 </button>
               </>
             ) : (
-              <Empty>Chọn một giá trị để xem chi tiết.</Empty>
+              <Empty title="Chưa chọn giá trị" description="Chọn một giá trị trong danh sách để xem chi tiết và chỉnh sửa." />
             );
           })()}
         </Panel>
@@ -1191,7 +1219,7 @@ function CatalogTypeForm({ onSaved }: { onSaved: () => void }) {
   const action = useAction(onSaved);
   return (
     <form
-      className="space-y-3"
+      className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
@@ -1214,12 +1242,15 @@ function CatalogTypeForm({ onSaved }: { onSaved: () => void }) {
             maxLength={i === 0 ? 64 : i === 1 ? 128 : 512}
             pattern={i === 0 ? "[a-z0-9_.-]{3,64}" : undefined}
             className={inputClass}
+            placeholder={["vd: khoi_nganh", "VD: Khối ngành", "VD: Nhóm ngành đào tạo dùng chung"][i]}
           />
         </label>
       ))}
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu loại danh mục
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu loại danh mục
+        </button>
+      </div>
     </form>
   );
 }
@@ -1235,7 +1266,7 @@ function CatalogItemForm({
   const action = useAction(onSaved);
   return (
     <form
-      className="space-y-3"
+      className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
@@ -1260,6 +1291,7 @@ function CatalogItemForm({
             required
             pattern="[a-z0-9_.-]{1,64}"
             className={inputClass}
+            placeholder="vd: cntt"
           />
         </label>
       )}
@@ -1270,6 +1302,7 @@ function CatalogItemForm({
           name="name"
           maxLength={128}
           className={inputClass}
+          placeholder="VD: Công nghệ thông tin"
           defaultValue={item?.name}
         />
       </label>
@@ -1279,6 +1312,7 @@ function CatalogItemForm({
           name="value"
           maxLength={1024}
           className={inputClass}
+          placeholder="Nội dung lưu kèm (nếu có)"
           defaultValue={item?.value ?? ""}
         />
       </label>
@@ -1299,9 +1333,11 @@ function CatalogItemForm({
           Đang hoạt động
         </label>
       )}
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu giá trị
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu giá trị
+        </button>
+      </div>
     </form>
   );
 }
@@ -1350,7 +1386,7 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
                   </button>
                 ))
               ) : (
-                <Empty>Chưa có cấu hình nghiệp vụ.</Empty>
+                <Empty title="Chưa có cấu hình nghiệp vụ." description="Thêm cấu hình nghiệp vụ đầu tiên; khóa kết nối dịch vụ do môi trường triển khai quản lý." />
               )}
             </>
           )}
@@ -1391,7 +1427,7 @@ function SettingForm({
   const action = useAction(onSaved);
   return (
     <form
-      className="space-y-3"
+      className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget),
@@ -1417,7 +1453,8 @@ function SettingForm({
           name="key"
           readOnly={Boolean(setting)}
           pattern="[a-z0-9._-]{1,128}"
-          className={inputClass}
+          className={`${inputClass} read-only:cursor-not-allowed read-only:opacity-60`}
+          placeholder="vd: interview.default_duration"
           defaultValue={setting?.key}
         />
       </label>
@@ -1437,12 +1474,15 @@ function SettingForm({
           name="description"
           maxLength={512}
           className={inputClass}
+          placeholder="Cấu hình này ảnh hưởng đến nghiệp vụ nào?"
           defaultValue={setting?.description ?? ""}
         />
       </label>
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu cấu hình
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu cấu hình
+        </button>
+      </div>
     </form>
   );
 }
@@ -1571,7 +1611,7 @@ export function AdminAudit() {
               <>
                 {r.items.length ? (
                   <div className="notebook-scroll max-h-[65vh] overflow-x-auto overflow-y-auto" role="region" aria-label="Nhật ký kiểm toán" tabIndex={0}>
-                    <table className="w-full text-left text-body">
+                    <table className="w-full min-w-[56rem] text-left text-body">
                       <thead className="bg-muted/50">
                         <tr>
                           {[
@@ -1608,7 +1648,7 @@ export function AdminAudit() {
                             <td className="p-3">
                               <button
                                 aria-label={"Chi tiết audit " + v.id}
-                                className="text-primary"
+                                className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                                 onClick={() => setSelected(v)}
                               >
                                 Chi tiết
@@ -1620,7 +1660,10 @@ export function AdminAudit() {
                     </table>
                   </div>
                 ) : (
-                  <Empty>Không có audit phù hợp.</Empty>
+                  <Empty
+                    title="Không có bản ghi audit phù hợp"
+                    description="Thử nới khoảng thời gian hoặc bỏ bớt điều kiện lọc."
+                  />
                 )}
                 <Pager {...r} onChange={setPage} />
               </>
@@ -1708,7 +1751,7 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
               <input
                 className={inputClass}
                 aria-label="Module hoạt động"
-                placeholder="Module: tasks, users, evaluations..."
+                placeholder="Module: tasks, users, evaluations…"
                 value={module}
                 onChange={(e) => {
                   setModule(e.target.value);
@@ -1729,12 +1772,9 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
             {(r) => (
               <>
                 {r.items.length ? (
-                  <ol className="space-y-4">
-                    {r.items.map((v) => (
-                      <li
-                        key={v.id}
-                        className="border-l border-primary/20 pl-4"
-                      >
+                  <ol className="min-w-0" aria-label="Dòng hoạt động">
+                    {r.items.map((v, index) => (
+                      <TimelineItem key={v.id} current={index === 0}>
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <Badge>{v.module}</Badge>
                           <time className="text-caption text-muted-foreground">
@@ -1752,11 +1792,14 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
                         <p className="mt-1 text-caption text-muted-foreground">
                           {v.action}
                         </p>
-                      </li>
+                      </TimelineItem>
                     ))}
                   </ol>
                 ) : (
-                  <Empty>Chưa có hoạt động.</Empty>
+                  <Empty
+                    title="Chưa có hoạt động nào"
+                    description="Sự kiện nghiệp vụ trong hệ thống sẽ xuất hiện tại đây khi xảy ra."
+                  />
                 )}
                 <Pager {...r} onChange={setPage} />
               </>

@@ -11,6 +11,7 @@ import { priorityLabels, statusLabels } from "@/lib/api/work";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 
 export function StudentHeading({
+  eyebrow,
   title,
   description,
   action,
@@ -23,12 +24,17 @@ export function StudentHeading({
   artwork?: "learn" | "teach" | "project" | "connect" | "achievement";
 }) {
   return (
-    <WorkspacePageHeader
-      title={title}
-      description={description}
-      action={action}
-      artwork={artwork}
-    />
+    <>
+      {/* v4: eyebrow giờ thật sự hiển thị — nét gạch mực + chữ xanh như
+          tem chương mở đầu trang sổ (trước đây prop bị bỏ lặng). */}
+      {eyebrow && <p className="student-heading-eyebrow">{eyebrow}</p>}
+      <WorkspacePageHeader
+        title={title}
+        description={description}
+        action={action}
+        artwork={artwork}
+      />
+    </>
   );
 }
 

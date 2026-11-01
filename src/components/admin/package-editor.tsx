@@ -1,5 +1,6 @@
 "use client";
 import { inputClass } from "@/components/product/primitives";
+import { linkButtonClass } from "./ui-bits";
 import type {
   LearningPackage,
   PackageFile,
@@ -55,7 +56,7 @@ export function FileRows({
             </label>
             <button
               type="button"
-              className="self-end py-3 text-caption font-semibold text-destructive"
+              className={`${linkButtonClass} self-end text-caption text-destructive hover:underline underline-offset-4`}
               onClick={() => onChange(files.filter((_, i) => i !== index))}
             >
               Xóa file {title.toLowerCase()} {index + 1}
@@ -85,7 +86,7 @@ export function FileRows({
       <button
         type="button"
         disabled={files.length >= max}
-        className="text-body font-semibold text-primary disabled:opacity-40"
+        className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4 disabled:cursor-not-allowed disabled:opacity-50`}
         onClick={() => onChange([...files, { path: "", content: "" }])}
       >
         + Thêm file {title.toLowerCase()}

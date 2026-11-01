@@ -196,7 +196,7 @@ export function DeliveryOverview({
         ))}
       </div>
       <Panel
-        title={kind === "sprints" ? "Danh sách Sprint" : "Danh sách Task"}
+        title={kind === "sprints" ? "Danh sách Sprint" : "Danh sách nhiệm vụ"}
         action={
           basePath === "/instructor" &&
           (status ||
@@ -252,9 +252,14 @@ export function DeliveryOverview({
             </select>
           </label>
             <label className="text-body">
-              {kind === "tasks" ? "Tìm Task" : "Tìm Sprint"}
+              {kind === "tasks" ? "Tìm nhiệm vụ" : "Tìm Sprint"}
               <input
                 maxLength={100}
+                placeholder={
+                  kind === "tasks"
+                    ? "Nhập mã hoặc tên nhiệm vụ…"
+                    : "Nhập mã hoặc tên Sprint…"
+                }
                 className={inputClass}
                 value={search}
                 onChange={(e) => {
@@ -299,6 +304,7 @@ export function DeliveryOverview({
             Tìm thành viên
             <input
               className={inputClass}
+              placeholder="Nhập tên thành viên…"
               value={memberSearch}
               onChange={(e) => {
                 setMemberSearch(e.target.value);
@@ -323,7 +329,7 @@ export function DeliveryOverview({
                 )}
               {members.data?.items.map((m) => (
                 <option key={m.userId} value={m.userId}>
-                  {m.displayName}, {m.email}
+                  {m.displayName} · {m.email}
                 </option>
               ))}
             </select>
@@ -343,7 +349,12 @@ export function DeliveryOverview({
         {Boolean(resource.error) && (
           <ErrorState error={resource.error} onRetry={resource.reload} />
         )}
-        {data && data.items.length === 0 && <Empty />}
+        {data && data.items.length === 0 && (
+          <Empty>
+            Chưa có {kind === "sprints" ? "Sprint" : "nhiệm vụ"} nào phù hợp
+            với phạm vi và bộ lọc hiện tại.
+          </Empty>
+        )}
         {kind === "sprints" && (
           <ul className="divide-y divide-border">
             {sprints.data?.items.map((s) => {

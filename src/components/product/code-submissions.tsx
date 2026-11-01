@@ -171,9 +171,11 @@ export function CodeSubmissions({
               className={inputClass}
             />
           </label>
-          <button disabled={busy} className={buttonClass}>
-            {busy ? "Đang xác minh code…" : "Nộp code để review"}
-          </button>
+          <div className="flex justify-end">
+            <button disabled={busy} className={buttonClass}>
+              {busy ? "Đang xác minh code…" : "Nộp code để review"}
+            </button>
+          </div>
           {sent && (
             <p
               role="status"
@@ -246,7 +248,7 @@ export function CodeSubmissions({
       ) : (
         <Empty>Chưa có bài nộp code cho task này.</Empty>
       )}
-      <button onClick={data.reload} className="mt-4 text-body text-primary">
+      <button onClick={data.reload} className="mt-4 rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
         Tải lại bài nộp
       </button>
     </Panel>
@@ -341,10 +343,10 @@ function SubmissionReview({
           {!!submission.latePenalty && submission.baseScore != null && <span className="mt-1 block text-caption text-warning">Rubric gốc {submission.baseScore} − trễ hạn {submission.latePenalty} = {submission.score}/100. Bằng chứng và cách xử lý được lưu tại mục Thời hạn & trách nhiệm.</span>}
         </p>
       )}
-      <div className="mt-3 flex gap-4">
+      <div className="mt-3 flex flex-wrap gap-4">
         <button
           onClick={() => setShow((v) => !v)}
-          className="text-body text-primary"
+          className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           {show ? "Thu gọn đánh giá" : "Xem đánh giá và bằng chứng"}
         </button>
@@ -352,7 +354,7 @@ function SubmissionReview({
           <button
             disabled={busy}
             onClick={() => void withdraw()}
-            className="text-body text-warning"
+            className="rounded-control px-1 text-body font-semibold text-warning hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Rút bài để cập nhật code
           </button>
@@ -552,7 +554,7 @@ function AiCodeReview({
           {busy ? "AI đang kiểm tra…" : "Chấm / thử lại bằng AI"}
         </button>
       )}
-      <button onClick={data.reload} className="ml-4 text-body text-primary">
+      <button onClick={data.reload} className="ml-4 rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
         Tải lại kết quả AI
       </button>
       {managed &&
@@ -688,9 +690,11 @@ function InstructorCodeDecision({
           {error}
         </p>
       )}
-      <button disabled={busy || !!penalty && !acceptedPenalty} className={buttonClass}>
-        {busy ? "Đang xác nhận…" : "Lưu kết quả giảng viên"}
-      </button>
+      <div className="flex justify-end">
+        <button disabled={busy || !!penalty && !acceptedPenalty} className={buttonClass}>
+          {busy ? "Đang xác nhận…" : "Lưu kết quả giảng viên"}
+        </button>
+      </div>
     </form>
   );
 }

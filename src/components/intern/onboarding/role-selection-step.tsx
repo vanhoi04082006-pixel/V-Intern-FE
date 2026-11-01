@@ -40,7 +40,7 @@ function ManualRoleSelectionStep() {
       </div>
       {catalog.loading && !catalog.data && <LoadingState />}
       {Boolean(catalog.error) && <ErrorState error={catalog.error} onRetry={catalog.reload} />}
-      {catalog.data?.length === 0 && <NotebookEmpty className="mt-8" title="Chưa có vị trí đang tuyển" hint="liên hệ giảng viên hoặc quay lại khi có đợt mới nhé!" />}
+      {catalog.data?.length === 0 && <NotebookEmpty className="mt-8" title="Chưa có vị trí đang tuyển" hint="Liên hệ giảng viên hoặc quay lại khi có đợt tuyển mới nhé!" />}
       <fieldset disabled={busy || catalog.loading || Boolean(catalog.error)} className="mt-8">
         <legend className="sr-only">Chọn vị trí ứng tuyển</legend>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -91,7 +91,7 @@ function ManualRoleSelectionStep() {
         </p>
         <Link
           href="/intern/onboarding"
-          className="rounded-control border border-border px-5 py-3 text-body"
+          className="inline-flex items-center rounded-control border border-border bg-card px-5 py-3 text-body font-semibold transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
         >
           Quay lại
         </Link>
@@ -101,9 +101,9 @@ function ManualRoleSelectionStep() {
           onClick={async () => {
             if (chosen && (await selectRole(chosen))) await start();
           }}
-          className="rounded-control bg-primary px-5 py-3 text-body font-semibold text-primary-foreground disabled:opacity-50"
+          className="rounded-control bg-primary px-5 py-3 text-body font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
         >
-          {busy ? "Đang xử lý..." : "Bắt đầu phỏng vấn"}
+          {busy ? "Đang xử lý…" : "Bắt đầu phỏng vấn"}
         </button>
       </div>
     </div>

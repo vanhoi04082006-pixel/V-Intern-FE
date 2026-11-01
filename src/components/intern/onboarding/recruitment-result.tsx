@@ -179,7 +179,7 @@ export function RecruitmentResult() {
                 </p>
                 <Link
                   href="/intern"
-                  className="mt-4 inline-block rounded-control bg-primary px-4 py-2 text-body font-semibold text-primary-foreground"
+                  className="mt-4 inline-flex items-center rounded-control bg-primary px-4 py-2 text-body font-semibold text-primary-foreground transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
                 >
                   Vào Workspace
                 </Link>
@@ -236,7 +236,7 @@ export function RecruitmentResult() {
               type="button"
               disabled={busy}
               onClick={() => void retryEvaluation()}
-              className="mt-4 rounded-control bg-primary px-4 py-2 text-primary-foreground"
+              className="mt-4 rounded-control bg-primary px-4 py-2 font-semibold text-primary-foreground transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
             >
               Thử lại đánh giá
             </button>
@@ -247,7 +247,7 @@ export function RecruitmentResult() {
         type="button"
         disabled={busy}
         onClick={() => void reload()}
-        className="mt-5 rounded-control border border-border px-4 py-2 text-body"
+        className="mt-5 rounded-control border border-border bg-card px-4 py-2 font-semibold transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
       >
         Tải lại trạng thái
       </button>

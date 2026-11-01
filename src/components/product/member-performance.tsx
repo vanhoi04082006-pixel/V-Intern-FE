@@ -249,6 +249,7 @@ export function MemberPerformance({
           Tìm sinh viên
           <input
             className={inputClass}
+            placeholder="Nhập tên sinh viên cần tìm…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -271,8 +272,8 @@ export function MemberPerformance({
             {!data.length ? (
               <Empty>Chưa có thành viên hoặc dữ liệu trong bộ lọc này.</Empty>
             ) : (
-              <div className="overflow-x-auto" role="region" aria-label="Hiệu suất thành viên theo bộ lọc" tabIndex={0}>
-                <table className="workspace-table w-full text-left text-body">
+              <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Hiệu suất thành viên theo bộ lọc" tabIndex={0}>
+                <table className="workspace-table w-full min-w-[760px] text-left text-body">
                   <thead className="bg-muted">
                     <tr>
                       {[
@@ -293,7 +294,7 @@ export function MemberPerformance({
                       <tr key={m.userId} className="border-b border-border">
                         <td className="p-3">
                           <button
-                            className="font-semibold text-primary"
+                            className="rounded-control font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                             onClick={() => setSelected(m.userId)}
                           >
                             {m.displayName ?? m.userId}
@@ -357,7 +358,7 @@ export function MemberPerformance({
                       {m.rank ?? (page - 1) * 10 + i + 1}
                     </span>
                     <button
-                      className="min-w-0 flex-1 break-words text-left font-semibold"
+                      className="min-w-0 flex-1 break-words rounded-control text-left font-semibold hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                       onClick={() => setSelected(m.userId)}
                     >
                       {m.displayName ?? m.userId}

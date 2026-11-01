@@ -67,6 +67,7 @@ export function InstructorSectionNav({
             const disclosure = document.getElementById(item.id)?.querySelector("details");
             if (disclosure) disclosure.open = true;
           }}
+          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           aria-label={`Đến phần ${item.label}${item.count !== undefined ? ` (${item.count})` : ""}`}
         >
           {item.label}

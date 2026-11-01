@@ -50,6 +50,8 @@
 /* "Duyệt bài" là hành động chính của hàng đợi ưu tiên — nổi như CTA chính. */
 .instructor-experience .ins-queue-action-primary { border-color: transparent; background: var(--primary); color: var(--primary-foreground); }
 .instructor-experience .ins-queue-action-primary:hover { background: var(--app-primary-700); border-color: transparent; }
+/* Vòng mực khi tab focus — mọi nút/hành động của hàng đợi và link lề. */
+.instructor-experience :is(.ins-queue-action, .ins-back, .instructor-hero-cta):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .instructor-experience .ins-analytics { min-width: 0; }
 .instructor-experience .ins-analytics > summary, .instructor-experience .ins-workflow > summary { min-height: var(--control-min); padding-block: var(--space-2); cursor: pointer; font-size: var(--type-small); font-weight: var(--weight-semibold); color: var(--primary); }
 .instructor-experience .ins-analytics .workspace-analytics-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding-top: var(--space-3); }
@@ -225,10 +227,11 @@
   list-style: none;
   margin: 0;
   padding: 0 0 0 var(--space-5);
-  border-left: 2px dashed color-mix(in srgb, var(--ink, var(--foreground)) 45%, transparent);
+  border-left: 2px dashed color-mix(in srgb, var(--primary) 45%, transparent);
 }
 .instructor-experience .ins-timeline-item { position: relative; padding-bottom: var(--space-4); }
 .instructor-experience .ins-timeline-item:last-child { padding-bottom: 0; }
+/* Marker mặc định: chấm rỗng viền mực xanh — các mốc cũ nằm im trên đường chỉ. */
 .instructor-experience .ins-timeline-item::before {
   content: "";
   position: absolute;
@@ -237,8 +240,14 @@
   width: 10px;
   height: 10px;
   border-radius: 47% 53% 55% 45% / 52% 46% 54% 48%;
+  background: var(--paper-raised, var(--card));
+  border: 2px solid color-mix(in srgb, var(--primary) 55%, transparent);
+}
+/* Mốc mới nhất (data-current): đặc ruột mực xanh + quầng mực mềm — điểm đang "ướt mực". */
+.instructor-experience .ins-timeline-item[data-current="true"]::before {
   background: var(--primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent);
 }
 
 /* ─────────────────────────────────────────────────────────────────

@@ -75,7 +75,14 @@ export function AuthAlert({
         className
       )}
     >
-      <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+      <span
+        aria-hidden="true"
+        className={cn(
+          "mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-current/10",
+        )}
+      >
+        <Icon aria-hidden="true" className="size-3.5" />
+      </span>
       <div className="min-w-0 flex-1">{children}</div>
       {actionLabel && onAction && (
         <button

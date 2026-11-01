@@ -52,8 +52,10 @@ export function InterviewStep() {
         <h1 className="text-page font-bold text-foreground">Đã kết thúc phỏng vấn</h1>
         <p className="mt-3 text-muted-foreground">Buổi phỏng vấn đã kết thúc. Vui lòng chờ hệ thống đánh giá kết quả.</p>
       </div>
-      <button disabled className="mt-6 rounded-control bg-primary px-5 py-3 text-primary-foreground opacity-60">Đang chấm bài…</button>
-      <button disabled className="ml-3 mt-3 rounded-control border p-3 opacity-60">Tải lại trạng thái</button>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <button disabled className="rounded-control bg-primary px-5 py-3 font-semibold text-primary-foreground opacity-60 disabled:cursor-not-allowed">Đang chấm bài…</button>
+        <button disabled className="rounded-control border border-border bg-card px-4 py-2 text-body font-semibold opacity-60 disabled:cursor-not-allowed">Tải lại trạng thái</button>
+      </div>
     </section>
   );
   if (!interview)
@@ -67,11 +69,11 @@ export function InterviewStep() {
           type="button"
           disabled={busy || profile.attemptsRemaining <= 0}
           onClick={() => void start()}
-          className="mt-4 rounded-control bg-primary px-4 py-2 text-primary-foreground"
+          className="mt-4 rounded-control bg-primary px-4 py-2 font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
         >
           Bắt đầu phỏng vấn
         </button>
-        {notice && <p role="alert">{notice}</p>}
+        {notice && <p role="alert" className="mt-4 rounded-control bg-destructive-subtle p-3 text-body text-destructive">{notice}</p>}
       </div>
     );
   if (interview.session.questionCount === 10) return <ConversationInterview key={interview.session.id} />;
@@ -112,7 +114,7 @@ export function InterviewStep() {
               type="button"
               disabled={busy || profile.attemptsRemaining <= 0}
               onClick={() => void start()}
-              className="mt-3 rounded-control bg-primary px-4 py-2 text-primary-foreground"
+              className="mt-3 rounded-control bg-primary px-4 py-2 font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
             >
               Bắt đầu lần phỏng vấn mới
             </button>
@@ -128,7 +130,7 @@ export function InterviewStep() {
           <p className="font-hand mb-2 px-1 text-[15px] leading-none text-muted-foreground">
             mục lục câu hỏi
           </p>
-          <ol className="space-y-2">
+          <ol className="notebook-scroll max-h-[65vh] space-y-2 overflow-y-auto pr-1">
             {questions.map((q) => (
               <li key={q.id}>
                 <button
@@ -139,7 +141,7 @@ export function InterviewStep() {
                     setSelectedId(q.id);
                     setDraft("");
                   }}
-                  className={`flex w-full items-center gap-2 rounded-control p-3 text-left text-body ${question?.id === q.id ? "bg-accent text-primary" : "text-muted-foreground"}`}
+                  className={`flex w-full items-center gap-2 rounded-control p-3 text-left text-body transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${question?.id === q.id ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   <span className="min-w-0 flex-1">
                     Câu {q.position} ·{" "}
@@ -194,7 +196,8 @@ export function InterviewStep() {
                   required
                   disabled={busy || !active}
                   rows={8}
-                  className="mt-2 w-full rounded-control border border-border p-3 focus:outline-none focus:ring-2 focus:ring-brand/30"
+                  placeholder="Chia sẻ trải nghiệm, dự án đã làm hoặc cách bạn tiếp cận vấn đề…"
+                  className="mt-2 w-full rounded-control border border-border bg-card p-3 text-body placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand/40 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60"
                 />
                 <p className="mt-1 text-caption text-muted-foreground">
                   {draft.length}/5000 ký tự
@@ -202,14 +205,14 @@ export function InterviewStep() {
                 <button
                   type="submit"
                   disabled={!draft.trim() || busy || !active}
-                  className="mt-4 rounded-control bg-primary px-4 py-2 font-semibold text-primary-foreground disabled:opacity-50"
+                  className="mt-4 rounded-control bg-primary px-4 py-2 font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
                 >
-                  {busy ? "Đang lưu..." : "Lưu câu trả lời"}
+                  {busy ? "Đang lưu…" : "Lưu câu trả lời"}
                 </button>
               </form>
             </>
           ) : (
-            <p>Chưa có câu hỏi được trả về.</p>
+            <p className="text-body text-muted-foreground">Chưa có câu hỏi được trả về.</p>
           )}
         </section>
       </div>
@@ -223,7 +226,7 @@ export function InterviewStep() {
             questions.some((q) => !q.answered)
           }
           onClick={() => void submit()}
-          className="rounded-control bg-primary px-5 py-3 font-semibold text-primary-foreground disabled:opacity-50"
+          className="rounded-control bg-primary px-5 py-3 font-semibold text-primary-foreground transition-transform disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
         >
           Nộp bài phỏng vấn
         </button>
@@ -231,7 +234,7 @@ export function InterviewStep() {
           type="button"
           disabled={busy}
           onClick={() => void reload()}
-          className="rounded-control border border-border px-4 py-2"
+          className="rounded-control border border-border bg-card px-4 py-2 font-semibold transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-50 motion-safe:active:translate-y-px"
         >
           Tải lại trạng thái
         </button>

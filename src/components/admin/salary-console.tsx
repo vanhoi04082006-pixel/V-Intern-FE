@@ -244,7 +244,7 @@ export function SalaryConsole() {
         <ErrorState error={ledger.error} onRetry={ledger.reload} />
       ) : ledger.data?.items.length ? (
         <div className="overflow-x-auto border-y border-border" role="region" aria-label="Sổ lương ảo theo kỳ" tabIndex={0}>
-          <table className="product-table w-full border-collapse text-body">
+          <table className="product-table w-full min-w-[48rem] border-collapse text-body">
             <thead>
               <tr>
                 {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải"].map((label) => (
@@ -288,7 +288,10 @@ export function SalaryConsole() {
           </table>
         </div>
       ) : (
-        <Empty>Chưa có dòng lương ảo nào. Sinh lương từ một kỳ KPI đã chốt hoặc ghi điều chỉnh.</Empty>
+        <Empty
+          title="Chưa có dòng lương ảo nào"
+          description="Sinh lương từ một kỳ KPI đã chốt, hoặc ghi điều chỉnh thưởng/phạt để sổ bắt đầu ghi."
+        />
       )}
       {ledger.data && (
         <Pager
@@ -457,10 +460,12 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
         Mọi dòng đều kèm lý do và gửi thông báo đến sinh viên.
       </p>
       {Boolean(action.error) && <ErrorState error={action.error} />}
-      <button className={buttonClass} disabled={action.busy} type="submit">
-        <IconWallet size={16} aria-hidden />
-        {action.busy ? "Đang ghi…" : "Ghi vào sổ"}
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy} type="submit">
+          <IconWallet size={16} aria-hidden />
+          {action.busy ? "Đang ghi…" : "Ghi vào sổ"}
+        </button>
+      </div>
     </form>
   );
 }

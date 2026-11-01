@@ -61,7 +61,7 @@ export function Profile() {
     <StudentOutcomeHeading title="Hồ sơ" subtitle="Thông tin của bạn và các kết nối trong V-Intern"
       action={<button type="button" className={buttonClass} disabled={busy} onClick={() => void refresh()}>
         <IconRefreshCw size={15} className={busy ? "account-refresh-icon" : undefined} aria-hidden="true" />
-        {busy ? "Đang làm mới..." : "Làm mới"}
+        {busy ? "Đang làm mới…" : "Làm mới"}
       </button>} />
     {role === "instructor" && (
       <MarginNote className="mb-5 max-w-md">

@@ -150,7 +150,7 @@ function AiPlanWorkspace({
       }),
     );
     if (mounted.current && ok) {
-      setNotice("Đã publish Sprint/Task từ kế hoạch.");
+      setNotice("Đã phát hành Sprint/nhiệm vụ từ kế hoạch.");
       setRevision((r) => r + 1);
       onPublished?.();
     }
@@ -173,7 +173,7 @@ function AiPlanWorkspace({
     <Panel title="Kế hoạch AI">
       {plans.loading ? (
         <p role="status" className="p-2 text-body text-muted-foreground">
-          Đang tải kế hoạch...
+          Đang tải kế hoạch…
         </p>
       ) : plans.error ? (
         <ErrorState error={plans.error} onRetry={plans.reload} />
@@ -222,35 +222,35 @@ function AiPlanWorkspace({
               disabled={
                 action.busy || generating || plan?.status === "confirmed"
               }
-              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small hover:bg-accent disabled:opacity-50"
+              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={() => void regenerate()}
             >
-              {action.busy ? "..." : "Tạo lại"}
+              {action.busy ? "Đang…" : "Tạo lại"}
             </button>
             <button
               type="button"
               disabled={action.busy || generating || plan?.status === "confirmed"}
-              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small hover:bg-accent disabled:opacity-50"
+              className="min-h-10 rounded-control border border-input bg-card px-3 py-2 text-small transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={() => void previewDraft()}
             >
-              {action.busy ? "..." : "Xem bản nháp"}
+              {action.busy ? "Đang…" : "Xem bản nháp"}
             </button>
           </div>
           {generating && (
             <p role="status" className="text-caption text-primary">
-              AI đang lập kế hoạch , tự làm mới...
+              AI đang lập kế hoạch, tự động làm mới…
             </p>
           )}
           {detail.loading ? (
             <p role="status" className="p-2 text-caption text-muted-foreground">
-              Đang tải chi tiết...
+              Đang tải chi tiết…
             </p>
           ) : detail.error ? (
             <ErrorState error={detail.error} />
           ) : plan?.status === "failed" ? (
             <div role="alert" className="space-y-2 text-body">
               <p className="text-destructive">
-                Tạo kế hoạch thất bại , không có gì được ghi. Hãy thử tạo lại.
+                Tạo kế hoạch thất bại, chưa có gì được ghi. Hãy thử tạo lại.
               </p>
               <button
                 type="button"
@@ -267,7 +267,7 @@ function AiPlanWorkspace({
                 <button
                   type="button"
                   disabled={action.busy}
-                  className="text-body font-semibold text-primary"
+                  className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() =>
                     setEdited({
                       planId: plan.planId,
@@ -339,7 +339,7 @@ function AiPlanWorkspace({
                   className={buttonClass}
                   onClick={() => void confirmDraft()}
                 >
-                  {action.busy ? "Đang publish..." : "Xác nhận & publish"}
+                  {action.busy ? "Đang phát hành…" : "Xác nhận & phát hành"}
                 </button>
               ) : (
                 <>
@@ -391,7 +391,7 @@ function SprintPlanPreview({
       <p className="text-body font-semibold">Bản nháp chưa lưu</p>
       <p className="text-caption text-muted-foreground">
         Bản nháp chỉ để xem trước — chưa ghi vào hệ thống. Chọn “Tạo lại” hoặc
-        lưu một kế hoạch trước khi publish.
+        lưu một kế hoạch trước khi phát hành.
       </p>
       {preview.warnings.length > 0 && (
         <ul className="space-y-1 rounded bg-warning-subtle p-2 text-caption text-warning">

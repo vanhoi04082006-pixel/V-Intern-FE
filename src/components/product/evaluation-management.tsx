@@ -131,7 +131,7 @@ export function EvaluationManagement() {
             cycles.data && (
               <>
                 <button
-                  className="mb-3 text-body text-primary"
+                  className="mb-3 rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                   onClick={() => {
                     setCycleId("");
                     setPage(1);
@@ -155,12 +155,12 @@ export function EvaluationManagement() {
                       {c.name}
                       <small className="block text-muted-foreground">{c.code}</small>
                     </button>
-                    <div className="mt-2 flex items-center justify-between">
+                    <div className="mt-2 flex items-center justify-between gap-3">
                       <Badge>
                         {isInstructor ? evaluationLabels[c.status] : c.status}
                       </Badge>
                       <button
-                        className="text-caption text-primary"
+                        className="rounded-control px-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                         onClick={() => setCycleEditor(c)}
                       >
                         Tiêu chí / trạng thái
@@ -336,6 +336,7 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
         <input
           required
           maxLength={64}
+          placeholder="VD: KY2-2026"
           className={`${inputClass} mt-1`}
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -346,6 +347,7 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
         <input
           required
           maxLength={256}
+          placeholder="VD: Đánh giá giữa kỳ thực tập"
           className={`${inputClass} mt-1`}
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -393,12 +395,14 @@ function CycleForm({ onCreated }: { onCreated: () => void }) {
           </option>
         ))}
       </select>
-      <p className="text-body text-muted-foreground">
+      <p className="text-caption leading-6 text-muted-foreground">
         Kỳ mới sử dụng bộ tiêu chí chuẩn. Có thể chỉnh trọng số trước khi mở kỳ.
       </p>
-      <button className={buttonClass} disabled={action.busy}>
-        Lưu kỳ đánh giá
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Lưu kỳ đánh giá
+        </button>
+      </div>
     </form>
   );
 }
@@ -431,7 +435,7 @@ function CycleEditor({
       </Badge>
       {cycle.status === "draft" && (
         <form
-          className="flex gap-2"
+          className="flex flex-wrap gap-3"
           onSubmit={(e) => {
             e.preventDefault();
             void action.run(() =>
@@ -473,7 +477,7 @@ function CycleEditor({
       {cycle.status === "draft" && (
         <NewCriterion cycleId={cycle.id} onChanged={criteria.reload} />
       )}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap justify-end gap-3">
         {choices.map((status) => (
           <button
             key={status}
@@ -568,7 +572,7 @@ function CriterionEditor({
         </label>
       </div>
       {editable && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap justify-end gap-3">
           <button className={buttonClass} disabled={action.busy}>
             Lưu tiêu chí
           </button>
@@ -644,9 +648,11 @@ function NewCriterion({
         value={weight}
         onChange={(e) => setWeight(e.target.value)}
       />
-      <button className={buttonClass} disabled={action.busy}>
-        Thêm tiêu chí
-      </button>
+      <div className="flex justify-end">
+        <button className={buttonClass} disabled={action.busy}>
+          Thêm tiêu chí
+        </button>
+      </div>
     </form>
   );
 }
@@ -667,7 +673,7 @@ function NewEvaluation({
       </button>
       {open && (
         <form
-          className="mt-3 space-y-2"
+          className="mt-3 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             void action.run(async () => {
@@ -684,9 +690,11 @@ function NewEvaluation({
             value={internId}
             onChange={setInternId}
           />
-          <button className={buttonClass} disabled={action.busy || !internId}>
-            Tạo bản nháp
-          </button>
+          <div className="flex justify-end">
+            <button className={buttonClass} disabled={action.busy || !internId}>
+              Tạo bản nháp
+            </button>
+          </div>
         </form>
       )}
     </>
@@ -894,12 +902,14 @@ export function ScoreEditor({
             />
           </label>
           {!locked && (
-            <button className={buttonClass} disabled={action.busy}>
-              Lưu điểm chính thức
-            </button>
+            <div className="flex justify-end">
+              <button className={buttonClass} disabled={action.busy}>
+                Lưu điểm chính thức
+              </button>
+            </div>
           )}
         </form>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {e.status === "draft" && (
             <button
               className={buttonClass}
@@ -1049,7 +1059,7 @@ function SuggestionHistoryList({
           Không tải được lịch sử gợi ý AI.{" "}
           <button
             type="button"
-            className="font-medium text-primary hover:underline"
+            className="rounded-control font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             onClick={history.reload}
           >
             Thử lại
@@ -1060,9 +1070,13 @@ function SuggestionHistoryList({
           Chưa có gợi ý AI nào được lưu cho đánh giá này.
         </p>
       ) : (
-        <ul className="mt-2 max-h-96 space-y-1 overflow-y-auto text-body">
-          {history.data.map((row) => (
-            <li key={row.id} className="border-b border-border py-2">
+        <ul className="ins-timeline notebook-scroll mt-3 max-h-96 overflow-y-auto pr-1 text-body">
+          {history.data.map((row, index) => (
+            <li
+              key={row.id}
+              data-current={index === 0 ? "true" : undefined}
+              className="pb-4"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-caption text-muted-foreground">
                   {new Date(row.generatedAt).toLocaleString("vi-VN")} ·{" "}
@@ -1070,7 +1084,7 @@ function SuggestionHistoryList({
                 </span>
                 <button
                   type="button"
-                  className="min-h-9 rounded-control px-2 text-caption font-medium text-primary hover:underline"
+                  className="min-h-9 rounded-control px-2 text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                   aria-expanded={openId === row.id}
                   onClick={() =>
                     onToggle(openId === row.id ? undefined : row.id)
@@ -1123,8 +1137,10 @@ function SuggestionDetail({
       ) : suggestionDetail.data ? (
         <div className="space-y-3 rounded-control bg-accent p-3 text-body">
           <p className="text-caption text-muted-foreground">
-            Trạng thái: {suggestionDetail.data.status} · Phiên bản prompt:{" "}
-            {suggestionDetail.data.promptVersion}
+            Trạng thái:{" "}
+            {suggestionStatusLabels[suggestionDetail.data.status] ??
+              suggestionDetail.data.status}{" "}
+            · Phiên bản prompt: {suggestionDetail.data.promptVersion}
             {suggestionDetail.data.aiRunId
               ? ` · Lượt chạy AI: ${suggestionDetail.data.aiRunId.slice(0, 8)}`
               : ""}

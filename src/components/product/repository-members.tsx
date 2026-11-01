@@ -22,7 +22,7 @@ const states = {
   expired: {
     label: "Lời mời hết hạn",
     icon: IconClock,
-    tone: "text-muted-foreground bg-muted",
+    tone: "text-muted-foreground border border-border bg-card",
   },
   failed: {
     label: "Cần kiểm tra",
@@ -32,7 +32,7 @@ const states = {
   not_connected: {
     label: "Chưa liên kết",
     icon: IconLink,
-    tone: "text-muted-foreground bg-muted",
+    tone: "text-muted-foreground border border-border bg-card",
   },
 };
 const date = (value: string | null) =>

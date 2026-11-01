@@ -29,9 +29,9 @@ function SessionCalendar({rows}:{rows:{id:string;code:string;name:string;startDa
   const week=rows.filter(r=>r.startDate&&Math.abs(Date.parse(r.startDate)-today.getTime())<7*86400000).slice(0,5);
   return <div>
     <div className="mb-2 flex items-center justify-between text-caption">
-      <button aria-label="Tháng trước" className="rounded p-1 hover:bg-accent" onClick={()=>setYm(v=>v.m===0?{y:v.y-1,m:11}:{y:v.y,m:v.m-1})}><IconChevronLeft size={15}/></button>
+      <button aria-label="Tháng trước" className="grid size-11 place-items-center rounded-control hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setYm(v=>v.m===0?{y:v.y-1,m:11}:{y:v.y,m:v.m-1})}><IconChevronLeft size={15}/></button>
       <strong className="text-foreground">Tháng {ym.m+1}, {ym.y}</strong>
-      <span className="flex items-center gap-2"><button className="rounded border border-primary px-2 py-1 text-primary" onClick={()=>setYm({y:today.getFullYear(),m:today.getMonth()})}>Hôm nay</button><button aria-label="Tháng sau" className="rounded p-1 hover:bg-accent" onClick={()=>setYm(v=>v.m===11?{y:v.y+1,m:0}:{y:v.y,m:v.m+1})}><IconChevronRight size={15}/></button></span>
+      <span className="flex items-center gap-2"><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setYm({y:today.getFullYear(),m:today.getMonth()})}>Hôm nay</button><button aria-label="Tháng sau" className="grid size-11 place-items-center rounded-control hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setYm(v=>v.m===11?{y:v.y+1,m:0}:{y:v.y,m:v.m+1})}><IconChevronRight size={15}/></button></span>
     </div>
     <div className="grid grid-cols-7 gap-1 text-center text-caption text-muted-foreground">{["T2","T3","T4","T5","T6","T7","CN"].map(d=><span key={d}>{d}</span>)}</div>
     <div className="mt-1 grid grid-cols-7 gap-1 text-center text-caption">

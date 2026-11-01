@@ -201,7 +201,7 @@ export function AssigneeSelector({
           <input
             aria-label="Tìm theo tên hoặc email"
             placeholder="Tìm theo tên hoặc email..."
-            className={`${inputClass} pl-9 pr-9`}
+            className={`${inputClass} pl-9 pr-12`}
             value={query}
             onChange={(e) => { setQuery(e.target.value); setActive(0); }}
             onKeyDown={onKeyDown}
@@ -214,7 +214,7 @@ export function AssigneeSelector({
             <button
               type="button"
               aria-label="Xóa tìm kiếm"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              className="absolute right-0 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-control text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
               onClick={() => setQuery("")}
             >
               <IconX size={15} />
@@ -229,7 +229,7 @@ export function AssigneeSelector({
             return (
               <span key={id} className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-caption font-semibold text-primary">
                 {c?.displayName ?? id.slice(0, 8)}
-                <button type="button" aria-label={`Bỏ chọn ${c?.displayName ?? id}`} className="rounded-full hover:bg-accent" onClick={() => pick(id)}>
+                <button type="button" aria-label={`Bỏ chọn ${c?.displayName ?? id}`} className="grid size-6 place-items-center rounded-full hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => pick(id)}>
                   <IconX size={12} />
                 </button>
               </span>
@@ -244,13 +244,13 @@ export function AssigneeSelector({
       ) : error ? (
         <p role="alert" className="p-3 text-body text-destructive">
           {errorMessage(error)}{" "}
-          <button type="button" className="underline" onClick={() => setReloadKey((k) => k + 1)}>
+          <button type="button" className="rounded-control font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setReloadKey((k) => k + 1)}>
             Thử lại
           </button>
         </p>
       ) : results.length ? (
         <>
-          <ul id="assignee-results" role="listbox" aria-label="Kết quả ứng viên" className="max-h-64 space-y-1 overflow-y-auto rounded-control border border-primary/70 p-1.5">
+          <ul id="assignee-results" role="listbox" aria-label="Kết quả ứng viên" className="notebook-scroll max-h-64 space-y-1 overflow-y-auto rounded-control border border-primary/70 p-1.5">
             {results.slice(0, 50).map((c, i) => {
               const isActive = i === active;
               const isSelected = multiple ? selected.includes(c.userId) : selected[0] === c.userId;
@@ -297,7 +297,7 @@ export function AssigneeSelector({
               Hiển thị {Math.min(results.length, 50)}{results.length > 50 ? "+" : ""} / {results.length} phù hợp · Đã tải {loaded.length}/{total}
             </span>
             {(pagesLeft || loadingMore) && (
-              <button type="button" disabled={loadingMore} className="font-semibold text-primary hover:underline disabled:opacity-50" onClick={() => void loadMore()}>
+              <button type="button" disabled={loadingMore} className="rounded-control font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50" onClick={() => void loadMore()}>
                 {loadingMore ? "Đang tải…" : "Tải thêm"}
               </button>
             )}

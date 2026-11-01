@@ -8,12 +8,13 @@ import {
   CoffeeStainDoodle,
   CrossDoodle,
   PaperclipDoodle,
+  RibbonBookmarkDoodle,
   SquiggleUnderline,
   StarDoodle,
   Tape,
 } from "@/components/v-intern/doodles";
 
-/** 404 toàn cục — không đụng tới trang chủ, chỉ thay thế Next default. */
+/** 404 toàn cục — trang sổ bị xé mất: kẹp giấy, dải băng dấu trang, số 404 khoanh mực. */
 export default function NotFound() {
   return (
     <div className="app-surface relative flex min-h-dvh items-center justify-center overflow-hidden bg-background p-6">
@@ -22,13 +23,15 @@ export default function NotFound() {
         aria-hidden="true"
         className="bg-grid-paper mask-fade-edges pointer-events-none absolute inset-0 opacity-80"
       />
-      {/* Vết cà phê + kẹp giấy — trang bị mất như thật */}
+      {/* Vết cà phê — dấu vết "tìm khắp cuốn sổ mà không ra" */}
       <CoffeeStainDoodle
         className="pointer-events-none absolute -left-6 bottom-10 h-20 w-20 text-ink/[0.05]"
       />
       <div className="relative w-full max-w-lg">
         <div className="sketch-card group relative animate-paper-settle px-6 py-10 text-center sm:px-10">
-          <Tape className="tape-peel -top-3 left-1/2 ml-[-48px]" rotate={-3} variant="candy" />
+          <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="candy" />
+          {/* Dải băng dấu trang treo khỏi mép sổ — trang bị "lạc" giữa cuốn */}
+          <RibbonBookmarkDoodle className="pointer-events-none absolute -top-6 left-8 h-14 w-7 text-blue/50" />
           <PaperclipDoodle className="pointer-events-none absolute -right-3.5 -top-5 h-11 w-6 text-ink/30" />
           <StarDoodle className="absolute right-5 top-5 h-6 w-6 text-ink-faint" />
           <CrossDoodle className="absolute bottom-4 left-5 h-4 w-4 text-ink-faint" />
@@ -58,14 +61,17 @@ export default function NotFound() {
             Đường dẫn có thể đã thay đổi hoặc không tồn tại. Hãy kiểm tra lại
             hoặc quay về một trong các điểm bắt đầu bên dưới.
           </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/" className={btn("primary")}>
-              Về trang chủ
+              Quay về trang chính
             </Link>
             <Link href="/login" className={btn("secondary")}>
               Đăng nhập
             </Link>
           </div>
+          <p className="font-hand mt-6 text-small text-ink-faint">
+            — trang không số trong sổ tay hành trình —
+          </p>
         </div>
       </div>
     </div>

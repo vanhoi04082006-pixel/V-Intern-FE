@@ -22,13 +22,33 @@ import {
   applicationLabels,
 } from "@/lib/api/applications";
 import {
+  btn,
   buttonClass,
   inputClass,
+  selectClass,
   PageTitle,
   Empty,
+  StatusDot,
 } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { useAction } from "@/components/product/use-action";
+
+/** Sắc thái trạng thái hồ sơ — chip dễ đọc, không còn chữ mờ trên nền mờ. */
+const statusTones: Record<
+  string,
+  "green" | "amber" | "red" | "blue" | "gray"
+> = {
+  unverified: "gray",
+  queued: "gray",
+  analyzing: "blue",
+  needs_information: "amber",
+  waitlisted: "amber",
+  booked: "green",
+  cancelled: "red",
+  deferred: "gray",
+  failed: "red",
+};
+
 export function ApplicationTimeline({
   application,
   showLoginLink = true,
@@ -41,14 +61,24 @@ export function ApplicationTimeline({
     <section className="space-y-5" aria-label="Tiến trình hồ sơ">
       <div>
         <p className="text-caption font-semibold text-primary">
-          Hồ sơ, phiên bản {application.revision}
+          Hồ sơ ứng tuyển · phiên bản {application.revision}
         </p>
         <h2 className="mt-2 text-page font-semibold text-foreground">
           {application.fullName}
         </h2>
-        <p className="mt-2 text-muted-foreground">
-          {applicationLabels[application.status] ?? application.status}
-        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <StatusDot tone={statusTones[application.status] ?? "blue"}>
+            {applicationLabels[application.status] ?? application.status}
+          </StatusDot>
+          {application.matchedRole && (
+            <p className="text-caption text-muted-foreground">
+              Nghề đề xuất:{" "}
+              <strong className="font-semibold text-foreground">
+                {application.matchedRole}
+              </strong>
+            </p>
+          )}
+        </div>
       </div>
       {booking && booking.status === "confirmed" && (
         <div className="border-l-2 border-dashed border-primary bg-info-subtle p-5">
@@ -78,13 +108,19 @@ export function ApplicationTimeline({
           )}
         </div>
       )}
-      <ol className="space-y-0 border-l-2 border-dashed border-blue/30 pl-5">
+      {/* Sợi chỉ nét đứt nối các dấu mực — mạch chuyện của hồ sơ */}
+      <ol className="space-y-0 border-l-2 border-dashed border-primary/45 pl-5">
         {application.timeline.map((event, i) => (
           <li className="relative pb-5" key={`${event.kind}-${i}`}>
-            {/* Chấm mực xanh — nét tròn lệch tay như dấu bút trên trang sổ */}
+            {/* Chấm mực xanh — nét tròn lệch tay như dấu bút trên trang sổ;
+                sự kiện mới nhất được tô đặc + quầng mực nhạt */}
             <span
               aria-hidden="true"
-              className="absolute -left-[27px] top-1.5 size-2.5 rounded-[46%_54%_50%_50%] border border-blue bg-blue/85"
+              className={
+                i === application.timeline.length - 1
+                  ? "absolute -left-[26px] top-1.5 size-2.5 rounded-[46%_54%_50%_50%] border border-primary bg-primary ring-4 ring-primary/15"
+                  : "absolute -left-[26px] top-1.5 size-2.5 rounded-[46%_54%_50%_50%] border border-primary bg-card"
+              }
             />
             <p className="text-body leading-6 text-foreground">{event.message}</p>
             <time className="text-caption text-muted-foreground">
@@ -159,11 +195,14 @@ export function PublicApplication() {
         <nav className="flex items-center justify-between text-body">
           <Link
             href="/"
-            className="text-section font-bold tracking-tight text-primary"
+            className="rounded-lg px-2 py-1 -mx-2 text-section font-bold tracking-tight text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           >
             V-Intern
           </Link>
-          <Link href="/login" className="font-medium text-muted-foreground">
+          <Link
+            href="/login"
+            className="rounded-lg px-2 py-1 -mx-2 font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          >
             Đã có tài khoản? Đăng nhập
           </Link>
         </nav>
@@ -183,7 +222,7 @@ export function PublicApplication() {
             onRetry={() => window.location.reload()}
           />
         ) : application ? (
-          <div className="sketch-card group relative space-y-6 p-6 sm:p-8">
+          <div className="sketch-card animate-paper-settle group relative space-y-6 p-6 sm:p-8">
             <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} variant="mint" />
             <PaperclipDoodle className="pointer-events-none absolute -right-3.5 -top-5 h-11 w-6 text-ink/30" />
             <StarDoodle className="pointer-events-none absolute right-5 top-4 h-5 w-5 text-ink-faint/70" />
@@ -202,7 +241,7 @@ export function PublicApplication() {
               </button>
               {["cancelled", "deferred"].includes(application.status) && (
                 <button
-                  className={buttonClass}
+                  className={btn("secondary")}
                   disabled={action.busy}
                   onClick={() =>
                     void action.run(async () => {
@@ -222,7 +261,7 @@ export function PublicApplication() {
               application.status,
             ) && (
               <form
-                className="space-y-3 border-t border-border pt-5"
+                className="space-y-4 border-t border-dashed border-border pt-5"
                 onSubmit={(event) => {
                   event.preventDefault();
                   const form = new FormData(event.currentTarget),
@@ -244,14 +283,16 @@ export function PublicApplication() {
                     className={`${inputClass} mt-2`}
                   />
                 </label>
-                <button className={buttonClass} disabled={action.busy}>
-                  Nộp bản bổ sung
-                </button>
+                <div className="flex justify-end">
+                  <button className={buttonClass} disabled={action.busy}>
+                    Nộp bản bổ sung
+                  </button>
+                </div>
               </form>
             )}
           </div>
         ) : (
-          <section className="p-6 sm:p-8">
+          <section className="animate-paper-settle p-6 sm:p-8">
             <Tape className="-top-3 left-1/2 ml-[-48px]" rotate={-3} />
             {rounds.loading ? (
               <LoadingState />
@@ -282,9 +323,22 @@ export function PublicApplication() {
                   });
                 }}
               >
+                {/* Đầu tờ đơn — nét đứt như đường gấp giấy, tiêu đề + ghi chú tay */}
+                <div className="border-b-2 border-dashed border-border pb-4 sm:col-span-2">
+                  <h2 className="text-section font-bold text-foreground">
+                    Tờ đơn ứng tuyển
+                  </h2>
+                  <p className="font-hand mt-1 text-body text-ink-soft">
+                    điền như viết vào sổ tay — mỗi trường một dòng mực ✎
+                  </p>
+                </div>
                 <label className="text-body font-medium sm:col-span-2">
                   Đợt ứng tuyển
-                  <select name="roundId" className={inputClass} required>
+                  <select
+                    name="roundId"
+                    className={`${selectClass} mt-2`}
+                    required
+                  >
                     {rounds.data.map((r) => (
                       <option key={r.id} value={r.id}>
                         {r.name}, nhận đến{" "}
@@ -292,16 +346,21 @@ export function PublicApplication() {
                       </option>
                     ))}
                   </select>
+                  <span className="mt-2 block text-caption font-normal leading-5 text-muted-foreground">
+                    Chọn đợt đang mở — sau ngày đóng, hệ thống không nhận hồ
+                    sơ nữa.
+                  </span>
                 </label>
                 <label className="text-body font-medium">
                   Họ và tên
                   <input
                     name="fullName"
-                    className={inputClass}
+                    className={`${inputClass} mt-2`}
                     minLength={2}
                     maxLength={128}
                     required
                     autoComplete="name"
+                    placeholder="Nguyễn Văn A"
                   />
                 </label>
                 <label className="text-body font-medium">
@@ -309,10 +368,11 @@ export function PublicApplication() {
                   <input
                     name="email"
                     type="email"
-                    className={inputClass}
+                    className={`${inputClass} mt-2`}
                     maxLength={320}
                     required
                     autoComplete="email"
+                    placeholder="ten.cua.ban@ten-mien.vn"
                   />
                 </label>
                 <label className="text-body font-medium sm:col-span-2">
@@ -321,17 +381,17 @@ export function PublicApplication() {
                     name="cv"
                     type="file"
                     accept=".pdf,.docx"
-                    className={inputClass}
+                    className={`${inputClass} mt-2`}
                     required
                   />
-                  <span className="mt-2 block font-normal text-muted-foreground">
+                  <span className="mt-2 block text-caption font-normal leading-5 text-muted-foreground">
                     PDF có văn bản hoặc DOCX, tối đa 5 MB. CV scan cần được
                     xuất lại thành văn bản, hiện chưa có OCR.
                   </span>
                 </label>
                 <label className="flex items-start gap-3 text-body leading-6 text-muted-foreground sm:col-span-2">
                   <input
-                    className="mt-1"
+                    className="mt-1 size-5 shrink-0 accent-primary"
                     type="checkbox"
                     name="consentVersion"
                     value="cv-consent-v1"
@@ -339,11 +399,14 @@ export function PublicApplication() {
                   />
                   Tôi đồng ý V-Intern lưu và xử lý CV qua dịch vụ AI để phân
                   tích kỹ năng, chọn nghề và lên lịch phỏng vấn. Tôi có quyền
-                  cung cấp hồ sơ này; không đưa mật khẩu hay thông tin tài chính
-                  vào CV.
+                  cung cấp hồ sơ này; không đưa mật khẩu hay thông tin tài
+                  chính vào CV.
                 </label>
-                <div className="sm:col-span-2">
-                  <button className={buttonClass} disabled={action.busy}>
+                <div className="flex sm:col-span-2 sm:justify-end">
+                  <button
+                    className={`${buttonClass} w-full sm:w-auto`}
+                    disabled={action.busy}
+                  >
                     {action.busy
                       ? "Đang nhận hồ sơ…"
                       : "Nộp CV & nhận email xác minh"}
@@ -352,11 +415,11 @@ export function PublicApplication() {
               </form>
             )}
             <details className="dashed-cut mt-7 rounded-xl p-5">
-              <summary className="cursor-pointer text-body font-semibold text-primary">
+              <summary className="cursor-pointer rounded-control text-body font-semibold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
                 Đã nộp CV? Nhận lại liên kết theo dõi
               </summary>
               <form
-                className="mt-4 grid gap-3 sm:grid-cols-2"
+                className="mt-4 grid gap-4 sm:grid-cols-2"
                 onSubmit={(event) => {
                   event.preventDefault();
                   const data = new FormData(event.currentTarget);
@@ -375,7 +438,7 @@ export function PublicApplication() {
                   Mã đợt tuyển
                   <input
                     name="round"
-                    className={inputClass}
+                    className={`${inputClass} mt-2`}
                     required
                     placeholder="Mã đợt trong thông tin tuyển dụng"
                   />
@@ -384,17 +447,21 @@ export function PublicApplication() {
                   Email đã nộp
                   <input
                     name="email"
-                    className={inputClass}
+                    className={`${inputClass} mt-2`}
                     type="email"
                     required
+                    autoComplete="email"
+                    placeholder="Email dùng khi nộp CV"
                   />
                 </label>
-                <button
-                  className={`${buttonClass} sm:col-span-2 sm:justify-self-start`}
-                  disabled={action.busy}
-                >
-                  Nhận lại liên kết
-                </button>
+                <div className="flex sm:col-span-2 sm:justify-end">
+                  <button
+                    className={`${buttonClass} w-full sm:w-auto`}
+                    disabled={action.busy}
+                  >
+                    Nhận lại liên kết
+                  </button>
+                </div>
               </form>
             </details>
           </section>
@@ -402,7 +469,7 @@ export function PublicApplication() {
         {notice && (
           <p
             role="status"
-            className="border-l-2 border-dashed border-success pl-4 text-body leading-6 text-success"
+            className="border-l-2 border-dashed border-success bg-success-subtle/50 px-4 py-3 text-body leading-6 text-success"
           >
             {notice}
           </p>
