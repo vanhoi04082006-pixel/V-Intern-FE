@@ -198,22 +198,12 @@ html {
   }
 }
 
-@keyframes v-spin-slow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .animate-wiggle {
   animation: v-wiggle 3.2s ease-in-out infinite;
 }
 
 .animate-blink-dot {
   animation: v-blink-dot 1.3s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: v-spin-slow 14s linear infinite;
 }
 
 /* ---------- Notebook utilities ("Sổ tay hành trình") ---------- */
@@ -1130,8 +1120,7 @@ html {
   .animate-float-delayed,
   .animate-float-soft,
   .animate-wiggle,
-  .animate-blink-dot,
-  .animate-spin-slow {
+  .animate-blink-dot {
     animation: none;
   }
   /* Notebook motion — mọi hiệu ứng sổ tay dừng ngay ở trạng thái cuối. */
