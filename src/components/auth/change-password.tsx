@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { fetchCurrentUser } from "@/lib/auth/auth-service";
 import { clearSession, notifyOtherTabs } from "@/lib/auth/session";
 import { request } from "@/lib/api/client";
-import { buttonClass, inputClass } from "@/components/product/primitives";
+import { inputClass } from "@/components/product/primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { useAction } from "@/components/product/use-action";
 
@@ -104,9 +105,14 @@ export function ChangePassword() {
             required
           />
         </label>
-        <button className={`auth-cta ${buttonClass} w-full`} disabled={action.busy}>
+        <LiquidButton
+          type="submit"
+          disabled={action.busy}
+          delay="0.32s"
+          className="auth-cta inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-80 [--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground"
+        >
           {action.busy ? "Đang lưu…" : "Đổi mật khẩu & đăng nhập lại"}
-        </button>
+        </LiquidButton>
       </form>
       {action.error ? <ErrorState error={action.error} /> : null}
     </div>

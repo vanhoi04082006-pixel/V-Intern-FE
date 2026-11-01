@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { FadeIn } from "@/components/v-intern/reveal";
 import { GradientBackground } from "@/components/animate-ui/backgrounds/gradient";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import {
   PaperPlaneDoodle,
   RouteTrailDoodle,
@@ -63,16 +65,20 @@ export function FinalCta() {
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="/login"
-              className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-coal bg-white px-8 text-sm font-extrabold text-coal shadow-[5px_5px_0_0_var(--coal)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_var(--coal)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--coal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-royal"
+            <LiquidButton
+              asChild
+              delay="0.35s"
+              fillHeight="4px"
+              className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-coal bg-white px-8 text-sm font-extrabold text-coal shadow-[5px_5px_0_0_var(--coal)] hover:shadow-[7px_7px_0_0_var(--coal)] active:shadow-[2px_2px_0_0_var(--coal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-royal [--liquid-button-background-color:var(--paper)] [--liquid-button-color:var(--coal)] hover:text-white"
             >
-              Viết trang đầu tiên
-              <IconArrowRight
-                className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                aria-hidden="true"
-              />
-            </a>
+              <Link href="/login">
+                Viết trang đầu tiên
+                <IconArrowRight
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </Link>
+            </LiquidButton>
           </div>
 
           {/* Mộc xác nhận trên nền xanh — dấu "MIỄN PHÍ" đóng nghiêng */}

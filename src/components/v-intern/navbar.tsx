@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/v-intern/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import {
   IconArrowRight,
   IconMenu,
@@ -65,16 +66,19 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <ThemeToggle />
-          <Link
-            href="/login"
-            className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[5px_5px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+          <LiquidButton
+            asChild
+            delay="0.35s"
+            className="group inline-flex h-11 items-center gap-2 rounded-xl border-2 border-ink bg-royal px-5 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--ink)] hover:shadow-[5px_5px_0_0_var(--ink)] active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
           >
-            Bắt đầu
-            <IconArrowRight
-              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-              aria-hidden="true"
-            />
-          </Link>
+            <Link href="/login">
+              Bắt đầu
+              <IconArrowRight
+                className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+          </LiquidButton>
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">

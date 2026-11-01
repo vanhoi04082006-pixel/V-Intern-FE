@@ -10,6 +10,7 @@ import { IconArrowLeft } from "@/components/v-intern/icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { Spinner } from "@/components/product/primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { requestPasswordReset } from "@/lib/auth/auth-service";
 import { validateEmail } from "@/lib/auth/validation";
 
@@ -96,10 +97,11 @@ export function ForgotPasswordForm() {
           }}
         />
 
-        <button
+        <LiquidButton
           type="submit"
           disabled={isSubmitting}
-          className="auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-80"
+          delay="0.32s"
+          className="auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-80 [--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground"
         >
           {isSubmitting ? (
             <>
@@ -109,7 +111,7 @@ export function ForgotPasswordForm() {
           ) : (
             "Gửi liên kết đặt lại"
           )}
-        </button>
+        </LiquidButton>
 
         <p aria-live="polite" className="sr-only">
           {status === "submitting"

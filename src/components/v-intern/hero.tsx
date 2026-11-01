@@ -18,7 +18,9 @@ import { Parallax } from "@/components/v-intern/motion";
 import { FeatureStrip } from "@/components/v-intern/feature-strip";
 import { Logo } from "@/components/v-intern/logo";
 import { TopographyBackground } from "@/components/animate-ui/backgrounds/topography";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { useIsDarkTheme } from "@/lib/theme";
+import Link from "next/link";
 import {
   AsteriskDoodle,
   CoffeeStainDoodle,
@@ -220,22 +222,28 @@ export function Hero() {
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <a
-                href="/login"
-                className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-royal-deep hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+              <LiquidButton
+                asChild
+                delay="0.35s"
+                fillHeight="4px"
+                className="group inline-flex h-[52px] items-center gap-2 rounded-xl border-2 border-ink bg-royal px-7 text-sm font-bold text-white shadow-[4px_4px_0_0_var(--ink)] hover:shadow-[6px_6px_0_0_var(--ink)] active:shadow-[2px_2px_0_0_var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--royal)] [--liquid-button-color:var(--ink)] hover:text-white"
               >
-                Bắt đầu ngay
-                <IconArrowRight
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </a>
-              <a
-                href="#how-it-works"
-                className="inline-flex h-[52px] items-center rounded-xl border-2 border-ink bg-raised px-7 text-sm font-bold text-ink shadow-[4px_4px_0_0_var(--hard-shadow)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-blue hover:text-blue hover:shadow-[6px_6px_0_0_var(--hard-shadow)] active:translate-x-0 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+                <Link href="/login">
+                  Bắt đầu ngay
+                  <IconArrowRight
+                    className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </LiquidButton>
+              <LiquidButton
+                asChild
+                delay="0.35s"
+                fillHeight="4px"
+                className="inline-flex h-[52px] items-center rounded-xl border-2 border-ink bg-raised px-7 text-sm font-bold text-ink shadow-[4px_4px_0_0_var(--hard-shadow)] hover:border-blue hover:shadow-[6px_6px_0_0_var(--hard-shadow)] active:shadow-[2px_2px_0_0_var(--hard-shadow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper [--liquid-button-background-color:var(--paper-raised)] [--liquid-button-color:var(--blue)] hover:text-white"
               >
-                Tìm hiểu thêm
-              </a>
+                <Link href="#how-it-works">Tìm hiểu thêm</Link>
+              </LiquidButton>
             </div>
 
             {/* Ghi chú viết tay kèm mũi tên chỉ CTA */}

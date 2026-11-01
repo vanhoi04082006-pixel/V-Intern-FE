@@ -13,6 +13,7 @@ import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
 import { Spinner } from "@/components/product/primitives";
+import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { login } from "@/lib/auth/auth-service";
 import { resolveLoginLanding } from "@/lib/auth/landing";
 import { errorMessage } from "@/lib/auth/api-client";
@@ -271,13 +272,15 @@ export function LoginForm({ previewState }: LoginFormProps) {
           </Link>
         </div>
 
-        <button
+        <LiquidButton
           type="submit"
           disabled={!hydrated || isSubmitting}
+          delay="0.32s"
           className={cn(
-            "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground transition-colors",
-            "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-80",
+            "auth-cta mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2",
+            "disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-80",
+            "[--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground",
           )}
         >
           {isSubmitting ? (
@@ -291,7 +294,7 @@ export function LoginForm({ previewState }: LoginFormProps) {
               <IconArrowRight className="auth-cta-arrow size-4" aria-hidden="true" />
             </>
           )}
-        </button>
+        </LiquidButton>
 
         <div className="mt-5 flex items-center gap-4" aria-hidden="true">
           <span className="auth-divider-line h-0 flex-1 border-t" />
