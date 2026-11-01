@@ -12,7 +12,7 @@ const kinds: Record<string, string> = { verify: 'Xác minh email', schedule: 'L�
 export function Communications() {
   const [page, setPage] = useState(1), [preview, setPreview] = useState<Awaited<ReturnType<typeof previewMail>> | null>(null), [notice, setNotice] = useState('');
   const state = useResource(useCallback((signal: AbortSignal) => listMail(page, signal), [page]));
-  return <div className="nb-swap space-y-6">
+  return <div className="space-y-6">
     <PageTitle title="Email & lịch gửi" subtitle="Theo dõi từng lần gửi. SMTP nhận thư chưa xác nhận thư đã tới hộp thư người nhận." action={<button className={buttonClass} onClick={state.reload}>Làm mới</button>} />
     {state.data && !state.data.transportConfigured && <p role="status" className="border-l border-warning pl-3 text-body text-warning">SMTP chưa được cấu hình. Hệ thống giữ email trong hàng đợi và không báo đã gửi.</p>}
     {state.data?.deliveryMode === 'local' && <p role="status" className="border-l border-primary pl-3 text-body text-info">Đang dùng SMTP local. Thư chỉ nằm trên máy này, không gửi đến Gmail/Outlook. <a className="font-semibold underline" href="http://localhost:8025" target="_blank" rel="noopener noreferrer">Mở hộp thư demo ↗</a></p>}

@@ -20,7 +20,7 @@ export function QuestionBank() {
   const state = useResource(useCallback((signal: AbortSignal) => listQuestionBank(new URLSearchParams({ page: String(page), pageSize: '10', ...(debounced ? { search: debounced } : {}), ...(role ? { roleCode: role } : {}), ...(phase ? { phase } : {}), ...(status ? { status } : {}) }), signal), [page, debounced, role, phase, status]));
   const action = useAction();
   const [notice, setNotice] = useState('');
-  return <div className="nb-swap space-y-6">
+  return <div className="space-y-6">
     <PageTitle title="Ngân hàng câu hỏi phỏng vấn" subtitle="Nội dung và hướng dẫn chấm riêng tư; thay đổi chỉ áp dụng cho phỏng vấn tương lai." action={<button className={buttonClass} disabled={!careers.data?.length || careers.loading || Boolean(careers.error)} onClick={() => setEditor('new')}>Thêm câu hỏi</button>} />
     {notice && !action.busy && !action.error && <p role="status" className="text-body text-success">{notice}</p>}
     {Boolean(careers.error) && <ErrorState error={careers.error} onRetry={careers.reload} />}

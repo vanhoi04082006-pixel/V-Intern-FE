@@ -26,7 +26,7 @@ export function AiConfiguration() {
     useCallback((signal: AbortSignal) => getAiConfiguration(signal), []),
   );
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Cấu hình AI"
         subtitle="Model và giới hạn áp dụng cho lời gọi mới; từng kết quả vẫn lưu model và phiên bản prompt thực tế."

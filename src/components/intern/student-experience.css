@@ -3252,17 +3252,11 @@
 }
 
 /* --------------------------------------------------------- route transition --- */
-/* v5 Mượt: khung route vào mềm (nb-swap — fade + 6px rise, 200ms). Lớp gắn
-   ở src/app/intern/template.tsx; rule cũ `animation: none` (v4 tắt khi
-   student-reveal thay thế) đã nhường chỗ cho kit chung. Reduced-motion
-   guard của motion.css và khối guard dưới đây tắt hẳn hiệu ứng. */
+/* v6 Mượt: enter của route đã chuyển lên root src/app/template.tsx
+   (PageTransition — View Transitions API, tự tắt khi giảm chuyển động).
+   Lớp này chỉ còn giữ khung `min-width: 0` cho bố cục cột dọc. */
 .student-route-frame {
   min-width: 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  .student-route-frame {
-    animation: none;
-  }
 }
 
 /* ------------------------------------------------------ submission intent --- */

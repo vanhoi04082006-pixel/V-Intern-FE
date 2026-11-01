@@ -31,7 +31,7 @@ function LibraryContent({ manage }: { manage: boolean }) {
   const state = useResource(useCallback((signal: AbortSignal) => listKnowledge(new URLSearchParams({ page: String(page), pageSize: '12', ...(query ? { search: query } : {}), ...(status ? { status } : {}), ...(kind ? { kind } : {}), ...(audience ? { audience } : {}), ...(purpose ? { purpose } : {}), ...(role ? { roleCode: role } : {}) }), signal), [page, query, status, kind, audience, purpose, role]));
   const filter = (set: (value: string) => void, value: string) => { set(value); setPage(1); };
   const filtered = !!(query || status || kind || audience || purpose || role);
-  return <div className="nb-swap min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageTitle title="Kho tri thức Agent" subtitle="Biên soạn nội dung có nguồn, duyệt phiên bản và giữ lịch sử." action={manage && <><button className={btn('secondary')} onClick={() => setImporting(true)}><IconUpload size={16} aria-hidden />Kiểm tra import</button><Link className={btn()} href="/admin/knowledge/new"><IconPlus size={16} aria-hidden />Soạn tài liệu</Link></>} />
     <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5"><p className="max-w-2xl text-body leading-6 text-muted-foreground">Bản nháp → kiểm tra nội dung và nguồn → xuất bản. Kho này chưa được nối vào các lượt chạy AI hiện tại.</p><Link href="/admin/questions" className="text-body font-medium text-primary hover:underline">Ngân hàng phỏng vấn hiện hành</Link></div>
     {!manage && <InlineAlert tone="info">Bạn đang ở chế độ chỉ đọc. Các thao tác biên soạn cần quyền quản lý tri thức.</InlineAlert>}

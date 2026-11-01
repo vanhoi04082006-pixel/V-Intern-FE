@@ -96,7 +96,7 @@ export function SalaryConsole() {
   );
 
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Lương ảo"
         subtitle="Đơn vị ảo dùng để động viên sinh viên — không phải lương thật. Số dư luôn được tính lại từ sổ ghi, không có số dư lưu sẵn."

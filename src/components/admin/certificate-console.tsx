@@ -58,7 +58,7 @@ export function CertificateConsole() {
   );
 
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Chứng nhận"
         subtitle="Cấp và thu hồi chứng nhận hoàn thành thực tập theo chính sách V-INTERN-COMPLETE. Điều kiện cấp được kiểm định phía hệ thống, không cấp tay."

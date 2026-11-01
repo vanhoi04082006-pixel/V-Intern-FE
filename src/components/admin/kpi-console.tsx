@@ -100,7 +100,7 @@ export function KpiConsole() {
   };
 
   return (
-    <div className="nb-swap space-y-6">
+    <div className="space-y-6">
       <PageTitle
         title="Kỳ KPI"
         subtitle="Tạo kỳ đo lường, tính KPI theo quy tắc kpi-v1 và chốt kỳ để sinh lương ảo cũng như cấp chứng nhận. Kỳ đã chốt không tính lại."
