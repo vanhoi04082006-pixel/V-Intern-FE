@@ -7,6 +7,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { buttonClass, Panel, Spinner } from "./primitives";
+import { CircleCheckBig } from "@/components/animate-ui/icons/circle-check-big";
 import {
   activateAcademic,
   canActivate,
@@ -76,8 +77,20 @@ export function OnboardingChecklist({
   const complete = steps.length > 0 && steps.every((s) => s.done);
   if (complete) {
     return (
-      <p role="status" className="rounded-control bg-success-subtle p-3 text-body text-success">
-        Đã hoàn tất thiết lập đợt thực tập. Chúc giảng viên một học kỳ hiệu quả.
+      <p
+        role="status"
+        className="flex items-start gap-2 rounded-control bg-success-subtle p-3 text-body text-success"
+      >
+        <CircleCheckBig
+          size={17}
+          animateOnView
+          aria-hidden="true"
+          className="mt-0.5 shrink-0"
+        />
+        <span>
+          Đã hoàn tất thiết lập đợt thực tập. Chúc giảng viên một học kỳ hiệu
+          quả.
+        </span>
       </p>
     );
   }

@@ -26,6 +26,7 @@ import {
   IconWallet,
 } from "@/components/v-intern/icons";
 import { Sparkles as SparklesIcon } from "@/components/animate-ui/icons/sparkles";
+import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -872,6 +873,15 @@ function CertificateDetail({
     : "Chưa ghi nhận";
   return (
     <div className="student-cert-detail">
+      {issued && (
+        <p
+          role="status"
+          className="inline-flex items-center gap-2 font-semibold text-success"
+        >
+          <PartyPopper size={20} animateOnView aria-hidden="true" />
+          Chúc mừng! Bạn đã hoàn thành chương trình thực tập.
+        </p>
+      )}
       <article
         className="student-cert-document"
         aria-labelledby="certificate-title"
