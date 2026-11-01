@@ -228,7 +228,7 @@ try {
   for (const endpoint of [`/sessions/${created.sessionId}`, `/projects/${created.projectId}`, `/ai-generations/plans/${plan.planId}`, `/sprints/${edited.sprintId}`, `/tasks/${edited.id}`]) await call("foreign", endpoint, "GET", undefined, 403);
   results.push({ name: "Test AI Start/ready/edit/Confirm/replay; SQL fields, cross-session and instructor isolation", status: "PASS", counts: before });
   stage = "session-delivery";
-  await page.goto(`${base}/instructor/sessions/${created.sessionId}`); await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible(); await expect(page.getByText("Catalog search", { exact: true })).toBeVisible(); await expect(page.getByRole("heading", { name: `Task (${before.tasks})`, exact: true })).toBeVisible();
+  await page.goto(`${base}/instructor/sessions/${created.sessionId}`); await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible(); await expect(page.getByText("Catalog search", { exact: true })).toBeVisible(); await expect(page.getByRole("heading", { name: `Nhiệm vụ (${before.tasks})`, exact: true })).toBeVisible();
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`); await page.getByRole("link", { name: "Contract Sprint 1", exact: true }).click(); await expect(page.getByText(/Contract Sprint 1/).first()).toBeVisible();
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`);
   await page.getByRole("button", { name: "Task", exact: true }).click();
