@@ -1,51 +1,78 @@
-# Kiểm chứng Frontend — 23/10/2026
+# Kiểm chứng Frontend
 
-> **Nguồn hiện hành về nghiệp vụ:** [kiểm thử 27/10](BUSINESS-ACCEPTANCE-20261027.md). Các bảng Aurora/G0–G7 phía dưới là các mốc lịch sử có source riêng.
+Trang này là **chỉ mục bằng chứng hiện hành**. Số liệu lịch sử nằm trong [`reports/`](reports/) và [`archive/`](archive/); không sửa chúng để khớp hiện tại.
 
-> **Checkpoint 26/10/2026:** [nguồn kiểm chứng và việc còn mở](ACCEPTANCE-CHECKPOINT-20261026.md). BE 859 / FE 660 unit tests; source và CI ghi riêng trong checkpoint. Hành trình QA thật đã hoàn thành 4/4 task, đánh giá 96,1, KPI 98,8, chứng nhận và vòng mời lại GitHub. Có cả bước UI/API; chưa nghiệm thu mọi nhánh hoặc redesign toàn bộ.
+## 1. Mốc hiện hành — 02/11/2026
 
-Bản này là mốc hiện hành cho giao diện Aurora Glass của **Sinh viên và Giảng viên**. Trang chủ và Admin giữ phạm vi thiết kế trước đó. Không dùng tổng số test ở checkpoint cũ để mô tả bản hiện tại.
-
-| Hạng mục | Kết quả | Log hoặc dữ liệu |
+| Hạng mục | Kết quả | Ghi chú |
 |---|---|---|
-| Vitest | **82 file / 541 test đạt** | fe-unit-final-v2.log |
-| ESLint | Đạt, không lỗi/cảnh báo lint | fe-lint-final-v2.log |
-| TypeScript | Đạt | fe-typecheck-final-v2.log |
-| Next build | Đạt | fe-build-final-v2.log |
-| Responsive | 1440, 1280, 1024, 768, 390px | browser-final.json, screens/ |
-| Các tương tác shell/modal | Kết quả từng thao tác được ghi riêng | browser.json, browser-final.json |
-| Luồng có dữ liệu thật | Đánh giá, nguồn KPI, ledger, chứng nhận, hiệu suất, AI và thông báo sau kết thúc | outcomes-live.json, browser-final.json |
+| Branch / commit | `main` / `063c3d5` | Working tree sạch tại thời điểm ghi |
+| ESLint | Đạt, 0 lỗi | `npm run lint` |
+| TypeScript | Đạt, 0 lỗi | `npm run typecheck` |
+| Vitest | **117 file / 672 test đạt** | `npm test` |
+| Next production build | Đạt | `npm run build` |
+| API contract | FE gọi Nest `/api/v1`; classes/sharing đã bị gỡ ở BE | `/api/v1/classes`, `/api/v1/session-sharing` trả 404 |
+| Runtime probe | Admin 27/27 · Giảng viên 13/13 · Sinh viên 15 route | 0 API lỗi, 0 page error; sinh viên vào được `/intern/onboarding/interview` |
 
-Kiểm thử mới giữ quyền đọc khuyến nghị sau assignment hoàn thành, chặn người chưa từng được phân công, giữ khóa công việc/Mentor và thay CTA sau kết thúc bằng liên kết đánh giá. Test tái hiện lỗi trước khi sửa nằm ở historical-recommendations-red.log và performance-next-step-red.log; kết quả sau sửa ở historical-outcomes-green.log.
+Lệnh tái lập:
 
-Vitest có thông báo jsdom không triển khai điều hướng trang trong một số test bấm liên kết; toàn bộ assertion vẫn đạt. Không đồng nhất thông báo môi trường test này với lỗi console của browser thật. Browser được kiểm riêng bằng dữ liệu runtime.
+```powershell
+& .\scripts\Use-ProjectStorage.ps1
+npm run lint
+npm run typecheck
+npm test
+npm run build
+git diff --check
+```
 
-## Hiểu đúng phạm vi nghiệm thu
+## 2. Phạm vi runtime probe
 
-Luồng thực hành dùng tài khoản QA riêng trên API 8081, database VIntern_Test_Learning_20261014 và FE 3004. FE chính 3001/API 8080 dùng VIntern_M2_BROWSER. Không reset/seed dữ liệu chính hoặc ba tài khoản gốc. Bài nộp là sản phẩm tổng hợp phục vụ kiểm thử, không phải bài đánh giá của một sinh viên thật.
+Probe dùng API/SQL thật trên môi trường local, đăng nhập từng vai trò và đi qua các route chính:
 
-Đã thực hiện GitHub OAuth, tạo repository dưới tài khoản chung của Admin, sinh viên khác danh tính commit/PR, Docker chạy test có chữ ký, Gemini phân tích, giảng viên trả sửa/duyệt. Kết quả cuối: 4/4 nhiệm vụ, đánh giá **85,5**, KPI **95,7**, số dư **9.570.000 đồng ảo**, chứng nhận xác minh hợp lệ, PDF/Excel tải và đọc được. Sau kết thúc phiên, sinh viên vẫn xem kết quả và khuyến nghị AI.
+- **Admin:** dashboard, người dùng, nghề nghiệp, câu hỏi, mẫu dự án, phiên, Sprint/task, đánh giá, KPI/lương/chứng nhận, báo cáo, cài đặt.
+- **Giảng viên:** dashboard, dự án, phiên, Sprint/task, đánh giá, hiệu suất, báo cáo, GitHub.
+- **Sinh viên:** onboarding, workspace, task, Sprint, dự án, Mentor, đánh giá, KPI/lương/chứng nhận, GitHub, thông báo.
 
-Xem [báo cáo nhập vai](ROLEPLAY-ACCEPTANCE.md) để đọc từng bước, lỗi tìm được, cách sửa và giới hạn. [Bàn giao](HANDOVER.md) hướng dẫn sử dụng và đọc code. [Git workflow](GIT-WORKFLOW.md) ghi các nhánh đã đối chiếu và SHA phục hồi.
+Đây là **smoke theo route**, không phải nghiệm thu từng nhánh nghiệp vụ hoặc mọi trạng thái dữ liệu. Các luồng mutation sâu cần dùng DB QA riêng và harness tương ứng.
 
-## Nguồn và mốc thời gian
+## 3. CI
 
-Tất cả tên tệp bằng chứng trong trang này tính từ **workspace/manual-runtime/aurora-handoff-20261022/**. Thư mục giữ ngày bắt đầu 22/10; kiểm tra cuối thực hiện ngày **23/10/2026, UTC+7**. Trường checkedAt trong JSON dùng UTC. final-manifest.json ghi thời điểm, source hash cả tệp chưa commit, branch/HEAD và trạng thái runtime; log ngày trước không được diễn giải thành lần chạy mới.
+| Workflow | Nội dung | Điều kiện |
+|---|---|---|
+| `ci.yml` — `verify` | lint → typecheck → test → audit production → build | Mọi PR vào `main` |
+| `phase7-fullstack.yml` — `sql2019` | SQL Server 2019 + BE contract SHA + harness full-stack | PR chạm contract/luồng tích hợp |
 
-Tại mốc chạy các kiểm tra bên trên, thay đổi còn nằm trong working tree. Source và tài liệu được commit/công bố trên nhánh feature ngày 23/10; xem GIT-WORKFLOW. Chưa merge vào main. Đã dọn 5 tên nhánh local có commit nằm trong HEAD bằng branch -d; giữ nhánh đang làm, main, archive và nhánh có patch tương đương để bảo toàn lịch sử. Bốn PR đã merge là trong repository bài thực hành QA.
+Gate full-stack đang ghim `COMPATIBLE_BE_SHA` trong workflow. Pin này **cố ý** không tự chạy theo BE `main`; khi contract đổi, cập nhật bằng PR compatibility có review.
 
-## Giới hạn còn được ghi nhận
+## 4. Bằng chứng lịch sử
 
-- Webhook repository QA chưa có endpoint public được cấu hình: chưa kiểm delivery live. Live PR/SHA dùng GitHub API; E2E kiểm hợp đồng webhook riêng.
-- Bộ test xuất JSON kiểm preview và version, chưa đối chiếu byte của file tải xuống từ browser.
-- Ma trận responsive không thay audit WCAG hoặc Core Web Vitals đầy đủ; kết quả AI của một bài không chứng minh độ chính xác chấm mọi bài.
-- Production không nằm trong yêu cầu hiện tại.
+| Nguồn | Nội dung | Cảnh báo |
+|---|---|---|
+| [`reports/`](reports/) | Báo cáo G2–G7, JSON, ảnh browser | Số liệu theo ngày và commit riêng |
+| [`design/`](design/) | Audit thiết kế, notebook foundation, notifications | Có thể lệch UI sau redesign |
+| [`ACCEPTANCE-CHECKPOINT-20261026.md`](ACCEPTANCE-CHECKPOINT-20261026.md) | Checkpoint 26/10 | Lịch sử |
+| [`BUSINESS-ACCEPTANCE-20261027.md`](BUSINESS-ACCEPTANCE-20261027.md) | Nghiệp vụ 27/10 | Lịch sử |
+| [`BUSINESS-ACCEPTANCE-20261028.md`](BUSINESS-ACCEPTANCE-20261028.md) | Nghiệp vụ 28/10 | Lịch sử |
+| [`ROLEPLAY-ACCEPTANCE.md`](ROLEPLAY-ACCEPTANCE.md) | Nhập vai sinh viên/giảng viên | Lịch sử |
+| [`archive/`](archive/) | Trước Aurora/notebook | Chính sách cũ |
 
-[Bằng chứng trước đợt này, giữ nguyên mốc lịch sử](archive/verification-before-aurora-20261023.md).
+Quy tắc đọc: **không cộng test của nhiều mốc**, không coi ảnh cũ là bằng chứng UI hiện tại, không coi harness deterministic là provider thật.
 
+## 5. Phần chưa được chứng minh
 
-## Bản vá bảo mật khi công bố GitHub — 23/10/2026
+- Chưa audit WCAG/Core Web Vitals đầy đủ cho toàn bộ 80 route.
+- Chưa có production deployment; không tuyên bố sẵn sàng production.
+- Không phải mọi route có ảnh browser mới sau redesign.
+- Provider AI/GitHub thật có thể lỗi/timeout; harness deterministic không thay thế kiểm tra live.
+- Một số luồng phụ thuộc dữ liệu/role cụ thể; smoke không kích hoạt mọi nhánh 403/409.
 
-CI ban đầu chặn Next.js 16.3.8 bởi advisory critical. Đã nâng riêng Next và eslint-config-next lên **16.4.2**, giữ React và các ngưỡng CI hiện hữu. Local sau nâng cấp: lint, 82 file/541 test, typecheck và build đạt; audit production không còn finding. Log mới nằm trong workspace/manual-runtime/publish-20261023. Các số liệu browser/nhập vai ở trên là mốc trước nâng dependency, không được gọi là đã chạy lại toàn bộ với Next mới.
+## 6. Cách ghi một mốc mới
 
-Full-stack CI ghim Backend tại commit `3989138d2e8b479b00b4a39f275ad8ee858b7911`, chính là source đã đạt 625 unit/237 SQL E2E trên [CI Backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/actions/runs/39879926943). Giữ đủ các bước nghiệp vụ và test hợp đồng; không chạy theo một nhánh BE thay đổi liên tục. Kết quả CI của bản vá xem [PR Frontend](https://github.com/vanhoi04082006-pixel/V-Intern-FE/pull/15).
+1. Tạo mục “Mốc … — ngày”.
+2. Ghi branch, commit, dirty state.
+3. Ghi lệnh + exit code + số test.
+4. Ghi môi trường: FE/API/DB, viewport, tài khoản vai trò (không mật khẩu).
+5. Ghi rõ đã kiểm gì và **chưa** kiểm gì.
+6. Lưu log/ảnh dưới workspace; chỉ commit bằng chứng đã lọc PII.
+
+Xem [TESTING](TESTING.md) để biết chọn lớp kiểm chứng phù hợp.

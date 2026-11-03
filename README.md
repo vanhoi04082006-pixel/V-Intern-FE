@@ -1,60 +1,92 @@
-**Nghiệp vụ 28/10/2026:** [sáu kịch bản UI ba vai, lỗi tuyển dụng và gate local](docs/BUSINESS-ACCEPTANCE-20261028.md) · [skill audit Cloudflare](docs/SECURITY-AUDIT-WORKFLOW.md). BE 860 test; FE worktree local 676 test, gồm redesign đang giữ riêng. Có timeout audit đã hồi phục và hai lỗi build trước khi cache mới đạt. G7 chưa đóng mọi nhánh UI; chưa merge.
-
-**Nghiệp vụ 27/10/2026:** [kết quả ba vai, nhánh ngoại lệ và dịch vụ thật](docs/BUSINESS-ACCEPTANCE-20261027.md). 117 ca SQL/HTTP duy nhất đạt theo ma trận mới nhất; có một timeout ở lượt nhóm đầu, advisor chạy riêng 3/3 đạt, giữ nguyên 5 giây. Mentor Gemini thật và trace LangSmith mới đã kiểm. Redesign tạm dừng; không coi lượt này là nghiệm thu mọi trang hoặc merge PR.
-
-**Checkpoint 26/10/2026:** [nguồn kiểm chứng và việc còn mở](docs/ACCEPTANCE-CHECKPOINT-20261026.md). BE 859 / FE 660 unit tests; source và CI ghi riêng trong checkpoint. Hành trình QA thật đã hoàn thành 4/4 task, đánh giá 96,1, KPI 98,8, chứng nhận và vòng mời lại GitHub. Có cả bước UI/API; chưa nghiệm thu mọi nhánh hoặc redesign toàn bộ.
-
-**G6/T03 — quyền repository sau thay người:** [hướng dẫn trạng thái, đối chiếu và phục hồi](docs/REPOSITORY-ACCESS-RECOVERY.md). Đã kiểm QA, GitHub pending thật và đã kích hoạt cả hai DB native.
+<div align="center">
 
 # V-Intern Frontend
 
-**UI sổ tay — 26/10:** [nền dùng chung và asset](docs/design/NOTEBOOK-FOUNDATION-20261026.md) · [tab Thông báo ba vai](docs/design/NOTIFICATIONS-20261026.md) · [inventory và checklist toàn hệ thống](tasks/ui-route-asset-manifest.md). Source hiện có **82 page source: 8 public, 32 admin, 19 instructor, 23 intern**. Kết quả nền chung và Thông báo chỉ bao phủ các route mẫu đã ghi ở từng báo cáo; chưa nghiệm thu từng route. Checkpoint nghiệp vụ bên dưới giữ số liệu theo source riêng của nó.
+**Sổ tay hành trình thực tập** — giao diện Next.js cho sinh viên, giảng viên và quản trị viên.
 
-**G6 — thời hạn và thay thành viên:** [quy tắc và điểm phạt](docs/PARTICIPATION.md) · [hướng dẫn tư vấn, xem trước và phê duyệt](docs/REPLACEMENT.md) · [bằng chứng QA và phần còn lại](docs/reports/g6-replacement-evidence-20261025.json). Đã kích hoạt G6 trên cả hai DB native, giữ nguyên dữ liệu cũ.
+[![CI](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/workflows/ci.yml)
+[![Full-stack SQL 2019](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/workflows/phase7-fullstack.yml/badge.svg?branch=main)](https://github.com/vanhoi04082006-pixel/V-Intern-FE/actions/workflows/phase7-fullstack.yml)
+![Next.js](https://img.shields.io/badge/Next.js-16.4.2-000?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-149eca?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06b6d4?logo=tailwindcss)
 
-**G5 — GitHub:** [lời mời, quyền cộng tác và cách mời lại](docs/GITHUB-INVITATIONS.md) · [kết quả local và phụ thuộc live](docs/reports/g5-completion-20261025.md).
+[Quick start](#quick-start) · [Tài liệu](docs/README.md) · [Kiến trúc](docs/ARCHITECTURE.md) · [Route](docs/ROUTE-MAP.md) · [API contract](docs/API-CONTRACTS.md)
 
-**G4 — phòng chờ và hẹn lại:** [hướng dẫn sinh viên, giảng viên và người bảo trì](docs/SCHEDULED-INTERVIEWS.md) · [kiểm chứng và giới hạn](docs/reports/g4-completion-20261025.md).
+</div>
 
-**G3 — cổng CV và lịch hẹn:** [hướng dẫn ứng viên, giảng viên và người bảo trì](docs/CV-AND-INTERVIEW-SCHEDULING.md) · [nghiệm thu và giới hạn](docs/reports/g3-completion-20261024.md).
+---
 
-**G2 — thư viện bài nhỏ:** [hướng dẫn Admin, giảng viên và sinh viên](docs/MINI-PROJECTS.md) · [báo cáo nghiệm thu](docs/reports/g2-completion-20261024.md).
+## V-Intern là gì?
 
-Giao diện thực tập theo dự án dành cho Sinh viên, Giảng viên và Quản trị viên. Sinh viên phỏng vấn, nhận nhiệm vụ, nộp bài và đọc phản hồi. Giảng viên chuẩn bị phiên, hướng dẫn, đánh giá và báo cáo. Dữ liệu nghiệp vụ đến từ NestJS API.
+V-Intern mô phỏng một kỳ thực tập phần mềm có đầy đủ vòng đời: tuyển chọn, xếp lớp, giao dự án, làm việc theo Sprint, nộp bài qua GitHub, đánh giá, KPI, lương ảo và chứng nhận. Frontend là lớp trải nghiệm cho ba vai trò; **mọi quyết định nghiệp vụ, phân quyền và dữ liệu chuẩn đều nằm ở NestJS API**.
 
-## Bắt đầu từ tài liệu bàn giao
-
-**[Đọc bộ bàn giao FE](docs/HANDOVER.md)** — từ cách chạy local đến hành trình sử dụng, kiến trúc, thiết kế, lỗi thường gặp và bảo trì.
-
-Chuẩn bị bảo vệ: **[kịch bản ngắn](docs/DEMO-CHECKLIST.md)** · [hướng dẫn demo từng bước](docs/DEMO-GUIDE.md) · [nghiệm thu hai vai trò](docs/ROLEPLAY-ACCEPTANCE.md). Thông tin đăng nhập được bàn giao riêng.
-
-| Tài liệu | Trả lời câu hỏi |
+| Vai trò | Trải nghiệm chính |
 |---|---|
-| [Hướng dẫn bàn giao](docs/HANDOVER.md) | Người mới tiếp nhận nên làm gì, đọc gì và dùng hệ thống ra sao? |
-| [Bản đồ route](docs/ROUTE-MAP.md) | URL này nằm ở file nào, dùng component nào? |
-| [Kiến trúc](docs/ARCHITECTURE.md) | Guard, lifecycle, API client và component phối hợp thế nào? |
-| [API contracts](docs/API-CONTRACTS.md) | Frontend trao đổi với Backend theo hợp đồng nào? |
-| [Thiết kế UI](docs/UI-SYSTEM.md) | Dùng Aurora Glass và component chung như thế nào? |
-| [Kiểm thử](docs/TESTING.md) | Gate và các luồng hồi quy phải giữ là gì? |
-| [Kiểm chứng](docs/VERIFICATION.md) | Số liệu và ảnh được kiểm ở thời điểm nào? |
-| [Nhánh Git](docs/GIT-WORKFLOW.md) | Nhánh nào đã tích hợp, nhánh nào là lưu trữ? |
-| [Thư viện nghề nghiệp](docs/CAREER-ROLES.md) | Tạo nghề mới, cấu hình năng lực, mở tuyển và chuẩn bị câu hỏi ra sao? |
-| [Kho tri thức Agent](docs/KNOWLEDGE-LIBRARY.md) | Soạn Q&A nhiều đáp án, giữ nguồn, duyệt xuất bản và khôi phục lịch sử thế nào? |
-| [Bàn giao Backend](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feat/admin-repository-account/docs/HANDOVER.md) | Dữ liệu và quy tắc phía server hoạt động thế nào? |
+| **Sinh viên** | Ứng tuyển, phỏng vấn, chờ phân công, nhận task, nộp bài, hỏi AI Mentor, xem đánh giá/KPI/chứng nhận |
+| **Giảng viên** | Mở phiên, duyệt kế hoạch, quản lý Sprint/task, chấm bài, theo dõi hiệu suất, xuất báo cáo |
+| **Quản trị viên** | Quản lý người dùng, nghề nghiệp, câu hỏi, mẫu dự án, kho tri thức, cấu hình AI/GitHub, KPI và chứng nhận |
 
-## Công nghệ và phạm vi
+Thiết kế hiện tại là **Journey Notebook**: nền giấy kem, nét mực, băng dính washi, con dấu mộc và typography viết tay có kiểm soát. Chi tiết token và quy tắc sử dụng nằm trong [UI System](docs/UI-SYSTEM.md).
 
-Next.js 16.4.2, React 19, TypeScript, Tailwind CSS 4, Framer Motion và Lucide. Font đã đóng gói cục bộ. Aurora Glass áp dụng cho Sinh viên/Giảng viên và onboarding; trang chủ và Admin có phạm vi thiết kế riêng. Không thêm dữ liệu giả để làm đầy dashboard.
+## Kiến trúc trong 30 giây
 
-## Chạy trên workspace hiện tại
+```mermaid
+flowchart LR
+  B[Trình duyệt] --> N[Next.js App Router]
+  N --> G[WorkspaceGuard / InternEntry]
+  G --> S[Shell + component nghiệp vụ]
+  S --> A[lib/api: adapter + parser]
+  A --> C[auth/api-client: Bearer + refresh cookie]
+  C --> API[NestJS /api/v1]
+  API --> DB[(SQL Server 2019)]
+  API --> X[AI · GitHub · Grading runner]
+```
+
+- **Không có backend nghiệp vụ trong Next.js.** Route chỉ chọn layout/component; dữ liệu đi qua `lib/api` tới NestJS.
+- **Hai shell, một hệ thiết kế.** `InternShell` cho sinh viên, `ProductShell` cho giảng viên/admin; cả hai dùng chung token notebook.
+- **Guard theo vòng đời.** Sinh viên đã đậu nhưng chưa có assignment chỉ vào được màn chờ, thông báo, hồ sơ và GitHub. API vẫn kiểm tra quyền lần cuối.
+- **Adapter kiểm tra dữ liệu thật.** Response sai schema bị từ chối thay vì render như dữ liệu hợp lệ.
+- **Access token nằm trong bộ nhớ.** Refresh cookie là HttpOnly; không lưu token vào `localStorage`, URL hay BroadcastChannel.
+
+## Công nghệ
+
+| Lớp | Công nghệ |
+|---|---|
+| Framework | Next.js 16.4.2 (App Router), React 19.2.3 |
+| Ngôn ngữ | TypeScript 5, strict mode |
+| Giao diện | Tailwind CSS 4, CSS variables, Framer Motion, bộ icon notebook vẽ tay |
+| Dữ liệu | Fetch API, adapter/parser thủ công, `useResource` cho abort/error/reload |
+| Kiểm thử | Vitest + Testing Library (JSDOM), Playwright cho browser harness |
+| Chất lượng | ESLint, `tsc --noEmit`, `npm audit --omit=dev`, Next production build |
+
+## Quick start
+
+### Yêu cầu
+
+- Node.js **22+** và npm
+- NestJS API đang chạy (mặc định `http://localhost:8080/api/v1`)
+- SQL Server 2019 đã được API kết nối thành công
+
+### Chạy local
 
 ```powershell
-& .\scripts\Use-ProjectStorage.ps1
-# Chạy tại thư mục gốc repository Frontend
+# Tại thư mục gốc repository Frontend
+& .\scripts\Use-ProjectStorage.ps1   # đưa cache/temp vào .runtime của dự án
+Copy-Item .env.example .env          # chỉ khi chưa có .env
+npm ci
 npm run dev
 ```
 
-Lệnh dev mặc định dùng cổng 3001. Nếu bản local đang chạy tại đó, không mở thêm process đè cổng. Bản chính đang dùng `next start`; sau khi sửa source cần build thành công rồi restart đúng process:
+Mở **http://localhost:3001**. Kiểm tra API trước khi debug giao diện:
+
+```powershell
+Invoke-RestMethod http://localhost:8080/api/v1/health
+```
+
+`NEXT_PUBLIC_API_BASE_URL` phải chứa đầy đủ tiền tố `/api/v1`. Biến `NEXT_PUBLIC_*` được nhúng vào bundle lúc **build**, không phải lúc restart.
+
+### Chạy bản production trên máy bàn giao
 
 ```powershell
 & .\scripts\Use-ProjectStorage.ps1
@@ -62,11 +94,46 @@ npm run build
 & ..\manual-runtime\restart-owned-apps.ps1 -Frontend
 ```
 
-Mở [ứng dụng local](http://localhost:3001). API chính là `http://localhost:8080/api/v1`; Swagger tại `http://localhost:8080/api/docs`. `NEXT_PUBLIC_API_BASE_URL` được lấy khi build. Không đặt token/secret vào biến public.
+Không chạy hai process dev dùng chung thư mục `.next`. Nếu cổng 3001 đang bận, kiểm tra process sở hữu trước khi dừng.
 
-Máy mới: xem phần chạy local trong [HANDOVER](docs/HANDOVER.md), cài bằng `npm ci` theo lockfile và cấu hình môi trường riêng. Không ghi đè .env của máy đang chạy.
+## Lệnh thường dùng
 
-## Kiểm tra trước khi bàn giao
+| Lệnh | Tác dụng |
+|---|---|
+| `npm run dev` | Next dev server tại cổng 3001 |
+| `npm run build` | Build production |
+| `npm start` | Chạy bản build tại cổng 3001 |
+| `npm run lint` | ESLint toàn repo |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Vitest một lượt |
+| `npm run test:watch` | Vitest watch mode |
+
+Các harness trình duyệt/live nằm trong `scripts/*.mjs` và được gọi bởi workflow full-stack, không phải script npm mặc định. Xem [Testing](docs/TESTING.md).
+
+## Cấu trúc repository
+
+```text
+src/
+├─ app/                  # 80 route: public 8 · admin 31 · instructor 18 · intern 23
+├─ components/
+│  ├─ auth/              # đăng nhập, guard, quyền hiển thị
+│  ├─ intern/            # shell, dashboard, onboarding, bài làm
+│  ├─ instructor/        # adapter và thành phần giảng viên
+│  ├─ admin/             # console quản trị
+│  ├─ product/           # luồng nghiệp vụ dùng chung
+│  ├─ sessions/          # phiên, kế hoạch, Sprint, báo cáo
+│  ├─ workspace/         # notebook tokens, shell, chart, primitives
+│  └─ v-intern/          # landing page và icon notebook
+├─ lib/
+│  ├─ api/               # adapter theo domain + parser + useResource
+│  └─ auth/              # session, refresh, permission, cookie coordination
+├─ styles/               # token và CSS toàn cục
+└─ test/                 # setup Vitest
+docs/                    # tài liệu kỹ thuật và lịch sử
+scripts/                 # harness QA/live, kiểm tra hợp đồng
+```
+
+## Kiểm thử và chất lượng
 
 ```powershell
 & .\scripts\Use-ProjectStorage.ps1
@@ -77,12 +144,49 @@ npm run build
 git diff --check
 ```
 
-Kiểm browser riêng cho desktop/mobile, drawer, tab, filter, form/modal, Kanban và trạng thái chưa có dữ liệu. Không coi unit test là bằng chứng đầy đủ cho layout. Số test mới nhất và giới hạn nằm trong [VERIFICATION](docs/VERIFICATION.md).
+CI `verify` chạy lint → typecheck → test → audit dependency production → build trên mọi PR vào `main`. Workflow `sql2019` dựng SQL Server 2019, checkout đúng BE contract SHA và chạy bộ kiểm tra full-stack. **Không merge khi một trong hai gate đỏ.**
 
-## Quy tắc tiếp nhận
+Trạng thái gần nhất (02/11/2026): **117 file test / 672 test đạt**; lint, typecheck và build đạt trên `main`.
 
-- Source, công cụ, dependency, cache, log và bằng chứng của dự án lưu trong workspace.
-- Giữ database và ba tài khoản gốc; không seed/reset để chụp UI.
-- Backend là nơi quyết định quyền, điểm và điều kiện chuyển trạng thái.
-- Giữ working tree có sẵn, review từng nhóm thay đổi trước commit/merge.
-- Không đưa secret hoặc `manual-runtime/private` lên repository.
+## Tài liệu
+
+| Bắt đầu ở đâu | Nội dung |
+|---|---|
+| [Mục lục tài liệu](docs/README.md) | Toàn bộ tài liệu, chia theo nhu cầu đọc |
+| [Getting started](docs/GETTING-STARTED.md) | Cài đặt, cấu hình, chạy, xác nhận môi trường |
+| [Kiến trúc](docs/ARCHITECTURE.md) | Routing, shell, auth, data layer, lifecycle |
+| [Bản đồ route](docs/ROUTE-MAP.md) | 80 route và component tương ứng |
+| [API contract](docs/API-CONTRACTS.md) | Hợp đồng FE ↔ BE theo domain |
+| [UI System](docs/UI-SYSTEM.md) | Token, utility, icon, component, accessibility |
+| [Kiểm thử](docs/TESTING.md) | Unit, browser, live harness và CI |
+| [Bảo mật](docs/SECURITY.md) | Phiên, phân quyền, XSS, secret, audit |
+| [Đóng góp](docs/CONTRIBUTING.md) | Nhánh, commit, PR, quality gate |
+| [Bàn giao](docs/HANDOVER.md) | Checklist tiếp nhận và các giới hạn đã biết |
+| [Demo](docs/DEMO.md) | Kịch bản demo trước hội đồng |
+| [Kiểm chứng](docs/VERIFICATION.md) | Bằng chứng và phạm vi đã kiểm |
+
+### Tài liệu nghiệp vụ
+
+[Thư viện nghề nghiệp](docs/CAREER-ROLES.md) · [CV và lịch phỏng vấn](docs/CV-AND-INTERVIEW-SCHEDULING.md) · [Phòng chờ & hẹn lại](docs/SCHEDULED-INTERVIEWS.md) · [Khôi phục mật khẩu tạm](docs/TEMPORARY-CREDENTIAL-RECOVERY.md) · [Thư viện dự án nhỏ](docs/MINI-PROJECTS.md) · [Kho tri thức](docs/KNOWLEDGE-LIBRARY.md) · [Thời hạn & điểm phạt](docs/PARTICIPATION.md) · [Thay thành viên](docs/REPLACEMENT.md) · [GitHub invitations](docs/GITHUB-INVITATIONS.md) · [Khôi phục quyền repo](docs/REPOSITORY-ACCESS-RECOVERY.md)
+
+## Quy ước quan trọng
+
+- **API là nguồn sự thật.** Không suy đoán quyền, điểm, trạng thái hay lifecycle từ dữ liệu đã tải một phần.
+- **Không dữ liệu giả để lấp UI.** Loading, empty, lỗi và “chưa đo được” phải là các trạng thái khác nhau.
+- **Giữ accessibility.** Mọi hành động có accessible name; modal có focus trap, Escape và trả focus; tôn trọng `prefers-reduced-motion`.
+- **Không hạ gate.** Không skip/xóa test, không `@ts-ignore`, không `eslint-disable` để làm xanh.
+- **Không commit secret.** `.env`, token, mật khẩu và `manual-runtime/private` chỉ tồn tại trên máy.
+- **Tài nguyên trong workspace.** Dependency, cache, log và bằng chứng nằm dưới `E:\Projects\V-INTERN\.runtime`.
+
+## Trạng thái
+
+| Hạng mục | Giá trị |
+|---|---|
+| Nhánh chính | `main` |
+| Commit | `063c3d5` |
+| Route | 80 page source |
+| Test | 672 Vitest test |
+| API | NestJS `/api/v1`, Swagger `/api/docs` |
+| Thiết kế | Journey Notebook, dark mode “chalkboard night” |
+
+> Đây là repository nội bộ. Thông tin đăng nhập, khóa và cấu hình môi trường được bàn giao qua kênh riêng, không nằm trong README.

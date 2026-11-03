@@ -1,21 +1,151 @@
-# Kiểm thử frontend
+# Kiểm thử Frontend
 
-Kho tri thức K03: `scripts/knowledge-library-live.mjs` kiểm UI/Nest/SQL thật trên DB `VIntern_Phase715_*` dùng riêng, không intercept API. Bài kiểm tạo/publish Q&A, conflict, archive/restore, dry-run import và 24 viewport checks. [Số liệu và giới hạn](reports/knowledge-library-20261024.md). Workflow giữ đủ 14 gate cũ, bổ sung career và knowledge, ghim BE `bf3118693c782c145a87d4348212344396ce3526`.
+Mỗi lớp test trả lời một câu hỏi khác nhau. Không cộng số test thành một “điểm tin cậy” duy nhất.
 
-npm test dùng Vitest/JSDOM; npm run typecheck/lint/build là gate riêng. Test hồi quy gồm passed-unassigned entry/navigation, chat recovery/pending, future prompt protection qua adapter, Kanban reload và rubric AI sau tải dữ liệu. Không skip hoặc xóa assertion để làm xanh.
+## 1. Bốn lớp kiểm chứng
 
-Browser dùng Chrome/Playwright với Nest/SQL thật. Kiểm tra login, refresh qua reload, route đang xem, heading thật, request failures, mobile overflow, Escape và desktop resize. Ảnh chụp trang login không được tính là bằng chứng route private đã kiểm tra. Dùng client navigation cho nhiều route; hard reload quá nhiều có thể đạt auth rate limit.
+| Lớp | Chứng minh được | Chưa chứng minh được |
+|---|---|---|
+| **Unit (Vitest + JSDOM)** | Logic adapter/parser, auth, permission, component state, lỗi biên | Layout thật, API/SQL thật, provider thật |
+| **Browser (Playwright)** | Route, layout, responsive, focus, modal, navigation | Mọi nhánh backend nếu chưa kích hoạt |
+| **Live harness** | FE + Nest + SQL thật, luồng nghiệp vụ có mutation | Toàn bộ mọi route/framework |
+| **Full-stack gate** | Contract FE ↔ BE trên SQL Server 2019 | Production, mọi dữ liệu thật |
 
-Database nghiệm thu phải riêng; không thêm data fixture vào ba tài khoản trắng của runtime. Provider deterministic chỉ trong harness test và phải xử lý đúng feature/schema. Provider thật có thể503/invalid JSON; ghi lại trạng thái thất bại và retry thay vì bịa điểm.
+## 2. Lệnh cơ bản
 
-Workflow full-stack ghim COMPATIBLE_BE_SHA bằng commit BE hiện hành đã có trên remote. Harness test-only xử lý next/clarify/follow-up/evaluation theo đúng schema, evaluation có sáu chiều; fixture chỉ trả lời câu hiện tại qua API, không lấy trước danh sách câu hỏi. Node contract tests kiểm tra cả thiếu evidence và follow-up. Giữ toàn bộ gate role/ownership, publish/idempotency, outcomes và browser. Không xem run dùng pin khác là bằng chứng cho thay đổi mới.
+```powershell
+& .\scripts\Use-ProjectStorage.ps1
+npm run lint
+npm run typecheck
+npm test
+npm run build
+git diff --check
+```
 
-Luồng nộp code dùng fixture ở ranh giới GitHub HTTP, chỉ GET repository/PR/diff/blob/checks đã đăng ký trong database VIntern_Phase715_ riêng. Khóa mã hóa tạm sinh trong từng job; transport từ chối credential thật, mutation và database ngoài test. Auth, scope, SHA, chấm AI và quyết định giảng viên vẫn đi qua domain service thật. Không giả lập execution pass: AI luôn inconclusive, duyệt cần lý do thủ công được audit. Fixture legacy chỉ kiểm tra hợp đồng nộp bài cũ, không được xem là nghiệm thu GitHub.
+| Lệnh | Phạm vi |
+|---|---|
+| `npm test` | Vitest một lượt, toàn bộ `*.test.ts(x)` |
+| `npm run test:watch` | Vitest watch mode khi đang sửa |
+| `node --test scripts/__tests__/*.test.mjs` | Contract test cho harness Node (CI full-stack chạy) |
+| `npm run build` | Next production build; bắt lỗi server/client boundary |
 
-CI chạy thêm audit dependency production, chặn high/critical. Audit toàn cây dev vẫn được review riêng: [finding chưa có bản vá và reachability](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/DEPENDENCIES.md). Gate này không tuyên bố full audit sạch.
+Chạy một file cụ thể:
 
-Geist/Geist Mono/Caveat được đóng gói trong source, dùng next/font/local để build không tải font từ Google. [Nguồn, checksum và giấy phép](../src/app/fonts/README.md) được giữ cùng assets; khi đổi font phải kiểm tra build và hiển thị tiếng Việt/mobile. Không retry build ngẫu nhiên để che lỗi xử lý URL font upstream.
+```powershell
+npx vitest run src/lib/api/__tests__/client.test.ts
+npx vitest run src/components/intern/__tests__/student-performance-next-step.test.tsx
+```
 
-Signup phải gọi API thật, gửi consent rõ ràng, không tự gán role hoặc đăng nhập khi chưa có session. Kiểm tra409/429/đăng ký bị đóng, mật khẩu theo giới hạn UTF8 của bcrypt. Form đăng nhập ghi Email theo hợp đồng API. Các case mới bao gồm lịch sử own outcomes sau placement, report filter/snapshot, blueprint/admin version conflict và chi tiết trusted runner có timing/score/checks.
+## 3. Unit test
 
-Kết quả hiện tại: [kiểm chứng frontend](VERIFICATION.md) và [kiểm chứng toàn hệ thống](https://github.com/vanhoi04082006-pixel/V-Intern-BE/blob/feature/unified-learning-experience/docs/VERIFICATION.md); báo cáo archive chỉ dùng truy vết. Viewport đã kiểm tra gồm1440/820/390px, với backend/SQL thật và dữ liệu nghiệm thu riêng.
+- Framework: **Vitest**, môi trường JSDOM, Testing Library.
+- Setup dùng chung nằm trong `src/test/`.
+- Test đặt cạnh code (`__tests__`) theo domain.
+- Trạng thái hiện tại (02/11/2026): **117 file / 672 test đạt**.
+
+Nhóm hồi quy quan trọng:
+
+| Nhóm | Phải giữ |
+|---|---|
+| Auth | Đăng nhập, refresh single-flight, logout, cookie coordination, redirect theo vai |
+| Permission | `Can`, route guard, ẩn/hiện hành động, không nâng quyền ở client |
+| Adapter | Parse đúng, response cũ, field thiếu/sai kiểu, nullable |
+| Lifecycle | Passed-unassigned, chờ phân công, có lịch sử assignment, outcomes sau placement |
+| Recruitment | Khôi phục hội thoại, câu hiện tại, follow-up, hết lượt, retry |
+| Work | Kanban reload/revision, rubric AI sau khi tải, nộp/rút bài |
+| Outcomes | KPI/lương/chứng nhận, report filter/snapshot, trusted runner có timing/score/checks |
+| UI state | Loading/error/empty, form giữ draft, modal focus/Escape |
+
+Không skip, xóa assertion hoặc hạ ngưỡng để làm xanh. Khi UI thêm nơi hiển thị cùng dữ liệu, scope selector vào đúng vùng thay vì giảm assertion nghiệp vụ.
+
+## 4. Browser test
+
+Browser test dùng Chrome/Playwright với **Nest + SQL thật**, không intercept API nghiệp vụ.
+
+Checklist tối thiểu:
+
+1. Đăng nhập đúng vai trò; refresh qua reload.
+2. Mở route private bằng **client navigation**; hard reload quá nhiều có thể chạm rate limit auth.
+3. Heading và dữ liệu thật, không chỉ ảnh trang login.
+4. Request failures/console errors; phân biệt lỗi mạng với lỗi UI.
+5. Responsive 1440/1280/1024/768/390px; kiểm tra tràn ngang.
+6. Keyboard: tab, focus-visible, Escape, modal trả focus.
+7. Loading/error/empty; filter không có kết quả; form đang gửi.
+8. Kanban: kéo thả, phụ thuộc, revision, refresh.
+
+> Ảnh chụp trang login **không** phải bằng chứng route private đã kiểm tra. Một suite xanh **không** chứng minh mobile đúng.
+
+## 5. Live harness
+
+Các script trong `scripts/` chạy trên môi trường local/QA riêng:
+
+| Nhóm | Script tiêu biểu | Mục đích |
+|---|---|---|
+| Tuyển dụng | `g3-applications-live.mjs`, `g4-scheduled-interviews-live.mjs` | CV, lịch, phòng chờ, hẹn lại |
+| Nghề nghiệp | `career-roles-live.mjs` | Catalog, phiên bản, câu hỏi |
+| Dự án nhỏ | `mini-project-library-live.mjs` | Starter, revision, assessment |
+| Kho tri thức | `knowledge-library-live.mjs` | Draft/publish/archive/import, 24 viewport |
+| GitHub | `g5-invitations-live.mjs`, `code-review-settlement.mjs` | Lời mời, quyền, review/settlement |
+| Nghiệp vụ đầy đủ | `project-first-*.mjs`, `phase7-*.mjs` | Luồng FE + Nest + SQL, UAT, audit runtime |
+| Kiểm tra hợp đồng | `scripts/__tests__/*.test.mjs` | Schema/fixture của harness |
+
+Nguyên tắc:
+
+- Dùng database QA/E2E **riêng**, không thêm fixture vào ba tài khoản trắng hoặc DB chính.
+- Provider deterministic chỉ trong harness; phải xử lý đúng feature/schema.
+- Provider thật có thể 503/invalid JSON; ghi lại thất bại và retry, không bịa điểm.
+- Không coi một lần chạy harness là nghiệm thu mọi route.
+
+## 6. CI và quality gate
+
+### `verify` — mọi PR vào `main`
+
+```text
+npm ci → lint → typecheck → test → npm audit --omit=dev --audit-level=high → build
+```
+
+### `sql2019` — full-stack gate
+
+- Chạy trên `ubuntu-24.04` (pin vì Playwright chưa có build cho 26.04).
+- Checkout FE hiện tại + BE đúng `COMPATIBLE_BE_SHA` (xem `phase7-fullstack.yml`).
+- Dựng SQL Server 2019, chạy migration/schema audit, seed idempotent, boot API thật.
+- Chạy unit + contract harness + browser/live flow + audit runtime.
+- Artifact chỉ chứa bằng chứng của đúng run; xóa `phase7-evidence` trước khi chạy.
+
+**Quy tắc merge:** cả `verify` và `sql2019` phải xanh. Không merge khi một gate đỏ, không “retry cho xanh” khi chưa hiểu nguyên nhân.
+
+Khi BE đổi contract, cập nhật `COMPATIBLE_BE_SHA` bằng một PR compatibility riêng, có review; không sửa pin tùy tiện trong PR feature.
+
+## 7. Dữ liệu và môi trường test
+
+| Môi trường | FE | API | Database | Dùng cho |
+|---|---|---|---|---|
+| Chính | 3001 | 8080 | `VIntern_M2_BROWSER` | Demo/QA chính |
+| QA | 3004 | 8081 | `VIntern_Test_Learning_20261014` | Luồng có mutation |
+| E2E | CI | CI | `VIntern_Phase715_*` | Full-stack gate |
+
+- Không reset/seed DB chính để chụp giao diện.
+- Không dùng mật khẩu thật trong script/ảnh/log.
+- Không sửa trạng thái DB thủ công để ép một test đi qua.
+- Giữ nguyên ba tài khoản trắng gốc.
+
+## 8. Ghi bằng chứng
+
+Mỗi lần kiểm chứng ghi:
+
+- Ngày/giờ và múi giờ.
+- Branch, commit, dirty state.
+- Lệnh đã chạy, exit code, số test.
+- Môi trường (FE/API/DB), viewport, tài khoản vai trò (không ghi mật khẩu).
+- Phần đã kiểm và **phần chưa kiểm**.
+
+Lưu log/ảnh dưới workspace (`.runtime/...` hoặc `docs/reports/` nếu là bằng chứng được commit). Không sửa log cũ để trông như mới.
+
+## 9. Giới hạn đã biết
+
+- Ma trận responsive không thay audit WCAG đầy đủ.
+- Chưa có production deployment trong phạm vi hiện tại.
+- Một số luồng phụ thuộc GitHub/AI/provider thật; harness deterministic không chứng minh provider thật.
+- Ảnh demo có thể lệch UI hiện tại sau các đợt redesign; luôn kiểm lại route trước khi dùng ảnh cũ.
+
+Xem [VERIFICATION](VERIFICATION.md) để biết mốc mới nhất và nguồn bằng chứng.

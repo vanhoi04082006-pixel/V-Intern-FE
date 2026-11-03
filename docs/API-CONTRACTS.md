@@ -1,51 +1,179 @@
-# API và lifecycle frontend
+# API và lifecycle Frontend
 
-> Bộ bàn giao theo lộ trình đọc: [HANDOVER](HANDOVER.md). Trang này là chương tra cứu chuyên sâu; kết quả chạy thực tế xem [VERIFICATION](VERIFICATION.md).
+Tài liệu này mô tả **hợp đồng mà frontend phụ thuộc**. Nguồn sự thật cuối cùng vẫn là controller/DTO/service của Backend; khi hai bên lệch, sửa cùng lúc và thêm test.
 
+## 1. Kết nối
 
-Admin chọn tài khoản tạo repo chung qua `POST /github/repository-account` (không nhận mật khẩu/token trong body; dùng chính GitHub đã liên kết của Admin). Yêu cầu `settings.update` và vai trò Admin; GET cùng đường dẫn yêu cầu `settings.read`, trả configured/connected/login/ready. OAuth của Admin xin read:user public_repo, callback về /admin/settings; giảng viên/sinh viên xin read:user để xác minh danh tính và nhận lời mời. Start tự tạo repo; worker mỗi60giây xử lý tối đa3phiên và5lời mời/phiên. Nút đồng bộ của chủ trì dùng credential owner đã ghi, không yêu cầu quyền tạo repo từ giảng viên. Repo cũ giữ owner/URL; scope không đủ hoặc danh tính đổi phải báo lỗi. GitHub gửi lời mời/email qua tài khoản numeric ID đã liên kết; không đoán username từ email ứng dụng.
-
-Task detail giữ tên/code sprint đã validate và ưu tiên tiếng Việt. `/tasks/:id/spec` phục vụ hiển thị dependency status; `/tasks/:id/spec/source` xuất raw snapshot để operator seal runner, không dùng thay display API. Notification chỉ chấp nhận route nội bộ đúng vai trò, giữ nguyên task ID kể cả GUID viết hoa; mark-read không đổi trạng thái nghiệp vụ. AI review lưu kết luận gốc, UI ghép thêm trạng thái bài nộp để không hiện chờ duyệt sau quyết định cuối.
-
-Task list cung cấp metadata Sprint và `repository: {status,fullName}|null` của đúng phiên. Kanban dùng dữ liệu đã hydrate của trang, hiển thị Sprint/tiến độ/trạng thái repository mà không gọi task detail hoặc GitHub cho từng thẻ. Parser chỉ nhận `provisioning/ready/failed`; trạng thái không hợp lệ bị từ chối. Response cũ thiếu trường này vẫn đọc được.
-
-Danh sách phiên gửi `sortBy=startDate|endDate|name|progress` và `sortDirection=asc|desc`; đổi sắp xếp/trạng thái/tìm kiếm trở về trang đầu. Backend tìm cả dự án và sắp xếp trước phân trang. UI đọc `currentSprint` và `alerts` từ API; planned không được gọi là đang chạy, cảnh báo chỉ hiện khi có dữ liệu thật. Response cũ không có các trường bổ sung vẫn đọc được.
-
-Chi tiết phiên dùng `/sessions/:id/work` cho từng trang task và `/sessions/:id/timeline` cho lịch sử theo target. Role lấy từ assignment của phiên. Task có bộ lọc trạng thái/ưu tiên/người nhận và nút lọc theo từng Sprint; nội dung bài nộp giữ SHA/PR và tách đề xuất AI khỏi điểm/quyết định giảng viên. Link source chỉ mở HTTPS GitHub hợp lệ. Mục tiêu/đầu ra trong snapshot đọc cả cấu trúc object và array. Hiệu suất và báo cáo nhúng chỉ tải khi mở, khóa project/session của trang và giữ permission gate; không thay thế kiểm tra quyền backend. Không tự gọi provider, tạo repo hay sửa kết quả khi xem phiên.
-
-Base lấy NEXT_PUBLIC_API_BASE_URL gồm /api/v1. Mọi request dùng credentials:include và Bearer access token khi cần. Refresh cookie HttpOnly; access token ở memory. Adapter kiểm tra field/type/nullable; response sai không render như dữ liệu hợp lệ.
-
-| Nhóm adapter | Hành vi |
+| Thành phần | Giá trị |
 |---|---|
-| workspace/recruitment | Lifecycle, profile, own session (kể cả polling trạng thái), conversation next/clarify, answer, submit/retry |
-| evaluations/ai-generations | Gợi ý AI cho đánh giá: sinh, lịch sử và chi tiết từng gợi ý; kế hoạch sprint có bản nháp xem trước rồi mới confirm |
-| templates/sessions | Library/detail/create run, public and pinned private assessments, eligible members, Start, plan history/publish |
-| work/submissions | Own tasks/specs/comments/history, nộp/rút bài, hoàn thành phân công, báo cáo hoàn thành sprint, spec nguồn (raw, hiển thị kèm display API), AI review và rubric cuối |
-| github | Trạng thái kết nối, authorize redirect, repo/provision/invitation, webhook setup và activity phân trang |
-| mentor | Own conversation/history, selected own taskId |
-| reports/performance | Scope quản lý, phân trang, PDF/XLSX |
-| finance (KPI/salary/certificates) | Kỳ KPI lifecycle (draft/open/calculate/finalize) chạy thẳng từ console kèm kết quả và provenance; sinh lương ảo từ kỳ đã chốt, điều chỉnh sổ, số dư theo user; chứng nhận issue/revoke/PDF với lý do 409 có cấu trúc |
-| projects | Phiên chạy theo dự án cho trang chi tiết; nhận dự án thư viện chưa có mentor (409 khi đã có người nhận) |
-| knowledge-runs | Tạo/poll/cancel/resume run của knowledge agent (requestId idempotent) |
-| notifications | Danh sách/đọc/tùy chọn + unread-count cho badge topbar (60s, fails soft) |
-| burndown/replacements | Burndown sprint dựng từ sự kiện trạng thái; polling trạng thái lệnh thay thế sau approve |
+| Base URL | `NEXT_PUBLIC_API_BASE_URL`, ví dụ `http://localhost:8080/api/v1` |
+| Định dạng | JSON |
+| Credentials | `credentials: "include"` cho mọi request cần cookie |
+| Access token | Header `Authorization: Bearer <token>` khi đã đăng nhập |
+| Refresh | Cookie HttpOnly do BE quản lý; client không đọc token này |
+| Swagger | `GET /api/docs` trên đúng process API đang chạy |
 
-Tài liệu chấm riêng của template chỉ tải khi người có `templates.assessment.read` mở mục tương ứng. `/project-templates/:id/revisions/:version/assessment` đọc theo revision; `/projects/:id/template-assessment` đọc theo project đã chọn, trả `{ version, assessment }` theo version đã ghim và có thể trả `assessment: null`. UI không thay bằng tài liệu của version khác; backend tiếp tục kiểm tra quyền truy cập project.
+Base URL **phải** chứa tiền tố `/api/v1`. Adapter không tự ghép thêm version.
 
-Lỗi 401 xóa phiên và yêu cầu đăng nhập;403 từ chối quyền;409 reload dữ liệu và cho xử lý xung đột;429/5xx hiển thị retry. Refresh bị throttled/transport error không giả thành logout; cookie invalid/revoked vẫn fail closed.
+## 2. Quy tắc parse response
 
-Sinh viên đã passed nhưng chưa assignment chỉ dùng route chờ, notifications, profile và github. requireAssignment là gate trước mount, không phải bảo mật duy nhất: API BE vẫn xác thực sở hữu. Sau assignment phải lấy workspace mới; không tự đặt active trong local state.
+1. Transport trả `unknown`.
+2. Adapter kiểm cấu trúc, kiểu, nullable và enum.
+3. Chỉ dữ liệu hợp lệ mới được trả về component.
+4. Field mới optional được giữ tương thích; field bắt buộc thiếu → lỗi contract.
+5. Không dùng `as any`, không biến lỗi thành mảng rỗng, không điền số đo giả.
 
-Ngoại lệ lịch sử có căn cứ: workspace trả hasAssignmentHistory từ EXISTS assignment của chính sinh viên. Khi không còn active nhưng đã có lịch sử, các trang own evaluations/performance/KPI/salary/certificates và route chi tiết vẫn đọc được. Task/sprint/project/Mentor/recommendations không mount. Người chưa từng được phân công giữ waiting gọn; các API own vẫn kiểm tra principal, flag không cấp quyền backend. Chứng nhận hiển thị project/session/completedAt từ snapshot; verify công khai không trả dữ liệu nội bộ, revoked ẩn thông tin người nhận.
+Các nhóm adapter chính:
 
-Performance directory dùng `items,total,page,pageSize` (10 mặc định), xếp hạng/tìm kiếm ở server. Bộ chọn evaluation cũng phân trang. Student detail lấy `/performance/interns/:id/detail` với scope, task page và trend sáu tháng UTC từ history. Report schema2 đọc thêm task/sprint/review/timeline và cảnh báo có căn cứ; parser giữ tương thích snapshot cũ. Filter tạo report có sprintId/studentId, reset khi đổi project/session; file xuất phản ánh snapshot, không sửa số liệu hiện tại.
+| Nhóm | File tiêu biểu | Hành vi |
+|---|---|---|
+| Workspace/recruitment | `workspace.ts`, `recruitment.ts` | Lifecycle, profile, own session, conversation, answer, submit/retry |
+| Sessions/templates | `sessions.ts`, `templates.ts`, `planning.ts` | Library/detail, tạo run, eligible members, Start, plan draft/publish |
+| Work/submissions | `work.ts`, `submissions.ts` | Task/spec/comment/history, nộp/rút bài, rubric, AI review |
+| GitHub | `github.ts`, `repository-access.ts` | Kết nối, authorize, repo/provision/invitation, webhook, activity |
+| Evaluation/AI | `outcomes.ts`, `business-agents.ts` | Gợi ý chấm, sinh nội dung, trạng thái job |
+| Finance | `finance.ts` | KPI lifecycle, lương ảo, ledger, chứng nhận, PDF |
+| Reports/performance | `reports.ts`, `student-detail.ts` | Scope quản lý, phân trang, PDF/XLSX |
+| Mentor | `mentor.ts` | Conversation/history, task được chọn |
+| Notifications | `management.ts` | Danh sách/đọc/tùy chọn, unread count (poll 60s, fails soft) |
+| Projects/knowledge | `projects.ts`, `knowledge*.ts` | Phiên theo dự án, knowledge run, tài liệu chấm |
 
-Admin có route questions/ai/templates/sessions/performance/reports, dùng cùng API đã kiểm tra quyền. Template editor giữ definition đầy đủ, gửi expectedVersion; archive/restore giữ snapshot. Link drill-down lấy basePath của workspace. ErrorState chỉ hiện details DTO đã giới hạn cho VALIDATION_ERROR400/422; không hiện chi tiết lỗi server.
+## 3. Lỗi và trạng thái
 
-API không trả đáp án mẫu/rubric tuyển dụng. Điểm AI code review là đề xuất, kèm evidence/limitations; task Done cần quyết định đã lưu từ BE. UI không gọi merge PR hoặc nhận trường passed từ model làm authority.
+```json
+{
+  "statusCode": 409,
+  "code": "TASK_DEPENDENCIES_PENDING",
+  "message": "Thông điệp mô tả điều kiện chưa đạt",
+  "traceId": "tham-chiếu-tra-log",
+  "details": { "blockedBy": [] }
+}
+```
 
-Evidence trustedTests mới có executionTimeMs, score và checks tên/kết quả/log do runner ký và BE kiểm tra. UI hiển thị thời gian, điểm test và từng tiêu chí đạt/chưa đạt cạnh kết luận AI. Bản ghi cũ không có nhóm chi tiết vẫn parse được, không tự điền số đo.
+| HTTP | UI xử lý |
+|---|---|
+| `400` / `422` | Hiển thị lỗi validation theo field; chỉ show `details` DTO đã giới hạn |
+| `401` | Xóa phiên, về login; không retry vô hạn |
+| `403` | Từ chối quyền; giữ ngữ cảnh, không tự nâng quyền |
+| `404` | Không tìm thấy trong scope; không kết luận dữ liệu toàn hệ thống không tồn tại |
+| `409` | Reload dữ liệu, hiển thị xung đột/điều kiện chưa đạt |
+| `429` | Thông báo chờ; không retry dồn dập |
+| `5xx` | Lỗi tạm thời; cho retry có kiểm soát |
 
-Conversation currentQuestion.kind là main hoặc follow_up. Câu phụ lưu qua PUT /recruitment/me/interviews/:id/follow-ups/:questionId; câu chính tiếp tục dùng /answers. Gửi xong tải lại conversation/next, không tự tăng chỉ số lượt. GET /recruitment/me/interviews phân trang lịch sử kết quả của principal. Điểm tiếng Anh riêng có thể null ở kết quả cũ.
+`ErrorState` không hiển thị chi tiết lỗi server ngoài DTO đã giới hạn. Không gom mọi lỗi thành “thao tác thất bại”.
 
-Planning giữ key ổn định, dependsOn, parentKey, expectedOutput, estimatedHours, skillTags, complexity và milestones khi sửa/chuyển task. Khi publish, backend ánh xạ key sang UUID và xác nhận lại quan hệ/deadline. Task spec trả danh sách phụ thuộc đã được scope theo project, có code/title/status để trình bày. Không tự suy Done hoặc bỏ chặn khi chỉ thay đổi UI.
+## 4. Pagination, sort, filter
+
+- Nhiều collection dùng `items`, `total`, `page`, `pageSize` (mặc định 10) hoặc `data/meta` tùy endpoint. **Đọc schema trước khi unwrap.**
+- Sort/filter chạy ở server trước pagination cho các read model quan trọng.
+- Đổi sort/filter/trạng thái/tìm kiếm → về trang đầu.
+- Session list nhận `sortBy=startDate|endDate|name|progress` và `sortDirection=asc|desc`.
+- Không lọc một trang đã tải rồi coi là toàn bộ dữ liệu.
+
+## 5. Lifecycle và phân quyền hiển thị
+
+- `WorkspaceGuard` kiểm tra đăng nhập + vai trò của nhánh.
+- `InternEntry` kiểm tra lifecycle trước khi mount nội dung học tập.
+- `Can`/permission chỉ quyết định **hiển thị**. BE vẫn kiểm tra permission + ownership trên từng bản ghi.
+- Sinh viên dùng API `own` theo principal; không gửi `internId` để đọc bài người khác.
+- Giảng viên có `tasks.view` vẫn chỉ thấy task trong project/session được giao.
+
+## 6. Hợp đồng theo domain
+
+### 6.1 Tuyển dụng và onboarding
+
+| Luồng | Endpoint / quy tắc |
+|---|---|
+| Bắt đầu / tiếp tục | `recruitment/me`, session hiện tại, profile |
+| Câu hỏi | `currentQuestion.kind = main | follow_up`; chỉ hiển thị đúng một câu hiện tại |
+| Trả lời chính | `POST .../answers` |
+| Câu phụ | `PUT /recruitment/me/interviews/:id/follow-ups/:questionId` |
+| Làm mới hội thoại | Tải lại `conversation/next`; không tự tăng số lượt |
+| Lịch sử | `GET /recruitment/me/interviews` (phân trang) |
+| Kết quả | Điểm, role đề xuất, lý do; điểm tiếng Anh có thể `null` ở bản cũ |
+| Retry | Chỉ khi còn lượt; tổng tối đa 3 lượt, không cộng dồn khi đổi role |
+
+Server giữ thời gian và thứ tự. UI dùng `remainingSeconds` từ server và interval địa phương chỉ để trình bày.
+
+### 6.2 Phiên, dự án, kế hoạch
+
+| Luồng | Hợp đồng |
+|---|---|
+| Danh sách phiên | `currentSprint`, `alerts`; planned không gọi là “đang chạy” |
+| Chi tiết phiên | `/sessions/:id/work`, `/sessions/:id/timeline` theo target |
+| Task list | Metadata Sprint + `repository: {status, fullName} | null` của đúng phiên |
+| Kanban | Dùng dữ liệu hydrate của trang; không gọi task detail/GitHub cho từng thẻ |
+| Trạng thái repo | Chỉ `provisioning/ready/failed`; response cũ thiếu field vẫn đọc được |
+| Plan | Draft AI → giảng viên sửa → confirm/publish; key ổn định, `dependsOn`, `parentKey`, milestone |
+| Publish | BE ánh xạ key → UUID và xác nhận lại quan hệ/deadline |
+| Task spec | `/tasks/:id/spec` cho dependency status; `/tasks/:id/spec/source` là raw snapshot cho runner |
+
+Không tự suy task Done hoặc bỏ chặn khi chỉ đổi UI.
+
+### 6.3 Bài làm, nộp bài, chấm
+
+| Luồng | Hợp đồng |
+|---|---|
+| Task detail | Giữ tên/code Sprint đã validate; ưu tiên tiếng Việt |
+| Nộp bài | Giữ PR URL + commit SHA; UI hiển thị SHA/PR đã lưu |
+| Rút/sửa | Theo trạng thái và quyền; không tạo bản ghi mới ngoài ý định |
+| AI review | Kết luận gốc + evidence/limitations; UI ghép trạng thái bài nộp |
+| Rubric cuối | Chỉ đọc sau khi giảng viên quyết định; AI không phải authority |
+| Trusted tests | `executionTimeMs`, `score`, `checks` tên/kết quả/log do runner ký |
+| Bản cũ | Thiếu nhóm chi tiết vẫn parse; không tự điền số đo |
+
+Link source chỉ mở HTTPS GitHub hợp lệ. UI không gọi merge PR hoặc nhận `passed` từ model làm kết quả cuối.
+
+### 6.4 Đánh giá, hiệu suất, KPI, chứng nhận
+
+| Luồng | Hợp đồng |
+|---|---|
+| Evaluation | Kỳ, tiêu chí, trạng thái draft/submitted/finalized; quyền chốt ở BE |
+| Performance | `items,total,page,pageSize`; xếp hạng/tìm kiếm ở server |
+| Student detail | `/performance/interns/:id/detail` với scope, task page, trend 6 tháng UTC |
+| Report | Schema 2 đọc thêm task/sprint/review/timeline; parser tương thích snapshot cũ |
+| KPI | Lifecycle draft/open/calculate/finalize; kết quả + provenance |
+| Salary | Sinh từ kỳ đã chốt; điều chỉnh ledger; số dư theo user |
+| Certificate | Issue/revoke/PDF; lý do 409 có cấu trúc; verify công khai không trả dữ liệu nội bộ |
+| PDF/XLSX | File phản ánh snapshot tại thời điểm tạo, không sửa số liệu hiện tại |
+
+`0` và “chưa đo được” là hai trạng thái khác nhau. Không thêm đường xu hướng khi thiếu mẫu số.
+
+### 6.5 GitHub
+
+| Luồng | Hợp đồng |
+|---|---|
+| Tài khoản tạo repo | `POST /github/repository-account`; không nhận password/token trong body |
+| Đọc trạng thái | `GET /github/repository-account`; trả configured/connected/login/ready |
+| Quyền | Yêu cầu `settings.update` + Admin; GET yêu cầu `settings.read` |
+| OAuth Admin | `read:user public_repo`; callback về `/admin/settings` |
+| OAuth GV/SV | `read:user` để xác minh danh tính và nhận lời mời |
+| Tạo repo | Start tự tạo; worker xử lý tối đa 3 phiên và 5 lời mời/phiên mỗi 60 giây |
+| Đồng bộ | Chủ trì dùng credential owner đã ghi; không yêu cầu quyền tạo repo từ giảng viên |
+| Danh tính | Ghép theo GitHub numeric ID; không đoán username từ email ứng dụng |
+| Lỗi | Scope thiếu/đổi danh tính → báo lỗi rõ; không âm thầm đổi owner |
+
+### 6.6 Tài liệu chấm và kho tri thức
+
+- `/project-templates/:id/revisions/:version/assessment` đọc theo revision.
+- `/projects/:id/template-assessment` trả `{ version, assessment }` theo version đã ghim; có thể `assessment: null`.
+- UI không thay bằng tài liệu của version khác; BE vẫn kiểm tra quyền project.
+- Knowledge run dùng `requestId` idempotent; poll/cancel/resume theo trạng thái job.
+
+## 7. Version và idempotency
+
+| Cơ chế | Cách dùng |
+|---|---|
+| `expectedVersion` | Gửi khi sửa template/plan/task; 409 → tải lại và so sánh |
+| `requestId` | Giữ ổn định cho một ý định; bấm lại sau mất mạng không tạo bản ghi mới |
+| Revision | Kanban/task list dùng để đồng bộ nhiều cột |
+| Polling | Chỉ cho job/trạng thái provisioning; dừng khi terminal state |
+
+## 8. Checklist khi đổi contract
+
+1. Sửa DTO/controller/service ở BE và OpenAPI.
+2. Cập nhật adapter/parser FE + kiểu domain.
+3. Thêm test cho response hợp lệ, response cũ và response sai schema.
+4. Kiểm tra loading/error/empty và quyền hiển thị.
+5. Cập nhật tài liệu này và `docs/api/SCHEMAS.md` của BE nếu field đổi.
+6. Chạy `npm run lint`, `typecheck`, `test`, `build` và gate full-stack nếu chạm contract.
