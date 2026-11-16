@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { SessionSetup, assessTeam } from "../session-setup";
 import { clearSession, setSession } from "@/lib/auth/session";
+import * as academic from "@/lib/api/academic";
+import { ApiError } from "@/lib/auth/api-client";
 const instructor = {
   id: "instructor1",
   displayName: "Instructor",
@@ -18,7 +20,7 @@ const instructor = {
   ],
 };
 beforeEach(() => setSession("test-token", instructor));
-afterEach(clearSession);
+afterEach(() => { clearSession(); vi.restoreAllMocks(); });
 
 const session = {
   code: "SS-1",
@@ -146,6 +148,7 @@ describe("SessionSetup (M3)", () => {
     expect(await screen.findByText(/chưa gắn dự án/i)).toBeInTheDocument();
   });
   it("keeps action notices across parent reloads (no unmount on refresh)", async () => {
+    vi.spyOn(academic, "transitionSession").mockRejectedValue(new ApiError(409, "SESSION_TEAM_INCOMPLETE", "Incomplete team"));
     const alice = {
       userId: "u1",
       displayName: "SV A",
@@ -195,6 +198,8 @@ describe("SessionSetup (M3)", () => {
       />,
     );
     expect(await screen.findByText(/Thiết lập: K48/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Bắt đầu phiên" }));
+    await screen.findByText("Chưa đủ thành viên cho các vai trò bắt buộc.");
     fireEvent.change(screen.getByLabelText(/tìm sinh viên/i), {
       target: { value: "sv" },
     });
@@ -206,6 +211,7 @@ describe("SessionSetup (M3)", () => {
     // Notice survives the parent reload triggered by onChanged, and the
     // refreshed member list arrives in the same tree.
     expect(await screen.findByText(/đã phân công SV A/i)).toBeInTheDocument();
+    expect(screen.queryByText("Chưa đủ thành viên cho các vai trò bắt buộc.")).not.toBeInTheDocument();
     expect((await screen.findAllByText("SV A")).length).toBeGreaterThanOrEqual(
       1,
     );

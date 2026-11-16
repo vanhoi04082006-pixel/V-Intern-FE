@@ -386,7 +386,7 @@ function SetupBody({
                   sessionId={sessionId}
                   projectId={project.id}
                   slots={slots}
-                  onChanged={onChanged}
+                  onChanged={() => { startAction.clearError(); onChanged(); }}
                   deps={selectorDeps}
                   members={members}
                 />
