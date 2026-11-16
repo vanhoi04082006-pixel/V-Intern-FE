@@ -18,7 +18,7 @@ const run = (overrides: Partial<KnowledgeRun> = {}): KnowledgeRun => ({
   output: {
     answer: "Paracetamol.",
     insufficientEvidence: false,
-    citations: [{ source: "handbook" }],
+    citations: [{ id: "k:notes@2", kind: "knowledge", code: "notes", version: 2, sha256: "a".repeat(64), title: "Hướng dẫn kiểm thử ghi chú", sources: [{ title: "Tài liệu kiểm thử", url: "https://example.test/testing", reference: "Mục 3: giá trị biên" }] }],
   },
   createdAt: "2026-10-28T09:00:00Z",
   updatedAt: "2026-10-28T09:01:00Z",
@@ -110,5 +110,15 @@ describe("KnowledgeRunMonitor", () => {
     render(<KnowledgeRunMonitor initialRun={run()} />);
     expect(screen.getByText("Paracetamol.")).toBeTruthy();
     expect(screen.getByText("Token vào/ra: 120 / 55")).toBeTruthy();
+  });
+
+  it("lets readers verify cited document versions and their source references", () => {
+    render(<KnowledgeRunMonitor initialRun={run()} />);
+    expect(screen.getByRole("list", { name: "Nguồn được trích dẫn" })).toBeInTheDocument();
+    expect(screen.getByText("Hướng dẫn kiểm thử ghi chú")).toBeInTheDocument();
+    expect(screen.getByText("notes · Phiên bản 2")).toBeInTheDocument();
+    expect(screen.getByText("Tài liệu kiểm thử")).toBeInTheDocument();
+    expect(screen.getByText("Mục 3: giá trị biên")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "https://example.test/testing" })).toHaveAttribute("rel", "noopener noreferrer");
   });
 });

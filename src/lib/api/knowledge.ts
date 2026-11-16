@@ -29,7 +29,7 @@ function json(value: unknown, depth = 0, budget = { nodes: 0 }): JsonValue {
     return [key, json(item, depth + 1, budget)];
   }));
 }
-function source(raw: unknown): KnowledgeSource {
+export function parseKnowledgeSource(raw: unknown): KnowledgeSource {
   const v = p.record(raw), result: KnowledgeSource = { title: p.string(v.title) };
   if (v.url !== undefined) {
     result.url = p.string(v.url);
@@ -49,7 +49,7 @@ export function parseKnowledgeSnapshot(raw: unknown) {
   const v = p.record(raw);
   if (v.schemaVersion !== 1) p.invalid();
   const body = p.record(json(p.record(v.body)));
-  return { ...fields(v), sources: p.array(v.sources, source), body: body as KnowledgeDraft['body'], schemaVersion: 1 as const, code: p.string(v.code), version: integer(v.version), status: p.oneOf(v.status, knowledgeStatuses) };
+  return { ...fields(v), sources: p.array(v.sources, parseKnowledgeSource), body: body as KnowledgeDraft['body'], schemaVersion: 1 as const, code: p.string(v.code), version: integer(v.version), status: p.oneOf(v.status, knowledgeStatuses) };
 }
 export type KnowledgeSnapshot = ReturnType<typeof parseKnowledgeSnapshot>;
 /** Authoring never sends server identity, version or lifecycle fields inside draft content. */

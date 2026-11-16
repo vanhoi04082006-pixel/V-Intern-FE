@@ -1,6 +1,17 @@
 import { request } from "./client";
-import { array, boolean, nullable, number, oneOf, record, string } from "./parse";
+import { array, boolean, invalid, nullable, number, oneOf, record, string } from "./parse";
 import { agentStatuses } from "./business-agents";
+import { parseKnowledgeSource } from "./knowledge";
+
+function parseCitation(raw: unknown) {
+  const value = record(raw), version = number(value.version), sha256 = string(value.sha256);
+  if (!Number.isInteger(version) || version < 1 || !/^[a-f0-9]{64}$/.test(sha256)) return invalid();
+  return {
+    id: string(value.id), kind: oneOf(value.kind, ["knowledge", "career"] as const),
+    code: string(value.code), version, sha256, title: string(value.title),
+    sources: array(value.sources, parseKnowledgeSource),
+  };
+}
 
 /** Same runtime state machine as business runs; expiry lands as failed + AGENT_RUN_EXPIRED. */
 export const knowledgeRunStatuses = agentStatuses;
@@ -24,7 +35,7 @@ export function parseKnowledgeRun(raw: unknown) {
       return {
         answer: string(o.answer),
         insufficientEvidence: boolean(o.insufficientEvidence),
-        citations: array(o.citations, record),
+        citations: array(o.citations, parseCitation),
       };
     }),
     createdAt: string(r.createdAt),

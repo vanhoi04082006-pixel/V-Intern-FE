@@ -4,6 +4,7 @@ import {
   createKnowledgeRun,
   getKnowledgeRun,
   resumeKnowledgeRun,
+  parseKnowledgeRun,
 } from "./knowledge-runs";
 import { clearSession, setSession } from "@/lib/auth/session";
 
@@ -86,7 +87,7 @@ it("gets a knowledge run by id from the admin agents namespace", async () => {
       output: {
         answer: "Paracetamol.",
         insufficientEvidence: false,
-        citations: [{ source: "handbook" }],
+        citations: [{ id: "k:handbook@1", kind: "knowledge", code: "handbook", version: 1, sha256: "a".repeat(64), title: "Handbook", sources: [{ title: "Internal QA handbook", reference: "Section 1" }] }],
       },
     }),
   );
@@ -129,4 +130,11 @@ it("resumes a retryable failed run and parses the accepted envelope", async () =
   );
   expect(fetcher.mock.calls[0][1].method).toBe("POST");
   expect(result).toEqual({ id: "run-7", accepted: true });
+});
+
+it.each([
+  { source: "handbook" },
+  { id: "k:handbook@1", kind: "knowledge", code: "handbook", version: 1, sha256: "a".repeat(64), title: "Handbook", sources: [{ title: "Unsafe source", url: "javascript:alert(1)" }] },
+])("rejects malformed or unsafe citation metadata", (citation) => {
+  expect(() => parseKnowledgeRun({ ...RUN, status: "succeeded", output: { answer: "QA answer", insufficientEvidence: false, citations: [citation] } })).toThrow();
 });
