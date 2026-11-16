@@ -47,7 +47,7 @@ describe("Admin root route", () => {
   it("reports a failed count request and reloads successfully on retry", async () => {
     api.listUsers.mockRejectedValueOnce(new Error("offline"));
     render(<AdminOverview />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể tải dữ liệu");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể hoàn tất yêu cầu");
     expect(screen.queryByText("17")).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Thử lại" }));
     expect(await screen.findByText("17")).toBeInTheDocument();

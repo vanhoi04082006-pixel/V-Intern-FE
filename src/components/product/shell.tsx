@@ -86,7 +86,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
   instructor: [
     { items: [["", "Tổng quan"]] },
     {
-      heading: "Lớp & phiên",
+      heading: "Tổ chức thực tập",
       items: [
         ["recruitment-rounds", "Hồ sơ CV & lịch tuyển"],
         ["sessions", "Phiên thực tập"],

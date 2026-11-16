@@ -31,7 +31,7 @@ describe("Instructor root route", () => {
   it("retains an actionable retry when the scoped session request fails", async () => {
     api.list.mockRejectedValueOnce(new Error("offline"));
     render(<InstructorHome />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể tải dữ liệu");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Không thể hoàn tất yêu cầu");
     await userEvent.click(screen.getByRole("button", { name: "Thử lại" }));
     expect(await screen.findByRole("heading", { name: "Phiên từ API", level: 3 })).toBeInTheDocument();
     expect(api.list).toHaveBeenCalledTimes(2);

@@ -4,11 +4,11 @@ import { ArrowLoopDoodle } from "@/components/v-intern/doodles";
 import { ApiError, errorMessage } from "@/lib/auth/api-client";
 import { btn, Spinner } from "@/components/product/primitives";
 
-/** Lỗi tải dữ liệu: thông điệp an toàn + chi tiết validation có giới hạn + retry. */
+/** Lỗi yêu cầu: thông điệp an toàn + chi tiết validation có giới hạn + retry. */
 export function ErrorState({
   error,
   onRetry,
-  title = 'Không thể tải dữ liệu',
+  title = 'Không thể hoàn tất yêu cầu',
 }: {
   error: unknown;
   onRetry?: () => void;
