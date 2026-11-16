@@ -89,8 +89,8 @@ export function InkCountUp({
 }) {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-48px" });
-  const mv = useMotionValue(0);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -48px 0px" });
+  const mv = useMotionValue(value);
   const rounded = useTransform(mv, (latest) =>
     Math.round(latest).toLocaleString("vi-VN"),
   );
@@ -99,11 +99,13 @@ export function InkCountUp({
   );
 
   useEffect(() => {
-    if (!inView) return;
-    if (reduceMotion) {
+    // Counts remain truthful when an observer is delayed or a narrow viewport
+    // puts the first metric outside the animation intersection area.
+    if (!inView || reduceMotion) {
       mv.set(value);
       return;
     }
+    mv.set(0);
     const controls = animate(mv, value, {
       duration,
       ease: [0.16, 0.84, 0.28, 0.96],
