@@ -244,11 +244,14 @@ try {
   await page.locator(`a[href="/instructor/tasks/${edited.id}" i]`).click();
   await expect(page.getByText(description, { exact: true }).first()).toBeVisible(); await expect(page.getByText(criteria[0], { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto(base + "/instructor/classes"); await page.waitForURL("**/instructor/projects"); await expect(page.getByRole("heading", { name: "Thư viện dự án", exact: true })).toBeVisible();
-  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)); assert.equal((await ds.query("SELECT COUNT(*) n FROM sys.tables WHERE name IN ('classes','class_members','class_attendance')"))[0].n, 3); assert.deepEqual(errors, []);
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+  assert.equal((await ds.query("SELECT COUNT(*) n FROM sys.tables WHERE name IN ('classes','class_members','class_attendance','class_announcements','class_lessons','session_access_requests')"))[0].n, 0, "Retired class and session-sharing tables must remain absent");
+  assert.equal((await ds.query("SELECT COUNT(*) n FROM permissions WHERE code IN ('classes.view','classes.manage')"))[0].n, 0, "Retired class permissions must remain absent");
+  assert.deepEqual(errors, []);
   await page.screenshot({ path: `${evidence}/project-first-mobile.png`, fullPage: true });
   fs.mkdirSync("../phase7-local", { recursive: true });
   fs.writeFileSync("../phase7-local/academic.json", JSON.stringify({ sessions: created.sessionId, projects: created.projectId, projectCode: (await call("instructor", `/projects/${created.projectId}`)).code, sessionCode: (await call("instructor", `/sessions/${created.sessionId}`)).code, startDate, endDate, sprintId: edited.sprintId, taskId: edited.id, taskTitle: edited.title, graduateEmail: Object.values(users).find(u => u.id === assignee).email, graduateId: assignee, foreignEmail: users.foreign.email, planId: plan.planId, summary }, null, 2));
-  results.push({ name: "Session roster/snapshot/progress, delivery details and retained Class storage", status: "PASS" });
+  results.push({ name: "Session roster/snapshot/progress, delivery details and retired class/sharing storage absent", status: "PASS" });
 } catch (error) {
   results.push({ stage, status: "FAIL", error: String(error) }); await page.screenshot({ path: `${evidence}/project-first-failure.png`, fullPage: true }).catch(() => undefined); throw error;
 } finally {
