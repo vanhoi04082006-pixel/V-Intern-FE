@@ -97,4 +97,20 @@ describe("TemplateDetail (M2)", () => {
     expect(await screen.findByText("Mẫu đã lưu trữ — không thể khởi tạo phiên mới.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /khởi tạo phiên/i })).toBeNull();
   });
+  it("shows the newly started session in the template history without a page reload", async () => {
+    const run = { id: "run-new", projectId: "project-new", sessionId: "session-new", templateVersion: 2, createdAt: "2026-11-16T00:00:00Z" };
+    let published = false;
+    const get = vi.fn(async () => ({ ...detail, runs: published ? [run] : [] }));
+    const start = vi.fn(async () => { published = true; return { ...run, deduped: false }; });
+    render(<TemplateDetail id={tpl.id} get={get} start={start} />);
+    await screen.findByRole("heading", { name: "Phiên đã khởi tạo (0)" });
+    fireEvent.change(screen.getByLabelText("Tên phiên"), { target: { value: "Phiên kiểm thử" } });
+    fireEvent.change(screen.getByLabelText("Ngày bắt đầu"), { target: { value: "2026-11-16" } });
+    fireEvent.change(screen.getByLabelText("Ngày kết thúc"), { target: { value: "2026-11-22" } });
+    fireEvent.click(screen.getByRole("button", { name: "Khởi tạo phiên thực tập" }));
+    expect(await screen.findByRole("heading", { name: "Phiên đã khởi tạo (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Phiên session-" })).toHaveAttribute("href", "/instructor/sessions/session-new");
+    expect(screen.getByText("Đã tạo phiên thực tập.")).toBeInTheDocument();
+    expect(start).toHaveBeenCalledOnce();
+  });
 });

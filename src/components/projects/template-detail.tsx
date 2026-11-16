@@ -89,10 +89,11 @@ export function TemplateDetail({
     if (ok && created) {
       const done: { sessionId: string; projectId: string; deduped: boolean } = created;
       setStarted({ sessionId: done.sessionId, projectId: done.projectId, deduped: done.deduped });
+      data.reload();
     }
   }
 
-  if (data.loading) return <LoadingState label="Đang tải mẫu dự án..." />;
+  if (data.loading && !data.data) return <LoadingState label="Đang tải mẫu dự án..." />;
   if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
   const t: TemplateDetailData = data.data;
   const def = t.definition;
