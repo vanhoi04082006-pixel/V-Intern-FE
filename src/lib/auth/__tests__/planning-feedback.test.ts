@@ -8,3 +8,8 @@ it.each([
 ])("explains how to resolve planning rejection %s", (code, message) => {
   expect(errorMessage(new ApiError(400, code, "Internal server detail"))).toBe(message);
 });
+
+it("explains that new work needs an open Sprint", () => {
+  expect(errorMessage(new ApiError(409, "SPRINT_NOT_EDITABLE", "Internal detail")))
+    .toBe("Sprint đã hoàn thành hoặc hủy. Hãy chọn Sprint khác để tạo hoặc chuyển nhiệm vụ mới.");
+});

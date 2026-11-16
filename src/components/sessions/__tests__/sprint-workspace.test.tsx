@@ -13,7 +13,7 @@ vi.mock('@/lib/api/academic', async original => ({ ...await original<typeof impo
 vi.mock('@/lib/api/session-work', async original => ({ ...await original<typeof import('@/lib/api/session-work')>(), listSessionWork: vi.fn() }));
 vi.mock('@/lib/api/management', async original => ({ ...await original<typeof import('@/lib/api/management')>(), getManagedSprint: vi.fn(), saveSprint: vi.fn(), transitionSprint: vi.fn() }));
 vi.mock('@/components/product/sprint-overview', () => ({ SprintOverview: ({ onManage }: { onManage: () => void }) => <><a href="#sprint-task-list">Xem tất cả task</a><button onClick={onManage}>Quản lý task</button></> }));
-vi.mock('@/components/product/sprint-management', async original => ({ ...await original<typeof import('@/components/product/sprint-management')>(), TaskManagement: ({ projectId, sprintId }: { projectId: string; sprintId: string }) => <p>Quản lý {projectId}/{sprintId}</p> }));
+vi.mock('@/components/product/sprint-management', async original => ({ ...await original<typeof import('@/components/product/sprint-management')>(), TaskManagement: ({ projectId, sprintId, allowCreate }: { projectId: string; sprintId: string; allowCreate?: boolean }) => <p data-can-create={allowCreate !== false}>Quản lý {projectId}/{sprintId}</p> }));
 vi.mock('@/components/product/intern-work', () => ({ TaskDetail: ({ id }: { id: string }) => <p>Chi tiết {id}</p> }));
 
 const sprint = { id: 'sp1', code: 'SP-1', name: 'Nền tảng', goal: 'Hoàn thành validation', status: 'planned', projectId: 'p1', sessionId: 's1', startDate: '2026-10-01', endDate: '2026-10-10', progress: null };
@@ -149,7 +149,7 @@ it('does not offer lifecycle changes to a Sprint viewer without management permi
 });
 
 it.each(['completed', 'cancelled'])('does not offer lifecycle or editing actions for terminal %s Sprints', async status => {
-  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage', 'tasks.manage'] });
   vi.mocked(getSprint).mockResolvedValue({ ...sprint, status });
   render(<SprintWorkspace id="sp1" />);
   await screen.findByText('Hoàn thành validation');
@@ -157,6 +157,8 @@ it.each(['completed', 'cancelled'])('does not offer lifecycle or editing actions
   expect(screen.queryByRole('button', { name: 'Hoàn thành Sprint' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Hủy Sprint' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Sửa Sprint' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Quản lý task' }));
+  expect(screen.getByText('Quản lý p1/sp1')).toHaveAttribute('data-can-create', 'false');
 });
 
 it('paginates all Sprint tasks on the server and resets to page one after filtering', async () => {

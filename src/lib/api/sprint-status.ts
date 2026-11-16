@@ -4,6 +4,9 @@
  * nguồn dữ liệu và vẫn được dùng trong bộ lọc/URL; chỉ đổi phần hiển thị.
  */
 export type SprintStatusTone = "blue" | "amber" | "green" | "gray" | "red";
+export function isSprintTerminal(status: string): boolean {
+  return status === "completed" || status === "cancelled";
+}
 
 const labels: Record<string, { label: string; tone: SprintStatusTone }> = {
   planned: { label: "Đã lên kế hoạch", tone: "gray" },

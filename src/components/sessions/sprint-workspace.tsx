@@ -31,6 +31,7 @@ import { ActivateButton } from "@/components/product/instructor-onboarding";
 import { TaskDetail } from "@/components/product/intern-work";
 import { SessionTaskDelivery } from "./session-task-delivery";
 import { SprintLifecycleActions } from "./sprint-lifecycle-actions";
+import { isSprintTerminal } from "@/lib/api/sprint-status";
 
 const sprintStatusLabels: Record<string, string> = {
   planned: "Đã lập kế hoạch",
@@ -394,6 +395,7 @@ export function SprintWorkspace({
               <TaskManagement
                 projectId={sprint.projectId}
                 sprintId={id}
+                allowCreate={!isSprintTerminal(sprint.status)}
                 onUpdated={reload}
               />
             </div>

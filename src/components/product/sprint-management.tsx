@@ -25,7 +25,7 @@ import {
   type Task,
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
-import { sprintStatusLabel } from "@/lib/api/sprint-status";
+import { isSprintTerminal, sprintStatusLabel } from "@/lib/api/sprint-status";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
@@ -82,7 +82,7 @@ export function SprintManagement() {
         { icon: IconCalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
         { icon: IconClock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
       ]} />
-      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
+      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id} allowCreate={!isSprintTerminal(focused.status)}/></div></>}
       <Panel title="Các Sprint" action={<button className={buttonClass} onClick={() => setCreate(true)}>Tạo Sprint</button>}>
         <div className="mb-4 grid items-start gap-3 sm:grid-cols-2">
           <AcademicPicker
@@ -382,6 +382,7 @@ function SprintDetail({
       <TaskManagement
         projectId={sprint.projectId}
         sprintId={sprint.id}
+        allowCreate={!isSprintTerminal(status)}
         onUpdated={board.reload}
       />
       <Panel title="Sprint Board">
@@ -438,10 +439,12 @@ function SprintDetail({
 export function TaskManagement({
   projectId = "",
   sprintId = "",
+  allowCreate = true,
   onUpdated,
 }: {
   projectId?: string;
   sprintId?: string;
+  allowCreate?: boolean;
   onUpdated?: () => void;
 }) {
   const [page, setPage] = useState(1),
@@ -486,11 +489,12 @@ export function TaskManagement({
       <Panel
         title="Danh sách nhiệm vụ"
         action={
-          <button className={buttonClass} onClick={() => setCreate(true)}>
+          allowCreate && <button className={buttonClass} onClick={() => setCreate(true)}>
             Tạo nhiệm vụ
           </button>
         }
       >
+        {!allowCreate && <p className="mb-4 text-body text-muted-foreground">Sprint đã hoàn thành hoặc hủy. Có thể tra cứu và xử lý công việc đã có; hãy chọn Sprint khác để tạo nhiệm vụ mới.</p>}
         {Boolean(action.error) && <ErrorState error={action.error} />}
         <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <input
@@ -575,7 +579,7 @@ export function TaskManagement({
           )
         )}
       </Panel>
-      {(create || edit) && (
+      {((create && allowCreate) || edit) && (
         <Modal
           title={edit ? "Sửa nhiệm vụ" : "Tạo nhiệm vụ"}
           onClose={() => {
