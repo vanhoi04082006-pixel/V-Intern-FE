@@ -147,6 +147,8 @@ export function errorMessage(error: unknown): string {
     SUBMISSION_PENDING_REVIEW: "Bài nộp đang chờ giảng viên duyệt. Vui lòng chờ kết quả.",
     SPRINT_HAS_OPEN_TASKS: "Sprint còn nhiệm vụ chưa hoàn thành. Hãy xử lý hết trước khi kết thúc Sprint.",
     SPRINT_NOT_EDITABLE: "Sprint đã hoàn thành hoặc hủy. Hãy chọn Sprint khác để tạo hoặc chuyển nhiệm vụ mới.",
+    CATALOG_TYPE_TAKEN: "Mã loại danh mục đã tồn tại. Hãy nhập mã khác.",
+    CATALOG_ITEM_TAKEN: "Mã giá trị đã tồn tại trong loại danh mục này. Hãy nhập mã khác.",
     SPRINT_ACTIVE_EXISTS: "Đang có một Sprint khác hoạt động. Hoàn thành hoặc hủy Sprint đó trước.",
     AI_RECOMMENDATION_NOT_AVAILABLE: "Chưa có khuyến nghị nào. Bấm “Cập nhật khuyến nghị” để tạo từ chỉ số hiện tại.",
     AI_PROVIDER_RATE_LIMITED: "Dịch vụ AI đang quá tải. Vui lòng thử lại sau ít phút.",
