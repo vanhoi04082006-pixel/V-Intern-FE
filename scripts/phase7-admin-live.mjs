@@ -360,7 +360,7 @@ try {
   const taskRow = page.getByRole("row").filter({ has: page.getByRole("button", { name: task.code, exact: true }) });
   await taskRow.getByText("Admin task " + tag, { exact: true }).waitFor();
   await taskRow.getByLabel(`Thao tác ${task.code}`, { exact: true }).click();
-  await taskRow.getByRole("button", { name: "Sửa nhiệm vụ", exact: true }).click();
+  await taskRow.getByRole("menuitem", { name: "Sửa nhiệm vụ", exact: true }).click();
   dialog = page.getByRole("dialog");
   await dialog
     .getByLabel("Tên nhiệm vụ", { exact: true })
@@ -390,7 +390,7 @@ try {
     page,
     `/tasks/${task.id}`,
     "DELETE",
-    () => taskRow.getByRole("button", { name: "Xóa nhiệm vụ", exact: true }).click(),
+    () => taskRow.getByRole("menuitem", { name: "Xóa nhiệm vụ", exact: true }).click(),
     200,
   );
   assert.ok(

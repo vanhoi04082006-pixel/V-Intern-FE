@@ -20,7 +20,7 @@ it("hides new-task creation for a closed Sprint while keeping retained work edit
   await screen.findByText("Retained work");
   expect(screen.queryByRole("button", { name: "Tạo nhiệm vụ" })).not.toBeInTheDocument();
   fireEvent.click(screen.getByLabelText("Thao tác T-1"));
-  fireEvent.click(screen.getByRole("button", { name: "Sửa nhiệm vụ" }));
+  fireEvent.click(screen.getByRole("menuitem", { name: "Sửa nhiệm vụ" }));
   expect(screen.getByRole("dialog", { name: "Sửa nhiệm vụ" })).toBeInTheDocument();
   expect(screen.getByLabelText("Tên nhiệm vụ")).toHaveValue("Retained work");
 });
