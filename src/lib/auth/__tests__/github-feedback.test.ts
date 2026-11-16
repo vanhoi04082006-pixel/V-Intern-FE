@@ -7,4 +7,10 @@ describe('GitHub invitation recovery feedback', () => {
   it('explains the per-member cooldown without exposing upstream details', () => {
     expect(errorMessage(new ApiError(409, 'GITHUB_INVITATION_COOLDOWN', 'internal'))).toContain('một phút');
   });
+  it.each([
+    ['SESSION_REPOSITORY_REQUIRED', 'Phiên chưa có repository. Nhờ giảng viên đồng bộ repository của phiên trước khi nộp bài.'],
+    ['GITHUB_IDENTITY_REQUIRED', 'Hãy liên kết tài khoản GitHub của bạn trước khi nộp bài.'],
+  ])('explains submission prerequisite %s', (code, message) => {
+    expect(errorMessage(new ApiError(409, code, 'internal'))).toBe(message);
+  });
 });

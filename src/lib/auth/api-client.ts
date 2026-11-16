@@ -115,6 +115,8 @@ export function errorMessage(error: unknown): string {
     REPLACEMENT_TASK_LIMIT: 'Phạm vi vượt 500 nhiệm vụ. Cần kiểm tra lại phân công trước khi bàn giao.',
     GITHUB_RECONNECT_REQUIRED: 'Cần Admin kết nối lại tài khoản GitHub tạo repository chung tại Cài đặt. Sau đó kiểm tra lại quyền truy cập.',
     GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
+    SESSION_REPOSITORY_REQUIRED: 'Phiên chưa có repository. Nhờ giảng viên đồng bộ repository của phiên trước khi nộp bài.',
+    GITHUB_IDENTITY_REQUIRED: 'Hãy liên kết tài khoản GitHub của bạn trước khi nộp bài.',
     GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',
     GITHUB_IDENTITY_CHANGED: 'Danh tính GitHub đã thay đổi. Nhờ Admin đối chiếu quyền cũ trước khi mời tiếp.',
     CV_FILE_INVALID: 'CV cần là PDF hoặc DOCX đúng định dạng, tối đa 5 MB.',
