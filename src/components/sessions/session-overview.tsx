@@ -36,6 +36,7 @@ import { Can } from "@/components/auth/can";
 import { roleLabel } from "@/lib/api/workspace";
 import { SessionTaskDelivery } from "./session-task-delivery";
 import { SessionTimeline } from "./session-timeline";
+import { SessionLifecycleActions } from "./session-lifecycle-actions";
 import { MemberPerformance } from "@/components/product/member-performance";
 import { ReportsWorkspace } from "./reports-workspace";
 import { InkCountUp } from "@/components/v-intern/motion";
@@ -227,6 +228,9 @@ export function SessionOverview({
           }
         />
       )}
+      <Can perm="sessions.manage">
+        <SessionLifecycleActions id={sessionId} status={session.status} onChanged={data.reload} />
+      </Can>
       {basePath === "/instructor" && (
         <InstructorSectionNav
           items={[

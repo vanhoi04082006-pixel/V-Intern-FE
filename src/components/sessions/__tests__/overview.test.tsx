@@ -1,7 +1,17 @@
-import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { SessionList } from "../session-list";
 import { SessionOverview, type DetailDeps } from "../session-overview";
+import { clearSession, setSession } from "@/lib/auth/session";
+import * as academic from "@/lib/api/academic";
+
+beforeAll(() => {
+  Object.defineProperties(HTMLDialogElement.prototype, {
+    showModal: { configurable: true, value() { this.setAttribute("open", ""); } },
+    close: { configurable: true, value() { this.removeAttribute("open"); } },
+  });
+});
+afterEach(() => { clearSession(); vi.restoreAllMocks(); });
 
 const overviewRow = {
   id: "s1",
@@ -198,6 +208,62 @@ describe("SessionOverview (M6)", () => {
       listPlans: vi.fn(async () => [{ planId: "pl1", status: "confirmed" }]),
     } as unknown as Partial<DetailDeps>;
   }
+  it("lets a session manager move an active session to ending and refreshes its status", async () => {
+    setSession("test-token", { id: "teacher", displayName: "Teacher", email: "teacher@test.local", roles: ["instructor"], permissions: ["sessions.view", "sessions.manage"] });
+    const d = deps();
+    d.getSession = vi.fn().mockResolvedValueOnce(session).mockResolvedValue({ ...session, status: "ending" });
+    const transition = vi.spyOn(academic, "transitionSession").mockResolvedValue(academic.parseAcademic({ ...session, id: "s1", description: null, status: "ending" }));
+    render(<SessionOverview sessionId="s1" deps={d} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Chuyển sang Sắp kết thúc" }));
+    await waitFor(() => expect(transition).toHaveBeenCalledWith("s1", "ending"));
+    expect(await screen.findByRole("button", { name: "Hoàn thành phiên" })).toBeInTheDocument();
+  });
+  it("confirms completion of an ending session and removes terminal lifecycle controls", async () => {
+    setSession("test-token", { id: "teacher", displayName: "Teacher", email: "teacher@test.local", roles: ["instructor"], permissions: ["sessions.view", "sessions.manage"] });
+    const d = deps();
+    d.getSession = vi.fn().mockResolvedValueOnce({ ...session, status: "ending" }).mockResolvedValue({ ...session, status: "completed" });
+    const transition = vi.spyOn(academic, "transitionSession").mockResolvedValue(academic.parseAcademic({ ...session, id: "s1", description: null, status: "completed" }));
+    render(<SessionOverview sessionId="s1" deps={d} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Hoàn thành phiên" }));
+    expect(screen.getByRole("dialog", { name: "Hoàn thành phiên" })).toBeInTheDocument();
+    expect(transition).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Xác nhận hoàn thành phiên" }));
+    await waitFor(() => expect(transition).toHaveBeenCalledWith("s1", "completed"));
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Hoàn thành phiên" })).not.toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: "Hủy phiên" })).not.toBeInTheDocument();
+  });
+  it("keeps the current session and allows retry when its transition is rejected", async () => {
+    setSession("test-token", { id: "teacher", displayName: "Teacher", email: "teacher@test.local", roles: ["instructor"], permissions: ["sessions.view", "sessions.manage"] });
+    const d = deps();
+    vi.spyOn(academic, "transitionSession").mockRejectedValue(new Error("Transition rejected"));
+    render(<SessionOverview sessionId="s1" deps={d} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Chuyển sang Sắp kết thúc" }));
+    expect(await within(screen.getByRole("region", { name: "Quản lý trạng thái phiên" })).findByRole("alert")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Chuyển sang Sắp kết thúc" })).toBeEnabled();
+    expect(d.getSession).toHaveBeenCalledOnce();
+  });
+  it("requires confirmation to cancel an upcoming session and keeps Start in the setup flow", async () => {
+    setSession("test-token", { id: "teacher", displayName: "Teacher", email: "teacher@test.local", roles: ["instructor"], permissions: ["sessions.view", "sessions.manage"] });
+    const d = deps();
+    d.getSession = vi.fn().mockResolvedValueOnce({ ...session, status: "upcoming" }).mockResolvedValue({ ...session, status: "cancelled" });
+    const transition = vi.spyOn(academic, "transitionSession").mockResolvedValue(academic.parseAcademic({ ...session, id: "s1", description: null, status: "cancelled" }));
+    render(<SessionOverview sessionId="s1" deps={d} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Hủy phiên" }));
+    fireEvent.click(screen.getByRole("button", { name: "Giữ phiên" }));
+    expect(transition).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Bắt đầu phiên" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Hủy phiên" }));
+    fireEvent.click(screen.getByRole("button", { name: "Xác nhận hủy phiên" }));
+    await waitFor(() => expect(transition).toHaveBeenCalledWith("s1", "cancelled"));
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Hủy phiên" })).not.toBeInTheDocument());
+  });
+  it("does not offer session lifecycle mutations without management permission", async () => {
+    setSession("test-token", { id: "viewer", displayName: "Viewer", email: "viewer@test.local", roles: ["instructor"], permissions: ["sessions.view"] });
+    render(<SessionOverview sessionId="s1" deps={deps()} />);
+    await screen.findByText("K48");
+    expect(screen.queryByRole("button", { name: "Chuyển sang Sắp kết thúc" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Hủy phiên" })).not.toBeInTheDocument();
+  });
   it("renders counters, sprints with progress and a task table", async () => {
     render(<SessionOverview sessionId="s1" deps={deps()} />);
     expect(await screen.findByText("K48")).toBeInTheDocument();
