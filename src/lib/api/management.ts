@@ -260,6 +260,9 @@ export function parseSprint(value: unknown) {
   };
 }
 export type Sprint = ReturnType<typeof parseSprint>;
+/** Full editable details; the delivery summary deliberately omits description. */
+export const getManagedSprint = (id: string, signal?: AbortSignal) =>
+  request(`/sprints/${encodeURIComponent(id)}`, parseSprint, { signal });
 export const listSprints = (
   page: number,
   projectId: string,
