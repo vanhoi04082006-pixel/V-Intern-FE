@@ -109,7 +109,7 @@ function AiConfigurationForm({
             id="ai-policy-model"
             className={inputClass}
             required
-            pattern="gemini[a-z0-9._-]+"
+            pattern={"gemini[a-z0-9._\\-]+"}
             maxLength={106}
             value={policy.model}
             onChange={(e) => setPolicy({ ...policy, model: e.target.value })}

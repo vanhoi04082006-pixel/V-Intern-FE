@@ -529,7 +529,7 @@ function UserForm({
           required
           minLength={3}
           maxLength={64}
-          pattern="[a-z0-9_.-]{3,64}"
+          pattern={"[a-z0-9_.\\-]{3,64}"}
           className={inputClass}
           placeholder="vd: nguyenthib"
           defaultValue={user?.username}
@@ -780,16 +780,23 @@ function GroupForm({
     >
       {Boolean(action.error) && <ErrorState error={action.error} />}
       {!group && (
-        <label className="block text-body">
-          Mã nhóm
-          <input
-            name="code"
-            required
-            pattern="[a-z0-9_.-]{3,64}"
-            className={inputClass}
-            placeholder="vd: nhom-mentor"
-          />
-        </label>
+        <div>
+          <label className="block text-body">
+            Mã nhóm
+            <input
+              name="code"
+              required
+              pattern={"[a-z0-9_.\\-]{3,64}"}
+              aria-describedby="group-code-hint"
+              title="3–64 ký tự: chữ thường, số, dấu chấm, gạch ngang hoặc gạch dưới."
+              className={inputClass}
+              placeholder="vd: nhom-mentor"
+            />
+          </label>
+          <p id="group-code-hint" className="mt-1 text-caption text-muted-foreground">
+            3–64 ký tự: chữ thường, số, dấu chấm, gạch ngang hoặc gạch dưới.
+          </p>
+        </div>
       )}
       <label className="block text-body">
         Tên nhóm
@@ -1240,7 +1247,7 @@ function CatalogTypeForm({ onSaved }: { onSaved: () => void }) {
             required={i < 2}
             name={name}
             maxLength={i === 0 ? 64 : i === 1 ? 128 : 512}
-            pattern={i === 0 ? "[a-z0-9_.-]{3,64}" : undefined}
+            pattern={i === 0 ? "[a-z0-9_.\\-]{3,64}" : undefined}
             className={inputClass}
             placeholder={["vd: khoi_nganh", "VD: Khối ngành", "VD: Nhóm ngành đào tạo dùng chung"][i]}
           />
@@ -1289,7 +1296,7 @@ function CatalogItemForm({
           <input
             name="code"
             required
-            pattern="[a-z0-9_.-]{1,64}"
+            pattern={"[a-z0-9_.\\-]{1,64}"}
             className={inputClass}
             placeholder="vd: cntt"
           />
@@ -1452,7 +1459,7 @@ function SettingForm({
           required
           name="key"
           readOnly={Boolean(setting)}
-          pattern="[a-z0-9._-]{1,128}"
+          pattern={"[a-z0-9._\\-]{1,128}"}
           className={`${inputClass} read-only:cursor-not-allowed read-only:opacity-60`}
           placeholder="vd: interview.default_duration"
           defaultValue={setting?.key}
