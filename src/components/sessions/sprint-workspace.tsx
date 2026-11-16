@@ -30,6 +30,7 @@ import { TaskManagement } from "@/components/product/sprint-management";
 import { ActivateButton } from "@/components/product/instructor-onboarding";
 import { TaskDetail } from "@/components/product/intern-work";
 import { SessionTaskDelivery } from "./session-task-delivery";
+import { SprintLifecycleActions } from "./sprint-lifecycle-actions";
 
 const sprintStatusLabels: Record<string, string> = {
   planned: "Đã lập kế hoạch",
@@ -344,6 +345,9 @@ export function SprintWorkspace({
           </Can>
         </div>
       )}
+      <Can perm="sprints.manage">
+        <SprintLifecycleActions id={id} status={sprint.status} onChanged={() => { data.reload(); reload(); }} />
+      </Can>
       <SprintOverview
         instructor={basePath === "/instructor"}
         id={id}

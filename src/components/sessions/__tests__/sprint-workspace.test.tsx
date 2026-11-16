@@ -6,6 +6,7 @@ import { getMembers } from '@/lib/api/academic';
 import { listSessionWork } from '@/lib/api/session-work';
 import { transitionSprint } from '@/lib/api/management';
 import { clearSession, setSession } from '@/lib/auth/session';
+import { ApiError } from '@/lib/auth/api-client';
 
 vi.mock('@/lib/api/delivery', async original => ({ ...await original<typeof import('@/lib/api/delivery')>(), getSprint: vi.fn(), listTasks: vi.fn() }));
 vi.mock('@/lib/api/academic', async original => ({ ...await original<typeof import('@/lib/api/academic')>(), getMembers: vi.fn() }));
@@ -67,6 +68,65 @@ it('keeps the planned Sprint and allows retry when activation is rejected', asyn
   expect(screen.getByRole('button', { name: 'Kích hoạt' })).toBeEnabled();
   expect(getSprint).toHaveBeenCalledTimes(1);
   expect(screen.queryByText('Đang chạy')).not.toBeInTheDocument();
+});
+
+it('lets a manager complete an active Sprint and refreshes the displayed lifecycle', async () => {
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  vi.mocked(getSprint).mockResolvedValueOnce({ ...sprint, status: 'active' }).mockResolvedValue({ ...sprint, status: 'completed' });
+  vi.mocked(transitionSprint).mockResolvedValue({ ...sprint, description: null, status: 'completed' });
+  render(<SprintWorkspace id="sp1" />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Hoàn thành Sprint' }));
+  await waitFor(() => expect(transitionSprint).toHaveBeenCalledWith('sp1', 'completed'));
+  expect(await screen.findByText('Đã hoàn thành')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Hoàn thành Sprint' })).not.toBeInTheDocument();
+});
+
+it('preserves the active Sprint when open tasks prevent completion and explains the rejection', async () => {
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  vi.mocked(getSprint).mockResolvedValue({ ...sprint, status: 'active' });
+  vi.mocked(transitionSprint).mockRejectedValue(new ApiError(409, 'SPRINT_HAS_OPEN_TASKS', 'Open tasks'));
+  render(<SprintWorkspace id="sp1" />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Hoàn thành Sprint' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Sprint');
+  expect(screen.getByRole('button', { name: 'Hoàn thành Sprint' })).toBeEnabled();
+  expect(getSprint).toHaveBeenCalledOnce();
+  expect(screen.queryByText('Đã hoàn thành')).not.toBeInTheDocument();
+});
+
+it('requires a manager to confirm cancellation and can dismiss it without changing the Sprint', async () => {
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  vi.mocked(getSprint).mockResolvedValueOnce({ ...sprint, status: 'active' }).mockResolvedValue({ ...sprint, status: 'cancelled' });
+  vi.mocked(transitionSprint).mockResolvedValue({ ...sprint, description: null, status: 'cancelled' });
+  render(<SprintWorkspace id="sp1" />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Hủy Sprint' }));
+  expect(screen.getByRole('dialog', { name: 'Hủy Sprint' })).toBeInTheDocument();
+  expect(transitionSprint).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: 'Giữ Sprint' }));
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Hủy Sprint' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Xác nhận hủy Sprint' }));
+  await waitFor(() => expect(transitionSprint).toHaveBeenCalledWith('sp1', 'cancelled'));
+  expect(await screen.findByText('Đã hủy')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Hủy Sprint' })).not.toBeInTheDocument();
+});
+
+it('does not offer lifecycle changes to a Sprint viewer without management permission', async () => {
+  vi.mocked(getSprint).mockResolvedValue({ ...sprint, status: 'active' });
+  render(<SprintWorkspace id="sp1" />);
+  await screen.findByText('Đang chạy');
+  expect(screen.queryByRole('button', { name: 'Hoàn thành Sprint' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Hủy Sprint' })).not.toBeInTheDocument();
+  expect(transitionSprint).not.toHaveBeenCalled();
+});
+
+it.each(['completed', 'cancelled'])('keeps terminal %s Sprints immutable even for a manager', async status => {
+  setSession('test-token', { id: 'teacher', email: 'teacher@example.test', displayName: 'Teacher', roles: ['instructor'], permissions: ['sprints.view', 'sprints.manage'] });
+  vi.mocked(getSprint).mockResolvedValue({ ...sprint, status });
+  render(<SprintWorkspace id="sp1" />);
+  await screen.findByText('Hoàn thành validation');
+  expect(screen.queryByRole('button', { name: 'Kích hoạt' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Hoàn thành Sprint' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Hủy Sprint' })).not.toBeInTheDocument();
 });
 
 it('paginates all Sprint tasks on the server and resets to page one after filtering', async () => {
