@@ -9,7 +9,8 @@ import {
   Empty,
   inputClass,
   Pager,
-  
+  buttonClass,
+  Modal,
   StatusDot,
 } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -22,6 +23,8 @@ import {
 import { sprintStatusLabel } from "@/lib/api/sprint-status";
 import { priorityLabels, statusLabels } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
+import { Can } from "@/components/auth/can";
+import { SprintForm } from "@/components/product/sprint-management";
 
 const taskTone: Record<string, "blue" | "amber" | "green" | "gray" | "red"> = {
   todo: "gray",
@@ -56,6 +59,8 @@ export function DeliveryOverview({
   const [memberPage, setMemberPage] = useState(1);
   const [dueFrom, setDueFrom] = useState("");
   const [dueTo, setDueTo] = useState("");
+  const [createSprint, setCreateSprint] = useState(false);
+  const [notice, setNotice] = useState("");
   const sprints = useResource(
     useCallback(
       (signal: AbortSignal) =>
@@ -145,7 +150,9 @@ export function DeliveryOverview({
       <PageTitle
         title="Sprint & Task"
         subtitle="Theo dõi công việc trong các dự án và phiên thực tập bạn quản lý."
+        action={kind === "sprints" && <Can perm="sprints.manage"><button className={buttonClass} onClick={() => setCreateSprint(true)}>Tạo Sprint</button></Can>}
       />
+      {notice && <p role="status" className="border-l border-success pl-3 text-body text-success">{notice}</p>}
       <details className="border-b border-border pb-4">
         <summary className="cursor-pointer py-2 text-body font-semibold text-foreground">Phạm vi dự án và phiên{projectId || sessionId ? " (đã chọn)" : " (tất cả)"}</summary>
         <div className="pt-3">
@@ -438,6 +445,11 @@ export function DeliveryOverview({
         )}
         {data && <Pager {...data} onChange={setPage} />}
       </Panel>
+      {createSprint && <Modal title="Tạo Sprint" onClose={() => setCreateSprint(false)}>
+        <SprintForm fixedProjectId={projectId || undefined} fixedProjectName="Dự án đã chọn trong phạm vi"
+          fixedSessionId={sessionId || undefined} fixedSessionName="Phiên đã chọn trong phạm vi"
+          onSaved={() => { setCreateSprint(false); setNotice("Đã tạo Sprint."); sprints.reload(); }} />
+      </Modal>}
     </div>
   );
 }
