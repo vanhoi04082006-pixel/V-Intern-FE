@@ -176,7 +176,7 @@ export function SalaryConsole() {
                   </div>
                 </div>
                 <p className="text-body text-muted-foreground">
-                  Thu nhập kỳ đang chọn:{" "}
+                  {kpiPeriodId ? "Thu nhập kỳ đang chọn" : "Thu nhập KPI (mọi kỳ)"}:{" "}
                   <strong className="tabular-nums text-foreground">
                     {vnd(balance.data.earnedThisPeriod, balance.data.unit)}
                   </strong>

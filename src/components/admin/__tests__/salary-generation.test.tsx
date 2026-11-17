@@ -132,8 +132,8 @@ it("refreshes the visible balance as well as the ledger after successful generat
   await within(member).findByRole("option", { name: "SV QA" });
   fireEvent.change(member, { target: { value: "u1" } });
   const balanceSection = screen.getByRole("heading", { name: "Tra số dư sinh viên" }).closest("section")!;
-  await within(balanceSection).findByText("Thu nhập kỳ đang chọn:", { exact: false });
+  await within(balanceSection).findByText("Thu nhập KPI (mọi kỳ):", { exact: false });
   fireEvent.click(screen.getByRole("button", { name: "Sinh lương cho kỳ" }));
   await screen.findByText(/Đã sinh 1 dòng/);
-  await waitFor(() => expect(within(balanceSection).getByText(/Thu nhập kỳ đang chọn:/)).toHaveTextContent("955.000 đồng ảo"));
+  await waitFor(() => expect(within(balanceSection).getByText(/Thu nhập KPI \(mọi kỳ\):/)).toHaveTextContent("955.000 đồng ảo"));
 });
