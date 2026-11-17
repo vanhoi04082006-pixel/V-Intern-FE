@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   parsePerformance,
+  parseEvaluation,
   parseSalary,
   parseVerification,
   parseKpi,
@@ -9,6 +10,12 @@ import {
   notificationLinkForRole,
 } from "../outcomes";
 describe("Outcome truth boundaries", () => {
+  it("retains criterion metadata for finalized student evaluation results", () => {
+    const raw = { id: "evaluation-qa", cycleId: "cycle-qa", status: "finalized", overallScore: 80, summary: null, finalizedAt: "2026-11-17T02:00:00Z", revisionNumber: 0, scores: [{ id: "score-qa", criterionId: "criterion-qa", criterionName: "Chất lượng kỹ thuật", weight: 40, maxScore: 10, score: 8, comment: null }] };
+    expect(parseEvaluation(raw).scores[0]).toMatchObject({ criterionName: "Chất lượng kỹ thuật", weight: 40, maxScore: 10 });
+    const legacy = parseEvaluation({ ...raw, scores: [{ id: "score-qa", criterionId: "criterion-qa", score: 8, comment: null }] });
+    expect(legacy.scores[0]).toMatchObject({ criterionName: null, weight: null, maxScore: null });
+  });
   it("maps task notices into the current workspace without crossing role guards", () => {
     const link = "/intern/tasks/12345678-1234-1234-1234-123456789012";
     expect(notificationLinkForRole(link, "instructor")).toBe(

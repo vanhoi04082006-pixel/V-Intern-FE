@@ -260,8 +260,9 @@ export function Evaluations({ id }: { id?: string }) {
                           <tr key={s.id}>
                             <td>
                               <span className="font-semibold text-foreground">
-                                Tiêu chí {index + 1}
+                                {s.criterionName ?? `Tiêu chí ${index + 1}`}
                               </span>
+                              {s.weight !== null && <p className="mt-1 text-caption text-muted-foreground">Trọng số {s.weight}%</p>}
                               <details className="mt-1 text-caption text-muted-foreground">
                                 <summary className="cursor-pointer">
                                   Mã tham chiếu
@@ -272,7 +273,7 @@ export function Evaluations({ id }: { id?: string }) {
                               </details>
                             </td>
                             <td className="student-table-num font-semibold">
-                              {s.score}
+                              {s.score}{s.maxScore !== null ? ` / ${s.maxScore}` : ""}
                             </td>
                             <td>{s.comment ?? "Chưa có"}</td>
                           </tr>
