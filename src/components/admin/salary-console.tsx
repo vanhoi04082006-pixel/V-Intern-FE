@@ -120,11 +120,15 @@ export function SalaryConsole() {
           busy={action.busy}
           error={action.error}
           onGenerate={async (periodId) => {
-            const outcome = await generateSalaryForPeriod(periodId);
-            setNotice(
-              `Đã sinh ${outcome.generated} dòng thu nhập, bỏ qua ${outcome.skipped} dòng (đã có hoặc điểm bằng 0).`,
-            );
-            ledger.reload();
+            setNotice("");
+            await action.run(async () => {
+              const outcome = await generateSalaryForPeriod(periodId);
+              setNotice(
+                `Đã sinh ${outcome.generated} dòng thu nhập, bỏ qua ${outcome.skipped} dòng (đã có hoặc điểm bằng 0).`,
+              );
+              ledger.reload();
+              balance.reload();
+            });
           }}
         />
         <section className="product-panel min-w-0 p-6">
@@ -311,6 +315,7 @@ export function SalaryConsole() {
               setAdjusting(false);
               setNotice(message);
               ledger.reload();
+              balance.reload();
             }}
           />
         </Modal>

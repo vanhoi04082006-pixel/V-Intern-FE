@@ -111,6 +111,7 @@ export function errorMessage(error: unknown): string {
   const workflowErrors: Record<string, string> = {
     KPI_CALCULATION_REQUIRED: 'Tính KPI thành công cho kỳ hiện tại trước khi chốt. Nếu vừa đổi khoảng ngày hoặc lượt tính bị lỗi, hãy tính lại rồi kiểm tra kết quả.',
     KPI_PERIOD_INVALID_DATES: 'Ngày kết thúc kỳ KPI phải sau ngày bắt đầu. Khoảng tính theo UTC và không bao gồm ngày kết thúc.',
+    VIRTUAL_SALARY_CONFIG_MISSING: 'Chưa có mức lương cơ sở ảo hợp lệ. Mở Cài đặt hệ thống, cấu hình mức này rồi thử sinh lương lại.',
     AI_REVIEW_REQUIRED: 'Chưa có đề xuất đạt với đủ bằng chứng AI và kiểm thử độc lập. Xem phần đánh giá; nếu quyết định chấm thủ công, hãy ghi rõ lý do chấm thủ công và phần đã tự kiểm tra trước khi lưu.',
     AI_REVIEWER_UNAVAILABLE: 'Chưa có giảng viên phụ trách đủ quyền để chạy Agent chấm bài. Nhờ người phụ trách kiểm tra phân công và quyền quản lý phiên, rồi thử chấm lại.',
     GITHUB_ACCESS_CHANGED: 'Trạng thái đối chiếu đã thay đổi. Đóng và tải lại trước khi gửi yêu cầu mới.',
