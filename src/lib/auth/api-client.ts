@@ -125,6 +125,7 @@ export function errorMessage(error: unknown): string {
     GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
     SESSION_REPOSITORY_REQUIRED: 'Phiên chưa có repository. Nhờ giảng viên đồng bộ repository của phiên trước khi nộp bài.',
     GITHUB_IDENTITY_REQUIRED: 'Hãy liên kết tài khoản GitHub của bạn trước khi nộp bài.',
+    SUBMISSION_REPOSITORY_MISMATCH: 'Bài nộp phải thuộc repository của phiên này. Hãy mở repository của phiên và gửi lại đúng link PR, commit hoặc branch/ref.',
     GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',
     GITHUB_IDENTITY_CHANGED: 'Danh tính GitHub đã thay đổi. Nhờ Admin đối chiếu quyền cũ trước khi mời tiếp.',
     CV_FILE_INVALID: 'CV cần là PDF hoặc DOCX đúng định dạng, tối đa 5 MB.',
