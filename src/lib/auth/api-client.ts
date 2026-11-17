@@ -100,6 +100,10 @@ export function errorMessage(error: unknown): string {
   if (error.code === "API_CONFIG_MISSING") return error.message;
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
+  if (error.code === "EVALUATION_WEIGHT_INVALID")
+    return error.statusCode === 400
+      ? "Ngày kết thúc kỳ đánh giá phải sau ngày bắt đầu. Hãy kiểm tra lại hai mốc thời gian."
+      : "Tổng trọng số tiêu chí phải bằng 100%. Hãy chỉnh và lưu trọng số trước khi mở kỳ hoặc chốt đánh giá.";
   const workflowErrors: Record<string, string> = {
     AI_REVIEW_REQUIRED: 'Chưa có đề xuất đạt với đủ bằng chứng AI và kiểm thử độc lập. Xem phần đánh giá; nếu quyết định chấm thủ công, hãy ghi rõ lý do chấm thủ công và phần đã tự kiểm tra trước khi lưu.',
     AI_REVIEWER_UNAVAILABLE: 'Chưa có giảng viên phụ trách đủ quyền để chạy Agent chấm bài. Nhờ người phụ trách kiểm tra phân công và quyền quản lý phiên, rồi thử chấm lại.',

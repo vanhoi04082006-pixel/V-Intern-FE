@@ -420,6 +420,10 @@ function CycleEditor({
     ),
     action = useAction(onChanged);
   const [name, setName] = useState(cycle.name);
+  const reloadCriteria = () => {
+    action.clearError();
+    criteria.reload();
+  };
   const choices =
     cycle.status === "draft"
       ? ["open", "archived"]
@@ -471,12 +475,12 @@ function CycleEditor({
             cycleId={cycle.id}
             criterion={c}
             editable={cycle.status === "draft"}
-            onChanged={criteria.reload}
+            onChanged={reloadCriteria}
           />
         ))
       )}
       {cycle.status === "draft" && (
-        <NewCriterion cycleId={cycle.id} onChanged={criteria.reload} />
+        <NewCriterion cycleId={cycle.id} onChanged={reloadCriteria} />
       )}
       <div className="flex flex-wrap justify-end gap-3">
         {choices.map((status) => (
