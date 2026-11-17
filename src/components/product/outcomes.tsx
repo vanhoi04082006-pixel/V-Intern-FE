@@ -75,6 +75,20 @@ const kpiMetricLabels: Record<string, string> = {
   timeliness: "Đúng hạn",
 };
 
+const recommendationMetricLabels: Record<string, string> = {
+  taskCompletionRate: "Tỷ lệ hoàn thành nhiệm vụ",
+  storyPointCompletionRate: "Tỷ lệ hoàn thành story points",
+  onTimeCompletionRate: "Tỷ lệ hoàn thành đúng hạn",
+  averageEvaluationScore: "Điểm đánh giá trung bình đã chốt",
+  kpiFinalScore: "Điểm KPI đã chốt",
+  overdueOpenTaskCount: "Số nhiệm vụ đang mở quá hạn",
+  activeSprintProgress: "Tiến độ Sprint đang chạy",
+  completedTaskCount: "Số nhiệm vụ đã hoàn thành",
+  totalTaskCount: "Tổng số nhiệm vụ",
+  completedStoryPoints: "Story points đã hoàn thành",
+  committedStoryPoints: "Story points đã cam kết",
+};
+
 /** Icon Sparkles (animate-ui) dạng IconComponent cho StudentPanel. */
 const SparklesPanelIcon: IconComponent = ({ size }) => (
   <SparklesIcon size={typeof size === "number" ? size : 24} aria-hidden="true" />
@@ -1642,7 +1656,7 @@ export function Recommendations() {
                   <p className="mt-4 border-t border-border pt-3 text-caption text-muted-foreground">
                     Chỉ số tham chiếu:{" "}
                     {r.evidenceMetricCodes
-                      .map((code) => kpiMetricLabels[code] ?? code)
+                      .map((code) => recommendationMetricLabels[code] ?? code)
                       .join(", ")}
                   </p>
                 </StudentPanel>
