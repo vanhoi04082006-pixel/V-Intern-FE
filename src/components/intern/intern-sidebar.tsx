@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Logo } from "@/components/v-intern/logo";
 
 import { INTERN_BOTTOM_NAV } from "./workspace-presentation";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import type {
   InternNavGroup,
   InternNavItem,
@@ -87,6 +88,7 @@ export function InternSidebar({
   onNavigate,
   currentPath = "/intern",
   user,
+  showThemeToggle = false,
 }: {
   groups: InternNavGroup[];
   className?: string;
@@ -94,6 +96,7 @@ export function InternSidebar({
   onNavigate?: () => void;
   currentPath?: string;
   user?: InternWorkspaceUser;
+  showThemeToggle?: boolean;
 }) {
   return (
     <aside className={cn("student-sidebar", className)}>
@@ -136,6 +139,10 @@ export function InternSidebar({
         </div>
 
         <div className="student-sidebar-footer">
+          {showThemeToggle && <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
+            <span className="text-caption text-muted-foreground">Giao diện</span>
+            <ThemeToggle />
+          </div>}
           <div>
             <NavItem
               item={INTERN_BOTTOM_NAV}

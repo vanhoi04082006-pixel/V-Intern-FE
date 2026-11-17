@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import { IconMonitor, IconMoon, IconSun } from "@/components/v-intern/icons";
 import type { NotebookIconProps } from "@/components/v-intern/icons";
 import {
@@ -24,6 +24,7 @@ const OPTIONS: { value: ThemePreference; label: string; Icon: ComponentType<Note
  */
 export function ThemeToggle({ className }: { className?: string }) {
   const [preference, setLocal] = useState<ThemePreference | null>(null);
+  const buttons = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
     const sync = () => setLocal(readPreference());
@@ -45,11 +46,12 @@ export function ThemeToggle({ className }: { className?: string }) {
         className,
       )}
     >
-      {OPTIONS.map(({ value, label, Icon }) => {
+      {OPTIONS.map(({ value, label, Icon }, index) => {
         const active = preference === value;
         return (
           <button
             key={value}
+            ref={node => { buttons.current[index] = node; }}
             type="button"
             role="radio"
             aria-checked={active}
@@ -57,6 +59,17 @@ export function ThemeToggle({ className }: { className?: string }) {
             title={`Chủ đề ${label}`}
             tabIndex={active || (preference === null && value === "system") ? 0 : -1}
             onClick={() => setPreference(value)}
+            onKeyDown={event => {
+              let next: number;
+              if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % OPTIONS.length;
+              else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + OPTIONS.length - 1) % OPTIONS.length;
+              else if (event.key === "Home") next = 0;
+              else if (event.key === "End") next = OPTIONS.length - 1;
+              else return;
+              event.preventDefault();
+              setPreference(OPTIONS[next].value);
+              buttons.current[next]?.focus();
+            }}
             className={cn(
               /* Real outline (not ring): renders in forced-colors mode and is
                  what the keyboard QA harness measures; on workspace shells
