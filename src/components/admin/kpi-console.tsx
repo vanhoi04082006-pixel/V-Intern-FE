@@ -388,7 +388,7 @@ function KpiPeriodForm({
         </label>
       </div>
       <p className="text-caption leading-5 text-muted-foreground">
-        Mã kỳ và quy tắc tính không đổi sau khi tạo. Ngày kết thúc là độc quyền (UTC).
+          Mã kỳ và quy tắc tính không đổi sau khi tạo. Ngày kết thúc phải sau ngày bắt đầu và không nằm trong khoảng tính (UTC).
       </p>
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <div className="flex justify-end">
