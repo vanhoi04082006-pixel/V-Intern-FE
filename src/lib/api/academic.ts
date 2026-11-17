@@ -279,6 +279,7 @@ export function parseMember(value: unknown) {
     userId: string(v.userId ?? v.instructorId),
     displayName: string(v.displayName),
     email: string(v.email),
+    ...(v.assignmentStatus === undefined ? {} : { assignmentStatus: nullable(v.assignmentStatus, string) }),
     ...(v.role === undefined && v.roleInProject === undefined ? {} : { role: nullable(v.role ?? v.roleInProject ?? null, string) }),
   };
 }

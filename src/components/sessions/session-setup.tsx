@@ -24,6 +24,7 @@ import { getTemplateContext } from "@/lib/api/templates";
 import { MemberSelector, type SelectorDeps } from "./member-selector";
 import { AiPlanPanel, type PlanDeps } from "./ai-plan";
 import { Can } from "@/components/auth/can";
+import { AssignmentCompletion } from "./assignment-completion";
 
 const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
   day: "2-digit",
@@ -77,6 +78,7 @@ export interface SetupMember {
   userId: string;
   displayName: string;
   email: string;
+  assignmentStatus?: string | null;
 }
 
 export interface SetupData {
@@ -368,6 +370,12 @@ function SetupBody({
                   <li key={m.userId}>
                     {m.displayName}{" "}
                     <span className="text-caption text-muted-foreground">{m.email}</span>
+                    {m.assignmentStatus === "completed" && <p className="text-caption text-success">Phân công đã hoàn thành</p>}
+                    {["active", "ending", "completed"].includes(session.status) && m.assignmentStatus === "active" && (
+                      <Can perm={["assignments.view", "assignments.manage"]}>
+                        <AssignmentCompletion sessionId={sessionId} internId={m.userId} displayName={m.displayName} onChanged={onChanged} />
+                      </Can>
+                    )}
                   </li>
                 ))}
               </ul>
