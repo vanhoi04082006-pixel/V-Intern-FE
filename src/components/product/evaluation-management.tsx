@@ -768,6 +768,7 @@ export function ScoreEditor({
     [summary, setSummary] = useState(e.summary ?? ""),
     [suggestion, setSuggestion] =
       useState<ReturnType<typeof api.parseAiSuggestion>>();
+  const [suggestionHistoryVersion, setSuggestionHistoryVersion] = useState(0);
   const action = useAction(),
     locked = e.status === "finalized";
   const hasUnsavedChanges =
@@ -971,9 +972,10 @@ export function ScoreEditor({
             className={btn("secondary")}
             disabled={action.busy || (isInstructor && locked)}
             onClick={() =>
-              void action.run(async () =>
-                setSuggestion(await api.suggestEvaluation(e.id)),
-              )
+              void action.run(async () => {
+                setSuggestion(await api.suggestEvaluation(e.id));
+                setSuggestionHistoryVersion(version => version + 1);
+              })
             }
           >
             <Sparkles
@@ -983,7 +985,7 @@ export function ScoreEditor({
               loop
               aria-hidden="true"
             />
-            {action.busy ? "Đang xin gợi ý…" : "Yêu cầu gợi ý AI"}
+            {action.busy ? "Đang xử lý…" : "Yêu cầu gợi ý AI"}
           </button>
         </Can>
         {isInstructor && locked && (
@@ -1022,7 +1024,7 @@ export function ScoreEditor({
             ))}
           </div>
         )}
-        <SuggestionHistory evaluationId={e.id} criteria={detail.criteria} />
+        <SuggestionHistory key={`${e.id}-${suggestionHistoryVersion}`} evaluationId={e.id} criteria={detail.criteria} />
       </Panel>
     </div>
   );
