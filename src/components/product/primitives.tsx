@@ -534,6 +534,7 @@ export function Modal({
   wide = false,
   description,
   footer,
+  closeDisabled = false,
 }: {
   title: string;
   onClose: () => void;
@@ -541,6 +542,7 @@ export function Modal({
   wide?: boolean;
   description?: ReactNode;
   footer?: ReactNode;
+  closeDisabled?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -557,12 +559,12 @@ export function Modal({
       ref={ref}
       onKeyDown={trapDialogFocus}
       onClick={(event) => {
-        if (event.target === ref.current) onClose();
+        if (!closeDisabled && event.target === ref.current) onClose();
       }}
       onCancel={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        onClose();
+        if (!closeDisabled) onClose();
       }}
       aria-label={title}
       className={`product-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-panel border border-border bg-card p-5 shadow-popover backdrop:bg-foreground/50`}
@@ -579,6 +581,7 @@ export function Modal({
         <button
           type="button"
           aria-label="Đóng"
+          disabled={closeDisabled}
           onClick={onClose}
           className={iconButtonClass}
         >

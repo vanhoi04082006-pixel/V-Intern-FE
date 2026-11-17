@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   IconCoins,
   IconPlus,
@@ -33,6 +33,8 @@ import { PerformanceMemberPicker } from "@/components/product/performance-member
 import { useInternNames } from "./use-intern-names";
 import { InkCountUp } from "@/components/v-intern/motion";
 import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
+import { linkButtonClass } from "./ui-bits";
+import { ApiError } from "@/lib/auth/api-client";
 
 export const ledgerTypeLabels: Record<SalaryLedgerRow["type"], string> = {
   kpi_earning: "Thu nhập KPI",
@@ -59,6 +61,8 @@ export function SalaryConsole() {
   const [type, setType] = useState("");
   const [kpiPeriodId, setKpiPeriodId] = useState("");
   const [adjusting, setAdjusting] = useState(false);
+  const [reversing, setReversing] = useState<SalaryLedgerRow | null>(null);
+  const [adjustmentBusy, setAdjustmentBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const action = useAction();
 
@@ -252,7 +256,7 @@ export function SalaryConsole() {
           <table className="product-table w-full min-w-[48rem] border-collapse text-body">
             <thead>
               <tr>
-                {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải"].map((label) => (
+                {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải", "Thao tác"].map((label) => (
                   <th
                     key={label}
                     className={thClass}
@@ -287,6 +291,11 @@ export function SalaryConsole() {
                   <td className="border-b border-border px-4 py-3 text-foreground">
                     {row.description}
                   </td>
+                  <td className="border-b border-border px-4 py-3">
+                    {row.type !== "reversal" && <button type="button" className={linkButtonClass}
+                      aria-label={`Hoàn đảo ${ledgerTypeLabels[row.type]} ${vnd(row.amount, row.unit)} của ${nameOf(row.userId)}`}
+                      onClick={() => { setNotice(""); setReversing(row); }}>Hoàn đảo</button>}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -308,11 +317,16 @@ export function SalaryConsole() {
         />
       )}
 
-      {adjusting && (
-        <Modal title="Ghi điều chỉnh lương ảo" onClose={() => setAdjusting(false)}>
+      {(adjusting || reversing) && (
+        <Modal title={reversing ? "Hoàn đảo dòng lương ảo" : "Ghi điều chỉnh lương ảo"} closeDisabled={adjustmentBusy}
+          onClose={() => { if (!adjustmentBusy) { setAdjusting(false); setReversing(null); } }}>
           <SalaryAdjustmentForm
+            onBusyChange={setAdjustmentBusy}
+            source={reversing ?? undefined}
+            sourceName={reversing ? nameOf(reversing.userId) : undefined}
             onSaved={(message) => {
               setAdjusting(false);
+              setReversing(null);
               setNotice(message);
               ledger.reload();
               balance.reload();
@@ -379,26 +393,32 @@ function GenerateCard({
   );
 }
 
-function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void }) {
+function SalaryAdjustmentForm({ onSaved, source, sourceName, onBusyChange }: { onSaved: (message: string) => void; source?: SalaryLedgerRow; sourceName?: string; onBusyChange: (busy: boolean) => void }) {
   const action = useAction();
-  const [userId, setUserId] = useState("");
-  const [type, setType] = useState<(typeof salaryAdjustmentTypes)[number]>("bonus");
+  const [userId, setUserId] = useState(source?.userId ?? "");
+  const [type, setType] = useState<(typeof salaryAdjustmentTypes)[number]>(source ? "reversal" : "bonus");
   const [amount, setAmount] = useState("");
-  const [sourceId, setSourceId] = useState("");
+  const [sourceId, setSourceId] = useState(source?.id ?? "");
   const [reason, setReason] = useState("");
+  const lastRequest = useRef<{ fingerprint: string; requestId: string } | null>(null);
   const needsAmount = type === "bonus" || type === "penalty" || type === "adjustment";
   const submit = async () => {
-    if (!userId || !reason.trim()) return;
+    if (!userId) return;
+    if (!reason.trim()) throw new ApiError(400, "VALIDATION_ERROR", "Reason is required.", ["Nhập lý do điều chỉnh, không chỉ khoảng trắng."]);
     if (needsAmount && !amount) return;
     if (type === "reversal" && !sourceId.trim()) return;
-    await createSalaryAdjustment({
+    const payload = {
       userId,
       type,
       ...(needsAmount ? { amount: Number(amount) } : {}),
       ...(type === "reversal" ? { sourceId: sourceId.trim() } : {}),
       reason: reason.trim(),
-      requestId: crypto.randomUUID(),
-    });
+    };
+    const fingerprint = JSON.stringify(payload);
+    let request = lastRequest.current;
+    if (!request || request.fingerprint !== fingerprint) request = { fingerprint, requestId: crypto.randomUUID() };
+    lastRequest.current = request;
+    await createSalaryAdjustment({ ...payload, requestId: request.requestId });
     onSaved("Đã ghi điều chỉnh vào sổ lương ảo.");
   };
   return (
@@ -406,9 +426,14 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
-        void action.run(submit);
+        void action.run(async () => {
+          onBusyChange(true);
+          try { await submit(); } finally { onBusyChange(false); }
+        });
       }}
     >
+      <fieldset disabled={action.busy} className="space-y-4">
+      {source ? <p className="text-body">Hoàn đảo {ledgerTypeLabels[source.type]} {vnd(source.amount, source.unit)} của {sourceName ?? source.userId}. Hệ thống thêm dòng bù trừ và giữ nguyên dòng gốc.</p> : <>
       <PerformanceMemberPicker value={userId} onChange={setUserId} required />
       <label className="block text-body font-medium">
         Loại điều chỉnh
@@ -424,6 +449,7 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
           ))}
         </select>
       </label>
+      </>}
       {needsAmount && (
         <label className="block text-body font-medium">
           Số tiền (đơn vị ảo) <span className="text-destructive">*</span>
@@ -438,7 +464,7 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
           />
         </label>
       )}
-      {type === "reversal" && (
+      {type === "reversal" && !source && (
         <label className="block text-body font-medium">
           Mã dòng gốc cần hoàn đảo <span className="text-destructive">*</span>
           <input
@@ -469,9 +495,10 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
       <div className="flex justify-end">
         <button className={buttonClass} disabled={action.busy} type="submit">
           <IconWallet size={16} aria-hidden />
-          {action.busy ? "Đang ghi…" : "Ghi vào sổ"}
+          {action.busy ? "Đang ghi…" : source ? "Xác nhận hoàn đảo" : "Ghi vào sổ"}
         </button>
       </div>
+      </fieldset>
     </form>
   );
 }
