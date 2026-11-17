@@ -125,7 +125,7 @@ export function InternWork() {
         }
       />
       <MarginNote className="-mt-5 max-w-md">
-        ghim task quan trọng lên đầu nhé ✎
+        dùng bộ lọc để chọn nhiệm vụ cần ưu tiên nhé ✎
       </MarginNote>
       {workspaceContext?.workspace.assignment && <details open className="student-help-disclosure student-project-materials"><summary>Tài liệu & gói dự án</summary><OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} /></details>}
 
