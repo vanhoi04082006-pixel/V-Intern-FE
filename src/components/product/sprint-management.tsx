@@ -27,6 +27,7 @@ import {
 import { useResource } from "@/lib/api/use-resource";
 import { isSprintTerminal, sprintStatusLabel } from "@/lib/api/sprint-status";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
 import { TaskDetail } from "./intern-work";
@@ -453,7 +454,9 @@ export function TaskManagement({
     [search, setSearch] = useState(""),
     [create, setCreate] = useState(false),
     [detail, setDetail] = useState<string>(),
-    [edit, setEdit] = useState<Task>();
+    [edit, setEdit] = useState<Task>(),
+    /* Xác nhận xoá task qua ConfirmDialog chuẩn thay window.confirm. */
+    [remove, setRemove] = useState<Task>();
   const tasks = useResource(
     useCallback(
       (s: AbortSignal) =>
@@ -567,7 +570,7 @@ export function TaskManagement({
                       <td className={tdClass}><PriorityBadge priority={t.priority} /></td>
                       <td className={`${tdClass} whitespace-nowrap`}>{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
                       <td className={tdClass}><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
-                      <td className={`${tdClass} whitespace-nowrap`}><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
+                      <td className={`${tdClass} whitespace-nowrap`}><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => setRemove(t) }]} /></td>
                     </tr>
                   ))}
                 </tbody></table></div>
@@ -604,6 +607,26 @@ export function TaskManagement({
           <TaskDetail id={detail} managed onUpdated={reload} />
         </Modal>
       )}
+      {/* Xác nhận xoá: lịch sử giữ nguyên — nêu rõ để người dùng không nghĩ
+          mất vĩnh viễn các bài nộp/đánh giá liên quan. */}
+      <ConfirmDialog
+        open={Boolean(remove)}
+        tone="danger"
+        title={`Xóa nhiệm vụ ${remove?.code ?? ""}?`}
+        description="Lịch sử vẫn được giữ."
+        confirmLabel="Xóa nhiệm vụ"
+        cancelLabel="Không xóa"
+        busy={action.busy}
+        onConfirm={() => {
+          const target = remove;
+          setRemove(undefined);
+          if (target) void action.run(() => deleteTask(target.id));
+        }}
+        onCancel={() => setRemove(undefined)}
+      >
+        Nhiệm vụ rời khỏi bảng sprint hiện tại; các bài nộp và đánh giá đã
+        xảy ra không bị xoá kèm.
+      </ConfirmDialog>
     </>
   );
 }

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { THEME_BOOTSTRAP } from "@/lib/theme";
+import { ToastProvider } from "@/components/shared/toast";
+import { PreviewGate } from "@/components/shared/preview-gate";
 import "./globals.css";
 
 const geistMono = localFont({
@@ -94,7 +96,15 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
       </head>
       <body className="antialiased bg-background text-foreground">
-        {children}
+        {/* Toast feedback toàn cục (Section 8): mount một lần ở root; mọi
+            client component lấy API qua useToast() — không Provider thì
+            no-op an toàn. */}
+        <ToastProvider>
+          {children}
+          {/* Preview switcher (Section 10): chỉ hiện ở dev/preview deploy —
+              production build loại khỏi bundle qua PreviewGate. */}
+          <PreviewGate />
+        </ToastProvider>
       </body>
     </html>
   );

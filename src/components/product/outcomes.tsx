@@ -28,10 +28,11 @@ import { Sparkles as SparklesIcon } from "@/components/animate-ui/icons/sparkles
 import { BellRing as BellRingIcon } from "@/components/animate-ui/icons/bell-ring";
 import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useResource } from "@/lib/api/use-resource";
+import { useToast } from "@/components/shared/toast";
 import { ApiError } from "@/lib/auth/api-client";
 import {
   getCertificate,
@@ -61,7 +62,6 @@ import {
   buttonClass,
   Empty,
   Field,
-  InlineAlert,
   inputClass,
   PageTitle,
   Pager,
@@ -1191,6 +1191,12 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
 export function Notifications() {
   const role = usePathname().split("/")[1];
   const intern = role === "intern";
+  /* v7: phản hồi thao tác chuyển sang toast tạm thời (Section 8) — người dùng
+     bấm xong có thể cuộn tiếp mà vẫn thấy xác nhận ở góc màn hình. */
+  const toast = useToast();
+  /** Toast xác nhận thao tác gần nhất — thao tác mới dismiss để không còn
+      success cũ treo lơ lửng khi lượt sau thất bại (giữ đúng ngữ nghĩa test). */
+  const feedbackId = useRef<number>(0);
   const [preferencePending, setPreferencePending] = useState<{
     category: string;
     enabled: boolean;
@@ -1199,7 +1205,6 @@ export function Notifications() {
     [unread, setUnread] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>();
-  const [notice, setNotice] = useState<string>();
   const notifications = useResource(
     useCallback(
       (signal: AbortSignal) => getNotifications(page, unread, signal),
@@ -1226,14 +1231,18 @@ export function Notifications() {
   async function read(id?: string) {
     setBusy(true);
     setError(undefined);
-    setNotice(undefined);
+    if (feedbackId.current) toast.dismiss(feedbackId.current);
     try {
       if (id) {
         await markNotification(id);
-        setNotice('Đã đánh dấu thông báo là đã đọc.');
+        feedbackId.current = toast.success({ title: 'Đã đánh dấu thông báo là đã đọc.' });
       } else {
         const updated = await markAllNotifications();
-        setNotice(updated ? `Đã đánh dấu ${updated.toLocaleString('vi-VN')} thông báo là đã đọc.` : 'Không có thông báo chưa đọc cần cập nhật.');
+        feedbackId.current = toast.success(
+          updated
+            ? { title: `Đã đánh dấu ${updated.toLocaleString('vi-VN')} thông báo là đã đọc.` }
+            : { title: 'Không có thông báo chưa đọc cần cập nhật.' },
+        );
       }
       notifications.reload();
     } catch (e) {
@@ -1282,7 +1291,6 @@ export function Notifications() {
         Chỉ hiện chưa đọc
       </label>
       {Boolean(error) && <ErrorState error={error} />}
-      {notice && <InlineAlert tone="success" className="mb-5">{notice}</InlineAlert>}
       <div
         className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_280px]"
       >
@@ -1473,13 +1481,14 @@ export function Notifications() {
                           });
                           setBusy(true);
                           setError(undefined);
-                          setNotice(undefined);
                           try {
                             await setNotificationPreference(
                               p.category,
                               enabled,
                             );
-                            setNotice(`Đã ${enabled ? 'bật' : 'tắt'} thông báo ${preferenceLabels[p.category].toLowerCase()}.`);
+                            toast.success({
+                              title: `Đã ${enabled ? 'bật' : 'tắt'} thông báo ${preferenceLabels[p.category].toLowerCase()}.`,
+                            });
                             preferences.reload();
                           } catch (e) {
                             setError(e);

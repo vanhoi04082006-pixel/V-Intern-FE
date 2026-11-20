@@ -101,3 +101,22 @@ html { scroll-behavior: smooth; }
   .nb-press:active { transform: none; }
   .nb-stagger > *, .nb-stagger > *:nth-child(n + 10) { animation: none; animation-delay: 0ms; }
 }
+
+/* ------------------------------------------------------------------ */
+/* 4. Toast — giấy ghi chú đặt lên bàn                                 */
+/* ------------------------------------------------------------------ */
+/* Toast vào khung như đặt mẩu giấy nhớ lên mặt bàn: dịch từ dưới lên
+   12px + fade 260ms; rời khung mượt ngược lại 180ms. Chỉ transform +
+   opacity nên không reflow; reduced-motion thì hiện/tắt tức thì. */
+@keyframes nb-toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+@keyframes nb-toast-out {
+  to { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+.nb-toast-in { animation: nb-toast-in 260ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+.nb-toast-out { animation: nb-toast-out 180ms var(--motion-ease, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nb-toast-in, .nb-toast-out { animation: none; }
+}
