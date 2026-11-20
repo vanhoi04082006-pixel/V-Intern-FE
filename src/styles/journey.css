@@ -1659,3 +1659,275 @@
     animation: none;
   }
 }
+
+/* =====================================================================
+ * === §20 BRIDGE — product-primitives render v3 (nb3-*) trong aurora ===
+ * =====================================================================
+ * primitives.tsx giờ render KÈM class nb3-* trên cùng phần tử product-*.
+ * aurora.css + notebook.css (v2) style product-* ở specificity (0,2,0)–
+ * (0,2,3); các rule dưới dùng (0,3,0)+ để v3 LUÔN thắng, không phụ thuộc
+ * thứ tự import CSS. Bridge chỉ khớp khi CẢ HAI class cùng xuất hiện
+ * (opt-in qua primitives.tsx) — sidebar/nav/panel v2 thuần giữ nguyên.
+ * ===================================================================== */
+
+/* --- 20.1 Buttons ------------------------------------------------------ */
+.aurora-workspace .product-button.nb3-btn {
+  border: 2px solid var(--ink);
+  border-radius: 12px 15px 13px 14px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 2.5px 2.5px 0 0 var(--hard-shadow);
+  font-weight: 700;
+  transition:
+    transform 160ms var(--motion-ease),
+    box-shadow 160ms var(--motion-ease),
+    background-color 160ms var(--motion-ease),
+    opacity 160ms;
+}
+.aurora-workspace .product-button.nb3-btn:not(:disabled):hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4.5px 4.5px 0 0 var(--hard-shadow);
+}
+.aurora-workspace .product-button.nb3-btn:not(:disabled):active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 0 var(--hard-shadow);
+}
+.aurora-workspace .product-button-primary.nb3-btn {
+  background: var(--royal);
+  color: #fff;
+}
+.dark .aurora-workspace .product-button-primary.nb3-btn {
+  color: var(--ink);
+}
+.aurora-workspace .product-button-primary.nb3-btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--royal) 92%, #fff 8%);
+}
+.dark .aurora-workspace .product-button-primary.nb3-btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--royal) 100%, transparent);
+}
+.aurora-workspace .product-button-danger.nb3-btn {
+  background: var(--danger);
+  color: #fff;
+}
+.dark .aurora-workspace .product-button-danger.nb3-btn {
+  color: var(--ink);
+}
+.aurora-workspace .product-button-danger.nb3-btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--danger) 92%, #fff 8%);
+}
+.aurora-workspace .product-button-ghost.nb3-btn {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  box-shadow: none;
+}
+.aurora-workspace .product-button-ghost.nb3-btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--royal) 10%, transparent);
+  color: var(--royal);
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- 20.2 Inputs ------------------------------------------------------- */
+.aurora-workspace :is(.product-input.nb3-input, .product-input.nb3-select, .product-input.nb3-textarea) {
+  background: var(--paper-raised);
+  border: 1.5px solid var(--ink);
+  border-radius: 10px 12px 11px 12px;
+  box-shadow: 2px 2px 0 0 var(--hard-shadow);
+}
+.aurora-workspace :is(.product-input.nb3-input, .product-input.nb3-select, .product-input.nb3-textarea):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-color: var(--royal);
+  box-shadow: 2px 2px 0 0 var(--hard-shadow);
+}
+
+/* --- 20.3 Panels ------------------------------------------------------- */
+.aurora-workspace .product-panel.nb3-panel {
+  background: var(--paper-raised);
+  border: 2px solid var(--ink);
+  border-radius: 14px 17px 15px 16px;
+  box-shadow: 4px 4px 0 0 var(--hard-shadow);
+  padding: 1.15rem 1.25rem 1.35rem;
+}
+.aurora-workspace .product-panel.nb3-panel:hover {
+  transform: none;
+  box-shadow: 4px 4px 0 0 var(--hard-shadow);
+}
+.aurora-workspace .product-panel.nb3-panel .product-panel-header {
+  background-image: none;
+  border-bottom: 0;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* --- 20.4 Tables -------------------------------------------------------- */
+.aurora-workspace .product-table.nb3-table {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.aurora-workspace .product-table.nb3-table th {
+  background: color-mix(in srgb, var(--gold-soft) 55%, var(--paper-raised));
+  color: var(--ink-soft);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ink);
+  padding: 0.65rem 0.95rem;
+}
+.aurora-workspace .product-table.nb3-table td {
+  border-bottom: 1.5px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+  padding: 0.72rem 0.95rem;
+  color: var(--ink);
+}
+.aurora-workspace .product-table.nb3-table tbody tr {
+  transition: background-color 160ms var(--motion-ease);
+}
+.aurora-workspace .product-table.nb3-table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--gold-soft) 24%, transparent);
+}
+.aurora-workspace .product-table.nb3-table tbody tr:hover {
+  background: color-mix(in srgb, var(--royal) 10%, transparent);
+}
+/* th/td standalone (kit inkThClass/inkTdClass dùng ngoài .nb3-table) */
+.nb3-th {
+  padding: 0.65rem 0.95rem;
+  text-align: left;
+  white-space: nowrap;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.nb3-td {
+  padding: 0.72rem 0.95rem;
+  vertical-align: top;
+  color: var(--ink);
+}
+
+/* --- 20.5 Badge/Status chip --------------------------------------------- */
+.aurora-workspace :is(.product-badge, .product-status).nb3-chip {
+  padding: 0.16rem 0.68rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 9px 11px 10px 12px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.aurora-workspace :is(.product-badge, .product-status).nb3-chip[data-tone="blue"] {
+  border-color: var(--royal);
+  color: var(--royal);
+  background: color-mix(in srgb, var(--royal) 10%, transparent);
+}
+.aurora-workspace :is(.product-badge, .product-status).nb3-chip[data-tone="green"] {
+  border-color: var(--success);
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+.aurora-workspace :is(.product-badge, .product-status).nb3-chip[data-tone="amber"] {
+  border-color: var(--warning);
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 14%, transparent);
+}
+.aurora-workspace :is(.product-badge, .product-status).nb3-chip[data-tone="red"] {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+.aurora-workspace :is(.product-badge, .product-status).nb3-chip[data-tone="muted"] {
+  border-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  border-style: dashed;
+  color: var(--ink-soft);
+  background: transparent;
+}
+
+/* --- 20.6 Empty ---------------------------------------------------------- */
+.aurora-workspace .product-empty.nb3-empty {
+  border: 0;
+  background: transparent;
+}
+.aurora-workspace .product-empty.nb3-empty > span:first-child {
+  border-radius: 14px 17px 15px 16px;
+  border: 2px dashed color-mix(in srgb, var(--ink) 45%, transparent);
+  background: color-mix(in srgb, var(--gold-soft) 30%, transparent);
+}
+
+/* --- 20.7 Modal ---------------------------------------------------------- */
+.aurora-workspace .product-modal.nb3-modal {
+  border: 2px solid var(--ink);
+  border-radius: 14px 17px 15px 16px;
+  background: var(--paper-raised);
+  box-shadow: 5px 5px 0 0 var(--hard-shadow);
+}
+.aurora-workspace .product-modal.nb3-modal::before {
+  content: none;
+}
+[data-workspace-role="intern"] .aurora-workspace .product-modal.nb3-modal::before,
+[data-workspace-role="instructor"] .aurora-workspace .product-modal.nb3-modal::before {
+  content: none;
+}
+
+/* --- 20.8 KPI metric ------------------------------------------------------ */
+.aurora-workspace .product-metric.nb3-kpi {
+  border: 2px solid var(--ink);
+  border-radius: 12px 15px 13px 14px;
+  background: var(--paper-raised);
+  box-shadow: 3px 3px 0 0 var(--hard-shadow);
+  padding: 1rem 1.1rem;
+}
+
+/* --- 20.9 nb3-card + nb3-alert (dùng bởi primitives v3) ------------------- */
+.nb3-card {
+  border: 1.5px dashed color-mix(in srgb, var(--ink) 28%, transparent);
+  border-radius: 10px 13px 11px 12px;
+  background: color-mix(in srgb, var(--paper-raised) 72%, transparent);
+  padding: 0.9rem 1rem;
+}
+.nb3-alert {
+  border: 1.5px solid var(--ink);
+  border-left-width: 4px;
+  border-radius: 8px 12px 9px 11px;
+  background: var(--paper-raised);
+  box-shadow: 2px 2px 0 0 var(--hard-shadow);
+}
+.nb3-alert[data-tone="info"] {
+  border-left-color: var(--royal);
+}
+.nb3-alert[data-tone="info"] > svg {
+  color: var(--royal);
+}
+.nb3-alert[data-tone="success"] {
+  border-left-color: var(--success);
+}
+.nb3-alert[data-tone="success"] > svg {
+  color: var(--success);
+}
+.nb3-alert[data-tone="warning"] {
+  border-left-color: var(--warning);
+}
+.nb3-alert[data-tone="warning"] > svg {
+  color: var(--warning);
+}
+.nb3-alert[data-tone="danger"] {
+  border-left-color: var(--danger);
+}
+.nb3-alert[data-tone="danger"] > svg {
+  color: var(--danger);
+}
+
+/* --- 20.10 Bridge reduced-motion ------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-workspace .product-button.nb3-btn,
+  .aurora-workspace .product-button.nb3-btn:not(:disabled):hover,
+  .aurora-workspace .product-button.nb3-btn:not(:disabled):active,
+  .aurora-workspace .product-table.nb3-table tbody tr {
+    transition-duration: 0ms;
+    transform: none;
+    animation: none;
+  }
+}

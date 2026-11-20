@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import {
   IconX,
@@ -14,6 +14,19 @@ import { LoaderCircle } from "@/components/animate-ui/icons/loader-circle";
 import Link from "next/link";
 import { trapDialogFocus } from "@/lib/ui/dialog-focus";
 import { cn } from "@/lib/utils";
+import { SquiggleUnderline } from "@/components/notebook/doodles";
+import { StampMoc } from "@/components/notebook/ui";
+
+/* =====================================================================
+ * PRODUCT PRIMITIVES — Journey Notebook v3 conversion (Phase B).
+ *
+ * Nguyên tắc:
+ * - API (tên hàm/props) giữ nguyên 100% — không phá call sites hay test.
+ * - Hook `product-*` vẫn render trong DOM (test + aurora fallback dựa vào).
+ * - Lớp nhìn chuyển sang nb3-* (journey.css) — tự chứa, không bị
+ *   `.aurora-workspace` v2 đè nhờ §20 BRIDGE trong journey.css.
+ * - KHÔNG đụng logic: không fetch, không state nghiệp vụ.
+ * ===================================================================== */
 
 /* ------------------------------------------------------------------ */
 /* Buttons                                                             */
@@ -22,21 +35,20 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const buttonBase =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0";
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 disabled:cursor-not-allowed disabled:active:translate-y-0";
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-primary-foreground shadow-app-xs hover:bg-primary/90",
-  secondary:
-    "border border-border bg-card text-foreground shadow-app-xs hover:border-input hover:bg-background",
-  ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
-  danger: "bg-destructive text-primary-foreground shadow-app-xs hover:bg-destructive/90",
+  primary: "nb3-btn-primary",
+  secondary: "",
+  ghost: "nb3-btn-ghost",
+  danger: "nb3-btn-danger",
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
-  sm: "min-h-9 px-3 py-2 text-small",
-  md: "min-h-10 px-4 py-3 text-body",
-  lg: "min-h-11 px-5 py-3 text-body",
-  icon: "size-10 p-0",
+  sm: "nb3-btn-sm",
+  md: "nb3-btn-md",
+  lg: "nb3-btn-lg",
+  icon: "nb3-btn-icon",
 };
 
 /** Class cho button theo variant/size — dùng thay cho string ghép tay. */
@@ -47,9 +59,10 @@ export function btn(
   return cn(
     "product-button",
     `product-button-${variant}`,
-    buttonBase,
+    "nb3-btn",
     buttonVariants[variant],
     buttonSizes[size],
+    buttonBase,
   );
 }
 
@@ -58,21 +71,17 @@ export const buttonClass = btn("primary");
 
 /** Icon-only button (menu, close, toolbar) — cần aria-label ở call site. */
 export const iconButtonClass = cn(
+  "product-button product-button-ghost",
+  "nb3-btn nb3-btn-ghost nb3-btn-icon",
   buttonBase,
-  buttonVariants.ghost,
-  buttonSizes.icon,
 );
 
 /* ------------------------------------------------------------------ */
 /* Form controls                                                       */
 /* ------------------------------------------------------------------ */
-export const inputClass =
-  "product-input w-full min-w-0 rounded-control border border-border bg-card px-4 py-3 text-body text-foreground shadow-app-xs transition-[border-color,box-shadow] placeholder:text-muted-foreground hover:border-input focus:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30";
-export const selectClass = cn(
-  inputClass,
-  "pr-9 cursor-pointer",
-);
-export const textareaClass = cn(inputClass, "min-h-24 resize-y");
+export const inputClass = "product-input nb3-input w-full min-w-0";
+export const selectClass = cn(inputClass, "nb3-select");
+export const textareaClass = cn(inputClass, "nb3-textarea min-h-24 resize-y");
 
 export function Field({
   label,
@@ -93,7 +102,7 @@ export function Field({
 }) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label htmlFor={htmlFor} className="block text-body font-medium text-foreground">
+      <label htmlFor={htmlFor} className="product-field-label nb3-label block text-foreground">
         {label}
         {required && (
           <span aria-hidden="true" className="ml-0.5 text-destructive">
@@ -121,7 +130,7 @@ export function Field({
 }
 
 /* ------------------------------------------------------------------ */
-/* Feedback                                                            */
+/* Feedback                                                           */
 /* ------------------------------------------------------------------ */
 export function Spinner({ className }: { className?: string }) {
   return (
@@ -172,26 +181,10 @@ export function TableSkeleton({
 }
 
 const alertTones = {
-  info: {
-    box: "border-primary/20 bg-accent text-primary",
-    icon: IconInfo,
-    iconClass: "text-primary",
-  },
-  success: {
-    box: "border-success/20 bg-success-subtle text-success",
-    icon: IconCircleCheck,
-    iconClass: "text-success",
-  },
-  warning: {
-    box: "border-warning/20 bg-warning-subtle text-warning",
-    icon: IconAlertTriangle,
-    iconClass: "text-warning",
-  },
-  danger: {
-    box: "border-destructive/20 bg-destructive-subtle text-destructive",
-    icon: IconCircleX,
-    iconClass: "text-destructive",
-  },
+  info: { icon: IconInfo },
+  success: { icon: IconCircleCheck },
+  warning: { icon: IconAlertTriangle },
+  danger: { icon: IconCircleX },
 } as const;
 export type AlertTone = keyof typeof alertTones;
 
@@ -213,15 +206,15 @@ export function InlineAlert({
   return (
     <div
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
+      data-tone={tone}
       className={cn(
-        "flex items-start gap-3 rounded-control border px-4 py-3 text-body leading-6",
-        conf.box,
+        "nb3-alert flex items-start gap-3 px-4 py-3 text-body leading-6 text-foreground",
         className,
       )}
     >
       <Icon
         aria-hidden="true"
-        className={cn("mt-0.5 size-5 shrink-0", conf.iconClass)}
+        className="mt-0.5 size-5 shrink-0"
       />
       <div className="min-w-0 flex-1">
         {title && <p className="font-semibold">{title}</p>}
@@ -250,17 +243,15 @@ export function MetricCard({
   index?: number;
 }) {
   return (
-    <section className="product-metric flex min-w-0 items-start gap-3 border-b border-border py-4">
-      <span className="grid size-10 shrink-0 place-items-center rounded-control bg-accent">
-        <Icon className="text-primary" size={21} aria-hidden="true" />
+    <section className="product-metric nb3-kpi paper-grain min-w-0">
+      <span className="nb3-kpi-icon">
+        <Icon size={20} aria-hidden="true" />
       </span>
-      <div className="min-w-0">
-        <p className="text-caption font-medium leading-5 text-muted-foreground">{label}</p>
-        <p className="mt-1 break-words text-page font-bold tracking-tight text-foreground tabular-nums">
-          {value}
-        </p>
+      <div className="min-w-0 flex-1">
+        <p className="nb3-kpi-label">{label}</p>
+        <p className="nb3-kpi-value mt-0.5 break-words">{value}</p>
         {sub != null && (
-          <p className={cn("mt-1 text-caption leading-5", subTone)}>{sub}</p>
+          <p className={cn("nb3-kpi-sub mt-1", subTone)}>{sub}</p>
         )}
       </div>
     </section>
@@ -283,17 +274,23 @@ export function Panel({
   return (
     <section
       className={cn(
-        "product-panel min-w-0",
+        "product-panel nb3-panel paper-grain min-w-0",
         className,
       )}
     >
-      <div className="product-panel-header mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
-        <div className="min-w-0">
-          <h2 className="product-panel-title text-body font-bold leading-6 text-foreground sm:text-subsection">
-            {title}
-          </h2>
+      <div className="product-panel-header mb-4 flex flex-wrap items-center justify-between gap-3 pb-3">
+        <div className="relative min-w-0">
+          <div className="relative w-fit max-w-full">
+            <h2 className="product-panel-title nb3-panel-title text-body leading-6 sm:text-subsection">
+              {title}
+            </h2>
+            <SquiggleUnderline
+              className="pointer-events-none absolute -bottom-1.5 left-0 h-2 w-full text-[var(--ink)]/45"
+              draw
+            />
+          </div>
           {description && (
-            <p className="product-panel-description mt-0.5 text-caption leading-5 text-muted-foreground">
+            <p className="product-panel-description nb3-panel-desc mt-1.5">
               {description}
             </p>
           )}
@@ -316,7 +313,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "product-card border-b border-border py-4",
+        "product-card nb3-card",
         className,
       )}
     >
@@ -330,14 +327,22 @@ export function PageTitle({
   subtitle,
   action,
   back,
+  eyebrow,
+  stamp,
+  stampTone = "red",
 }: {
   title: string;
   subtitle?: string;
   action?: ReactNode;
   back?: { href: string; label: string };
+  /** v3 additive: dòng mono nhỏ trên tiêu đề (opt-in từng trang). */
+  eyebrow?: string;
+  /** v3 additive: con dấu cạnh tiêu đề (opt-in từng trang). */
+  stamp?: string;
+  stampTone?: "red" | "blue";
 }) {
   return (
-    <div className="product-page-title mb-6">
+    <div className="product-page-title nb3-page-heading mb-6">
       {back && (
         <Link
           href={back.href}
@@ -349,17 +354,29 @@ export function PageTitle({
       )}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="product-page-title-heading text-page font-bold tracking-tight text-foreground sm:text-page">
-            {title}
-          </h1>
+          {eyebrow && <p className="eyebrow mb-1.5">{eyebrow}</p>}
+          <div className="relative w-fit max-w-full">
+            <h1 className="product-page-title-heading nb3-page-title text-page tracking-tight sm:text-page">
+              {title}
+            </h1>
+            <SquiggleUnderline
+              className="pointer-events-none absolute -bottom-2 left-0 h-2.5 w-full text-[var(--royal)]/70"
+              draw
+            />
+          </div>
           {subtitle && (
-            <p className="product-page-title-subtitle mt-2 max-w-3xl text-body leading-6 text-muted-foreground">
+            <p className="product-page-title-subtitle nb3-page-subtitle mt-3">
               {subtitle}
             </p>
           )}
         </div>
+        {stamp && (
+          <div className="relative shrink-0 pl-2 pt-1">
+            <StampMoc tone={stampTone}>{stamp}</StampMoc>
+          </div>
+        )}
         {action && (
-          <div className="product-page-actions flex min-w-0 max-w-full shrink-0 flex-wrap items-center gap-2">
+          <div className="product-page-actions nb3-page-actions max-w-full">
             {action}
           </div>
         )}
@@ -385,21 +402,23 @@ export function Empty({
   return (
     <div
       role="status"
-      className="product-empty px-4 py-8 text-center"
+      className="product-empty nb3-empty px-4 py-8"
     >
       {hasRich && (
-        <span className="mx-auto grid size-11 place-items-center rounded-full bg-card text-muted-foreground ring-1 ring-ring/70">
-          <Icon size={20} aria-hidden="true" />
+        <span className="nb3-empty-doodle">
+          <Icon size={22} aria-hidden="true" />
         </span>
       )}
-      {title && <p className="mt-3 text-body font-semibold text-foreground">{title}</p>}
+      {title && (
+        <p className="nb3-empty-title mt-3 text-foreground">{title}</p>
+      )}
       {description && (
-        <p className="mx-auto mt-1 max-w-md text-body leading-6 text-muted-foreground">
+        <p className="nb3-empty-desc mx-auto mt-1 max-w-md">
           {description}
         </p>
       )}
       {!hasRich && (
-        <div className="text-body text-muted-foreground">
+        <div className="nb3-empty-desc text-body">
           {children ?? "Chưa có dữ liệu."}
         </div>
       )}
@@ -413,12 +432,12 @@ export function Empty({
 /* Badge / status                                                      */
 /* ------------------------------------------------------------------ */
 const badgeTones = {
-  blue: "bg-accent text-primary",
-  gray: "bg-muted text-muted-foreground",
-  amber: "bg-warning-subtle text-warning",
-  green: "bg-success-subtle text-success",
-  red: "bg-destructive-subtle text-destructive",
-  sky: "bg-accent text-primary",
+  blue: "blue",
+  gray: "muted",
+  amber: "amber",
+  green: "green",
+  red: "red",
+  sky: "blue",
 } as const;
 export type BadgeTone = keyof typeof badgeTones;
 
@@ -429,11 +448,12 @@ export function Badge({
   children: ReactNode;
   tone?: BadgeTone;
 }) {
+  const dataTone = badgeTones[tone];
   return (
     <span
+      data-tone={dataTone}
       className={cn(
-        "product-badge inline-flex items-center gap-1 rounded-md px-2 py-1 text-caption font-medium leading-none",
-        badgeTones[tone],
+        "product-badge nb3-chip inline-flex items-center gap-1 leading-none",
       )}
     >
       {children}
@@ -442,12 +462,12 @@ export function Badge({
 }
 
 const statusDotTones: Record<string, string> = {
-  green: "bg-success-subtle text-success",
-  amber: "bg-warning-subtle text-warning",
-  blue: "bg-accent text-primary",
-  gray: "bg-muted text-muted-foreground",
-  red: "bg-destructive-subtle text-destructive",
-  sky: "bg-accent text-primary",
+  green: "green",
+  amber: "amber",
+  blue: "blue",
+  gray: "muted",
+  red: "red",
+  sky: "blue",
 };
 
 /** Status pill with leading dot, as in the reference tables. */
@@ -460,11 +480,12 @@ export function StatusDot({
 }) {
   return (
     <span
+      data-tone={statusDotTones[tone]}
       className={cn(
-        "product-status inline-flex items-center gap-2 whitespace-nowrap rounded px-2 py-1 text-caption font-medium",
-        statusDotTones[tone],
+        "product-status nb3-chip inline-flex items-center gap-2 whitespace-nowrap leading-none",
       )}
     >
+      <span className="nb3-chip-dot" aria-hidden="true" />
       {children}
     </span>
   );
@@ -567,11 +588,11 @@ export function Modal({
         if (!closeDisabled) onClose();
       }}
       aria-label={title}
-      className={`product-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto rounded-panel border border-border bg-card p-5 shadow-popover backdrop:bg-foreground/50`}
+      className={`product-modal nb3-modal fixed inset-0 m-auto max-h-[90dvh] ${wide ? "w-[min(1200px,calc(100%-24px))]" : "w-[min(760px,calc(100%-24px))]"} overflow-y-auto backdrop:bg-foreground/50`}
     >
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-section font-bold text-foreground">{title}</h2>
+          <h2 className="nb3-modal-title text-section font-bold text-foreground">{title}</h2>
           {description && (
             <p className="mt-1 text-body leading-6 text-muted-foreground">
               {description}
@@ -590,7 +611,7 @@ export function Modal({
       </div>
       {children}
       {footer && (
-        <div className="mt-5 flex flex-wrap justify-end gap-2 border-t border-border pt-4">
+        <div className="mt-5 flex flex-wrap justify-end gap-2 pt-4">
           {footer}
         </div>
       )}
@@ -655,13 +676,17 @@ export function ProgressBar({
   if (value === null) return <span className="text-muted-foreground">Chưa có dữ liệu</span>;
   const v = Math.max(0, Math.min(100, Math.round(value)));
   return (
-    <span className="flex items-center gap-2">
-      <progress
-        value={v}
-        max={100}
-        className="h-2 w-20 accent-primary"
+    <span className="nb3-mini-track inline-flex items-center gap-2">
+      <span
+        className="nb3-mini-bar"
+        role="progressbar"
+        aria-valuenow={v}
+        aria-valuemin={0}
+        aria-valuemax={100}
         aria-label={label ?? `Tiến độ ${v}%`}
-      />
+      >
+        <span className="nb3-mini-fill" style={{ width: `${v}%` }} />
+      </span>
       <span className="text-caption tabular-nums text-muted-foreground">
         {label ?? `${v}%`}
       </span>
@@ -673,10 +698,8 @@ export function ProgressBar({
 /* Table classes — dùng cho bảng thủ công để đồng bộ style             */
 /* ------------------------------------------------------------------ */
 export const tableWrapClass =
-  "workspace-table-wrap overflow-x-auto border-y border-border";
-export const tableClass = "product-table w-full border-collapse text-body";
-export const thClass =
-  "whitespace-nowrap border-b border-border/70 bg-background/80 px-4 py-3 text-left text-caption font-semibold  text-muted-foreground";
-export const tdClass =
-  "border-b border-border px-4 py-3 align-top text-foreground";
-export const tableRowClass = "transition-colors hover:bg-background/70";
+  "workspace-table-wrap nb3-table-wrap overflow-x-auto";
+export const tableClass = "product-table nb3-table w-full border-collapse text-body";
+export const thClass = "nb3-th whitespace-nowrap text-left";
+export const tdClass = "nb3-td align-top";
+export const tableRowClass = "";

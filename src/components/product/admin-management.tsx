@@ -18,6 +18,9 @@ import {
   Pager,
   Panel,
   StatusDot,
+  tableClass,
+  tdClass,
+  thClass,
 } from "./primitives";
 import { useAction } from "./use-action";
 import { Can } from "@/components/auth/can";
@@ -66,6 +69,9 @@ export function AdminOverview() {
   return (
     <>
       <PageTitle
+        eyebrow="BẢNG ĐIỀU KHIỂN"
+        stamp="ADMIN"
+        stampTone="blue"
         title="Trang quản trị"
         subtitle="Tổng quan quản trị và hoạt động được ghi nhận trong hệ thống"
       />
@@ -240,6 +246,8 @@ export function AdminUsers() {
   return (
     <>
       <PageTitle
+        eyebrow="QUẢN TRỊ"
+        stamp="SỔ NHÂN SỰ"
         title="Quản lý người dùng"
         subtitle="Danh sách và trạng thái tài khoản từ cơ sở dữ liệu"
         action={
@@ -340,8 +348,8 @@ export function AdminUsers() {
               <>
                 {data.items.length ? (
                   <div className="notebook-scroll max-h-[65vh] overflow-x-auto overflow-y-auto" role="region" aria-label="Danh sách người dùng" tabIndex={0}>
-                    <table className="w-full min-w-[52rem] text-left text-body">
-                      <thead className="bg-muted/50">
+                    <table className={`${tableClass} min-w-[52rem] text-left`}>
+                      <thead>
                         <tr>
                           {[
                             "Người dùng",
@@ -350,7 +358,7 @@ export function AdminUsers() {
                             "Đăng nhập gần nhất",
                             "Thao tác",
                           ].map((x) => (
-                            <th key={x} className={`p-3 ${x === "Thao tác" ? "text-right" : ""}`}>
+                            <th key={x} className={`${thClass}${x === "Thao tác" ? " text-right" : ""}`}>
                               {x}
                             </th>
                           ))}
@@ -358,8 +366,8 @@ export function AdminUsers() {
                       </thead>
                       <tbody>
                         {data.items.map((u) => (
-                          <tr key={u.id} className="border-b border-border">
-                            <td className="p-3">
+                          <tr key={u.id}>
+                            <td className={tdClass}>
                               <strong className="block text-foreground">
                                 {u.displayName}
                               </strong>
@@ -367,8 +375,8 @@ export function AdminUsers() {
                                 {u.email}
                               </span>
                             </td>
-                            <td className="p-3">{u.username}</td>
-                            <td className="p-3">
+                            <td className={tdClass}>{u.username}</td>
+                            <td className={tdClass}>
                               <Badge
                                 tone={
                                   u.status === "locked" || u.status === "deleted"
@@ -392,14 +400,14 @@ export function AdminUsers() {
                                 </StampMoc>
                               )}
                             </td>
-                            <td className="p-3">
+                            <td className={tdClass}>
                               {u.lastLoginAt
                                 ? new Date(u.lastLoginAt).toLocaleString(
                                     "vi-VN",
                                   )
                                 : "Chưa đăng nhập"}
                             </td>
-                            <td className="p-3">
+                            <td className={tdClass}>
                               <div className="flex flex-col items-end gap-2">
                                 <button
                                   className={`${linkButtonClass} text-primary hover:underline underline-offset-4`}
@@ -581,6 +589,9 @@ export function AdminRoles() {
   return (
     <>
       <PageTitle
+        eyebrow="QUẢN TRỊ"
+        stamp="RBAC"
+        stampTone="blue"
         title="Vai trò & quyền"
         subtitle="Các quyền được cấp trong chính sách RBAC hiện hành"
       />
@@ -677,6 +688,8 @@ export function AdminGroups() {
   return (
     <>
       <PageTitle
+        eyebrow="QUẢN TRỊ"
+        stamp="NHÓM"
         title="Nhóm người dùng"
         subtitle="Quản lý thành viên và vai trò kế thừa"
         action={
@@ -1055,6 +1068,9 @@ export function AdminCatalogs() {
   return (
     <>
       <PageTitle
+        eyebrow="HỆ THỐNG"
+        stamp="DANH MỤC"
+        stampTone="blue"
         title="Danh mục dùng chung"
         subtitle="Các loại danh mục và giá trị đang lưu trong hệ thống"
         action={
@@ -1365,6 +1381,8 @@ export function AdminSettings({ embedded = false }: { embedded?: boolean } = {})
     <>
       {!embedded && (
         <PageTitle
+          eyebrow="HỆ THỐNG"
+          stamp="CẤU HÌNH"
           title="Cài đặt hệ thống"
           subtitle="Cấu hình nghiệp vụ được lưu tại Backend"
           action={createAction}
@@ -1525,6 +1543,8 @@ export function AdminAudit() {
     <>
       <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
         <PageTitle
+          eyebrow="BẢO MẬT"
+          stamp="THỦ QUỸ"
           title="Audit log"
           subtitle="Lịch sử thao tác bảo mật và thay đổi dữ liệu"
         />
@@ -1721,6 +1741,9 @@ export function AdminActivity({ compact = false }: { compact?: boolean }) {
     <>
       {!compact && (
         <PageTitle
+          eyebrow="VẬN HÀNH"
+          stamp="NHẬT KÝ"
+          stampTone="blue"
           title="Hoạt động gần đây"
           subtitle="Sự kiện thực tế từ các nghiệp vụ trong hệ thống"
         />
@@ -1850,6 +1873,8 @@ export function AdminServices() {
   return (
     <>
       <PageTitle
+        eyebrow="VẬN HÀNH"
+        stamp="SỨC KHỎE"
         title="Trạng thái dịch vụ"
         subtitle="Kết quả kiểm tra kết nối hiện tại từ Backend"
         action={
