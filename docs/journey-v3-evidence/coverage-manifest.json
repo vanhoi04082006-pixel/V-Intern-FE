@@ -1,969 +1,5388 @@
 {
-  "standard": "JOURNEY V3 — 100% UI INTEGRATION (master prompt V4)",
-  "branch": "codex/product-acceptance-20261116",
-  "acceptanceRule": "DONE/ALREADY-COMPLIANT/REDIRECT cho mọi route; mọi route DONE phải có evidence tồn tại; 0 PARTIAL/NOT-STARTED/BLOCKED",
-  "generatedBy": "tools/gen-journey-manifest.py",
-  "globals": [
-    {
-      "file": "src/app/loading.tsx",
-      "status": "ALREADY-COMPLIANT",
-      "evidence": [],
-      "note": "ink-line + skeleton-pencil; render mọi chuyển route chậm; audit code + VLM qua luồng QA"
-    },
-    {
-      "file": "src/app/error.tsx",
-      "status": "ALREADY-COMPLIANT",
-      "evidence": [],
-      "note": "sketch-card + StampBadge LỖI + doodles; btn() primitives v3"
-    },
-    {
-      "file": "src/app/global-error.tsx",
-      "status": "ALREADY-COMPLIANT",
-      "evidence": [],
-      "note": "inline-style stamp tự chứa (global CSS không nạp được ở tầng này)"
-    },
-    {
-      "file": "src/app/not-found.tsx",
-      "status": "ALREADY-COMPLIANT",
-      "evidence": [
-        "journey-v3-evidence/global/not-found-1440.png",
-        "journey-v3-evidence/global/not-found-390.png"
-      ],
-      "note": "sketch-card 404 + doodles + squiggle; đã chụp 2 viewport"
-    },
-    {
-      "file": "src/app/template.tsx",
-      "status": "ALREADY-COMPLIANT",
-      "evidence": [],
-      "note": "không có UI riêng — audit code"
-    }
+ "standard": "Journey Notebook v3 — FINAL ACCEPTANCE (đợt tái nghiệm thu độc lập)",
+ "branch": "codex/product-acceptance-20261116",
+ "commit": "519b130",
+ "generatedAt": "2026-11-20T21:29:29.637Z",
+ "generatedBy": "scripts/gen-journey-v3-manifest.mjs (tái tạo được từ browser-audit.json + route-api-map.json)",
+ "environment": "Preview QA — next dev + NEXT_PUBLIC_PREVIEW=1 (mock API trong src/lib/preview/*). KHÔNG phải Real Backend E2E.",
+ "acceptanceRule": "DONE chỉ khi: đủ bằng chứng browser cho route (đúng role, đúng route, dữ liệu đã tải, 3 viewport, ảnh thuộc đúng route). Redirect: URL cuối. Ngoại lệ: trạng thái riêng + giải thích kỹ thuật — không tính là PASS tự động.",
+ "verifiedScopes": {
+  "codeComplete": true,
+  "visualVerified": "preview-qa",
+  "responsiveVerified": "3 viewport (390/768/1440) mọi route có UI — bằng chứng trong evidence[]",
+  "functionalVerified": "22/22 tương tác nghiệp vụ pass (đăng nhập từng role, palette ⌘K, drawer mobile, dialog, filter, gửi tin nhắn AI mentor, đánh dấu thông báo, luồng onboarding trọn vẹn, đổi mật khẩu, logout)",
+  "realBackendVerified": false,
+  "realBackendNote": "Toàn bộ bằng chứng là Preview QA trên mock API. KHÔNG tuyên bố Real Backend E2E PASS."
+ },
+ "stats": {
+  "routesTotal": 80,
+  "routesDone": 80,
+  "routesPartial": 0,
+  "routesMissing": 0,
+  "uiRoutes": 79,
+  "redirectRoutes": 1,
+  "screenshots": 272,
+  "viewports": [
+   "390x844",
+   "768x1024",
+   "1440x900"
   ],
-  "routes": [
-    {
-      "route": "/",
-      "group": "public",
-      "component": "v-intern/landing + HowItWorks 5 vé",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/public/landing-1440.png",
-        "docs/journey-v3-evidence/public/landing-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin",
-      "group": "admin",
-      "component": "product/admin-management AdminOverview",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin-1440.png",
-        "docs/journey-v3-evidence/admin/_admin-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/activity",
-      "group": "admin",
-      "component": "admin-management AdminActivity",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/root-1440.png"
-      ],
-      "note": "cũng render compact trên /admin (đã chụp)",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/ai",
-      "group": "admin",
-      "component": "admin/ai-configuration",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_ai-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/audit",
-      "group": "admin",
-      "component": "admin-management AdminAudit",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_audit-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_audit-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/career-roles",
-      "group": "admin",
-      "component": "admin/career-roles + editor",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_career-roles-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/catalogs",
-      "group": "admin",
-      "component": "admin-management AdminCatalogs",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_catalogs-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_catalogs-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/certificates",
-      "group": "admin",
-      "component": "admin/certificate-console",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_certificates-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_certificates-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/communications",
-      "group": "admin",
-      "component": "admin/communications",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_communications-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/groups",
-      "group": "admin",
-      "component": "admin-management AdminGroups",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_groups-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_groups-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/knowledge",
-      "group": "admin",
-      "component": "admin/knowledge/library",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_knowledge-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_knowledge-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/knowledge/[code]",
-      "group": "admin",
-      "component": "admin/knowledge/editor",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/knowledge-new-1440.png"
-      ],
-      "note": "cùng component editor render cả /new và /[code] (route scan xác nhận); editor đã chuyển (eyebrow KIẾN THỨC + back)",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/knowledge/new",
-      "group": "admin",
-      "component": "admin/knowledge/editor",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/knowledge-new-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/kpi",
-      "group": "admin",
-      "component": "admin/kpi-console",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_kpi-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_kpi-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/notifications",
-      "group": "admin",
-      "component": "product/outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_notifications-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/performance",
-      "group": "admin",
-      "component": "product/member-performance",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_performance-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/profile",
-      "group": "admin",
-      "component": "product/outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_profile-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/questions",
-      "group": "admin",
-      "component": "admin/question-bank + question-editor",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_questions-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_questions-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/recruitment-rounds",
-      "group": "admin",
-      "component": "applications/recruitment-rounds",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_recruitment-rounds-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/reports",
-      "group": "admin",
-      "component": "sessions/reports-workspace",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_reports-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_reports-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/roles",
-      "group": "admin",
-      "component": "admin-management AdminRoles",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_roles-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_roles-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/salary",
-      "group": "admin",
-      "component": "admin/salary-console",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_salary-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_salary-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/services",
-      "group": "admin",
-      "component": "admin-management AdminServices",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_services-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_services-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/sessions",
-      "group": "admin",
-      "component": "admin/sessions → session-overview",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_sessions-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_sessions-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/sessions/[id]",
-      "group": "admin",
-      "component": "sessions/session-overview",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/sessions-detail-1440.png"
-      ],
-      "note": "cùng session-overview (evidence instructor owner)",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/settings",
-      "group": "admin",
-      "component": "admin-management AdminSettings + github-connection",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_settings-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_settings-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/sprints",
-      "group": "admin",
-      "component": "sessions/delivery-overview",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_sprints-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_sprints-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/sprints/[id]",
-      "group": "admin",
-      "component": "sessions/sprint-workspace",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/sprints-detail-1440.png"
-      ],
-      "note": "cùng sprint-workspace (evidence instructor owner)",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/tasks",
-      "group": "admin",
-      "component": "product/sprint-management",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_tasks-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_tasks-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/tasks/[id]",
-      "group": "admin",
-      "component": "product/intern-work",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/tasks-detail-1440.png",
-        "docs/journey-v3-evidence/admin/tasks-detail-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/templates",
-      "group": "admin",
-      "component": "admin/templates-manager",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_templates-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_templates-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/admin/users",
-      "group": "admin",
-      "component": "admin-management AdminUsers",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/admin/_admin_users-1440.png",
-        "docs/journey-v3-evidence/admin/_admin_users-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/apply",
-      "group": "public",
-      "component": "applications/public-application",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/public/_apply-1440.png",
-        "docs/journey-v3-evidence/public/_apply-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/change-password",
-      "group": "public",
-      "component": "auth/change-password",
-      "status": "DONE",
-      "evidence": [
-        "docs/preview-evidence/screens/public-login.jpg"
-      ],
-      "note": "PasswordStrength + paper-grain; cùng auth-shell đã audit",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/forgot-password",
-      "group": "public",
-      "component": "auth/forgot-password-form",
-      "status": "DONE",
-      "evidence": [
-        "docs/preview-evidence/screens/public-forgot-password.jpg"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/github/invitation",
-      "group": "public",
-      "component": "workspace-guard + github-connection",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/public/_github_invitation-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor",
-      "group": "instructor",
-      "component": "sessions/instructor-home",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/classes",
-      "group": "public",
-      "component": "redirect → /instructor/projects",
-      "status": "REDIRECT",
-      "evidence": [],
-      "note": "server redirect, không render UI",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/evaluations",
-      "group": "instructor",
-      "component": "product/evaluation-management + imported-reviews",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_evaluations-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_evaluations-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/github",
-      "group": "instructor",
-      "component": "github-connection + notebook",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_github-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_github-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/notifications",
-      "group": "instructor",
-      "component": "product/outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_notifications-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/participation",
-      "group": "instructor",
-      "component": "participation/instructor",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_participation-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_participation-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/performance",
-      "group": "instructor",
-      "component": "product/member-performance",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_performance-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/profile",
-      "group": "instructor",
-      "component": "product/outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_profile-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/projects",
-      "group": "instructor",
-      "component": "projects/project-library",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_projects-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_projects-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/projects/[id]",
-      "group": "instructor",
-      "component": "projects/template-detail",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/projects-detail-1440.png",
-        "docs/journey-v3-evidence/instructor/projects-detail-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/recruitment-rounds",
-      "group": "instructor",
-      "component": "applications/recruitment-rounds",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_recruitment-rounds-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/reports",
-      "group": "instructor",
-      "component": "sessions/reports-workspace",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_reports-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_reports-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/sessions",
-      "group": "instructor",
-      "component": "sessions/session-list",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_sessions-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_sessions-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/sessions/[id]",
-      "group": "instructor",
-      "component": "sessions/session-overview",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/sessions-detail-1440.png",
-        "docs/journey-v3-evidence/instructor/sessions-detail-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/sessions/[id]/setup",
-      "group": "instructor",
-      "component": "sessions/session-setup",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/session-setup-1440.png",
-        "docs/journey-v3-evidence/instructor/session-setup-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/sprints",
-      "group": "instructor",
-      "component": "sessions/delivery-overview",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/_instructor_sprints-1440.png",
-        "docs/journey-v3-evidence/instructor/_instructor_sprints-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/sprints/[id]",
-      "group": "instructor",
-      "component": "sessions/sprint-workspace",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/instructor/sprints-detail-1440.png",
-        "docs/journey-v3-evidence/instructor/sprints-detail-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/instructor/tasks/[id]",
-      "group": "instructor",
-      "component": "product/intern-work + instructor-ui",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/work-detail-1440.png"
-      ],
-      "note": "cùng component intern-work (evidence work-detail) + unit tests task delivery",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern",
-      "group": "intern",
-      "component": "intern/intern-workspace + context",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern-1440.png",
-        "docs/journey-v3-evidence/intern/_intern-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/certificates",
-      "group": "intern",
-      "component": "intern-entry + outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_certificates-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_certificates-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/certificates/[id]",
-      "group": "intern",
-      "component": "outcomes detail",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/certificates-detail-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/evaluations",
-      "group": "intern",
-      "component": "intern-entry + product/outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_evaluations-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_evaluations-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/evaluations/[id]",
-      "group": "intern",
-      "component": "outcomes detail",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/evaluations-detail-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/github",
-      "group": "intern",
-      "component": "intern-entry + student-github",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_github-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/kpi",
-      "group": "intern",
-      "component": "intern-entry + outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_kpi-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_kpi-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/kpi/[id]",
-      "group": "intern",
-      "component": "outcomes detail",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/kpi-detail-1440.png",
-        "docs/journey-v3-evidence/intern/kpi-detail-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/mentor",
-      "group": "intern",
-      "component": "product/mentor",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_mentor-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_mentor-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/notifications",
-      "group": "intern",
-      "component": "intern-entry + outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_notifications-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/onboarding",
-      "group": "intern",
-      "component": "onboarding-shell + welcome-step",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_onboarding-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_onboarding-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/onboarding/interview",
-      "group": "intern",
-      "component": "interview-step + scheduled/conversation",
-      "status": "DONE",
-      "evidence": [
-        "docs/preview-evidence/screens/intern-intern-onboarding-interview.jpg"
-      ],
-      "note": "unit: scheduled-interview + conversation-interview + onboarding-flow tests pass",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/onboarding/result",
-      "group": "intern",
-      "component": "recruitment-result",
-      "status": "DONE",
-      "evidence": [
-        "docs/preview-evidence/screens/intern-intern-onboarding-result.jpg"
-      ],
-      "note": "unit: onboarding-flow tests pass; reveal animation giữ nguyên",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/onboarding/role",
-      "group": "intern",
-      "component": "role-selection-step",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_onboarding_role-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/participation",
-      "group": "intern",
-      "component": "participation/student",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_participation-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_participation-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/performance",
-      "group": "intern",
-      "component": "intern-entry + outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_performance-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/profile",
-      "group": "intern",
-      "component": "intern-entry + outcomes(profile)",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_profile-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_profile-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/project",
-      "group": "intern",
-      "component": "intern-entry + own-project-package",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_project-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_project-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/recommendations",
-      "group": "intern",
-      "component": "intern-entry + outcomes",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_recommendations-1440.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/sprint",
-      "group": "intern",
-      "component": "intern-entry + own-kanban (DnD)",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_sprint-1440.png"
-      ],
-      "note": "unit: intern-work-kanban DnD tests pass",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/virtual-salary",
-      "group": "intern",
-      "component": "outcomes + student-outcome-heading",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_virtual-salary-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_virtual-salary-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/work",
-      "group": "intern",
-      "component": "intern-entry + product/intern-work",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/_intern_work-1440.png",
-        "docs/journey-v3-evidence/intern/_intern_work-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/intern/work/[id]",
-      "group": "intern",
-      "component": "product/intern-work + student-ui",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/intern/work-detail-1440.png",
-        "docs/journey-v3-evidence/intern/work-detail-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/login",
-      "group": "public",
-      "component": "auth/auth-tabs + login-form",
-      "status": "DONE",
-      "evidence": [
-        "docs/preview-evidence/screens/public-login.jpg",
-        "docs/preview-evidence/screens/public-login-mobile.jpg"
-      ],
-      "note": "tái xác minh: mọi vòng QA đợt này login thành công, console sạch",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/register",
-      "group": "public",
-      "component": "auth/register-form",
-      "status": "DONE",
-      "evidence": [
-        "docs/preview-evidence/screens/public-register.jpg"
-      ],
-      "note": "",
-      "evidenceMissing": []
-    },
-    {
-      "route": "/verify",
-      "group": "public",
-      "component": "product/outcomes (verify)",
-      "status": "DONE",
-      "evidence": [
-        "docs/journey-v3-evidence/public/_verify-1440.png",
-        "docs/journey-v3-evidence/public/_verify-390.png"
-      ],
-      "note": "",
-      "evidenceMissing": []
+  "interactionsTotal": 22,
+  "interactionsPassed": 22,
+  "stateVariants": 6,
+  "globalsExempt": 3
+ },
+ "globals": [
+  {
+   "file": "src/app/not-found.tsx",
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/global/not-found-1440.jpg",
+     "role": "public"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/global/not-found-768.jpg",
+     "role": "public"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/global/not-found-390.jpg",
+     "role": "public"
     }
-  ]
+   ],
+   "browser": {
+    "finalUrl": "/khong-ton-tai-route-kiem-chung",
+    "state": "loaded",
+    "trigger": "truy cập route không tồn tại (404 thật)"
+   },
+   "note": "Sketch-card 404 + doodles (giấy kẹp, ribbon, tem vẽ tay) — VLM xác nhận notebook style."
+  },
+  {
+   "file": "src/app/loading.tsx",
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/global/intern-work-data-skeleton-1440.jpg",
+     "role": "intern",
+     "scenario": "loading-slow"
+    }
+   ],
+   "browser": {
+    "state": "loading",
+    "trigger": "scenario preview loading-slow (mọi request +2400ms) — skeleton 'Đang tải dữ liệu…' tại thời điểm chụp"
+   },
+   "note": "Skeleton dữ liệu trang /intern/work khi API chậm (bằng chứng DOM role=status + ảnh). Route-level loading.tsx chỉ xuất hiện khi route segment streaming chậm — trong dev đã compile không tái hiện được; component code-audit (ink-line + skeleton-pencil)."
+  },
+  {
+   "file": "src/app/error.tsx",
+   "status": "EXEMPT-REASONED",
+   "evidence": [],
+   "justification": "error.tsx chỉ render khi một exception chưa được handle ném RA TRONG render của route segment. Toàn bộ lỗi API trong app được useResource/ErrorState bắt (đã có bằng chứng error-state ở stateVariants), không route nào ném exception render trong luồng người dùng thật. Mô phỏng buộc phải inject lỗi render nhân tạo (không tồn tại trong code) — không tái kiểm tra được, nên khai báo ngoại lệ thay vì DONE.",
+   "technicalEvidence": [
+    "src/components/shared/data-state.tsx — ErrorState bắt mọi ApiError của các trang (bằng chứng ảnh error-state × 3 viewport trong stateVariants).",
+    "Component error.tsx dùng sketch-card + StampBadge LỖI + btn() primitives v3 (code-audit tại src/app/error.tsx)."
+   ],
+   "browser": {
+    "state": "n/a"
+   }
+  },
+  {
+   "file": "src/app/global-error.tsx",
+   "status": "EXEMPT-REASONED",
+   "evidence": [],
+   "justification": "global-error.tsx chỉ render khi root layout itself throw — không thể tái hiện qua bất kỳ thao tác người dùng nào trên 80 route đã audit. Component inline-style (global CSS không nạp được ở tầng này) — code-audit là bằng chứng kỹ thuật.",
+   "technicalEvidence": [
+    "src/app/global-error.tsx — inline stamp tự chứa, không phụ thuộc CSS ngoài (ràng buộc kiến trúc Next.js tầng global-error)."
+   ],
+   "browser": {
+    "state": "n/a"
+   }
+  },
+  {
+   "file": "src/app/template.tsx",
+   "status": "EXEMPT-NO-UI",
+   "evidence": [],
+   "justification": "template.tsx không render UI riêng (chỉ bọc lại layout theo ràng buộc Next) — không có gì để chụp.",
+   "technicalEvidence": [
+    "src/app/template.tsx — không phần tử thị giác nào."
+   ],
+   "browser": {
+    "state": "n/a"
+   }
+  },
+  {
+   "file": "state-variants (loading/empty/error)",
+   "status": "DONE",
+   "evidence": [
+    {
+     "variant": "intern-work-data-skeleton",
+     "file": "docs/journey-v3-evidence/global/intern-work-data-skeleton-1440.jpg",
+     "state": "loading"
+    },
+    {
+     "variant": "intern-work-error-state",
+     "files": [
+      "docs/journey-v3-evidence/global/intern-work-error-state-1440.jpg",
+      "docs/journey-v3-evidence/global/intern-work-error-state-768.jpg",
+      "docs/journey-v3-evidence/global/intern-work-error-state-390.jpg"
+     ],
+     "state": "error"
+    },
+    {
+     "variant": "admin-users-empty-state",
+     "files": [
+      "docs/journey-v3-evidence/global/admin-users-empty-state-1440.jpg",
+      "docs/journey-v3-evidence/global/admin-users-empty-state-768.jpg",
+      "docs/journey-v3-evidence/global/admin-users-empty-state-390.jpg"
+     ],
+     "state": "empty"
+    },
+    {
+     "variant": "instructor-empty-users",
+     "files": [
+      "docs/journey-v3-evidence/global/instructor-empty-users-1440.jpg",
+      "docs/journey-v3-evidence/global/instructor-empty-users-768.jpg",
+      "docs/journey-v3-evidence/global/instructor-empty-users-390.jpg"
+     ],
+     "state": "empty"
+    }
+   ],
+   "note": "Các trạng thái loading/empty/error được kiểm tra riêng bằng scenario preview (loading-slow/error/empty) — không dùng ảnh loaded thay thế."
+  }
+ ],
+ "routes": [
+  {
+   "route": "/",
+   "group": "public",
+   "slug": "landing",
+   "role": {
+    "access": [
+     "public"
+    ],
+    "auditedAs": "public",
+    "account": null
+   },
+   "component": "v-intern/landing (hero, how-it-works, showcase, product-heart, audience, workflow, final-cta, footer)",
+   "api": [],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/public/landing-1440.jpg",
+     "role": "public",
+     "resolvedRoute": "/",
+     "url": "/"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/public/landing-768.jpg",
+     "role": "public",
+     "resolvedRoute": "/",
+     "url": "/"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/public/landing-390.jpg",
+     "role": "public",
+     "resolvedRoute": "/",
+     "url": "/"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin",
+   "group": "admin",
+   "slug": "home",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (overview)",
+   "api": [
+    "GET /users",
+    "GET /groups",
+    "GET /roles",
+    "GET /audit-logs"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/home-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin",
+     "url": "/admin"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/home-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin",
+     "url": "/admin"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/home-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin",
+     "url": "/admin"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/activity",
+   "group": "admin",
+   "slug": "activity",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (activity)",
+   "api": [
+    "GET /activity-events"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/activity-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/activity",
+     "url": "/admin/activity"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/activity-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/activity",
+     "url": "/admin/activity"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/activity-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/activity",
+     "url": "/admin/activity"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/activity",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/ai",
+   "group": "admin",
+   "slug": "ai",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/ai-configuration",
+   "api": [
+    "GET /admin/ai-configuration",
+    "PUT /admin/ai-configuration",
+    "GET /admin/agents/business-runs",
+    "POST /admin/agents/knowledge-runs",
+    "GET /admin/agents/knowledge-runs/:id",
+    "POST /admin/agents/knowledge-runs/:id/cancel",
+    "POST /admin/agents/knowledge-runs/:id/resume"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/ai-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/ai",
+     "url": "/admin/ai"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/ai-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/ai",
+     "url": "/admin/ai"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/ai-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/ai",
+     "url": "/admin/ai"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/ai",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/audit",
+   "group": "admin",
+   "slug": "audit",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (audit)",
+   "api": [
+    "GET /audit-logs"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/audit-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/audit",
+     "url": "/admin/audit"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/audit-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/audit",
+     "url": "/admin/audit"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/audit-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/audit",
+     "url": "/admin/audit"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/audit",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/career-roles",
+   "group": "admin",
+   "slug": "career-roles",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/career-roles",
+   "api": [
+    "GET /admin/career-roles",
+    "POST /admin/career-roles",
+    "PUT /admin/career-roles/:code",
+    "POST /admin/career-roles/:code/archive",
+    "GET /admin/career-roles/:code/revisions"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/career-roles-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/career-roles",
+     "url": "/admin/career-roles"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/career-roles-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/career-roles",
+     "url": "/admin/career-roles"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/career-roles-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/career-roles",
+     "url": "/admin/career-roles"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/career-roles",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/catalogs",
+   "group": "admin",
+   "slug": "catalogs",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (catalogs)",
+   "api": [
+    "GET /catalogs/types",
+    "GET /catalogs/items",
+    "POST /catalogs/types",
+    "POST /catalogs/items",
+    "PATCH /catalogs/items/:id"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/catalogs-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/catalogs",
+     "url": "/admin/catalogs"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/catalogs-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/catalogs",
+     "url": "/admin/catalogs"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/catalogs-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/catalogs",
+     "url": "/admin/catalogs"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/catalogs",
+    "state": "empty",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "empty"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/certificates",
+   "group": "admin",
+   "slug": "certificates",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/certificate-console",
+   "api": [
+    "GET /certificates",
+    "POST /certificates/issue",
+    "POST /certificates/:id/revoke",
+    "GET /certificates/:id/pdf",
+    "GET /performance/interns"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/certificates-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/certificates",
+     "url": "/admin/certificates"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/certificates-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/certificates",
+     "url": "/admin/certificates"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/certificates-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/certificates",
+     "url": "/admin/certificates"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/certificates",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/communications",
+   "group": "admin",
+   "slug": "communications",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/communications",
+   "api": [
+    "GET /admin/communications",
+    "GET /admin/communications/:id/preview",
+    "POST /admin/communications/:id/resend"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/communications-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/communications",
+     "url": "/admin/communications"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/communications-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/communications",
+     "url": "/admin/communications"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/communications-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/communications",
+     "url": "/admin/communications"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/communications",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/groups",
+   "group": "admin",
+   "slug": "groups",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (groups)",
+   "api": [
+    "GET /groups",
+    "POST /groups",
+    "PATCH /groups/:id",
+    "GET /groups/:id/members",
+    "GET /groups/:id/roles",
+    "PUT /groups/:id/roles",
+    "POST /groups/:id/members",
+    "DELETE /groups/:id/members/:userId",
+    "GET /users/:id"
+   ],
+   "perms": [
+    "groups.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/groups-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/groups",
+     "url": "/admin/groups"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/groups-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/groups",
+     "url": "/admin/groups"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/groups-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/groups",
+     "url": "/admin/groups"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/groups",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/knowledge",
+   "group": "admin",
+   "slug": "knowledge",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/knowledge/library",
+   "api": [
+    "GET /admin/knowledge",
+    "GET /admin/knowledge/:code",
+    "GET /admin/career-roles",
+    "POST /admin/knowledge/import/dry-run"
+   ],
+   "perms": [
+    "knowledge.read",
+    "knowledge.manage",
+    "knowledge.publish"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/knowledge-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge",
+     "url": "/admin/knowledge"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/knowledge-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge",
+     "url": "/admin/knowledge"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/knowledge-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge",
+     "url": "/admin/knowledge"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/knowledge",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "admin-knowledge-open-document",
+     "ok": true,
+     "description": "Mở tài liệu KL-QA-01 → trang biên soạn"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/admin/knowledge/[code]",
+   "group": "admin",
+   "slug": "knowledge_KL-QA-01",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/knowledge/editor",
+   "api": [
+    "GET /admin/knowledge/:code",
+    "POST /admin/knowledge",
+    "PUT /admin/knowledge/:code",
+    "POST /admin/knowledge/:code/publish",
+    "POST /admin/knowledge/:code/archive",
+    "POST /admin/knowledge/:code/restore",
+    "GET /admin/knowledge/:code/revisions",
+    "GET /admin/knowledge/:code/publication-check",
+    "GET /admin/career-roles"
+   ],
+   "perms": [
+    "knowledge.read",
+    "knowledge.manage",
+    "knowledge.publish"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/knowledge_KL-QA-01-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge/KL-QA-01",
+     "url": "/admin/knowledge/KL-QA-01"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/knowledge_KL-QA-01-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge/KL-QA-01",
+     "url": "/admin/knowledge/KL-QA-01"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/knowledge_KL-QA-01-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge/KL-QA-01",
+     "url": "/admin/knowledge/KL-QA-01"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/knowledge/KL-QA-01",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "admin-knowledge-open-document",
+     "ok": true,
+     "description": "Mở tài liệu KL-QA-01 → trang biên soạn"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/admin/knowledge/new",
+   "group": "admin",
+   "slug": "knowledge-new",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/knowledge/editor",
+   "api": [
+    "POST /admin/knowledge",
+    "PUT /admin/knowledge/:code",
+    "POST /admin/knowledge/:code/publish",
+    "POST /admin/knowledge/:code/archive",
+    "POST /admin/knowledge/:code/restore",
+    "GET /admin/knowledge/:code/revisions",
+    "GET /admin/knowledge/:code/publication-check",
+    "GET /admin/career-roles"
+   ],
+   "perms": [
+    "knowledge.read",
+    "knowledge.manage",
+    "knowledge.publish"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/knowledge-new-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge/new",
+     "url": "/admin/knowledge/new"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/knowledge-new-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge/new",
+     "url": "/admin/knowledge/new"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/knowledge-new-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/knowledge/new",
+     "url": "/admin/knowledge/new"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/knowledge/new",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/kpi",
+   "group": "admin",
+   "slug": "kpi",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/kpi-console",
+   "api": [
+    "GET /kpi-periods",
+    "POST /kpi-periods",
+    "PATCH /kpi-periods/:id",
+    "POST /kpi-periods/:id/status",
+    "POST /kpi-periods/:id/calculate",
+    "POST /kpi-periods/:id/finalize",
+    "GET /kpi-periods/:id/results",
+    "GET /kpi-results/:id",
+    "GET /performance/interns"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/kpi-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/kpi",
+     "url": "/admin/kpi"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/kpi-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/kpi",
+     "url": "/admin/kpi"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/kpi-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/kpi",
+     "url": "/admin/kpi"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/kpi",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/notifications",
+   "group": "admin",
+   "slug": "notifications",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/outcomes (notifications)",
+   "api": [
+    "GET /notifications",
+    "POST /notifications/:id/read",
+    "POST /notifications/read-all",
+    "GET /notifications/preferences",
+    "PUT /notifications/preferences"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/notifications-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/notifications",
+     "url": "/admin/notifications"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/notifications-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/notifications",
+     "url": "/admin/notifications"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/notifications-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/notifications",
+     "url": "/admin/notifications"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/notifications",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/performance",
+   "group": "admin",
+   "slug": "performance",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/member-performance",
+   "api": [
+    "GET /performance/interns",
+    "GET /performance/interns/:id/ai-recommendations",
+    "GET /performance/interns/:id/detail",
+    "GET /projects",
+    "GET /projects/:id",
+    "GET /sessions",
+    "GET /sessions/:id"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/performance-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/performance",
+     "url": "/admin/performance"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/performance-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/performance",
+     "url": "/admin/performance"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/performance-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/performance",
+     "url": "/admin/performance"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/performance",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/profile",
+   "group": "admin",
+   "slug": "profile",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/outcomes (profile)",
+   "api": [
+    "POST /auth/refresh"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/profile-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/profile",
+     "url": "/admin/profile"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/profile-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/profile",
+     "url": "/admin/profile"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/profile-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/profile",
+     "url": "/admin/profile"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/profile",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/questions",
+   "group": "admin",
+   "slug": "questions",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/question-bank",
+   "api": [
+    "GET /admin/question-bank",
+    "POST /admin/question-bank",
+    "PUT /admin/question-bank/:id",
+    "DELETE /admin/question-bank/:id",
+    "GET /admin/career-roles"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/questions-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/questions",
+     "url": "/admin/questions"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/questions-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/questions",
+     "url": "/admin/questions"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/questions-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/questions",
+     "url": "/admin/questions"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/questions",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/recruitment-rounds",
+   "group": "admin",
+   "slug": "recruitment-rounds",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "applications/recruitment-rounds",
+   "api": [
+    "GET /recruitment-rounds",
+    "POST /recruitment-rounds",
+    "GET /recruitment-rounds/:id",
+    "POST /recruitment-rounds/:id/status",
+    "POST /recruitment-rounds/:id/slots",
+    "POST /recruitment-rounds/:id/slots/:slotId/close",
+    "GET /recruitment-rounds/:id/applications",
+    "GET /recruitment-rounds/:id/applications/:appId",
+    "GET /recruitment-rounds/:id/applications/:appId/cv",
+    "POST /recruitment-rounds/:id/applications/:appId/retake",
+    "POST /recruitment-rounds/:id/applications/:appId/reschedule",
+    "POST /recruitment-rounds/:id/applications/:appId/cancel",
+    "POST /recruitment-rounds/:id/applications/:appId/retry",
+    "POST /recruitment-rounds/:id/applications/:appId/resend-credentials",
+    "GET /recruitment-rounds/:id/applications/:appId/credential-recovery",
+    "POST /recruitment-rounds/:id/applications/:appId/recover-credentials",
+    "GET /career-roles",
+    "POST /applications/request-access"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/recruitment-rounds-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/recruitment-rounds",
+     "url": "/admin/recruitment-rounds"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/recruitment-rounds-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/recruitment-rounds",
+     "url": "/admin/recruitment-rounds"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/recruitment-rounds-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/recruitment-rounds",
+     "url": "/admin/recruitment-rounds"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/recruitment-rounds",
+    "state": "empty",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "empty"
+   },
+   "interactions": [
+    {
+     "id": "admin-recruitment-round-select",
+     "ok": true,
+     "description": "Chọn đợt tuyển → workspace hồ sơ hiển thị"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/admin/reports",
+   "group": "admin",
+   "slug": "reports",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "sessions/reports-workspace",
+   "api": [
+    "GET /reports",
+    "GET /reports/:id",
+    "POST /reports",
+    "GET /reports/:id/pdf",
+    "GET /reports/:id/xlsx",
+    "GET /projects",
+    "GET /projects/:id",
+    "GET /sessions",
+    "GET /sessions/:id",
+    "GET /sprints",
+    "GET /performance/interns"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/reports-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/reports",
+     "url": "/admin/reports"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/reports-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/reports",
+     "url": "/admin/reports"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/reports-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/reports",
+     "url": "/admin/reports"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/reports",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/roles",
+   "group": "admin",
+   "slug": "roles",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (roles)",
+   "api": [
+    "GET /roles",
+    "GET /permissions",
+    "GET /roles/:id/permissions"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/roles-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/roles",
+     "url": "/admin/roles"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/roles-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/roles",
+     "url": "/admin/roles"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/roles-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/roles",
+     "url": "/admin/roles"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/roles",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/salary",
+   "group": "admin",
+   "slug": "salary",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/salary-console",
+   "api": [
+    "GET /kpi-periods",
+    "GET /virtual-salary",
+    "POST /virtual-salary/generate/:kpiPeriodId",
+    "POST /virtual-salary/adjustments",
+    "GET /virtual-salary/users/:userId/balance",
+    "GET /performance/interns"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/salary-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/salary",
+     "url": "/admin/salary"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/salary-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/salary",
+     "url": "/admin/salary"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/salary-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/salary",
+     "url": "/admin/salary"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/salary",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "admin-salary-period-switch",
+     "ok": true,
+     "description": "Chọn kỳ lương trong console — bảng tải lại theo kỳ"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/admin/services",
+   "group": "admin",
+   "slug": "services",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (services)",
+   "api": [
+    "GET /health",
+    "GET /admin/system/status",
+    "GET /admin/system/contracts",
+    "POST /admin/system/contracts/validate",
+    "GET /admin/system/repositories"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/services-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/services",
+     "url": "/admin/services"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/services-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/services",
+     "url": "/admin/services"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/services-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/services",
+     "url": "/admin/services"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/services",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/sessions",
+   "group": "admin",
+   "slug": "sessions",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/sessions (console)",
+   "api": [
+    "GET /sessions/overview",
+    "GET /sessions/:id",
+    "POST /sessions",
+    "PATCH /sessions/:id",
+    "GET /sessions/:id/members",
+    "POST /sessions/:id/members",
+    "DELETE /sessions/:id/members/:userId",
+    "GET /sessions/:id/instructors",
+    "POST /sessions/:id/instructors",
+    "DELETE /sessions/:id/instructors/:userId",
+    "GET /sessions/instructor-options",
+    "GET /sessions/:id/milestones",
+    "POST /sessions/:id/milestones",
+    "PATCH /sessions/:id/milestones/:milestoneId",
+    "DELETE /sessions/:id/milestones/:milestoneId",
+    "GET /recruitment/candidates",
+    "POST /assignments",
+    "GET /projects",
+    "GET /projects/:id"
+   ],
+   "perms": [
+    "sessions.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/sessions-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sessions",
+     "url": "/admin/sessions"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/sessions-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sessions",
+     "url": "/admin/sessions"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/sessions-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sessions",
+     "url": "/admin/sessions"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/sessions",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "admin-session-open-detail",
+     "ok": true,
+     "description": "Mở phiên SS-F26 → trang chi tiết phiên"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/admin/sessions/[id]",
+   "group": "admin",
+   "slug": "sessions_ss-f26",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "sessions/session-overview",
+   "api": [
+    "GET /sessions/:id",
+    "GET /sprints",
+    "GET /sessions/:id/work",
+    "GET /sessions/:id/timeline",
+    "PATCH /sessions/:id",
+    "GET /ai-generations/plans",
+    "POST /ai-generations/plans/generate",
+    "GET /ai-generations/plans/:planId",
+    "POST /ai-generations/sprint-plan/confirm",
+    "POST /ai-generations/sprint-plan/draft",
+    "GET /sessions/:id/github",
+    "POST /sessions/:id/github/provision",
+    "POST /sessions/:id/github/invite",
+    "POST /sessions/:id/github/webhook",
+    "POST /sessions/:id/github/members/:userId/invite",
+    "POST /sessions/:id/github/reconcile",
+    "GET /sessions/:id/github/activity",
+    "GET /performance/interns",
+    "GET /performance/interns/:id/ai-recommendations",
+    "GET /performance/interns/:id/detail",
+    "GET /projects",
+    "GET /sessions",
+    "GET /projects/:id",
+    "GET /reports",
+    "GET /reports/:id",
+    "POST /reports",
+    "GET /reports/:id/pdf",
+    "GET /reports/:id/xlsx"
+   ],
+   "perms": [
+    "sessions.manage",
+    "sprints.manage",
+    "sessions.view",
+    "tasks.view",
+    "performance.view"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/sessions_ss-f26-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sessions/ss-f26",
+     "url": "/admin/sessions/ss-f26"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/sessions_ss-f26-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sessions/ss-f26",
+     "url": "/admin/sessions/ss-f26"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/sessions_ss-f26-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sessions/ss-f26",
+     "url": "/admin/sessions/ss-f26"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/sessions/ss-f26",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/settings",
+   "group": "admin",
+   "slug": "settings",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management + github-connection (settings)",
+   "api": [
+    "GET /settings",
+    "PATCH /settings",
+    "GET /github/repository-account",
+    "POST /github/repository-account"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/settings-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/settings",
+     "url": "/admin/settings"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/settings-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/settings",
+     "url": "/admin/settings"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/settings-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/settings",
+     "url": "/admin/settings"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/settings",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/sprints",
+   "group": "admin",
+   "slug": "sprints",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "sessions/delivery-overview",
+   "api": [
+    "GET /sprints",
+    "GET /tasks",
+    "GET /sessions/member-options",
+    "GET /projects",
+    "GET /projects/:id",
+    "POST /sprints"
+   ],
+   "perms": [
+    "sprints.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/sprints-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sprints",
+     "url": "/admin/sprints"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/sprints-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sprints",
+     "url": "/admin/sprints"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/sprints-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sprints",
+     "url": "/admin/sprints"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/sprints",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/sprints/[id]",
+   "group": "admin",
+   "slug": "sprints_sp-03",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "sessions/sprint-workspace",
+   "api": [
+    "GET /sprints/:id",
+    "GET /tasks",
+    "GET /sessions/:id/work",
+    "GET /dashboard/sprints/:id/burndown",
+    "GET /sessions/:id/members",
+    "GET /projects/:id/members",
+    "GET /sprints/:id/board",
+    "GET /sprints/:id/completion",
+    "POST /sprints/:id/status",
+    "POST /sprints",
+    "PATCH /sprints/:id",
+    "GET /sprints",
+    "GET /projects",
+    "GET /projects/:id",
+    "POST /tasks",
+    "PATCH /tasks/:id",
+    "DELETE /tasks/:id",
+    "GET /tasks/:id",
+    "GET /tasks/:id/comments",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [
+    "sprints.manage",
+    "tasks.view",
+    "sprints.view",
+    "sessions.view",
+    "projects.view",
+    "tasks.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/sprints_sp-03-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sprints/sp-03",
+     "url": "/admin/sprints/sp-03"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/sprints_sp-03-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sprints/sp-03",
+     "url": "/admin/sprints/sp-03"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/sprints_sp-03-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/sprints/sp-03",
+     "url": "/admin/sprints/sp-03"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/sprints/sp-03",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/tasks",
+   "group": "admin",
+   "slug": "tasks",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/sprint-management",
+   "api": [
+    "GET /sprints",
+    "GET /projects",
+    "GET /projects/:id",
+    "GET /tasks",
+    "POST /tasks",
+    "PATCH /tasks/:id",
+    "DELETE /tasks/:id",
+    "GET /projects/:id/members",
+    "GET /sprints/:id/board",
+    "GET /sprints/:id/completion",
+    "GET /dashboard/sprints/:id/burndown",
+    "POST /sprints",
+    "PATCH /sprints/:id",
+    "POST /sprints/:id/status",
+    "GET /tasks/:id",
+    "GET /tasks/:id/comments",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [
+    "tasks.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/tasks-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/tasks",
+     "url": "/admin/tasks"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/tasks-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/tasks",
+     "url": "/admin/tasks"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/tasks-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/tasks",
+     "url": "/admin/tasks"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/tasks",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/tasks/[id]",
+   "group": "admin",
+   "slug": "tasks_ts-20",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/intern-work (task detail)",
+   "api": [
+    "GET /tasks/:id",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "PATCH /tasks/:id",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/tasks_ts-20-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/tasks/ts-20",
+     "url": "/admin/tasks/ts-20"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/tasks_ts-20-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/tasks/ts-20",
+     "url": "/admin/tasks/ts-20"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/tasks_ts-20-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/tasks/ts-20",
+     "url": "/admin/tasks/ts-20"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/tasks/ts-20",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/templates",
+   "group": "admin",
+   "slug": "templates",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "admin/templates-manager",
+   "api": [
+    "GET /project-templates",
+    "GET /project-templates/:id",
+    "POST /project-templates",
+    "PATCH /project-templates/:id",
+    "GET /project-templates/:id/revisions",
+    "GET /project-templates/:id/revisions/:version",
+    "GET /projects/:projectId/template-assessment"
+   ],
+   "perms": [
+    "templates.assessment.read",
+    "templates.assessment.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/templates-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/templates",
+     "url": "/admin/templates"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/templates-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/templates",
+     "url": "/admin/templates"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/templates-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/templates",
+     "url": "/admin/templates"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/templates",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/users",
+   "group": "admin",
+   "slug": "users",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/admin-management (users)",
+   "api": [
+    "GET /users",
+    "GET /users/:id",
+    "POST /users",
+    "PATCH /users/:id",
+    "PATCH /users/:id/status",
+    "GET /roles"
+   ],
+   "perms": [
+    "users.create"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/users-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/users",
+     "url": "/admin/users"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/users-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/users",
+     "url": "/admin/users"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/users-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/users",
+     "url": "/admin/users"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/users",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "admin-users-search",
+     "ok": true,
+     "description": "Tìm kiếm \"sinhvien\" — còn 8 hàng"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/apply",
+   "group": "public",
+   "slug": "apply",
+   "role": {
+    "access": [
+     "public"
+    ],
+    "auditedAs": "public",
+    "account": null
+   },
+   "component": "applications/public-application",
+   "api": [
+    "GET /applications/rounds",
+    "POST /applications",
+    "POST /applications/verify",
+    "GET /applications/me",
+    "POST /applications/me/cv",
+    "POST /applications/leave",
+    "POST /applications/request-access"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/public/apply-1440.jpg",
+     "role": "public",
+     "resolvedRoute": "/apply",
+     "url": "/apply"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/public/apply-768.jpg",
+     "role": "public",
+     "resolvedRoute": "/apply",
+     "url": "/apply"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/public/apply-390.jpg",
+     "role": "public",
+     "resolvedRoute": "/apply",
+     "url": "/apply"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/apply",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "public-apply-render",
+     "ok": null
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/change-password",
+   "group": "public",
+   "slug": "change-password",
+   "role": {
+    "access": [
+     "admin",
+     "instructor",
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "auth/change-password",
+   "api": [
+    "GET /auth/me",
+    "POST /auth/change-password"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/change-password-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/change-password",
+     "url": "/change-password"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/change-password-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/change-password",
+     "url": "/change-password"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/change-password-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/change-password",
+     "url": "/change-password"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/change-password",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "intern-change-password-render",
+     "ok": true,
+     "description": "Form đổi mật khẩu render (đã đăng nhập)"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/forgot-password",
+   "group": "public",
+   "slug": "forgot-password",
+   "role": {
+    "access": [
+     "public"
+    ],
+    "auditedAs": "public",
+    "account": null
+   },
+   "component": "auth/forgot-password-form",
+   "api": [
+    "POST /auth/forgot-password"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/public/forgot-password-1440.jpg",
+     "role": "public",
+     "resolvedRoute": "/forgot-password",
+     "url": "/forgot-password"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/public/forgot-password-768.jpg",
+     "role": "public",
+     "resolvedRoute": "/forgot-password",
+     "url": "/forgot-password"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/public/forgot-password-390.jpg",
+     "role": "public",
+     "resolvedRoute": "/forgot-password",
+     "url": "/forgot-password"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/forgot-password",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "public-forgot-password-submit",
+     "ok": true,
+     "description": "Gửi yêu cầu quên mật khẩu — FE hiện phản hồi trạng thái"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/github/invitation",
+   "group": "public",
+   "slug": "github-invitation",
+   "role": {
+    "access": [
+     "intern",
+     "instructor",
+     "admin"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "auth/workspace-guard + product/github-connection",
+   "api": [
+    "GET /sessions/:id/github",
+    "POST /sessions/:id/github/provision",
+    "POST /sessions/:id/github/invite",
+    "POST /sessions/:id/github/webhook",
+    "POST /sessions/:id/github/members/:userId/invite",
+    "POST /sessions/:id/github/reconcile",
+    "GET /sessions/:id/github/activity"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/github-invitation-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/github/invitation?session=ss-f26",
+     "url": "/github/invitation?session=ss-f26"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/github-invitation-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/github/invitation?session=ss-f26",
+     "url": "/github/invitation?session=ss-f26"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/github-invitation-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/github/invitation?session=ss-f26",
+     "url": "/github/invitation?session=ss-f26"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/github/invitation?session=ss-f26",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor",
+   "group": "instructor",
+   "slug": "home",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/instructor-home",
+   "api": [
+    "GET /dashboard/instructor",
+    "GET /sessions/overview"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/home-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor",
+     "url": "/instructor"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/home-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor",
+     "url": "/instructor"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/home-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor",
+     "url": "/instructor"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/classes",
+   "group": "instructor",
+   "slug": "classes",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "server redirect → /instructor/projects",
+   "api": [],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [],
+   "redirect": {
+    "expected": "/instructor/projects",
+    "finalUrl": "/instructor/projects",
+    "verified": true,
+    "note": "Server redirect — bằng chứng là URL cuối sau khi truy cập bằng role instructor, không dùng ảnh của route khác."
+   },
+   "browser": {
+    "finalUrl": "/instructor/projects",
+    "state": "redirect",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/evaluations",
+   "group": "instructor",
+   "slug": "evaluations",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "product/evaluation-management + imported-reviews",
+   "api": [
+    "GET /evaluation-cycles",
+    "POST /evaluation-cycles",
+    "PATCH /evaluation-cycles/:id",
+    "POST /evaluation-cycles/:id/status",
+    "GET /evaluation-cycles/:id/criteria",
+    "POST /evaluation-cycles/:id/criteria",
+    "PATCH /evaluation-cycles/:id/criteria/:criterionId",
+    "DELETE /evaluation-cycles/:id/criteria/:criterionId",
+    "GET /evaluations",
+    "POST /evaluations",
+    "GET /evaluations/:id",
+    "PATCH /evaluations/:id",
+    "POST /evaluations/:id/submit",
+    "POST /evaluations/:id/finalize",
+    "POST /evaluations/:id/ai-suggestions",
+    "GET /evaluations/:id/ai-suggestions",
+    "GET /evaluations/:id/ai-suggestions/:suggestionId",
+    "GET /imported-reviews",
+    "PATCH /imported-reviews/:id"
+   ],
+   "perms": [
+    "ai.evaluation.assist"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/evaluations-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/evaluations",
+     "url": "/instructor/evaluations"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/evaluations-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/evaluations",
+     "url": "/instructor/evaluations"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/evaluations-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/evaluations",
+     "url": "/instructor/evaluations"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/evaluations",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "instructor-evaluations-render",
+     "ok": true,
+     "description": "Bảng quản lý đánh giá render với dữ liệu"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/instructor/github",
+   "group": "instructor",
+   "slug": "github",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "product/github-connection",
+   "api": [
+    "GET /github/me",
+    "POST /github/connect",
+    "DELETE /github/me"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/github-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/github",
+     "url": "/instructor/github"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/github-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/github",
+     "url": "/instructor/github"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/github-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/github",
+     "url": "/instructor/github"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/github",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/notifications",
+   "group": "instructor",
+   "slug": "notifications",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "product/outcomes (notifications)",
+   "api": [
+    "GET /notifications",
+    "POST /notifications/:id/read",
+    "POST /notifications/read-all",
+    "GET /notifications/preferences",
+    "PUT /notifications/preferences"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/notifications-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/notifications",
+     "url": "/instructor/notifications"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/notifications-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/notifications",
+     "url": "/instructor/notifications"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/notifications-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/notifications",
+     "url": "/instructor/notifications"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/notifications",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/participation",
+   "group": "instructor",
+   "slug": "participation",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "participation/instructor",
+   "api": [
+    "GET /sessions/overview",
+    "GET /sessions/:id/participation",
+    "POST /sessions/:id/participation/refresh",
+    "POST /sessions/:id/participation/policy",
+    "POST /sessions/:id/participation/incidents/:incidentId/resolve",
+    "POST /sessions/:id/participation/tasks/:taskId/extend",
+    "POST /sessions/:id/participation/incidents/:incidentId/replacement-advice",
+    "POST /sessions/:id/participation/incidents/:incidentId/replacement-preview",
+    "POST /sessions/:id/participation/replacements/:commandId/approve",
+    "GET /sessions/:id/participation/replacements/:commandId",
+    "GET /sessions/:id/participation/repository-access-jobs",
+    "POST /sessions/:id/participation/repository-access-jobs/:id/retry"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/participation-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/participation",
+     "url": "/instructor/participation"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/participation-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/participation",
+     "url": "/instructor/participation"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/participation-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/participation",
+     "url": "/instructor/participation"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/participation",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/performance",
+   "group": "instructor",
+   "slug": "performance",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "product/member-performance",
+   "api": [
+    "GET /performance/interns",
+    "GET /performance/interns/:id/ai-recommendations",
+    "GET /performance/interns/:id/detail",
+    "GET /projects",
+    "GET /projects/:id",
+    "GET /sessions",
+    "GET /sessions/:id"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/performance-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/performance",
+     "url": "/instructor/performance"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/performance-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/performance",
+     "url": "/instructor/performance"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/performance-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/performance",
+     "url": "/instructor/performance"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/performance",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/profile",
+   "group": "instructor",
+   "slug": "profile",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "product/outcomes (profile)",
+   "api": [
+    "POST /auth/refresh"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/profile-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/profile",
+     "url": "/instructor/profile"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/profile-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/profile",
+     "url": "/instructor/profile"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/profile-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/profile",
+     "url": "/instructor/profile"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/profile",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/projects",
+   "group": "instructor",
+   "slug": "projects",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "projects/project-library",
+   "api": [
+    "GET /project-templates"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/projects-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/projects",
+     "url": "/instructor/projects"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/projects-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/projects",
+     "url": "/instructor/projects"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/projects-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/projects",
+     "url": "/instructor/projects"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/projects",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/projects/[id]",
+   "group": "instructor",
+   "slug": "projects_tpl-lib",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "projects/template-detail",
+   "api": [
+    "GET /project-templates/:id",
+    "POST /project-templates/:id/start",
+    "GET /project-templates/:id/revisions",
+    "GET /project-templates/:id/revisions/:version",
+    "GET /projects/:projectId/template-assessment"
+   ],
+   "perms": [
+    "projects.manage",
+    "sessions.manage",
+    "tasks.manage",
+    "templates.assessment.read"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/projects_tpl-lib-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/projects/tpl-lib",
+     "url": "/instructor/projects/tpl-lib"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/projects_tpl-lib-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/projects/tpl-lib",
+     "url": "/instructor/projects/tpl-lib"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/projects_tpl-lib-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/projects/tpl-lib",
+     "url": "/instructor/projects/tpl-lib"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/projects/tpl-lib",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/recruitment-rounds",
+   "group": "instructor",
+   "slug": "recruitment-rounds",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "applications/recruitment-rounds",
+   "api": [
+    "GET /recruitment-rounds",
+    "POST /recruitment-rounds",
+    "GET /recruitment-rounds/:id",
+    "POST /recruitment-rounds/:id/status",
+    "POST /recruitment-rounds/:id/slots",
+    "POST /recruitment-rounds/:id/slots/:slotId/close",
+    "GET /recruitment-rounds/:id/applications",
+    "GET /recruitment-rounds/:id/applications/:appId",
+    "GET /recruitment-rounds/:id/applications/:appId/cv",
+    "POST /recruitment-rounds/:id/applications/:appId/retake",
+    "POST /recruitment-rounds/:id/applications/:appId/reschedule",
+    "POST /recruitment-rounds/:id/applications/:appId/cancel",
+    "POST /recruitment-rounds/:id/applications/:appId/retry",
+    "POST /recruitment-rounds/:id/applications/:appId/resend-credentials",
+    "GET /recruitment-rounds/:id/applications/:appId/credential-recovery",
+    "POST /recruitment-rounds/:id/applications/:appId/recover-credentials",
+    "GET /career-roles",
+    "POST /applications/request-access"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/recruitment-rounds-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/recruitment-rounds",
+     "url": "/instructor/recruitment-rounds"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/recruitment-rounds-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/recruitment-rounds",
+     "url": "/instructor/recruitment-rounds"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/recruitment-rounds-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/recruitment-rounds",
+     "url": "/instructor/recruitment-rounds"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/recruitment-rounds",
+    "state": "empty",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "empty"
+   },
+   "interactions": [
+    {
+     "id": "instructor-recruitment-round-select",
+     "ok": true,
+     "description": "Chọn đợt tuyển dụng → workspace đợt hiển thị"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/instructor/reports",
+   "group": "instructor",
+   "slug": "reports",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/reports-workspace",
+   "api": [
+    "GET /reports",
+    "GET /reports/:id",
+    "POST /reports",
+    "GET /reports/:id/pdf",
+    "GET /reports/:id/xlsx",
+    "GET /projects",
+    "GET /projects/:id",
+    "GET /sessions",
+    "GET /sessions/:id",
+    "GET /sprints",
+    "GET /performance/interns"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/reports-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/reports",
+     "url": "/instructor/reports"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/reports-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/reports",
+     "url": "/instructor/reports"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/reports-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/reports",
+     "url": "/instructor/reports"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/reports",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/sessions",
+   "group": "instructor",
+   "slug": "sessions",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/session-list",
+   "api": [
+    "GET /sessions/overview"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/sessions-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions",
+     "url": "/instructor/sessions"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/sessions-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions",
+     "url": "/instructor/sessions"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/sessions-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions",
+     "url": "/instructor/sessions"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/sessions",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/sessions/[id]",
+   "group": "instructor",
+   "slug": "sessions_ss-f26",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/session-overview",
+   "api": [
+    "GET /sessions/:id",
+    "GET /sprints",
+    "GET /sessions/:id/work",
+    "GET /sessions/:id/timeline",
+    "PATCH /sessions/:id",
+    "GET /ai-generations/plans",
+    "POST /ai-generations/plans/generate",
+    "GET /ai-generations/plans/:planId",
+    "POST /ai-generations/sprint-plan/confirm",
+    "POST /ai-generations/sprint-plan/draft",
+    "GET /sessions/:id/github",
+    "POST /sessions/:id/github/provision",
+    "POST /sessions/:id/github/invite",
+    "POST /sessions/:id/github/webhook",
+    "POST /sessions/:id/github/members/:userId/invite",
+    "POST /sessions/:id/github/reconcile",
+    "GET /sessions/:id/github/activity",
+    "GET /performance/interns",
+    "GET /performance/interns/:id/ai-recommendations",
+    "GET /performance/interns/:id/detail",
+    "GET /projects",
+    "GET /sessions",
+    "GET /projects/:id",
+    "GET /reports",
+    "GET /reports/:id",
+    "POST /reports",
+    "GET /reports/:id/pdf",
+    "GET /reports/:id/xlsx"
+   ],
+   "perms": [
+    "sessions.manage",
+    "sprints.manage",
+    "sessions.view",
+    "tasks.view",
+    "performance.view"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/sessions_ss-f26-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions/ss-f26",
+     "url": "/instructor/sessions/ss-f26"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/sessions_ss-f26-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions/ss-f26",
+     "url": "/instructor/sessions/ss-f26"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/sessions_ss-f26-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions/ss-f26",
+     "url": "/instructor/sessions/ss-f26"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/sessions/ss-f26",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "instructor-session-open-setup",
+     "ok": true,
+     "description": "Mở trang Thiết lập phiên từ tổng quan"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/instructor/sessions/[id]/setup",
+   "group": "instructor",
+   "slug": "sessions_ss-f26_setup",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/session-setup",
+   "api": [
+    "GET /sessions/:id",
+    "GET /projects/:id",
+    "GET /sessions/:id/members",
+    "GET /projects/:id/slots",
+    "GET /projects/:projectId/template-context",
+    "PATCH /sessions/:id",
+    "GET /career-roles/reference",
+    "GET /recruitment/candidates",
+    "GET /recruitment/candidates/:userId",
+    "POST /assignments",
+    "GET /assignments",
+    "POST /assignments/:id/cancel",
+    "POST /assignments/:id/complete",
+    "GET /ai-generations/plans",
+    "POST /ai-generations/plans/generate",
+    "GET /ai-generations/plans/:planId",
+    "POST /ai-generations/sprint-plan/confirm",
+    "POST /ai-generations/sprint-plan/draft"
+   ],
+   "perms": [
+    "assignments.view",
+    "assignments.manage",
+    "sprints.manage",
+    "sessions.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/sessions_ss-f26_setup-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions/ss-f26/setup?project=prj-lib",
+     "url": "/instructor/sessions/ss-f26/setup?project=prj-lib"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/sessions_ss-f26_setup-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions/ss-f26/setup?project=prj-lib",
+     "url": "/instructor/sessions/ss-f26/setup?project=prj-lib"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/sessions_ss-f26_setup-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sessions/ss-f26/setup?project=prj-lib",
+     "url": "/instructor/sessions/ss-f26/setup?project=prj-lib"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/sessions/ss-f26/setup?project=prj-lib",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "instructor-session-open-setup",
+     "ok": true,
+     "description": "Mở trang Thiết lập phiên từ tổng quan"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/instructor/sprints",
+   "group": "instructor",
+   "slug": "sprints",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/delivery-overview",
+   "api": [
+    "GET /sprints",
+    "GET /tasks",
+    "GET /sessions/member-options",
+    "GET /projects",
+    "GET /projects/:id",
+    "POST /sprints"
+   ],
+   "perms": [
+    "sprints.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/sprints-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sprints",
+     "url": "/instructor/sprints"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/sprints-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sprints",
+     "url": "/instructor/sprints"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/sprints-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sprints",
+     "url": "/instructor/sprints"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/sprints",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/sprints/[id]",
+   "group": "instructor",
+   "slug": "sprints_sp-03",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "sessions/sprint-workspace",
+   "api": [
+    "GET /sprints/:id",
+    "GET /tasks",
+    "GET /sessions/:id/work",
+    "GET /dashboard/sprints/:id/burndown",
+    "GET /sessions/:id/members",
+    "GET /projects/:id/members",
+    "GET /sprints/:id/board",
+    "GET /sprints/:id/completion",
+    "POST /sprints/:id/status",
+    "POST /sprints",
+    "PATCH /sprints/:id",
+    "GET /sprints",
+    "GET /projects",
+    "GET /projects/:id",
+    "POST /tasks",
+    "PATCH /tasks/:id",
+    "DELETE /tasks/:id",
+    "GET /tasks/:id",
+    "GET /tasks/:id/comments",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [
+    "sprints.manage",
+    "tasks.view",
+    "sprints.view",
+    "sessions.view",
+    "projects.view",
+    "tasks.manage"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/sprints_sp-03-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sprints/sp-03",
+     "url": "/instructor/sprints/sp-03"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/sprints_sp-03-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sprints/sp-03",
+     "url": "/instructor/sprints/sp-03"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/sprints_sp-03-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/sprints/sp-03",
+     "url": "/instructor/sprints/sp-03"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/sprints/sp-03",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/instructor/tasks/[id]",
+   "group": "instructor",
+   "slug": "tasks_ts-20",
+   "role": {
+    "access": [
+     "instructor"
+    ],
+    "auditedAs": "instructor",
+    "account": "giangvien1@vintern.preview"
+   },
+   "component": "product/intern-work (task detail)",
+   "api": [
+    "GET /tasks/:id",
+    "GET /tasks/:id/comments",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "PATCH /tasks/:id",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/instructor/tasks_ts-20-1440.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/tasks/ts-20",
+     "url": "/instructor/tasks/ts-20"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/instructor/tasks_ts-20-768.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/tasks/ts-20",
+     "url": "/instructor/tasks/ts-20"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/instructor/tasks_ts-20-390.jpg",
+     "role": "instructor",
+     "resolvedRoute": "/instructor/tasks/ts-20",
+     "url": "/instructor/tasks/ts-20"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/instructor/tasks/ts-20",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern",
+   "group": "intern",
+   "slug": "home",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "intern/intern-workspace + context",
+   "api": [
+    "GET /intern/me/workspace",
+    "GET /recruitment/me",
+    "GET /recruitment/me/interviews",
+    "GET /tasks"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/home-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern",
+     "url": "/intern"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/home-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern",
+     "url": "/intern"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/home-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern",
+     "url": "/intern"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/certificates",
+   "group": "intern",
+   "slug": "certificates",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes (certificates)",
+   "api": [
+    "GET /intern/me/certificates"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/certificates-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/certificates",
+     "url": "/intern/certificates"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/certificates-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/certificates",
+     "url": "/intern/certificates"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/certificates-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/certificates",
+     "url": "/intern/certificates"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/certificates",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/certificates/[id]",
+   "group": "intern",
+   "slug": "certificates_cert-01",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/outcomes (certificate detail)",
+   "api": [
+    "GET /intern/me/certificates",
+    "GET /intern/me/certificates/:id",
+    "GET /intern/me/certificates/:id/pdf"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/certificates_cert-01-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/certificates/cert-01",
+     "url": "/intern/certificates/cert-01"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/certificates_cert-01-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/certificates/cert-01",
+     "url": "/intern/certificates/cert-01"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/certificates_cert-01-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/certificates/cert-01",
+     "url": "/intern/certificates/cert-01"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/certificates/cert-01",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/evaluations",
+   "group": "intern",
+   "slug": "evaluations",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes",
+   "api": [
+    "GET /intern/me/evaluations"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/evaluations-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/evaluations",
+     "url": "/intern/evaluations"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/evaluations-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/evaluations",
+     "url": "/intern/evaluations"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/evaluations-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/evaluations",
+     "url": "/intern/evaluations"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/evaluations",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/evaluations/[id]",
+   "group": "intern",
+   "slug": "evaluations_ev-2026-mid",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/outcomes (evaluation detail)",
+   "api": [
+    "GET /intern/me/evaluations",
+    "GET /intern/me/evaluations/:id"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/evaluations_ev-2026-mid-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/evaluations/ev-2026-mid",
+     "url": "/intern/evaluations/ev-2026-mid"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/evaluations_ev-2026-mid-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/evaluations/ev-2026-mid",
+     "url": "/intern/evaluations/ev-2026-mid"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/evaluations_ev-2026-mid-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/evaluations/ev-2026-mid",
+     "url": "/intern/evaluations/ev-2026-mid"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/evaluations/ev-2026-mid",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/github",
+   "group": "intern",
+   "slug": "github",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "intern/student-github",
+   "api": [
+    "GET /github/me",
+    "POST /github/connect",
+    "DELETE /github/me",
+    "GET /sessions/:id/github",
+    "POST /sessions/:id/github/provision",
+    "POST /sessions/:id/github/invite",
+    "POST /sessions/:id/github/webhook",
+    "POST /sessions/:id/github/members/:userId/invite",
+    "POST /sessions/:id/github/reconcile",
+    "GET /sessions/:id/github/activity"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/github-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/github",
+     "url": "/intern/github"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/github-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/github",
+     "url": "/intern/github"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/github-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/github",
+     "url": "/intern/github"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/github",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/kpi",
+   "group": "intern",
+   "slug": "kpi",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes",
+   "api": [
+    "GET /intern/me/kpi"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/kpi-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/kpi",
+     "url": "/intern/kpi"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/kpi-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/kpi",
+     "url": "/intern/kpi"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/kpi-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/kpi",
+     "url": "/intern/kpi"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/kpi",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/kpi/[id]",
+   "group": "intern",
+   "slug": "kpi_kpi-2026-10",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/outcomes (kpi detail)",
+   "api": [
+    "GET /intern/me/kpi",
+    "GET /intern/me/kpi/:id"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/kpi_kpi-2026-10-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/kpi/kpi-2026-10",
+     "url": "/intern/kpi/kpi-2026-10"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/kpi_kpi-2026-10-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/kpi/kpi-2026-10",
+     "url": "/intern/kpi/kpi-2026-10"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/kpi_kpi-2026-10-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/kpi/kpi-2026-10",
+     "url": "/intern/kpi/kpi-2026-10"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/kpi/kpi-2026-10",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/mentor",
+   "group": "intern",
+   "slug": "mentor",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/mentor",
+   "api": [
+    "GET /intern/me/ai-mentor/conversations",
+    "POST /intern/me/ai-mentor/conversations",
+    "GET /intern/me/ai-mentor/conversations/:id",
+    "POST /intern/me/ai-mentor/conversations/:id/archive",
+    "POST /intern/me/ai-mentor/conversations/:id/messages",
+    "GET /tasks"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/mentor-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/mentor",
+     "url": "/intern/mentor"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/mentor-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/mentor",
+     "url": "/intern/mentor"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/mentor-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/mentor",
+     "url": "/intern/mentor"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/mentor",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "intern-mentor-send-message",
+     "ok": true,
+     "description": "Gửi tin nhắn AI Mentor — hội thoại phản hồi"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/intern/notifications",
+   "group": "intern",
+   "slug": "notifications",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes",
+   "api": [
+    "GET /notifications",
+    "POST /notifications/:id/read",
+    "POST /notifications/read-all",
+    "GET /notifications/preferences",
+    "PUT /notifications/preferences"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/notifications-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/notifications",
+     "url": "/intern/notifications"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/notifications-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/notifications",
+     "url": "/intern/notifications"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/notifications-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/notifications",
+     "url": "/intern/notifications"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/notifications",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "intern-notifications-read-all",
+     "ok": true,
+     "description": "Đánh dấu mọi thông báo đã đọc"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/intern/onboarding",
+   "group": "intern",
+   "slug": "onboarding",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern-onboarding",
+    "account": "sinhvien_tan@vintern.preview"
+   },
+   "component": "onboarding-shell + welcome-step",
+   "api": [
+    "GET /intern/me/workspace",
+    "GET /recruitment/me",
+    "GET /recruitment/me/interviews/:id/questions"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-1440.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding",
+     "url": "/intern/onboarding"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-768.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding",
+     "url": "/intern/onboarding"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-390.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding",
+     "url": "/intern/onboarding"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/onboarding",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/onboarding/interview",
+   "group": "intern",
+   "slug": "onboarding-interview",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern-onboarding",
+    "account": "sinhvien_tan@vintern.preview"
+   },
+   "component": "onboarding-shell + interview-step",
+   "api": [
+    "GET /intern/me/workspace",
+    "GET /recruitment/me",
+    "GET /recruitment/me/interviews/:id/questions",
+    "POST /recruitment/me/interviews",
+    "PUT /recruitment/me/interviews/:id/answers/:questionId",
+    "PUT /recruitment/me/interviews/:id/follow-ups/:questionId",
+    "POST /recruitment/me/interviews/:id/submit",
+    "POST /recruitment/me/interviews/:id/retry-evaluation",
+    "GET /recruitment/me/interviews/:id/conversation",
+    "POST /recruitment/me/interviews/:id/conversation/next",
+    "POST /recruitment/me/interviews/:id/conversation/clarify"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-interview-1440.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/interview",
+     "url": "/intern/onboarding/interview"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-interview-768.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/interview",
+     "url": "/intern/onboarding/interview"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-interview-390.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/interview",
+     "url": "/intern/onboarding/interview"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/onboarding/interview",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/onboarding/result",
+   "group": "intern",
+   "slug": "onboarding-result",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern-onboarding",
+    "account": "sinhvien_tan@vintern.preview"
+   },
+   "component": "onboarding-shell + recruitment-result",
+   "api": [
+    "GET /intern/me/workspace",
+    "GET /recruitment/me"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-result-1440.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/result",
+     "url": "/intern/onboarding/result"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-result-768.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/result",
+     "url": "/intern/onboarding/result"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-result-390.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/result",
+     "url": "/intern/onboarding/result"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/onboarding/result",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/onboarding/role",
+   "group": "intern",
+   "slug": "onboarding-role",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern-onboarding",
+    "account": "sinhvien_tan@vintern.preview"
+   },
+   "component": "onboarding-shell + role-selection-step",
+   "api": [
+    "GET /intern/me/workspace",
+    "GET /recruitment/me",
+    "GET /career-roles",
+    "PATCH /recruitment/me/role"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-role-1440.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/role",
+     "url": "/intern/onboarding/role"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-role-768.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/role",
+     "url": "/intern/onboarding/role"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern-onboarding/onboarding-role-390.jpg",
+     "role": "intern-onboarding",
+     "resolvedRoute": "/intern/onboarding/role",
+     "url": "/intern/onboarding/role"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/onboarding/role",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "intern-onboarding-select-role",
+     "ok": true,
+     "description": "Chọn nghề trong onboarding → sang bước phỏng vấn"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/intern/participation",
+   "group": "intern",
+   "slug": "participation",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "participation/student",
+   "api": [
+    "GET /participation/me",
+    "GET /participation/me/replacements",
+    "GET /github/me/repository-access"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/participation-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/participation",
+     "url": "/intern/participation"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/participation-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/participation",
+     "url": "/intern/participation"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/participation-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/participation",
+     "url": "/intern/participation"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/participation",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/performance",
+   "group": "intern",
+   "slug": "performance",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes",
+   "api": [
+    "GET /intern/me/performance"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/performance-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/performance",
+     "url": "/intern/performance"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/performance-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/performance",
+     "url": "/intern/performance"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/performance-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/performance",
+     "url": "/intern/performance"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/performance",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/profile",
+   "group": "intern",
+   "slug": "profile",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes (profile)",
+   "api": [
+    "POST /auth/refresh"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/profile-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/profile",
+     "url": "/intern/profile"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/profile-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/profile",
+     "url": "/intern/profile"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/profile-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/profile",
+     "url": "/intern/profile"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/profile",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/project",
+   "group": "intern",
+   "slug": "project",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry (own-project package)",
+   "api": [
+    "GET /intern/me/project"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/project-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/project",
+     "url": "/intern/project"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/project-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/project",
+     "url": "/intern/project"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/project-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/project",
+     "url": "/intern/project"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/project",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/recommendations",
+   "group": "intern",
+   "slug": "recommendations",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + outcomes",
+   "api": [
+    "GET /intern/me/ai-recommendations",
+    "POST /intern/me/ai-recommendations/refresh"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/recommendations-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/recommendations",
+     "url": "/intern/recommendations"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/recommendations-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/recommendations",
+     "url": "/intern/recommendations"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/recommendations-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/recommendations",
+     "url": "/intern/recommendations"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/recommendations",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/sprint",
+   "group": "intern",
+   "slug": "sprint",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry (own kanban)",
+   "api": [
+    "GET /intern/me/sprints",
+    "GET /intern/me/sprints/:id/board",
+    "GET /tasks/:id",
+    "PATCH /tasks/:id/my"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/sprint-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/sprint",
+     "url": "/intern/sprint"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/sprint-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/sprint",
+     "url": "/intern/sprint"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/sprint-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/sprint",
+     "url": "/intern/sprint"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/sprint",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/virtual-salary",
+   "group": "intern",
+   "slug": "virtual-salary",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/outcomes + student-outcome-heading",
+   "api": [
+    "GET /intern/me/virtual-salary",
+    "GET /intern/me/virtual-salary/ledger"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/virtual-salary-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/virtual-salary",
+     "url": "/intern/virtual-salary"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/virtual-salary-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/virtual-salary",
+     "url": "/intern/virtual-salary"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/virtual-salary-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/virtual-salary",
+     "url": "/intern/virtual-salary"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/virtual-salary",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/intern/work",
+   "group": "intern",
+   "slug": "work",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-entry + intern-work",
+   "api": [
+    "GET /tasks",
+    "GET /intern/me/projects/:projectId/learning-package",
+    "GET /tasks/:id",
+    "PATCH /tasks/:id/my",
+    "GET /tasks/:id/comments",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/work-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/work",
+     "url": "/intern/work"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/work-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/work",
+     "url": "/intern/work"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/work-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/work",
+     "url": "/intern/work"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/work",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "intern-command-palette",
+     "ok": true,
+     "description": "Ctrl+K mở bảng lệnh"
+    },
+    {
+     "id": "intern-mobile-drawer",
+     "ok": true,
+     "description": "Mở drawer điều hướng trên mobile 390"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/intern/work/[id]",
+   "group": "intern",
+   "slug": "work_ts-20",
+   "role": {
+    "access": [
+     "intern"
+    ],
+    "auditedAs": "intern",
+    "account": "sinhvien1@vintern.preview"
+   },
+   "component": "product/intern-work + student-ui (task detail)",
+   "api": [
+    "GET /tasks/:id",
+    "PATCH /tasks/:id/my",
+    "GET /tasks/:id/comments",
+    "POST /tasks/:id/comments",
+    "GET /tasks/:id/history",
+    "GET /tasks/:id/spec",
+    "GET /tasks/:id/spec/source",
+    "GET /tasks/:taskId/submissions",
+    "POST /tasks/:taskId/submissions",
+    "POST /submissions/:id/withdraw",
+    "POST /submissions/:id/review",
+    "GET /submissions/:id/code-reviews",
+    "POST /submissions/:id/code-reviews"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/intern/work_ts-20-1440.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/work/ts-20",
+     "url": "/intern/work/ts-20"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/intern/work_ts-20-768.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/work/ts-20",
+     "url": "/intern/work/ts-20"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/intern/work_ts-20-390.jpg",
+     "role": "intern",
+     "resolvedRoute": "/intern/work/ts-20",
+     "url": "/intern/work/ts-20"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/intern/work/ts-20",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/login",
+   "group": "public",
+   "slug": "login",
+   "role": {
+    "access": [
+     "public"
+    ],
+    "auditedAs": "public",
+    "account": null
+   },
+   "component": "auth/auth-card + auth-tabs + login-form",
+   "api": [
+    "POST /auth/login",
+    "GET /intern/me/workspace"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/public/login-1440.jpg",
+     "role": "public",
+     "resolvedRoute": "/login",
+     "url": "/login"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/public/login-768.jpg",
+     "role": "public",
+     "resolvedRoute": "/login",
+     "url": "/login"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/public/login-390.jpg",
+     "role": "public",
+     "resolvedRoute": "/login",
+     "url": "/login"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/login",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "intern-login",
+     "ok": true,
+     "description": "Đăng nhập sinh viên1 → vào workspace"
+    },
+    {
+     "id": "admin-login",
+     "ok": true,
+     "description": "Đăng nhập admin → vào /admin"
+    },
+    {
+     "id": "instructor-login",
+     "ok": true,
+     "description": "Đăng nhập giảng viên → vào /instructor"
+    },
+    {
+     "id": "intern-onboarding-login",
+     "ok": true,
+     "description": "Đăng nhập sinh viên mới → vào onboarding"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/register",
+   "group": "public",
+   "slug": "register",
+   "role": {
+    "access": [
+     "public"
+    ],
+    "auditedAs": "public",
+    "account": null
+   },
+   "component": "auth/register-form",
+   "api": [
+    "POST /auth/register"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/public/register-1440.jpg",
+     "role": "public",
+     "resolvedRoute": "/register",
+     "url": "/register"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/public/register-768.jpg",
+     "role": "public",
+     "resolvedRoute": "/register",
+     "url": "/register"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/public/register-390.jpg",
+     "role": "public",
+     "resolvedRoute": "/register",
+     "url": "/register"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/register",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "public-register-submit",
+     "ok": true,
+     "description": "Gửi form đăng ký — thấy phản hồi"
+    }
+   ],
+   "note": ""
+  },
+  {
+   "route": "/verify",
+   "group": "public",
+   "slug": "verify",
+   "role": {
+    "access": [
+     "public"
+    ],
+    "auditedAs": "public",
+    "account": null
+   },
+   "component": "product/outcomes (verify)",
+   "api": [
+    "GET /certificates/verify/:code"
+   ],
+   "perms": [],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/public/verify-1440.jpg",
+     "role": "public",
+     "resolvedRoute": "/verify?code=VC-2026-000123-XK4T",
+     "url": "/verify?code=VC-2026-000123-XK4T"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/public/verify-768.jpg",
+     "role": "public",
+     "resolvedRoute": "/verify?code=VC-2026-000123-XK4T",
+     "url": "/verify?code=VC-2026-000123-XK4T"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/public/verify-390.jpg",
+     "role": "public",
+     "resolvedRoute": "/verify?code=VC-2026-000123-XK4T",
+     "url": "/verify?code=VC-2026-000123-XK4T"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/verify?code=VC-2026-000123-XK4T",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [
+    {
+     "id": "public-verify-certificate",
+     "ok": true,
+     "description": "Xác minh mã chứng nhận VC-2026-000123-XK4T — kết quả hiển thị"
+    }
+   ],
+   "note": ""
+  }
+ ]
 }

@@ -236,17 +236,19 @@ thêm**, không thay thế các trạng thái browser-audit ở 9.1.
 | `/instructor/sessions` | Instructor | card-tilt | card-tilt hover cho hàng session | DONE |
 | Toàn bộ route vỏ intern (15) | Intern | Command Palette | **⌘K / Ctrl+K** (bảng lệnh 15 route intern + Về trang chủ + Đăng xuất qua auth-service thật) trong topbar | DONE (lớp shell) |
 | Toàn bộ route vỏ admin + instructor (49) | Admin/Instructor | Command Palette | ⌘K / Ctrl+K / `/` (bảng lệnh theo role, 55 route thật đã kiểm chứng tồn tại) trong product shell | DONE (lớp shell) |
-| Toàn bộ 79 route UI còn lại (intern 23, instructor 17, admin 31, public 4, + verify/github-invitation) | — | journey.css §1–20 + VIcons + notebook primitives + **PAGE KIT nb3-*** (`notebook/kit.tsx`) | **Chuyển thể sâu từng trang**: primitives render v3 (buttons/inputs/panels/tables/badges/modals/empty/pager), PageTitle eyebrow+stamp+mực squiggle, ink-table, InkTabs/FilterChips, KanbanColumn/Tape, ChartFrame, EmptyNotebook — chi tiết từng route: `JOURNEY_V3_100_PERCENT_AUDIT.md` + `journey-v3-evidence/coverage-manifest.json` | **DONE** (đợt hoàn thiện 100% — 2026-11-21) |
+| Toàn bộ 79 route UI còn lại (intern 23, instructor 17, admin 31, public 4, + verify/github-invitation) | — | journey.css §1–20 + VIcons + notebook primitives + **PAGE KIT nb3-*** (`notebook/kit.tsx`) | **Chuyển thể sâu từng trang**: primitives render v3 (buttons/inputs/panels/tables/badges/modals/empty/pager), PageTitle eyebrow+stamp+mực squiggle, ink-table, InkTabs/FilterChips, KanbanColumn/Tape, ChartFrame, EmptyNotebook — chi tiết từng route: `JOURNEY_V3_100_PERCENT_AUDIT.md` + `journey-v3-evidence/coverage-manifest.json` | **DONE** (đợt hoàn thiện 100% 2026-11-21 · tái nghiệm thu độc lập 2026-11-20 — bằng chứng browser-audit 3 viewport đúng role, xem `JOURNEY_V3_100_PERCENT_AUDIT.md`) |
 
 ### 9.9.3. Cổng kiểm soát chất lượng phiên tích hợp
 
-| Cổng | Kết quả |
+| Cổng | Kết quả (tái nghiệm thu 2026-11-20) |
 |---|---|
-| Quét marker mock sandbox (`an.pham`, `minh.nguyen`, `lan.pham`, `Sv@2026`, `Gv@2026`, demo-account-panel, `enterAuth(`, token `ghp_`) | **0 kết quả** trong tập file của phiên (hệ preview sẵn có của repo tại `src/lib/preview/*` là commit có trước, không thuộc phạm vi, không đụng tới) |
-| `bun run lint` (eslint .) | 0 lỗi (1 warning `no-img-element` có chủ đích ở PolaroidFrame) |
-| `bun run typecheck` (tsc --noEmit) | 0 lỗi |
-| `bunx vitest run` | 135 file / **787 test pass** (đúng baseline) |
-| `bun run build` (production) | **PASS** — manifest đầy đủ route, không lỗi Tailwind v4/env |
+| Quét marker mock sandbox (`an.pham`, `minh.nguyen`, `lan.pham`, `Sv@2026`, `Gv@2026`, demo-account-panel, `enterAuth(`, token `ghp_`) | **0 kết quả** trong tập file của phiên (hệ preview của repo tại `src/lib/preview/*` được mở rộng CHO QA browser — endpoint mock theo parser thật, không đụng contract BE; `verify-preview-isolation` PASS) |
+| `eslint .` | 0 lỗi (1 warning `no-img-element` có chủ đích ở PolaroidFrame) |
+| `tsc --noEmit` | 0 lỗi |
+| `vitest run` | 136 file / **804 test pass** (baseline 787 + 17 test preview-gap2) |
+| `next build` (production) | **PASS** |
+| `verify-preview-isolation.mjs` | PASS — 0 marker preview trong `.next` |
+| `verify-journey-v3-coverage.mjs` (gate v2 — 10 yêu cầu nghiệm thu) | **PASS** — 80/80 route: đúng role × 3 viewport, ảnh đúng route, trạng thái loading/empty/error có bằng chứng riêng, 22/22 tương tác, ngoại lệ có giải thích |
 | `git diff` rò rỉ secret | 0 |
 
 Chi tiết thực thi: `docs/IMPLEMENTATION_PROGRESS.md` mục "Phiên tích hợp v3".

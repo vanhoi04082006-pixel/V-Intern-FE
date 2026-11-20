@@ -58,3 +58,30 @@ với tài sản đã port vào FE thật, chỉ rõ phần đã có / còn thi�
 - Không thay `lib/api/*`, guard, middleware, token/permission, validation.
 - Preview mode (`src/lib/preview/*`) là commit có trước của repo — chỉ dùng cho QA browser, không đụng contract.
 - Mọi chuyển thể là additive + namespaced (`nb3-*`), tách bạch với logic.
+
+## 5. Tái nghiệm thu độc lập (2026-11-20 — FINAL ACCEPTANCE RE-AUDIT)
+
+Đối chiếu lại toàn bộ bằng chứng sau khi khắc phục các lỗ hổng nghiệm thu
+(chi tiết: `docs/JOURNEY_V3_100_PERCENT_AUDIT.md`):
+
+- **Kho bằng chứng mới** (`docs/journey-v3-evidence/`): 79 route UI × 3 viewport
+  (390/768/1440) chụp bằng đúng role từng khu (admin/instructor/intern/
+  intern-onboarding/public), ID động hợp lệ (`ss-f26`, `sp-03`, `ts-20`,
+  `KL-QA-01`, `tpl-lib`, `kpi-2026-10`, `ev-2026-mid`, `cert-01`), metadata
+  đầy đủ trong `browser-audit.json` (URL cuối, console, 501, overflow, state).
+  Ảnh cũ PNG của phiên trước (nhiều ảnh thực chất là ErrorState/permission-denied)
+  đã xoá khỏi kho — không còn reference mồ côi.
+- **Mock preview API** mở rộng 59 → 279 handler (parse-đúng, ID nhất quán) —
+  điều kiện để các trang admin render "loaded" thay vì ErrorState trong QA;
+  production build vẫn cách ly (verify-preview-isolation PASS).
+- **Ngôn ngữ thị giác sau tái аудит**: các trang dùng `product/primitives`
+  (nb3-bridge) render notebook đầy đủ (giấy kem + viền mực + mộc + doodle —
+  VLM xác nhận, ví dụ admin/users, admin/salary, sprint workspace). Trang task
+  detail (`intern-work` TaskContent) còn hero SaaS phẳng đã được **chuyển thể
+  thật** sang `nb-sketch-card` + Tape + eyebrow "NHIỆM VỤ" (dùng chung cho
+  intern/instructor/admin task detail). Họ student-* (cream + stamp + eyebrow
+  + nb-stagger) giữ vai biến thể "notebook nhẹ" của khu intern — ghi nhận trong
+  VLM sweep, không thay đổi ở đợt này ngoài task detail.
+- **Cổng nghiệm thu**: `scripts/verify-journey-v3-coverage.mjs` v2 thực thi
+  đúng-role/đúng-route/đủ-viewport/ID-hợp-lệ/không-mượn-ảnh/có-bằng-chứng-
+  trạng-thái/có-tương-tác/không-tự-nhận-DONE + ngoại lệ phải có giải thích.
