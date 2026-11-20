@@ -504,8 +504,10 @@ function TaskContent({
     >
       {!managed && (
         <>
-          <header className="student-detail-hero">
+          <header className="student-detail-hero nb-sketch-card relative mt-2 p-5 sm:p-6">
+            <Tape className="-top-3 left-6" rotate={-4} />
             <div className="min-w-0">
+              <p className="eyebrow mb-1.5">NHIỆM VỤ</p>
               <p className="student-work-code">{task.code}</p>
               <h2 className="student-detail-title">{task.title}</h2>
               <div className="student-meta mt-3">
@@ -551,6 +553,7 @@ function TaskContent({
 
       {managed && (
         <div>
+          <p className="eyebrow mb-1.5">NHIỆM VỤ</p>
           <h3 className="text-section font-bold leading-relaxed text-foreground">
             {task.code} · {task.title}
           </h3>
