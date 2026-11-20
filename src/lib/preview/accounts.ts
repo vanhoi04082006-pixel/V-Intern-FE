@@ -53,6 +53,9 @@ const adminPermissions = [
   "audit.read",
   "settings.manage",
   "ai.evaluation.assist",
+  "knowledge.read",
+  "knowledge.manage",
+  "knowledge.publish",
 ];
 
 const instructorPermissions = [

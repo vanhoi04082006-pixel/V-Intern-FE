@@ -10,6 +10,7 @@
  * được trong bundle production (nếu lọt vào là FAIL ngay).
  */
 import type { PreviewScenario } from "./store";
+import { ONBOARDING_FLOW, onboardingWorkspaceStatus } from "./onboarding-flow";
 
 export const VINTERN_PREVIEW_MARKER = "VINTERN-PREVIEW-MARKER";
 
@@ -525,16 +526,18 @@ export function instructorDashboard(
 export function internWorkspace(accountId: string, scenario: PreviewScenario) {
   const long = scenario === "long-text";
   if (accountId === "pv-intern-3") {
-    // new: chưa onboarding → resolver đẩy sang /intern/onboarding.
+    // new: luồng onboarding có trạng thái trong phiên (onboarding-flow.ts) —
+    // PATCH role / POST interview / POST submit đổi trạng thái thật và workspace
+    // phản ánh đúng lifecyclePath (recruitment_required → in_progress → result).
     return {
-      status: "recruitment_required",
+      status: onboardingWorkspaceStatus(),
       hasAssignmentHistory: false,
       assignment: null,
       recruitment: {
-        status: "not_started",
-        selectedRole: null,
-        attemptCount: 0,
-        recruitedAt: null,
+        status: ONBOARDING_FLOW.status,
+        selectedRole: ONBOARDING_FLOW.role,
+        attemptCount: ONBOARDING_FLOW.interviewId ? 1 : 0,
+        recruitedAt: ONBOARDING_FLOW.status === "passed" ? iso(0, 15) : null,
       },
       currentSprint: null,
       taskSummary: { todo: 0, doing: 0, review: 0, done: 0, total: 0 },
@@ -761,12 +764,28 @@ export function mentorConversationsFor(scenario: PreviewScenario) {
   return { items: list, total: list.length, page: 1, pageSize: 20 };
 }
 
+/* Tin nhắn mentor gửi thêm trong phiên (POST messages) — GET phản ánh để
+ * luồng reload sau khi gửi hiển thị được tin nhắn mới (hành vi nhất quán). */
+const MENTOR_APPENDED = new Map<string, { id: string; role: "user" | "assistant"; content: string; aiRunId: string | null; createdAt: string }[]>();
+
+export function mentorAppendMessage(conversationId: string, userContent: string, assistantContent: string): void {
+  const now = new Date().toISOString();
+  const list = MENTOR_APPENDED.get(conversationId) ?? [];
+  list.push(
+    { id: `mm-u-${now}`, role: "user", content: userContent, aiRunId: null, createdAt: now },
+    { id: `mm-a-${now}`, role: "assistant", content: assistantContent, aiRunId: "run-live", createdAt: now },
+  );
+  MENTOR_APPENDED.set(conversationId, list);
+}
+
 export function mentorDetailFor(id: string, scenario: PreviewScenario) {
   const conversations = mentorConversationsFor(scenario).items;
   const found = conversations.find((c) => c.id === id) ?? conversations[0];
+  const appended = found ? (MENTOR_APPENDED.get(found.id) ?? []) : [];
   return {
     conversation: found,
     messages: [
+      ...appended,
       {
         id: "mm-1",
         role: "user",
