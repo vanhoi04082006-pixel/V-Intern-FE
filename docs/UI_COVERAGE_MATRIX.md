@@ -205,3 +205,49 @@ Endpoint **không tồn tại** và được ghi rõ: forgot-password, newslette
 
 Trang chỉ được đánh **Completed** khi đủ 9 điều kiện (giao diện, responsive, tương tác, states, phân quyền, API thật, preview, test, không lỗi nghiêm trọng). Còn thiếu bằng chứng → **Partial / Blocked / Not Started** kèm lý do. Trạng thái trong file này là nguồn sự thật duy nhất — không tự nâng cấp.
 
+## 9.9. Integration Log — Journey Notebook v3 (2026-11-21)
+
+Tích hợp lớp thiết kế "Sổ tay hành trình v3" (bản nâng cấp sandbox) vào source
+thật. Nguyên tắc: **additive + namespaced (`nb-*` / `hw-*`)** — không đổi
+logic API/permission/routing, không mang mock/demo sandbox; mọi route giữ nguyên
+`lib/api/*`, guard, middleware. Trạng thái dưới đây chỉ mô tả **lớp v3 được áp
+thêm**, không thay thế các trạng thái browser-audit ở 9.1.
+
+### 9.9.1. Hạ tầng v3 dùng chung (phủ 100% route)
+
+| Thành phần | File | Ghi chú |
+|---|---|---|
+| 176 VIcons + VLogoMark (hand-drawn, currentColor, props tương thích lucide) | `src/components/icons/v-icons.tsx` | dùng chung mọi trang |
+| Notebook primitives: Tape, StampMoc, NoteCard, InkBadge, PolaroidFrame, Eyebrow, SketchCard + FadeIn/Stagger/StaggerItem/Parallax + 18 doodles | `src/components/notebook/{ui,reveal,doodles}.tsx` | namespaced `nb-*` để không đè style thật |
+| v3 tokens/keyframes/utilities: paper-grain, card-tilt, sticker-pop, ants-border (marching-ants), shake-ink, pop-in, spotlight-sweep, confetti-burst, chart-grow… + kill-switch `prefers-reduced-motion` cục bộ | `src/styles/journey.css` (import từ globals.css) | bỏ qua mọi keyframe/var trùng tên đã có sẵn của repo |
+
+### 9.9.2. Lớp v3 theo route
+
+| Route thật | Role | Design System & Icons | UI/UX nâng cấp v3 | Trạng thái v3 |
+|---|---|---|---|---|
+| `/` | Public | journey.css + VStampTool | HowItWorks **5 tấm vé 01–05** (sticker-pop, tape-gold, hand-drawn ticket, giữ anchor `#how-it-works`) | DONE |
+| `/login` | Public | journey.css | paper-grain, Caps Lock hint, shake-ink khi lỗi | DONE |
+| `/register` | Public | journey.css | PasswordStrength meter, Caps Lock hint, shake-ink | DONE |
+| `/forgot-password` | Public | journey.css | paper-grain (qua auth-shell) | DONE |
+| `/change-password` | Public | journey.css | PasswordStrength meter, paper-grain | DONE |
+| `/admin/salary` | Admin | StampMoc nb + sticker-pop | Mộc "KHO BẠC" + sticker-pop thẻ số dư | DONE |
+| `/admin/kpi` | Admin | StampMoc nb | Mộc "KPI" ở tiêu đề console | DONE |
+| `/intern/virtual-salary` + mọi route render `product/outcomes` / `product/profile` (kpi, kpi/[id], evaluations, evaluations/[id], certificates, certificates/[id], recommendations, performance, notifications, profile của intern/instructor/admin) | Intern/Instructor/Admin | StampMoc nb | Mộc "SỔ TAY" ở tiêu đề outcome | DONE |
+| `/instructor/sessions` | Instructor | card-tilt | card-tilt hover cho hàng session | DONE |
+| Toàn bộ route vỏ intern (15) | Intern | Command Palette | **⌘K / Ctrl+K** (bảng lệnh 15 route intern + Về trang chủ + Đăng xuất qua auth-service thật) trong topbar | DONE (lớp shell) |
+| Toàn bộ route vỏ admin + instructor (49) | Admin/Instructor | Command Palette | ⌘K / Ctrl+K / `/` (bảng lệnh theo role, 55 route thật đã kiểm chứng tồn tại) trong product shell | DONE (lớp shell) |
+| Các route còn lại | — | journey.css + VIcons + notebook primitives sẵn sàng | lớp dùng chung (chưa áp sâu từng trang) | PARTIAL (lớp dùng chung) |
+
+### 9.9.3. Cổng kiểm soát chất lượng phiên tích hợp
+
+| Cổng | Kết quả |
+|---|---|
+| Quét marker mock sandbox (`an.pham`, `minh.nguyen`, `lan.pham`, `Sv@2026`, `Gv@2026`, demo-account-panel, `enterAuth(`, token `ghp_`) | **0 kết quả** trong tập file của phiên (hệ preview sẵn có của repo tại `src/lib/preview/*` là commit có trước, không thuộc phạm vi, không đụng tới) |
+| `bun run lint` (eslint .) | 0 lỗi (1 warning `no-img-element` có chủ đích ở PolaroidFrame) |
+| `bun run typecheck` (tsc --noEmit) | 0 lỗi |
+| `bunx vitest run` | 135 file / **787 test pass** (đúng baseline) |
+| `bun run build` (production) | **PASS** — manifest đầy đủ route, không lỗi Tailwind v4/env |
+| `git diff` rò rỉ secret | 0 |
+
+Chi tiết thực thi: `docs/IMPLEMENTATION_PROGRESS.md` mục "Phiên tích hợp v3".
+

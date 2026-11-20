@@ -94,3 +94,63 @@
 
 - Xem `git log codex/product-acceptance-20261116` sau khi push (nhóm: docs
   coverage, toast+confirm, preview mode, evidence+QA).
+
+---
+
+## Phiên tích hợp v3 — Journey Notebook (2026-11-21)
+
+**Phạm vi:** chuyển thể lớp thiết kế "Sổ tay hành trình v3" (từ sandbox demo
+1-route) vào source thật nhánh `codex/product-acceptance-20261116` — additive,
+giữ 100% logic API/permission/routing/multi-route.
+
+### Đã làm
+
+1. **Design system**: thêm `src/styles/journey.css` (v3 tokens, 17 keyframes
+   mới, utilities paper-grain / card-tilt / sticker-pop / ants-border /
+   shake-ink / spotlight-sweep…, kill-switch reduced-motion cục bộ) — import
+   1 dòng vào `globals.css`; mọi keyframe/biến trùng tên repo đã có được bỏ
+   qua, không ghi đè.
+2. **176 custom SVG icons** (`src/components/icons/v-icons.tsx`, gồm
+   VLogo/VLogoMark) + **notebook primitives** (`src/components/notebook/{ui,
+   reveal,doodles}.tsx`: Tape, StampMoc, NoteCard, InkBadge, PolaroidFrame,
+   Stagger…) — namespaced `nb-*` tại mọi điểm đụng style trùng tên của repo
+   (tape, stamp-moc, sketch-card, sticky-note, squiggle…).
+3. **Landing**: `v-intern/how-it-works.tsx` thay bằng bản **5 tấm vé 01–05**
+   (sticker-pop + tape-gold + vé vẽ tay), giữ export, anchor
+   `#how-it-works` và mọi liên kết landing nguyên vẹn.
+4. **Auth**: `password-strength.tsx` (meter điểm mạnh), Caps Lock hint trong
+   `password-field.tsx`, `animate-shake-ink` khi lỗi ở `login-form.tsx`,
+   meter ở `register-form.tsx` + `change-password.tsx`; toàn bộ luồng
+   `auth-service`/validation/redirect/cookie giữ nguyên từng dòng.
+5. **Shell**: `shared/command-palette.tsx` — bảng lệnh ⌘K/Ctrl+K/`/` dựng trên
+   pattern `<dialog>` của repo, điều hướng **55 route thật** theo role
+   (intern/instructor/admin), "Đăng xuất" gọi đúng `auth-service.logout()`;
+   gắn vào `intern/intern-topbar.tsx` và `product/shell.tsx` (bỏ `/` ở intern
+   để không đụng phím tắt search sẵn có).
+6. **Flagship accents**: mộc "KHO BẠC"/"KPI" (salary/kpi console), mộc "SỔ TAY"
+   (`student-outcome-heading.tsx` — phủ các trang outcome của 3 role),
+   sticker-pop thẻ số dư lương, card-tilt hàng session `/instructor/sessions`,
+   paper-grain cho 4 trang auth, xoá emoji `👋`.
+7. **Docs**: ma trận 9.9 trong `UI_COVERAGE_MATRIX.md`.
+
+### Cổng kiểm soát (đều XANH)
+
+- Quét marker mock sandbox (`an.pham`, `minh.nguyen`, `lan.pham`, `Sv@2026`,
+  `Gv@2026`, demo-account-panel, `enterAuth(`, `ghp_`): **0 kết quả** trong
+  tập file của phiên. Hệ preview `src/lib/preview/*` là commit có trước của
+  repo, không đụng.
+- `bun run lint` 0 lỗi · `bun run typecheck` 0 lỗi · `bunx vitest run`
+  **135 file / 787 test pass** (đúng baseline) · `bun run build` **PASS**.
+
+### Commits của phiên
+
+1. `feat(design-system): integrate journey notebook tokens and 176 custom icons`
+2. `feat(ui): upgrade landing, auth and global shell`
+3. `feat(pages): upgrade student, instructor and admin workspaces with real api`
+4. `docs: add UI coverage matrix and progress report`
+
+### Còn lại (phiên sau)
+
+- Áp sâu v3 (paper-grain/card-tilt/sticker-pop) cho từng trang workspace còn
+  đang ở "lớp dùng chung" (ma trận 9.9.2 dòng PARTIAL).
+- Audit browser cho lớp v3 trên từng route (hiện đã có build + 787 test xanh).
