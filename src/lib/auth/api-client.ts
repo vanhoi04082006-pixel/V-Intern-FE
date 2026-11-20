@@ -10,12 +10,18 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
+/* Chỉ khai báo const từ module gate (không kéo dữ liệu mock); import động
+   transport nằm trong nhánh PREVIEW_ENABLED để production build dead-code
+   loại mọi module mock khỏi bundle. Xem src/lib/preview/enabled.ts. */
+import { PREVIEW_ENABLED } from "@/lib/preview/enabled";
 export function getApiBaseUrl(): string {
   return (process.env.NEXT_PUBLIC_API_BASE_URL ?? "")
     .trim()
     .replace(/\/+$/, "");
 }
 export function isApiConfigured(): boolean {
+  /* Preview cung cấp transport mock nên coi như "đã cấu hình" khi gate mở. */
+  if (PREVIEW_ENABLED) return true;
   return getApiBaseUrl().length > 0;
 }
 export interface ApiFetchOptions {
@@ -40,6 +46,19 @@ export async function apiFetch(
     responseType = "json",
   }: ApiFetchOptions = {},
 ): Promise<unknown> {
+  /* Preview transport: chỉ bật khi gate build-time mở (dev/preview deploy).
+     Điều kiện VIẾT INLINE (không import const từ module khác) để bundler gập
+     được literal env lúc production build: NEXT_PUBLIC_PREVIEW không được đặt
+     + NODE_ENV=production → ("undefined" === "1") && (...) → false → nhánh
+     chết bị minifier xoá kèm dynamic import — module mock rời khỏi bundle
+     (chứng minh: scripts/verify-preview-isolation.mjs). */
+  if (
+    process.env.NEXT_PUBLIC_PREVIEW === "1" &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    const { previewFetch } = await import("@/lib/preview/transport");
+    return previewFetch(path, { method, body, formData, token, signal, responseType });
+  }
   const base = getApiBaseUrl();
   if (!base)
     throw new ApiError(

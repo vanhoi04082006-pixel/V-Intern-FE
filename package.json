@@ -12,6 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "preview:audit": "node scripts/preview-visual-audit.mjs",
+    "verify:preview-isolation": "node scripts/verify-preview-isolation.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {
