@@ -33,6 +33,7 @@ import { PerformanceMemberPicker } from "@/components/product/performance-member
 import { useInternNames } from "./use-intern-names";
 import { InkCountUp } from "@/components/v-intern/motion";
 import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
+import { StampMoc } from "@/components/notebook/ui";
 import { linkButtonClass } from "./ui-bits";
 import { ApiError } from "@/lib/auth/api-client";
 
@@ -106,16 +107,32 @@ export function SalaryConsole() {
         title="Lương ảo"
         subtitle="Đơn vị ảo dùng để động viên sinh viên — không phải lương thật. Số dư luôn được tính lại từ sổ ghi, không có số dư lưu sẵn."
         action={
-          <button
-            className={buttonClass}
-            onClick={() => {
-              setNotice("");
-              setAdjusting(true);
-            }}
-          >
-            <IconPlus size={16} aria-hidden />
-            Ghi điều chỉnh
-          </button>
+          <>
+            {/* Dấu mộc đỏ "kho bạc" — tem nhỏ nghiêng trong hàng tiêu đề,
+                trang trí thuần (không tương tác, ẩn với screen reader). */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none inline-flex shrink-0 self-center"
+            >
+              <StampMoc
+                tone="red"
+                rotate={-6}
+                className="!px-2 !py-0.5 !text-[0.58rem]"
+              >
+                KHO BẠC
+              </StampMoc>
+            </span>
+            <button
+              className={buttonClass}
+              onClick={() => {
+                setNotice("");
+                setAdjusting(true);
+              }}
+            >
+              <IconPlus size={16} aria-hidden />
+              Ghi điều chỉnh
+            </button>
+          </>
         }
       />
       <div className="grid gap-4 lg:grid-cols-2">
@@ -154,8 +171,9 @@ export function SalaryConsole() {
               <ErrorState error={balance.error} onRetry={balance.reload} />
             ) : balanceUser && balance.data ? (
               <div className="space-y-3">
-                {/* Thẻ số dư kiểu sketch-card gấp dog-ear — số tiền đếm mực. */}
-                <div className="sketch-card-sm dog-ear flex items-start gap-3 p-4">
+                {/* Thẻ số dư kiểu sketch-card gấp dog-ear — số tiền đếm mực;
+                    sticker-pop: bật nhẹ như sticker dán khi rê chuột. */}
+                <div className="sketch-card-sm dog-ear sticker-pop flex items-start gap-3 p-4">
                   <span className="grid size-10 shrink-0 place-items-center rounded-control bg-accent">
                     <IconWallet className="text-primary" size={21} aria-hidden="true" />
                   </span>

@@ -37,6 +37,7 @@ import { useAction } from "@/components/product/use-action";
 import { linkButtonClass } from "./ui-bits";
 import { useInternNames } from "./use-intern-names";
 import { StampMoc } from "@/components/workspace/notebook";
+import { StampMoc as StampMocNb } from "@/components/notebook/ui";
 import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
 
 export const kpiStatusLabels: Record<KpiPeriod["status"], string> = {
@@ -106,16 +107,32 @@ export function KpiConsole() {
         title="Kỳ KPI"
         subtitle="Tạo kỳ đo lường, tính KPI theo quy tắc kpi-v1 và chốt kỳ để sinh lương ảo cũng như cấp chứng nhận. Kỳ đã chốt không tính lại."
         action={
-          <button
-            className={buttonClass}
-            onClick={() => {
-              setNotice("");
-              setEditor("new");
-            }}
-          >
-            <IconPlus size={16} aria-hidden />
-            Thêm kỳ KPI
-          </button>
+          <>
+            {/* Dấu mộc xanh "KPI" — tem nhỏ nghiêng trong hàng tiêu đề,
+                trang trí thuần (không tương tác, ẩn với screen reader). */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none inline-flex shrink-0 self-center"
+            >
+              <StampMocNb
+                tone="blue"
+                rotate={-6}
+                className="!px-2 !py-0.5 !text-[0.58rem]"
+              >
+                KPI
+              </StampMocNb>
+            </span>
+            <button
+              className={buttonClass}
+              onClick={() => {
+                setNotice("");
+                setEditor("new");
+              }}
+            >
+              <IconPlus size={16} aria-hidden />
+              Thêm kỳ KPI
+            </button>
+          </>
         }
       />
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">

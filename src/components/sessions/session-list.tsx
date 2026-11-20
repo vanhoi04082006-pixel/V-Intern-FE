@@ -205,7 +205,9 @@ export function SessionList({
             {data.data.items.map((s) => {
               const conf = sessionStatus(s.status);
               return (
-                <li key={s.id}>
+                <li key={s.id} className="card-tilt">
+                  {/* card-tilt: nghiêng 3D nhẹ khi rê — mỗi dòng phiên là một thẻ
+                      giấy tự chứa (instructor: sketch-card; admin: product-card). */}
                   {isInstructor ? (
                     <InstructorSessionRow
                       row={s}

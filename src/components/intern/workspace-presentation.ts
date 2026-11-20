@@ -112,7 +112,9 @@ export function waitingPresentation(
     searchPlaceholder: "Tìm kiếm dự án, tài liệu, thông báo...",
     pageSubtitle: "Không gian làm việc và thực tập của bạn",
     welcome: {
-      greeting: `Xin chào, ${user.displayName} 👋`,
+      // Không dùng emoji màu trong chuỗi lời chào — nơi hiển thị (empty-intern-
+      // workspace) đã tự kết thúc bằng SparkleDoodle, trang trí duy nhất đủ.
+      greeting: `Xin chào, ${user.displayName}`,
       message:
         "Bạn đã hoàn thành tuyển dụng. Không gian làm việc sẽ được cập nhật khi có phân công từ giảng viên.",
       badges: [
