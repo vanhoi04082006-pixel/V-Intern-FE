@@ -7,6 +7,7 @@ import { request } from "@/lib/api/client";
 import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { Spinner } from "@/components/product/primitives";
 import { PasswordField } from "@/components/auth/password-field";
+import { PasswordStrength } from "@/components/auth/password-strength";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { useAction } from "@/components/product/use-action";
 
@@ -14,6 +15,9 @@ export function ChangePassword() {
   const router = useRouter(),
     [ready, setReady] = useState(false),
     [loadError, setLoadError] = useState<unknown>(),
+    /* Mirror giá trị mật khẩu mới vào state (form vẫn uncontrolled,
+     * submit đọc FormData như cũ) — chỉ để vẽ thước độ mạnh. */
+    [newPasswordValue, setNewPasswordValue] = useState(""),
     action = useAction();
   useEffect(() => {
     let active = true;
@@ -74,16 +78,25 @@ export function ChangePassword() {
           maxLength={72}
           required
         />
-        <PasswordField
-          id="new-password"
-          name="newPassword"
-          label="Mật khẩu mới"
-          autoComplete="new-password"
-          minLength={12}
-          maxLength={72}
-          hint="Từ 12 ký tự; tối đa 72 byte. Chọn mật khẩu riêng cho tài khoản này."
-          required
-        />
+        <div>
+          <PasswordField
+            id="new-password"
+            name="newPassword"
+            label="Mật khẩu mới"
+            autoComplete="new-password"
+            minLength={12}
+            maxLength={72}
+            hint="Từ 12 ký tự; tối đa 72 byte. Chọn mật khẩu riêng cho tài khoản này."
+            required
+            onChange={(event) => setNewPasswordValue(event.target.value)}
+          />
+          {/* Thước độ mạnh mật khẩu (sandbox PasswordStrength) — hiện
+           * khi ô mật khẩu mới có nội dung; thuần hiển thị, không đụng
+           * luồng submit FormData. */}
+          {newPasswordValue.length > 0 ? (
+            <PasswordStrength password={newPasswordValue} />
+          ) : null}
+        </div>
         <PasswordField
           id="confirm-password"
           name="confirm"

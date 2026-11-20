@@ -9,6 +9,10 @@ import {
   IconSearch,
 } from "@/components/v-intern/icons";
 import { LogoutButton } from "@/components/auth/logout-button";
+import {
+  CommandPalette,
+  CommandPaletteTrigger,
+} from "@/components/shared/command-palette";
 import { NotificationBell } from "@/components/shared/notification-bell";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -48,6 +52,7 @@ export function InternTopbar({
   searchItems?: { href: string; label: string }[];
 }) {
   const [query, setQuery] = useState("");
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const matches = searchItems.filter((item) =>
     item.label.toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")),
@@ -167,6 +172,11 @@ export function InternTopbar({
             )}
           </div>
 
+          {/* Bảng lệnh nhanh ⌘K — phím "/" đã được ô tìm kiếm phía trên sử
+              dụng (focus ô tìm kiếm, kbd student-kbd), nên palette ở shell này
+              chỉ mở bằng ⌘K/Ctrl+K để không đè hành vi cũ. */}
+          <CommandPaletteTrigger onOpen={() => setPaletteOpen(true)} slashHint={false} />
+
           <ThemeToggle className="hidden sm:inline-flex" />
 
           <NotificationBell href="/intern/notifications" />
@@ -193,6 +203,16 @@ export function InternTopbar({
           <LogoutButton />
         </div>
       </div>
+
+      {/* Palette dùng role thật của workspace sinh viên (guard khóa
+          vai trò intern khi vào /intern); enableSlash=false vì "/" thuộc
+          ô tìm kiếm phía trên. */}
+      <CommandPalette
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
+        role="intern"
+        enableSlash={false}
+      />
     </header>
   );
 }

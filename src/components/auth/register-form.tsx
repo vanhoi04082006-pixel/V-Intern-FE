@@ -15,6 +15,7 @@ import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { PasswordField } from "@/components/auth/password-field";
+import { PasswordStrength } from "@/components/auth/password-strength";
 import { Spinner } from "@/components/product/primitives";
 import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { register } from "@/lib/auth/auth-service";
@@ -249,23 +250,31 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
             }}
           />
 
-          <PasswordField
-            id="register-password"
-            label="Mật khẩu"
-            name="password"
-            autoComplete="new-password"
-            placeholder="Nhập mật khẩu"
-            value={password}
-            error={errors.password}
-            hint={`Tối thiểu ${PASSWORD_MIN_LENGTH} ký tự.`}
-            disabled={isSubmitting}
-            onChange={(event) => {
-              setPassword(event.target.value);
-              if (errors.password) {
-                setErrors((prev) => ({ ...prev, password: undefined }));
-              }
-            }}
-          />
+          <div>
+            <PasswordField
+              id="register-password"
+              label="Mật khẩu"
+              name="password"
+              autoComplete="new-password"
+              placeholder="Nhập mật khẩu"
+              value={password}
+              error={errors.password}
+              hint={`Tối thiểu ${PASSWORD_MIN_LENGTH} ký tự.`}
+              disabled={isSubmitting}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (errors.password) {
+                  setErrors((prev) => ({ ...prev, password: undefined }));
+                }
+              }}
+            />
+            {/* Thước độ mạnh mật khẩu (sandbox PasswordStrength) — vạch
+             * mực đỏ/hổ phạch/xanh hiện ngay dưới ô mật khẩu khi người
+             * dùng bắt đầu gõ. UI thuần: chỉ đọc state password đã có. */}
+            {password.length > 0 ? (
+              <PasswordStrength password={password} />
+            ) : null}
+          </div>
 
           <PasswordField
             id="register-confirm"

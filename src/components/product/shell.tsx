@@ -37,6 +37,10 @@ import { BellRing } from "@/components/animate-ui/icons/bell-ring";
 import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { Logo } from "@/components/v-intern/logo";
 import { LogoutButton } from "@/components/auth/logout-button";
+import {
+  CommandPalette,
+  CommandPaletteTrigger,
+} from "@/components/shared/command-palette";
 import { NotificationBell } from "@/components/shared/notification-bell";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { getSessionUser } from "@/lib/auth/session";
@@ -263,6 +267,7 @@ export function ProductShell({
   const path = usePathname();
   const user = getSessionUser();
   const [open, setOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -471,6 +476,7 @@ export function ProductShell({
             </nav>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <CommandPaletteTrigger onOpen={() => setPaletteOpen(true)} />
             <ThemeToggle className="hidden sm:inline-flex" />
             <NotificationBell href={`/${role}/notifications`} />
             {role === "instructor" && user ? (
@@ -503,6 +509,14 @@ export function ProductShell({
           {role === "instructor" ? <WorkspaceStage role="instructor">{children}</WorkspaceStage> : children}
         </main>
       </div>
+
+      {/* Bảng lệnh nhanh ⌘K/"/" — vai trò theo prop role của shell
+          (layout /admin|/instructor đã xác định sau WorkspaceGuard). */}
+      <CommandPalette
+        role={role}
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
+      />
     </div>
   );
 }

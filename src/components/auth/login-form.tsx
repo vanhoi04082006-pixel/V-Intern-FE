@@ -167,7 +167,16 @@ export function LoginForm({ previewState }: LoginFormProps) {
                   ? "system"
                   : "info"
           }
-          className="mt-4"
+          className={cn(
+            "mt-4",
+            /* Lắc mực khi có lỗi (sandbox shake-ink) — chỉ áp cho
+             * trạng thái lỗi (auth-error / system-error), không áp cho
+             * info (not-connected) hay success. Alert unmount khi
+             * chuyển sang "submitting" nên mỗi lần lỗi mới animation
+             * tự chạy lại. Thuần hiển thị — không đụng logic submit. */
+            (status === "auth-error" || status === "system-error") &&
+              "animate-shake-ink",
+          )}
           actionLabel={status === "system-error" ? "Thử lại" : undefined}
           onAction={
             status === "system-error"
