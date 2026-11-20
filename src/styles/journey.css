@@ -712,3 +712,950 @@
     animation: none;
   }
 }
+
+/* =====================================================================
+ * === PAGE KIT v3 — deep conversion primitives (nb3-*) ===
+ * Phiên hoàn thiện 2026-11-22. Mọi class dưới đây dùng tiền tố `nb3-`
+ * (không tồn tại ở bất kỳ stylesheet nào của repo — đã kiểm), giá trị
+ * tự chứa (tokens toàn cục tokens.css + --nb3-* density) nên shell
+ * `.aurora-workspace` không thể đổi lớp nhìn của chúng.
+ * Guard `.workspace-ui.aurora-workspace` (specificity 0-3-x) chỉ dùng
+ * ở những chỗ aurora.css/notebook.css đè đúng property đó.
+ * ===================================================================== */
+
+/* --- 1. Marker highlight (marker-yellow/divider-torn/dog-ear đã có sẵn) --- */
+.marker-blue {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--blue-mist) 92%, transparent) 3%,
+    color-mix(in srgb, var(--blue-mist) 92%, transparent) 97%,
+    transparent 99.5%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 46%;
+  background-position: 0 82%;
+}
+.dark .marker-blue {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--royal) 38%, transparent) 3%,
+    color-mix(in srgb, var(--royal) 38%, transparent) 97%,
+    transparent 99.5%
+  );
+}
+.marker-pink {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--note-pink) 92%, transparent) 3%,
+    color-mix(in srgb, var(--note-pink) 92%, transparent) 97%,
+    transparent 99.5%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 46%;
+  background-position: 0 82%;
+}
+.dark .marker-pink {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, #fb7185 32%, transparent) 3%,
+    color-mix(in srgb, #fb7185 32%, transparent) 97%,
+    transparent 99.5%
+  );
+}
+.marker-mint {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--note-mint) 92%, transparent) 3%,
+    color-mix(in srgb, var(--note-mint) 92%, transparent) 97%,
+    transparent 99.5%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 46%;
+  background-position: 0 82%;
+}
+.dark .marker-mint {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, #34d399 30%, transparent) 3%,
+    color-mix(in srgb, #34d399 30%, transparent) 97%,
+    transparent 99.5%
+  );
+}
+
+/* --- 2. Divider gạch đứt mực + kim cương giữa / gáy lò xo --- */
+.divider-dashed-ink {
+  position: relative;
+  height: 0;
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 42%, transparent);
+}
+.divider-dashed-ink::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 1px;
+}
+.spiral-edge {
+  position: relative;
+}
+.spiral-edge::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  bottom: 14px;
+  width: 12px;
+  background-image: radial-gradient(circle at 6px 7px, var(--paper-raised) 3.4px, var(--ink) 3.4px, var(--ink) 4.6px, transparent 5px);
+  background-size: 12px 24px;
+  background-repeat: repeat-y;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* --- 3. Chữ mực / phấn / gạch xuyên / chip mono / glow ring / spark bar --- */
+.text-shadow-ink {
+  text-shadow: 1px 1px 0 var(--hard-shadow);
+}
+.chalk-text {
+  color: var(--chalk-dust);
+  text-shadow: 1px 1px 0 var(--hard-shadow);
+}
+.strikethrough-ink {
+  position: relative;
+}
+.strikethrough-ink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 54%;
+  height: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--ink) 72%, transparent);
+  transform-origin: left center;
+  animation: strike-draw 420ms 160ms var(--motion-ease) both;
+}
+.link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.6rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1.5px dashed color-mix(in srgb, var(--ink-soft) 55%, transparent);
+  border-radius: 8px 10px 8px 10px;
+  text-decoration: none;
+  transition:
+    transform 180ms var(--motion-ease),
+    box-shadow 180ms var(--motion-ease),
+    border-color 180ms var(--motion-ease),
+    color 180ms var(--motion-ease);
+}
+.link-chip:hover {
+  transform: translateY(-2px);
+  color: var(--royal);
+  border-color: var(--royal);
+  box-shadow: 2px 3px 0 0 var(--hard-shadow);
+}
+.glow-ring {
+  box-shadow:
+    0 0 0 2px var(--royal),
+    0 0 0 6px color-mix(in srgb, var(--royal) 32%, transparent),
+    0 0 20px color-mix(in srgb, var(--royal) 38%, transparent);
+  transition: box-shadow 220ms var(--motion-ease), transform 180ms var(--motion-ease);
+}
+.spark-bar {
+  position: relative;
+  background: color-mix(in srgb, var(--royal) 32%, transparent);
+  border-radius: 3px 3px 1px 1px;
+}
+.spark-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 3px 3px 0 0;
+}
+.dark .spark-bar {
+  background: color-mix(in srgb, var(--royal) 42%, transparent);
+}
+.spark-bar[data-tone="success"] {
+  background: color-mix(in srgb, var(--success) 34%, transparent);
+}
+.spark-bar[data-tone="warning"] {
+  background: color-mix(in srgb, var(--warning) 34%, transparent);
+}
+.spark-bar[data-tone="danger"] {
+  background: color-mix(in srgb, var(--danger) 34%, transparent);
+}
+
+/* --- 4. Skeleton khối góc bất đối xứng --- */
+.skeleton-pencil-block {
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--ink) 6%, transparent) 40%,
+    color-mix(in srgb, var(--ink) 12%, transparent) 50%,
+    color-mix(in srgb, var(--ink) 6%, transparent) 60%
+  );
+  background-size: 220% 100%;
+  animation: pencil-sweep 1.4s ease-in-out infinite;
+  border-radius: 12px 15px 13px 14px;
+}
+
+/* --- 5. nb3 BUTTON — nút mực viền nét + bóng in lệch --- */
+.nb3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  border: 2px solid var(--ink);
+  border-radius: 12px 15px 13px 14px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 2.5px 2.5px 0 0 var(--hard-shadow);
+  cursor: pointer;
+  transition:
+    transform 160ms var(--motion-ease),
+    box-shadow 160ms var(--motion-ease),
+    background-color 160ms var(--motion-ease),
+    opacity 160ms;
+}
+.nb3-btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 4.5px 4.5px 0 0 var(--hard-shadow);
+}
+.nb3-btn:active:not(:disabled) {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 0 var(--hard-shadow);
+}
+.nb3-btn:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+.nb3-btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.nb3-btn-primary {
+  background: var(--royal);
+  color: #fff;
+}
+.dark .nb3-btn-primary {
+  color: var(--ink);
+}
+.nb3-btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--royal) 92%, #fff 8%);
+}
+.dark .nb3-btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--royal) 100%, transparent);
+}
+.nb3-btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.dark .nb3-btn-danger {
+  color: var(--ink);
+}
+.nb3-btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 92%, #fff 8%);
+}
+.nb3-btn-ghost {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  color: var(--ink-soft);
+}
+.nb3-btn-ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--royal) 10%, transparent);
+  color: var(--royal);
+  box-shadow: none;
+  transform: none;
+}
+.nb3-btn-sm {
+  min-height: 36px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+}
+.nb3-btn-md {
+  min-height: 42px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.95rem;
+}
+.nb3-btn-lg {
+  min-height: 48px;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+}
+.nb3-btn-icon {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 0;
+  aspect-ratio: 1 / 1;
+}
+/* Guard aurora: giữ silhouette notebook cho nút trong workspace
+ * (aurora.css chỉ đụng .product-button về radius/min-height). */
+.workspace-ui.aurora-workspace .nb3-btn {
+  border-radius: 12px 15px 13px 14px;
+}
+
+/* --- 6. nb3 FORM — ô nhập mực, nhãn tay, focus nét mực --- */
+.nb3-input,
+.nb3-select,
+.nb3-textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px 12px 11px 12px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 0 var(--hard-shadow);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition:
+    border-color 160ms var(--motion-ease),
+    box-shadow 160ms var(--motion-ease),
+    transform 160ms var(--motion-ease);
+}
+.nb3-input::placeholder,
+.nb3-textarea::placeholder {
+  color: var(--pencil);
+}
+.nb3-input:hover:not(:disabled),
+.nb3-select:hover:not(:disabled),
+.nb3-textarea:hover:not(:disabled) {
+  border-color: var(--royal);
+}
+.nb3-input:focus-visible,
+.nb3-select:focus-visible,
+.nb3-textarea:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-color: var(--royal);
+}
+.nb3-input:disabled,
+.nb3-select:disabled,
+.nb3-textarea:disabled {
+  opacity: 0.55;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.nb3-input[aria-invalid="true"] {
+  border-color: var(--danger);
+  animation: shake-ink 480ms ease-in-out both;
+}
+.nb3-select {
+  cursor: pointer;
+  padding-right: 2.2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2317171c' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 7 6-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  appearance: none;
+}
+.dark .nb3-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23f2f1e9' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 7 6-7'/%3E%3C/svg%3E");
+}
+.nb3-textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+.nb3-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+/* --- 7. nb3 PAGE HEADING — eyebrow mono + tiêu đề mực + squiggle --- */
+.nb3-page-heading {
+  position: relative;
+  margin-bottom: 1.6rem;
+}
+.nb3-page-heading .nb3-page-title {
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0;
+}
+.nb3-page-subtitle {
+  margin-top: 0.55rem;
+  max-width: 46rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.nb3-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* --- 8. nb3 KPI — thẻ số liệu giấy + hạt giấy + sticker icon --- */
+.nb3-kpi {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1rem 1.1rem;
+  border: 2px solid var(--ink);
+  border-radius: 12px 15px 13px 14px;
+  background: var(--paper-raised);
+  box-shadow: 3px 3px 0 0 var(--hard-shadow);
+  transition:
+    transform 240ms var(--motion-ease),
+    box-shadow 240ms var(--motion-ease);
+}
+.nb3-kpi:hover {
+  transform: translate(-2px, -2px) rotate(-0.35deg);
+  box-shadow: 5px 5px 0 0 var(--hard-shadow);
+}
+.nb3-kpi-icon {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  border-radius: 11px 13px 12px 14px;
+  background: var(--blue-mist);
+  color: var(--royal);
+  transition: transform 340ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nb3-kpi:hover .nb3-kpi-icon {
+  transform: scale(1.06) rotate(-4deg);
+}
+.nb3-kpi-label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.nb3-kpi-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-shadow: 1px 1px 0 var(--hard-shadow);
+}
+.nb3-kpi-sub {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--pencil);
+}
+.nb3-kpi-trend {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.nb3-kpi-trend[data-tone="up"] {
+  color: var(--success);
+}
+.nb3-kpi-trend[data-tone="down"] {
+  color: var(--danger);
+}
+.nb3-kpi-trend[data-tone="flat"] {
+  color: var(--pencil);
+}
+
+/* --- 9. nb3 PANEL — panel sketch có băng dính + squiggle tiêu đề --- */
+.nb3-panel {
+  position: relative;
+  border: 2px solid var(--ink);
+  border-radius: 14px 17px 15px 16px;
+  background: var(--paper-raised);
+  box-shadow: 4px 4px 0 0 var(--hard-shadow);
+  padding: 1.15rem 1.25rem 1.35rem;
+}
+.nb3-panel-title {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.nb3-panel-desc {
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 40rem;
+}
+
+/* --- 10. nb3 TABLE — bảng mực: header mono, zebra giấy ấm, hover mực --- */
+.nb3-table-wrap {
+  overflow-x: auto;
+  border: 2px solid var(--ink);
+  border-radius: 12px 15px 13px 14px;
+  background: var(--paper-raised);
+  box-shadow: 3px 3px 0 0 var(--hard-shadow);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ink) 40%, transparent) transparent;
+}
+.nb3-table-wrap::-webkit-scrollbar {
+  height: 8px;
+}
+.nb3-table-wrap::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink) 40%, transparent);
+  border-radius: 999px;
+}
+.nb3-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.nb3-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.65rem 0.95rem;
+  text-align: left;
+  white-space: nowrap;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: color-mix(in srgb, var(--gold-soft) 55%, var(--paper-raised));
+  border-bottom: 2px solid var(--ink);
+}
+.nb3-table td {
+  padding: 0.72rem 0.95rem;
+  vertical-align: top;
+  border-bottom: 1.5px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+  color: var(--ink);
+}
+.nb3-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.nb3-table tbody tr {
+  transition: background-color 160ms var(--motion-ease);
+}
+.nb3-table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--gold-soft) 24%, transparent);
+}
+.nb3-table tbody tr:hover {
+  background: color-mix(in srgb, var(--royal) 10%, transparent);
+}
+.nb3-table td strong,
+.nb3-table td b {
+  color: var(--ink);
+}
+
+/* --- 11. nb3 CHIP/BADGE — tem nhỏ viền mực cho trạng thái --- */
+.nb3-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.16rem 0.68rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 9px 11px 10px 12px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.nb3-chip[data-tone="blue"] {
+  border-color: var(--royal);
+  color: var(--royal);
+  background: color-mix(in srgb, var(--royal) 10%, transparent);
+}
+.nb3-chip[data-tone="green"] {
+  border-color: var(--success);
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+.nb3-chip[data-tone="amber"] {
+  border-color: var(--warning);
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 14%, transparent);
+}
+.nb3-chip[data-tone="red"] {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+.nb3-chip[data-tone="muted"] {
+  border-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  color: var(--ink-soft);
+  background: transparent;
+  border-style: dashed;
+}
+.nb3-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* --- 12. nb3 TOOLBAR — lọc chip vẽ tay + tìm kiếm mực --- */
+.nb3-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+.nb3-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 34px;
+  padding: 0.25rem 0.85rem;
+  border: 1.5px dashed color-mix(in srgb, var(--ink) 55%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 180ms var(--motion-ease),
+    box-shadow 180ms var(--motion-ease),
+    border-color 180ms var(--motion-ease),
+    background-color 180ms var(--motion-ease),
+    color 180ms var(--motion-ease);
+}
+.nb3-filter-chip:hover {
+  transform: translateY(-2px);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.nb3-filter-chip[aria-pressed="true"] {
+  border-style: solid;
+  border-color: var(--ink);
+  background: var(--royal);
+  color: #fff;
+  box-shadow: 2px 2.5px 0 0 var(--hard-shadow);
+}
+.dark .nb3-filter-chip[aria-pressed="true"] {
+  color: var(--ink);
+}
+.nb3-filter-chip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+.nb3-filter-chip:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* --- 13. nb3 TABS — tab gạch chân mực trượt --- */
+.nb3-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  border-bottom: 2px solid var(--ink);
+}
+.nb3-tab {
+  position: relative;
+  padding: 0.5rem 0.95rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 180ms var(--motion-ease);
+}
+.nb3-tab:hover {
+  color: var(--ink);
+}
+.nb3-tab[aria-selected="true"] {
+  color: var(--royal);
+}
+.nb3-tab::after {
+  content: "";
+  position: absolute;
+  left: 0.55rem;
+  right: 0.55rem;
+  bottom: -2px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--royal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 240ms var(--motion-ease);
+}
+.nb3-tab[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+.nb3-tab:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* --- 14. nb3 KANBAN — cột sketch + đầu băng dính --- */
+.nb3-kanban-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 2px solid var(--ink);
+  border-radius: 14px 17px 15px 16px;
+  background: color-mix(in srgb, var(--gold-soft) 30%, var(--paper));
+  box-shadow: 3px 3px 0 0 var(--hard-shadow);
+}
+.nb3-kanban-col-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.95rem;
+  border-bottom: 2px solid var(--ink);
+}
+.nb3-kanban-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.3rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px 10px 9px 11px;
+  background: var(--paper-raised);
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.nb3-kanban-body {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 3rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ink) 35%, transparent) transparent;
+}
+.nb3-kanban-body:empty::after {
+  content: "— trống —";
+  display: block;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--pencil);
+}
+.nb3-kanban-card {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.75rem 0.85rem;
+  border: 2px solid var(--ink);
+  border-radius: 10px 13px 11px 12px;
+  background: var(--paper-raised);
+  box-shadow: 2px 2px 0 0 var(--hard-shadow);
+  transition:
+    transform 200ms var(--motion-ease),
+    box-shadow 200ms var(--motion-ease);
+}
+.nb3-kanban-card:hover {
+  transform: translate(-1.5px, -1.5px) rotate(-0.3deg);
+  box-shadow: 3.5px 3.5px 0 0 var(--hard-shadow);
+}
+
+/* --- 15. nb3 CHART FRAME — khung biểu đồ sketch + polish nét mực ---
+ * Specificity (0,2,x) vượt `.workspace-chart` (0,1,0) của workspace.css. */
+.nb3-chart-frame {
+  position: relative;
+  border: 2px solid var(--ink);
+  border-radius: 14px 17px 15px 16px;
+  background: var(--paper-raised);
+  box-shadow: 3px 3px 0 0 var(--hard-shadow);
+  padding: 1rem 1.15rem 1.15rem;
+}
+.nb3-chart-frame figure,
+.nb3-chart-frame .workspace-chart,
+.nb3-chart-frame .workspace-rate-chart {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.nb3-chart-frame figcaption {
+  font-size: 0.9rem !important;
+  font-weight: 800;
+  color: var(--ink) !important;
+  letter-spacing: -0.005em;
+}
+.nb3-chart-frame figcaption > span {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft) !important;
+}
+.nb3-chart-frame .workspace-rate-track {
+  border-radius: 4px 6px 5px 6px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent) !important;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 35%, transparent);
+}
+.nb3-chart-frame .workspace-rate-track > span {
+  border-radius: 3px 5px 4px 5px;
+  box-shadow: inset 0 2px 0 0 var(--hard-shadow);
+}
+.nb3-chart-frame .workspace-rate-axis {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.64rem;
+  color: var(--pencil);
+}
+.nb3-chart-frame .workspace-donut svg circle {
+  stroke-linecap: butt;
+}
+
+/* --- 16. nb3 MODAL — dialog sketch-card pop-in --- */
+.nb3-modal {
+  border: 2px solid var(--ink);
+  border-radius: 14px 17px 15px 16px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 5px 5px 0 0 var(--hard-shadow);
+  padding: 1.15rem 1.3rem 1.3rem;
+}
+.nb3-modal[open] {
+  animation: pop-in 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.nb3-modal::backdrop {
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+  backdrop-filter: blur(2px);
+}
+.workspace-ui.aurora-workspace .nb3-modal {
+  border-radius: 14px 17px 15px 16px;
+  border: 2px solid var(--ink);
+  box-shadow: 5px 5px 0 0 var(--hard-shadow);
+}
+
+/* --- 17. nb3 EMPTY/ERROR — trạng thái trống/lỗi doodle --- */
+.nb3-empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  padding: 1.6rem 1rem;
+  text-align: center;
+}
+.nb3-empty-doodle {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 2px dashed color-mix(in srgb, var(--ink) 45%, transparent);
+  border-radius: 14px 17px 15px 16px;
+  background: color-mix(in srgb, var(--gold-soft) 30%, transparent);
+  color: var(--ink-soft);
+}
+.nb3-empty-title {
+  font-weight: 800;
+  color: var(--ink);
+}
+.nb3-empty-desc {
+  max-width: 28rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* --- 18. nb3 MINI BAR — thanh tiến độ mực có nắp --- */
+.nb3-mini-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.nb3-mini-bar {
+  position: relative;
+  width: 4.5rem;
+  height: 0.55rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 5px 7px 6px 7px;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  overflow: hidden;
+}
+.nb3-mini-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: color-mix(in srgb, var(--royal) 62%, transparent);
+  border-right: 2px solid var(--ink);
+}
+.nb3-mini-fill[data-tone="success"] {
+  background: color-mix(in srgb, var(--success) 62%, transparent);
+}
+.nb3-mini-fill[data-tone="warning"] {
+  background: color-mix(in srgb, var(--warning) 62%, transparent);
+}
+.nb3-mini-fill[data-tone="danger"] {
+  background: color-mix(in srgb, var(--danger) 62%, transparent);
+}
+
+/* --- 19. nb3 MARGIN/BREADCRUMB — breadcrumb chip mono --- */
+.nb3-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.nb3-crumb a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 160ms var(--motion-ease);
+}
+.nb3-crumb a:hover {
+  color: var(--royal);
+}
+
+/* --- reduced-motion cho PAGE KIT --- */
+@media (prefers-reduced-motion: reduce) {
+  .strikethrough-ink::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+  .skeleton-pencil-block {
+    animation: none;
+  }
+  .nb3-btn,
+  .nb3-btn:hover:not(:disabled),
+  .nb3-btn:active:not(:disabled),
+  .nb3-kpi,
+  .nb3-kpi-icon,
+  .nb3-kanban-card,
+  .nb3-kanban-card:hover,
+  .nb3-filter-chip,
+  .nb3-filter-chip:hover,
+  .nb3-tab::after,
+  .nb3-input[aria-invalid="true"] {
+    transition-duration: 0ms;
+    animation: none;
+    transform: none;
+  }
+  .nb3-modal[open] {
+    animation: none;
+  }
+}
