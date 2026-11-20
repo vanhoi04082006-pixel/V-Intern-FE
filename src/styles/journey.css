@@ -1,0 +1,714 @@
+/* =====================================================================
+ * JOURNEY NOTEBOOK v3 — additive port from the sandbox design system.
+ * Source of truth: sandbox src/app/globals.css, sections marked
+ * "v3 UPGRADE" (tokens / keyframes / surfaces / data-viz / loading).
+ *
+ * PORT RULES (read before editing):
+ *  1. NOTHING in this file overrides a real-repo rule or token. Every
+ *     class / var / keyframe here is either brand-new (no real-repo
+ *     definition anywhere: globals.css, styles/tokens.css,
+ *     styles/motion.css, components/workspace/notebook.css) or
+ *     namespaced `nb-` because the real repo already owns the plain
+ *     name with a DIFFERENT look (tape, stamp-moc, animate-stamp-thump,
+ *     sticky-note, sketch-card, squiggle-draw, shadow-ink-*).
+ *  2. Intentionally NOT redefined (already exist in real repo):
+ *     keyframes stamp-thump / marker-blot / marker-sweep / nb-rise /
+ *     nb-fade / nb-fill / nb-toast-in / nb-toast-out / page-curl /
+ *     paper-settle / paper-flap-in / squiggle-draw / ink-draw / v-float /
+ *     v-float-soft / v-bob / v-wiggle / v-blink-dot / v-spin-hand /
+ *     vintern-result-enter; vars --paper / --paper-raised / --royal /
+ *     --royal-deep / --note-yellow / --stamp-red / --ink / --line /
+ *     --hard-shadow / --motion-ease / --stamp-blue / --pencil …;
+ *     animate utility classes .animate-float / .animate-float-delayed /
+ *     .animate-float-soft / .animate-bob / .animate-wiggle /
+ *     .animate-blink-dot; classes .tape / .tape-warm…slate / .stamp-moc /
+ *     .sticky-note / .sketch-card / .squiggle-draw / .marker… .
+ *  3. `--nb3-*` vars are private to the ported nb-* primitives: the real
+ *     workspace shell (.aurora-workspace in notebook.css) redefines
+ *     --nb-ink-line / --nb-radius per role, which would hijack the
+ *     ported look inside workspace pages. --nb3-* cannot be overridden
+ *     by it, so nb-* primitives always render the sandbox look.
+ * ===================================================================== */
+
+/* --- v3 animate tokens + accent colors + namespaced ink-shadow ladder ---
+ * Real repo defines NO --animate-* theme tokens; its equivalents are the
+ * unlayered classes .animate-float/.animate-bob/.animate-wiggle/
+ * .animate-blink-dot/.animate-float-delayed in globals.css — those names
+ * are therefore skipped here to avoid duplicate utilities. */
+@theme {
+  --animate-pop-in: pop-in 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-shake-ink: shake-ink 480ms ease-in-out both;
+  --animate-float-y: float-y 5s ease-in-out infinite;
+  --animate-marquee: marquee-strip 22s linear infinite;
+
+  /* v3 accent colors (sandbox @theme aliases; absent in real repo). */
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-chalk-dust: var(--chalk-dust);
+  --color-royal-mist: var(--blue-mist);
+
+  /* Sandbox's ink-shadow ladder (var(--hard-shadow)) for the ported
+     primitives — real repo's own shadow-ink-2/4/6 ladder (var(--ink))
+     stays untouched. */
+  --shadow-nb-ink-2: 2px 2px 0 0 var(--hard-shadow);
+  --shadow-nb-ink-3: 3px 3px 0 0 var(--hard-shadow);
+  --shadow-nb-ink-4: 4px 4px 0 0 var(--hard-shadow);
+}
+
+/* =====================================================================
+ * v3 TOKENS — vàng son / phấn bụi / confetti / danger (light + dark).
+ * Append-only: every var below is absent from the real repo.
+ * ===================================================================== */
+:root {
+  --gold: #b45309;
+  --gold-soft: #f6e7c6;
+  --chalk-dust: #f2f1e9;
+  --confetti-1: #f59e0b;
+  --confetti-2: #2060f0;
+  --confetti-3: #ef4767;
+  --confetti-4: #34d399;
+  --confetti-5: #fde047;
+  --confetti-6: #0ea5b7;
+  --danger: #c0272d;
+
+  /* Notebook density defaults (sandbox :root values, plain names as
+     requested). Pure fallbacks: the real repo only *sets* --nb-ink-line /
+     --nb-radius inside .aurora-workspace (which still wins there) and
+     nothing in the real repo consumes them outside that scope. */
+  --nb-ink-line: 2px;
+  --nb-offset: 4px;
+  --nb-radius: 12px 15px 13px 14px;
+
+  /* Private density vars for the ported nb-* primitives (see header #3). */
+  --nb3-ink-line: 2px;
+  --nb3-offset: 4px;
+  --nb3-radius: 12px 15px 13px 14px;
+}
+.dark {
+  --gold: #fbbf24;
+  --gold-soft: rgba(251, 191, 36, 0.16);
+  --chalk-dust: #f4f3ec;
+  --confetti-1: #fbbf24;
+  --confetti-2: #7d97ff;
+  --confetti-3: #fb7185;
+  --confetti-4: #3ddc97;
+  --confetti-5: #fde047;
+  --confetti-6: #38bdf8;
+  --danger: #ff627a;
+}
+
+/* =====================================================================
+ * PORTED NOTEBOOK PRIMITIVES (src/components/notebook/*).
+ * Class placement mirrors the sandbox (utilities layer), values verbatim;
+ * only the conflicting names are prefixed `nb-`.
+ * ===================================================================== */
+@layer utilities {
+  /* --- Băng dính washi (sandbox .tape family) --- */
+  .nb-tape {
+    position: absolute;
+    width: 96px;
+    height: 28px;
+    background: color-mix(in srgb, var(--royal) 26%, #fff 30%);
+    opacity: 0.82;
+    box-shadow: 0 1px 3px rgba(23, 23, 28, 0.18);
+    border-left: 1px dashed rgba(255, 255, 255, 0.55);
+    border-right: 1px dashed rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(1px);
+    transition: transform 200ms var(--motion-ease), opacity 200ms;
+  }
+  .nb-tape-warm {
+    background: color-mix(in srgb, #f59e0b 30%, #fff 34%);
+  }
+  .nb-tape-candy {
+    background: color-mix(in srgb, #f472b6 28%, #fff 32%);
+  }
+  .nb-tape-mint {
+    background: color-mix(in srgb, #34d399 28%, #fff 32%);
+  }
+  .nb-tape-slate {
+    background: color-mix(in srgb, #64748b 30%, #e2e8f0 30%);
+  }
+
+  /* v3 tape-gold — băng dính vàng son, mép sẫm (new name in real repo,
+   * composes with either the real .tape or the ported .nb-tape). */
+  .tape-gold {
+    background: linear-gradient(
+      180deg,
+      #c9972c,
+      #e6b950 18%,
+      #e6b950 82%,
+      #c9972c
+    );
+  }
+  .dark .tape-gold {
+    background: linear-gradient(
+      180deg,
+      #7c611c,
+      #a8842e 18%,
+      #a8842e 82%,
+      #7c611c
+    );
+  }
+
+  /* --- Sticky note (sandbox .sticky-note) --- */
+  .nb-sticky-note {
+    background: var(--note-yellow);
+    color: var(--note-yellow-ink);
+    border-radius: 2px 2px 14px 2px;
+    box-shadow: 0 4px 14px rgba(23, 23, 28, 0.14);
+    transform: rotate(var(--note-rotate, -1.5deg));
+    transition: transform 200ms var(--motion-ease);
+  }
+  .nb-sticky-note:hover {
+    transform: rotate(0deg) scale(1.015);
+  }
+  /* Sandbox modifiers — the real repo's analogues are named
+   * .sticky-note-pink / .sticky-note-mint, so these names are free. */
+  .sticky-pink {
+    background: var(--note-pink);
+    color: var(--note-pink-ink);
+  }
+  .sticky-mint {
+    background: var(--note-mint);
+    color: var(--note-mint-ink);
+  }
+
+  /* --- Con dấu mộc (sandbox .stamp-moc / .stamp-blue) --- */
+  .nb-stamp-moc {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 2.5px solid var(--stamp-red);
+    color: var(--stamp-red);
+    border-radius: 999px;
+    padding: 0.28rem 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transform: rotate(var(--stamp-rotate, -6deg));
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    opacity: 0.88;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0.08'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'%3E%3C/svg%3E");
+    mask-size: 120px;
+  }
+  .nb-stamp-blue {
+    border-color: var(--stamp-blue);
+    color: var(--stamp-blue);
+  }
+  /* Sandbox's stamp animation (420ms, springy) — namespaced because the
+   * real repo's .animate-stamp-thump runs its own 220ms keyframe. */
+  .nb-animate-stamp-thump {
+    animation: nb-stamp-thump 420ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+  }
+
+  /* --- Sketch card: viền mực 2px + bóng in lệch + bán kính bất đối xứng
+   * (sandbox .sketch-card / .sketch-card-hover, on the aurora-proof
+   * --nb3-* density vars) --- */
+  .nb-sketch-card {
+    border: var(--nb3-ink-line) solid var(--ink);
+    border-radius: var(--nb3-radius);
+    box-shadow: var(--nb3-offset) var(--nb3-offset) 0 0 var(--hard-shadow);
+    background: var(--paper-raised);
+    transition: transform 180ms var(--motion-ease), box-shadow 180ms var(--motion-ease);
+  }
+  .nb-sketch-card-hover:hover {
+    transform: translate(-2px, -2px) rotate(-0.35deg);
+    box-shadow: calc(var(--nb3-offset) + 3px) calc(var(--nb3-offset) + 3px) 0 0 var(--hard-shadow);
+  }
+
+  /* --- Squiggle underline vẽ dần khi cuộn tới (sandbox time-based rule;
+   * real repo's .squiggle-draw is scroll-driven with pathLength 120) --- */
+  .nb-squiggle-draw path {
+    stroke-dasharray: 240;
+    stroke-dashoffset: 240;
+    animation: nb-squiggle-draw 900ms 120ms var(--motion-ease) forwards;
+  }
+
+  /* --- Eyebrow label (sandbox .eyebrow; no real-repo definition — the
+   * real repo's landing uses inline Tailwind for its eyebrow props) --- */
+  .eyebrow {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+}
+
+/* Status dot viền mực (sandbox .ws-dot — dùng trong InkBadge; real repo
+ * defines no .ws-dot class). */
+.ws-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+  border: 1.5px solid var(--ink);
+}
+
+/* Băng dính xoay theo --tape-rotate (sandbox "landing gốc" transform
+ * block — the effective base/hover rules for the ported tape family). */
+.nb-tape,
+.nb-tape-peel {
+  transform: rotate(var(--tape-rotate, -6deg));
+  transition: transform var(--motion-normal, 200ms) var(--motion-ease, ease);
+}
+.group:hover .nb-tape-peel,
+.nb-tape-peel:hover {
+  transform: rotate(calc(var(--tape-rotate, -6deg) - 2deg)) translateY(-1.5px) scale(1.03);
+  opacity: 1;
+}
+
+/* =====================================================================
+ * v3 UPGRADE · A — ANIMATION & MOTION UTILITIES (new names in real repo)
+ * ===================================================================== */
+
+/* Halo "đang online" — wired với keyframe `ping-soft`. */
+.ws-dot-live {
+  position: relative;
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--success);
+  border: 1.5px solid var(--ink);
+}
+.ws-dot-live::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--success) 60%, transparent);
+  animation: ping-soft 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.dark .ws-dot-live {
+  border-color: var(--ink);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--success) 45%, transparent);
+}
+.dark .ws-dot-live::before {
+  border-color: color-mix(in srgb, var(--success) 55%, transparent);
+}
+
+/* Shine quét chéo khi hover (::after gradient). */
+.shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.shine-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.42) 46%,
+    rgba(255, 255, 255, 0.58) 50%,
+    rgba(255, 255, 255, 0.42) 54%,
+    transparent 68%
+  );
+  transform: translateX(-130%);
+}
+.shine-sweep:hover::after {
+  animation: spotlight-sweep 900ms var(--motion-ease);
+}
+.dark .shine-sweep::after {
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(242, 241, 233, 0.12) 46%,
+    rgba(242, 241, 233, 0.2) 50%,
+    rgba(242, 241, 233, 0.12) 54%,
+    transparent 68%
+  );
+}
+
+/* Sketch-card + spotlight khi hover (distinct class name — real repo's
+ * own .sketch-card is untouched). */
+.sketch-card-spotlight {
+  position: relative;
+  overflow: hidden;
+  border: var(--nb-ink-line) solid var(--ink);
+  border-radius: var(--nb-radius);
+  box-shadow: var(--nb-offset) var(--nb-offset) 0 0 var(--hard-shadow);
+  background: var(--paper-raised);
+  transition: transform 180ms var(--motion-ease), box-shadow 180ms var(--motion-ease);
+}
+.sketch-card-spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.36) 46%,
+    rgba(255, 255, 255, 0.52) 50%,
+    rgba(255, 255, 255, 0.36) 54%,
+    transparent 68%
+  );
+  transform: translateX(-130%);
+}
+.sketch-card-spotlight:hover::after {
+  animation: spotlight-sweep 850ms var(--motion-ease);
+}
+.dark .sketch-card-spotlight::after {
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(242, 241, 233, 0.1) 46%,
+    rgba(242, 241, 233, 0.17) 50%,
+    rgba(242, 241, 233, 0.1) 54%,
+    transparent 68%
+  );
+}
+
+/* Marching ants — viền đứt chạy vòng quanh (4 repeating-linear-gradient).
+ * The sandbox's utility name is .ants-border (no .marching-ants class
+ * exists there; the animation keyframe is `march-ants`). */
+.ants-border {
+  --ants-color: var(--ink);
+  border: 2px solid transparent;
+  background-origin: border-box;
+  background-clip: border-box;
+  background-image:
+    repeating-linear-gradient(90deg, var(--ants-color) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(90deg, var(--ants-color) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(0deg, var(--ants-color) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(0deg, var(--ants-color) 0 8px, transparent 8px 16px);
+  background-repeat: no-repeat;
+  background-size: 100% 2px, 100% 2px, 2px 100%, 2px 100%;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  animation: march-ants 0.8s steps(8, end) infinite;
+}
+
+/* Panel cảnh báo "thở" gradient ấm. */
+.shimmer-warm {
+  color: var(--warning);
+  border: 1.5px solid color-mix(in srgb, var(--warning) 40%, transparent);
+  background-image: linear-gradient(
+    110deg,
+    var(--note-yellow) 0%,
+    color-mix(in srgb, #f59e0b 26%, var(--note-yellow)) 45%,
+    var(--note-yellow) 100%
+  );
+  background-size: 220% 100%;
+  animation: heat-shimmer 3.4s ease-in-out infinite;
+}
+.dark .shimmer-warm {
+  background-image: linear-gradient(
+    110deg,
+    var(--note-yellow) 0%,
+    color-mix(in srgb, #fbbf24 20%, var(--note-yellow)) 45%,
+    var(--note-yellow) 100%
+  );
+}
+
+/* Hạt giấy — feTurbulence overlay ::before (4% light / 8% dark). */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.74' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'%3E%3C/svg%3E");
+  opacity: 0.04;
+}
+.dark .paper-grain::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.74' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g2)'%3E%3C/svg%3E");
+  opacity: 0.08;
+}
+
+/* Tilt 3D nhẹ khi hover (perspective 800px). */
+.card-tilt {
+  transform: perspective(800px) rotateX(0deg) rotateY(0deg);
+  transition: transform 280ms var(--motion-ease), box-shadow 180ms var(--motion-ease);
+}
+.card-tilt:hover {
+  transform: perspective(800px) rotateX(2.5deg) rotateY(-2.5deg);
+}
+
+/* Sticker bật lên dán nhẹ khi hover. */
+.sticker-pop {
+  transition: transform 340ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sticker-pop:hover {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+/* Halo mềm sau badge — đổi tông màu qua --glow-tone (mặc định royal). */
+.badge-glow {
+  --glow-tone: var(--royal);
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--glow-tone) 42%, transparent),
+    0 0 4px color-mix(in srgb, var(--glow-tone) 30%, transparent);
+}
+.dark .badge-glow {
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--glow-tone) 52%, transparent),
+    0 0 5px color-mix(in srgb, var(--glow-tone) 38%, transparent);
+}
+
+/* Gạch chân mực 2px trượt ra từ trái khi hover. */
+.ink-underline-hover {
+  position: relative;
+}
+.ink-underline-hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -3px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  transition: right 240ms var(--motion-ease);
+}
+.ink-underline-hover:hover::after {
+  right: 0;
+}
+
+/* =====================================================================
+ * KEYFRAMES — sandbox-unique only (verified absent from the real repo:
+ * globals.css / tokens.css / motion.css / notebook.css).
+ * ===================================================================== */
+
+/* Pop-in: nảy lò xo 0.92 → 1.02 → 1 */
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.92); }
+  60% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Lắc mực khi lỗi (±4px × 3 nhịp) */
+@keyframes shake-ink {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-4px); }
+  30%, 60%, 90% { transform: translateX(4px); }
+}
+
+/* Marching ants — dịch 4 mép gradient đứt mỗi bước 16px */
+@keyframes march-ants {
+  from { background-position: 0 0, 0 100%, 0 0, 100% 0; }
+  to { background-position: 16px 0, -16px 100%, 0 -16px, 100% 16px; }
+}
+
+/* Shine quét chéo */
+@keyframes spotlight-sweep {
+  from { transform: translateX(-130%); }
+  to { transform: translateX(130%); }
+}
+
+/* Băng chạy ngang vô hạn */
+@keyframes marquee-strip {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Con trỏ đánh máy nháy ▌ */
+@keyframes type-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Bar mọc từ đáy */
+@keyframes chart-grow {
+  0% { transform: scaleY(0); }
+  72% { transform: scaleY(1.03); }
+  100% { transform: scaleY(1); }
+}
+
+/* Gợn mực trên nút khi :active */
+@keyframes ripple-ink {
+  0% { opacity: 0.75; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* Confetti 6 hạt — chạy đúng 1 lần khi gắn class `play` (utility class
+ * .confetti-pop chưa được port; keyframe sẵn sàng dùng). */
+@keyframes confetti-burst {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8) rotate(150deg); }
+}
+
+/* Nổi nhẹ theo trục Y */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Panel cảnh báo "thở" */
+@keyframes heat-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Checkmark SVG vẽ dần — đè --draw-len theo pathLength nếu cần */
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Page-turn entrance companion: nghiêng rotateX nhẹ & bóng mực mờ dần
+ * (keyframe ported; utility class .page-curl-enter chưa được port). */
+@keyframes page-curl-shade {
+  0% {
+    rotate: x 9deg;
+    box-shadow: -12px 16px 30px color-mix(in srgb, var(--ink) 25%, transparent);
+    filter: brightness(0.88);
+  }
+  100% {
+    rotate: x 0deg;
+    box-shadow: 0 0 0 0 transparent;
+    filter: brightness(1);
+  }
+}
+
+/* Ping mềm — halo lan tỏa rồi biến mất */
+@keyframes ping-soft {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.1); opacity: 0; }
+}
+
+/* Skeleton nét chì quét ngang (real repo's .skeleton-pencil is static —
+ * this keyframe is available for the animated variant). */
+@keyframes pencil-sweep {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+/* Spinner "hoa sao mực" quay */
+@keyframes spin-ink {
+  to { transform: rotate(360deg); }
+}
+
+/* Gạch xuyên item hoàn thành — vẽ từ trái sang phải */
+@keyframes strike-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* --- Namespaced keyframes required by ported primitives (sandbox values,
+ * new names because the real repo owns the plain names with different
+ * definitions) --- */
+
+/* Sandbox's stamp-thump (420ms springy thump) for .nb-animate-stamp-thump. */
+@keyframes nb-stamp-thump {
+  0% { transform: rotate(var(--stamp-rotate, -6deg)) scale(2.1); opacity: 0; }
+  60% { transform: rotate(var(--stamp-rotate, -6deg)) scale(0.94); opacity: 1; }
+  100% { transform: rotate(var(--stamp-rotate, -6deg)) scale(1); opacity: 0.88; }
+}
+
+/* Sandbox's squiggle-draw (time-based draw-in) for .nb-squiggle-draw. */
+@keyframes nb-squiggle-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* =====================================================================
+ * REDUCED MOTION — kill-switch for everything this file animates.
+ * (Sandbox's global `*` kill-switch is deliberately NOT ported: it would
+ * freeze every real-repo animation. This block covers journey.css only.)
+ * ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .ants-border,
+  .shimmer-warm,
+  .ws-dot-live::before,
+  .animate-float-y {
+    animation-play-state: paused !important;
+  }
+  .shine-sweep:hover::after,
+  .sketch-card-spotlight:hover::after {
+    animation: none;
+  }
+  .sticker-pop,
+  .card-tilt,
+  .ink-underline-hover::after,
+  .nb-tape,
+  .nb-tape-peel,
+  .nb-sticky-note,
+  .nb-sketch-card {
+    transition-duration: 0ms;
+  }
+  .nb-animate-stamp-thump {
+    animation: none;
+  }
+  .nb-squiggle-draw path {
+    animation: none;
+  }
+}
+
+/* =====================================================================
+ * === B1: landing how-it-works additions ===
+ * Sandbox's landing `.marker` (globals.css "Marker highlight") — vệt
+ * mực royal 22% loang mỏng dưới đáy chữ (46% height @ 82%). The real
+ * repo already owns `.marker` with a DIFFERENT look (solid --blue-mist
+ * highlight bar, 88% height, globals.css), so the sandbox look ships
+ * namespaced as `.hw-marker` — used only by the landing how-it-works
+ * heading. No vars appended: --royal / --ink / --ink-soft / --paper all
+ * exist in styles/tokens.css (--royal is fixed across themes by design).
+ * `.hw-ticket` lives in the component's own inline <style> (as in the
+ * sandbox) and collides with nothing, so it is not redefined here.
+ * ===================================================================== */
+.hw-marker {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    color-mix(in srgb, var(--royal) 22%, transparent) 3%,
+    color-mix(in srgb, var(--royal) 22%, transparent) 97%,
+    transparent 99.5%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 46%;
+  background-position: 0 82%;
+}
+
+/* =====================================================================
+ * === C: command palette additions ===
+ * Chỉ dùng bởi src/components/shared/command-palette.tsx (+ nút trigger
+ * trong intern-topbar / product shell). Token màu/bóng/keyframe pop-in
+ * đã có sẵn (tokens.css, phần @theme của globals.css và journey.css);
+ * phần dưới chỉ bổ sung lớp còn thiếu cho bảng lệnh ⌘K.
+ * ===================================================================== */
+
+/* Focus ring mực — cổng y nguyên .focus-ink của sandbox globals.css
+ * (repo thật chưa định nghĩa tên này ở bất kỳ stylesheet nào). */
+.focus-ink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Nền mờ + blur nhẹ cho ::backdrop của <dialog> palette — Tailwind bản
+ * build hiện tại không có variant ::backdrop, viết tay cho chắc. */
+.cmd-palette-dialog::backdrop {
+  background: rgba(23, 23, 28, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* Bật lên kiểu sticker khi mở — tái dùng keyframe pop-in ở trên file. */
+.cmd-palette-dialog[open] {
+  animation: pop-in 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Thanh cuộn mảnh cho danh sách lệnh (danh mục admin dài nhất). */
+.cmd-palette-list {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ink) 35%, transparent) transparent;
+}
+.cmd-palette-list::-webkit-scrollbar {
+  width: 8px;
+}
+.cmd-palette-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+.cmd-palette-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmd-palette-dialog[open] {
+    animation: none;
+  }
+}
