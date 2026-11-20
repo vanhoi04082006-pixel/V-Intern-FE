@@ -1,0 +1,969 @@
+{
+  "standard": "JOURNEY V3 — 100% UI INTEGRATION (master prompt V4)",
+  "branch": "codex/product-acceptance-20261116",
+  "acceptanceRule": "DONE/ALREADY-COMPLIANT/REDIRECT cho mọi route; mọi route DONE phải có evidence tồn tại; 0 PARTIAL/NOT-STARTED/BLOCKED",
+  "generatedBy": "tools/gen-journey-manifest.py",
+  "globals": [
+    {
+      "file": "src/app/loading.tsx",
+      "status": "ALREADY-COMPLIANT",
+      "evidence": [],
+      "note": "ink-line + skeleton-pencil; render mọi chuyển route chậm; audit code + VLM qua luồng QA"
+    },
+    {
+      "file": "src/app/error.tsx",
+      "status": "ALREADY-COMPLIANT",
+      "evidence": [],
+      "note": "sketch-card + StampBadge LỖI + doodles; btn() primitives v3"
+    },
+    {
+      "file": "src/app/global-error.tsx",
+      "status": "ALREADY-COMPLIANT",
+      "evidence": [],
+      "note": "inline-style stamp tự chứa (global CSS không nạp được ở tầng này)"
+    },
+    {
+      "file": "src/app/not-found.tsx",
+      "status": "ALREADY-COMPLIANT",
+      "evidence": [
+        "journey-v3-evidence/global/not-found-1440.png",
+        "journey-v3-evidence/global/not-found-390.png"
+      ],
+      "note": "sketch-card 404 + doodles + squiggle; đã chụp 2 viewport"
+    },
+    {
+      "file": "src/app/template.tsx",
+      "status": "ALREADY-COMPLIANT",
+      "evidence": [],
+      "note": "không có UI riêng — audit code"
+    }
+  ],
+  "routes": [
+    {
+      "route": "/",
+      "group": "public",
+      "component": "v-intern/landing + HowItWorks 5 vé",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/public/landing-1440.png",
+        "docs/journey-v3-evidence/public/landing-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin",
+      "group": "admin",
+      "component": "product/admin-management AdminOverview",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin-1440.png",
+        "docs/journey-v3-evidence/admin/_admin-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/activity",
+      "group": "admin",
+      "component": "admin-management AdminActivity",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/root-1440.png"
+      ],
+      "note": "cũng render compact trên /admin (đã chụp)",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/ai",
+      "group": "admin",
+      "component": "admin/ai-configuration",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_ai-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/audit",
+      "group": "admin",
+      "component": "admin-management AdminAudit",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_audit-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_audit-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/career-roles",
+      "group": "admin",
+      "component": "admin/career-roles + editor",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_career-roles-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/catalogs",
+      "group": "admin",
+      "component": "admin-management AdminCatalogs",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_catalogs-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_catalogs-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/certificates",
+      "group": "admin",
+      "component": "admin/certificate-console",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_certificates-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_certificates-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/communications",
+      "group": "admin",
+      "component": "admin/communications",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_communications-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/groups",
+      "group": "admin",
+      "component": "admin-management AdminGroups",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_groups-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_groups-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/knowledge",
+      "group": "admin",
+      "component": "admin/knowledge/library",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_knowledge-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_knowledge-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/knowledge/[code]",
+      "group": "admin",
+      "component": "admin/knowledge/editor",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/knowledge-new-1440.png"
+      ],
+      "note": "cùng component editor render cả /new và /[code] (route scan xác nhận); editor đã chuyển (eyebrow KIẾN THỨC + back)",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/knowledge/new",
+      "group": "admin",
+      "component": "admin/knowledge/editor",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/knowledge-new-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/kpi",
+      "group": "admin",
+      "component": "admin/kpi-console",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_kpi-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_kpi-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/notifications",
+      "group": "admin",
+      "component": "product/outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_notifications-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/performance",
+      "group": "admin",
+      "component": "product/member-performance",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_performance-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/profile",
+      "group": "admin",
+      "component": "product/outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_profile-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/questions",
+      "group": "admin",
+      "component": "admin/question-bank + question-editor",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_questions-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_questions-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/recruitment-rounds",
+      "group": "admin",
+      "component": "applications/recruitment-rounds",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_recruitment-rounds-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/reports",
+      "group": "admin",
+      "component": "sessions/reports-workspace",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_reports-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_reports-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/roles",
+      "group": "admin",
+      "component": "admin-management AdminRoles",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_roles-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_roles-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/salary",
+      "group": "admin",
+      "component": "admin/salary-console",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_salary-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_salary-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/services",
+      "group": "admin",
+      "component": "admin-management AdminServices",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_services-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_services-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/sessions",
+      "group": "admin",
+      "component": "admin/sessions → session-overview",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_sessions-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_sessions-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/sessions/[id]",
+      "group": "admin",
+      "component": "sessions/session-overview",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/sessions-detail-1440.png"
+      ],
+      "note": "cùng session-overview (evidence instructor owner)",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/settings",
+      "group": "admin",
+      "component": "admin-management AdminSettings + github-connection",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_settings-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_settings-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/sprints",
+      "group": "admin",
+      "component": "sessions/delivery-overview",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_sprints-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_sprints-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/sprints/[id]",
+      "group": "admin",
+      "component": "sessions/sprint-workspace",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/sprints-detail-1440.png"
+      ],
+      "note": "cùng sprint-workspace (evidence instructor owner)",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/tasks",
+      "group": "admin",
+      "component": "product/sprint-management",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_tasks-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_tasks-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/tasks/[id]",
+      "group": "admin",
+      "component": "product/intern-work",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/tasks-detail-1440.png",
+        "docs/journey-v3-evidence/admin/tasks-detail-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/templates",
+      "group": "admin",
+      "component": "admin/templates-manager",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_templates-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_templates-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/admin/users",
+      "group": "admin",
+      "component": "admin-management AdminUsers",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/admin/_admin_users-1440.png",
+        "docs/journey-v3-evidence/admin/_admin_users-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/apply",
+      "group": "public",
+      "component": "applications/public-application",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/public/_apply-1440.png",
+        "docs/journey-v3-evidence/public/_apply-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/change-password",
+      "group": "public",
+      "component": "auth/change-password",
+      "status": "DONE",
+      "evidence": [
+        "docs/preview-evidence/screens/public-login.jpg"
+      ],
+      "note": "PasswordStrength + paper-grain; cùng auth-shell đã audit",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/forgot-password",
+      "group": "public",
+      "component": "auth/forgot-password-form",
+      "status": "DONE",
+      "evidence": [
+        "docs/preview-evidence/screens/public-forgot-password.jpg"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/github/invitation",
+      "group": "public",
+      "component": "workspace-guard + github-connection",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/public/_github_invitation-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor",
+      "group": "instructor",
+      "component": "sessions/instructor-home",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/classes",
+      "group": "public",
+      "component": "redirect → /instructor/projects",
+      "status": "REDIRECT",
+      "evidence": [],
+      "note": "server redirect, không render UI",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/evaluations",
+      "group": "instructor",
+      "component": "product/evaluation-management + imported-reviews",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_evaluations-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_evaluations-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/github",
+      "group": "instructor",
+      "component": "github-connection + notebook",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_github-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_github-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/notifications",
+      "group": "instructor",
+      "component": "product/outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_notifications-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/participation",
+      "group": "instructor",
+      "component": "participation/instructor",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_participation-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_participation-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/performance",
+      "group": "instructor",
+      "component": "product/member-performance",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_performance-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/profile",
+      "group": "instructor",
+      "component": "product/outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_profile-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/projects",
+      "group": "instructor",
+      "component": "projects/project-library",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_projects-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_projects-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/projects/[id]",
+      "group": "instructor",
+      "component": "projects/template-detail",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/projects-detail-1440.png",
+        "docs/journey-v3-evidence/instructor/projects-detail-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/recruitment-rounds",
+      "group": "instructor",
+      "component": "applications/recruitment-rounds",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_recruitment-rounds-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/reports",
+      "group": "instructor",
+      "component": "sessions/reports-workspace",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_reports-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_reports-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/sessions",
+      "group": "instructor",
+      "component": "sessions/session-list",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_sessions-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_sessions-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/sessions/[id]",
+      "group": "instructor",
+      "component": "sessions/session-overview",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/sessions-detail-1440.png",
+        "docs/journey-v3-evidence/instructor/sessions-detail-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/sessions/[id]/setup",
+      "group": "instructor",
+      "component": "sessions/session-setup",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/session-setup-1440.png",
+        "docs/journey-v3-evidence/instructor/session-setup-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/sprints",
+      "group": "instructor",
+      "component": "sessions/delivery-overview",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/_instructor_sprints-1440.png",
+        "docs/journey-v3-evidence/instructor/_instructor_sprints-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/sprints/[id]",
+      "group": "instructor",
+      "component": "sessions/sprint-workspace",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/instructor/sprints-detail-1440.png",
+        "docs/journey-v3-evidence/instructor/sprints-detail-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/instructor/tasks/[id]",
+      "group": "instructor",
+      "component": "product/intern-work + instructor-ui",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/work-detail-1440.png"
+      ],
+      "note": "cùng component intern-work (evidence work-detail) + unit tests task delivery",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern",
+      "group": "intern",
+      "component": "intern/intern-workspace + context",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern-1440.png",
+        "docs/journey-v3-evidence/intern/_intern-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/certificates",
+      "group": "intern",
+      "component": "intern-entry + outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_certificates-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_certificates-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/certificates/[id]",
+      "group": "intern",
+      "component": "outcomes detail",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/certificates-detail-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/evaluations",
+      "group": "intern",
+      "component": "intern-entry + product/outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_evaluations-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_evaluations-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/evaluations/[id]",
+      "group": "intern",
+      "component": "outcomes detail",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/evaluations-detail-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/github",
+      "group": "intern",
+      "component": "intern-entry + student-github",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_github-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/kpi",
+      "group": "intern",
+      "component": "intern-entry + outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_kpi-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_kpi-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/kpi/[id]",
+      "group": "intern",
+      "component": "outcomes detail",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/kpi-detail-1440.png",
+        "docs/journey-v3-evidence/intern/kpi-detail-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/mentor",
+      "group": "intern",
+      "component": "product/mentor",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_mentor-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_mentor-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/notifications",
+      "group": "intern",
+      "component": "intern-entry + outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_notifications-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/onboarding",
+      "group": "intern",
+      "component": "onboarding-shell + welcome-step",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_onboarding-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_onboarding-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/onboarding/interview",
+      "group": "intern",
+      "component": "interview-step + scheduled/conversation",
+      "status": "DONE",
+      "evidence": [
+        "docs/preview-evidence/screens/intern-intern-onboarding-interview.jpg"
+      ],
+      "note": "unit: scheduled-interview + conversation-interview + onboarding-flow tests pass",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/onboarding/result",
+      "group": "intern",
+      "component": "recruitment-result",
+      "status": "DONE",
+      "evidence": [
+        "docs/preview-evidence/screens/intern-intern-onboarding-result.jpg"
+      ],
+      "note": "unit: onboarding-flow tests pass; reveal animation giữ nguyên",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/onboarding/role",
+      "group": "intern",
+      "component": "role-selection-step",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_onboarding_role-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/participation",
+      "group": "intern",
+      "component": "participation/student",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_participation-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_participation-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/performance",
+      "group": "intern",
+      "component": "intern-entry + outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_performance-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/profile",
+      "group": "intern",
+      "component": "intern-entry + outcomes(profile)",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_profile-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_profile-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/project",
+      "group": "intern",
+      "component": "intern-entry + own-project-package",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_project-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_project-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/recommendations",
+      "group": "intern",
+      "component": "intern-entry + outcomes",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_recommendations-1440.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/sprint",
+      "group": "intern",
+      "component": "intern-entry + own-kanban (DnD)",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_sprint-1440.png"
+      ],
+      "note": "unit: intern-work-kanban DnD tests pass",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/virtual-salary",
+      "group": "intern",
+      "component": "outcomes + student-outcome-heading",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_virtual-salary-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_virtual-salary-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/work",
+      "group": "intern",
+      "component": "intern-entry + product/intern-work",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/_intern_work-1440.png",
+        "docs/journey-v3-evidence/intern/_intern_work-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/intern/work/[id]",
+      "group": "intern",
+      "component": "product/intern-work + student-ui",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/intern/work-detail-1440.png",
+        "docs/journey-v3-evidence/intern/work-detail-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/login",
+      "group": "public",
+      "component": "auth/auth-tabs + login-form",
+      "status": "DONE",
+      "evidence": [
+        "docs/preview-evidence/screens/public-login.jpg",
+        "docs/preview-evidence/screens/public-login-mobile.jpg"
+      ],
+      "note": "tái xác minh: mọi vòng QA đợt này login thành công, console sạch",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/register",
+      "group": "public",
+      "component": "auth/register-form",
+      "status": "DONE",
+      "evidence": [
+        "docs/preview-evidence/screens/public-register.jpg"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    },
+    {
+      "route": "/verify",
+      "group": "public",
+      "component": "product/outcomes (verify)",
+      "status": "DONE",
+      "evidence": [
+        "docs/journey-v3-evidence/public/_verify-1440.png",
+        "docs/journey-v3-evidence/public/_verify-390.png"
+      ],
+      "note": "",
+      "evidenceMissing": []
+    }
+  ]
+}

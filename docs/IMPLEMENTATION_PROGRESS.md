@@ -154,3 +154,24 @@ giữ 100% logic API/permission/routing/multi-route.
 - Áp sâu v3 (paper-grain/card-tilt/sticker-pop) cho từng trang workspace còn
   đang ở "lớp dùng chung" (ma trận 9.9.2 dòng PARTIAL).
 - Audit browser cho lớp v3 trên từng route (hiện đã có build + 787 test xanh).
+
+---
+
+## Phiên hoàn thiện 100% (2026-11-21, master prompt V4)
+
+Mục tiêu: kết thúc mọi trạng thái PARTIAL — chuyển thể sâu toàn bộ 80 route thật.
+
+**Kiểm soát đầu vào:** FE & BE đúng nhánh `codex/product-acceptance-20261116`; HEAD đầu phiên `5d5b114` (đã push); working tree chỉ còn WIP `kit.tsx` + `journey.css` nb3 của phiên bị gián đoạn (baseline 787/787 test đã xác nhận lại trước khi làm).
+
+**Các bước đã thực thi:**
+
+1. **PHASE A — Audit & gap:** quét 80 `page.tsx` thật → map route→component chính (admin-management 9 route, outcomes 12, sessions 10, consoles 13, work/kanban 5…). Tạo `docs/JOURNEY_V3_DESIGN_PARITY.md` (nguồn sandbox còn truy cập được — đối chiếu trực tiếp), `docs/JOURNEY_V3_100_PERCENT_AUDIT.md`, `docs/JOURNEY_V3_CONVERSION_RECIPE.md`.
+2. **PHASE B — Nền primitives v3:** `product/primitives.tsx` giữ nguyên 100% API + hooks `product-*` nhưng render lớp `nb3-*` (buttons/inputs/panels/page-title squiggle/tables/badges/status/modals/empty/alerts/metric-kpi/pager/progress). `journey.css` thêm **§20 BRIDGE** specificity (0,3,0)+ để v3 luôn thắng rule v2 aurora/notebook.css mọi nơi (neutralize modal tape + panel hover cũ, thêm nb3-th/td/card/alert). → toàn bộ trang dùng primitives tự lên v3 an toàn.
+3. **PHASE C — Chuyển thể sâu 2 wave (7 sub-agent có recipe, file không giao nhau):**
+   - Wave 1: outcomes family (EmptyNotebook ×4, verify stamp XÁC MINH), sessions (eyebrow LỚP/SPRINT/BÁO CÁO, ink table reports, FilterChips, ChartFrame burndown), admin consoles 13 file (ink table kpi/salary/certificates, FilterChips, EmptyNotebook), work/kanban (nb3-kanban-col/card + Tape đầu cột, DnD handlers giữ nguyên 100%).
+   - Wave 2: applications/participation/projects, evaluation/performance/mentor/github, intern workspace + onboarding (eyebrow SỔ TAY THỰC TẬP / HƯỚNG DẪN / CHỌN NGHỀ / PHỎNG VẤN / KẾT QUẢ, ChartFrame, EmptyNotebook).
+   - Mỗi agent: typecheck bắt buộc PASS + diff review của điều phối viên + test toàn cục 787/787 giữ nguyên sau mỗi wave.
+4. **PHASE D — Browser verification:** preview mode (`NEXT_PUBLIC_PREVIEW=1`, dev 3001, tài khoản `*.preview`) — QA mọi route 3 role (admin 26+, instructor 12, intern 15+ onboarding tân SV) × 2 viewport (1440/390) + route động `[id]` trích từ trang list đúng owner + 404 + landing. **0 console error, 0 page error** mọi vòng. VLM spot-check xác nhận ngôn ngữ v3 render đúng (kpi console: eyebrow mono + squiggle + ink buttons; intern work: tape + eyebrow CÔNG VIỆC + status chips).
+5. **PHASE E — Coverage gate + tài liệu:** `tools/gen-journey-manifest.py` sinh manifest 80 route → `scripts/verify-journey-v3-coverage.mjs` (quét route ↔ manifest ↔ evidence tồn tại ↔ trạng thái): **PASS 100%**. Quality gates cuối: lint 0 error (1 warning có chủ đích) · typecheck PASS · vitest **135 file/787 test PASS** (đúng baseline) · production build PASS · `verify:preview-isolation` PASS (0 marker mock trong .next) · quét marker sandbox 0 kết quả.
+
+**Commit chuỗi:** `cfcf9e2` (page kit) → `9baeb29` (primitives bridge + recipe + tham chiếu) → `b4ffa91` (wave 1) → `53a15b2` (wave 2) → (commit cuối: evidence + manifest + coverage gate + docs).

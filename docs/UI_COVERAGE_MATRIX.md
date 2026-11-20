@@ -236,7 +236,7 @@ thêm**, không thay thế các trạng thái browser-audit ở 9.1.
 | `/instructor/sessions` | Instructor | card-tilt | card-tilt hover cho hàng session | DONE |
 | Toàn bộ route vỏ intern (15) | Intern | Command Palette | **⌘K / Ctrl+K** (bảng lệnh 15 route intern + Về trang chủ + Đăng xuất qua auth-service thật) trong topbar | DONE (lớp shell) |
 | Toàn bộ route vỏ admin + instructor (49) | Admin/Instructor | Command Palette | ⌘K / Ctrl+K / `/` (bảng lệnh theo role, 55 route thật đã kiểm chứng tồn tại) trong product shell | DONE (lớp shell) |
-| Các route còn lại | — | journey.css + VIcons + notebook primitives sẵn sàng | lớp dùng chung (chưa áp sâu từng trang) | PARTIAL (lớp dùng chung) |
+| Toàn bộ 79 route UI còn lại (intern 23, instructor 17, admin 31, public 4, + verify/github-invitation) | — | journey.css §1–20 + VIcons + notebook primitives + **PAGE KIT nb3-*** (`notebook/kit.tsx`) | **Chuyển thể sâu từng trang**: primitives render v3 (buttons/inputs/panels/tables/badges/modals/empty/pager), PageTitle eyebrow+stamp+mực squiggle, ink-table, InkTabs/FilterChips, KanbanColumn/Tape, ChartFrame, EmptyNotebook — chi tiết từng route: `JOURNEY_V3_100_PERCENT_AUDIT.md` + `journey-v3-evidence/coverage-manifest.json` | **DONE** (đợt hoàn thiện 100% — 2026-11-21) |
 
 ### 9.9.3. Cổng kiểm soát chất lượng phiên tích hợp
 

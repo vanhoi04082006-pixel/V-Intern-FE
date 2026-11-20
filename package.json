@@ -14,7 +14,9 @@
     "test": "vitest run",
     "preview:audit": "node scripts/preview-visual-audit.mjs",
     "verify:preview-isolation": "node scripts/verify-preview-isolation.mjs",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify:journey": "node scripts/verify-journey-v3-coverage.mjs",
+    "journey:manifest": "python3 tools/gen-journey-manifest.py"
   },
   "dependencies": {
     "@animate-ui/react": "^2.4.1",
