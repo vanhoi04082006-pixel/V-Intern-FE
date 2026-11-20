@@ -54,11 +54,35 @@ export function StudentOutcomeHeading({
       {action}
     </>
   );
-  if (pathname.startsWith("/instructor") || pathname.startsWith("/admin")) return <WorkspacePageHeader title={title} description={subtitle} action={stampedAction} artwork={artwork} />;
-  if (!pathname.startsWith("/intern")) return <PageTitle title={title} subtitle={subtitle} action={stampedAction} />;
+  /* v3: tem chương mono phía trên mọi tiêu đề outcome — nhóm chức năng
+     "SỔ KẾT QUẢ" (đánh giá / KPI / lương ảo / chứng nhận / khuyến nghị).
+     Thuần trình bày: không đụng dữ liệu, không đổi props của heading. */
+  const eyebrow = "SỔ KẾT QUẢ";
+  if (pathname.startsWith("/instructor") || pathname.startsWith("/admin"))
+    return (
+      <>
+        <p className="eyebrow mb-1.5">{eyebrow}</p>
+        <WorkspacePageHeader
+          title={title}
+          description={subtitle}
+          action={stampedAction}
+          artwork={artwork}
+        />
+      </>
+    );
+  if (!pathname.startsWith("/intern"))
+    return (
+      <PageTitle
+        eyebrow={eyebrow}
+        title={title}
+        subtitle={subtitle}
+        action={stampedAction}
+      />
+    );
   return (
     <>
       <StudentHeading
+        eyebrow={eyebrow}
         title={title}
         description={subtitle}
         action={stampedAction}

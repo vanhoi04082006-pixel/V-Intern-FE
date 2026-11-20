@@ -8,6 +8,9 @@ import {
   buttonClass,
   inputClass,
   Pager,
+  tableClass,
+  tdClass,
+  thClass,
 } from "@/components/product/primitives";
 import { Empty } from "@/components/product/primitives";
 import { NeutralDot } from "./ui-bits";
@@ -128,12 +131,12 @@ export function BusinessAgentMonitor({
       ) : resource.error ? (
         <ErrorState error={resource.error} onRetry={resource.reload} />
       ) : data?.items.length ? (
-        <div className="min-w-0 overflow-x-auto" role="region" aria-label="Lịch sử chạy Agent" tabIndex={0}>
-          <table className="w-full min-w-[680px] text-left text-body">
+        <div className="notebook-scroll min-w-0 overflow-x-auto" role="region" aria-label="Lịch sử chạy Agent" tabIndex={0}>
+          <table className={`${tableClass} min-w-[680px]`}>
             <caption className="sr-only">
               Lịch sử Agent, phiên bản, model và trạng thái thực tế
             </caption>
-            <thead className="border-y border-border text-caption text-muted-foreground">
+            <thead>
               <tr>
                 {[
                   "Agent / phiên bản",
@@ -141,16 +144,16 @@ export function BusinessAgentMonitor({
                   "Model / công cụ",
                   "Trạng thái",
                 ].map((title) => (
-                  <th key={title} className="px-3 py-3 font-semibold">
+                  <th key={title} className={thClass}>
                     {title}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="nb-stagger divide-y divide-border">
+            <tbody className="nb-stagger">
               {data.items.map((run) => (
-                <tr key={run.id} className="align-top hover:bg-muted/70">
-                  <td className="max-w-56 px-3 py-4">
+                <tr key={run.id}>
+                  <td className={`${tdClass} max-w-56`}>
                     <p className="font-semibold">
                       {names[run.agentId] ?? run.agentId}, v{run.agentVersion}
                     </p>
@@ -158,13 +161,13 @@ export function BusinessAgentMonitor({
                       {run.promptVersion}
                     </p>
                   </td>
-                  <td className="px-3 py-4">
+                  <td className={tdClass}>
                     <p className="font-mono text-caption">{run.id}</p>
                     <p className="mt-1 text-caption text-muted-foreground">
                       {new Date(run.createdAt).toLocaleString("vi-VN")}
                     </p>
                   </td>
-                  <td className="px-3 py-4">
+                  <td className={tdClass}>
                     <p>{run.model ?? "Chưa có kết quả model"}</p>
                     <p className="mt-1 text-caption text-muted-foreground">
                       {run.toolCalls} tool, {run.attempts} lượt thực thi ·{" "}
@@ -175,7 +178,7 @@ export function BusinessAgentMonitor({
                       {run.outputTokens ?? "—"}
                     </p>
                   </td>
-                  <td className="px-3 py-4">
+                  <td className={tdClass}>
                     {run.status === "succeeded" ? (
                       <Badge tone="green">{statuses[run.status]}</Badge>
                     ) : run.status === "failed" ? (

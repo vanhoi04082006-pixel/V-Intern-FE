@@ -44,12 +44,22 @@ import {
   Pager,
   Panel,
   StatusDot,
+  tableClass,
   tdClass,
   thClass,
 } from "./primitives";
+import { Tape } from "@/components/notebook/ui";
 import { Person } from "./identity";
 import { RowMenu } from "./instructor-dashboard";
 import { ActivateButton } from "./instructor-onboarding";
+
+/* Màu băng dính đầu cột theo trạng thái — thuần trình bày (journey v3). */
+const columnTape: Record<string, "blue" | "warm" | "candy" | "mint" | "slate"> = {
+  todo: "slate",
+  doing: "blue",
+  review: "warm",
+  done: "mint",
+};
 
 export function TaskStatusPill({ status }: { status: string }) {
   const tone = status === "done" ? "green" : status === "review" ? "amber" : status === "doing" ? "blue" : "gray";
@@ -76,7 +86,12 @@ export function SprintManagement() {
   const focused = rows.data?.items.find(s=>s.id===focus) ?? rows.data?.items.find(s=>s.status==='active') ?? rows.data?.items[0];
   return (
     <>
-      <PageTitle title="Sprint & Task" subtitle="Tra cứu nhanh mọi sprint và nhiệm vụ đang chạy trong các phiên thực tập." />
+      <PageTitle
+        eyebrow="BẢNG NHIỆM VỤ"
+        stamp="TASK"
+        title="Sprint & Task"
+        subtitle="Tra cứu nhanh mọi sprint và nhiệm vụ đang chạy trong các phiên thực tập."
+      />
       <PageMeta items={[
         { icon: IconUsers, label: "Vai trò", value: "Giảng viên / Technical Lead" },
         { icon: IconLayers, label: "Hệ thống", value: "V-Intern Platform" },
@@ -399,29 +414,39 @@ function SprintDetail({
                 {board.data.columns.map((c) => (
                   <section
                     key={c.status}
-                    className="min-w-0 rounded-control bg-background p-3"
+                    className="nb3-kanban-col relative"
                   >
-                    <h3 className="mb-3 text-body font-bold">
-                      {statusLabels[c.status]} ({c.count})
-                    </h3>
-                    {c.tasks.map((t) => (
-                      <button
-                        key={t.id}
-                        className="mb-2 block w-full rounded-control bg-card p-3 text-left text-body shadow-app-sm transition-[translate,box-shadow] duration-200 hover:shadow-app-xs active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-                        onClick={() => setTask(t.id)}
-                      >
-                        <small className="text-primary">{t.code}</small>
-                        <p className="mt-1 font-semibold">{t.title}</p>
-                        <p className="mt-2 text-caption text-muted-foreground">
-                          {priorityLabels[t.priority as keyof typeof priorityLabels] ?? t.priority} · {t.progress}%
+                    <Tape
+                      variant={columnTape[c.status]}
+                      rotate={-4}
+                      className="-top-2 left-1/2 z-10 !h-5 !w-16 -translate-x-1/2"
+                    />
+                    <header className="nb3-kanban-col-head">
+                      <h3 className="text-body font-bold">
+                        {statusLabels[c.status]}
+                      </h3>
+                      <span className="nb3-kanban-count ml-auto">{c.count}</span>
+                    </header>
+                    <div className="nb3-kanban-body">
+                      {c.tasks.map((t) => (
+                        <button
+                          key={t.id}
+                          className="nb3-kanban-card w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                          onClick={() => setTask(t.id)}
+                        >
+                          <small className="text-primary">{t.code}</small>
+                          <p className="mt-1 font-semibold">{t.title}</p>
+                          <p className="mt-2 text-caption text-muted-foreground">
+                            {priorityLabels[t.priority as keyof typeof priorityLabels] ?? t.priority} · {t.progress}%
+                          </p>
+                        </button>
+                      ))}
+                      {c.count > c.tasks.length && (
+                        <p className="text-caption">
+                          Xem danh sách nhiệm vụ để truy cập tất cả.
                         </p>
-                      </button>
-                    ))}
-                    {c.count > c.tasks.length && (
-                      <p className="text-caption">
-                        Xem danh sách nhiệm vụ để truy cập tất cả.
-                      </p>
-                    )}
+                      )}
+                    </div>
                   </section>
                 ))}
               </div>
@@ -550,7 +575,7 @@ export function TaskManagement({
           tasks.data && (
             <>
               {tasks.data.items.length ? (
-                <div className="notebook-scroll overflow-x-auto"><table className="product-table w-full min-w-[860px] border-collapse text-caption"><thead><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className={thClass}>{label}</th>)}</tr></thead><tbody>
+                <div className="notebook-scroll overflow-x-auto"><table className={`${tableClass} min-w-[860px]`}><thead><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className={thClass}>{label}</th>)}</tr></thead><tbody>
                   {tasks.data.items.map((t, i) => (
                     <tr
                       key={t.id}

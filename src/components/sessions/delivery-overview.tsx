@@ -5,6 +5,7 @@ import { InstructorPageTitle as PageTitle } from "@/components/instructor/instru
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { AcademicPicker } from "@/components/product/academic-picker";
+import { FilterChips } from "@/components/notebook/kit";
 import {
   Empty,
   inputClass,
@@ -149,6 +150,9 @@ export function DeliveryOverview({
     <div className="space-y-5">
       <PageTitle
         title="Sprint & Task"
+        eyebrow="SPRINT"
+        stamp="SPRINT"
+        stampTone="blue"
         subtitle="Theo dõi công việc trong các dự án và phiên thực tập bạn quản lý."
         action={kind === "sprints" && <Can perm="sprints.manage"><button className={buttonClass} onClick={() => setCreateSprint(true)}>Tạo Sprint</button></Can>}
       />
@@ -182,26 +186,19 @@ export function DeliveryOverview({
         </div>
         </div>
       </details>
-      <div
-        role="group"
-        className="ins-view-switch flex gap-2"
-        aria-label="Loại công việc"
-      >
-        {(["sprints", "tasks"] as const).map((tab) => (
-          <button
-            key={tab}
-            aria-pressed={kind === tab}
-            className="min-h-10 border-b-2 border-transparent px-4 py-2 text-body text-muted-foreground hover:bg-accent aria-pressed:border-primary aria-pressed:text-primary"
-            onClick={() => {
-              setKind(tab);
-              setStatus("");
-              setPage(1);
-            }}
-          >
-            {tab === "sprints" ? "Sprint" : "Task"}
-          </button>
-        ))}
-      </div>
+      <FilterChips
+        options={[
+          { value: "sprints", label: "Sprint" },
+          { value: "tasks", label: "Task" },
+        ]}
+        value={kind}
+        onChange={(tab) => {
+          setKind(tab);
+          setStatus("");
+          setPage(1);
+        }}
+        ariaLabel="Loại công việc"
+      />
       <Panel
         title={kind === "sprints" ? "Danh sách Sprint" : "Danh sách nhiệm vụ"}
         action={

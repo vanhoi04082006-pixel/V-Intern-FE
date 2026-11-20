@@ -13,7 +13,9 @@ import { getBoard, getSprintCompletion } from "@/lib/api/work";
 import { fetchSprintBurndown } from "@/lib/api/delivery";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Modal, Panel, Badge, Empty, MetricCard } from "./primitives";
+import { btn, Empty, MetricCard, Modal, Panel } from "./primitives";
+import { Tape } from "@/components/notebook/ui";
+import { ChartFrame } from "@/components/notebook/kit";
 import { TaskDetail } from "./intern-work";
 import { TaskStatusPill, PriorityBadge } from "./sprint-management";
 import { DropColumn, canManageDrop, draggableTask } from "./kanban-dnd";
@@ -27,11 +29,12 @@ const labels = {
   review: "Review",
   done: "Done",
 };
-const colors = {
-  todo: "bg-muted",
-  doing: "bg-accent",
-  review: "bg-warning-subtle",
-  done: "bg-success-subtle",
+/* Màu băng dính đầu cột theo trạng thái — thuần trình bày (journey v3). */
+const columnTape: Record<string, "blue" | "warm" | "candy" | "mint" | "slate"> = {
+  todo: "slate",
+  doing: "blue",
+  review: "warm",
+  done: "mint",
 };
 export function SprintOverview({
   id,
@@ -172,7 +175,7 @@ export function SprintOverview({
                     onManage ? "#sprint-task-management" : "#sprint-task-list"
                   }
                   onClick={onManage}
-                  className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-caption font-semibold text-primary-foreground shadow-app-xs transition-[background-color,translate] duration-200 hover:bg-primary/90 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                  className={btn("primary", "sm")}
                 >
                   <IconPlus size={14} />
                   {onManage ? "Quản lý task" : "Tạo task mới"}
@@ -190,24 +193,31 @@ export function SprintOverview({
             {b.columns.map((c) => (
               <section
                 key={c.status}
-                className={`min-w-0 rounded-control p-3 ${colors[c.status]}`}
+                className="nb3-kanban-col relative"
               >
-                <h3 className="mb-3 text-body font-bold text-foreground">
-                  {instructor ? statusLabels[c.status] : labels[c.status]}{" "}
-                  <Badge>{c.count}</Badge>
-                </h3>
+                <Tape
+                  variant={columnTape[c.status]}
+                  rotate={-4}
+                  className="-top-2 left-1/2 z-10 !h-5 !w-16 -translate-x-1/2"
+                />
+                <header className="nb3-kanban-col-head">
+                  <h3 className="text-body font-bold text-foreground">
+                    {instructor ? statusLabels[c.status] : labels[c.status]}
+                  </h3>
+                  <span className="nb3-kanban-count ml-auto">{c.count}</span>
+                </header>
                 <DropColumn
                   status={c.status}
                   canDrop={(from) => canManageDrop(from, c.status)}
                   onDrop={(taskId, to) => void dropTask(taskId, to)}
                 >
-                  <div className="space-y-3">
+                  <div className="nb3-kanban-body">
                     {c.tasks.slice(0, 3).map((t) => (
                       <button
                         key={t.id}
                         {...draggableTask(t.id, t.status)}
                         title="Mở chi tiết, kéo sang cột được phép để chuyển trạng thái"
-                        className="mb-3 w-full rounded-md border border-primary bg-card p-3 text-left transition-[translate,box-shadow] duration-200 hover:shadow-app-xs active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                        className="nb3-kanban-card w-full text-left [&[draggable=true]]:cursor-grab [&[draggable=true]]:active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                         onClick={() => setTask(t.id)}
                       >
                         <span className="flex items-center justify-between gap-2">
@@ -244,7 +254,7 @@ export function SprintOverview({
                   </div>
                 </DropColumn>
                 {instructor && c.count === 0 && (
-                  <p className="py-5 text-center text-caption leading-6 text-muted-foreground">
+                  <p className="m-3 py-5 text-center text-caption leading-6 text-muted-foreground">
                     {c.status === "review"
                       ? "Chưa có bài cần duyệt."
                       : c.status === "done"
@@ -255,7 +265,7 @@ export function SprintOverview({
                 {c.count > 3 && (
                   <a
                     href="#sprint-task-list"
-                    className="block rounded bg-card/70 p-2 text-center text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                    className="m-3 block rounded bg-card/70 p-2 text-center text-caption font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                   >
                     Xem tất cả {c.count} nhiệm vụ
                   </a>
@@ -321,7 +331,7 @@ export function SprintOverview({
                     </div>
                     <TaskStatusPill status="review" />
                     <button
-                      className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                      className={btn("secondary", "sm")}
                       onClick={() => setTask(t.id)}
                     >
                       Xem
@@ -392,7 +402,7 @@ function SprintCompletionPanel({
       action={
         <button
           type="button"
-          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className={btn("secondary", "sm")}
           aria-expanded={open}
           aria-controls="sprint-completion-report"
           onClick={onToggle}
@@ -471,12 +481,13 @@ export function Burndown({
       <p className="my-2 text-caption text-muted-foreground">
         Xanh: task còn lại, Nét đứt: kế hoạch lý tưởng
       </p>
-      <svg
-        viewBox="0 0 490 210"
-        className={compact ? "h-32 w-full" : "w-full"}
-        role="img"
-        aria-label="Burndown theo lịch sử trạng thái task hiện thuộc Sprint"
-      >
+      <ChartFrame>
+        <svg
+          viewBox="0 0 490 210"
+          className={compact ? "h-32 w-full" : "w-full"}
+          role="img"
+          aria-label="Burndown theo lịch sử trạng thái task hiện thuộc Sprint"
+        >
         <path d="M35 25V175H455" fill="none" stroke="var(--border)" />
         {[0, 0.5, 1].map((f) => (
           <g key={f}>
@@ -529,6 +540,7 @@ export function Burndown({
           {new Date(points.at(-1)!.date).toLocaleDateString("vi-VN")}
         </text>
       </svg>
+      </ChartFrame>
       <details className="text-caption text-muted-foreground">
         <summary>Nguồn dữ liệu và bảng số</summary>
         <p className="my-2">

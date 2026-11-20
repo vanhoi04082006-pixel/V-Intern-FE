@@ -217,6 +217,7 @@ export function SessionOverview({
       ) : (
         <PageTitle
           title={session.name}
+          eyebrow="PHIÊN THỰC TẬP"
           subtitle={`${session.code} · ${session.status}${session.startDate ? ` · ${session.startDate.slice(0, 10)} → ${session.endDate?.slice(0, 10) ?? ""}` : ""}`}
           action={
             <Link

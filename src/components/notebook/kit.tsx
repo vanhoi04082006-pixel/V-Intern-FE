@@ -252,7 +252,7 @@ export function FilterChips<T extends string>({
   ariaLabel = "Bộ lọc",
   className,
 }: {
-  options: { value: T; label: string; count?: number }[];
+  options: { value: T; label: ReactNode; count?: number }[];
   value: T;
   onChange: (value: T) => void;
   ariaLabel?: string;
@@ -266,7 +266,6 @@ export function FilterChips<T extends string>({
           type="button"
           className="nb3-filter-chip"
           aria-pressed={value === opt.value}
-          aria-pressed-description={undefined}
           onClick={() => onChange(opt.value)}
         >
           {opt.label}

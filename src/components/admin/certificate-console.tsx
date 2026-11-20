@@ -21,6 +21,7 @@ import {
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
+  btn,
   buttonClass,
   Empty,
   inputClass,
@@ -28,6 +29,7 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  tableClass,
   thClass,
   tdClass,
 } from "@/components/product/primitives";
@@ -64,6 +66,8 @@ export function CertificateConsole() {
   return (
     <div className="space-y-6">
       <PageTitle
+        eyebrow="CHỨNG NHẬN"
+        stamp="VĂN BẰNG"
         title="Chứng nhận"
         subtitle="Cấp và thu hồi chứng nhận hoàn thành thực tập theo chính sách V-INTERN-COMPLETE. Điều kiện cấp được kiểm định phía hệ thống, không cấp tay."
         action={
@@ -113,8 +117,8 @@ export function CertificateConsole() {
       ) : certificates.error ? (
         <ErrorState error={certificates.error} onRetry={certificates.reload} />
       ) : certificates.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Danh sách chứng nhận" tabIndex={0}>
-          <table className="product-table w-full min-w-[52rem] border-collapse text-body">
+        <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Danh sách chứng nhận" tabIndex={0}>
+          <table className={`${tableClass} min-w-[52rem]`}>
             <thead>
               <tr>
                 {["Số chứng nhận", "Người giữ", "Vai trò · Dự án", "Trạng thái", "Hành động"].map(
@@ -136,7 +140,6 @@ export function CertificateConsole() {
               {certificates.data.items.map((certificate) => (
                 <tr
                   key={certificate.id}
-                  className="align-top transition-colors hover:bg-background/70"
                 >
                   <td className={tdClass}>
                     {/* Số chứng nhận như mảnh bi lai xé khỏi cuốn: viền mực,
@@ -168,7 +171,7 @@ export function CertificateConsole() {
                       {certificate.roleName ?? "—"}
                     </p>
                   </td>
-                  <td className="border-b border-border px-4 py-3 text-muted-foreground">
+                  <td className={`${tdClass} text-muted-foreground`}>
                     {certificate.projectName ?? "—"}
                     {certificate.sessionName ? (
                       <span className="block text-caption">{certificate.sessionName}</span>
@@ -197,7 +200,7 @@ export function CertificateConsole() {
                       </p>
                     )}
                   </td>
-                  <td className="border-b border-border px-4 py-3 text-right">
+                  <td className={`${tdClass} text-right`}>
                     <div className="flex flex-wrap items-center justify-end gap-3">
                       <a
                         className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
@@ -439,7 +442,7 @@ function RevokeForm({
       {Boolean(action.error) && <ErrorState error={action.error} />}
       <div className="flex justify-end">
         <button
-          className={`${buttonClass} bg-destructive hover:bg-destructive/90`}
+          className={btn("danger")}
           disabled={action.busy || !reason.trim()}
           type="submit"
         >

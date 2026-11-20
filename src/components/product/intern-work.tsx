@@ -56,6 +56,7 @@ import {
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { Tape } from "@/components/v-intern/doodles";
+import { FilterChips } from "@/components/notebook/kit";
 import {
   Badge,
   buttonClass,
@@ -97,31 +98,19 @@ export function InternWork() {
   return (
     <>
       <StudentHeading
+        eyebrow="CÔNG VIỆC"
         title="Công việc của tôi"
         description="Theo dõi hạn nộp, tập trung vào nhiệm vụ đang làm và gửi bài để nhận phản hồi."
         action={
-          <div
-            role="group"
-            aria-label="Cách xem công việc"
-            className="student-segmented"
-          >
-            <button
-              type="button"
-              aria-pressed={view === "list"}
-              onClick={() => setView("list")}
-            >
-              <IconClipboardCheck size={15} aria-hidden="true" />
-              Danh sách
-            </button>
-            <button
-              type="button"
-              aria-pressed={view === "board"}
-              onClick={() => setView("board")}
-            >
-              <IconSquareKanban size={15} aria-hidden="true" />
-              Bảng Kanban
-            </button>
-          </div>
+          <FilterChips
+            options={[
+              { value: "list", label: "Danh sách" },
+              { value: "board", label: "Bảng Kanban" },
+            ]}
+            value={view}
+            onChange={setView}
+            ariaLabel="Cách xem công việc"
+          />
         }
       />
       <MarginNote className="-mt-5 max-w-md">

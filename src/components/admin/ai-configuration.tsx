@@ -28,6 +28,8 @@ export function AiConfiguration() {
   return (
     <div className="space-y-6">
       <PageTitle
+        eyebrow="HỆ THỐNG"
+        stamp="AI"
         title="Cấu hình AI"
         subtitle="Model và giới hạn áp dụng cho lời gọi mới; từng kết quả vẫn lưu model và phiên bản prompt thực tế."
       />

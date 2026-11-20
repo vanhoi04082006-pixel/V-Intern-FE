@@ -3,6 +3,7 @@ import {
   IconArrowUpRight,
 } from "@/components/v-intern/icons";
 import type { SessionOverviewRow } from "@/lib/api/sessions";
+import { ChartFrame } from "@/components/notebook/kit";
 import { TaskDistribution } from "@/components/workspace/workspace-ui";
 import { SessionProgressComparison } from "@/components/workspace/workspace-charts";
 import { InkCountUp } from "@/components/v-intern/motion";
@@ -140,18 +141,22 @@ export function InstructorSessionSummary({
       <details className="ins-analytics">
       <summary>Phân bố công việc và tiến độ phiên</summary>
       <div className="workspace-analytics-grid">
-        <TaskDistribution
-        label="Tiến độ nhiệm vụ trong các phiên đang hiển thị"
-        items={[
-          { label: "Đã hoàn thành", value: done, tone: "success" },
-          {
-            label: "Chưa hoàn thành",
-            value: Math.max(0, tasks - done),
-            tone: "neutral",
-          },
-        ]}
-        />
-        <SessionProgressComparison items={rows.map((row) => ({ id: row.id, name: row.name, done: row.taskDone, total: row.taskTotal }))} />
+        <ChartFrame>
+          <TaskDistribution
+            label="Tiến độ nhiệm vụ trong các phiên đang hiển thị"
+            items={[
+              { label: "Đã hoàn thành", value: done, tone: "success" },
+              {
+                label: "Chưa hoàn thành",
+                value: Math.max(0, tasks - done),
+                tone: "neutral",
+              },
+            ]}
+          />
+        </ChartFrame>
+        <ChartFrame>
+          <SessionProgressComparison items={rows.map((row) => ({ id: row.id, name: row.name, done: row.taskDone, total: row.taskTotal }))} />
+        </ChartFrame>
       </div>
       </details>
       </div>

@@ -57,6 +57,7 @@ import {
 } from "@/lib/api/outcomes";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Tape } from "@/components/v-intern/doodles";
+import { EmptyNotebook } from "@/components/notebook/kit";
 import { NotificationText } from "./notification-text";
 import {
   buttonClass,
@@ -301,19 +302,16 @@ export function Evaluations({ id }: { id?: string }) {
             </div>
           ) : (
             <div className="student-outcome-empty-layout">
-              <div className="student-panel student-empty">
-                <IconAward size={42} aria-hidden="true" />
-                <h3>Chưa có đánh giá được chốt.</h3>
-                <p>
-                  Nhận xét và điểm chính thức sẽ xuất hiện sau khi giảng viên
-                  hoàn tất đánh giá.
-                </p>
-                <div className="mt-5">
+              <EmptyNotebook
+                doodle={<IconAward size={42} aria-hidden="true" />}
+                title="Chưa có đánh giá được chốt."
+                description="Nhận xét và điểm chính thức sẽ xuất hiện sau khi giảng viên hoàn tất đánh giá."
+                action={
                   <StudentLink secondary href="/intern/performance">
                     Xem tiến độ hiện tại
                   </StudentLink>
-                </div>
-              </div>
+                }
+              />
               <StudentPanel title="Đánh giá diễn ra thế nào?" icon={IconInfo}>
                 <ol className="student-step-list">
                   <li>
@@ -482,19 +480,18 @@ export function Kpi({ id }: { id?: string }) {
             </div>
           ) : (
             <div className="student-dashboard-grid student-outcome-empty-grid">
-              <div className="student-panel student-empty">
-                <SparklesIcon size={36} animateOnView aria-hidden="true" />
-                <h3>Chưa có kết quả KPI</h3>
-                <p>
-                  Khi có đủ dữ liệu và kết quả được tính, bạn sẽ xem được điểm,
-                  trọng số và nguồn tính tại đây.
-                </p>
-                <div className="mt-5">
+              <EmptyNotebook
+                doodle={
+                  <SparklesIcon size={36} animateOnView aria-hidden="true" />
+                }
+                title="Chưa có kết quả KPI"
+                description="Khi có đủ dữ liệu và kết quả được tính, bạn sẽ xem được điểm, trọng số và nguồn tính tại đây."
+                action={
                   <StudentLink secondary href="/intern/performance">
                     Xem hiệu suất hiện tại
                   </StudentLink>
-                </div>
-              </div>
+                }
+              />
               <StudentPanel title="KPI được tổng hợp thế nào?" icon={IconInfo}>
                 <ol className="student-step-list">
                   <li>
@@ -644,14 +641,11 @@ export function Salary() {
                   </table>
                 </div>
               ) : (
-                <div className="student-empty">
-                  <IconWallet size={34} aria-hidden="true" />
-                  <h3>Chưa có giao dịch lương ảo</h3>
-                  <p>
-                    Khi KPI được chốt hoặc có điều chỉnh, giao dịch sẽ xuất hiện
-                    tại đây kèm nguồn và thời điểm.
-                  </p>
-                </div>
+                <Empty
+                  icon={IconWallet}
+                  title="Chưa có giao dịch lương ảo"
+                  description="Khi KPI được chốt hoặc có điều chỉnh, giao dịch sẽ xuất hiện tại đây kèm nguồn và thời điểm."
+                />
               )}
               {data.totalPages > 1 && <Pager {...data} onChange={setPage} />}
             </>
@@ -836,19 +830,16 @@ export function Certificates({ id }: { id?: string }) {
             )
           ) : (
             <div className="student-outcome-empty-layout">
-              <div className="student-panel student-empty">
-                <IconAward size={48} aria-hidden="true" />
-                <h3>Chưa có chứng nhận được cấp.</h3>
-                <p>
-                  Chứng nhận được cấp theo chính sách chương trình sau khi kết
-                  quả thực tập được xác nhận.
-                </p>
-                <div className="mt-5">
+              <EmptyNotebook
+                doodle={<IconAward size={48} aria-hidden="true" />}
+                title="Chưa có chứng nhận được cấp."
+                description="Chứng nhận được cấp theo chính sách chương trình sau khi kết quả thực tập được xác nhận."
+                action={
                   <StudentLink secondary href="/intern/evaluations">
                     Xem đánh giá của tôi
                   </StudentLink>
-                </div>
-              </div>
+                }
+              />
               <StudentPanel title="Điều kiện cấp chứng nhận" icon={IconShieldCheck}>
                 <ol className="student-step-list">
                   <li>
@@ -1079,6 +1070,8 @@ export function Verify({ initialCode = "" }: { initialCode?: string }) {
       </Link>
       <div className="mt-8">
         <PageTitle
+          eyebrow="CHỨNG NHẬN"
+          stamp="XÁC MINH"
           title="Xác minh chứng nhận"
           subtitle="Nhập mã xác minh in trên chứng nhận để kiểm tra hiệu lực — kết quả đọc trực tiếp từ hệ thống."
         />
@@ -1414,15 +1407,15 @@ export function Notifications() {
                       ))}
                   </div>
                 ) : intern ? (
-                  <div className="student-empty">
-                    <BellRingIcon size={34} animateOnView aria-hidden="true" />
-                    <h3>Chưa có thông báo phù hợp</h3>
-                    <p>
-                      {unread
+                  <Empty
+                    icon={BellPanelIcon}
+                    title="Chưa có thông báo phù hợp"
+                    description={
+                      unread
                         ? "Bạn đã đọc hết thông báo. Bỏ lọc để xem lại toàn bộ."
-                        : "Cập nhật từ phiên thực tập, nhiệm vụ và đánh giá sẽ xuất hiện tại đây."}
-                    </p>
-                  </div>
+                        : "Cập nhật từ phiên thực tập, nhiệm vụ và đánh giá sẽ xuất hiện tại đây."
+                    }
+                  />
                 ) : (
                   <Empty
                     title="Chưa có thông báo phù hợp"
@@ -1554,24 +1547,23 @@ export function Recommendations() {
       {recommendations.error instanceof ApiError &&
       recommendations.error.statusCode === 404 ? (
         <div className="student-dashboard-grid">
-          <div className="student-panel student-chat-welcome">
-            <SparklesIcon
-              size={42}
-              animateOnView
-              className="text-primary"
-              aria-hidden="true"
-            />
-            <h2>Một kế hoạch phát triển dành cho bạn</h2>
-            <p>
-              Chưa có khuyến nghị. Cập nhật để yêu cầu AI phân tích dữ liệu hiện
-              tại: kết quả công việc, điểm đã chốt và các chỉ số hiệu suất.
-            </p>
-            <div className="mt-5">
+          <EmptyNotebook
+            doodle={
+              <SparklesIcon
+                size={42}
+                animateOnView
+                className="text-primary"
+                aria-hidden="true"
+              />
+            }
+            title="Một kế hoạch phát triển dành cho bạn"
+            description="Chưa có khuyến nghị. Cập nhật để yêu cầu AI phân tích dữ liệu hiện tại: kết quả công việc, điểm đã chốt và các chỉ số hiệu suất."
+            action={
               <StudentLink secondary href="/intern/performance">
                 Xem hiệu suất của tôi
               </StudentLink>
-            </div>
-          </div>
+            }
+          />
           <StudentPanel title="Dữ liệu được dùng" icon={IconInfo}>
             <ol className="student-step-list">
               <li>

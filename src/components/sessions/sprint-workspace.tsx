@@ -25,6 +25,7 @@ import {
 } from "@/components/product/primitives";
 import { SprintOverview } from "@/components/product/sprint-overview";
 import { SprintBurndown } from "@/components/workspace/workspace-charts";
+import { ChartFrame } from "@/components/notebook/kit";
 import { StampMoc } from "@/components/workspace/notebook";
 import { TaskManagement } from "@/components/product/sprint-management";
 import { ActivateButton } from "@/components/product/instructor-onboarding";
@@ -261,7 +262,11 @@ export function SprintBurndownSection({ id }: { id: string }) {
     useCallback((signal: AbortSignal) => fetchSprintBurndown(id, signal), [id]),
   );
   if (data.loading || data.error || !data.data) return null;
-  return <SprintBurndown points={data.data} />;
+  return (
+    <ChartFrame>
+      <SprintBurndown points={data.data} />
+    </ChartFrame>
+  );
 }
 
 export function SprintWorkspace({

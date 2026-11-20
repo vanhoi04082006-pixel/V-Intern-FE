@@ -115,6 +115,9 @@ export function SessionList({
       ) : (
         <PageTitle
           title="Phiên thực tập"
+          eyebrow="PHIÊN THỰC TẬP"
+          stamp="LỚP"
+          stampTone="blue"
           subtitle={
             basePath === "/admin"
               ? "Các phiên trong hệ thống, đội hình và tiến độ được lưu tại backend"

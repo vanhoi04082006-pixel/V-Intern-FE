@@ -11,6 +11,7 @@ import {
   inputClass,
   buttonClass,
   Spinner,
+  tableClass,
   thClass,
   tdClass,
   
@@ -145,6 +146,9 @@ export function ReportsWorkspace({
       {!embedded && (
         <PageTitle
           title="Báo cáo phiên thực tập"
+          eyebrow="BÁO CÁO"
+          stamp="BÁO CÁO"
+          stampTone="blue"
           subtitle="Bản chụp tiến độ, đóng góp và điểm đánh giá từ dữ liệu đã lưu."
         />
       )}
@@ -403,7 +407,7 @@ export function ReportsWorkspace({
                 {new Date(detail.data.createdAt).toLocaleString("vi-VN")}
               </p>
               <div className="overflow-x-auto border-y border-border" role="region" aria-label="Thành viên trong bản chụp báo cáo" tabIndex={0}>
-                <table className="product-table w-full border-collapse text-body">
+                <table className={tableClass}>
                   <thead>
                     <tr>
                       {[

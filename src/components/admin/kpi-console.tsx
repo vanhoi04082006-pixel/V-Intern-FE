@@ -31,6 +31,8 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  tableClass,
+  tdClass,
   thClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
@@ -104,6 +106,7 @@ export function KpiConsole() {
   return (
     <div className="space-y-6">
       <PageTitle
+        eyebrow="ĐO LƯỜNG HIỆU SUẤT"
         title="Kỳ KPI"
         subtitle="Tạo kỳ đo lường, tính KPI theo quy tắc kpi-v1 và chốt kỳ để sinh lương ảo cũng như cấp chứng nhận. Kỳ đã chốt không tính lại."
         action={
@@ -436,8 +439,8 @@ function KpiResults({ period }: { period: KpiPeriod }) {
       ) : results.error ? (
         <ErrorState error={results.error} onRetry={results.reload} />
       ) : results.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Kết quả KPI của kỳ" tabIndex={0}>
-          <table className="product-table w-full min-w-[40rem] border-collapse text-body">
+        <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Kết quả KPI của kỳ" tabIndex={0}>
+          <table className={`${tableClass} min-w-[40rem]`}>
             <thead>
               <tr>
                 <th className={thClass}>
@@ -460,25 +463,25 @@ function KpiResults({ period }: { period: KpiPeriod }) {
             </thead>
             <tbody className="nb-stagger">
               {results.data.items.map((row, index) => (
-                <tr key={row.id} className="transition-colors hover:bg-background/70">
-                  <td className="border-b border-border px-4 py-3 tabular-nums text-muted-foreground">
+                <tr key={row.id}>
+                  <td className={`${tdClass} tabular-nums text-muted-foreground`}>
                     {(page - 1) * results.data!.pageSize + index + 1}
                   </td>
-                  <td className="border-b border-border px-4 py-3 font-medium text-foreground">
+                  <td className={`${tdClass} font-medium text-foreground`}>
                     {nameOf(row.userId)}
                   </td>
-                  <td className="border-b border-border px-4 py-3 tabular-nums text-foreground">
+                  <td className={`${tdClass} tabular-nums text-foreground`}>
                     {row.finalScore === null ? "—" : row.finalScore.toFixed(1)}
                   </td>
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     <StatusDot tone={row.status === "calculated" ? "green" : "amber"}>
                       {row.status === "calculated" ? "Đã tính" : "Thiếu dữ liệu"}
                     </StatusDot>
                   </td>
-                  <td className="border-b border-border px-4 py-3 text-muted-foreground">
+                  <td className={`${tdClass} text-muted-foreground`}>
                     {new Date(row.calculatedAt).toLocaleString("vi-VN")}
                   </td>
-                  <td className="border-b border-border px-4 py-3 text-right">
+                  <td className={`${tdClass} text-right`}>
                     <button
                       className={`${linkButtonClass} -ml-1 text-primary hover:underline underline-offset-4`}
                       aria-label={`Chi tiết kết quả ${nameOf(row.userId)}`}
@@ -547,8 +550,8 @@ function KpiResultDetail({
         {nameOf(result.userId)} · quy tắc <span className="font-mono">{result.ruleVersion}</span> ·{" "}
         {metricHint}
       </p>
-      <div className="overflow-x-auto border-y border-border" role="region" aria-label="Thành phần điểm KPI" tabIndex={0}>
-        <table className="product-table w-full min-w-[36rem] border-collapse text-body">
+      <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Thành phần điểm KPI" tabIndex={0}>
+        <table className={`${tableClass} min-w-[36rem]`}>
           <thead>
             <tr>
               {["Thành phần", "Giá trị gốc", "Trọng số hiệu lực", "Đóng góp"].map((label) => (
@@ -563,17 +566,17 @@ function KpiResultDetail({
           </thead>
           <tbody className="nb-stagger">
             {state.data.metrics.map((metric) => (
-              <tr key={metric.metricCode} className="transition-colors hover:bg-background/70">
-                <td className="border-b border-border px-4 py-3 font-medium text-foreground">
+              <tr key={metric.metricCode}>
+                <td className={`${tdClass} font-medium text-foreground`}>
                   {metricLabels[metric.metricCode] ?? metric.metricCode}
                 </td>
-                <td className="border-b border-border px-4 py-3 tabular-nums">
+                <td className={`${tdClass} tabular-nums`}>
                   {metric.sourceValue === null ? "—" : metric.sourceValue.toFixed(1)}
                 </td>
-                <td className="border-b border-border px-4 py-3 tabular-nums text-muted-foreground">
+                <td className={`${tdClass} tabular-nums text-muted-foreground`}>
                   {metric.effectiveWeight === null ? "—" : `${metric.effectiveWeight}%`}
                 </td>
-                <td className="border-b border-border px-4 py-3 tabular-nums">
+                <td className={`${tdClass} tabular-nums`}>
                   {metric.weightedContribution === null
                     ? "—"
                     : metric.weightedContribution.toFixed(2)}

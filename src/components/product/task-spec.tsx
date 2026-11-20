@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { getTaskSpec, getTaskSpecSource } from "@/lib/api/templates";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Panel, Spinner } from "./primitives";
+import { Panel, Spinner, btn } from "./primitives";
 import { roleLabel } from "@/lib/api/workspace";
 import { StudentPanel } from "@/components/intern/student-ui";
 import {
@@ -148,7 +148,7 @@ export function TaskSpec({ id, own = false }: { id: string; own?: boolean }) {
           type="button"
           aria-expanded={showSource}
           aria-controls="task-spec-source"
-          className="rounded border border-primary px-3 py-1.5 text-caption font-semibold text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className={btn("secondary", "sm")}
           onClick={() => setShowSource((v) => !v)}
         >
           {showSource ? "Ẩn nguồn" : "Xem nguồn"}

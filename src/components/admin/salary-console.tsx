@@ -26,6 +26,8 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  tableClass,
+  tdClass,
   thClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
@@ -104,6 +106,7 @@ export function SalaryConsole() {
   return (
     <div className="space-y-6">
       <PageTitle
+        eyebrow="TÀI CHÍNH ẢO"
         title="Lương ảo"
         subtitle="Đơn vị ảo dùng để động viên sinh viên — không phải lương thật. Số dư luôn được tính lại từ sổ ghi, không có số dư lưu sẵn."
         action={
@@ -270,8 +273,8 @@ export function SalaryConsole() {
       ) : ledger.error ? (
         <ErrorState error={ledger.error} onRetry={ledger.reload} />
       ) : ledger.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Sổ lương ảo theo kỳ" tabIndex={0}>
-          <table className="product-table w-full min-w-[48rem] border-collapse text-body">
+        <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Sổ lương ảo theo kỳ" tabIndex={0}>
+          <table className={`${tableClass} min-w-[48rem]`}>
             <thead>
               <tr>
                 {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải", "Thao tác"].map((label) => (
@@ -286,30 +289,30 @@ export function SalaryConsole() {
             </thead>
             <tbody className="nb-stagger">
               {ledger.data.items.map((row) => (
-                <tr key={row.id} className="transition-colors hover:bg-background/70">
-                  <td className="whitespace-nowrap border-b border-border px-4 py-3 text-muted-foreground">
+                <tr key={row.id}>
+                  <td className={`${tdClass} whitespace-nowrap text-muted-foreground`}>
                     {new Date(row.createdAt).toLocaleString("vi-VN")}
                   </td>
-                  <td className="border-b border-border px-4 py-3 font-medium text-foreground">
+                  <td className={`${tdClass} font-medium text-foreground`}>
                     {nameOf(row.userId)}
                   </td>
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     <StatusDot tone={ledgerTypeTones[row.type]}>
                       {ledgerTypeLabels[row.type]}
                     </StatusDot>
                   </td>
                   <td
-                    className={`border-b border-border px-4 py-3 tabular-nums font-semibold ${
+                    className={`${tdClass} tabular-nums font-semibold ${
                       row.amount < 0 ? "text-destructive" : "text-success"
                     }`}
                   >
                     {row.amount > 0 ? "+" : ""}
                     {vnd(row.amount, row.unit)}
                   </td>
-                  <td className="border-b border-border px-4 py-3 text-foreground">
+                  <td className={`${tdClass} text-foreground`}>
                     {row.description}
                   </td>
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     {row.type !== "reversal" && <button type="button" className={linkButtonClass}
                       aria-label={`Hoàn đảo ${ledgerTypeLabels[row.type]} ${vnd(row.amount, row.unit)} của ${nameOf(row.userId)}`}
                       onClick={() => { setNotice(""); setReversing(row); }}>Hoàn đảo</button>}
