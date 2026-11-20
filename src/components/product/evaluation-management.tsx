@@ -16,6 +16,7 @@ import { CollectionMetrics } from "./collection-insights";
 import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { StampMoc, MarginNote } from "@/components/workspace/notebook";
 import { StampBadge } from "@/components/v-intern/doodles";
+import { FilterChips } from "@/components/notebook/kit";
 import {
   Badge,
   btn,
@@ -73,6 +74,8 @@ export function EvaluationManagement() {
   return (
     <>
       <PageTitle
+        eyebrow="ĐÁNH GIÁ"
+        stamp="CHẤM BÀI"
         title="Đánh giá AI"
         subtitle="Giảng viên chốt điểm chính thức · AI cung cấp gợi ý tham khảo"
         action={
@@ -188,24 +191,24 @@ export function EvaluationManagement() {
             ) : undefined
           }
         >
-          <select
-            aria-label="Trạng thái đánh giá"
-            className={`${inputClass} mb-4`}
+          <FilterChips
+            options={[
+              { value: "", label: "Tất cả trạng thái" },
+              ...["draft", "submitted", "finalized"].map((s) => ({
+                value: s,
+                label: isInstructor
+                  ? evaluationLabels[s as keyof typeof evaluationLabels]
+                  : s,
+              })),
+            ]}
             value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
+            onChange={(value) => {
+              setStatus(value);
               setPage(1);
             }}
-          >
-            <option value="">Tất cả trạng thái</option>
-            {["draft", "submitted", "finalized"].map((s) => (
-              <option key={s} value={s}>
-                {isInstructor
-                  ? evaluationLabels[s as keyof typeof evaluationLabels]
-                  : s}
-              </option>
-            ))}
-          </select>
+            ariaLabel="Trạng thái đánh giá"
+            className="mb-4"
+          />
           {evaluations.loading ? (
             <LoadingState />
           ) : evaluations.error ? (

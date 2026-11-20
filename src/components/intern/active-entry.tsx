@@ -18,6 +18,7 @@ import {
   IconTrendingUp,
 } from "@/components/v-intern/icons";
 import { StarDoodle, Tape } from "@/components/v-intern/doodles";
+import { ChartFrame } from "@/components/notebook/kit";
 import { NoteCard, StampMoc } from "@/components/workspace/notebook";
 import { listTasks, type Task } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
@@ -49,6 +50,7 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
   return (
     <div className="student-dashboard student-reveal space-y-6">
       <StudentHeading
+        eyebrow="SỔ TAY THỰC TẬP"
         title={name ? `Chào ${name}!` : "Không gian thực tập của bạn"}
         description="Tiếp tục công việc, nhận phản hồi và theo dõi tiến bộ của bạn."
         action={
@@ -245,14 +247,18 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
         </div>
 
         <div className="student-stack">
-          <TaskDistribution
-            items={[
-              { label: "Cần làm", value: taskSummary.todo, tone: "neutral" },
-              { label: "Đang làm", value: taskSummary.doing, tone: "primary" },
-              { label: "Chờ duyệt", value: taskSummary.review, tone: "warning" },
-              { label: "Hoàn thành", value: taskSummary.done, tone: "success" },
-            ]}
-          />
+          {/* v3: khung mực sketch cho donut phân bố nhiệm vụ (chỉ bọc khung —
+              dữ liệu/tooltip giữ nguyên). */}
+          <ChartFrame>
+            <TaskDistribution
+              items={[
+                { label: "Cần làm", value: taskSummary.todo, tone: "neutral" },
+                { label: "Đang làm", value: taskSummary.doing, tone: "primary" },
+                { label: "Chờ duyệt", value: taskSummary.review, tone: "warning" },
+                { label: "Hoàn thành", value: taskSummary.done, tone: "success" },
+              ]}
+            />
+          </ChartFrame>
           <StudentPanel title="Nhịp Sprint" icon={IconCalendarDays}>
             {currentSprint ? (
               <>

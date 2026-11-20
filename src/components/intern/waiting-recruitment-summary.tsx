@@ -5,6 +5,7 @@ import { roleLabel } from "@/lib/api/workspace";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Pager } from "@/components/product/primitives";
+import { EmptyNotebook } from "@/components/notebook/kit";
 import { StampMoc } from "@/components/workspace/notebook";
 import {
   IconBadgeCheck,
@@ -14,7 +15,6 @@ import {
 import {
   StudentBadge,
   StudentCallout,
-  StudentEmpty,
   StudentLink,
   StudentPanel,
 } from "@/components/intern/student-ui";
@@ -226,9 +226,13 @@ export function WaitingRecruitmentSummary({
             ))}
           </ol>
         ) : (
-          <StudentEmpty icon={IconHistory} title="Chưa có phiên phỏng vấn">
-            Lịch sử các lần phỏng vấn sẽ xuất hiện tại đây sau khi bạn hoàn thành.
-          </StudentEmpty>
+          /* v3: empty của panel lịch sử → EmptyNotebook (giữ icon + text
+              hiện có; băng washi/mộc v2 của panel giữ nguyên phía trên). */
+          <EmptyNotebook
+            doodle={<IconHistory size={36} aria-hidden="true" />}
+            title="Chưa có phiên phỏng vấn"
+            description="Lịch sử các lần phỏng vấn sẽ xuất hiện tại đây sau khi bạn hoàn thành."
+          />
         )}
         {history.total > 5 && (
           <Pager

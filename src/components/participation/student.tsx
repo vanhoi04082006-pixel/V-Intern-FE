@@ -4,6 +4,7 @@ import { StudentHeading } from "@/components/intern/student-ui";
 import { Pager, btn } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { NoteCard, PaperDivider } from "@/components/workspace/notebook";
+import { StampMoc } from "@/components/notebook/ui";
 import { Tape } from "@/components/v-intern/doodles";
 import { ownParticipation } from "@/lib/api/participation";
 import { useResource } from "@/lib/api/use-resource";
@@ -21,18 +22,35 @@ export function ParticipationStudent() {
   );
   return (
     <div className="space-y-6">
+      {/* v3: tem chương + mộc sổ tay cho nhóm thời hạn & ghi nhận — thuần
+          trình bày, ẩn với screen reader, không đụng dữ liệu. */}
       <StudentHeading
+        eyebrow="THỜI HẠN & GHI NHẬN"
         title="Thời hạn & ghi nhận"
         description="Theo dõi bằng chứng nộp bài, gia hạn và điểm phạt của bạn."
         action={
-          <button
-            type="button"
-            className={btn("secondary")}
-            disabled={report.loading}
-            onClick={report.reload}
-          >
-            Cập nhật
-          </button>
+          <>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none inline-flex shrink-0 self-center"
+            >
+              <StampMoc
+                tone="red"
+                rotate={-6}
+                className="!px-2 !py-0.5 !text-[0.58rem]"
+              >
+                GHI CHÉP
+              </StampMoc>
+            </span>
+            <button
+              type="button"
+              className={btn("secondary")}
+              disabled={report.loading}
+              onClick={report.reload}
+            >
+              Cập nhật
+            </button>
+          </>
         }
       />
       <p className="max-w-3xl text-body leading-6 text-muted-foreground">

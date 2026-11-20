@@ -154,6 +154,9 @@ export function ConversationInterview() {
           <IconBot aria-hidden="true" />
         </span>
         <div className="flex-1">
+          {/* v3: tem chương mono của bước phỏng vấn — nhãn mục lục phía trên
+              tiêu đề (chế độ hội thoại 10 câu). */}
+          <p className="eyebrow mb-1.5">PHỎNG VẤN</p>
           <h1 className="text-section font-bold text-foreground">
             Trò chuyện cùng AI Recruiter
           </h1>

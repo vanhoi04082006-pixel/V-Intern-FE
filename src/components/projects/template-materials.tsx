@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { Can } from "@/components/auth/can";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { buttonClass, inputClass } from "@/components/product/primitives";
+import { buttonClass, selectClass } from "@/components/product/primitives";
 import type { TemplateDetail } from "@/lib/api/templates";
 import {
   getTemplateRevision,
@@ -37,7 +37,7 @@ function RevisionPicker({
     <label className="text-body text-muted-foreground">
       Phiên bản public
       <select
-        className={`${inputClass} mt-1`}
+        className={`${selectClass} mt-1`}
         value={version}
         onChange={(event) => onChange(Number(event.target.value))}
       >
@@ -136,7 +136,7 @@ export function TemplateMaterials({ source }: { source: TemplateDetail }) {
               <label className="block text-body text-muted-foreground">
                 Chọn phiên
                 <select
-                  className={`${inputClass} mt-1`}
+                  className={`${selectClass} mt-1`}
                   value={selectedRunId}
                   onChange={(event) => setSelectedRunId(event.target.value)}
                 >

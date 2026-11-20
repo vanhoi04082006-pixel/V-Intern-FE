@@ -19,6 +19,7 @@ const destinations = [
 export function HistoryEntry({ onReload, refreshing }: { onReload: () => void; refreshing: boolean }) {
   return <div className="space-y-8">
     <StudentHeading
+      eyebrow="SỔ TAY THỰC TẬP"
       title="Kết quả và lịch sử thực tập"
       description="Bạn hiện không có phân công đang hoạt động. Các đánh giá, KPI và chứng nhận đã được ghi nhận vẫn có thể xem lại tại đây."
       action={<StudentLink secondary href="/intern/notifications">Xem thông báo</StudentLink>}

@@ -2,6 +2,11 @@
 import { useCallback } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import {
+  tableClass,
+  thClass,
+  tdClass,
+} from "@/components/product/primitives";
+import {
   getAssessment,
   getPinnedProjectAssessment,
   type TemplateAssessment,
@@ -30,20 +35,30 @@ function AssessmentContent({
       <PackageFiles
         files={[...assessment.solutionFiles, ...assessment.hiddenTestFiles]}
       />
-      <table className="w-full text-left text-body">
+      <table className={tableClass}>
         <caption className="mb-3 text-left font-semibold text-foreground">
           Rubric tham khảo, tổng 100%
         </caption>
-        <tbody className="divide-y divide-border">
+        <thead>
+          <tr>
+            <th scope="col" className={thClass}>
+              Tiêu chí
+            </th>
+            <th scope="col" className={`${thClass} text-right`}>
+              Trọng số
+            </th>
+          </tr>
+        </thead>
+        <tbody>
           {assessment.rubric.map((row) => (
             <tr key={row.criterion}>
-              <th scope="row" className="py-3 pr-4 align-top font-medium">
+              <td className={`${tdClass} font-medium`}>
                 {row.criterion}
                 <p className="mt-1 font-normal leading-6 text-muted-foreground">
                   {row.description}
                 </p>
-              </th>
-              <td className="py-3 text-right align-top tabular-nums">
+              </td>
+              <td className={`${tdClass} text-right tabular-nums`}>
                 {row.weight}%
               </td>
             </tr>

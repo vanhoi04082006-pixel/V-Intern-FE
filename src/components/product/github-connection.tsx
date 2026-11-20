@@ -23,6 +23,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { errorMessage } from "@/lib/auth/api-client";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Panel, Pager, Empty, Spinner, btn, buttonClass } from "./primitives";
+import { StampMoc } from "@/components/notebook/ui";
 import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { cn } from "@/lib/utils";
 import { linkButtonClass, TimelineItem } from "@/components/admin/ui-bits";
@@ -56,14 +57,22 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
     }
   }
   return (
-    <Panel
-      title={
-        <span className="flex items-center gap-2">
-          <IconGithub size={20} />
-          Tài khoản GitHub
-        </span>
-      }
-    >
+    <>
+      {/* v3: tem chương mono + mộc REPO cho khối kết nối GitHub (thuần trình bày). */}
+      <p className="eyebrow mb-2">KẾT NỐI GITHUB</p>
+      <Panel
+        title={
+          <span className="flex items-center gap-2">
+            <IconGithub size={20} />
+            Tài khoản GitHub
+          </span>
+        }
+        action={
+          <span className="relative shrink-0 self-start pl-2 pt-1">
+            <StampMoc tone="red">REPO</StampMoc>
+          </span>
+        }
+      >
       {data.loading ? (
         <LoadingState />
       ) : data.error ? (
@@ -138,7 +147,8 @@ export function GithubConnection({ repositoryAdmin = false }: { repositoryAdmin?
           {error}
         </p>
       )}
-    </Panel>
+      </Panel>
+    </>
   );
 }
 export function GithubRepositoryAdmin() {

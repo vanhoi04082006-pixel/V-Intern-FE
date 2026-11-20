@@ -5,6 +5,7 @@ import {
   StudentPanel,
 } from "./student-ui";
 import { RateComparison } from "@/components/workspace/workspace-charts";
+import { ChartFrame } from "@/components/notebook/kit";
 import { InkCountUp } from "@/components/v-intern/motion";
 import { useInternWorkspaceContext } from "./intern-workspace-context";
 import { MarginNote } from "@/components/workspace/notebook";
@@ -82,12 +83,16 @@ export function StudentPerformance({
           </MarginNote>
         </StudentPanel>
         <div>
-          <RateComparison label="Nhìn vào quá trình" items={[
-            { label: "Hoàn thành nhiệm vụ", value: m.taskCompletionRate },
-            { label: "Hoàn thành đúng hạn", value: m.onTimeCompletionRate },
-            { label: "Tiến độ Sprint hiện tại", value: m.activeSprintProgress },
-            { label: "Hoàn thành story points", value: m.storyPointCompletionRate },
-          ]} />
+          {/* v3: khung mực sketch cho biểu đồ so sánh (chỉ bọc khung —
+              dữ liệu/tooltip giữ nguyên). */}
+          <ChartFrame>
+            <RateComparison label="Nhìn vào quá trình" items={[
+              { label: "Hoàn thành nhiệm vụ", value: m.taskCompletionRate },
+              { label: "Hoàn thành đúng hạn", value: m.onTimeCompletionRate },
+              { label: "Tiến độ Sprint hiện tại", value: m.activeSprintProgress },
+              { label: "Hoàn thành story points", value: m.storyPointCompletionRate },
+            ]} />
+          </ChartFrame>
           <div className="mt-7 border-t border-border pt-5 text-body text-muted-foreground">
             <strong className="text-foreground tabular-nums">
               {m.completedStoryPoints}/{m.committedStoryPoints}

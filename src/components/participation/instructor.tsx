@@ -19,6 +19,7 @@ import {
 } from "@/lib/api/participation";
 import { useResource } from "@/lib/api/use-resource";
 import { MarginNote } from "@/components/workspace/notebook";
+import { StampMoc } from "@/components/notebook/ui";
 import { IncidentList } from "./incident-list";
 import { IncidentActionDialog, type IncidentAction } from "./incident-action";
 import { PolicyEditor } from "./policy-editor";
@@ -43,9 +44,26 @@ export function InstructorParticipation({
   const id = selected || sessions.data?.items[0]?.id;
   return (
     <div className="space-y-6">
+      {/* v3: tem chương + mộc sổ tay cho nhóm thời hạn & ghi nhận (mặt giảng
+          viên) — thuần trình bày, ẩn với screen reader. */}
+      <p className="eyebrow mb-1.5">GIÁM SÁT</p>
       <InstructorHeading
         title="Thời hạn & kỷ luật"
         description="Cấu hình quy tắc, đối chiếu bằng chứng và xử lý từng trường hợp trong phiên bạn phụ trách."
+        action={
+          <span
+            aria-hidden="true"
+            className="pointer-events-none inline-flex shrink-0 self-center"
+          >
+            <StampMoc
+              tone="red"
+              rotate={-6}
+              className="!px-2 !py-0.5 !text-[0.58rem]"
+            >
+              GHI CHÉP
+            </StampMoc>
+          </span>
+        }
       />
       <MarginNote className="max-w-2xl">
         lần nộp hợp lệ đầu tiên quyết định trễ hạn ✎

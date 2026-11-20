@@ -69,6 +69,7 @@ export function InterviewStep() {
   if (!interview)
     return (
       <div>
+        <p className="eyebrow mb-1.5">PHỎNG VẤN</p>
         <h1 className="text-page font-bold text-foreground">
           Chưa có phiên phỏng vấn
         </h1>
@@ -95,6 +96,8 @@ export function InterviewStep() {
     <div>
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
+          {/* v3: tem chương mono của bước 3 — nhãn mục lục phía trên tiêu đề. */}
+          <p className="eyebrow mb-1.5">PHỎNG VẤN</p>
           <h1 className="text-page font-bold text-foreground">
             Phỏng vấn cùng AI Recruiter
           </h1>

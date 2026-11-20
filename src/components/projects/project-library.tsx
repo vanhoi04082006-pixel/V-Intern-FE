@@ -4,10 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import {
-  Empty,
   Pager,
   inputClass,
+  selectClass,
 } from "@/components/product/primitives";
+import { EmptyNotebook } from "@/components/notebook/kit";
 import {
   IconArrowUpRight,
 } from "@/components/v-intern/icons";
@@ -79,6 +80,9 @@ export function ProjectLibrary({
   return (
     <div className="space-y-4">
       <PageTitle
+        eyebrow="DỰ ÁN MẪU"
+        stamp="DỰ ÁN"
+        stampTone="blue"
         title="Thư viện dự án"
         subtitle="Chọn một mẫu dự án hoàn chỉnh để khởi tạo phiên thực tập"
       />
@@ -102,7 +106,7 @@ export function ProjectLibrary({
         />
         <select
           aria-label="Lọc theo độ khó"
-          className={`${inputClass} sm:w-48`}
+          className={`${selectClass} sm:w-48`}
           value={difficulty}
           onChange={(e) => {
             setDifficulty(e.target.value);
@@ -120,9 +124,10 @@ export function ProjectLibrary({
       ) : data.error ? (
         <ErrorState error={data.error} onRetry={data.reload} />
       ) : !data.data || data.data.items.length === 0 ? (
-        <Empty>
-          Chưa có mẫu dự án{debounced ? ` phù hợp với "${debounced}"` : ""}.
-        </Empty>
+        /* v3: trạng thái trống cấp trang — doodle sổ tay thay Empty */
+        <EmptyNotebook
+          title={`Chưa có mẫu dự án${debounced ? ` phù hợp với "${debounced}"` : ""}`}
+        />
       ) : (
         <>
           <ul className="workspace-project-grid">

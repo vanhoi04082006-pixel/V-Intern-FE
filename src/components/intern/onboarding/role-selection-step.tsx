@@ -29,6 +29,7 @@ function ManualRoleSelectionStep() {
   return (
     <div>
       <StudentHeading
+        eyebrow="CHỌN NGHỀ"
         title="Chọn vị trí ứng tuyển"
         description="Khám phá yêu cầu của từng vị trí và chọn hướng phù hợp với thế mạnh của bạn. Vòng phỏng vấn sẽ dựa trên lựa chọn này."
       />

@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import {
   btn,
   Field,
-  inputClass,
+  selectClass,
   textareaClass,
 } from "@/components/product/primitives";
 import { ErrorState } from "@/components/shared/data-state";
@@ -52,7 +52,7 @@ export function CredentialRecovery({
       >
         <select
           id="recovery-slot"
-          className={inputClass}
+          className={selectClass}
           value={slotId}
           disabled={action.busy}
           onChange={(e) => {
