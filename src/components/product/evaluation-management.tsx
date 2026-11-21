@@ -819,15 +819,11 @@ function EvaluationEditor({
       [id],
     ),
   );
-  return detail.loading ? (
-    <LoadingState />
-  ) : detail.error ? (
-    <ErrorState error={detail.error} onRetry={detail.reload} />
-  ) : detail.data ? (
+  /* Stale-while-revalidate (đúng ngữ nghĩa useResource — reload giữ payload
+   * cũ): ScoreEditor phải GIỮ NGUYÊN khi tải lại, nếu không mọi modal đang mở
+   * trong nó (kết quả điều chỉnh spec 14) sẽ bị unmount ngay khi reload. */
+  return detail.data ? (
     <ScoreEditor
-      /* Không đưa revisionNumber vào key: sau khi lưu điều chỉnh, modal kết
-       * quả phải giữ nguyên (xác nhận "điểm cũ → điểm mới") trong khi dữ liệu
-       * cha tải lại — overallScore/badge cập nhật qua prop, không remount. */
       key={`${id}-${detail.data.evaluation.status}`}
       detail={detail.data}
       reload={() => {
@@ -835,6 +831,10 @@ function EvaluationEditor({
         onChanged();
       }}
     />
+  ) : detail.loading ? (
+    <LoadingState />
+  ) : detail.error ? (
+    <ErrorState error={detail.error} onRetry={detail.reload} />
   ) : null;
 }
 export function ScoreEditor({
