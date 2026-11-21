@@ -89,13 +89,16 @@ try {
     .waitFor();
   /* Master prompt V6 — Phase E/P2: /admin phải dùng aggregate thật của BE
    * (GET /dashboard/admin) thay vì tự tính từ trang đầu tiên của list.
-   * Chờ đúng endpoint + panel aggregate hiển thị trước khi tiếp tục. */
-  const dashboardResponse = await page.waitForResponse(
+   * Remount /admin để bắt response TRƯỚC khi điều hướng (login đã tiêu thụ
+   * request đầu) — wait setup trước goto là deterministic. */
+  const dashboardReady = page.waitForResponse(
     (r) =>
       r.url().endsWith("/dashboard/admin") &&
       r.request().method() === "GET" &&
       r.ok(),
   );
+  await page.goto(base + "/admin");
+  const dashboardResponse = await dashboardReady;
   const dashboard = await dashboardResponse.json();
   assert.ok(
     dashboard.metrics &&

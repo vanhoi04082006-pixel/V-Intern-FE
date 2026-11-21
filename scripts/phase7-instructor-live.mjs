@@ -216,7 +216,7 @@ try {
     await adminPage.waitForURL("**/admin");
     await adminPage.goto(base + "/admin/evaluations");
     await adminPage
-      .getByRole("button", { name: "Đánh giá browser " + tag, exact: true })
+      .getByRole("button", { name: "Đánh giá browser " + tag })
       .click();
     await adminPage
       .getByRole("button", { name: "Mở đánh giá " + evaluation.id.slice(0, 8) })
