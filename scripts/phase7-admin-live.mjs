@@ -109,7 +109,14 @@ try {
     page.waitForResponse(
       (r) => r.url().includes("/users?") && r.url().includes("roleCode=intern"),
     ),
-    page.getByLabel("Lọc vai trò người dùng").selectOption("intern"),
+    // Journey v3: bộ lọc vai trò giờ là FilterChips (notebook kit) thay cho
+    // select trần — bấm chip "Thực tập sinh" (label hiển thị của role intern)
+    // vẫn đi qua cùng một assertion nghiệp vụ: request /users?...roleCode=intern
+    // trả 200 và meta.total = 1.
+    page
+      .getByRole("group", { name: "Lọc theo vai trò người dùng" })
+      .getByRole("button", { name: "Thực tập sinh", exact: true })
+      .click(),
   ]);
   assert.equal(roleFilter.status(), 200);
   assert.equal((await roleFilter.json()).meta.total, 1);
