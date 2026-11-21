@@ -384,13 +384,23 @@ try {
     path: path.join(evidence, "admin-tasks.png"),
     fullPage: true,
   });
-  page.once("dialog", (d) => d.accept());
+  // Journey v3 ConfirmDialog (Section 5 master brief) đã thay window.confirm():
+  // bấm menuitem "Xóa nhiệm vụ" chỉ MỞ hộp thoại xác nhận — DELETE chỉ được
+  // gửi khi bấm tiếp nút xác nhận (confirmLabel "Xóa nhiệm vụ") bên trong
+  // dialog. Native page.once("dialog") cũ không bao giờ fire nữa.
   await taskRow.getByLabel(`Thao tác ${task.code}`, { exact: true }).click();
+  await taskRow
+    .getByRole("menuitem", { name: "Xóa nhiệm vụ", exact: true })
+    .click();
   await mutate(
     page,
     `/tasks/${task.id}`,
     "DELETE",
-    () => taskRow.getByRole("menuitem", { name: "Xóa nhiệm vụ", exact: true }).click(),
+    () =>
+      page
+        .getByRole("dialog", { name: `Xóa nhiệm vụ ${task.code}` })
+        .getByRole("button", { name: "Xóa nhiệm vụ", exact: true })
+        .click(),
     200,
   );
   assert.ok(
