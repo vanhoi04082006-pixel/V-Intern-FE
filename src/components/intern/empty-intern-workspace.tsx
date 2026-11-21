@@ -85,7 +85,11 @@ export function EmptyInternWorkspace({
                 alt=""
                 width={48}
                 height={64}
-                className="h-16 w-12 object-contain"
+                /* v3: mascot bồng bềnh nhẹ (animate-bob) — thuần trang trí,
+                    tắt theo prefers-reduced-motion trong globals.css. */
+                className="h-16 w-12 animate-bob object-contain select-none"
+                style={{ animationDuration: "6s" }}
+                draggable={false}
               />
             </span>
             {/* Mascot — asset có sẵn trong repo (nền đã trong suốt), thuần trang trí.

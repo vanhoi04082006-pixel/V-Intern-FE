@@ -16,6 +16,7 @@ import {
   IconCheck,
   IconCircleCheck,
   IconClock,
+  IconCompass,
   IconCopy,
   IconDownload,
   IconFileText,
@@ -28,7 +29,7 @@ import { Sparkles as SparklesIcon } from "@/components/animate-ui/icons/sparkles
 import { BellRing as BellRingIcon } from "@/components/animate-ui/icons/bell-ring";
 import { PartyPopper } from "@/components/animate-ui/icons/party-popper";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useResource } from "@/lib/api/use-resource";
@@ -57,7 +58,7 @@ import {
 } from "@/lib/api/outcomes";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Tape } from "@/components/v-intern/doodles";
-import { EmptyNotebook } from "@/components/notebook/kit";
+import { ChartFrame, EmptyNotebook } from "@/components/notebook/kit";
 import { NotificationText } from "./notification-text";
 import {
   buttonClass,
@@ -175,6 +176,346 @@ export function Metrics({ values }: { values: [string, number | null][] }) {
     </dl>
   );
 }
+/* ------------------------------------------------------------------ */
+/* v3 — Radar tiêu chí & xu hướng KPI (SVG vẽ tay, không npm mới).      */
+/* Cùng tinh thần hand-rolled của workspace-charts.tsx: lưới nét đứt,  */
+/* nhãn viết tay, mọi con số là dữ liệu thật từ API.                   */
+/* ------------------------------------------------------------------ */
+
+/** Trục radar: tên tiêu chí + điểm gốc (score / maxScore thật từ API). */
+type RadarDatum = { label: string; score: number; max: number };
+
+/** Tách nhãn dài thành tối đa 2 dòng cân bằng — đủ tên tiêu chí, không cắt cụt. */
+function wrap2(label: string): string[] {
+  if (label.length <= 14) return [label];
+  const words = label.split(" ");
+  let best = 1;
+  let bestDiff = Infinity;
+  for (let i = 1; i < words.length; i++) {
+    const diff = Math.abs(
+      words.slice(0, i).join(" ").length -
+        words.slice(i).join(" ").length,
+    );
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      best = i;
+    }
+  }
+  return [words.slice(0, best).join(" "), words.slice(best).join(" ")];
+}
+
+/** Màu thanh/đỉnh theo tỷ lệ đạt: ≥80% xanh · ≥65% vàng · đỏ. */
+function ratioTone(pct: number): string {
+  if (pct >= 80) return "var(--success)";
+  if (pct >= 65) return "var(--warning)";
+  return "var(--danger)";
+}
+
+/**
+ * Bảng tiêu chí kỳ đánh giá dạng radar nét mực — dựng thủ công bằng SVG
+ * (không thêm gói npm): lưới lục giác nét đứt, nhãn trục viết tay
+ * (font-hand), mực loang theo tỷ lệ đạt score/maxScore. Bảng điểm gốc
+ * trong <details> vẫn là "bảng dữ liệu" tiếp cận được; radar chỉ là hình
+ * hoá của đúng các con số đó (role="img" + tóm tắt bằng văn bản).
+ */
+function CriteriaRadar({ scores }: { scores: RadarDatum[] }) {
+  const n = scores.length;
+  const width = 360,
+    height = 300,
+    cx = 180,
+    cy = 150,
+    r = 92;
+  const angle = (i: number) => ((-90 + (360 / n) * i) * Math.PI) / 180;
+  const point = (i: number, ratio: number): [number, number] => {
+    const a = angle(i);
+    return [cx + Math.cos(a) * r * ratio, cy + Math.sin(a) * r * ratio];
+  };
+  const data = scores.map((s) => ({
+    ...s,
+    pct: Math.max(0, Math.min(100, (s.score / s.max) * 100)),
+  }));
+  const ring = (ratio: number) =>
+    scores
+      .map((_, i) => {
+        const [x, y] = point(i, ratio);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+  const shape = data
+    .map((d, i) => {
+      const [x, y] = point(i, d.pct / 100);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  const summary = `Biểu đồ radar tỷ lệ đạt theo tiêu chí (0 đến 100%): ${data
+    .map((d) => `${d.label} ${Math.round(d.pct)}%`)
+    .join(", ")}.`;
+  return (
+    <figure className="workspace-chart" aria-label={summary}>
+      <figcaption>
+        <IconCompass
+          size={15}
+          className="mr-1 inline-block align-[-2px]"
+          aria-hidden="true"
+        />
+        Bảng tiêu chí dạng radar
+        <span>
+          Tỷ lệ đạt của từng tiêu chí (0–100%) — điểm gốc nằm trong bảng chi
+          tiết
+        </span>
+      </figcaption>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={summary}
+        fill="none"
+        className="mx-auto mt-3 block w-full max-w-[420px]"
+      >
+        {/* Lưới lục giác nét đứt — 4 vòng 25/50/75/100%. */}
+        {[0.25, 0.5, 0.75, 1].map((ratio) => (
+          <polygon
+            key={ratio}
+            points={ring(ratio)}
+            fill="none"
+            stroke="color-mix(in srgb, var(--ink) 45%, transparent)"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+          />
+        ))}
+        {/* Trục từ tâm ra từng đỉnh tiêu chí. */}
+        {scores.map((_, i) => {
+          const [x, y] = point(i, 1);
+          return (
+            <line
+              key={i}
+              x1={cx}
+              y1={cy}
+              x2={x}
+              y2={y}
+              stroke="color-mix(in srgb, var(--ink) 45%, transparent)"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+            />
+          );
+        })}
+        {/* Vùng mực loang theo tỷ lệ đạt thật của từng tiêu chí. */}
+        <polygon
+          points={shape}
+          fill="var(--primary)"
+          fillOpacity="0.22"
+          stroke="var(--primary)"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        {data.map((d, i) => {
+          const [x, y] = point(i, d.pct / 100);
+          return (
+            <circle
+              key={`${d.label}-${i}`}
+              cx={x}
+              cy={y}
+              r="2.5"
+              fill="var(--primary)"
+              stroke="var(--ink)"
+              strokeWidth="1"
+            />
+          );
+        })}
+        {/* Nhãn trục viết tay — 2 dòng cân bằng khi tên dài. */}
+        {data.map((d, i) => {
+          const a = angle(i);
+          const lx = cx + Math.cos(a) * (r + 18);
+          const ly = cy + Math.sin(a) * (r + 18);
+          const lines = wrap2(d.label);
+          const anchor =
+            lx < cx - 50 ? "end" : lx > cx + 50 ? "start" : "middle";
+          const dy = Math.sin(a) < -0.5 ? -8 : Math.sin(a) > 0.5 ? 16 : 4;
+          return (
+            <text
+              key={`${d.label}-${i}`}
+              x={lx.toFixed(1)}
+              y={(ly + dy).toFixed(1)}
+              textAnchor={anchor}
+              fontSize="11.5"
+              fill="var(--ink-soft)"
+              className="font-hand"
+            >
+              {lines.map((l, k) => (
+                <tspan key={l} x={lx.toFixed(1)} dy={k === 0 ? 0 : 12}>
+                  {l}
+                </tspan>
+              ))}
+            </text>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
+/** Điểm KPI mỗi lần tổng hợp — thời điểm và điểm số đều thật từ API. */
+type KpiTrendPoint = { id: string; at: Date; score: number };
+
+/** Ngưỡng đạt của chương trình — cùng hằng số semantics với tone hero
+ * (finalScore >= 70 => xanh) đã có trong section Kpi. */
+const KPI_PASS_THRESHOLD = 70;
+
+/**
+ * Xu hướng điểm KPI qua các lần tổng hợp — area chart vẽ tay bằng SVG:
+ * đường mực primary + vùng loang gradient + ReferenceLine ngưỡng đạt 70
+ * nét đỏ đứt. Chỉ dựng từ các bản ghi có finalScore thật; component gọi
+ * chịu trách nhiệm chỉ render khi có >= 2 điểm (không bịa xu hướng từ
+ * một thời điểm duy nhất).
+ */
+function KpiTrendChart({ points }: { points: KpiTrendPoint[] }) {
+  const gradId = `kpi-trend-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
+  const width = 640,
+    height = 220,
+    pad = { top: 16, right: 18, bottom: 28, left: 40 };
+  const innerW = width - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const n = points.length;
+  if (n < 2) return null;
+  const x = (i: number) => pad.left + (n > 1 ? (i / (n - 1)) * innerW : 0);
+  const y = (v: number) =>
+    pad.top + innerH - (Math.max(0, Math.min(100, v)) / 100) * innerH;
+  const dayLabel = (d: Date) =>
+    d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+  const line = points
+    .map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.score).toFixed(1)}`)
+    .join(" ");
+  const area = `${line} L${x(n - 1).toFixed(1)},${y(0).toFixed(1)} L${x(0).toFixed(1)},${y(0).toFixed(1)} Z`;
+  const last = points[n - 1];
+  const labelEvery = Math.max(1, Math.ceil(n / 6));
+  return (
+    <figure
+      className="workspace-chart"
+      aria-label={`Xu hướng điểm KPI qua ${n} lần tổng hợp, ngưỡng đạt ${KPI_PASS_THRESHOLD}`}
+    >
+      <figcaption>
+        Xu hướng qua các lần tổng hợp
+        <span>
+          Điểm tổng hợp xếp theo thời gian — đường đỏ là ngưỡng đạt{" "}
+          {KPI_PASS_THRESHOLD}
+        </span>
+      </figcaption>
+      <div className="mt-3" aria-hidden="true">
+        <svg viewBox={`0 0 ${width} ${height}`} fill="none" role="presentation">
+          <defs>
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.04" />
+            </linearGradient>
+          </defs>
+          {/* Lưới ngang mờ + nhãn trục viết tay (0/50/100). */}
+          {[0, 50, 100].map((v) => (
+            <g key={v}>
+              <line
+                x1={pad.left}
+                x2={width - pad.right}
+                y1={y(v)}
+                y2={y(v)}
+                stroke="color-mix(in srgb, var(--ink) 30%, transparent)"
+                strokeWidth="1"
+                strokeDasharray="4 5"
+              />
+              <text
+                x={pad.left - 6}
+                y={y(v) + 3.5}
+                textAnchor="end"
+                fontSize="10"
+                fill="var(--ink-soft)"
+                className="font-hand"
+              >
+                {v}
+              </text>
+            </g>
+          ))}
+          {/* Ngưỡng đạt 70 — nét đỏ đứt (tương đương ReferenceLine). */}
+          <line
+            x1={pad.left}
+            x2={width - pad.right}
+            y1={y(KPI_PASS_THRESHOLD)}
+            y2={y(KPI_PASS_THRESHOLD)}
+            stroke="var(--danger)"
+            strokeWidth="1.5"
+            strokeDasharray="6 4"
+          />
+          <text
+            x={pad.left + 4}
+            y={y(KPI_PASS_THRESHOLD) - 6}
+            fontSize="10"
+            fill="var(--danger)"
+          >
+            Ngưỡng đạt {KPI_PASS_THRESHOLD}
+          </text>
+          <path d={area} fill={`url(#${gradId})`} />
+          <path
+            d={line}
+            stroke="var(--primary)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {points.map((p, i) => (
+            <circle
+              key={p.id}
+              cx={x(i)}
+              cy={y(p.score)}
+              r="3.5"
+              fill="var(--primary)"
+              stroke="var(--ink)"
+              strokeWidth="1"
+            />
+          ))}
+          {points.map((p, i) =>
+            i % labelEvery === 0 || i === n - 1 ? (
+              <text
+                key={p.id}
+                x={x(i)}
+                y={height - 8}
+                textAnchor="middle"
+                fontSize="11"
+                fill="var(--ink-soft)"
+                className="font-hand"
+              >
+                {dayLabel(p.at)}
+              </text>
+            ) : null,
+          )}
+        </svg>
+      </div>
+      <p
+        className="workspace-chart-selection"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {n} lần tổng hợp. Kỳ gần nhất ({dayLabel(last.at)}): {last.score} điểm
+        —{" "}
+        {last.score >= KPI_PASS_THRESHOLD
+          ? "đạt"
+          : "chưa đạt"}{" "}
+        ngưỡng {KPI_PASS_THRESHOLD}.
+      </p>
+      <ul className="workspace-chart-legend mt-3">
+        <li>
+          <i data-tone="primary" aria-hidden="true" />
+          <span>Điểm KPI</span>
+          <strong>{last.score}</strong>
+        </li>
+        <li>
+          <i
+            aria-hidden="true"
+            style={{ background: "var(--danger)" }}
+          />
+          <span>Ngưỡng đạt</span>
+          <strong>{KPI_PASS_THRESHOLD}</strong>
+        </li>
+      </ul>
+    </figure>
+  );
+}
+
 export function Evaluations({ id }: { id?: string }) {
   const evaluations = useResource(
     useCallback(
@@ -206,7 +547,18 @@ export function Evaluations({ id }: { id?: string }) {
         {(data) =>
           data.length ? (
             <div className="student-stack student-record-collection">
-              {data.map((e) => (
+              {data.map((e, index) => {
+                /* v3: dữ liệu radar — chỉ lấy tiêu chí có thang điểm (maxScore)
+                   để chuẩn hoá thành tỷ lệ đạt; thiếu thang thì bỏ khỏi radar
+                   (bảng gốc vẫn giữ nguyên dòng đó, không bịa số). */
+                const radarScores = e.scores
+                  .map((s, i) => ({
+                    label: s.criterionName ?? `Tiêu chí ${i + 1}`,
+                    score: s.score,
+                    max: s.maxScore ?? 0,
+                  }))
+                  .filter((s) => s.max > 0);
+                return (
                 <StudentPanel
                   key={e.id}
                   className="student-outcome-record"
@@ -254,6 +606,18 @@ export function Evaluations({ id }: { id?: string }) {
                     </time>
                   </div>
 
+                  {/* v3: kỳ mới nhất có bảng radar tiêu chí — radar nét mực
+                      dựng từ đúng điểm score/maxScore của API, đặt trong khung
+                      ChartFrame như các biểu đồ workspace khác. */}
+                  {index === 0 && radarScores.length >= 3 && (
+                    <ChartFrame className="mt-5">
+                      <CriteriaRadar scores={radarScores} />
+                      <MarginNote className="mt-2">
+                        mực loang càng rộng — kỹ năng càng đều
+                      </MarginNote>
+                    </ChartFrame>
+                  )}
+
                   <details open={Boolean(id)} className="student-help-disclosure">
                     <summary>Tiêu chí & nhận xét chi tiết ({e.scores.length})</summary>
                   <div
@@ -271,7 +635,18 @@ export function Evaluations({ id }: { id?: string }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {e.scores.map((s, index) => (
+                        {e.scores.map((s, index) => {
+                          /* v3: thanh mực nhỏ dưới điểm — chỉ vẽ khi có thang
+                              điểm (maxScore) để tính tỷ lệ đạt; rút mực từ 0
+                              bằng nb-fill, màu theo tỷ lệ thật. */
+                          const ratio =
+                            s.maxScore !== null && s.maxScore > 0
+                              ? Math.max(
+                                  0,
+                                  Math.min(100, (s.score / s.maxScore) * 100),
+                                )
+                              : null;
+                          return (
                           <tr key={s.id}>
                             <td>
                               <span className="font-semibold text-foreground">
@@ -289,16 +664,32 @@ export function Evaluations({ id }: { id?: string }) {
                             </td>
                             <td className="student-table-num font-semibold">
                               {s.score}{s.maxScore !== null ? ` / ${s.maxScore}` : ""}
+                              {ratio !== null && (
+                                <span
+                                  className="mt-1.5 block h-1.5 overflow-hidden rounded-full border border-border/70 bg-muted"
+                                  aria-hidden="true"
+                                >
+                                  <span
+                                    className="nb-fill block h-full rounded-full"
+                                    style={{
+                                      width: `${ratio}%`,
+                                      background: ratioTone(ratio),
+                                    }}
+                                  />
+                                </span>
+                              )}
                             </td>
                             <td>{s.comment ?? "Chưa có"}</td>
                           </tr>
-                        ))}
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
                   </details>
                 </StudentPanel>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="student-outcome-empty-layout">
@@ -396,10 +787,28 @@ export function Kpi({ id }: { id?: string }) {
         }
       />
       <Resource resource={results}>
-        {(data) =>
-          data.length ? (
-            <div className="student-stack student-record-collection">
-              {data.map((k) => (
+        {(data) => {
+          /* v3: chuỗi xu hướng — chỉ từ các bản ghi có finalScore thật,
+             xếp theo calculatedAt (cũ → mới). Payload KPI không có nhãn
+             kỳ/period nên KHÔNG dựng bộ chip chọn kỳ (sẽ là bịa ngữ cảnh);
+             mỗi bản ghi đã hiển thị đầy đủ trong danh sách phía trên. */
+          const trend: KpiTrendPoint[] = [];
+          for (const k of data) {
+            if (
+              typeof k.finalScore === "number" &&
+              Number.isFinite(k.finalScore)
+            )
+              trend.push({
+                id: k.id,
+                at: new Date(k.calculatedAt),
+                score: k.finalScore,
+              });
+          }
+          trend.sort((a, b) => a.at.getTime() - b.at.getTime());
+          return data.length ? (
+            <>
+              <div className="student-stack student-record-collection">
+                {data.map((k) => (
                 <StudentPanel
                   key={k.id}
                   className="student-outcome-record"
@@ -477,7 +886,16 @@ export function Kpi({ id }: { id?: string }) {
                   )}
                 </StudentPanel>
               ))}
-            </div>
+              </div>
+              {/* v3: biểu đồ xu hướng điểm KPI — chỉ vẽ khi có >= 2 lần tổng
+                  hợp có điểm (một điểm không tạo ra xu hướng); đường đỏ đứt
+                  là ngưỡng đạt 70 cùng semantics với tone hero. */}
+              {!id && trend.length >= 2 && (
+                <ChartFrame className="mt-6">
+                  <KpiTrendChart points={trend} />
+                </ChartFrame>
+              )}
+            </>
           ) : (
             <div className="student-dashboard-grid student-outcome-empty-grid">
               <EmptyNotebook
@@ -525,7 +943,7 @@ export function Kpi({ id }: { id?: string }) {
               </StudentPanel>
             </div>
           )
-        }
+        }}
       </Resource>
       <div className="student-salary-section">
         <Salary />

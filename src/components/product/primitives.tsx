@@ -640,24 +640,86 @@ export function PageMeta({
   );
 }
 
-/** Overlapping member avatars with overflow count. */
-export function AvatarStack({ count }: { count: number }) {
+/* ------------------------------------------------------------------ */
+/* Avatars                                                            */
+/* ------------------------------------------------------------------ */
+
+/** Initials từ họ tên thật — 2 chữ cái đầu của 2 từ cuối (kiểu tên VN). */
+function initialsOf(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const letters = words
+    .slice(-2)
+    .map((w) => (w[0] ?? "").toUpperCase())
+    .join("");
+  return letters || "?";
+}
+
+/** 4 tông giấy note xoay vòng — viền mực như sandbox AvatarStack. */
+const AVATAR_NOTE_TONES = [
+  "bg-[var(--blue-mist)] text-[var(--royal)]",
+  "bg-[var(--note-yellow)] text-[var(--note-yellow-ink)]",
+  "bg-[var(--note-pink)] text-[var(--note-pink-ink)]",
+  "bg-[var(--note-mint)] text-[var(--note-mint-ink)]",
+] as const;
+
+/** Overlapping member avatars with overflow count.
+ *  Journey v3 additive: truyền `names` (họ tên thật) thì các hạt hiện
+ *  initials thật với 4 tông giấy note + viền mực; thiếu names thì giữ
+ *  nguyên bản generic cũ — không đổi hình các call site hiện có. */
+export function AvatarStack({
+  count,
+  names,
+}: {
+  count: number;
+  /** Họ tên thành viên thật từ API (tùy chọn). */
+  names?: string[];
+}) {
   if (!count) return <span className="text-muted-foreground">0</span>;
+  const list = (names ?? []).filter((name) => name.trim().length > 0);
+  if (list.length === 0) {
+    return (
+      <span className="flex items-center gap-2">
+        <strong className="tabular-nums">{count}</strong>
+        <span className="flex -space-x-1" aria-hidden="true">
+          {Array.from({ length: Math.min(3, count) }, (_, i) => (
+            <span
+              key={i}
+              className="grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-accent text-caption text-primary"
+            >
+              SV
+            </span>
+          ))}
+          {count > 3 && (
+            <span className="grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-muted text-caption text-muted-foreground">
+              +{count - 3}
+            </span>
+          )}
+        </span>
+      </span>
+    );
+  }
+  const shown = list.slice(0, 3);
+  const rest = Math.max(0, count - shown.length);
   return (
     <span className="flex items-center gap-2">
       <strong className="tabular-nums">{count}</strong>
-      <span className="flex -space-x-1" aria-hidden="true">
-        {Array.from({ length: Math.min(3, count) }, (_, i) => (
+      <span
+        className="flex -space-x-1"
+        role="img"
+        aria-label={`${count} thành viên: ${list.slice(0, 3).join(", ")}${rest > 0 ? " và hơn nữa" : ""}`}
+      >
+        {shown.map((name, i) => (
           <span
-            key={i}
-            className="grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-accent text-caption text-primary"
+            key={`${name}-${i}`}
+            title={name}
+            className={`grid h-5 w-5 place-items-center rounded-full border-[1.5px] border-[var(--ink)] text-[0.55rem] font-bold ${AVATAR_NOTE_TONES[i % AVATAR_NOTE_TONES.length]}`}
           >
-            SV
+            {initialsOf(name)}
           </span>
         ))}
-        {count > 3 && (
-          <span className="grid h-5 w-5 place-items-center rounded-full border-2 border-card bg-muted text-caption text-muted-foreground">
-            +{count - 3}
+        {rest > 0 && (
+          <span className="grid h-5 w-5 place-items-center rounded-full border-[1.5px] border-[var(--ink)] bg-[var(--paper)] text-[0.55rem] font-bold text-[var(--ink-soft)]">
+            +{rest}
           </span>
         )}
       </span>

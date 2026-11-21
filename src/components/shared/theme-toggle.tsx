@@ -42,7 +42,11 @@ export function ThemeToggle({ className }: { className?: string }) {
       role="radiogroup"
       aria-label="Chủ đề giao diện"
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full border border-border bg-muted/60 p-0.5",
+        /* Journey v3 notebook skin (sandbox theme-toggle): viền mực 2px,
+           nền giấy nổi, bóng in lệch, sticker-pop bật nhẹ khi hover. Chỉ đổi
+           vóc — giữ nguyên 3 trạng thái + roving tabindex + focus outline
+           thật (outline-ring) cho QA bàn phím. */
+        "sticker-pop inline-flex items-center gap-1 rounded-full border-2 border-[var(--ink)] bg-[var(--paper-raised)] p-0.5 shadow-ink-2",
         className,
       )}
     >
@@ -74,13 +78,15 @@ export function ThemeToggle({ className }: { className?: string }) {
               /* Real outline (not ring): renders in forced-colors mode and is
                  what the keyboard QA harness measures; on workspace shells
                  the unlayered :focus-visible rule still wins for parity. */
-              "grid size-7 place-items-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              "grid size-8 place-items-center rounded-full border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              /* Đang chọn: mực xanh đổ đầy + pop-in bật lên (sandbox checked);
+                 chưa chọn: nền trống, hover nhô nhẹ + viền mực hiện ra. */
               active
-                ? "bg-card text-primary shadow-app-xs"
-                : "text-muted-foreground hover:text-foreground",
+                ? "animate-pop-in border-[var(--ink)] bg-[var(--royal)] text-white shadow-ink-2"
+                : "border-transparent text-[var(--ink-soft)] hover:-translate-y-0.5 hover:border-[var(--ink)] hover:text-[var(--ink)]",
             )}
           >
-            <Icon size={14} aria-hidden="true" />
+            <Icon size={16} aria-hidden="true" />
           </button>
         );
       })}

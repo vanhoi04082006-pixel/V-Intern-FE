@@ -25,9 +25,30 @@
 .admin-workspace .admin-coverage-table td:not(:first-child) { font-variant-numeric: tabular-nums; }
 .admin-workspace .admin-coverage-table th:first-child, .admin-workspace .admin-coverage-table td:first-child { padding-left: 0; }
 .admin-workspace .admin-template-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
-.admin-workspace .admin-template-item { min-width: 0; padding-block: var(--space-5); border-bottom: 1px solid var(--border); }
-.admin-workspace .admin-template-item h3 { font-size: var(--type-subsection); line-height: var(--leading-body); }
-.admin-workspace .admin-template-actions { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin-top: var(--space-4); font-size: var(--type-small); color: var(--muted-foreground); }
+/* v6 notebook port — thẻ mẫu dạng giấy sketch dán băng dính: thẻ lệch
+   phẳng so le như bảng nút, hover nắn thẳng lại; mực/nhịp theo tokens
+   chung, không đụng stylesheet dùng chung của sổ tay. */
+.admin-workspace .admin-template-grid > li {
+  min-width: 0;
+  rotate: 0deg;
+  transition: rotate 240ms var(--motion-ease), opacity 240ms var(--motion-ease);
+}
+.admin-workspace .admin-template-grid > li:nth-child(odd) { rotate: -0.55deg; }
+.admin-workspace .admin-template-grid > li:nth-child(even) { rotate: 0.45deg; }
+.admin-workspace .admin-template-grid > li:hover { rotate: 0deg; }
+.admin-workspace .admin-template-archived { opacity: 0.9; }
+.admin-workspace .admin-template-code {
+  display: inline-flex; align-items: center;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0.12rem 0.45rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.admin-workspace .admin-template-actions { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin-top: auto; padding-top: var(--space-3); border-top: 2px dashed color-mix(in srgb, var(--ink) 20%, transparent); font-size: var(--type-small); color: var(--muted-foreground); }
 /* V5 — nút dòng trong khối mẫu: transition ngay tại rule gốc để focus ring
    không "snap" (kế thừa đủ bộ thuộc tính của baseline motion.css). */
 .admin-workspace .admin-template-actions button {
@@ -137,6 +158,15 @@
   .admin-workspace .product-panel table:not(.product-table):not(.admin-coverage-table) tbody td { transition: none; }
   .admin-workspace progress::-webkit-progress-value,
   .admin-workspace progress::-moz-progress-bar { animation: none; }
+  .admin-workspace .admin-template-grid > li { transition: none; }
+  .admin-workspace .draw-check path { animation: none; stroke-dashoffset: 0; }
+  .admin-workspace .admin-pending-cta { transition: none; }
+  .admin-workspace .admin-pending-cta:hover { translate: none; }
+  .admin-workspace .confetti-pop.play::before,
+  .admin-workspace .confetti-pop.play::after { animation: none; }
+  .admin-workspace .admin-approve-btn { transition: none; }
+  .admin-workspace .admin-approve-btn:hover { translate: none; }
+  .admin-workspace .admin-user-avatar { transition: none; }
 }
 @media (max-width: 79.99rem) {
   .admin-workspace .admin-catalog-layout { grid-template-columns: 13rem minmax(0, 1fr); }
@@ -152,3 +182,143 @@
   .admin-workspace :is(.admin-catalog-layout, .admin-template-grid, .admin-configuration-grid) { grid-template-columns: minmax(0, 1fr); }
 }
 .admin-workspace .admin-overview-actions { min-width: 0; }
+
+/* ------------------------------------------------------------------ */
+/* v6 notebook port — bảng nhân sự & tổng quan quản trị                 */
+/* ------------------------------------------------------------------ */
+
+/* Ảnh chữ đầu tròn viền mực — suy ra từ tên hiển thị thật của từng dòng. */
+.admin-workspace .admin-user-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--blue-mist);
+  color: var(--royal);
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.admin-workspace .admin-user-avatar[data-locked="true"] {
+  background: color-mix(in srgb, var(--destructive) 14%, transparent);
+  border-color: color-mix(in srgb, var(--destructive) 55%, var(--ink));
+  color: var(--destructive);
+}
+
+/* Dòng bị khóa — phủ nhẹ mực đỏ để nhìn ra biện pháp cuối cùng. */
+.admin-workspace .admin-user-row-locked {
+  background: color-mix(in srgb, var(--destructive) 5%, transparent);
+}
+
+/* Nút "Duyệt" nhanh — viền mực xanh success, vùng chạm tối thiểu 44px. */
+.admin-workspace .admin-approve-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--touch-min);
+  padding-inline: 0.75rem;
+  border: 2px solid var(--success);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+  color: var(--success);
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: translate var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
+}
+.admin-workspace .admin-approve-btn:hover:not(:disabled) {
+  translate: 0 -2px;
+  background: color-mix(in srgb, var(--success) 16%, transparent);
+}
+.admin-workspace .admin-approve-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+.admin-workspace .admin-approve-btn:focus-visible {
+  outline: 2px solid var(--success);
+  outline-offset: 2px;
+}
+
+/* Dấu tick vẽ dần sau khi duyệt nhanh — keyframe `draw-check` có sẵn
+ * trong journey.css; class này từng chưa được port nên định nghĩa tại chỗ. */
+.admin-workspace .draw-check path {
+  stroke-dasharray: var(--draw-len, 60);
+  stroke-dashoffset: var(--draw-len, 60);
+  animation: draw-check 560ms 140ms var(--motion-ease) forwards;
+}
+
+/* CTA "Tài khoản chờ duyệt" — viền kiến đang đi vòng (ants-border của
+ * journey.css); nền pha vàng cảnh báo, nhấc nhẹ khi hover. */
+.admin-workspace .admin-pending-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-4);
+  background-color: color-mix(in srgb, var(--warning) 10%, transparent);
+  transition: translate var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
+}
+.admin-workspace .admin-pending-cta:hover {
+  translate: 0 -2px;
+  box-shadow: 2px 2px 0 0 var(--hard-shadow);
+}
+.admin-workspace .admin-pending-cta:focus-visible {
+  outline: 2px solid var(--warning);
+  outline-offset: 2px;
+}
+.admin-workspace .admin-pending-cta-num {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--warning);
+  border-radius: 999px;
+  color: var(--warning);
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Confetti 6 hạt khi lưu câu hỏi thành công — chạy đúng 1 lần khi gắn
+ * class `play`; keyframe `confetti-burst` và token --confetti-* có sẵn
+ * trong journey.css (light + dark). */
+.admin-workspace .confetti-pop {
+  position: fixed;
+  left: 50%;
+  top: 6.5rem;
+  z-index: 60;
+  width: 5px;
+  height: 5px;
+  pointer-events: none;
+}
+.admin-workspace .confetti-pop::before,
+.admin-workspace .confetti-pop::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 1.5px;
+  opacity: 0;
+  pointer-events: none;
+}
+.admin-workspace .confetti-pop::before {
+  background: var(--confetti-1);
+  box-shadow: 9px 3px 0 0 var(--confetti-2), -10px -4px 0 0 var(--confetti-3);
+}
+.admin-workspace .confetti-pop::after {
+  background: var(--confetti-4);
+  box-shadow: 8px -6px 0 0 var(--confetti-5), -9px 5px 0 0 var(--confetti-6);
+}
+.admin-workspace .confetti-pop.play::before {
+  animation: confetti-burst 680ms 60ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+.admin-workspace .confetti-pop.play::after {
+  animation: confetti-burst 640ms 140ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}

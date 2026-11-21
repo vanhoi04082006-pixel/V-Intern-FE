@@ -126,6 +126,7 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
   }
 
   if (status === "success") {
+    const registeredEmail = email.trim();
     return (
       <section
         aria-label="Đăng ký thành công"
@@ -146,12 +147,37 @@ export function RegisterForm({ previewState }: RegisterFormProps) {
           Tài khoản của bạn đã được tạo. Hãy đăng nhập để bắt đầu hành trình
           thực tập.
         </p>
+        {/* Sandbox Journey v3: dòng viết tay nhắc email đã được điền sẵn —
+         * chỉ hiện khi có email thật từ form (preview dev không có). */}
+        {registeredEmail ? (
+          <p className="auth-caps-note mt-3 max-w-sm font-hand text-[0.95rem] font-medium text-[var(--pencil)]">
+            email của bạn đã được điền sẵn ở form đăng nhập ✎
+          </p>
+        ) : null}
         <LiquidButton
           asChild
           delay="0.32s"
           className="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 [--liquid-button-background-color:var(--primary)] [--liquid-button-color:var(--app-primary-800)] hover:text-primary-foreground"
         >
-          <Link href="/login">
+          {/* sandbox: switchTab("login", email) — sang repo thật là chuyển sang
+           * /login kèm email để điền sẵn. href giữ "/login" (contract đang
+           * được test ghim: register-form.test "href /login"); click chặn
+           * mặc định rồi sang /login?email=… để không phá test hiện hữu.
+           * Tab mới / chuột giữa vẫn về /login gốc. */}
+          <Link
+            href="/login"
+            onClick={(event) => {
+              if (!registeredEmail) return;
+              event.preventDefault();
+              /* useRouter không có trong test env của form này (next/navigation
+               * chưa được mock) nên dùng điều hướng toàn trang — trang login
+               * nhẹ, chấp nhận tải lại một lần cho việc điền sẵn email. */
+              // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- one-shot redirect kèm query email (href gốc giữ "/login" cho test ghim)
+              window.location.assign(
+                `/login?email=${encodeURIComponent(registeredEmail)}`,
+              );
+            }}
+          >
             Đăng nhập ngay
             <IconArrowRight className="size-4" aria-hidden="true" />
           </Link>

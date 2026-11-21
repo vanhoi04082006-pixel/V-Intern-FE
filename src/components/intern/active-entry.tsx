@@ -19,6 +19,7 @@ import {
 } from "@/components/v-intern/icons";
 import { StarDoodle, Tape } from "@/components/v-intern/doodles";
 import { ChartFrame } from "@/components/notebook/kit";
+import { InkCountUp } from "@/components/v-intern/motion";
 import { NoteCard, StampMoc } from "@/components/workspace/notebook";
 import { listTasks, type Task } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
@@ -79,6 +80,11 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
             )}
             {currentSprint && (
               <StudentChip icon={IconSquareKanban} tone="blue">
+                {/* v3: chấm "ws-dot-live" pulsing khi sprint đang chạy — dấu
+                    hiệu "trang này đang viết tiếp" của sandbox (journey.css). */}
+                {sprintStatusLabel(currentSprint.status).tone === "blue" && (
+                  <span className="ws-dot-live" aria-hidden="true" />
+                )}
                 {currentSprint.code} ·{" "}
                 {sprintStatusLabel(currentSprint.status).label}
               </StudentChip>
@@ -114,41 +120,45 @@ export function ActiveEntry({ workspace }: { workspace: InternWorkspace }) {
           </div>
         </div>
         <div className="student-placement-progress">
-          <StudentProgress value={completed} label="Tiến độ thực tập" />
+          {/* v3: phần trăm tiến độ đếm dần bằng mực (InkCountUp) — giá trị
+              cuối vẫn là con số thật tính từ taskSummary của API. */}
+          <StudentProgress value={completed} label="Tiến độ thực tập" countUp />
         </div>
       </section>
 
       <div className="student-metrics" role="group" aria-label="Tổng quan nhiệm vụ">
+        {/* v3: năm ô số liệu đếm dần như người viết tay điền số (InkCountUp) —
+            dữ liệu vẫn là taskSummary thật của workspace payload. */}
         <StudentMetric
           icon={IconClipboardCheck}
           label="Tất cả nhiệm vụ"
-          value={taskSummary.total}
+          value={<InkCountUp value={taskSummary.total} />}
           hint="Công việc được giao"
         />
         <StudentMetric
           icon={IconListTodo}
           label="Cần bắt đầu"
-          value={taskSummary.todo}
+          value={<InkCountUp value={taskSummary.todo} />}
           hint="Đọc yêu cầu trước khi làm"
           tone="slate"
         />
         <StudentMetric
           icon={IconCircleDot}
           label="Đang thực hiện"
-          value={taskSummary.doing}
+          value={<InkCountUp value={taskSummary.doing} />}
           hint="Duy trì nhịp làm việc"
         />
         <StudentMetric
           icon={IconHourglass}
           label="Chờ phản hồi"
-          value={taskSummary.review}
+          value={<InkCountUp value={taskSummary.review} />}
           hint="Đang chờ giảng viên duyệt"
           tone="amber"
         />
         <StudentMetric
           icon={IconCircleCheck}
           label="Đã hoàn thành"
-          value={taskSummary.done}
+          value={<InkCountUp value={taskSummary.done} />}
           hint="Được giảng viên xác nhận"
           tone="green"
         />

@@ -173,7 +173,9 @@ function KanbanColumn({
         ) : data.error ? (
           <ErrorState error={data.error} onRetry={data.reload} />
         ) : !data.data?.items.length ? (
-          <p className="student-board-empty m-3">
+          /* v3: chữ trống cột viết tay (font-hand) — mực của sinh viên tự
+             ghi chú lên bảng sprint; nội dung hướng dẫn giữ nguyên. */
+          <p className="student-board-empty m-3 font-hand">
             {
               {
                 todo: "Chưa có công việc cần bắt đầu.",

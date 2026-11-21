@@ -1,12 +1,13 @@
 "use client";
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import * as api from "@/lib/api/admin";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { IconArrowUpRight, IconCircleCheck, IconClock, IconTimer } from "@/components/v-intern/icons";
+import { IconArrowUpRight, IconCircleCheck, IconCheck, IconClock, IconTimer } from "@/components/v-intern/icons";
+import { VEdit, VLock, VShield } from "@/components/icons/v-icons";
 import {
   Badge,
   buttonClass,
@@ -29,6 +30,7 @@ import { AdminSystemStatus } from '@/components/admin/system-status';
 import { linkButtonClass, TimelineItem } from '@/components/admin/ui-bits';
 import { StampMoc } from "@/components/workspace/notebook";
 import { CheckDoodle, Tape } from "@/components/v-intern/doodles";
+import { ChartFrame, FilterChips, RowMenuButton } from "@/components/notebook/kit";
 function Result<T>({
   resource: r,
   children,
@@ -53,6 +55,281 @@ const userStatusLabels: Record<string, string> = {
   deleted: "Đã xóa",
 };
 const userStatusOptions = ["active", "pending", "locked", "deleted"] as const;
+type AdminUserRow = ReturnType<typeof api.parseUser>;
+
+/** Ảnh chữ đầu (chữ cái các từ cuối của tên hiển thị) — suy ra từ dữ liệu thật. */
+function initialsOf(name: string) {
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .slice(-2)
+      .map((part) => part[0])
+      .join("") || "?"
+  );
+}
+
+/* Mực cho từng cung donut — cùng bảng tone workspace-chart (loaded qua
+ * workspace.css trong admin layout) để ăn nhập với trang khác của repo. */
+const USER_STATUS_TONES: Record<string, "neutral" | "primary" | "warning" | "success"> = {
+  active: "success",
+  pending: "warning",
+  locked: "neutral",
+  deleted: "neutral",
+};
+
+/** Donut cơ cấu trạng thái tài khoản — SVG dựng tay theo công thức của
+ * workspace-charts.tsx (TaskDistribution): cung dash-offset, chú giải bấm
+ * được làm bảng dữ liệu keyboard-accessible, tâm hiển thị tổng/đang chọn.
+ * Dữ liệu 100% thật: trang đầu tiên của danh sách người dùng. */
+function AccountDistributionDonut({ users }: { users: AdminUserRow[] }) {
+  const id = useId();
+  const [selection, setSelection] = useState<string | null>(null);
+  const counts = useMemo(() => {
+    const map = new Map<string, number>();
+    users.forEach((u) => map.set(u.status, (map.get(u.status) ?? 0) + 1));
+    return [...map.entries()];
+  }, [users]);
+  const total = counts.reduce((n, [, value]) => n + value, 0);
+  const radius = 62;
+  const circumference = 2 * Math.PI * radius;
+  const segments = counts.map(([status, value], index) => ({
+    status,
+    value,
+    tone: USER_STATUS_TONES[status] ?? "neutral",
+    length: total ? (value / total) * circumference : 0,
+    offset:
+      total
+        ? (counts.slice(0, index).reduce((n, [, v]) => n + v, 0) / total) *
+          circumference
+        : 0,
+  }));
+  const selected = counts.find(([status]) => status === selection);
+  const labelOf = (status: string) => userStatusLabels[status] ?? status;
+  return (
+    <figure className="workspace-chart" aria-labelledby={id}>
+      <figcaption id={id}>
+        Phân bố trạng thái tài khoản
+        <span>
+          Trang đầu tiên · {users.length} bản ghi
+        </span>
+      </figcaption>
+      <div className="workspace-donut-layout">
+        <div className="workspace-donut" aria-hidden="true">
+          <svg viewBox="0 0 160 160" fill="none">
+            <circle cx="80" cy="80" r={radius} stroke="var(--ws-line)" strokeWidth="15" />
+            {segments
+              .filter((item) => item.value > 0)
+              .map((item) => (
+                <circle
+                  key={item.status}
+                  className="workspace-donut-segment"
+                  data-tone={item.tone}
+                  data-dimmed={
+                    selection && selection !== item.status ? "true" : undefined
+                  }
+                  cx="80"
+                  cy="80"
+                  r={radius}
+                  strokeWidth={selection === item.status ? 19 : 15}
+                  strokeDasharray={`${item.length} ${circumference}`}
+                  strokeDashoffset={-item.offset}
+                  transform="rotate(-90 80 80)"
+                />
+              ))}
+          </svg>
+          <div className="workspace-donut-center">
+            <strong>{selected?.[1] ?? total}</strong>
+            <span>
+              {selected ? labelOf(selected[0]) : "tài khoản"}
+            </span>
+          </div>
+        </div>
+        <div className="workspace-chart-data">
+          <ul className="workspace-chart-legend">
+            {segments.map((item) => (
+              <li key={item.status}>
+                <button
+                  type="button"
+                  aria-pressed={selection === item.status}
+                  onClick={() =>
+                    setSelection(
+                      selection === item.status ? null : item.status,
+                    )
+                  }
+                >
+                  <i data-tone={item.tone} aria-hidden="true" />
+                  <span>{labelOf(item.status)}</span>
+                  <strong>{item.value}</strong>
+                  <small>{total ? Math.round((item.value / total) * 100) : 0}%</small>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p className="workspace-chart-selection" aria-live="polite" aria-atomic="true">
+            {selected
+              ? `${labelOf(selected[0])}: ${selected[1]} / ${total} tài khoản. Chọn lại để xem tổng.`
+              : `${total} tài khoản trong trang đầu tiên của danh sách. Chọn trạng thái để xem tỷ trọng.`}
+          </p>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/** Menu ⋯ trên dòng người dùng — nút tròn mực (RowMenuButton của notebook kit)
+ * + popover native theo đúng công thức product/row-menu.tsx: focus menuitem
+ * đầu khi mở, bấm ngoài/Escape đóng lại và trả focus về nút. Chỉ chứa những
+ * thao tác đã có sẵn handler thật trên trang (sửa, khóa/mở khóa). */
+function UserRowMenu({
+  user,
+  disabled,
+  onEdit,
+  onSetStatus,
+}: {
+  user: AdminUserRow;
+  disabled: boolean;
+  onEdit: () => void;
+  onSetStatus: (status: "locked" | "active") => void;
+}) {
+  const [open, setOpen] = useState(false);
+  /* RowMenuButton (kit dùng chung) không nhận ref qua prop nên bọc span
+     quanh nút và tìm nút trong DOM — hộp neo đúng vị trí nút tròn mực. */
+  const wrapper = useRef<HTMLSpanElement>(null);
+  const menu = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ left: 8, top: 8 });
+  const triggerButton = () =>
+    wrapper.current?.querySelector<HTMLButtonElement>("button") ?? null;
+  const close = useCallback((restoreFocus = false) => {
+    menu.current?.hidePopover?.();
+    setOpen(false);
+    if (restoreFocus) triggerButton()?.focus({ preventScroll: true });
+  }, []);
+  const place = useCallback(() => {
+    if (!wrapper.current || !menu.current) return;
+    const anchor = wrapper.current.getBoundingClientRect();
+    const popup = menu.current.getBoundingClientRect();
+    const width = popup.width || Math.min(176, window.innerWidth - 16);
+    const left = Math.max(
+      8,
+      Math.min(anchor.right - width, window.innerWidth - width - 8),
+    );
+    const top =
+      anchor.bottom + popup.height + 4 <= window.innerHeight - 8
+        ? anchor.bottom + 4
+        : Math.max(8, anchor.top - popup.height - 4);
+    setPosition((old) =>
+      old.left === left && old.top === top ? old : { left, top },
+    );
+  }, []);
+  useLayoutEffect(() => {
+    if (!open) return;
+    place();
+    const targets = menu.current?.querySelectorAll<HTMLElement>('[role="menuitem"]');
+    targets?.[0]?.focus({ preventScroll: true });
+  }, [open, place]);
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !menu.current?.contains(event.target) &&
+        !wrapper.current?.contains(event.target)
+      )
+        close();
+    };
+    const scrolled = (event: Event) => {
+      if (event.target instanceof Node && !menu.current?.contains(event.target))
+        close();
+    };
+    document.addEventListener("pointerdown", outside);
+    window.addEventListener("scroll", scrolled, true);
+    window.addEventListener("resize", place);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      window.removeEventListener("scroll", scrolled, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [open, close, place]);
+  function show() {
+    setOpen(true);
+    menu.current?.showPopover?.();
+  }
+  function navigate(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape" || event.key === "Tab") {
+      if (event.key === "Escape") event.preventDefault();
+      close(true);
+      return;
+    }
+    const targets = [
+      ...(menu.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []),
+    ];
+    if (!targets.length || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key))
+      return;
+    event.preventDefault();
+    const current = targets.findIndex((target) => target === document.activeElement);
+    const next =
+      event.key === "Home" ? 0 : event.key === "End" ? targets.length - 1
+        : (current + (event.key === "ArrowDown" ? 1 : -1) + targets.length) % targets.length;
+    targets[next]?.focus({ preventScroll: true });
+  }
+  const itemClass =
+    "flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-caption text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
+  const entries: { icon: typeof VEdit; label: string; onSelect: () => void }[] = [
+    { icon: VEdit, label: "Sửa tài khoản", onSelect: onEdit },
+    {
+      icon: user.status === "locked" ? VShield : VLock,
+      label: user.status === "locked" ? "Mở khóa tài khoản" : "Khóa tài khoản",
+      onSelect: () => onSetStatus(user.status === "locked" ? "active" : "locked"),
+    },
+  ];
+  return (
+    <span ref={wrapper} className="relative inline-block">
+      <RowMenuButton
+        label={"Thao tác với tài khoản " + user.displayName}
+        disabled={disabled}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => {
+          if (open) close(true);
+          else show();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            show();
+          }
+        }}
+      />
+      <div
+        ref={menu}
+        popover="auto"
+        role="menu"
+        onKeyDown={navigate}
+        onToggle={(event) => setOpen(event.newState === "open")}
+        className="z-50 w-44 max-w-[calc(100vw-1rem)] max-h-[min(20rem,calc(100dvh-1rem))] overflow-y-auto rounded-control border border-primary bg-card p-1 shadow-popover"
+        style={{ position: "fixed", inset: "auto", margin: 0, ...position, display: open ? undefined : "none" }}
+      >
+        {entries.map((entry) => (
+          <button
+            key={entry.label}
+            type="button"
+            role="menuitem"
+            tabIndex={-1}
+            className={itemClass}
+            onClick={() => {
+              close(true);
+              entry.onSelect();
+            }}
+          >
+            <entry.icon size={15} aria-hidden="true" />
+            {entry.label}
+          </button>
+        ))}
+      </div>
+    </span>
+  );
+}
 
 export function AdminOverview() {
   const counts = useResource(
@@ -63,9 +340,15 @@ export function AdminOverview() {
         api.listRoles(1, s),
         api.listAudits(1, {}, s),
       ]);
-      return results.map((x) => x.total);
+      // Giữ lại trang đầu tiên của danh sách người dùng (dữ liệu thật) cho
+      // donut phân bố trạng thái và thẻ CTA "chờ duyệt"; tổng số vẫn hiển thị
+      // nguyên vẹn qua CollectionMetrics.
+      return { totals: results.map((x) => x.total), users: results[0].items };
     }, []),
   );
+  const pendingOnFirstPage = counts.data
+    ? counts.data.users.filter((u) => u.status === "pending").length
+    : 0;
   return (
     <>
       <PageTitle
@@ -77,7 +360,17 @@ export function AdminOverview() {
       />
       <Result resource={counts}>
         {(c) => (
-          <CollectionMetrics values={[["Người dùng", c[0]], ["Nhóm", c[1]], ["Vai trò", c[2]], ["Bản ghi audit", c[3]]]} />
+          <>
+            <CollectionMetrics values={[["Người dùng", c.totals[0]], ["Nhóm", c.totals[1]], ["Vai trò", c.totals[2]], ["Bản ghi audit", c.totals[3]]]} />
+            {/* Donut phân bố trạng thái — chỉ dựng khi có dữ liệu thật trên
+                trang đầu tiên; payload không có chuỗi hoạt động theo ngày nên
+                không vẽ area chart 14 ngày (không bịa số liệu). */}
+            {c.users.length > 0 && (
+              <ChartFrame className="mt-6">
+                <AccountDistributionDonut users={c.users} />
+              </ChartFrame>
+            )}
+          </>
         )}
       </Result>
       <div className="admin-overview-grid">
@@ -93,6 +386,8 @@ export function AdminOverview() {
               ["catalogs", "Danh mục hệ thống"],
               ["services", "Kiểm tra dịch vụ"],
               ["audit", "Tra cứu audit"],
+              ["questions", "Ngân hàng câu hỏi"],
+              ["templates", "Thư viện project template"],
             ].map(([href, label]) => (
               <Link
                 key={href}
@@ -112,6 +407,26 @@ export function AdminOverview() {
               Phân quyền, cấu hình và nhật ký hệ thống đều được kiểm soát tại đây.
             </p>
           </aside>
+          {/* Tài khoản chờ duyệt — viền kiến đang đi vòng (ants-border), chỉ
+              hiện khi trang đầu tiên có tài khoản chờ thật; đếm theo trang. */}
+          {pendingOnFirstPage > 0 && (
+            <Link
+              href="/admin/users?status=pending"
+              className="admin-pending-cta ants-border"
+              style={{ "--ants-color": "var(--warning)" } as CSSProperties}
+            >
+              <span className="admin-pending-cta-num">{pendingOnFirstPage}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-small font-bold text-foreground">
+                  Tài khoản chờ duyệt
+                </span>
+                <span className="block text-caption text-muted-foreground">
+                  Xem trong trang Người dùng · đếm theo trang đầu tiên
+                </span>
+              </span>
+              <IconArrowUpRight size={17} className="shrink-0 text-[var(--warning)]" aria-hidden />
+            </Link>
+          )}
         </section>
       </div>
     </>
@@ -225,11 +540,26 @@ export function AdminUsers() {
   const [notice, setNotice] = useState("");
   const [page, setPage] = useState(1),
     [q, setQ] = useState(""),
-    [status, setStatus] = useState(""),
+    /* Bộ lọc trạng thái khởi tạo từ URL (?status=pending) — dùng cho CTA
+       "Tài khoản chờ duyệt" trên trang tổng quan. Trang admin nằm sau
+       WorkspaceGuard nên chỉ render trên client: đọc window an toàn,
+       không gây lệch hydration. Chỉ chấp nhận mã trạng thái thật. */
+    [status, setStatus] = useState(() => {
+      const value =
+        typeof window === "undefined"
+          ? null
+          : new URLSearchParams(window.location.search).get("status");
+      return value && (userStatusOptions as readonly string[]).includes(value)
+        ? value
+        : "";
+    }),
     [roleCode, setRoleCode] = useState(""),
     [rolePage, setRolePage] = useState(1),
     [create, setCreate] = useState(false),
     [edit, setEdit] = useState<ReturnType<typeof api.parseUser>>();
+  /* Id của dòng vừa được duyệt nhanh — bật dấu tick vẽ dần (draw-check)
+     trong ~1.8s như đầu bài đã chấm xong. */
+  const [approved, setApproved] = useState<string | null>(null);
   const users = useResource(
       useCallback(
         (s: AbortSignal) => api.listUsers(page, q, status, s, roleCode),
@@ -243,6 +573,18 @@ export function AdminUsers() {
       [rolePage],
     ),
   );
+  const rowBusy = (u: AdminUserRow) => action.busy || u.id === getSessionUser()?.id;
+  const approve = (u: AdminUserRow) =>
+    void action.run(async () => {
+      await api.setUserStatus(u.id, "active");
+      setApproved(u.id);
+      window.setTimeout(
+        () => setApproved((current) => (current === u.id ? null : current)),
+        1800,
+      );
+    });
+  const rowSetStatus = (u: AdminUserRow, next: "locked" | "active") =>
+    void action.run(() => api.setUserStatus(u.id, next));
   return (
     <>
       <PageTitle
@@ -285,27 +627,31 @@ export function AdminUsers() {
       )}
       <div className="admin-collection-layout">
         <Panel title="Tài khoản">
-          <div className="mb-4">
-            <select
-              aria-label="Lọc vai trò người dùng"
-              className={inputClass}
-              value={roleCode}
-              onChange={(e) => {
-                setRoleCode(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">Tất cả vai trò</option>
-              {roleOptions.data?.items.map((r) => (
-                <option key={r.id} value={r.code}>
-                  {r.name}
-                </option>
-              ))}
-              {roleCode &&
-                !roleOptions.data?.items.some((r) => r.code === roleCode) && (
-                  <option value={roleCode}>{roleCode}</option>
-                )}
-            </select>
+          {/* Bộ lọc dạng chip vẽ tay (FilterChips — notebook kit) thay cho hai
+              select trần; giữ nguyên ngữ nghĩa lọc phía máy chủ. */}
+          <div className="mb-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="eyebrow shrink-0 text-[0.6rem]!">Vai trò</span>
+              <FilterChips
+                ariaLabel="Lọc theo vai trò người dùng"
+                options={[
+                  { value: "", label: "Tất cả vai trò" },
+                  ...(roleOptions.data?.items ?? []).map((r) => ({
+                    value: r.code,
+                    label: r.name,
+                  })),
+                  ...(roleCode &&
+                  !roleOptions.data?.items.some((r) => r.code === roleCode)
+                    ? [{ value: roleCode, label: roleCode }]
+                    : []),
+                ]}
+                value={roleCode}
+                onChange={(v) => {
+                  setRoleCode(v);
+                  setPage(1);
+                }}
+              />
+            </div>
             {Boolean(roleOptions.error) && (
               <ErrorState
                 error={roleOptions.error}
@@ -313,36 +659,40 @@ export function AdminUsers() {
               />
             )}
             {roleOptions.data && roleOptions.data.totalPages > 1 && (
-              <Pager {...roleOptions.data} onChange={setRolePage} />
+              <Pager {...roleOptions.data} onChange={setRolePage} unit="vai trò" />
             )}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                className={inputClass}
+                aria-label="Tìm người dùng"
+                placeholder="Tìm tên, email hoặc username…"
+                value={q}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  setPage(1);
+                }}
+              />
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="eyebrow shrink-0 text-[0.6rem]!">Trạng thái</span>
+                <FilterChips
+                  ariaLabel="Lọc theo trạng thái người dùng"
+                  options={[
+                    { value: "", label: "Tất cả" },
+                    ...userStatusOptions.map((s) => ({
+                      value: s,
+                      label: userStatusLabels[s],
+                    })),
+                  ]}
+                  value={status}
+                  onChange={(v) => {
+                    setStatus(v);
+                    setPage(1);
+                  }}
+                />
+              </div>
+            </div>
           </div>
           {Boolean(action.error) && <ErrorState error={action.error} />}
-          <div className="mb-4 grid gap-3 sm:grid-cols-2">
-            <input
-              className={inputClass}
-              aria-label="Tìm người dùng"
-              placeholder="Tìm tên, email hoặc username…"
-              value={q}
-              onChange={(e) => {
-                setQ(e.target.value);
-                setPage(1);
-              }}
-            />
-            <select
-              className={inputClass}
-              aria-label="Trạng thái người dùng"
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">Tất cả trạng thái</option>
-              {userStatusOptions.map((s) => (
-                <option key={s} value={s}>{userStatusLabels[s]}</option>
-              ))}
-            </select>
-          </div>
           <Result resource={users}>
             {(data) => (
               <>
@@ -366,39 +716,62 @@ export function AdminUsers() {
                       </thead>
                       <tbody>
                         {data.items.map((u) => (
-                          <tr key={u.id}>
+                          <tr
+                            key={u.id}
+                            className={u.status === "locked" ? "admin-user-row-locked" : undefined}
+                          >
                             <td className={tdClass}>
-                              <strong className="block text-foreground">
-                                {u.displayName}
-                              </strong>
-                              <span className="text-caption text-muted-foreground">
-                                {u.email}
-                              </span>
+                              <div className="flex items-center gap-3">
+                                {/* Ảnh chữ đầu suy ra từ tên thật; dòng khóa tô đỏ. */}
+                                <span
+                                  aria-hidden="true"
+                                  className="admin-user-avatar"
+                                  data-locked={u.status === "locked" ? "true" : undefined}
+                                >
+                                  {initialsOf(u.displayName)}
+                                </span>
+                                <div className="min-w-0">
+                                  <strong className="block text-foreground">
+                                    {u.displayName}
+                                  </strong>
+                                  <span className="text-caption text-muted-foreground">
+                                    {u.email}
+                                  </span>
+                                </div>
+                              </div>
                             </td>
                             <td className={tdClass}>{u.username}</td>
                             <td className={tdClass}>
-                              <Badge
-                                tone={
-                                  u.status === "locked" || u.status === "deleted"
-                                    ? "red"
-                                    : undefined
-                                }
-                              >
-                                {userStatusLabels[u.status] ?? u.status}
-                              </Badge>
-                              {/* Trạng thái cuối vòng đời (khóa/xóa) được đóng
-                                  mộc đỏ đậm — hành chính "đã chốt", không thể
-                                  đảo ngược; trạng thái khác giữ badge mềm. */}
-                              {(u.status === "locked" || u.status === "deleted") && (
-                                <StampMoc
-                                  tone="red"
-                                  size="sm"
-                                  rotate={-6}
-                                  className="nb-moc-allowed ml-2 align-middle"
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge
+                                  tone={
+                                    u.status === "locked" || u.status === "deleted"
+                                      ? "red"
+                                      : undefined
+                                  }
                                 >
                                   {userStatusLabels[u.status] ?? u.status}
-                                </StampMoc>
-                              )}
+                                </Badge>
+                                {/* Trạng thái cuối vòng đời (khóa/xóa) được đóng
+                                    mộc đỏ đậm — hành chính "đã chốt", không thể
+                                    đảo ngược; trạng thái khác giữ badge mềm. */}
+                                {(u.status === "locked" || u.status === "deleted") && (
+                                  <StampMoc
+                                    tone="red"
+                                    size="sm"
+                                    rotate={-6}
+                                    className="nb-moc-allowed ml-2 align-middle"
+                                  >
+                                    {userStatusLabels[u.status] ?? u.status}
+                                  </StampMoc>
+                                )}
+                                {/* Dấu tick mực vẽ dần ngay sau khi duyệt nhanh. */}
+                                {approved === u.id && (
+                                  <span className="draw-check" aria-hidden="true">
+                                    <IconCircleCheck size={16} className="text-success" />
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             <td className={tdClass}>
                               {u.lastLoginAt
@@ -409,6 +782,28 @@ export function AdminUsers() {
                             </td>
                             <td className={tdClass}>
                               <div className="flex flex-col items-end gap-2">
+                                <div className="flex flex-wrap items-center justify-end gap-2">
+                                  {/* Duyệt nhanh tài khoản chờ kích hoạt — dùng
+                                      handler thật (setUserStatus "active"). */}
+                                  {u.status === "pending" && (
+                                    <button
+                                      type="button"
+                                      className="admin-approve-btn"
+                                      disabled={rowBusy(u)}
+                                      aria-label={"Duyệt tài khoản " + u.displayName}
+                                      onClick={() => approve(u)}
+                                    >
+                                      <IconCheck size={14} aria-hidden />
+                                      Duyệt
+                                    </button>
+                                  )}
+                                  <UserRowMenu
+                                    user={u}
+                                    disabled={rowBusy(u)}
+                                    onEdit={() => { setNotice(""); setEdit(u); }}
+                                    onSetStatus={(next) => rowSetStatus(u, next)}
+                                  />
+                                </div>
                                 <button
                                   className={`${linkButtonClass} text-primary hover:underline underline-offset-4`}
                                   onClick={() => { setNotice(""); setEdit(u); }}
