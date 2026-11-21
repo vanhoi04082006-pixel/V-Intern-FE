@@ -10,6 +10,7 @@ const api = vi.hoisted(() => ({
   submitApplication: vi.fn(),
   requestApplicationAccess: vi.fn(),
   supplementCv: vi.fn(),
+  downloadMyCv: vi.fn(),
   leaveCandidateSession: vi.fn(),
 }));
 vi.mock("@/lib/api/applications", async () => ({
@@ -119,4 +120,24 @@ it("processes a verification link opened in the same already-mounted application
   expect(
     await screen.findByText("CV scan cần bản văn bản; chưa có OCR."),
   ).toBeInTheDocument();
+});
+it("lets a submitted candidate re-download their own CV (GET /applications/me/cv)", async () => {
+  /* Master prompt V6 Phase E/P3: BE có GET /applications/me/cv nhưng trước đó
+   * không có nút nào dùng downloadMyCv. Regression: hasCv → nút "Tải lại CV đã
+   * nộp" gọi đúng capability cookie công khai và tải blob về máy ứng viên. */
+  api.downloadMyCv.mockResolvedValue(new Blob(["%PDF-fixture"], { type: "application/octet-stream" }));
+  const createObjectURL = vi.fn(() => "blob:cv-fixture");
+  const revokeObjectURL = vi.fn();
+  vi.stubGlobal("URL", Object.assign(URL, { createObjectURL, revokeObjectURL }));
+  api.myApplication.mockResolvedValue({ ...candidate, status: "waitlisted" });
+  render(<PublicApplication />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Tải lại CV đã nộp" }),
+  );
+  await waitFor(() => expect(api.downloadMyCv).toHaveBeenCalledOnce());
+  await waitFor(() =>
+    expect(createObjectURL).toHaveBeenCalledWith(expect.any(Blob)),
+  );
+  expect(screen.getByRole("button", { name: "Cập nhật tiến trình" })).toBeInTheDocument();
+  vi.unstubAllGlobals();
 });

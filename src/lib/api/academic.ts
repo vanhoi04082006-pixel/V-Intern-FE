@@ -135,6 +135,21 @@ export const getProjectSlots = (projectId: string, signal?: AbortSignal) =>
   request(`/projects/${encodeURIComponent(projectId)}/slots`, (x) => array(record(x).slots, parseSlot), {
     signal,
   });
+/**
+ * PUT /projects/:id/slots — thay toàn bộ vị trí vai trò của dự án
+ * (projects.manage — mentor quản lý, có audit). BE: roleCode + requiredCount
+ * 1..50, tối đa 20 slot. Master prompt V6 Phase E: capability BE có từ trước
+ * nhưng FE chưa từng có UI thao tác.
+ */
+export const setProjectSlots = (
+  projectId: string,
+  slots: Array<{ roleCode: string; requiredCount: number }>,
+) =>
+  request(
+    `/projects/${encodeURIComponent(projectId)}/slots`,
+    (x) => array(record(x).slots, parseSlot),
+    { method: "PUT", body: { slots } },
+  );
 
 /** M5 Start Session: explicit status transition (preconditions enforced server-side). */
 export const transitionSession = (id: string, status: string) =>

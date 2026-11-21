@@ -263,6 +263,11 @@ const globals = [
 /* --- gộp tương tác vào stats --- */
 const interactionsAll = audit.interactions ?? [];
 const interactionsPassed = interactionsAll.filter((i) => i.ok).length;
+/* Biến thể trạng thái (loading/empty/error) — lấy từ globals entry
+ * "state-variants" (bằng chứng global chụp riêng theo scenario preview). */
+const variants =
+  globals.find((g) => typeof g.file === "string" && g.file.startsWith("state-variants"))
+    ?.evidence ?? [];
 
 const stats = {
   routesTotal: routes.length,

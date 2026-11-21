@@ -1,11 +1,11 @@
 # Bản đồ route Frontend
 
-Đối chiếu **80 file `src/app/**/page.tsx`** ngày 02/11/2026:
+Đối chiếu **81 file `src/app/**/page.tsx`** ngày 02/11/2026:
 
 | Nhóm | Số route | Ghi chú |
 |---|---:|---|
 | Công khai / auth | 8 | Landing, đăng nhập, đăng ký, ứng tuyển, xác minh |
-| Admin | 31 | Console quản trị |
+| Admin | 32 | Console quản trị |
 | Giảng viên | 18 | Trong đó `/instructor/classes` là redirect |
 | Sinh viên | 23 | Onboarding + workspace học tập |
 
@@ -43,6 +43,7 @@
 | `/admin/kpi` | [page](../src/app/admin/kpi/page.tsx) | `admin/kpi-console` |
 | `/admin/notifications` | [page](../src/app/admin/notifications/page.tsx) | `product/outcomes` |
 | `/admin/performance` | [page](../src/app/admin/performance/page.tsx) | `product/member-performance` |
+| `/admin/evaluations` | [page](../src/app/admin/evaluations/page.tsx) | `product/evaluation-management` (ScoreEditor + RevisionModal — admin điều chỉnh điểm đã chốt, spec 14) |
 | `/admin/profile` | [page](../src/app/admin/profile/page.tsx) | `product/outcomes` |
 | `/admin/questions` | [page](../src/app/admin/questions/page.tsx) | `admin/question-bank` |
 | `/admin/recruitment-rounds` | [page](../src/app/admin/recruitment-rounds/page.tsx) | `applications/recruitment-rounds` |

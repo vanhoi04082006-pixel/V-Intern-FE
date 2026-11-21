@@ -1,8 +1,9 @@
 "use client";
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import * as api from "@/lib/api/admin";
+import { getAdminDashboard } from "@/lib/api/dashboard";
 import { useResource } from "@/lib/api/use-resource";
 import { getSessionUser } from "@/lib/auth/session";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -81,15 +82,13 @@ const USER_STATUS_TONES: Record<string, "neutral" | "primary" | "warning" | "suc
 /** Donut cơ cấu trạng thái tài khoản — SVG dựng tay theo công thức của
  * workspace-charts.tsx (TaskDistribution): cung dash-offset, chú giải bấm
  * được làm bảng dữ liệu keyboard-accessible, tâm hiển thị tổng/đang chọn.
- * Dữ liệu 100% thật: trang đầu tiên của danh sách người dùng. */
-function AccountDistributionDonut({ users }: { users: AdminUserRow[] }) {
+ * Dữ liệu 100% thật: GET /dashboard/admin — đếm GROUP BY status trên SQL. */
+function AccountDistributionDonut({ rows }: { rows: { status: string; count: number }[] }) {
   const id = useId();
   const [selection, setSelection] = useState<string | null>(null);
-  const counts = useMemo(() => {
-    const map = new Map<string, number>();
-    users.forEach((u) => map.set(u.status, (map.get(u.status) ?? 0) + 1));
-    return [...map.entries()];
-  }, [users]);
+  /* BE /dashboard/admin trả về đếm trạng thái chính xác cho TOÀN hệ thống
+   * (GROUP BY status trên SQL) — không còn xấp xỉ từ trang đầu tiên. */
+  const counts = rows.filter((r) => r.count > 0).map((r) => [r.status, r.count] as [string, number]);
   const total = counts.reduce((n, [, value]) => n + value, 0);
   const radius = 62;
   const circumference = 2 * Math.PI * radius;
@@ -111,7 +110,7 @@ function AccountDistributionDonut({ users }: { users: AdminUserRow[] }) {
       <figcaption id={id}>
         Phân bố trạng thái tài khoản
         <span>
-          Trang đầu tiên · {users.length} bản ghi
+          Toàn hệ thống · {total} tài khoản
         </span>
       </figcaption>
       <div className="workspace-donut-layout">
@@ -332,22 +331,15 @@ function UserRowMenu({
 }
 
 export function AdminOverview() {
-  const counts = useResource(
-    useCallback(async (s: AbortSignal) => {
-      const results = await Promise.all([
-        api.listUsers(1, "", "", s),
-        api.listGroups(1, "", s),
-        api.listRoles(1, s),
-        api.listAudits(1, {}, s),
-      ]);
-      // Giữ lại trang đầu tiên của danh sách người dùng (dữ liệu thật) cho
-      // donut phân bố trạng thái và thẻ CTA "chờ duyệt"; tổng số vẫn hiển thị
-      // nguyên vẹn qua CollectionMetrics.
-      return { totals: results.map((x) => x.total), users: results[0].items };
-    }, []),
+  /* Nguồn sự thật duy nhất: GET /dashboard/admin — aggregates SQL chính xác
+   * (userCount/instructorCount/internCount/activeSessions/aiRunsToday, đếm
+   * trạng thái GROUP BY, 5 người dùng mới nhất, vai trò kèm permissionCount,
+   * 6 hoạt động mới). Không tự tính số liệu từ trang đầu tiên của list nữa. */
+  const dashboard = useResource(
+    useCallback((s: AbortSignal) => getAdminDashboard(s), []),
   );
-  const pendingOnFirstPage = counts.data
-    ? counts.data.users.filter((u) => u.status === "pending").length
+  const pendingCount = dashboard.data
+    ? (dashboard.data.statuses.find((row) => row.status === "pending")?.count ?? 0)
     : 0;
   return (
     <>
@@ -358,18 +350,71 @@ export function AdminOverview() {
         title="Trang quản trị"
         subtitle="Tổng quan quản trị và hoạt động được ghi nhận trong hệ thống"
       />
-      <Result resource={counts}>
-        {(c) => (
+      <Result resource={dashboard}>
+        {(d) => (
           <>
-            <CollectionMetrics values={[["Người dùng", c.totals[0]], ["Nhóm", c.totals[1]], ["Vai trò", c.totals[2]], ["Bản ghi audit", c.totals[3]]]} />
-            {/* Donut phân bố trạng thái — chỉ dựng khi có dữ liệu thật trên
-                trang đầu tiên; payload không có chuỗi hoạt động theo ngày nên
-                không vẽ area chart 14 ngày (không bịa số liệu). */}
-            {c.users.length > 0 && (
+            <CollectionMetrics values={[
+              ["Người dùng", d.metrics.userCount],
+              ["Giảng viên", d.metrics.instructorCount],
+              ["Thực tập sinh", d.metrics.internCount],
+              ["Phiên đang chạy", d.metrics.activeSessions],
+              ["Chạy AI hôm nay", d.metrics.aiRunsToday],
+            ]} />
+            {/* Donut phân bố trạng thái — đếm chính xác toàn hệ thống từ BE
+                (không bịa, không xấp xỉ trang đầu). */}
+            {d.statuses.length > 0 && (
               <ChartFrame className="mt-6">
-                <AccountDistributionDonut users={c.users} />
+                <AccountDistributionDonut rows={d.statuses} />
               </ChartFrame>
             )}
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              <Panel title="Người dùng mới nhất">
+                <table className={tableClass}>
+                  <thead>
+                    <tr>
+                      <th className={thClass}>Tên hiển thị</th>
+                      <th className={thClass}>Email</th>
+                      <th className={thClass}>Trạng thái</th>
+                      <th className={thClass}>Đăng nhập cuối</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {d.users.map((u) => (
+                      <tr key={u.id}>
+                        <td className={tdClass}>{u.displayName}</td>
+                        <td className={tdClass}>{u.email}</td>
+                        <td className={tdClass}>
+                          <StatusDot tone={USER_STATUS_TONES[u.status] ?? "neutral"}>
+                            {userStatusLabels[u.status] ?? u.status}
+                          </StatusDot>
+                        </td>
+                        <td className={tdClass}>{u.lastLoginAt ?? "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Panel>
+              <Panel title="Vai trò & số quyền">
+                <table className={tableClass}>
+                  <thead>
+                    <tr>
+                      <th className={thClass}>Vai trò</th>
+                      <th className={thClass}>Mã</th>
+                      <th className={thClass}>Số quyền gắn</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {d.roles.map((r) => (
+                      <tr key={r.id}>
+                        <td className={tdClass}>{r.name}</td>
+                        <td className={tdClass}>{r.code}</td>
+                        <td className={tdClass}>{r.permissionCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Panel>
+            </div>
           </>
         )}
       </Result>
@@ -408,20 +453,21 @@ export function AdminOverview() {
             </p>
           </aside>
           {/* Tài khoản chờ duyệt — viền kiến đang đi vòng (ants-border), chỉ
-              hiện khi trang đầu tiên có tài khoản chờ thật; đếm theo trang. */}
-          {pendingOnFirstPage > 0 && (
+              hiện khi có tài khoản chờ thật; đếm chính xác toàn hệ thống
+              từ GET /dashboard/admin (GROUP BY status trên SQL). */}
+          {pendingCount > 0 && (
             <Link
               href="/admin/users?status=pending"
               className="admin-pending-cta ants-border"
               style={{ "--ants-color": "var(--warning)" } as CSSProperties}
             >
-              <span className="admin-pending-cta-num">{pendingOnFirstPage}</span>
+              <span className="admin-pending-cta-num">{pendingCount}</span>
               <span className="min-w-0 flex-1">
                 <span className="block text-small font-bold text-foreground">
                   Tài khoản chờ duyệt
                 </span>
                 <span className="block text-caption text-muted-foreground">
-                  Xem trong trang Người dùng · đếm theo trang đầu tiên
+                  Xem trong trang Người dùng · đếm toàn hệ thống
                 </span>
               </span>
               <IconArrowUpRight size={17} className="shrink-0 text-[var(--warning)]" aria-hidden />

@@ -40,6 +40,13 @@ import { SessionLifecycleActions } from "./session-lifecycle-actions";
 import { MemberPerformance } from "@/components/product/member-performance";
 import { ReportsWorkspace } from "./reports-workspace";
 import { InkCountUp } from "@/components/v-intern/motion";
+import { KpiTile } from "@/components/notebook/kit";
+import {
+  VLayers,
+  VListTodo,
+  VClipboardCheck,
+  VSparkles,
+} from "@/components/icons/v-icons";
 
 function snapshotItems(value: unknown): string[] {
   if (Array.isArray(value))
@@ -218,6 +225,8 @@ export function SessionOverview({
         <PageTitle
           title={session.name}
           eyebrow="PHIÊN THỰC TẬP"
+          stamp="LỚP"
+          stampTone="blue"
           subtitle={`${session.code} · ${session.status}${session.startDate ? ` · ${session.startDate.slice(0, 10)} → ${session.endDate?.slice(0, 10) ?? ""}` : ""}`}
           action={
             <Link
@@ -261,51 +270,43 @@ export function SessionOverview({
         />
       )}
 
-      <dl className="ins-session-stat-strip">
-        <div>
-          <dt>Sprint</dt>
-          <dd>
-            <InkCountUp value={session.overview.sprintCount} />
-            <span className="ins-stat-hint">
-              {session.sprintProgress.filter((s) => s.status === "active").length} đang chạy
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt>Nhiệm vụ</dt>
-          <dd>
-            <InkCountUp value={totalTasks} />
-            <span className="ins-stat-hint">
-              {progress.done} hoàn thành ({progress.percent}%)
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt>Còn lại</dt>
-          <dd>
-            <InkCountUp value={totalTasks - progress.done} />
-            <span className="ins-stat-hint">
-              {session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)}{" "}
-              chờ duyệt
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt>Kế hoạch AI</dt>
-          <dd className="ins-stat-text">
-            {plans.loading
+      {/* Journey v3: dải số liệu phiên — thẻ KPI sổ tay (nb3-kpi paper-grain,
+   * số đếm dần bằng mực InkCountUp) thay cho dải stat generic cũ. */}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiTile
+          icon={VLayers}
+          label="Sprint"
+          value={<InkCountUp value={session.overview.sprintCount} />}
+          sub={`${session.sprintProgress.filter((s) => s.status === "active").length} đang chạy`}
+          tape
+        />
+        <KpiTile
+          icon={VListTodo}
+          label="Nhiệm vụ"
+          value={<InkCountUp value={totalTasks} />}
+          sub={`${progress.done} hoàn thành (${progress.percent}%)`}
+        />
+        <KpiTile
+          icon={VClipboardCheck}
+          label="Còn lại"
+          value={<InkCountUp value={totalTasks - progress.done} />}
+          sub={`${session.sprintProgress.reduce((sum, s) => sum + s.taskReview, 0)} chờ duyệt`}
+        />
+        <KpiTile
+          icon={VSparkles}
+          label="Kế hoạch AI"
+          value={
+            plans.loading
               ? "Đang tải…"
               : plans.error
                 ? "không tải được"
                 : basePath === "/instructor"
                   ? instructorPlanStatus(plans.data?.[0]?.status ?? "chưa có")
-                  : (plans.data?.[0]?.status ?? "chưa có")}
-            <span className="ins-stat-hint">
-              {plans.data?.length ?? 0} bản kế hoạch
-            </span>
-          </dd>
-        </div>
-      </dl>
+                  : (plans.data?.[0]?.status ?? "chưa có")
+          }
+          sub={`${plans.data?.length ?? 0} bản kế hoạch`}
+        />
+      </div>
 
       {projectId && (
         <nav

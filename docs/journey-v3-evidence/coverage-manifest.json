@@ -1,8 +1,8 @@
 {
  "standard": "Journey Notebook v3 — FINAL ACCEPTANCE (đợt tái nghiệm thu độc lập)",
  "branch": "codex/product-acceptance-20261116",
- "commit": "519b130",
- "generatedAt": "2026-11-20T21:29:29.637Z",
+ "commit": "fc7b9d8",
+ "generatedAt": "2026-11-21T05:45:56.883Z",
  "generatedBy": "scripts/gen-journey-v3-manifest.mjs (tái tạo được từ browser-audit.json + route-api-map.json)",
  "environment": "Preview QA — next dev + NEXT_PUBLIC_PREVIEW=1 (mock API trong src/lib/preview/*). KHÔNG phải Real Backend E2E.",
  "acceptanceRule": "DONE chỉ khi: đủ bằng chứng browser cho route (đúng role, đúng route, dữ liệu đã tải, 3 viewport, ảnh thuộc đúng route). Redirect: URL cuối. Ngoại lệ: trạng thái riêng + giải thích kỹ thuật — không tính là PASS tự động.",
@@ -15,11 +15,11 @@
   "realBackendNote": "Toàn bộ bằng chứng là Preview QA trên mock API. KHÔNG tuyên bố Real Backend E2E PASS."
  },
  "stats": {
-  "routesTotal": 80,
-  "routesDone": 80,
+  "routesTotal": 81,
+  "routesDone": 81,
   "routesPartial": 0,
   "routesMissing": 0,
-  "uiRoutes": 79,
+  "uiRoutes": 80,
   "redirectRoutes": 1,
   "screenshots": 272,
   "viewports": [
@@ -29,7 +29,7 @@
   ],
   "interactionsTotal": 22,
   "interactionsPassed": 22,
-  "stateVariants": 6,
+  "stateVariants": 4,
   "globalsExempt": 3
  },
  "globals": [
@@ -675,6 +675,86 @@
    "redirect": null,
    "browser": {
     "finalUrl": "/admin/communications",
+    "state": "loaded",
+    "consoleErrors": 0,
+    "notMocked501": 0,
+    "http5xx": 0,
+    "overflowX": {
+     "1440x900": 0,
+     "768x1024": 0,
+     "390x844": 0
+    },
+    "dataLoad": "loaded"
+   },
+   "interactions": [],
+   "note": ""
+  },
+  {
+   "route": "/admin/evaluations",
+   "group": "admin",
+   "slug": "evaluations",
+   "role": {
+    "access": [
+     "admin"
+    ],
+    "auditedAs": "admin",
+    "account": "admin@vintern.preview"
+   },
+   "component": "product/evaluation-management (kỳ đánh giá + ScoreEditor + RevisionModal — admin hiệu chỉnh điểm đã chốt)",
+   "api": [
+    "GET /evaluation-cycles",
+    "POST /evaluation-cycles",
+    "PATCH /evaluation-cycles/:id",
+    "POST /evaluation-cycles/:id/status",
+    "GET /evaluation-cycles/:id/criteria",
+    "POST /evaluation-cycles/:id/criteria",
+    "PATCH /evaluation-cycles/:id/criteria/:criterionId",
+    "DELETE /evaluation-cycles/:id/criteria/:criterionId",
+    "GET /evaluations",
+    "POST /evaluations",
+    "GET /evaluations/:id",
+    "PATCH /evaluations/:id",
+    "POST /evaluations/:id/submit",
+    "POST /evaluations/:id/finalize",
+    "POST /evaluations/:id/ai-suggestions",
+    "GET /evaluations/:id/ai-suggestions",
+    "GET /evaluations/:id/ai-suggestions/:suggestionId",
+    "GET /imported-reviews",
+    "PATCH /imported-reviews/:id",
+    "POST /evaluations/:id/revisions"
+   ],
+   "perms": [
+    "evaluations.manage",
+    "evaluations.view",
+    "ai.evaluation.assist"
+   ],
+   "status": "DONE",
+   "evidence": [
+    {
+     "viewport": "1440x900",
+     "file": "docs/journey-v3-evidence/admin/evaluations-1440.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/evaluations",
+     "url": "/admin/evaluations"
+    },
+    {
+     "viewport": "768x1024",
+     "file": "docs/journey-v3-evidence/admin/evaluations-768.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/evaluations",
+     "url": "/admin/evaluations"
+    },
+    {
+     "viewport": "390x844",
+     "file": "docs/journey-v3-evidence/admin/evaluations-390.jpg",
+     "role": "admin",
+     "resolvedRoute": "/admin/evaluations",
+     "url": "/admin/evaluations"
+    }
+   ],
+   "redirect": null,
+   "browser": {
+    "finalUrl": "/admin/evaluations",
     "state": "loaded",
     "consoleErrors": 0,
     "notMocked501": 0,

@@ -149,6 +149,7 @@ const menus: Record<ProductRole, NavGroup[]> = {
       heading: "Phân tích",
       items: [
         ["performance", "Hiệu suất sinh viên"],
+        ["evaluations", "Đánh giá & điều chỉnh điểm"],
         ["kpi", "Kỳ KPI"],
         ["salary", "Lương ảo"],
         ["certificates", "Chứng nhận"],

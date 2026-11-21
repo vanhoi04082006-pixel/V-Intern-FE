@@ -194,6 +194,37 @@ export const advanceEvaluation = (id: string, action: "submit" | "finalize") =>
     (x) => parseManagedEvaluation(record(x).evaluation),
     { method: "POST" },
   );
+/**
+ * PRIVILEGED correction of a FINALIZED evaluation — spec 14, admin policy.
+ * BE resolves the admin role fresh from DB (evaluations.manage alone is NOT
+ * sufficient), keeps the evaluation finalized, bumps revisionNumber and
+ * stores an immutable revision row with previous/new overall + reason.
+ */
+export const reviseEvaluation = (
+  id: string,
+  body: {
+    scores?: { criterionId: string; score: number; comment?: string | null }[];
+    summary?: string;
+    reason: string;
+  },
+) =>
+  request(
+    `/evaluations/${encodeURIComponent(id)}/revisions`,
+    (value) => {
+      const v = record(value);
+      const r = record(v.revision);
+      return {
+        evaluation: parseManagedEvaluation(v.evaluation),
+        revision: {
+          revisionNumber: number(r.revisionNumber),
+          previousOverallScore: nullable(r.previousOverallScore, number),
+          newOverallScore: nullable(r.newOverallScore, number),
+          reason: string(r.reason),
+        },
+      };
+    },
+    { method: "POST", body },
+  );
 export const suggestEvaluation = (id: string) =>
   request(
     `/evaluations/${encodeURIComponent(id)}/ai-suggestions`,

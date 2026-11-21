@@ -87,6 +87,32 @@ try {
   await page
     .getByRole("heading", { name: "Trang quản trị", exact: true })
     .waitFor();
+  /* Master prompt V6 — Phase E/P2: /admin phải dùng aggregate thật của BE
+   * (GET /dashboard/admin) thay vì tự tính từ trang đầu tiên của list.
+   * Chờ đúng endpoint + panel aggregate hiển thị trước khi tiếp tục. */
+  const dashboardResponse = await page.waitForResponse(
+    (r) =>
+      r.url().endsWith("/dashboard/admin") &&
+      r.request().method() === "GET" &&
+      r.ok(),
+  );
+  const dashboard = await dashboardResponse.json();
+  assert.ok(
+    dashboard.metrics &&
+      Number.isInteger(Number(dashboard.metrics.userCount)) &&
+      Number.isInteger(Number(dashboard.metrics.instructorCount)) &&
+      Number.isInteger(Number(dashboard.metrics.internCount)) &&
+      Number.isInteger(Number(dashboard.metrics.activeSessions)) &&
+      Number.isInteger(Number(dashboard.metrics.aiRunsToday)),
+    "GET /dashboard/admin returns exact SQL aggregates",
+  );
+  await page
+    .getByRole("heading", { name: "Người dùng mới nhất", exact: true })
+    .waitFor();
+  await page
+    .getByRole("heading", { name: "Vai trò & số quyền", exact: true })
+    .waitFor();
+  await page.getByText(/Toàn hệ thống · \d+ tài khoản/).waitFor();
   await page.goto(base + "/admin/users");
   await page
     .getByRole("button", { name: "Tạo người dùng", exact: true })

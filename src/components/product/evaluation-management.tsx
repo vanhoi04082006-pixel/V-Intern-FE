@@ -155,7 +155,11 @@ export function EvaluationManagement() {
             page,
             cycleId,
             status,
-            getSessionUser()?.id,
+            /* Admin quản lý toàn bộ đánh giá (BE: isAdmin scope); giảng viên
+             * chỉ thấy đánh giá mình phụ trách (evaluatorId = chính mình). */
+            (getSessionUser()?.roles ?? []).includes("admin")
+              ? ""
+              : getSessionUser()?.id,
             s,
           ),
         [page, cycleId, status],
@@ -821,7 +825,7 @@ function EvaluationEditor({
     <ErrorState error={detail.error} onRetry={detail.reload} />
   ) : detail.data ? (
     <ScoreEditor
-      key={`${id}-${detail.data.evaluation.status}`}
+      key={`${id}-${detail.data.evaluation.status}-${detail.data.evaluation.revisionNumber}`}
       detail={detail.data}
       reload={() => {
         detail.reload();
@@ -863,7 +867,11 @@ export function ScoreEditor({
       useState<ReturnType<typeof api.parseAiSuggestion>>();
   const [suggestionHistoryVersion, setSuggestionHistoryVersion] = useState(0);
   const action = useAction(),
-    locked = e.status === "finalized";
+    locked = e.status === "finalized",
+    /* Spec 14: hiệu chỉnh điểm đã chốt là quyền quản trị — BE xác minh role
+     * admin trực tiếp từ DB lúc lưu; FE chỉ điều hướng hiển thị. */
+    isAdmin = (getSessionUser()?.roles ?? []).includes("admin"),
+    [revising, setRevising] = useState(false);
   /* Journey v3: bung mộc đỏ "ĐÃ DUYỆT" + confetti một nhịp khi chốt điểm —
    * tải lại sau ~750ms cho kịp nhịp đóng dấu (đúng sandbox stamping). Người
    * dùng giảm chuyển động thì bỏ nhịp giải trí và tải lại luôn như trước. */
@@ -957,6 +965,10 @@ export function ScoreEditor({
         )}
         <div className="flex flex-wrap items-center gap-3">
           <Badge>{isInstructor ? evaluationLabels[e.status] : e.status}</Badge>
+          {e.revisionNumber > 0 && (
+            /* Số lần hiệu chỉnh chính thức đã áp dụng (spec 14). */
+            <Badge tone="blue">Điều chỉnh #{e.revisionNumber}</Badge>
+          )}
           <p className="font-bold">
             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
           </p>
@@ -1158,10 +1170,27 @@ export function ScoreEditor({
               </button>
             </span>
           )}
-          {locked && (
+          {locked && !isAdmin && (
             <p className="text-body text-muted-foreground">
               Đánh giá đã khóa. Hiệu chỉnh cần quyền quản trị và lưu lịch sử.
             </p>
+          )}
+          {locked && isAdmin && (
+            /* Hiệu chỉnh chính thức trên đánh giá đã chốt — spec 14: chỉ admin,
+             * BE xác minh lại role lúc lưu; mỗi lần lưu tạo một phiên bản bất
+             * biến kèm lý do (immutable revision row). */
+            <span className="relative inline-flex items-center gap-3">
+              <button
+                className={buttonClass}
+                disabled={action.busy || sealing}
+                onClick={() => setRevising(true)}
+              >
+                Hiệu chỉnh điểm đã chốt
+              </button>
+              <MarginNote className="max-w-64">
+                {"Điều chỉnh chính thức của quản trị — lưu lịch sử phiên bản kèm lý do; trạng thái vẫn \"Đã chốt\"."}
+              </MarginNote>
+            </span>
           )}
         </div>
       </div>
@@ -1248,7 +1277,220 @@ export function ScoreEditor({
         )}
         <SuggestionHistory key={`${e.id}-${suggestionHistoryVersion}`} evaluationId={e.id} criteria={detail.criteria} />
       </Panel>
+      {revising && isAdmin && (
+        <RevisionModal
+          evaluation={e}
+          criteria={detail.criteria}
+          onClose={() => setRevising(false)}
+          onRevised={reload}
+        />
+      )}
     </div>
+  );
+}
+
+/**
+ * Modal hiệu chỉnh chính thức trên đánh giá đã chốt (spec 14 — admin policy).
+ * - Chỉ admin (BE xác minh lại role lúc lưu, FE chỉ điều hướng hiển thị).
+ * - Gửi POST /evaluations/:id/revisions: scores điều chỉnh + summary + lý do
+ *   bắt buộc; BE giữ trạng thái finalized, tăng revisionNumber và lưu hàng
+ *   revision bất biến (điểm cũ/mới + lý do).
+ */
+function RevisionModal({
+  evaluation,
+  criteria,
+  onClose,
+  onRevised,
+}: {
+  evaluation: ReturnType<typeof api.parseManagedEvaluation> & {
+    scores: { criterionId: string; score: number; comment: string | null }[];
+  };
+  criteria: ReturnType<typeof api.parseCriterion>[];
+  onClose: () => void;
+  onRevised: () => void;
+}) {
+  const action = useAction(),
+    [scores, setScores] = useState<Record<string, { score: string; comment: string }>>(
+      Object.fromEntries(
+        criteria.map((c) => {
+          const saved = evaluation.scores.find((s) => s.criterionId === c.id);
+          return [c.id, { score: saved?.score.toString() ?? "", comment: saved?.comment ?? "" }];
+        }),
+      ),
+    ),
+    [summary, setSummary] = useState(evaluation.summary ?? ""),
+    [reason, setReason] = useState(""),
+    [result, setResult] = useState<Awaited<ReturnType<typeof api.reviseEvaluation>>>();
+  const reasonInvalid = reason.trim().length === 0;
+  const scoreInvalid = criteria.some((c) => {
+    const raw = scores[c.id].score.replace(",", ".").trim();
+    if (raw === "") return false;
+    const value = Number(raw);
+    return !Number.isFinite(value) || value < 0 || value > c.maxScore;
+  });
+  return (
+    <Modal
+      wide
+      title="Hiệu chỉnh điểm đã chốt"
+      description={
+        <>
+          Quyền quản trị · spec 14 — điều chỉnh chính thức trên đánh giá đã chốt.
+          Mỗi lần lưu tạo một phiên bản bất biến kèm lý do; trạng thái vẫn{" "}
+          <strong>Đã chốt</strong>.
+        </>
+      }
+      onClose={onClose}
+      footer={
+        <>
+          <button className={btn("secondary")} onClick={onClose} disabled={action.busy}>
+            {result ? "Đóng" : "Hủy"}
+          </button>
+          <button
+            className={buttonClass}
+            disabled={action.busy || reasonInvalid || scoreInvalid}
+            onClick={() =>
+              void action
+                .run(async () => {
+                  const outcome = await api.reviseEvaluation(evaluation.id, {
+                    scores: criteria
+                      .filter((c) => scores[c.id].score !== "")
+                      .map((c) => ({
+                        criterionId: c.id,
+                        score: Number(scores[c.id].score.replace(",", ".")),
+                        comment: scores[c.id].comment || null,
+                      })),
+                    summary,
+                    reason: reason.trim(),
+                  });
+                  setResult(outcome);
+                  return outcome;
+                })
+                .then((ok) => {
+                  if (ok) onRevised();
+                })
+            }
+          >
+            {action.busy ? "Đang lưu…" : "Lưu điều chỉnh"}
+          </button>
+        </>
+      }
+    >
+      {Boolean(action.error) && (
+        <span key={String(action.error)} className="animate-shake-ink block">
+          <ErrorState error={action.error} />
+        </span>
+      )}
+      {result ? (
+        <div className="space-y-3" role="status">
+          <div className="flex flex-wrap items-center gap-3">
+            <StampMoc tone="red" size="sm" thump>
+              ĐÃ HIỆU CHỈNH
+            </StampMoc>
+            <p className="font-bold">
+              Điều chỉnh #{result.revision.revisionNumber}
+            </p>
+          </div>
+          <p className="text-body">
+            Điểm chính thức{" "}
+            {result.revision.previousOverallScore ?? evaluation.overallScore} →{" "}
+            <strong>{result.evaluation.overallScore ?? result.revision.newOverallScore}</strong>
+          </p>
+          <p className="text-caption text-muted-foreground">
+            Lý do đã lưu vào lịch sử phiên bản: {result.revision.reason}
+          </p>
+        </div>
+      ) : (
+        <form
+          className="space-y-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+          }}
+        >
+          <MarginNote>
+            Điểm và nhận xét dưới đây là bản điều chỉnh — chỉ gửi những tiêu chí
+            bạn thực sự thay đổi. Lý do hiệu chỉnh là bắt buộc (1–1000 ký tự).
+          </MarginNote>
+          {criteria.map((c) => {
+            const saved = evaluation.scores.find((s) => s.criterionId === c.id);
+            return (
+              <fieldset key={c.id} className="border-b border-border pb-4 pt-3">
+                <legend className="text-subsection font-semibold">{c.name}</legend>
+                <p className="mt-1 text-caption text-muted-foreground">
+                  Trọng số {c.weight}% · Điểm tối đa {c.maxScore}
+                  {saved ? ` · Hiện tại ${saved.score}` : ""}
+                </p>
+                <div className="mt-3 grid gap-4 sm:grid-cols-[minmax(0,110px)_minmax(0,1fr)]">
+                  <label className="block text-body">
+                    Điểm {c.name}
+                    <input
+                      aria-label={`Điểm điều chỉnh ${c.name}`}
+                      type="number"
+                      min="0"
+                      max={c.maxScore}
+                      step="0.1"
+                      disabled={action.busy || Boolean(result)}
+                      className={`${inputClass} mt-1`}
+                      value={scores[c.id].score}
+                      onChange={(event) =>
+                        setScores({
+                          ...scores,
+                          [c.id]: { ...scores[c.id], score: event.target.value },
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="block text-body">
+                    Nhận xét điều chỉnh {c.name}
+                    <textarea
+                      aria-label={`Nhận xét điều chỉnh ${c.name}`}
+                      maxLength={2000}
+                      disabled={action.busy || Boolean(result)}
+                      className={`${inputClass} mt-1`}
+                      rows={2}
+                      value={scores[c.id].comment}
+                      onChange={(event) =>
+                        setScores({
+                          ...scores,
+                          [c.id]: { ...scores[c.id], comment: event.target.value },
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+              </fieldset>
+            );
+          })}
+          <label className="block text-caption font-semibold">
+            Nhận xét tổng hợp điều chỉnh
+            <textarea
+              className={`${inputClass} mt-1`}
+              rows={3}
+              maxLength={4000}
+              value={summary}
+              onChange={(event) => setSummary(event.target.value)}
+            />
+          </label>
+          <label className="block text-caption font-semibold">
+            Lý do hiệu chỉnh (bắt buộc — lưu vào lịch sử phiên bản)
+            <textarea
+              className={`${inputClass} mt-1`}
+              rows={2}
+              maxLength={1000}
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+              aria-required="true"
+            />
+          </label>
+          {(reasonInvalid || scoreInvalid) && (
+            <p className="text-caption text-[var(--danger)]" role="alert">
+              {scoreInvalid
+                ? "Điểm điều chỉnh phải để trống (giữ nguyên) hoặc nằm trong 0…điểm tối đa."
+                : "Cần nhập lý do hiệu chỉnh trước khi lưu."}
+            </p>
+          )}
+        </form>
+      )}
+    </Modal>
   );
 }
 

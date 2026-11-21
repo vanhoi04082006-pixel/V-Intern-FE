@@ -183,7 +183,7 @@ const PLAN = {
       { route: "/admin/salary", url: "/admin/salary", slug: "salary" },
       { route: "/admin/reports", url: "/admin/reports", slug: "reports" },
       { route: "/admin/performance", url: "/admin/performance", slug: "performance" },
-      { route: "/admin/evaluations-placeholder", url: "/admin", slug: "unused" }, // không tồn tại — bị loại ở dưới
+      { route: "/admin/evaluations", url: "/admin/evaluations", slug: "evaluations" },
       { route: "/admin/catalogs", url: "/admin/catalogs", slug: "catalogs" },
       { route: "/admin/services", url: "/admin/services", slug: "services" },
       { route: "/admin/communications", url: "/admin/communications", slug: "communications" },
@@ -196,8 +196,8 @@ const PLAN = {
     ],
   },
 };
-// bỏ dòng định danh không dùng
-PLAN.admin.routes = PLAN.admin.routes.filter((r) => r.route !== "/admin/evaluations-placeholder");
+// (Route /admin/evaluations đã tồn tại thật từ Master prompt V6 Phase E —
+// không còn dòng định danh placeholder cần loại.)
 
 const results = {
   meta: {

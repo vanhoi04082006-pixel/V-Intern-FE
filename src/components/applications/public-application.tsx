@@ -17,6 +17,7 @@ import {
   myApplication,
   requestApplicationAccess,
   supplementCv,
+  downloadMyCv,
   leaveCandidateSession,
   type Application,
   applicationLabels,
@@ -240,6 +241,28 @@ export function PublicApplication() {
               >
                 Cập nhật tiến trình
               </button>
+              {application.hasCv && (
+                /* Ứng viên tải lại CV mình đã nộp — GET /applications/me/cv
+                 * (capability cookie công khai của ứng viên; responseType "cv"
+                 * nhận application/octet-stream). */
+                <button
+                  className={btn("secondary")}
+                  disabled={action.busy}
+                  onClick={() =>
+                    void action.run(async () => {
+                      const blob = await downloadMyCv(),
+                        url = URL.createObjectURL(blob),
+                        link = document.createElement("a");
+                      link.href = url;
+                      link.download = "cv-da-nop";
+                      link.click();
+                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    })
+                  }
+                >
+                  Tải lại CV đã nộp
+                </button>
+              )}
               {["cancelled", "deferred"].includes(application.status) && (
                 <button
                   className={btn("secondary")}

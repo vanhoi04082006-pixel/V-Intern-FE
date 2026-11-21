@@ -189,6 +189,96 @@ try {
     status: "PASS",
   });
   await dialog.getByRole("button", { name: "Đóng", exact: true }).click();
+  /* Master prompt V6 — Phase E/P1: BE có POST /evaluations/:id/revisions
+   * (spec 14 — hiệu chỉnh chính thức trên đánh giá ĐÃ CHỐT, admin policy) nhưng
+   * FE chưa từng có UI happy path (chỉ có negative 403 ở uat-negative).
+   * Admin điều chỉnh 80 → 85 qua UI thật trên /admin/evaluations (route mới
+   * cho capability này); SQL đối chiếu evaluation + revision row bất biến. */
+  {
+    const adminContext = await browser.newContext({
+      reducedMotion: "reduce",
+      viewport: { width: 1440, height: 1000 },
+    });
+    const adminPage = await adminContext.newPage();
+    adminPage.on("pageerror", (e) =>
+      errors.push("admin-revision: " + e.message),
+    );
+    await adminPage.goto(base + "/login");
+    await adminPage
+      .getByLabel("Email", { exact: true })
+      .fill("admin@phase715.test");
+    await adminPage
+      .getByLabel("Mật khẩu", { exact: true })
+      .fill(process.env.LIVE_PASSWORD);
+    await adminPage
+      .getByRole("button", { name: "Đăng nhập", exact: true })
+      .click();
+    await adminPage.waitForURL("**/admin");
+    await adminPage.goto(base + "/admin/evaluations");
+    await adminPage
+      .getByRole("button", { name: "Đánh giá browser " + tag, exact: true })
+      .click();
+    await adminPage
+      .getByRole("button", { name: "Mở đánh giá " + evaluation.id.slice(0, 8) })
+      .click();
+    const scoring = adminPage.getByRole("dialog", {
+      name: "Chấm điểm chính thức",
+    });
+    await scoring
+      .getByRole("button", { name: "Hiệu chỉnh điểm đã chốt", exact: true })
+      .waitFor();
+    const revision = adminPage
+      .getByRole("dialog")
+      .filter({ hasText: "Lý do hiệu chỉnh (bắt buộc" });
+    const revisionInputs = revision.locator("input[type=number]");
+    await revisionInputs.first().waitFor();
+    assert.equal(await revisionInputs.count(), 4);
+    for (let i = 0; i < 4; i++) await revisionInputs.nth(i).fill("85");
+    await revision
+      .getByLabel(/Lý do hiệu chỉnh/i)
+      .fill("CI spec 14: điều chỉnh chính thức sau khi phát hiện sai số chấm.");
+    await mutation(
+      adminPage,
+      `/evaluations/${evaluation.id}/revisions`,
+      "POST",
+      () =>
+        revision
+          .getByRole("button", { name: "Lưu điều chỉnh", exact: true })
+          .click(),
+    );
+    await revision.getByText("Điều chỉnh #1").waitFor();
+    await revision.getByText("85", { exact: true }).waitFor();
+    sql = await ds.query(
+      "SELECT overallScore, revisionNumber, status FROM evaluations WHERE id=@0",
+      [evaluation.id],
+    );
+    assert.equal(Number(sql[0].overallScore), 85, "revision updates overall");
+    assert.equal(Number(sql[0].revisionNumber), 1, "revisionNumber bumped");
+    assert.equal(sql[0].status, "finalized", "spec 14: stays finalized");
+    const revisionRow = await ds.query(
+      "SELECT revisionNumber, previousOverallScore, newOverallScore, reason, changedById FROM evaluation_revisions WHERE evaluationId=@0",
+      [evaluation.id],
+    );
+    assert.equal(revisionRow.length, 1, "immutable revision row stored");
+    assert.equal(Number(revisionRow[0].previousOverallScore), 80);
+    assert.equal(Number(revisionRow[0].newOverallScore), 85);
+    assert.ok(revisionRow[0].reason.includes("spec 14"));
+    assert.ok(revisionRow[0].changedById, "audited admin actor");
+    const notified = await ds.query(
+      "SELECT COUNT(*) n FROM notifications WHERE type='evaluation.revised' AND userId=@0",
+      [academic.graduateId],
+    );
+    assert.equal(Number(notified[0].n) >= 1, true, "intern notified");
+    await adminPage.screenshot({
+      path: path.join(evidence, "admin-evaluation-revision.png"),
+      fullPage: true,
+    });
+    results.push({
+      name: "Admin revises finalized 80->85 via /admin/evaluations UI; immutable revision row + intern notification",
+      status: "PASS",
+    });
+    await adminContext.close();
+  }
   // Delivery now comes from the reviewed AI plan, not manual Sprint/Task seeding.
   const task = await call(academic.graduateEmail, `/tasks/${academic.taskId}`);
   await call(academic.graduateEmail, `/tasks/${task.id}/my`, "PATCH", { status: "doing", progress: 30, expectedVersion: task.version });
