@@ -2,6 +2,7 @@
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { PageTitle } from "@/components/product/primitives";
+import { StampMoc } from "@/components/notebook/ui";
 import { StudentHeading } from "./student-ui";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 
@@ -32,14 +33,59 @@ export function StudentOutcomeHeading({
   const pathname = usePathname();
   const current = pathname.split("/")[2];
   const artwork = artworkByTab[current];
-  if (pathname.startsWith("/instructor") || pathname.startsWith("/admin")) return <WorkspacePageHeader title={title} description={subtitle} action={action} artwork={artwork} />;
-  if (!pathname.startsWith("/intern")) return <PageTitle title={title} subtitle={subtitle} action={action} />;
+  /* Dấu mộc xanh "SỔ TAY" đi kèm mọi tiêu đề outcome (kpi / đánh giá / chứng
+     nhận / hiệu suất / lương ảo) — tem nhỏ nghiêng đặt inline trong hàng tiêu
+     đề, trang trí thuần: không tương tác, ẩn với screen reader, hiện đều ở
+     mọi ngữ cảnh trang dùng heading này. */
+  const stampedAction = (
+    <>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none inline-flex shrink-0 self-center"
+      >
+        <StampMoc
+          tone="blue"
+          rotate={-6}
+          className="!px-2 !py-0.5 !text-[0.58rem]"
+        >
+          SỔ TAY
+        </StampMoc>
+      </span>
+      {action}
+    </>
+  );
+  /* v3: tem chương mono phía trên mọi tiêu đề outcome — nhóm chức năng
+     "SỔ KẾT QUẢ" (đánh giá / KPI / lương ảo / chứng nhận / khuyến nghị).
+     Thuần trình bày: không đụng dữ liệu, không đổi props của heading. */
+  const eyebrow = "SỔ KẾT QUẢ";
+  if (pathname.startsWith("/instructor") || pathname.startsWith("/admin"))
+    return (
+      <>
+        <p className="eyebrow mb-1.5">{eyebrow}</p>
+        <WorkspacePageHeader
+          title={title}
+          description={subtitle}
+          action={stampedAction}
+          artwork={artwork}
+        />
+      </>
+    );
+  if (!pathname.startsWith("/intern"))
+    return (
+      <PageTitle
+        eyebrow={eyebrow}
+        title={title}
+        subtitle={subtitle}
+        action={stampedAction}
+      />
+    );
   return (
     <>
       <StudentHeading
+        eyebrow={eyebrow}
         title={title}
         description={subtitle}
-        action={action}
+        action={stampedAction}
       />
     </>
   );

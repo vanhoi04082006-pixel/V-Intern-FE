@@ -28,6 +28,8 @@ export function AiConfiguration() {
   return (
     <div className="space-y-6">
       <PageTitle
+        eyebrow="HỆ THỐNG"
+        stamp="AI"
         title="Cấu hình AI"
         subtitle="Model và giới hạn áp dụng cho lời gọi mới; từng kết quả vẫn lưu model và phiên bản prompt thực tế."
       />
@@ -109,7 +111,7 @@ function AiConfigurationForm({
             id="ai-policy-model"
             className={inputClass}
             required
-            pattern="gemini[a-z0-9._-]+"
+            pattern={"gemini[a-z0-9._\\-]+"}
             maxLength={106}
             value={policy.model}
             onChange={(e) => setPolicy({ ...policy, model: e.target.value })}

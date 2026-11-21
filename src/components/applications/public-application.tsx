@@ -17,6 +17,7 @@ import {
   myApplication,
   requestApplicationAccess,
   supplementCv,
+  downloadMyCv,
   leaveCandidateSession,
   type Application,
   applicationLabels,
@@ -27,9 +28,9 @@ import {
   inputClass,
   selectClass,
   PageTitle,
-  Empty,
   StatusDot,
 } from "@/components/product/primitives";
+import { EmptyNotebook } from "@/components/notebook/kit";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { useAction } from "@/components/product/use-action";
 
@@ -210,6 +211,7 @@ export function PublicApplication() {
           <AsteriskDoodle className="pointer-events-none absolute -top-4 right-2 h-4 w-4 text-blue/30 motion-safe:animate-bob" />
           <SparkleDoodle className="pointer-events-none absolute -left-6 top-8 hidden h-4 w-4 text-blue/25 sm:block" />
           <PageTitle
+            eyebrow="ỨNG TUYỂN"
             title="Khởi đầu hành trình thực tập"
             subtitle="Nộp CV một lần. Agent phân tích năng lực, đề xuất nghề phù hợp và xếp lịch trong các khung giờ được mở."
           />
@@ -239,6 +241,28 @@ export function PublicApplication() {
               >
                 Cập nhật tiến trình
               </button>
+              {application.hasCv && (
+                /* Ứng viên tải lại CV mình đã nộp — GET /applications/me/cv
+                 * (capability cookie công khai của ứng viên; responseType "cv"
+                 * nhận application/octet-stream). */
+                <button
+                  className={btn("secondary")}
+                  disabled={action.busy}
+                  onClick={() =>
+                    void action.run(async () => {
+                      const blob = await downloadMyCv(),
+                        url = URL.createObjectURL(blob),
+                        link = document.createElement("a");
+                      link.href = url;
+                      link.download = "cv-da-nop";
+                      link.click();
+                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    })
+                  }
+                >
+                  Tải lại CV đã nộp
+                </button>
+              )}
               {["cancelled", "deferred"].includes(application.status) && (
                 <button
                   className={btn("secondary")}
@@ -300,7 +324,8 @@ export function PublicApplication() {
               <ErrorState error={rounds.error} onRetry={rounds.reload} />
             ) : !rounds.data?.length ? (
               <div className="dashed-cut rounded-xl p-4 sm:p-6">
-                <Empty
+                {/* v3: trạng thái trống cấp trang (chưa có đợt mở) — doodle sổ tay */}
+                <EmptyNotebook
                   title="Chưa có đợt đang nhận hồ sơ"
                   description="Bạn có thể quay lại khi người phụ trách mở đợt tuyển mới."
                 />

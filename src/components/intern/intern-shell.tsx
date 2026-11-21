@@ -126,6 +126,7 @@ export function InternShell({
               groups={groups}
               user={workspaceUserView}
               className="h-full w-full"
+              showThemeToggle
               onNavigate={() => setMenuOpen(false)}
             />
             <button

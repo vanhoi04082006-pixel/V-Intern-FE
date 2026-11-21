@@ -87,6 +87,35 @@ try {
   await page
     .getByRole("heading", { name: "Trang quản trị", exact: true })
     .waitFor();
+  /* Master prompt V6 — Phase E/P2: /admin phải dùng aggregate thật của BE
+   * (GET /dashboard/admin) thay vì tự tính từ trang đầu tiên của list.
+   * Remount /admin để bắt response TRƯỚC khi điều hướng (login đã tiêu thụ
+   * request đầu) — wait setup trước goto là deterministic. */
+  const dashboardReady = page.waitForResponse(
+    (r) =>
+      r.url().endsWith("/dashboard/admin") &&
+      r.request().method() === "GET" &&
+      r.ok(),
+  );
+  await page.goto(base + "/admin");
+  const dashboardResponse = await dashboardReady;
+  const dashboard = await dashboardResponse.json();
+  assert.ok(
+    dashboard.metrics &&
+      Number.isInteger(Number(dashboard.metrics.userCount)) &&
+      Number.isInteger(Number(dashboard.metrics.instructorCount)) &&
+      Number.isInteger(Number(dashboard.metrics.internCount)) &&
+      Number.isInteger(Number(dashboard.metrics.activeSessions)) &&
+      Number.isInteger(Number(dashboard.metrics.aiRunsToday)),
+    "GET /dashboard/admin returns exact SQL aggregates",
+  );
+  await page
+    .getByRole("heading", { name: "Người dùng mới nhất", exact: true })
+    .waitFor();
+  await page
+    .getByRole("heading", { name: "Vai trò & số quyền", exact: true })
+    .waitFor();
+  await page.getByText(/Toàn hệ thống · \d+ tài khoản/).waitFor();
   await page.goto(base + "/admin/users");
   await page
     .getByRole("button", { name: "Tạo người dùng", exact: true })
@@ -109,7 +138,14 @@ try {
     page.waitForResponse(
       (r) => r.url().includes("/users?") && r.url().includes("roleCode=intern"),
     ),
-    page.getByLabel("Lọc vai trò người dùng").selectOption("intern"),
+    // Journey v3: bộ lọc vai trò giờ là FilterChips (notebook kit) thay cho
+    // select trần — bấm chip "Thực tập sinh" (label hiển thị của role intern)
+    // vẫn đi qua cùng một assertion nghiệp vụ: request /users?...roleCode=intern
+    // trả 200 và meta.total = 1.
+    page
+      .getByRole("group", { name: "Lọc theo vai trò người dùng" })
+      .getByRole("button", { name: "Thực tập sinh", exact: true })
+      .click(),
   ]);
   assert.equal(roleFilter.status(), 200);
   assert.equal((await roleFilter.json()).meta.total, 1);
@@ -360,7 +396,7 @@ try {
   const taskRow = page.getByRole("row").filter({ has: page.getByRole("button", { name: task.code, exact: true }) });
   await taskRow.getByText("Admin task " + tag, { exact: true }).waitFor();
   await taskRow.getByLabel(`Thao tác ${task.code}`, { exact: true }).click();
-  await taskRow.getByRole("button", { name: "Sửa nhiệm vụ", exact: true }).click();
+  await taskRow.getByRole("menuitem", { name: "Sửa nhiệm vụ", exact: true }).click();
   dialog = page.getByRole("dialog");
   await dialog
     .getByLabel("Tên nhiệm vụ", { exact: true })
@@ -384,13 +420,23 @@ try {
     path: path.join(evidence, "admin-tasks.png"),
     fullPage: true,
   });
-  page.once("dialog", (d) => d.accept());
+  // Journey v3 ConfirmDialog (Section 5 master brief) đã thay window.confirm():
+  // bấm menuitem "Xóa nhiệm vụ" chỉ MỞ hộp thoại xác nhận — DELETE chỉ được
+  // gửi khi bấm tiếp nút xác nhận (confirmLabel "Xóa nhiệm vụ") bên trong
+  // dialog. Native page.once("dialog") cũ không bao giờ fire nữa.
   await taskRow.getByLabel(`Thao tác ${task.code}`, { exact: true }).click();
+  await taskRow
+    .getByRole("menuitem", { name: "Xóa nhiệm vụ", exact: true })
+    .click();
   await mutate(
     page,
     `/tasks/${task.id}`,
     "DELETE",
-    () => taskRow.getByRole("button", { name: "Xóa nhiệm vụ", exact: true }).click(),
+    () =>
+      page
+        .getByRole("dialog", { name: `Xóa nhiệm vụ ${task.code}` })
+        .getByRole("button", { name: "Xóa nhiệm vụ", exact: true })
+        .click(),
     200,
   );
   assert.ok(

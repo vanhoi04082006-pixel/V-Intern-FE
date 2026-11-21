@@ -48,6 +48,8 @@ export function WelcomeStep() {
 
       <header className="student-onboarding-intro mt-3">
         <div className="max-w-[720px]">
+          {/* v3: tem chương mono của bước 1 — nhãn mục lục phía trên tiêu đề. */}
+          <p className="eyebrow mb-1.5">HƯỚNG DẪN</p>
           <h1 className="text-page font-extrabold leading-[1.15] tracking-tight text-foreground sm:text-metric">
             {WELCOME_HEADING}
           </h1>

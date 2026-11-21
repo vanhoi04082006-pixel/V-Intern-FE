@@ -15,7 +15,10 @@ import {
   studentToneForPriority,
   studentToneForStatus,
 } from "./student-ui";
-import { TaskDeadline } from "@/components/workspace/task-deadline";
+import {
+  TaskDeadline,
+  describeTaskDeadline,
+} from "@/components/workspace/task-deadline";
 
 /** Danh sách nhiệm vụ của sinh viên — mỗi dòng là một "thẻ công việc" đầy đủ
  * ngữ cảnh: trạng thái, ưu tiên, sprint, story points, tiến độ và thời hạn. */
@@ -59,7 +62,13 @@ export function StudentWorkList({
   return (
     <div className="student-work-list nb-stagger">
       <div className="workspace-work-columns" aria-hidden="true"><span>Nhiệm vụ & yêu cầu</span><span>Tiến độ</span><span>Hạn hoàn thành</span></div>
-      {tasks.map((task) => (
+      {tasks.map((task) => {
+        /* v3: chip hạn "thở" gradient ấm (shimmer-warm — class journey chưa
+            dùng tới) khi nhiệm vụ đang mở đã quá hạn; một nhiệm vụ đã xong thì
+            hạn cũ không còn là cảnh báo (cùng quy tắc TaskDeadline). */
+        const overdue =
+          describeTaskDeadline(task.dueDate, task.status).tone === "danger";
+        return (
         <article
           key={task.id}
           className="student-work-row"
@@ -102,7 +111,13 @@ export function StudentWorkList({
             />
           </div>
           <div className="student-work-actions">
-            <TaskDeadline value={task.dueDate} status={task.status} />
+            {overdue ? (
+              <span className="shimmer-warm inline-flex items-center rounded-full px-2 py-0.5">
+                <TaskDeadline value={task.dueDate} status={task.status} />
+              </span>
+            ) : (
+              <TaskDeadline value={task.dueDate} status={task.status} />
+            )}
             <Link
               href={`/intern/work/${encodeURIComponent(task.id)}`}
               className="student-action student-action-secondary student-action-sm"
@@ -112,7 +127,8 @@ export function StudentWorkList({
             </Link>
           </div>
         </article>
-      ))}
+        );
+      })}
     </div>
   );
 }

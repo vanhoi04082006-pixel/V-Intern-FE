@@ -25,11 +25,14 @@ import {
 } from "@/components/product/primitives";
 import { SprintOverview } from "@/components/product/sprint-overview";
 import { SprintBurndown } from "@/components/workspace/workspace-charts";
+import { ChartFrame } from "@/components/notebook/kit";
 import { StampMoc } from "@/components/workspace/notebook";
 import { TaskManagement } from "@/components/product/sprint-management";
 import { ActivateButton } from "@/components/product/instructor-onboarding";
 import { TaskDetail } from "@/components/product/intern-work";
 import { SessionTaskDelivery } from "./session-task-delivery";
+import { SprintLifecycleActions } from "./sprint-lifecycle-actions";
+import { isSprintTerminal } from "@/lib/api/sprint-status";
 
 const sprintStatusLabels: Record<string, string> = {
   planned: "Đã lập kế hoạch",
@@ -259,7 +262,11 @@ export function SprintBurndownSection({ id }: { id: string }) {
     useCallback((signal: AbortSignal) => fetchSprintBurndown(id, signal), [id]),
   );
   if (data.loading || data.error || !data.data) return null;
-  return <SprintBurndown points={data.data} />;
+  return (
+    <ChartFrame>
+      <SprintBurndown points={data.data} />
+    </ChartFrame>
+  );
 }
 
 export function SprintWorkspace({
@@ -344,6 +351,9 @@ export function SprintWorkspace({
           </Can>
         </div>
       )}
+      <Can perm="sprints.manage">
+        <SprintLifecycleActions id={id} status={sprint.status} onChanged={() => { data.reload(); reload(); }} />
+      </Can>
       <SprintOverview
         instructor={basePath === "/instructor"}
         id={id}
@@ -390,6 +400,7 @@ export function SprintWorkspace({
               <TaskManagement
                 projectId={sprint.projectId}
                 sprintId={id}
+                allowCreate={!isSprintTerminal(sprint.status)}
                 onUpdated={reload}
               />
             </div>

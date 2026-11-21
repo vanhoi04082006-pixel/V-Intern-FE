@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { SetupWizard } from "../setup-wizard";
 
 vi.mock("@/lib/api/academic", async (importOriginal) => {
@@ -194,13 +194,19 @@ describe("SetupWizard", () => {
     await waitFor(() => expect(saveAcademicMock).toHaveBeenCalledTimes(1));
   });
   it("asks for confirmation before abandoning a dirty wizard", async () => {
-    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     const onClose = vi.fn();
     render(<SetupWizard onClose={onClose} onFinished={vi.fn()} />);
     fireEvent.change(screen.getByLabelText(/mã phiên/i), { target: { value: "SS-WZ-10" } });
     fireEvent.click(screen.getByRole("button", { name: "Đóng wizard" }));
-    expect(confirm).toHaveBeenCalled();
+    // ConfirmDialog chuẩn (thay window.confirm): hiện lời xác nhận, không đóng.
+    const dialog = await screen.findByRole("dialog", { name: "Bỏ dở thiết lập?" });
     expect(onClose).not.toHaveBeenCalled();
-    confirm.mockRestore();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Tiếp tục thiết lập" }));
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Bỏ dở thiết lập?" })).not.toBeInTheDocument());
+    expect(onClose).not.toHaveBeenCalled();
+    // Đóng lần nữa rồi xác nhận "Bỏ dở" mới thực sự thoát wizard.
+    fireEvent.click(screen.getByRole("button", { name: "Đóng wizard" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Bỏ dở" }));
+    await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
   });
 });

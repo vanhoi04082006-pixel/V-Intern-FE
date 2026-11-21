@@ -7,6 +7,7 @@ import {
   IconInfo,
   type IconComponent,
 } from "@/components/v-intern/icons";
+import { InkCountUp } from "@/components/v-intern/motion";
 import { priorityLabels, statusLabels } from "@/lib/api/work";
 import { WorkspacePageHeader } from "@/components/workspace/workspace-ui";
 
@@ -158,6 +159,7 @@ export function StudentProgress({
   label,
   tone = "blue",
   hideLabel = false,
+  countUp = false,
 }: {
   value: number;
   label: string;
@@ -165,13 +167,23 @@ export function StudentProgress({
   /** Dense rows (work lists) already carry a column header — repeating the
    * label per row is noise. The value and the progress aria-label stay. */
   hideLabel?: boolean;
+  /** v3 polish: phần trăm đếm dần bằng mực (InkCountUp) — chỉ bật cho các ô
+   *  hero trên dashboard, dòng dày trong work list giữ giá trị tĩnh. Giá
+   *  trị cuối cùng luôn là con số thật đã làm tròn. */
+  countUp?: boolean;
 }) {
   const safe = Math.max(0, Math.min(100, Math.round(value)));
   return (
     <div className="student-progress" data-tone={tone}>
       <div>
         <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
-        <strong>{safe}%</strong>
+        <strong>
+          {countUp ? (
+            <InkCountUp value={safe} format={(n) => `${n}%`} />
+          ) : (
+            `${safe}%`
+          )}
+        </strong>
       </div>
       <progress aria-label={label} value={safe} max={100} />
     </div>

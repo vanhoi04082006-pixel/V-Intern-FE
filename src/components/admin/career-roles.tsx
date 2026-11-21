@@ -23,7 +23,7 @@ export function CareerRoles() {
   const action = useAction();
   const saved = (message: string) => { setEditor(null); setNotice(message); state.reload(); };
   return <div className="space-y-6">
-    <PageTitle title="Thư viện nghề nghiệp" subtitle="Định nghĩa vị trí tuyển dụng, năng lực và trạng thái nhận hồ sơ. Nghề nghiệp tách biệt với vai trò và quyền tài khoản." action={<button className={buttonClass} onClick={() => { setNotice(''); setEditor('new'); }}><IconPlus size={16} aria-hidden />Thêm nghề nghiệp</button>} />
+    <PageTitle eyebrow="TUYỂN DỤNG" stamp="NGHỀ NGHIỆP" title="Thư viện nghề nghiệp" subtitle="Định nghĩa vị trí tuyển dụng, năng lực và trạng thái nhận hồ sơ. Nghề nghiệp tách biệt với vai trò và quyền tài khoản." action={<button className={buttonClass} onClick={() => { setNotice(''); setEditor('new'); }}><IconPlus size={16} aria-hidden />Thêm nghề nghiệp</button>} />
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
       <p className="max-w-2xl text-body leading-6 text-muted-foreground">Soạn bản nháp → hoàn thiện kỹ năng và trọng số → xuất bản → mở nhận hồ sơ. Trước khi phỏng vấn, cần đủ câu hỏi cho nghề đã chọn.</p>
       <Link className="text-body font-semibold text-primary hover:underline" href="/admin/questions">Quản lý câu hỏi</Link>

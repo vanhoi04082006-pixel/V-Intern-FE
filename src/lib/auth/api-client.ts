@@ -10,12 +10,18 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
+/* Chỉ khai báo const từ module gate (không kéo dữ liệu mock); import động
+   transport nằm trong nhánh PREVIEW_ENABLED để production build dead-code
+   loại mọi module mock khỏi bundle. Xem src/lib/preview/enabled.ts. */
+import { PREVIEW_ENABLED } from "@/lib/preview/enabled";
 export function getApiBaseUrl(): string {
   return (process.env.NEXT_PUBLIC_API_BASE_URL ?? "")
     .trim()
     .replace(/\/+$/, "");
 }
 export function isApiConfigured(): boolean {
+  /* Preview cung cấp transport mock nên coi như "đã cấu hình" khi gate mở. */
+  if (PREVIEW_ENABLED) return true;
   return getApiBaseUrl().length > 0;
 }
 export interface ApiFetchOptions {
@@ -40,6 +46,19 @@ export async function apiFetch(
     responseType = "json",
   }: ApiFetchOptions = {},
 ): Promise<unknown> {
+  /* Preview transport: chỉ bật khi gate build-time mở (dev/preview deploy).
+     Điều kiện VIẾT INLINE (không import const từ module khác) để bundler gập
+     được literal env lúc production build: NEXT_PUBLIC_PREVIEW không được đặt
+     + NODE_ENV=production → ("undefined" === "1") && (...) → false → nhánh
+     chết bị minifier xoá kèm dynamic import — module mock rời khỏi bundle
+     (chứng minh: scripts/verify-preview-isolation.mjs). */
+  if (
+    process.env.NEXT_PUBLIC_PREVIEW === "1" &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    const { previewFetch } = await import("@/lib/preview/transport");
+    return previewFetch(path, { method, body, formData, token, signal, responseType });
+  }
   const base = getApiBaseUrl();
   if (!base)
     throw new ApiError(
@@ -100,7 +119,19 @@ export function errorMessage(error: unknown): string {
   if (error.code === "API_CONFIG_MISSING") return error.message;
   if (error.code === "INVALID_RESPONSE")
     return "Dữ liệu hệ thống trả về chưa hợp lệ. Vui lòng tải lại hoặc liên hệ hỗ trợ.";
+  if (error.code === "EVALUATION_WEIGHT_INVALID")
+    return error.statusCode === 400
+      ? "Ngày kết thúc kỳ đánh giá phải sau ngày bắt đầu. Hãy kiểm tra lại hai mốc thời gian."
+      : "Tổng trọng số tiêu chí phải bằng 100%. Hãy chỉnh và lưu trọng số trước khi mở kỳ hoặc chốt đánh giá.";
+  if (error.code === "EVALUATION_CRITERIA_INCOMPLETE")
+    return isRecord(error.details) && Array.isArray(error.details.missingCriteria)
+      ? "Chấm và lưu đủ điểm cho tất cả tiêu chí bắt buộc trước khi nộp hoặc chốt đánh giá."
+      : "Kỳ chưa có tiêu chí đánh giá. Hãy bổ sung tiêu chí và trọng số trước khi mở kỳ.";
   const workflowErrors: Record<string, string> = {
+    KPI_CALCULATION_REQUIRED: 'Tính KPI thành công cho kỳ hiện tại trước khi chốt. Nếu vừa đổi khoảng ngày hoặc lượt tính bị lỗi, hãy tính lại rồi kiểm tra kết quả.',
+    KPI_PERIOD_INVALID_DATES: 'Ngày kết thúc kỳ KPI phải sau ngày bắt đầu. Khoảng tính theo UTC và không bao gồm ngày kết thúc.',
+    VIRTUAL_SALARY_CONFIG_MISSING: 'Chưa có mức lương cơ sở ảo hợp lệ. Mở Cài đặt hệ thống, cấu hình mức này rồi thử sinh lương lại.',
+    VIRTUAL_SALARY_ALREADY_REVERSED: 'Dòng giao dịch này đã được hoàn đảo. Hãy tải lại sổ để đối chiếu dòng bù trừ đã ghi.',
     AI_REVIEW_REQUIRED: 'Chưa có đề xuất đạt với đủ bằng chứng AI và kiểm thử độc lập. Xem phần đánh giá; nếu quyết định chấm thủ công, hãy ghi rõ lý do chấm thủ công và phần đã tự kiểm tra trước khi lưu.',
     AI_REVIEWER_UNAVAILABLE: 'Chưa có giảng viên phụ trách đủ quyền để chạy Agent chấm bài. Nhờ người phụ trách kiểm tra phân công và quyền quản lý phiên, rồi thử chấm lại.',
     GITHUB_ACCESS_CHANGED: 'Trạng thái đối chiếu đã thay đổi. Đóng và tải lại trước khi gửi yêu cầu mới.',
@@ -115,6 +146,9 @@ export function errorMessage(error: unknown): string {
     REPLACEMENT_TASK_LIMIT: 'Phạm vi vượt 500 nhiệm vụ. Cần kiểm tra lại phân công trước khi bàn giao.',
     GITHUB_RECONNECT_REQUIRED: 'Cần Admin kết nối lại tài khoản GitHub tạo repository chung tại Cài đặt. Sau đó kiểm tra lại quyền truy cập.',
     GITHUB_INVITATION_COOLDOWN: 'Vừa kiểm tra thành viên này. Vui lòng đợi một phút trước khi thử lại.',
+    SESSION_REPOSITORY_REQUIRED: 'Phiên chưa có repository. Nhờ giảng viên đồng bộ repository của phiên trước khi nộp bài.',
+    GITHUB_IDENTITY_REQUIRED: 'Hãy liên kết tài khoản GitHub của bạn trước khi nộp bài.',
+    SUBMISSION_REPOSITORY_MISMATCH: 'Bài nộp phải thuộc repository của phiên này. Hãy mở repository của phiên và gửi lại đúng link PR, commit hoặc branch/ref.',
     GITHUB_RATE_OR_PERMISSION: 'GitHub đang giới hạn yêu cầu hoặc tài khoản thiếu quyền. Nhờ Admin kiểm tra kết nối và quyền repository.',
     GITHUB_IDENTITY_CHANGED: 'Danh tính GitHub đã thay đổi. Nhờ Admin đối chiếu quyền cũ trước khi mời tiếp.',
     CV_FILE_INVALID: 'CV cần là PDF hoặc DOCX đúng định dạng, tối đa 5 MB.',
@@ -137,10 +171,16 @@ export function errorMessage(error: unknown): string {
     PLAN_ALREADY_PUBLISHED: "Phiên này đã có kế hoạch được publish. Vui lòng tải lại.",
     GENERATION_DESCRIPTION_REQUIRED: "Bổ sung mô tả cho từng Task trong bản nháp trước khi publish.",
     GENERATION_ACCEPTANCE_CRITERIA_REQUIRED: "Bổ sung tiêu chí chấp nhận cho từng Task trước khi publish.",
+    GENERATION_ASSIGNEE_REQUIRED: "Chọn người nhận cho từng nhiệm vụ trước khi phát hành kế hoạch.",
+    GENERATION_ASSIGNEE_INVALID: "Người nhận nhiệm vụ phải là thành viên đang được phân công trong phiên này.",
+    GENERATION_DUE_OUT_OF_RANGE: "Hạn nhiệm vụ phải nằm trong thời gian của Sprint chứa nhiệm vụ đó.",
     TASK_NOT_OWNED: "Bạn chỉ có thể cập nhật nhiệm vụ được giao cho mình.",
     TASK_ACCESS_DENIED: "Bạn không có quyền cập nhật nhiệm vụ này.",
     SUBMISSION_PENDING_REVIEW: "Bài nộp đang chờ giảng viên duyệt. Vui lòng chờ kết quả.",
     SPRINT_HAS_OPEN_TASKS: "Sprint còn nhiệm vụ chưa hoàn thành. Hãy xử lý hết trước khi kết thúc Sprint.",
+    SPRINT_NOT_EDITABLE: "Sprint đã hoàn thành hoặc hủy. Hãy chọn Sprint khác để tạo hoặc chuyển nhiệm vụ mới.",
+    CATALOG_TYPE_TAKEN: "Mã loại danh mục đã tồn tại. Hãy nhập mã khác.",
+    CATALOG_ITEM_TAKEN: "Mã giá trị đã tồn tại trong loại danh mục này. Hãy nhập mã khác.",
     SPRINT_ACTIVE_EXISTS: "Đang có một Sprint khác hoạt động. Hoàn thành hoặc hủy Sprint đó trước.",
     AI_RECOMMENDATION_NOT_AVAILABLE: "Chưa có khuyến nghị nào. Bấm “Cập nhật khuyến nghị” để tạo từ chỉ số hiện tại.",
     AI_PROVIDER_RATE_LIMITED: "Dịch vụ AI đang quá tải. Vui lòng thử lại sau ít phút.",

@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
-import { MarginNote } from '@/components/workspace/notebook';
+import { MarginNote, StampMoc } from '@/components/workspace/notebook';
+import { Tape } from '@/components/v-intern/doodles';
 import { StudentHeading, StudentLink } from './student-ui';
 import {
   IconArrowRight,
@@ -15,15 +16,36 @@ const destinations = [
   { href: '/intern/certificates', title: 'Xem chứng nhận', description: 'Mở các chứng nhận đã được cấp và trạng thái xác minh.', icon: IconAward },
 ];
 
-/** History does not imply completion: cancelled assignments can also leave this state. */
+/** History does not imply completion: cancelled assignments can also leave this state.
+ *
+ * v3 polish port (sandbox "FinishedView"): chỉ chuyển thể LỚP TRÌNH BÀY — mộc
+ * xanh ghi trạng thái phiên đã kết thúc (đúng cho cả hoàn thành lẫn hủy),
+ * băng dính + mẩu giấy note vàng viết tay. KHÔNG có số đếm / mốc cúp vì
+ * workspace payload cho trạng thái này không chứa điểm KPI / số chứng nhận
+ * (parser ép total=0, assignment=null) và lịch sử cũng có thể là hủy phiên —
+ * sinh số để ăn mừng sẽ là dữ liệu bịa (HARD RULE 2 + comment trong test
+ * intern-entry-navigation). Các con số thật nằm ở trang Đánh giá / KPI /
+ * Chứng nhận mà các thẻ dưới đây dẫn tới. */
 export function HistoryEntry({ onReload, refreshing }: { onReload: () => void; refreshing: boolean }) {
   return <div className="space-y-8">
     <StudentHeading
+      eyebrow="SỔ TAY THỰC TẬP"
       title="Kết quả và lịch sử thực tập"
       description="Bạn hiện không có phân công đang hoạt động. Các đánh giá, KPI và chứng nhận đã được ghi nhận vẫn có thể xem lại tại đây."
-      action={<StudentLink secondary href="/intern/notifications">Xem thông báo</StudentLink>}
+      action={
+        <span className="flex flex-wrap items-center gap-3">
+          {/* Mộc xanh đóng sổ — ghi sự thật "phiên đã kết thúc", không phát ngôn
+              "hoàn thành" vì lịch sử có thể chứa phiên bị hủy. */}
+          <StampMoc tone="blue" rotate={-8} className="shrink-0" thump>
+            Phiên đã kết thúc
+          </StampMoc>
+          <StudentLink secondary href="/intern/notifications">Xem thông báo</StudentLink>
+        </span>
+      }
     />
-    <section aria-label="Truy cập kết quả thực tập">
+    <section aria-label="Truy cập kết quả thực tập" className="relative">
+      {/* Băng dính washi — chất liệu sổ tay cho khu thẻ kết quả. */}
+      <Tape variant="warm" rotate={-4} className="-top-3 left-8 !h-5 !w-24" />
       {/* Thẻ chờ hành động: viền đứt đường cắt giấy (đặc tả Lớp 8 — empty edge);
           v5 Mượt: 3 thẻ vào khung lần lượt (nb-stagger), thẻ lún nhẹ khi nhấn (nb-press). */}
       <ul className="grid gap-3 sm:grid-cols-3 nb-stagger">
@@ -42,6 +64,14 @@ export function HistoryEntry({ onReload, refreshing }: { onReload: () => void; r
         <button type="button" onClick={onReload} disabled={refreshing} className="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60">{refreshing ? 'Đang kiểm tra phân công…' : 'Kiểm tra phân công mới'}</button>
         <Link href="/intern/onboarding/result" className="text-muted-foreground hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">Xem lại kết quả tuyển dụng</Link>
       </div>
+      {/* Mẩu giấy note vàng viết tay —ghi chú chân trang thay cho thẻ "Kết sổ"
+          của sandbox; nội dung giữ đúng sự thật (kết quả đã chốt được giữ
+          nguyên trên hệ thống, không nói "hoàn thành"). */}
+      <aside className="sticky-note order-first w-full max-w-md p-3 sm:order-none" style={{ "--note-rotate": "1.2deg" } as React.CSSProperties}>
+        <p className="font-hand text-small font-medium leading-relaxed text-[var(--note-yellow-ink)]">
+          điểm và chứng nhận đã chốt được giữ nguyên trên hệ thống — mở lại bất cứ lúc nào để đối chiếu
+        </p>
+      </aside>
     </section>
   </div>;
 }

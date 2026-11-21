@@ -20,6 +20,7 @@ import {
 import { ErrorState } from "@/components/shared/data-state";
 import { StampMoc } from "@/components/workspace/notebook";
 import { NeutralDot } from "./ui-bits";
+import { SourceLink } from "./knowledge/preview";
 
 const statuses: Record<string, string> = {
   queued: "Đang chờ",
@@ -223,6 +224,23 @@ export function KnowledgeRunMonitor({
               <p className="text-caption text-muted-foreground">
                 {run.output.citations.length} trích dẫn nguồn.
               </p>
+              {run.output.citations.length > 0 && (
+                <ol aria-label="Nguồn được trích dẫn" className="list-decimal space-y-4 pl-5 text-body">
+                  {run.output.citations.map(citation => (
+                    <li key={citation.id} className="min-w-0 space-y-2 [overflow-wrap:anywhere]">
+                      <p className="font-medium text-foreground">{citation.title}</p>
+                      <p className="text-caption text-muted-foreground">{citation.code} · Phiên bản {citation.version}</p>
+                      {citation.sources.map((source, index) => (
+                        <div key={index} className="space-y-1 text-caption text-muted-foreground">
+                          <p>{source.title}</p>
+                          {source.url && <SourceLink url={source.url} />}
+                          {source.reference && <p className="whitespace-pre-wrap">{source.reference}</p>}
+                        </div>
+                      ))}
+                    </li>
+                  ))}
+                </ol>
+              )}
             </div>
           )}
         </div>

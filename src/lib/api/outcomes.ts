@@ -28,6 +28,9 @@ export function parseEvaluation(value: unknown) {
       return {
         id: string(s.id),
         criterionId: string(s.criterionId),
+        criterionName: s.criterionName == null ? null : string(s.criterionName),
+        weight: s.weight == null ? null : number(s.weight),
+        maxScore: s.maxScore == null ? null : number(s.maxScore),
         score: number(s.score),
         comment: nullable(s.comment, string),
       };

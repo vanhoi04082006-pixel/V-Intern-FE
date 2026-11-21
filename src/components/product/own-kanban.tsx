@@ -18,12 +18,21 @@ import {
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
 import { ErrorState } from "@/components/shared/data-state";
-import { InlineAlert } from "./primitives";
+import { btn, InlineAlert } from "./primitives";
+import { Tape } from "@/components/notebook/ui";
 import { DropColumn, canOwnDrop, draggableTask } from "./kanban-dnd";
 import { useOwnTaskDrop, type OwnTaskOpenIntent } from "./use-own-task-drop";
 import { StudentProgress } from "@/components/intern/student-ui";
 import { useInternWorkspaceContext } from "@/components/intern/intern-workspace-context";
 import { TaskDeadline } from "@/components/workspace/task-deadline";
+
+/* Màu băng dính đầu cột theo trạng thái — thuần trình bày (journey v3). */
+const columnTape: Record<string, "blue" | "warm" | "candy" | "mint" | "slate"> = {
+  todo: "slate",
+  doing: "blue",
+  review: "warm",
+  done: "mint",
+};
 
 export function OwnKanban({
   search,
@@ -132,20 +141,28 @@ function KanbanColumn({
       status={status}
       canDrop={(from) => !busy && canOwnDrop(from, status)}
       onDrop={onDrop}
-      className={`student-board-column student-column-${status}`}
+      className="nb3-kanban-col relative"
     >
-      <section aria-label={statusLabels[status]}>
-        <header className="student-board-head">
-          <h2>
+      <Tape
+        variant={columnTape[status]}
+        rotate={-4}
+        className="-top-2 left-1/2 z-10 !h-5 !w-16 -translate-x-1/2"
+      />
+      <section
+        aria-label={statusLabels[status]}
+        className="flex min-h-0 flex-1 flex-col"
+      >
+        <header className="nb3-kanban-col-head flex-wrap">
+          <h2 className="flex items-center gap-2 text-small font-bold">
             {statusLabels[status]}
-            <span className="student-board-count">
+            <span className="nb3-kanban-count">
               {data.data?.total ?? "…"}
             </span>
           </h2>
           <p>{{ todo: "Đọc yêu cầu và chuẩn bị", doing: "Tập trung từng nhiệm vụ", review: "Đã nộp, chờ phản hồi", done: "Được giảng viên xác nhận" }[status]}</p>
         </header>
         {data.loading ? (
-          <div className="space-y-3" role="status">
+          <div className="nb3-kanban-body" role="status">
             <span className="sr-only">
               Đang tải cột {statusLabels[status]}…
             </span>
@@ -156,7 +173,9 @@ function KanbanColumn({
         ) : data.error ? (
           <ErrorState error={data.error} onRetry={data.reload} />
         ) : !data.data?.items.length ? (
-          <p className="student-board-empty">
+          /* v3: chữ trống cột viết tay (font-hand) — mực của sinh viên tự
+             ghi chú lên bảng sprint; nội dung hướng dẫn giữ nguyên. */
+          <p className="student-board-empty m-3 font-hand">
             {
               {
                 todo: "Chưa có công việc cần bắt đầu.",
@@ -167,7 +186,7 @@ function KanbanColumn({
             }
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="nb3-kanban-body">
             {data.data.items.map((t) => (
               <button
                 key={t.id}
@@ -175,7 +194,7 @@ function KanbanColumn({
                   ? draggableTask(t.id, t.status)
                   : {})}
                 onClick={() => onOpen(t.id)}
-                className="student-board-card group w-full text-left"
+                className="nb3-kanban-card group w-full text-left [&[draggable=true]]:cursor-grab [&[draggable=true]]:active:cursor-grabbing"
               >
                 <div className="student-board-card-head">
                   <span className="student-work-code">{t.code}</span>
@@ -192,7 +211,7 @@ function KanbanColumn({
                     {priorityLabels[t.priority]}
                   </span>
                 </div>
-                <h3>{t.title}</h3>
+                <h3 className="text-body font-bold leading-[1.55]">{t.title}</h3>
                 <p className="student-board-card-foot">
                   <IconSquareKanban size={11} aria-hidden="true" />
                   <span className="inline-flex items-center gap-1">
@@ -235,12 +254,12 @@ function KanbanColumn({
           </div>
         )}
         {data.data && data.data.totalPages > 1 && (
-          <div className="mt-3 flex items-center justify-between gap-2 text-caption text-muted-foreground">
+          <div className="mt-3 flex items-center justify-between gap-2 px-3 pb-3 text-caption text-muted-foreground">
             <button
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="student-action student-action-secondary student-action-sm"
+              className={btn("secondary", "sm")}
               aria-label={`Trang trước, cột ${statusLabels[status]}`}
             >
               <IconChevronLeft size={13} aria-hidden="true" />
@@ -253,7 +272,7 @@ function KanbanColumn({
               type="button"
               disabled={page >= data.data.totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="student-action student-action-secondary student-action-sm"
+              className={btn("secondary", "sm")}
               aria-label={`Trang sau, cột ${statusLabels[status]}`}
             >
               Sau

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Panel, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
+import { Panel, Spinner, btn, buttonClass, inputClass } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
 import { Can } from "@/components/auth/can";
 import { IconArrowLeft } from "@/components/v-intern/icons";
@@ -89,10 +89,11 @@ export function TemplateDetail({
     if (ok && created) {
       const done: { sessionId: string; projectId: string; deduped: boolean } = created;
       setStarted({ sessionId: done.sessionId, projectId: done.projectId, deduped: done.deduped });
+      data.reload();
     }
   }
 
-  if (data.loading) return <LoadingState label="Đang tải mẫu dự án..." />;
+  if (data.loading && !data.data) return <LoadingState label="Đang tải mẫu dự án..." />;
   if (data.error || !data.data) return <ErrorState error={data.error} onRetry={data.reload} />;
   const t: TemplateDetailData = data.data;
   const def = t.definition;
@@ -105,6 +106,8 @@ export function TemplateDetail({
 
   return (
     <div className="space-y-4">
+      {/* v3: trang chi tiết chỉ tem chương + back (không mộc — tránh dồn dập). */}
+      <p className="eyebrow mb-1.5">DỰ ÁN MẪU</p>
       <WorkspacePageHeader
         title={t.name}
         description={`${t.code}, phiên bản ${t.version}, ${difficultyLabels[t.difficulty] ?? t.difficulty}${t.status === "archived" ? ", ĐÃ LƯU TRỮ" : ""}`}
@@ -248,7 +251,7 @@ export function TemplateDetail({
               </button>
               <button
                 type="button"
-                className="rounded px-3 py-2 text-body text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className={btn("ghost")}
                 onClick={() => { setRequestId(crypto.randomUUID()); setStarted(null); }}
               >
                 Tạo yêu cầu mới

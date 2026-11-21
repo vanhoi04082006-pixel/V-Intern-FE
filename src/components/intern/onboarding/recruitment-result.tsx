@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useRecruitmentFlow } from "./recruitment-provider";
 import { roleLabel } from "@/lib/api/workspace";
 import { RateComparison } from "@/components/workspace/workspace-charts";
+import { ChartFrame } from "@/components/notebook/kit";
 import { RecruitmentPolicy } from "./recruitment-policy";
 const criterionLabels: Record<string, string> = { knowledge: "Kiến thức chuyên môn", communication: "Giao tiếp", problem_solving: "Giải quyết vấn đề", english: "Tiếng Anh", confidence: "Trình bày hiểu biết", reasoning: "Lập luận" };
 export function RecruitmentResult() {
@@ -38,6 +39,7 @@ export function RecruitmentResult() {
   return (
     <div>
       <StudentHeading
+        eyebrow="KẾT QUẢ"
         title="Kết quả tuyển dụng"
         description="Đọc kết quả, hiểu điểm mạnh và chọn bước tiếp theo cho hành trình thực tập của bạn."
       />
@@ -177,7 +179,7 @@ export function RecruitmentResult() {
                   </ul>
                 </>
               )}
-              {result.criteria.length > 0 && <div className="mt-8"><RateComparison label="Năng lực thể hiện qua phỏng vấn" unit="điểm" items={result.criteria.map((c) => ({ label: criterionLabels[c.code] ?? c.code, value: c.score }))} /><dl className="workspace-interview-criteria">{result.criteria.map((c) => <div key={c.code}><dt>{criterionLabels[c.code] ?? c.code}</dt><dd>{c.feedback}</dd></div>)}</dl></div>}
+              {result.criteria.length > 0 && <div className="mt-8"><ChartFrame><RateComparison label="Năng lực thể hiện qua phỏng vấn" unit="điểm" items={result.criteria.map((c) => ({ label: criterionLabels[c.code] ?? c.code, value: c.score }))} /></ChartFrame><dl className="workspace-interview-criteria">{result.criteria.map((c) => <div key={c.code}><dt>{criterionLabels[c.code] ?? c.code}</dt><dd>{c.feedback}</dd></div>)}</dl></div>}
             </section>
           </div>
           <aside className="workspace-interview-next nb-stagger">

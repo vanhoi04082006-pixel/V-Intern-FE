@@ -23,6 +23,7 @@ import { AcademicPicker } from "./academic-picker";
 import { AssigneeSelector } from "./assignee-selector";
 import { activateAcademic } from "@/lib/api/instructor-setup";
 import { btn, buttonClass, inputClass, Modal, StatusDot } from "./primitives";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 
 const STEPS = ["Phiên thực tập", "Dự án", "Phân công sinh viên", "Sprint & task"];
 
@@ -109,10 +110,14 @@ export function SetupWizard({
   }
   function requestClose() {
     if (touched || session || project || sprint) {
-      if (!window.confirm("Bỏ dở thiết lập? Các bản ghi đã tạo vẫn được giữ lại.")) return;
+      setConfirmAbandon(true);
+      return;
     }
     onClose();
   }
+  /* Xác nhận bỏ dở bằng ConfirmDialog chuẩn (thay window.confirm):
+     focus trap + nút thoại rõ ràng, không chặn thread. */
+  const [confirmAbandon, setConfirmAbandon] = useState(false);
 
   const validDates = (a: string, b: string) => !a || !b || a < b;
 
@@ -516,6 +521,22 @@ export function SetupWizard({
           <IconX size={14} /> Đóng wizard
         </button>
       </div>
+      <ConfirmDialog
+        open={confirmAbandon}
+        tone="normal"
+        title="Bỏ dở thiết lập?"
+        description="Các bản ghi đã tạo vẫn được giữ lại."
+        confirmLabel="Bỏ dở"
+        cancelLabel="Tiếp tục thiết lập"
+        onConfirm={() => {
+          setConfirmAbandon(false);
+          onClose();
+        }}
+        onCancel={() => setConfirmAbandon(false)}
+      >
+        Bạn có thể quay lại sau; các bước đã lưu (phiên, dự án, sprint, task)
+        không bị xoá và wizard mở lại từ bước hiện tại.
+      </ConfirmDialog>
     </Modal>
   );
 }

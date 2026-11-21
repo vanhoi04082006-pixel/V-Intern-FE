@@ -15,6 +15,7 @@ export function StudentGithub({ workspace }: { workspace: InternWorkspace }) {
   return (
     <>
       <StudentHeading
+        eyebrow="MÃ NGUỒN"
         title="GitHub của bạn"
         description="Liên kết đúng tài khoản, nhận lời mời vào dự án và chuẩn bị mã nguồn để nộp bài."
       />

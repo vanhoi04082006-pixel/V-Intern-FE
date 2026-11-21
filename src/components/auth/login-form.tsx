@@ -1,13 +1,12 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
-import type { FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import type { CSSProperties, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  IconMail,
-} from "@/components/v-intern/icons";
+import { IconLock, IconMail } from "@/components/v-intern/icons";
 import { IconArrowRight } from "@/components/v-intern/icons";
+import { VCircleCheck } from "@/components/icons/v-icons";
 import { AuthAlert } from "@/components/auth/auth-alert";
 import { AuthField } from "@/components/auth/auth-field";
 import { GoogleIcon } from "@/components/auth/google-icon";
@@ -53,6 +52,11 @@ const PREVIEW_MESSAGES: Record<LoginFormPreviewState, string> = {
   success: "Đăng nhập thành công.",
 };
 
+/** Prefix câu lỗi mà auth-service trả về cho HTTP 403 + ACCOUNT_LOCKED
+ *  (src/lib/auth/auth-service.ts) — dấu hiệu duy nhất form có được để vẽ
+ *  hộp chú ý kiến bò (sandbox LockedNotice). Không đụng vào auth-service. */
+const LOCKED_MESSAGE_PREFIX = "Tài khoản đã bị khóa";
+
 interface LoginFormProps {
   previewState?: LoginFormPreviewState;
 }
@@ -71,6 +75,38 @@ export function LoginForm({ previewState }: LoginFormProps) {
     previewState ? PREVIEW_MESSAGES[previewState] : "",
   );
   const [googleNotice, setGoogleNotice] = useState(false);
+  /* Điền sẵn email từ /register (sandbox: switchTab("login", email)) và ghi
+   * chú nhỏ khi vừa đổi mật khẩu xong (/login?password=changed). Đọc query
+   * sau mount — SSR an toàn (server render luôn rỗng, không lệch hydrat).
+   * Không dùng useSearchParams để không cần Suspense quanh trang tĩnh. */
+  const [prefilledEmail, setPrefilledEmail] = useState(false);
+  const [passwordChanged, setPasswordChanged] = useState(false);
+  /* Giảm chuyển động — chặn hai nhịp trình diễn (vẽ tick, đợi 560ms). */
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    /* Bọc trong hàm local rồi gọi (pattern auth-glyph-layer: sync()) — đọc
+     * query sau mount, SSR an toàn, không lệch hydrat. */
+    const applyQuery = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+        if (email && email.trim()) {
+          setIdentifier(email.trim());
+          setPrefilledEmail(true);
+        }
+        if (params.get("password") === "changed") setPasswordChanged(true);
+      } catch {
+        /* URLSearchParams lỗi hiếm — bỏ qua, không chặn form. */
+      }
+      setReducedMotion(
+        Boolean(
+          window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches,
+        ),
+      );
+    };
+    applyQuery();
+  }, []);
 
   const isSubmitting = status === "submitting";
 
@@ -126,7 +162,13 @@ export function LoginForm({ previewState }: LoginFormProps) {
         // Đích đến sau đăng nhập theo role (admin → /admin, instructor →
         // /instructor). `replace` để nút Back không quay lại form đã dùng.
         try {
-          router.replace(await resolveLoginLanding(result.user));
+          const landing = await resolveLoginLanding(result.user);
+          /* Sandbox: chờ giữa chừng để dấu tick vẽ mực kịp hoàn tất rồi mới
+           * mở sổ tay — thuần trình diễn, không đụng luồng login/landing. */
+          if (!reducedMotion) {
+            await new Promise((resolve) => setTimeout(resolve, 560));
+          }
+          router.replace(landing);
         } catch (error) {
           setStatus("system-error");
           setStatusMessage(errorMessage(error));
@@ -147,6 +189,11 @@ export function LoginForm({ previewState }: LoginFormProps) {
     status === "not-connected" ||
     status === "success";
 
+  /* 403 + ACCOUNT_LOCKED (xem auth-service) → hộp chú ý kiến bò riêng,
+     thay cho alert generic — giữ nguyên mọi trạng thái lỗi khác. */
+  const isLockedNotice =
+    status === "auth-error" && statusMessage.startsWith(LOCKED_MESSAGE_PREFIX);
+
   return (
     <section aria-label="Đăng nhập tài khoản V-Intern">
       <h1 className="text-page font-bold leading-tight tracking-tight text-foreground">
@@ -156,7 +203,20 @@ export function LoginForm({ previewState }: LoginFormProps) {
         Đăng nhập để tiếp tục hành trình thực tập của bạn.
       </p>
 
-      {showErrorAlert && (
+      {/* Sandbox Journey v3: note viết tay sau khi đổi mật khẩu xong — đọc
+       * /login?password=changed (luồng thật của change-password.tsx). */}
+      {passwordChanged && status !== "success" && (
+        <p className="auth-caps-note mt-3 font-hand text-[0.95rem] font-medium text-[var(--success)]">
+          mật khẩu đã đổi xong — đăng nhập lại bằng mật khẩu mới nhé ✎
+        </p>
+      )}
+      {prefilledEmail && (
+        <p className="auth-caps-note mt-2 font-hand text-[0.95rem] font-medium text-[var(--pencil)]">
+          email của bạn đã được điền sẵn — kiểm tra rồi nhập mật khẩu ✎
+        </p>
+      )}
+
+      {showErrorAlert && !isLockedNotice && (
         <AuthAlert
           variant={
             status === "success"
@@ -167,7 +227,16 @@ export function LoginForm({ previewState }: LoginFormProps) {
                   ? "system"
                   : "info"
           }
-          className="mt-4"
+          className={cn(
+            "mt-4",
+            /* Lắc mực khi có lỗi (sandbox shake-ink) — chỉ áp cho
+             * trạng thái lỗi (auth-error / system-error), không áp cho
+             * info (not-connected) hay success. Alert unmount khi
+             * chuyển sang "submitting" nên mỗi lần lỗi mới animation
+             * tự chạy lại. Thuần hiển thị — không đụng logic submit. */
+            (status === "auth-error" || status === "system-error") &&
+              "animate-shake-ink",
+          )}
           actionLabel={status === "system-error" ? "Thử lại" : undefined}
           onAction={
             status === "system-error"
@@ -181,6 +250,29 @@ export function LoginForm({ previewState }: LoginFormProps) {
         >
           {statusMessage}
         </AuthAlert>
+      )}
+
+      {/* Hộp chú ý 403 — viền kiến bò quanh (journey.css .ants-border),
+         ổ khóa vẽ tay + tiêu đề đậm (sandbox LockedNotice). role="alert"
+         cho screen reader; animate-shake-ink lắc một nhịp khi xuất hiện. */}
+      {isLockedNotice && (
+        <div
+          role="alert"
+          className="ants-border animate-shake-ink mt-4 flex items-start gap-3 rounded-[10px_12px_10px_12px] bg-[color-mix(in_srgb,var(--danger)_7%,transparent)] p-3.5"
+          style={{ "--ants-color": "var(--danger)" } as CSSProperties}
+        >
+          <IconLock
+            size={22}
+            aria-hidden="true"
+            className="mt-0.5 shrink-0 text-[var(--danger)]"
+          />
+          <div className="min-w-0 text-small leading-snug">
+            <p className="font-bold text-[var(--danger)]">Tài khoản đã bị khóa</p>
+            <p className="mt-0.5 font-medium text-[var(--ink-soft)]">
+              {statusMessage}
+            </p>
+          </div>
+        </div>
       )}
 
       {googleNotice && status !== "success" && (
@@ -287,6 +379,23 @@ export function LoginForm({ previewState }: LoginFormProps) {
             <>
               <Spinner />
               Đang đăng nhập...
+            </>
+          ) : status === "success" ? (
+            /* Sandbox: dấu tick vẽ dần bằng keyframe draw-check (journey.css)
+             * + dòng "Đăng nhập thành công!". Vẽ nét qua stroke-dasharray /
+             * dashoffset trên chính svg (thuộc tính kế thừa xuống path) —
+             * không cần thêm class CSS dùng chung. Giảm chuyển động → tĩnh. */
+            <>
+              <VCircleCheck
+                size={19}
+                className="text-primary-foreground [stroke-dasharray:60] [stroke-dashoffset:60]"
+                style={
+                  reducedMotion
+                    ? undefined
+                    : { animation: "draw-check 560ms 140ms ease-out forwards" }
+                }
+              />
+              Đăng nhập thành công!
             </>
           ) : (
             <>

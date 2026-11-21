@@ -49,7 +49,7 @@ export function KnowledgePreview({ draft, code }: { draft: KnowledgeDraft; code?
     <section className="space-y-3 border-t border-border pt-5"><h4 className="font-semibold text-foreground">Nguồn tham khảo</h4>{draft.sources.length ? <ol className="list-decimal space-y-4 pl-5 text-body">{draft.sources.map((source, index) => <li key={index} className="space-y-1 break-words"><p className="font-medium text-foreground">{source.title || 'Nguồn chưa có tên'}</p>{source.url && <SourceLink url={source.url} />}{source.reference && <p className="whitespace-pre-wrap leading-6 text-muted-foreground">{source.reference}</p>}</li>)}</ol> : <p className="text-body text-muted-foreground">Chưa có nguồn. Cần bổ sung trước khi xuất bản.</p>}</section>
   </article>;
 }
-function SourceLink({ url }: { url: string }) {
+export function SourceLink({ url }: { url: string }) {
   let safe = false;
   try { const value = new URL(url); safe = value.protocol === 'https:' && !!value.hostname && !value.username && !value.password; } catch { /* Render invalid drafts as inert text. */ }
   return safe ? <a className="inline-block max-w-full break-all rounded-sm text-primary underline underline-offset-4 hover:text-info focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" href={url} target="_blank" rel="noopener noreferrer">{url}</a> : <p className="break-all text-muted-foreground">{url} · URL chưa hợp lệ</p>;

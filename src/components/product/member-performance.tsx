@@ -21,6 +21,7 @@ import {
   buttonClass,
   inputClass,
   Pager,
+  tableClass,
   tdClass,
   thClass,
 } from "./primitives";
@@ -142,6 +143,8 @@ export function MemberPerformance({
     <>
       {!embedded && (
         <PageTitle
+          eyebrow="HIỆU SUẤT"
+          stamp="ĐIỂM"
           title={reports ? "Báo cáo tổng hợp" : "Hiệu suất thành viên"}
           subtitle="Số liệu trong phạm vi quản lý, tính từ nhiệm vụ và đánh giá đã chốt"
           action={
@@ -276,7 +279,7 @@ export function MemberPerformance({
               <Empty>Chưa có thành viên hoặc dữ liệu trong bộ lọc này.</Empty>
             ) : (
               <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Hiệu suất thành viên theo bộ lọc" tabIndex={0}>
-                <table className="product-table w-full min-w-[760px] border-collapse text-body">
+                <table className={`${tableClass} min-w-[760px]`}>
                   <thead>
                     <tr>
                       {[

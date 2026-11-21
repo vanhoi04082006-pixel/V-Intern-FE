@@ -6,9 +6,9 @@ import {
 } from "@/components/instructor/instructor-ui";
 import { roleLabel } from "@/lib/api/workspace";
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
-import { Empty, Spinner, buttonClass } from "@/components/product/primitives";
+import { Empty, Spinner, buttonClass, inputClass } from "@/components/product/primitives";
 import { LiquidButton } from "@/components/animate-ui/buttons/liquid";
 import { cn } from "@/lib/utils";
 import { useAction } from "@/components/product/use-action";
@@ -17,6 +17,7 @@ import {
   getAcademic,
   getMembers,
   getProjectSlots,
+  setProjectSlots,
   transitionSession,
   type SlotInfo,
 } from "@/lib/api/academic";
@@ -24,6 +25,7 @@ import { getTemplateContext } from "@/lib/api/templates";
 import { MemberSelector, type SelectorDeps } from "./member-selector";
 import { AiPlanPanel, type PlanDeps } from "./ai-plan";
 import { Can } from "@/components/auth/can";
+import { AssignmentCompletion } from "./assignment-completion";
 
 const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
   day: "2-digit",
@@ -77,6 +79,7 @@ export interface SetupMember {
   userId: string;
   displayName: string;
   email: string;
+  assignmentStatus?: string | null;
 }
 
 export interface SetupData {
@@ -368,11 +371,31 @@ function SetupBody({
                   <li key={m.userId}>
                     {m.displayName}{" "}
                     <span className="text-caption text-muted-foreground">{m.email}</span>
+                    {m.assignmentStatus === "completed" && <p className="text-caption text-success">Phân công đã hoàn thành</p>}
+                    {["active", "ending", "completed"].includes(session.status) && m.assignmentStatus === "active" && (
+                      <Can perm={["assignments.view", "assignments.manage"]}>
+                        <AssignmentCompletion sessionId={sessionId} internId={m.userId} displayName={m.displayName} onChanged={onChanged} />
+                      </Can>
+                    )}
                   </li>
                 ))}
               </ul>
             )}
           </Panel>
+          {/* Master prompt V6 Phase E: PUT /projects/:id/slots — BE có sẵn
+              (projects.manage, audited) nhưng FE chưa từng có UI. Slot editor
+              cho mentor/quản trị: đổi requiredCount từng vai trò hoặc thêm vị
+              trí mới; gửi REPLACE toàn bộ danh sách theo contract BE. */}
+          {projectId && (
+            <Can perm="projects.manage">
+              <SlotEditor
+                key={`${projectId}-${slots.map((s) => `${s.roleCode}:${s.requiredCount}`).join("|")}`}
+                projectId={projectId}
+                slots={slots}
+                onChanged={() => { startAction.clearError(); onChanged(); }}
+              />
+            </Can>
+          )}
           {session.status === "upcoming" && (
             <Can
               perm={[
@@ -386,7 +409,7 @@ function SetupBody({
                   sessionId={sessionId}
                   projectId={project.id}
                   slots={slots}
-                  onChanged={onChanged}
+                  onChanged={() => { startAction.clearError(); onChanged(); }}
                   deps={selectorDeps}
                   members={members}
                 />
@@ -474,5 +497,171 @@ function SetupBody({
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * Editor vị trí vai trò của dự án — PUT /projects/:id/slots (projects.manage,
+ * audited). Master prompt V6 Phase E: BE hỗ trợ REPLACE cấu hình slot nhưng
+ * trước đó FE không có thao tác nào — mentor không thể mở rộng sức chứa vai
+ * trò (ví dụ thêm 1 vị trí backend khi tuyển thêm) mà phải đi sửa template.
+ *
+ * Contract BE: body { slots: [{ roleCode, requiredCount 1..50 }] }, tối đa 20
+ * slot; gửi REPLACE toàn bộ danh sách. Xóa một vị trí = bỏ khỏi danh sách gửi
+ * lên (thành viên đã phân công vẫn giữ nguyên phía BE).
+ */
+function SlotEditor({
+  projectId,
+  slots,
+  onChanged,
+}: {
+  projectId: string;
+  slots: SlotInfo[];
+  onChanged: () => void;
+}) {
+  const action = useAction(onChanged),
+    [rows, setRows] = useState(
+      slots.map((s) => ({ roleCode: s.roleCode, requiredCount: String(s.requiredCount) })),
+    ),
+    [newRole, setNewRole] = useState(""),
+    [newCount, setNewCount] = useState("1"),
+    [notice, setNotice] = useState("");
+  const invalidCount = (value: string) => {
+    const n = Number(value);
+    return !Number.isInteger(n) || n < 1 || n > 50;
+  };
+  const rowInvalid = rows.some((r) => r.roleCode.trim() === "" || invalidCount(r.requiredCount));
+  const duplicateRoles = new Set(
+    rows.map((r) => r.roleCode.trim().toLowerCase()).filter((code, i, list) => list.indexOf(code) !== i),
+  );
+  const addRowInvalid =
+    newRole.trim() === "" ||
+    rows.some((r) => r.roleCode.trim().toLowerCase() === newRole.trim().toLowerCase()) ||
+    invalidCount(newCount);
+  const changed =
+    rows.length !== slots.length ||
+    rows.some((r) => {
+      const saved = slots.find((s) => s.roleCode === r.roleCode);
+      return !saved || String(saved.requiredCount) !== r.requiredCount;
+    });
+  return (
+    <Panel title="Điều chỉnh vị trí vai trò (thay toàn bộ)">
+      <InstructorNotice title="Quyền quản trị dự án">
+        Lưu thay đổi sẽ gửi nguyên danh sách vị trí hiện tại (REPLACE) theo
+        đúng contract BE: mỗi vai trò 1–50 vị trí, tối đa 20 vai trò. Thành
+        viên đã phân công không bị xóa; thu hẹp vị trí chỉ chặn phân công mới.
+      </InstructorNotice>
+      <ul className="mt-4 space-y-2">
+        {rows.map((row, index) => (
+          <li key={index} className="flex flex-wrap items-end gap-3 border-b border-border pb-2">
+            <label className="min-w-40 flex-1 text-caption font-semibold">
+              Mã vai trò
+              <input
+                aria-label={`Mã vai trò vị trí ${index + 1}`}
+                className={`${inputClass} mt-1 font-mono`}
+                value={row.roleCode}
+                maxLength={64}
+                onChange={(event) =>
+                  setRows(rows.map((r, i) => (i === index ? { ...r, roleCode: event.target.value } : r)))
+                }
+              />
+            </label>
+            <label className="text-caption font-semibold">
+              Số vị trí (1–50)
+              <input
+                aria-label={`Số vị trí vai trò ${row.roleCode}`}
+                className={`${inputClass} mt-1 w-24`}
+                type="number"
+                min="1"
+                max="50"
+                step="1"
+                value={row.requiredCount}
+                onChange={(event) =>
+                  setRows(rows.map((r, i) => (i === index ? { ...r, requiredCount: event.target.value } : r)))
+                }
+              />
+            </label>
+            <button
+              type="button"
+              className="text-caption font-semibold text-muted-foreground hover:text-primary"
+              onClick={() => setRows(rows.filter((_, i) => i !== index))}
+            >
+              Bỏ vị trí
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-3 flex flex-wrap items-end gap-3">
+        <label className="min-w-40 flex-1 text-caption font-semibold">
+          Thêm vai trò mới (mã)
+          <input
+            className={`${inputClass} mt-1 font-mono`}
+            value={newRole}
+            maxLength={64}
+            placeholder="vd: backend"
+            onChange={(event) => setNewRole(event.target.value)}
+          />
+        </label>
+        <label className="text-caption font-semibold">
+          Số vị trí
+          <input
+            aria-label="Số vị trí vai trò mới"
+            className={`${inputClass} mt-1 w-24`}
+            type="number"
+            min="1"
+            max="50"
+            step="1"
+            value={newCount}
+            onChange={(event) => setNewCount(event.target.value)}
+          />
+        </label>
+        <button
+          type="button"
+          className={buttonClass}
+          disabled={addRowInvalid}
+          onClick={() => {
+            setRows([...rows, { roleCode: newRole.trim(), requiredCount: String(Number(newCount)) }]);
+            setNewRole("");
+            setNewCount("1");
+          }}
+        >
+          Thêm vào danh sách
+        </button>
+      </div>
+      {(rowInvalid || duplicateRoles.size > 0) && (
+        <p className="mt-2 text-caption text-[var(--danger)]" role="alert">
+          {rowInvalid
+            ? "Mỗi vị trí cần mã vai trò và số vị trí nguyên 1–50."
+            : "Mã vai trò bị trùng trong danh sách."}
+        </p>
+      )}
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          className={buttonClass}
+          disabled={action.busy || rowInvalid || duplicateRoles.size > 0 || rows.length === 0 || rows.length > 20 || !changed}
+          onClick={() =>
+            void action
+              .run(async () => {
+                await setProjectSlots(
+                  projectId,
+                  rows.map((r) => ({ roleCode: r.roleCode.trim(), requiredCount: Number(r.requiredCount) })),
+                );
+                setNotice("Đã lưu cấu hình vị trí vai trò của dự án.");
+              })
+              .then((ok) => {
+                if (ok) onChanged();
+              })
+          }
+        >
+          {action.busy ? "Đang lưu…" : "Lưu vị trí vai trò"}
+        </button>
+        {notice && (
+          <p className="text-caption text-success" role="status">
+            {notice}
+          </p>
+        )}
+      </div>
+      {Boolean(action.error) && <ErrorState error={action.error} />}
+    </Panel>
   );
 }

@@ -3,7 +3,7 @@ import { SessionSection as Panel } from "@/components/sessions/session-section";
 import { usePathname } from "next/navigation";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import { InstructorNotice } from "@/components/instructor/instructor-ui";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as api from "@/lib/api/management";
 import { PerformanceMemberPicker } from "./performance-member-picker";
 import { useResource } from "@/lib/api/use-resource";
@@ -16,6 +16,8 @@ import { CollectionMetrics } from "./collection-insights";
 import { Sparkles } from "@/components/animate-ui/icons/sparkles";
 import { StampMoc, MarginNote } from "@/components/workspace/notebook";
 import { StampBadge } from "@/components/v-intern/doodles";
+import { IconPlus, IconX } from "@/components/v-intern/icons";
+import { FilterChips } from "@/components/notebook/kit";
 import {
   Badge,
   btn,
@@ -41,6 +43,95 @@ const suggestionStatusLabels: Record<string, string> = {
   superseded: "Đã thay thế",
   failed: "Lỗi tạo gợi ý",
 };
+
+/* =====================================================================
+ * Journey Notebook v3 — micro-interactions chấm bài (port từ sandbox
+ * instructor-grading): bước điểm ±0,25, chip điểm nhanh, spark-bar dưới
+ * điểm AI đề xuất, bung mộc ĐÃ DUYỆT + confetti khi chốt, lỗi inline
+ * rung mực. Chỉ là lớp hình ảnh — logic + bản ghi API giữ nguyên.
+ * ===================================================================== */
+
+/** Nút bước điểm — tròn viền mực, vùng chạm 44px. */
+const stepButtonClass =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1 grid h-11 w-11 place-items-center rounded-full border-2 border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] transition-all hover:-translate-y-0.5 hover:bg-[var(--blue-mist)] hover:text-[var(--royal)] disabled:pointer-events-none disabled:opacity-50";
+
+/** Chip điểm nhanh ("theo AI" / "tối đa") — vùng chạm 44px. */
+const quickScoreChipClass =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-1 min-h-11 inline-flex items-center rounded-full border-[1.5px] border-[color-mix(in_srgb,var(--ink)_32%,transparent)] bg-[var(--paper)] px-3 py-1 text-caption font-semibold text-[var(--ink)] transition-all hover:border-[var(--ink)] hover:bg-[var(--blue-mist)]";
+
+/** Confetti 6 hạt bung một nhịp khi chốt điểm — bản inline của .confetti-pop
+ * sandbox (tiện ích chưa được port sang journey.css; keyframe `confetti-burst`
+ * và màu --confetti-N đã có sẵn), nên dùng style inline thay vì CSS dùng chung. */
+function ConfettiBurst() {
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-10"
+    >
+      <span
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: 5,
+          height: 5,
+          borderRadius: 1.5,
+          opacity: 0,
+          background: "var(--confetti-1)",
+          boxShadow:
+            "9px 3px 0 0 var(--confetti-2), -10px -4px 0 0 var(--confetti-3)",
+          animation:
+            "confetti-burst 680ms 60ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards",
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: 5,
+          height: 5,
+          borderRadius: 1.5,
+          opacity: 0,
+          background: "var(--confetti-4)",
+          boxShadow:
+            "8px -6px 0 0 var(--confetti-5), -9px 5px 0 0 var(--confetti-6)",
+          animation:
+            "confetti-burst 640ms 140ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards",
+        }}
+      />
+    </span>
+  );
+}
+
+/** Spark-bar tí hon dưới điểm AI đề xuất — vẽ tỉ lệ điểm/thang điểm thật
+ * (mực nắp trên đỉnh của .spark-bar journey.css, tông theo mức đạt). */
+function AiScoreSparkBar({
+  suggested,
+  max,
+}: {
+  suggested: number;
+  max: number;
+}) {
+  if (!(max > 0)) return null;
+  const ratio = Math.min(1, Math.max(0, suggested / max));
+  const tone =
+    ratio >= 0.8 ? "success" : ratio >= 0.65 ? "warning" : "danger";
+  return (
+    <span
+      aria-hidden="true"
+      title={`AI đề xuất ${suggested}/${max}`}
+      className="mt-2 block h-[7px] w-24 overflow-hidden rounded-[3px_3px_1px_1px] border-[1.5px] border-[color-mix(in_srgb,var(--ink)_35%,transparent)] bg-[var(--paper)]"
+    >
+      <span
+        className="spark-bar block h-full"
+        data-tone={tone}
+        style={{ width: `${Math.round(ratio * 100)}%` }}
+      />
+    </span>
+  );
+}
+
 export function EvaluationManagement() {
   const isInstructor = Boolean(usePathname()?.startsWith("/instructor"));
   const [page, setPage] = useState(1),
@@ -64,7 +155,11 @@ export function EvaluationManagement() {
             page,
             cycleId,
             status,
-            getSessionUser()?.id,
+            /* Admin quản lý toàn bộ đánh giá (BE: isAdmin scope); giảng viên
+             * chỉ thấy đánh giá mình phụ trách (evaluatorId = chính mình). */
+            (getSessionUser()?.roles ?? []).includes("admin")
+              ? ""
+              : getSessionUser()?.id,
             s,
           ),
         [page, cycleId, status],
@@ -73,6 +168,8 @@ export function EvaluationManagement() {
   return (
     <>
       <PageTitle
+        eyebrow="ĐÁNH GIÁ"
+        stamp="CHẤM BÀI"
         title="Đánh giá AI"
         subtitle="Giảng viên chốt điểm chính thức · AI cung cấp gợi ý tham khảo"
         action={
@@ -188,24 +285,24 @@ export function EvaluationManagement() {
             ) : undefined
           }
         >
-          <select
-            aria-label="Trạng thái đánh giá"
-            className={`${inputClass} mb-4`}
+          <FilterChips
+            options={[
+              { value: "", label: "Tất cả trạng thái" },
+              ...["draft", "submitted", "finalized"].map((s) => ({
+                value: s,
+                label: isInstructor
+                  ? evaluationLabels[s as keyof typeof evaluationLabels]
+                  : s,
+              })),
+            ]}
             value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
+            onChange={(value) => {
+              setStatus(value);
               setPage(1);
             }}
-          >
-            <option value="">Tất cả trạng thái</option>
-            {["draft", "submitted", "finalized"].map((s) => (
-              <option key={s} value={s}>
-                {isInstructor
-                  ? evaluationLabels[s as keyof typeof evaluationLabels]
-                  : s}
-              </option>
-            ))}
-          </select>
+            ariaLabel="Trạng thái đánh giá"
+            className="mb-4"
+          />
           {evaluations.loading ? (
             <LoadingState />
           ) : evaluations.error ? (
@@ -420,6 +517,10 @@ function CycleEditor({
     ),
     action = useAction(onChanged);
   const [name, setName] = useState(cycle.name);
+  const reloadCriteria = () => {
+    action.clearError();
+    criteria.reload();
+  };
   const choices =
     cycle.status === "draft"
       ? ["open", "archived"]
@@ -471,12 +572,12 @@ function CycleEditor({
             cycleId={cycle.id}
             criterion={c}
             editable={cycle.status === "draft"}
-            onChanged={criteria.reload}
+            onChanged={reloadCriteria}
           />
         ))
       )}
       {cycle.status === "draft" && (
-        <NewCriterion cycleId={cycle.id} onChanged={criteria.reload} />
+        <NewCriterion cycleId={cycle.id} onChanged={reloadCriteria} />
       )}
       <div className="flex flex-wrap justify-end gap-3">
         {choices.map((status) => (
@@ -718,11 +819,10 @@ function EvaluationEditor({
       [id],
     ),
   );
-  return detail.loading ? (
-    <LoadingState />
-  ) : detail.error ? (
-    <ErrorState error={detail.error} onRetry={detail.reload} />
-  ) : detail.data ? (
+  /* Stale-while-revalidate (đúng ngữ nghĩa useResource — reload giữ payload
+   * cũ): ScoreEditor phải GIỮ NGUYÊN khi tải lại, nếu không mọi modal đang mở
+   * trong nó (kết quả điều chỉnh spec 14) sẽ bị unmount ngay khi reload. */
+  return detail.data ? (
     <ScoreEditor
       key={`${id}-${detail.data.evaluation.status}`}
       detail={detail.data}
@@ -731,6 +831,10 @@ function EvaluationEditor({
         onChanged();
       }}
     />
+  ) : detail.loading ? (
+    <LoadingState />
+  ) : detail.error ? (
+    <ErrorState error={detail.error} onRetry={detail.reload} />
   ) : null;
 }
 export function ScoreEditor({
@@ -764,8 +868,40 @@ export function ScoreEditor({
     [summary, setSummary] = useState(e.summary ?? ""),
     [suggestion, setSuggestion] =
       useState<ReturnType<typeof api.parseAiSuggestion>>();
+  const [suggestionHistoryVersion, setSuggestionHistoryVersion] = useState(0);
   const action = useAction(),
-    locked = e.status === "finalized";
+    locked = e.status === "finalized",
+    /* Spec 14: hiệu chỉnh điểm đã chốt là quyền quản trị — BE xác minh role
+     * admin trực tiếp từ DB lúc lưu; FE chỉ điều hướng hiển thị. */
+    isAdmin = (getSessionUser()?.roles ?? []).includes("admin"),
+    [revising, setRevising] = useState(false);
+  /* Journey v3: bung mộc đỏ "ĐÃ DUYỆT" + confetti một nhịp khi chốt điểm —
+   * tải lại sau ~750ms cho kịp nhịp đóng dấu (đúng sandbox stamping). Người
+   * dùng giảm chuyển động thì bỏ nhịp giải trí và tải lại luôn như trước. */
+  const [sealing, setSealing] = useState(false);
+  const sealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (sealTimer.current) clearTimeout(sealTimer.current);
+    },
+    [],
+  );
+  function fireSeal(after: () => void) {
+    const reduced =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      after();
+      return;
+    }
+    if (sealTimer.current) clearTimeout(sealTimer.current);
+    setSealing(true);
+    sealTimer.current = setTimeout(() => {
+      setSealing(false);
+      after();
+    }, 750);
+  }
   const hasUnsavedChanges =
     summary !== (e.summary ?? "") ||
     detail.criteria.some((criterion) => {
@@ -796,14 +932,46 @@ export function ScoreEditor({
     );
     if (ok) reload();
   }
+  /** Điểm AI đang đề xuất cho một mã tiêu chí (theo gợi ý mới nhất). */
+  const aiScoreOf = (code: string) =>
+    suggestion?.criteria.find((x) => x.criterionCode === code)?.suggestedScore;
+  /** Bước ±0,25 điểm cho ô điểm tiêu chí — kẹp trong khoảng 0…maxScore thật. */
+  function stepScore(c: ReturnType<typeof api.parseCriterion>, delta: number) {
+    const cur = Number(scores[c.id].score.replace(",", "."));
+    const base = Number.isFinite(cur)
+      ? Math.min(c.maxScore, Math.max(0, cur))
+      : 0;
+    const next = Math.min(c.maxScore, Math.max(0, base + delta));
+    setScores({
+      ...scores,
+      [c.id]: { ...scores[c.id], score: String(Number(next.toFixed(2))) },
+    });
+  }
+  /** Điền nhanh một giá trị thật (AI đề xuất / điểm tối đa) vào ô điểm. */
+  function fillScore(c: ReturnType<typeof api.parseCriterion>, value: number) {
+    setScores({
+      ...scores,
+      [c.id]: { ...scores[c.id], score: String(Number(value.toFixed(2))) },
+    });
+  }
   return (
     <div
       className={`${isInstructor ? "ins-score-editor " : ""}grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]`}
     >
       <div className="space-y-4">
-        {Boolean(action.error) && <ErrorState error={action.error} />}
+        {Boolean(action.error) && (
+          /* Journey v3: lỗi inline rung mực — key đổi theo thông điệp để mỗi
+           * lỗi mới phát lại nhịp animate-shake-ink như sandbox formError. */
+          <span key={String(action.error)} className="animate-shake-ink block">
+            <ErrorState error={action.error} />
+          </span>
+        )}
         <div className="flex flex-wrap items-center gap-3">
           <Badge>{isInstructor ? evaluationLabels[e.status] : e.status}</Badge>
+          {e.revisionNumber > 0 && (
+            /* Số lần hiệu chỉnh chính thức đã áp dụng (spec 14). */
+            <Badge tone="blue">Điều chỉnh #{e.revisionNumber}</Badge>
+          )}
           <p className="font-bold">
             Điểm chính thức: {e.overallScore ?? "Chưa chấm"}
           </p>
@@ -845,7 +1013,9 @@ export function ScoreEditor({
             void save();
           }}
         >
-          {detail.criteria.map((c) => (
+          {detail.criteria.map((c) => {
+            const aiValue = aiScoreOf(c.code);
+            return (
             <fieldset key={c.id} className="border-b border-border pb-5 pt-3">
               <legend className="text-subsection font-semibold">{c.name}</legend>
               <p className="mt-1 text-caption text-muted-foreground">
@@ -853,6 +1023,7 @@ export function ScoreEditor({
                 {c.isRequired ? " · Bắt buộc" : ""}
               </p>
               <div className="mt-3 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+              <div>
               <label className="block text-body">
                 Điểm {c.name}
                 <input
@@ -873,6 +1044,51 @@ export function ScoreEditor({
                   }
                 />
               </label>
+              {!locked && (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      className={stepButtonClass}
+                      disabled={action.busy}
+                      aria-label={`Bớt 0,25 điểm ${c.name}`}
+                      onClick={() => stepScore(c, -0.25)}
+                    >
+                      <IconX size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      className={stepButtonClass}
+                      disabled={action.busy}
+                      aria-label={`Thêm 0,25 điểm ${c.name}`}
+                      onClick={() => stepScore(c, 0.25)}
+                    >
+                      <IconPlus size={13} />
+                    </button>
+                  </span>
+                  {typeof aiValue === "number" && (
+                    <button
+                      type="button"
+                      className={quickScoreChipClass}
+                      disabled={action.busy}
+                      aria-label={`Điền điểm AI đề xuất cho ${c.name}`}
+                      onClick={() => fillScore(c, aiValue)}
+                    >
+                      theo AI
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className={quickScoreChipClass}
+                    disabled={action.busy}
+                    aria-label={`Điền điểm tối đa cho ${c.name}`}
+                    onClick={() => fillScore(c, c.maxScore)}
+                  >
+                    tối đa
+                  </button>
+                </div>
+              )}
+              </div>
               <label className="block text-body">
                 Nhận xét {c.name}
                 <textarea
@@ -891,7 +1107,8 @@ export function ScoreEditor({
               </label>
               </div>
             </fieldset>
-          ))}
+            );
+          })}
           <label className="block text-body">
             Tổng kết
             <textarea
@@ -927,24 +1144,56 @@ export function ScoreEditor({
             </button>
           )}
           {e.status === "submitted" && (
-            <button
-              className={buttonClass}
-              disabled={action.busy || needsSave}
-              onClick={() =>
-                void action
-                  .run(() => api.advanceEvaluation(e.id, "finalize"))
-                  .then((ok) => {
-                    if (ok) reload();
-                  })
-              }
-            >
-              Chốt đánh giá
-            </button>
+            <span className="relative inline-flex">
+              {sealing && (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -top-9 right-2 z-10"
+                  >
+                    <StampMoc tone="red" rotate={-8} size="sm" thump>
+                      ĐÃ DUYỆT
+                    </StampMoc>
+                  </span>
+                  <ConfettiBurst />
+                </>
+              )}
+              <button
+                className={buttonClass}
+                disabled={action.busy || needsSave || sealing}
+                onClick={() =>
+                  void action
+                    .run(() => api.advanceEvaluation(e.id, "finalize"))
+                    .then((ok) => {
+                      if (ok) fireSeal(reload);
+                    })
+                }
+              >
+                Chốt đánh giá
+              </button>
+            </span>
           )}
-          {locked && (
+          {locked && !isAdmin && (
             <p className="text-body text-muted-foreground">
               Đánh giá đã khóa. Hiệu chỉnh cần quyền quản trị và lưu lịch sử.
             </p>
+          )}
+          {locked && isAdmin && (
+            /* Hiệu chỉnh chính thức trên đánh giá đã chốt — spec 14: chỉ admin,
+             * BE xác minh lại role lúc lưu; mỗi lần lưu tạo một phiên bản bất
+             * biến kèm lý do (immutable revision row). */
+            <span className="relative inline-flex items-center gap-3">
+              <button
+                className={buttonClass}
+                disabled={action.busy || sealing}
+                onClick={() => setRevising(true)}
+              >
+                Hiệu chỉnh điểm đã chốt
+              </button>
+              <MarginNote className="max-w-64">
+                {"Điều chỉnh chính thức của quản trị — lưu lịch sử phiên bản kèm lý do; trạng thái vẫn \"Đã chốt\"."}
+              </MarginNote>
+            </span>
           )}
         </div>
       </div>
@@ -967,9 +1216,10 @@ export function ScoreEditor({
             className={btn("secondary")}
             disabled={action.busy || (isInstructor && locked)}
             onClick={() =>
-              void action.run(async () =>
-                setSuggestion(await api.suggestEvaluation(e.id)),
-              )
+              void action.run(async () => {
+                setSuggestion(await api.suggestEvaluation(e.id));
+                setSuggestionHistoryVersion(version => version + 1);
+              })
             }
           >
             <Sparkles
@@ -979,7 +1229,7 @@ export function ScoreEditor({
               loop
               aria-hidden="true"
             />
-            {action.busy ? "Đang xin gợi ý…" : "Yêu cầu gợi ý AI"}
+            {action.busy ? "Đang xử lý…" : "Yêu cầu gợi ý AI"}
           </button>
         </Can>
         {isInstructor && locked && (
@@ -998,16 +1248,25 @@ export function ScoreEditor({
               </StampBadge>
             </p>
             <p>{suggestion.summary}</p>
-            {suggestion.criteria.map((c) => (
+            {suggestion.criteria.map((c) => {
+              const criterion = detail.criteria.find(
+                (x) => x.code === c.criterionCode,
+              );
+              return (
               <article
                 key={c.criterionCode}
                 className="border-b border-border py-4"
               >
                 <strong>
-                  {detail.criteria.find((x) => x.code === c.criterionCode)
-                    ?.name ?? c.criterionCode}
+                  {criterion?.name ?? c.criterionCode}
                   : AI đề xuất {c.suggestedScore}
                 </strong>
+                {criterion && (
+                  <AiScoreSparkBar
+                    suggested={c.suggestedScore}
+                    max={criterion.maxScore}
+                  />
+                )}
                 <p className="mt-2">{c.comment}</p>
                 <ul className="mt-2 list-inside list-disc text-caption">
                   {c.evidence.map((x, i) => (
@@ -1015,12 +1274,226 @@ export function ScoreEditor({
                   ))}
                 </ul>
               </article>
-            ))}
+              );
+            })}
           </div>
         )}
-        <SuggestionHistory evaluationId={e.id} criteria={detail.criteria} />
+        <SuggestionHistory key={`${e.id}-${suggestionHistoryVersion}`} evaluationId={e.id} criteria={detail.criteria} />
       </Panel>
+      {revising && isAdmin && (
+        <RevisionModal
+          evaluation={e}
+          criteria={detail.criteria}
+          onClose={() => setRevising(false)}
+          onRevised={reload}
+        />
+      )}
     </div>
+  );
+}
+
+/**
+ * Modal hiệu chỉnh chính thức trên đánh giá đã chốt (spec 14 — admin policy).
+ * - Chỉ admin (BE xác minh lại role lúc lưu, FE chỉ điều hướng hiển thị).
+ * - Gửi POST /evaluations/:id/revisions: scores điều chỉnh + summary + lý do
+ *   bắt buộc; BE giữ trạng thái finalized, tăng revisionNumber và lưu hàng
+ *   revision bất biến (điểm cũ/mới + lý do).
+ */
+function RevisionModal({
+  evaluation,
+  criteria,
+  onClose,
+  onRevised,
+}: {
+  evaluation: ReturnType<typeof api.parseManagedEvaluation> & {
+    scores: { criterionId: string; score: number; comment: string | null }[];
+  };
+  criteria: ReturnType<typeof api.parseCriterion>[];
+  onClose: () => void;
+  onRevised: () => void;
+}) {
+  const action = useAction(),
+    [scores, setScores] = useState<Record<string, { score: string; comment: string }>>(
+      Object.fromEntries(
+        criteria.map((c) => {
+          const saved = evaluation.scores.find((s) => s.criterionId === c.id);
+          return [c.id, { score: saved?.score.toString() ?? "", comment: saved?.comment ?? "" }];
+        }),
+      ),
+    ),
+    [summary, setSummary] = useState(evaluation.summary ?? ""),
+    [reason, setReason] = useState(""),
+    [result, setResult] = useState<Awaited<ReturnType<typeof api.reviseEvaluation>>>();
+  const reasonInvalid = reason.trim().length === 0;
+  const scoreInvalid = criteria.some((c) => {
+    const raw = scores[c.id].score.replace(",", ".").trim();
+    if (raw === "") return false;
+    const value = Number(raw);
+    return !Number.isFinite(value) || value < 0 || value > c.maxScore;
+  });
+  return (
+    <Modal
+      wide
+      title="Hiệu chỉnh điểm đã chốt"
+      description={
+        <>
+          Quyền quản trị · spec 14 — điều chỉnh chính thức trên đánh giá đã chốt.
+          Mỗi lần lưu tạo một phiên bản bất biến kèm lý do; trạng thái vẫn{" "}
+          <strong>Đã chốt</strong>.
+        </>
+      }
+      onClose={onClose}
+      footer={
+        <>
+          <button className={btn("secondary")} onClick={onClose} disabled={action.busy}>
+            {result ? "Đóng" : "Hủy"}
+          </button>
+          <button
+            className={buttonClass}
+            disabled={action.busy || reasonInvalid || scoreInvalid}
+            onClick={() =>
+              void action
+                .run(async () => {
+                  const outcome = await api.reviseEvaluation(evaluation.id, {
+                    scores: criteria
+                      .filter((c) => scores[c.id].score !== "")
+                      .map((c) => ({
+                        criterionId: c.id,
+                        score: Number(scores[c.id].score.replace(",", ".")),
+                        comment: scores[c.id].comment || null,
+                      })),
+                    summary,
+                    reason: reason.trim(),
+                  });
+                  setResult(outcome);
+                  return outcome;
+                })
+                .then((ok) => {
+                  if (ok) onRevised();
+                })
+            }
+          >
+            {action.busy ? "Đang lưu…" : "Lưu điều chỉnh"}
+          </button>
+        </>
+      }
+    >
+      {Boolean(action.error) && (
+        <span key={String(action.error)} className="animate-shake-ink block">
+          <ErrorState error={action.error} />
+        </span>
+      )}
+      {result ? (
+        <div className="space-y-3" role="status">
+          <div className="flex flex-wrap items-center gap-3">
+            <StampMoc tone="red" size="sm" thump>
+              ĐÃ HIỆU CHỈNH
+            </StampMoc>
+            <p className="font-bold">
+              Điều chỉnh #{result.revision.revisionNumber}
+            </p>
+          </div>
+          <p className="text-body">
+            Điểm chính thức{" "}
+            {result.revision.previousOverallScore ?? evaluation.overallScore} →{" "}
+            <strong>{result.evaluation.overallScore ?? result.revision.newOverallScore}</strong>
+          </p>
+          <p className="text-caption text-muted-foreground">
+            Lý do đã lưu vào lịch sử phiên bản: {result.revision.reason}
+          </p>
+        </div>
+      ) : (
+        <form
+          className="space-y-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+          }}
+        >
+          <MarginNote>
+            Điểm và nhận xét dưới đây là bản điều chỉnh — chỉ gửi những tiêu chí
+            bạn thực sự thay đổi. Lý do hiệu chỉnh là bắt buộc (1–1000 ký tự).
+          </MarginNote>
+          {criteria.map((c) => {
+            const saved = evaluation.scores.find((s) => s.criterionId === c.id);
+            return (
+              <fieldset key={c.id} className="border-b border-border pb-4 pt-3">
+                <legend className="text-subsection font-semibold">{c.name}</legend>
+                <p className="mt-1 text-caption text-muted-foreground">
+                  Trọng số {c.weight}% · Điểm tối đa {c.maxScore}
+                  {saved ? ` · Hiện tại ${saved.score}` : ""}
+                </p>
+                <div className="mt-3 grid gap-4 sm:grid-cols-[minmax(0,110px)_minmax(0,1fr)]">
+                  <label className="block text-body">
+                    Điểm {c.name}
+                    <input
+                      aria-label={`Điểm điều chỉnh ${c.name}`}
+                      type="number"
+                      min="0"
+                      max={c.maxScore}
+                      step="0.1"
+                      disabled={action.busy || Boolean(result)}
+                      className={`${inputClass} mt-1`}
+                      value={scores[c.id].score}
+                      onChange={(event) =>
+                        setScores({
+                          ...scores,
+                          [c.id]: { ...scores[c.id], score: event.target.value },
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="block text-body">
+                    Nhận xét điều chỉnh {c.name}
+                    <textarea
+                      aria-label={`Nhận xét điều chỉnh ${c.name}`}
+                      maxLength={2000}
+                      disabled={action.busy || Boolean(result)}
+                      className={`${inputClass} mt-1`}
+                      rows={2}
+                      value={scores[c.id].comment}
+                      onChange={(event) =>
+                        setScores({
+                          ...scores,
+                          [c.id]: { ...scores[c.id], comment: event.target.value },
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+              </fieldset>
+            );
+          })}
+          <label className="block text-caption font-semibold">
+            Nhận xét tổng hợp điều chỉnh
+            <textarea
+              className={`${inputClass} mt-1`}
+              rows={3}
+              maxLength={4000}
+              value={summary}
+              onChange={(event) => setSummary(event.target.value)}
+            />
+          </label>
+          <label className="block text-caption font-semibold">
+            Lý do hiệu chỉnh (bắt buộc — lưu vào lịch sử phiên bản)
+            <textarea
+              className={`${inputClass} mt-1`}
+              rows={2}
+              maxLength={1000}
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+              aria-required="true"
+            />
+          </label>
+          {(reasonInvalid || scoreInvalid) && (
+            <p className="text-caption text-[var(--danger)]" role="alert">
+              {scoreInvalid
+                ? "Điểm điều chỉnh phải để trống (giữ nguyên) hoặc nằm trong 0…điểm tối đa."
+                : "Cần nhập lý do hiệu chỉnh trước khi lưu."}
+            </p>
+          )}
+        </form>
+      )}
+    </Modal>
   );
 }
 
@@ -1183,16 +1656,23 @@ function SuggestionDetail({
               </ul>
             </div>
           )}
-          {suggestionDetail.data.suggestion.criteria.map((c) => (
+          {suggestionDetail.data.suggestion.criteria.map((c) => {
+            const criterion = criteria.find((x) => x.code === c.criterionCode);
+            return (
             <article
               key={c.criterionCode}
               className="border-t border-border pt-2"
             >
               <strong>
-                {criteria.find((x) => x.code === c.criterionCode)?.name ??
-                  c.criterionCode}
+                {criterion?.name ?? c.criterionCode}
                 : AI đề xuất {c.suggestedScore}
               </strong>
+              {criterion && (
+                <AiScoreSparkBar
+                  suggested={c.suggestedScore}
+                  max={criterion.maxScore}
+                />
+              )}
               {c.comment && <p className="mt-1">{c.comment}</p>}
               {c.evidence.length > 0 && (
                 <ul className="mt-1 list-inside list-disc text-caption">
@@ -1202,7 +1682,8 @@ function SuggestionDetail({
                 </ul>
               )}
             </article>
-          ))}
+            );
+          })}
         </div>
       ) : null}
     </div>

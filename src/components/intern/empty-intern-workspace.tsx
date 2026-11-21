@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 
 import { SparkleDoodle } from "@/components/v-intern/doodles";
+import { EmptyNotebook } from "@/components/notebook/kit";
 import { SectionCard, StatusBadge } from "./intern-primitives";
 import { InternshipInfoCard } from "./internship-info-card";
 import { NextProcessCard } from "./next-process-card";
@@ -59,6 +60,9 @@ export function EmptyInternWorkspace({
       <div className="flex min-w-0 flex-col gap-5 xl:min-h-0 xl:gap-6">
         {/* Page header — compact, chỉ nằm trong main column (reference) */}
         <header className="shrink-0">
+          {/* v3: tem chương mono phía trên tiêu đề — cùng họ với nhóm trang
+              sổ intern (pl-4 ăn khớp lề đỏ của .intern-waiting h1). */}
+          <p className="eyebrow mb-1.5 pl-4">SỔ TAY THỰC TẬP</p>
           <h1 className="text-page font-extrabold tracking-tight text-foreground sm:text-page xl:text-page xl:leading-none">
             {recruitment ? "Hành trình thực tập của bạn" : "Intern Workspace"}
           </h1>
@@ -81,7 +85,11 @@ export function EmptyInternWorkspace({
                 alt=""
                 width={48}
                 height={64}
-                className="h-16 w-12 object-contain"
+                /* v3: mascot bồng bềnh nhẹ (animate-bob) — thuần trang trí,
+                    tắt theo prefers-reduced-motion trong globals.css. */
+                className="h-16 w-12 animate-bob object-contain select-none"
+                style={{ animationDuration: "6s" }}
+                draggable={false}
               />
             </span>
             {/* Mascot — asset có sẵn trong repo (nền đã trong suốt), thuần trang trí.
@@ -121,7 +129,7 @@ export function EmptyInternWorkspace({
           <div className="space-y-3">{recruitment}</div>
         ) : (
           <section
-            aria-labelledby="intern-empty-assignment"
+            aria-label="Chưa có dự án được phân công"
             className="workspace-waiting-empty flex min-h-0 flex-1 flex-col items-start justify-center py-8"
           >
             {/* R01: browser, open blue box and paper plane; decorative only. */}
@@ -218,32 +226,31 @@ export function EmptyInternWorkspace({
                 strokeLinecap="round"
               />
             </svg>
-            <h2
-              id="intern-empty-assignment"
-              className="marker text-section font-bold tracking-tight text-foreground sm:text-page xl:text-page"
-            >
-              {emptyCard.title}
-            </h2>
-            <p className="mt-3 max-w-xl text-body leading-relaxed text-muted-foreground xl:mt-1 xl:max-w-lg xl:text-small xl:leading-[1.35]">
-              {emptyCard.description}
-            </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 xl:mt-3 xl:gap-3">
-              <Link
-                href="/intern/onboarding/result"
-                className="inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
-              >
-                <IconFileText className="size-4" aria-hidden="true" />
-                {emptyCard.primaryAction}
-              </Link>
-              <button
-                type="button"
-                onClick={onReload}
-                className="inline-flex items-center gap-2 rounded-control border border-border bg-card px-4 py-2 text-small font-semibold text-foreground transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
-              >
-                <IconRefreshCw className="size-4" aria-hidden="true" />
-                {emptyCard.secondaryAction}
-              </button>
-            </div>
+            {/* v3: cụm trống cấp trang → EmptyNotebook (giữ nguyên artwork R01
+                phía trên + nội dung text + 2 nút hành động hiện có). */}
+            <EmptyNotebook
+              title={emptyCard.title}
+              description={emptyCard.description}
+              action={
+                <>
+                  <Link
+                    href="/intern/onboarding/result"
+                    className="inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2 text-small font-semibold text-primary-foreground transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
+                  >
+                    <IconFileText className="size-4" aria-hidden="true" />
+                    {emptyCard.primaryAction}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={onReload}
+                    className="inline-flex items-center gap-2 rounded-control border border-border bg-card px-4 py-2 text-small font-semibold text-foreground transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1 motion-safe:active:translate-y-px"
+                  >
+                    <IconRefreshCw className="size-4" aria-hidden="true" />
+                    {emptyCard.secondaryAction}
+                  </button>
+                </>
+              }
+            />
           </section>
         )}
 

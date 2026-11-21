@@ -372,7 +372,7 @@ function AiPlanWorkspace({
                 >
                   {action.busy ? (
                     <>
-                      <Spinner className="size-3.5" />Đang phát hành…
+                    <Spinner className="size-3.5" />Đang xử lý…
                     </>
                   ) : (
                     "Xác nhận & phát hành"

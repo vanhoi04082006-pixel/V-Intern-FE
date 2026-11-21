@@ -8,7 +8,8 @@ import {
 import { useAction } from "@/components/product/use-action";
 import {
   buttonClass,
-  inputClass,
+  selectClass,
+  textareaClass,
   Modal,
 } from "@/components/product/primitives";
 import { ErrorState } from "@/components/shared/data-state";
@@ -125,7 +126,7 @@ export function InterviewRebooking({
             <fieldset disabled={action.busy} className="space-y-4">
               <label className="block text-body font-medium">
                 Khung giờ mới
-                <select name="slot" required className={`${inputClass} mt-2`}>
+                <select name="slot" required className={`${selectClass} mt-2`}>
                   <option value="">Chọn lịch mở và còn chỗ</option>
                   {offered.map((slot) => (
                     <option key={slot.id} value={slot.id}>
@@ -144,7 +145,7 @@ export function InterviewRebooking({
                   minLength={10}
                   maxLength={1000}
                   rows={3}
-                  className={`${inputClass} mt-2`}
+                  className={`${textareaClass} mt-2`}
                 />
               </label>
               <button

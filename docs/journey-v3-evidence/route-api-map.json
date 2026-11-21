@@ -1,0 +1,1307 @@
+{
+  "standard": "Journey Notebook v3 — route → role → component → API map (traced from source by GAP-1 audit, 2026-11-20)",
+  "routeCount": 81,
+  "routes": {
+    "/": {
+      "role": "public",
+      "group": "public",
+      "component": "v-intern/landing (hero, how-it-works, showcase, product-heart, audience, workflow, final-cta, footer)",
+      "api": [],
+      "perms": []
+    },
+    "/login": {
+      "role": "public",
+      "group": "public",
+      "component": "auth/auth-card + auth-tabs + login-form",
+      "api": [
+        "POST /auth/login",
+        "GET /intern/me/workspace"
+      ],
+      "perms": []
+    },
+    "/register": {
+      "role": "public",
+      "group": "public",
+      "component": "auth/register-form",
+      "api": [
+        "POST /auth/register"
+      ],
+      "perms": []
+    },
+    "/forgot-password": {
+      "role": "public",
+      "group": "public",
+      "component": "auth/forgot-password-form",
+      "api": [
+        "POST /auth/forgot-password"
+      ],
+      "perms": []
+    },
+    "/change-password": {
+      "role": "authenticated",
+      "group": "public",
+      "component": "auth/change-password",
+      "api": [
+        "GET /auth/me",
+        "POST /auth/change-password"
+      ],
+      "perms": []
+    },
+    "/apply": {
+      "role": "public",
+      "group": "public",
+      "component": "applications/public-application",
+      "api": [
+        "GET /applications/rounds",
+        "POST /applications",
+        "POST /applications/verify",
+        "GET /applications/me",
+        "POST /applications/me/cv",
+        "POST /applications/leave",
+        "POST /applications/request-access"
+      ],
+      "perms": []
+    },
+    "/verify": {
+      "role": "public",
+      "group": "public",
+      "component": "product/outcomes (verify)",
+      "api": [
+        "GET /certificates/verify/:code"
+      ],
+      "perms": []
+    },
+    "/github/invitation": {
+      "role": "public",
+      "group": "public",
+      "component": "auth/workspace-guard + product/github-connection",
+      "api": [
+        "GET /sessions/:id/github",
+        "POST /sessions/:id/github/provision",
+        "POST /sessions/:id/github/invite",
+        "POST /sessions/:id/github/webhook",
+        "POST /sessions/:id/github/members/:userId/invite",
+        "POST /sessions/:id/github/reconcile",
+        "GET /sessions/:id/github/activity"
+      ],
+      "perms": []
+    },
+    "/admin": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (overview)",
+      "api": [
+        "GET /users",
+        "GET /groups",
+        "GET /roles",
+        "GET /audit-logs"
+      ],
+      "perms": []
+    },
+    "/admin/users": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (users)",
+      "api": [
+        "GET /users",
+        "GET /users/:id",
+        "POST /users",
+        "PATCH /users/:id",
+        "PATCH /users/:id/status",
+        "GET /roles"
+      ],
+      "perms": [
+        "users.create"
+      ]
+    },
+    "/admin/roles": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (roles)",
+      "api": [
+        "GET /roles",
+        "GET /permissions",
+        "GET /roles/:id/permissions"
+      ],
+      "perms": []
+    },
+    "/admin/groups": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (groups)",
+      "api": [
+        "GET /groups",
+        "POST /groups",
+        "PATCH /groups/:id",
+        "GET /groups/:id/members",
+        "GET /groups/:id/roles",
+        "PUT /groups/:id/roles",
+        "POST /groups/:id/members",
+        "DELETE /groups/:id/members/:userId",
+        "GET /users/:id"
+      ],
+      "perms": [
+        "groups.manage"
+      ]
+    },
+    "/admin/activity": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (activity)",
+      "api": [
+        "GET /activity-events"
+      ],
+      "perms": []
+    },
+    "/admin/audit": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (audit)",
+      "api": [
+        "GET /audit-logs"
+      ],
+      "perms": []
+    },
+    "/admin/catalogs": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (catalogs)",
+      "api": [
+        "GET /catalogs/types",
+        "GET /catalogs/items",
+        "POST /catalogs/types",
+        "POST /catalogs/items",
+        "PATCH /catalogs/items/:id"
+      ],
+      "perms": []
+    },
+    "/admin/services": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management (services)",
+      "api": [
+        "GET /health",
+        "GET /admin/system/status",
+        "GET /admin/system/contracts",
+        "POST /admin/system/contracts/validate",
+        "GET /admin/system/repositories"
+      ],
+      "perms": []
+    },
+    "/admin/settings": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/admin-management + github-connection (settings)",
+      "api": [
+        "GET /settings",
+        "PATCH /settings",
+        "GET /github/repository-account",
+        "POST /github/repository-account"
+      ],
+      "perms": []
+    },
+    "/admin/ai": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/ai-configuration",
+      "api": [
+        "GET /admin/ai-configuration",
+        "PUT /admin/ai-configuration",
+        "GET /admin/agents/business-runs",
+        "POST /admin/agents/knowledge-runs",
+        "GET /admin/agents/knowledge-runs/:id",
+        "POST /admin/agents/knowledge-runs/:id/cancel",
+        "POST /admin/agents/knowledge-runs/:id/resume"
+      ],
+      "perms": []
+    },
+    "/admin/career-roles": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/career-roles",
+      "api": [
+        "GET /admin/career-roles",
+        "POST /admin/career-roles",
+        "PUT /admin/career-roles/:code",
+        "POST /admin/career-roles/:code/archive",
+        "GET /admin/career-roles/:code/revisions"
+      ],
+      "perms": []
+    },
+    "/admin/certificates": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/certificate-console",
+      "api": [
+        "GET /certificates",
+        "POST /certificates/issue",
+        "POST /certificates/:id/revoke",
+        "GET /certificates/:id/pdf",
+        "GET /performance/interns"
+      ],
+      "perms": []
+    },
+    "/admin/communications": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/communications",
+      "api": [
+        "GET /admin/communications",
+        "GET /admin/communications/:id/preview",
+        "POST /admin/communications/:id/resend"
+      ],
+      "perms": []
+    },
+    "/admin/knowledge": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/knowledge/library",
+      "api": [
+        "GET /admin/knowledge",
+        "GET /admin/knowledge/:code",
+        "GET /admin/career-roles",
+        "POST /admin/knowledge/import/dry-run"
+      ],
+      "perms": [
+        "knowledge.read",
+        "knowledge.manage",
+        "knowledge.publish"
+      ]
+    },
+    "/admin/knowledge/new": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/knowledge/editor",
+      "api": [
+        "POST /admin/knowledge",
+        "PUT /admin/knowledge/:code",
+        "POST /admin/knowledge/:code/publish",
+        "POST /admin/knowledge/:code/archive",
+        "POST /admin/knowledge/:code/restore",
+        "GET /admin/knowledge/:code/revisions",
+        "GET /admin/knowledge/:code/publication-check",
+        "GET /admin/career-roles"
+      ],
+      "perms": [
+        "knowledge.read",
+        "knowledge.manage",
+        "knowledge.publish"
+      ]
+    },
+    "/admin/knowledge/[code]": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/knowledge/editor",
+      "api": [
+        "GET /admin/knowledge/:code",
+        "POST /admin/knowledge",
+        "PUT /admin/knowledge/:code",
+        "POST /admin/knowledge/:code/publish",
+        "POST /admin/knowledge/:code/archive",
+        "POST /admin/knowledge/:code/restore",
+        "GET /admin/knowledge/:code/revisions",
+        "GET /admin/knowledge/:code/publication-check",
+        "GET /admin/career-roles"
+      ],
+      "perms": [
+        "knowledge.read",
+        "knowledge.manage",
+        "knowledge.publish"
+      ]
+    },
+    "/admin/kpi": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/kpi-console",
+      "api": [
+        "GET /kpi-periods",
+        "POST /kpi-periods",
+        "PATCH /kpi-periods/:id",
+        "POST /kpi-periods/:id/status",
+        "POST /kpi-periods/:id/calculate",
+        "POST /kpi-periods/:id/finalize",
+        "GET /kpi-periods/:id/results",
+        "GET /kpi-results/:id",
+        "GET /performance/interns"
+      ],
+      "perms": []
+    },
+    "/admin/notifications": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/outcomes (notifications)",
+      "api": [
+        "GET /notifications",
+        "POST /notifications/:id/read",
+        "POST /notifications/read-all",
+        "GET /notifications/preferences",
+        "PUT /notifications/preferences"
+      ],
+      "perms": []
+    },
+    "/admin/profile": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/outcomes (profile)",
+      "api": [
+        "POST /auth/refresh"
+      ],
+      "perms": []
+    },
+    "/admin/performance": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/member-performance",
+      "api": [
+        "GET /performance/interns",
+        "GET /performance/interns/:id/ai-recommendations",
+        "GET /performance/interns/:id/detail",
+        "GET /projects",
+        "GET /projects/:id",
+        "GET /sessions",
+        "GET /sessions/:id"
+      ],
+      "perms": []
+    },
+    "/admin/questions": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/question-bank",
+      "api": [
+        "GET /admin/question-bank",
+        "POST /admin/question-bank",
+        "PUT /admin/question-bank/:id",
+        "DELETE /admin/question-bank/:id",
+        "GET /admin/career-roles"
+      ],
+      "perms": []
+    },
+    "/admin/recruitment-rounds": {
+      "role": "admin",
+      "group": "admin",
+      "component": "applications/recruitment-rounds",
+      "api": [
+        "GET /recruitment-rounds",
+        "POST /recruitment-rounds",
+        "GET /recruitment-rounds/:id",
+        "POST /recruitment-rounds/:id/status",
+        "POST /recruitment-rounds/:id/slots",
+        "POST /recruitment-rounds/:id/slots/:slotId/close",
+        "GET /recruitment-rounds/:id/applications",
+        "GET /recruitment-rounds/:id/applications/:appId",
+        "GET /recruitment-rounds/:id/applications/:appId/cv",
+        "POST /recruitment-rounds/:id/applications/:appId/retake",
+        "POST /recruitment-rounds/:id/applications/:appId/reschedule",
+        "POST /recruitment-rounds/:id/applications/:appId/cancel",
+        "POST /recruitment-rounds/:id/applications/:appId/retry",
+        "POST /recruitment-rounds/:id/applications/:appId/resend-credentials",
+        "GET /recruitment-rounds/:id/applications/:appId/credential-recovery",
+        "POST /recruitment-rounds/:id/applications/:appId/recover-credentials",
+        "GET /career-roles",
+        "POST /applications/request-access"
+      ],
+      "perms": []
+    },
+    "/admin/reports": {
+      "role": "admin",
+      "group": "admin",
+      "component": "sessions/reports-workspace",
+      "api": [
+        "GET /reports",
+        "GET /reports/:id",
+        "POST /reports",
+        "GET /reports/:id/pdf",
+        "GET /reports/:id/xlsx",
+        "GET /projects",
+        "GET /projects/:id",
+        "GET /sessions",
+        "GET /sessions/:id",
+        "GET /sprints",
+        "GET /performance/interns"
+      ],
+      "perms": []
+    },
+    "/admin/salary": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/salary-console",
+      "api": [
+        "GET /kpi-periods",
+        "GET /virtual-salary",
+        "POST /virtual-salary/generate/:kpiPeriodId",
+        "POST /virtual-salary/adjustments",
+        "GET /virtual-salary/users/:userId/balance",
+        "GET /performance/interns"
+      ],
+      "perms": []
+    },
+    "/admin/sessions": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/sessions (console)",
+      "api": [
+        "GET /sessions/overview",
+        "GET /sessions/:id",
+        "POST /sessions",
+        "PATCH /sessions/:id",
+        "GET /sessions/:id/members",
+        "POST /sessions/:id/members",
+        "DELETE /sessions/:id/members/:userId",
+        "GET /sessions/:id/instructors",
+        "POST /sessions/:id/instructors",
+        "DELETE /sessions/:id/instructors/:userId",
+        "GET /sessions/instructor-options",
+        "GET /sessions/:id/milestones",
+        "POST /sessions/:id/milestones",
+        "PATCH /sessions/:id/milestones/:milestoneId",
+        "DELETE /sessions/:id/milestones/:milestoneId",
+        "GET /recruitment/candidates",
+        "POST /assignments",
+        "GET /projects",
+        "GET /projects/:id"
+      ],
+      "perms": [
+        "sessions.manage"
+      ]
+    },
+    "/admin/sessions/[id]": {
+      "role": "admin",
+      "group": "admin",
+      "component": "sessions/session-overview",
+      "api": [
+        "GET /sessions/:id",
+        "GET /sprints",
+        "GET /sessions/:id/work",
+        "GET /sessions/:id/timeline",
+        "PATCH /sessions/:id",
+        "GET /ai-generations/plans",
+        "POST /ai-generations/plans/generate",
+        "GET /ai-generations/plans/:planId",
+        "POST /ai-generations/sprint-plan/confirm",
+        "POST /ai-generations/sprint-plan/draft",
+        "GET /sessions/:id/github",
+        "POST /sessions/:id/github/provision",
+        "POST /sessions/:id/github/invite",
+        "POST /sessions/:id/github/webhook",
+        "POST /sessions/:id/github/members/:userId/invite",
+        "POST /sessions/:id/github/reconcile",
+        "GET /sessions/:id/github/activity",
+        "GET /performance/interns",
+        "GET /performance/interns/:id/ai-recommendations",
+        "GET /performance/interns/:id/detail",
+        "GET /projects",
+        "GET /sessions",
+        "GET /projects/:id",
+        "GET /reports",
+        "GET /reports/:id",
+        "POST /reports",
+        "GET /reports/:id/pdf",
+        "GET /reports/:id/xlsx"
+      ],
+      "perms": [
+        "sessions.manage",
+        "sprints.manage",
+        "sessions.view",
+        "tasks.view",
+        "performance.view"
+      ]
+    },
+    "/admin/sprints": {
+      "role": "admin",
+      "group": "admin",
+      "component": "sessions/delivery-overview",
+      "api": [
+        "GET /sprints",
+        "GET /tasks",
+        "GET /sessions/member-options",
+        "GET /projects",
+        "GET /projects/:id",
+        "POST /sprints"
+      ],
+      "perms": [
+        "sprints.manage"
+      ]
+    },
+    "/admin/sprints/[id]": {
+      "role": "admin",
+      "group": "admin",
+      "component": "sessions/sprint-workspace",
+      "api": [
+        "GET /sprints/:id",
+        "GET /tasks",
+        "GET /sessions/:id/work",
+        "GET /dashboard/sprints/:id/burndown",
+        "GET /sessions/:id/members",
+        "GET /projects/:id/members",
+        "GET /sprints/:id/board",
+        "GET /sprints/:id/completion",
+        "POST /sprints/:id/status",
+        "POST /sprints",
+        "PATCH /sprints/:id",
+        "GET /sprints",
+        "GET /projects",
+        "GET /projects/:id",
+        "POST /tasks",
+        "PATCH /tasks/:id",
+        "DELETE /tasks/:id",
+        "GET /tasks/:id",
+        "GET /tasks/:id/comments",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": [
+        "sprints.manage",
+        "tasks.view",
+        "sprints.view",
+        "sessions.view",
+        "projects.view",
+        "tasks.manage"
+      ]
+    },
+    "/admin/tasks": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/sprint-management",
+      "api": [
+        "GET /sprints",
+        "GET /projects",
+        "GET /projects/:id",
+        "GET /tasks",
+        "POST /tasks",
+        "PATCH /tasks/:id",
+        "DELETE /tasks/:id",
+        "GET /projects/:id/members",
+        "GET /sprints/:id/board",
+        "GET /sprints/:id/completion",
+        "GET /dashboard/sprints/:id/burndown",
+        "POST /sprints",
+        "PATCH /sprints/:id",
+        "POST /sprints/:id/status",
+        "GET /tasks/:id",
+        "GET /tasks/:id/comments",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": [
+        "tasks.manage"
+      ]
+    },
+    "/admin/tasks/[id]": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/intern-work (task detail)",
+      "api": [
+        "GET /tasks/:id",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "PATCH /tasks/:id",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": []
+    },
+    "/admin/templates": {
+      "role": "admin",
+      "group": "admin",
+      "component": "admin/templates-manager",
+      "api": [
+        "GET /project-templates",
+        "GET /project-templates/:id",
+        "POST /project-templates",
+        "PATCH /project-templates/:id",
+        "GET /project-templates/:id/revisions",
+        "GET /project-templates/:id/revisions/:version",
+        "GET /projects/:projectId/template-assessment"
+      ],
+      "perms": [
+        "templates.assessment.read",
+        "templates.assessment.manage"
+      ]
+    },
+    "/instructor": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/instructor-home",
+      "api": [
+        "GET /dashboard/instructor",
+        "GET /sessions/overview"
+      ],
+      "perms": []
+    },
+    "/instructor/evaluations": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "product/evaluation-management + imported-reviews",
+      "api": [
+        "GET /evaluation-cycles",
+        "POST /evaluation-cycles",
+        "PATCH /evaluation-cycles/:id",
+        "POST /evaluation-cycles/:id/status",
+        "GET /evaluation-cycles/:id/criteria",
+        "POST /evaluation-cycles/:id/criteria",
+        "PATCH /evaluation-cycles/:id/criteria/:criterionId",
+        "DELETE /evaluation-cycles/:id/criteria/:criterionId",
+        "GET /evaluations",
+        "POST /evaluations",
+        "GET /evaluations/:id",
+        "PATCH /evaluations/:id",
+        "POST /evaluations/:id/submit",
+        "POST /evaluations/:id/finalize",
+        "POST /evaluations/:id/ai-suggestions",
+        "GET /evaluations/:id/ai-suggestions",
+        "GET /evaluations/:id/ai-suggestions/:suggestionId",
+        "GET /imported-reviews",
+        "PATCH /imported-reviews/:id"
+      ],
+      "perms": [
+        "ai.evaluation.assist"
+      ]
+    },
+    "/instructor/github": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "product/github-connection",
+      "api": [
+        "GET /github/me",
+        "POST /github/connect",
+        "DELETE /github/me"
+      ],
+      "perms": []
+    },
+    "/instructor/notifications": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "product/outcomes (notifications)",
+      "api": [
+        "GET /notifications",
+        "POST /notifications/:id/read",
+        "POST /notifications/read-all",
+        "GET /notifications/preferences",
+        "PUT /notifications/preferences"
+      ],
+      "perms": []
+    },
+    "/instructor/participation": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "participation/instructor",
+      "api": [
+        "GET /sessions/overview",
+        "GET /sessions/:id/participation",
+        "POST /sessions/:id/participation/refresh",
+        "POST /sessions/:id/participation/policy",
+        "POST /sessions/:id/participation/incidents/:incidentId/resolve",
+        "POST /sessions/:id/participation/tasks/:taskId/extend",
+        "POST /sessions/:id/participation/incidents/:incidentId/replacement-advice",
+        "POST /sessions/:id/participation/incidents/:incidentId/replacement-preview",
+        "POST /sessions/:id/participation/replacements/:commandId/approve",
+        "GET /sessions/:id/participation/replacements/:commandId",
+        "GET /sessions/:id/participation/repository-access-jobs",
+        "POST /sessions/:id/participation/repository-access-jobs/:id/retry"
+      ],
+      "perms": []
+    },
+    "/instructor/performance": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "product/member-performance",
+      "api": [
+        "GET /performance/interns",
+        "GET /performance/interns/:id/ai-recommendations",
+        "GET /performance/interns/:id/detail",
+        "GET /projects",
+        "GET /projects/:id",
+        "GET /sessions",
+        "GET /sessions/:id"
+      ],
+      "perms": []
+    },
+    "/instructor/projects": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "projects/project-library",
+      "api": [
+        "GET /project-templates"
+      ],
+      "perms": []
+    },
+    "/instructor/projects/[id]": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "projects/template-detail",
+      "api": [
+        "GET /project-templates/:id",
+        "POST /project-templates/:id/start",
+        "GET /project-templates/:id/revisions",
+        "GET /project-templates/:id/revisions/:version",
+        "GET /projects/:projectId/template-assessment"
+      ],
+      "perms": [
+        "projects.manage",
+        "sessions.manage",
+        "tasks.manage",
+        "templates.assessment.read"
+      ]
+    },
+    "/instructor/recruitment-rounds": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "applications/recruitment-rounds",
+      "api": [
+        "GET /recruitment-rounds",
+        "POST /recruitment-rounds",
+        "GET /recruitment-rounds/:id",
+        "POST /recruitment-rounds/:id/status",
+        "POST /recruitment-rounds/:id/slots",
+        "POST /recruitment-rounds/:id/slots/:slotId/close",
+        "GET /recruitment-rounds/:id/applications",
+        "GET /recruitment-rounds/:id/applications/:appId",
+        "GET /recruitment-rounds/:id/applications/:appId/cv",
+        "POST /recruitment-rounds/:id/applications/:appId/retake",
+        "POST /recruitment-rounds/:id/applications/:appId/reschedule",
+        "POST /recruitment-rounds/:id/applications/:appId/cancel",
+        "POST /recruitment-rounds/:id/applications/:appId/retry",
+        "POST /recruitment-rounds/:id/applications/:appId/resend-credentials",
+        "GET /recruitment-rounds/:id/applications/:appId/credential-recovery",
+        "POST /recruitment-rounds/:id/applications/:appId/recover-credentials",
+        "GET /career-roles",
+        "POST /applications/request-access"
+      ],
+      "perms": []
+    },
+    "/instructor/reports": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/reports-workspace",
+      "api": [
+        "GET /reports",
+        "GET /reports/:id",
+        "POST /reports",
+        "GET /reports/:id/pdf",
+        "GET /reports/:id/xlsx",
+        "GET /projects",
+        "GET /projects/:id",
+        "GET /sessions",
+        "GET /sessions/:id",
+        "GET /sprints",
+        "GET /performance/interns"
+      ],
+      "perms": []
+    },
+    "/instructor/sessions": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/session-list",
+      "api": [
+        "GET /sessions/overview"
+      ],
+      "perms": []
+    },
+    "/instructor/sessions/[id]": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/session-overview",
+      "api": [
+        "GET /sessions/:id",
+        "GET /sprints",
+        "GET /sessions/:id/work",
+        "GET /sessions/:id/timeline",
+        "PATCH /sessions/:id",
+        "GET /ai-generations/plans",
+        "POST /ai-generations/plans/generate",
+        "GET /ai-generations/plans/:planId",
+        "POST /ai-generations/sprint-plan/confirm",
+        "POST /ai-generations/sprint-plan/draft",
+        "GET /sessions/:id/github",
+        "POST /sessions/:id/github/provision",
+        "POST /sessions/:id/github/invite",
+        "POST /sessions/:id/github/webhook",
+        "POST /sessions/:id/github/members/:userId/invite",
+        "POST /sessions/:id/github/reconcile",
+        "GET /sessions/:id/github/activity",
+        "GET /performance/interns",
+        "GET /performance/interns/:id/ai-recommendations",
+        "GET /performance/interns/:id/detail",
+        "GET /projects",
+        "GET /sessions",
+        "GET /projects/:id",
+        "GET /reports",
+        "GET /reports/:id",
+        "POST /reports",
+        "GET /reports/:id/pdf",
+        "GET /reports/:id/xlsx"
+      ],
+      "perms": [
+        "sessions.manage",
+        "sprints.manage",
+        "sessions.view",
+        "tasks.view",
+        "performance.view"
+      ]
+    },
+    "/instructor/sessions/[id]/setup": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/session-setup",
+      "api": [
+        "GET /sessions/:id",
+        "GET /projects/:id",
+        "GET /sessions/:id/members",
+        "GET /projects/:id/slots",
+        "GET /projects/:projectId/template-context",
+        "PATCH /sessions/:id",
+        "GET /career-roles/reference",
+        "GET /recruitment/candidates",
+        "GET /recruitment/candidates/:userId",
+        "POST /assignments",
+        "GET /assignments",
+        "POST /assignments/:id/cancel",
+        "POST /assignments/:id/complete",
+        "GET /ai-generations/plans",
+        "POST /ai-generations/plans/generate",
+        "GET /ai-generations/plans/:planId",
+        "POST /ai-generations/sprint-plan/confirm",
+        "POST /ai-generations/sprint-plan/draft"
+      ],
+      "perms": [
+        "assignments.view",
+        "assignments.manage",
+        "sprints.manage",
+        "sessions.manage"
+      ]
+    },
+    "/instructor/sprints": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/delivery-overview",
+      "api": [
+        "GET /sprints",
+        "GET /tasks",
+        "GET /sessions/member-options",
+        "GET /projects",
+        "GET /projects/:id",
+        "POST /sprints"
+      ],
+      "perms": [
+        "sprints.manage"
+      ]
+    },
+    "/instructor/sprints/[id]": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "sessions/sprint-workspace",
+      "api": [
+        "GET /sprints/:id",
+        "GET /tasks",
+        "GET /sessions/:id/work",
+        "GET /dashboard/sprints/:id/burndown",
+        "GET /sessions/:id/members",
+        "GET /projects/:id/members",
+        "GET /sprints/:id/board",
+        "GET /sprints/:id/completion",
+        "POST /sprints/:id/status",
+        "POST /sprints",
+        "PATCH /sprints/:id",
+        "GET /sprints",
+        "GET /projects",
+        "GET /projects/:id",
+        "POST /tasks",
+        "PATCH /tasks/:id",
+        "DELETE /tasks/:id",
+        "GET /tasks/:id",
+        "GET /tasks/:id/comments",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": [
+        "sprints.manage",
+        "tasks.view",
+        "sprints.view",
+        "sessions.view",
+        "projects.view",
+        "tasks.manage"
+      ]
+    },
+    "/instructor/tasks/[id]": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "product/intern-work (task detail)",
+      "api": [
+        "GET /tasks/:id",
+        "GET /tasks/:id/comments",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "PATCH /tasks/:id",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": []
+    },
+    "/instructor/classes": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "server redirect → /instructor/projects",
+      "api": [],
+      "perms": []
+    },
+    "/intern": {
+      "role": "intern",
+      "group": "intern",
+      "component": "intern/intern-workspace + context",
+      "api": [
+        "GET /intern/me/workspace",
+        "GET /recruitment/me",
+        "GET /recruitment/me/interviews",
+        "GET /tasks"
+      ],
+      "perms": []
+    },
+    "/intern/certificates": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes (certificates)",
+      "api": [
+        "GET /intern/me/certificates"
+      ],
+      "perms": []
+    },
+    "/intern/certificates/[id]": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/outcomes (certificate detail)",
+      "api": [
+        "GET /intern/me/certificates",
+        "GET /intern/me/certificates/:id",
+        "GET /intern/me/certificates/:id/pdf"
+      ],
+      "perms": []
+    },
+    "/intern/evaluations": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes",
+      "api": [
+        "GET /intern/me/evaluations"
+      ],
+      "perms": []
+    },
+    "/intern/evaluations/[id]": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/outcomes (evaluation detail)",
+      "api": [
+        "GET /intern/me/evaluations",
+        "GET /intern/me/evaluations/:id"
+      ],
+      "perms": []
+    },
+    "/intern/kpi": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes",
+      "api": [
+        "GET /intern/me/kpi"
+      ],
+      "perms": []
+    },
+    "/intern/kpi/[id]": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/outcomes (kpi detail)",
+      "api": [
+        "GET /intern/me/kpi",
+        "GET /intern/me/kpi/:id"
+      ],
+      "perms": []
+    },
+    "/intern/github": {
+      "role": "intern",
+      "group": "intern",
+      "component": "intern/student-github",
+      "api": [
+        "GET /github/me",
+        "POST /github/connect",
+        "DELETE /github/me",
+        "GET /sessions/:id/github",
+        "POST /sessions/:id/github/provision",
+        "POST /sessions/:id/github/invite",
+        "POST /sessions/:id/github/webhook",
+        "POST /sessions/:id/github/members/:userId/invite",
+        "POST /sessions/:id/github/reconcile",
+        "GET /sessions/:id/github/activity"
+      ],
+      "perms": []
+    },
+    "/intern/mentor": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/mentor",
+      "api": [
+        "GET /intern/me/ai-mentor/conversations",
+        "POST /intern/me/ai-mentor/conversations",
+        "GET /intern/me/ai-mentor/conversations/:id",
+        "POST /intern/me/ai-mentor/conversations/:id/archive",
+        "POST /intern/me/ai-mentor/conversations/:id/messages",
+        "GET /tasks"
+      ],
+      "perms": []
+    },
+    "/intern/notifications": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes",
+      "api": [
+        "GET /notifications",
+        "POST /notifications/:id/read",
+        "POST /notifications/read-all",
+        "GET /notifications/preferences",
+        "PUT /notifications/preferences"
+      ],
+      "perms": []
+    },
+    "/intern/onboarding": {
+      "role": "intern",
+      "group": "intern",
+      "component": "onboarding-shell + welcome-step",
+      "api": [
+        "GET /intern/me/workspace",
+        "GET /recruitment/me",
+        "GET /recruitment/me/interviews/:id/questions"
+      ],
+      "perms": []
+    },
+    "/intern/onboarding/role": {
+      "role": "intern",
+      "group": "intern",
+      "component": "onboarding-shell + role-selection-step",
+      "api": [
+        "GET /intern/me/workspace",
+        "GET /recruitment/me",
+        "GET /career-roles",
+        "PATCH /recruitment/me/role"
+      ],
+      "perms": []
+    },
+    "/intern/onboarding/interview": {
+      "role": "intern",
+      "group": "intern",
+      "component": "onboarding-shell + interview-step",
+      "api": [
+        "GET /intern/me/workspace",
+        "GET /recruitment/me",
+        "GET /recruitment/me/interviews/:id/questions",
+        "POST /recruitment/me/interviews",
+        "PUT /recruitment/me/interviews/:id/answers/:questionId",
+        "PUT /recruitment/me/interviews/:id/follow-ups/:questionId",
+        "POST /recruitment/me/interviews/:id/submit",
+        "POST /recruitment/me/interviews/:id/retry-evaluation",
+        "GET /recruitment/me/interviews/:id/conversation",
+        "POST /recruitment/me/interviews/:id/conversation/next",
+        "POST /recruitment/me/interviews/:id/conversation/clarify"
+      ],
+      "perms": []
+    },
+    "/intern/onboarding/result": {
+      "role": "intern",
+      "group": "intern",
+      "component": "onboarding-shell + recruitment-result",
+      "api": [
+        "GET /intern/me/workspace",
+        "GET /recruitment/me"
+      ],
+      "perms": []
+    },
+    "/intern/participation": {
+      "role": "intern",
+      "group": "intern",
+      "component": "participation/student",
+      "api": [
+        "GET /participation/me",
+        "GET /participation/me/replacements",
+        "GET /github/me/repository-access"
+      ],
+      "perms": []
+    },
+    "/intern/performance": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes",
+      "api": [
+        "GET /intern/me/performance"
+      ],
+      "perms": []
+    },
+    "/intern/profile": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes (profile)",
+      "api": [
+        "POST /auth/refresh"
+      ],
+      "perms": []
+    },
+    "/intern/project": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry (own-project package)",
+      "api": [
+        "GET /intern/me/project"
+      ],
+      "perms": []
+    },
+    "/intern/recommendations": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + outcomes",
+      "api": [
+        "GET /intern/me/ai-recommendations",
+        "POST /intern/me/ai-recommendations/refresh"
+      ],
+      "perms": []
+    },
+    "/intern/sprint": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry (own kanban)",
+      "api": [
+        "GET /intern/me/sprints",
+        "GET /intern/me/sprints/:id/board",
+        "GET /tasks/:id",
+        "PATCH /tasks/:id/my"
+      ],
+      "perms": []
+    },
+    "/intern/virtual-salary": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/outcomes + student-outcome-heading",
+      "api": [
+        "GET /intern/me/virtual-salary",
+        "GET /intern/me/virtual-salary/ledger"
+      ],
+      "perms": []
+    },
+    "/intern/work": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-entry + intern-work",
+      "api": [
+        "GET /tasks",
+        "GET /intern/me/projects/:projectId/learning-package",
+        "GET /tasks/:id",
+        "PATCH /tasks/:id/my",
+        "GET /tasks/:id/comments",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": []
+    },
+    "/intern/work/[id]": {
+      "role": "intern",
+      "group": "intern",
+      "component": "product/intern-work + student-ui (task detail)",
+      "api": [
+        "GET /tasks/:id",
+        "PATCH /tasks/:id/my",
+        "GET /tasks/:id/comments",
+        "POST /tasks/:id/comments",
+        "GET /tasks/:id/history",
+        "GET /tasks/:id/spec",
+        "GET /tasks/:id/spec/source",
+        "GET /tasks/:taskId/submissions",
+        "POST /tasks/:taskId/submissions",
+        "POST /submissions/:id/withdraw",
+        "POST /submissions/:id/review",
+        "GET /submissions/:id/code-reviews",
+        "POST /submissions/:id/code-reviews"
+      ],
+      "perms": []
+    },
+    "/instructor/profile": {
+      "role": "instructor",
+      "group": "instructor",
+      "component": "product/outcomes (profile)",
+      "api": [
+        "POST /auth/refresh"
+      ],
+      "perms": []
+    },
+    "/admin/evaluations": {
+      "role": "admin",
+      "group": "admin",
+      "component": "product/evaluation-management (kỳ đánh giá + ScoreEditor + RevisionModal — admin hiệu chỉnh điểm đã chốt)",
+      "api": [
+        "GET /evaluation-cycles",
+        "POST /evaluation-cycles",
+        "PATCH /evaluation-cycles/:id",
+        "POST /evaluation-cycles/:id/status",
+        "GET /evaluation-cycles/:id/criteria",
+        "POST /evaluation-cycles/:id/criteria",
+        "PATCH /evaluation-cycles/:id/criteria/:criterionId",
+        "DELETE /evaluation-cycles/:id/criteria/:criterionId",
+        "GET /evaluations",
+        "POST /evaluations",
+        "GET /evaluations/:id",
+        "PATCH /evaluations/:id",
+        "POST /evaluations/:id/submit",
+        "POST /evaluations/:id/finalize",
+        "POST /evaluations/:id/ai-suggestions",
+        "GET /evaluations/:id/ai-suggestions",
+        "GET /evaluations/:id/ai-suggestions/:suggestionId",
+        "GET /imported-reviews",
+        "PATCH /imported-reviews/:id",
+        "POST /evaluations/:id/revisions"
+      ],
+      "perms": [
+        "evaluations.manage",
+        "evaluations.view",
+        "ai.evaluation.assist"
+      ]
+    }
+  }
+}

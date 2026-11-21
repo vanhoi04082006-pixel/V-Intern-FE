@@ -4,8 +4,14 @@ import {
   parseCandidates,
   academicBody,
   sessionTransitions,
+  parseMember,
 } from "../academic";
 describe("Academic Nest boundaries", () => {
+  it("preserves authoritative assignment status for session roster completion", () => {
+    expect(parseMember({ userId: "u1", displayName: "SV A", email: "a@x.edu", assignmentStatus: "active" })).toHaveProperty("assignmentStatus", "active");
+    expect(parseMember({ userId: "u1", displayName: "SV A", email: "a@x.edu", assignmentStatus: "completed" })).toHaveProperty("assignmentStatus", "completed");
+    expect(parseMember({ userId: "u1", displayName: "SV A", email: "a@x.edu" })).not.toHaveProperty("assignmentStatus");
+  });
   const entity = {
     id: "id",
     code: "C",

@@ -25,8 +25,9 @@ import {
   type Task,
 } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
-import { sprintStatusLabel } from "@/lib/api/sprint-status";
+import { isSprintTerminal, sprintStatusLabel } from "@/lib/api/sprint-status";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { AcademicPicker } from "./academic-picker";
 import { useAction } from "./use-action";
 import { TaskDetail } from "./intern-work";
@@ -43,12 +44,22 @@ import {
   Pager,
   Panel,
   StatusDot,
+  tableClass,
   tdClass,
   thClass,
 } from "./primitives";
+import { Tape } from "@/components/notebook/ui";
 import { Person } from "./identity";
 import { RowMenu } from "./instructor-dashboard";
 import { ActivateButton } from "./instructor-onboarding";
+
+/* Màu băng dính đầu cột theo trạng thái — thuần trình bày (journey v3). */
+const columnTape: Record<string, "blue" | "warm" | "candy" | "mint" | "slate"> = {
+  todo: "slate",
+  doing: "blue",
+  review: "warm",
+  done: "mint",
+};
 
 export function TaskStatusPill({ status }: { status: string }) {
   const tone = status === "done" ? "green" : status === "review" ? "amber" : status === "doing" ? "blue" : "gray";
@@ -75,14 +86,19 @@ export function SprintManagement() {
   const focused = rows.data?.items.find(s=>s.id===focus) ?? rows.data?.items.find(s=>s.status==='active') ?? rows.data?.items[0];
   return (
     <>
-      <PageTitle title="Sprint & Task" subtitle="Tra cứu nhanh mọi sprint và nhiệm vụ đang chạy trong các phiên thực tập." />
+      <PageTitle
+        eyebrow="BẢNG NHIỆM VỤ"
+        stamp="TASK"
+        title="Sprint & Task"
+        subtitle="Tra cứu nhanh mọi sprint và nhiệm vụ đang chạy trong các phiên thực tập."
+      />
       <PageMeta items={[
         { icon: IconUsers, label: "Vai trò", value: "Giảng viên / Technical Lead" },
         { icon: IconLayers, label: "Hệ thống", value: "V-Intern Platform" },
         { icon: IconCalendarDays, label: "Sprint hiện tại", value: focused ? `${focused.code} · ${focused.name}` : "Chưa có" },
         { icon: IconClock, label: "Cập nhật lúc", value: new Date().toLocaleString("vi-VN") },
       ]} />
-      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id}/></div></>}
+      {focused && <><div className="mb-4 flex flex-wrap items-center gap-3"><label className="text-body font-semibold" htmlFor="sprint-focus">Sprint đang xem</label><select id="sprint-focus" className={`${inputClass} sm:max-w-md`} value={focused.id} onChange={e=>setFocus(e.target.value)}>{rows.data?.items.map(s=><option key={s.id} value={s.id}>{s.code} · {s.name}</option>)}</select><button className="rounded-control px-1 text-body font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={()=>setSelected(focused)}>Cài đặt Sprint</button></div><SprintOverview key={focused.id} id={focused.id} activeCount={rows.data?.items.filter(s=>s.status==='active').length ?? 0}/><div id="sprint-task-list" className="scroll-mt-4"><TaskManagement projectId={focused.projectId} sprintId={focused.id} allowCreate={!isSprintTerminal(focused.status)}/></div></>}
       <Panel title="Các Sprint" action={<button className={buttonClass} onClick={() => setCreate(true)}>Tạo Sprint</button>}>
         <div className="mb-4 grid items-start gap-3 sm:grid-cols-2">
           <AcademicPicker
@@ -382,6 +398,7 @@ function SprintDetail({
       <TaskManagement
         projectId={sprint.projectId}
         sprintId={sprint.id}
+        allowCreate={!isSprintTerminal(status)}
         onUpdated={board.reload}
       />
       <Panel title="Sprint Board">
@@ -397,29 +414,39 @@ function SprintDetail({
                 {board.data.columns.map((c) => (
                   <section
                     key={c.status}
-                    className="min-w-0 rounded-control bg-background p-3"
+                    className="nb3-kanban-col relative"
                   >
-                    <h3 className="mb-3 text-body font-bold">
-                      {statusLabels[c.status]} ({c.count})
-                    </h3>
-                    {c.tasks.map((t) => (
-                      <button
-                        key={t.id}
-                        className="mb-2 block w-full rounded-control bg-card p-3 text-left text-body shadow-app-sm transition-[translate,box-shadow] duration-200 hover:shadow-app-xs active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-                        onClick={() => setTask(t.id)}
-                      >
-                        <small className="text-primary">{t.code}</small>
-                        <p className="mt-1 font-semibold">{t.title}</p>
-                        <p className="mt-2 text-caption text-muted-foreground">
-                          {priorityLabels[t.priority as keyof typeof priorityLabels] ?? t.priority} · {t.progress}%
+                    <Tape
+                      variant={columnTape[c.status]}
+                      rotate={-4}
+                      className="-top-2 left-1/2 z-10 !h-5 !w-16 -translate-x-1/2"
+                    />
+                    <header className="nb3-kanban-col-head">
+                      <h3 className="text-body font-bold">
+                        {statusLabels[c.status]}
+                      </h3>
+                      <span className="nb3-kanban-count ml-auto">{c.count}</span>
+                    </header>
+                    <div className="nb3-kanban-body">
+                      {c.tasks.map((t) => (
+                        <button
+                          key={t.id}
+                          className="nb3-kanban-card w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                          onClick={() => setTask(t.id)}
+                        >
+                          <small className="text-primary">{t.code}</small>
+                          <p className="mt-1 font-semibold">{t.title}</p>
+                          <p className="mt-2 text-caption text-muted-foreground">
+                            {priorityLabels[t.priority as keyof typeof priorityLabels] ?? t.priority} · {t.progress}%
+                          </p>
+                        </button>
+                      ))}
+                      {c.count > c.tasks.length && (
+                        <p className="text-caption">
+                          Xem danh sách nhiệm vụ để truy cập tất cả.
                         </p>
-                      </button>
-                    ))}
-                    {c.count > c.tasks.length && (
-                      <p className="text-caption">
-                        Xem danh sách nhiệm vụ để truy cập tất cả.
-                      </p>
-                    )}
+                      )}
+                    </div>
                   </section>
                 ))}
               </div>
@@ -438,10 +465,12 @@ function SprintDetail({
 export function TaskManagement({
   projectId = "",
   sprintId = "",
+  allowCreate = true,
   onUpdated,
 }: {
   projectId?: string;
   sprintId?: string;
+  allowCreate?: boolean;
   onUpdated?: () => void;
 }) {
   const [page, setPage] = useState(1),
@@ -450,7 +479,9 @@ export function TaskManagement({
     [search, setSearch] = useState(""),
     [create, setCreate] = useState(false),
     [detail, setDetail] = useState<string>(),
-    [edit, setEdit] = useState<Task>();
+    [edit, setEdit] = useState<Task>(),
+    /* Xác nhận xoá task qua ConfirmDialog chuẩn thay window.confirm. */
+    [remove, setRemove] = useState<Task>();
   const tasks = useResource(
     useCallback(
       (s: AbortSignal) =>
@@ -486,11 +517,12 @@ export function TaskManagement({
       <Panel
         title="Danh sách nhiệm vụ"
         action={
-          <button className={buttonClass} onClick={() => setCreate(true)}>
+          allowCreate && <button className={buttonClass} onClick={() => setCreate(true)}>
             Tạo nhiệm vụ
           </button>
         }
       >
+        {!allowCreate && <p className="mb-4 text-body text-muted-foreground">Sprint đã hoàn thành hoặc hủy. Có thể tra cứu và xử lý công việc đã có; hãy chọn Sprint khác để tạo nhiệm vụ mới.</p>}
         {Boolean(action.error) && <ErrorState error={action.error} />}
         <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <input
@@ -543,7 +575,7 @@ export function TaskManagement({
           tasks.data && (
             <>
               {tasks.data.items.length ? (
-                <div className="notebook-scroll overflow-x-auto"><table className="product-table w-full min-w-[860px] border-collapse text-caption"><thead><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className={thClass}>{label}</th>)}</tr></thead><tbody>
+                <div className="notebook-scroll overflow-x-auto"><table className={`${tableClass} min-w-[860px]`}><thead><tr>{['#','Nhiệm vụ','Sinh viên','Trạng thái','Ưu tiên','Hạn','Tiến độ','Hành động'].map(label=><th key={label} className={thClass}>{label}</th>)}</tr></thead><tbody>
                   {tasks.data.items.map((t, i) => (
                     <tr
                       key={t.id}
@@ -563,7 +595,7 @@ export function TaskManagement({
                       <td className={tdClass}><PriorityBadge priority={t.priority} /></td>
                       <td className={`${tdClass} whitespace-nowrap`}>{t.dueDate?new Date(t.dueDate).toLocaleDateString('vi-VN'):'Chưa có'}</td>
                       <td className={tdClass}><div className="flex min-w-24 items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{width:`${t.progress}%`}}/></div>{t.progress}%</div></td>
-                      <td className={`${tdClass} whitespace-nowrap`}><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => { if (window.confirm(`Xóa nhiệm vụ ${t.code}? Lịch sử vẫn được giữ.`)) void action.run(() => deleteTask(t.id)); } }]} /></td>
+                      <td className={`${tdClass} whitespace-nowrap`}><button className="rounded border border-primary px-2 py-1 text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={() => setDetail(t.id)}>Xem</button> <RowMenu label={`Thao tác ${t.code}`} items={[{ label: "Sửa nhiệm vụ", onSelect: () => setEdit(t) }, { label: "Xóa nhiệm vụ", onSelect: () => setRemove(t) }]} /></td>
                     </tr>
                   ))}
                 </tbody></table></div>
@@ -575,7 +607,7 @@ export function TaskManagement({
           )
         )}
       </Panel>
-      {(create || edit) && (
+      {((create && allowCreate) || edit) && (
         <Modal
           title={edit ? "Sửa nhiệm vụ" : "Tạo nhiệm vụ"}
           onClose={() => {
@@ -600,6 +632,26 @@ export function TaskManagement({
           <TaskDetail id={detail} managed onUpdated={reload} />
         </Modal>
       )}
+      {/* Xác nhận xoá: lịch sử giữ nguyên — nêu rõ để người dùng không nghĩ
+          mất vĩnh viễn các bài nộp/đánh giá liên quan. */}
+      <ConfirmDialog
+        open={Boolean(remove)}
+        tone="danger"
+        title={`Xóa nhiệm vụ ${remove?.code ?? ""}?`}
+        description="Lịch sử vẫn được giữ."
+        confirmLabel="Xóa nhiệm vụ"
+        cancelLabel="Không xóa"
+        busy={action.busy}
+        onConfirm={() => {
+          const target = remove;
+          setRemove(undefined);
+          if (target) void action.run(() => deleteTask(target.id));
+        }}
+        onCancel={() => setRemove(undefined)}
+      >
+        Nhiệm vụ rời khỏi bảng sprint hiện tại; các bài nộp và đánh giá đã
+        xảy ra không bị xoá kèm.
+      </ConfirmDialog>
     </>
   );
 }

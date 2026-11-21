@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Notifications } from '../outcomes';
+import { ToastProvider } from '@/components/shared/toast';
 import * as api from '@/lib/api/outcomes';
 
 const location = vi.hoisted(() => ({ path: '/intern/notifications' }));
@@ -11,6 +12,14 @@ vi.mock('@/lib/api/outcomes', async importOriginal => ({
   getNotifications: vi.fn(), getNotificationPreferences: vi.fn(),
   markNotification: vi.fn(), markAllNotifications: vi.fn(), setNotificationPreference: vi.fn(),
 }));
+
+function mount() {
+  return render(
+    <ToastProvider>
+      <Notifications />
+    </ToastProvider>,
+  );
+}
 
 const title = 'Bài nộp cần kiểm tra';
 const body = 'Nhận xét theo tiêu chí và bằng chứng mã nguồn. '.repeat(7);
@@ -31,7 +40,7 @@ beforeEach(() => {
 describe('Notification feedback across roles', () => {
   it.each(['intern', 'instructor', 'admin'])('confirms the acknowledged read-all count for %s', async role => {
     location.path = `/${role}/notifications`;
-    render(<Notifications />);
+    mount();
     await screen.findByRole('heading', { name: title });
     await userEvent.click(screen.getByRole('button', { name: 'Đánh dấu tất cả đã đọc' }));
     expect(await screen.findByText('Đã đánh dấu 1 thông báo là đã đọc.')).toBeVisible();
@@ -41,7 +50,7 @@ describe('Notification feedback across roles', () => {
   it('keeps read pending, prevents a second request and only then shows success', async () => {
     let acknowledge: (value: null) => void = () => { throw new Error('Request not started'); };
     vi.mocked(api.markNotification).mockImplementation(() => new Promise(resolve => { acknowledge = resolve; }));
-    render(<Notifications />);
+    mount();
     const button = await screen.findByRole('button', { name: `Đánh dấu đã đọc: ${title}` });
     await userEvent.dblClick(button);
     expect(button).toBeDisabled();
@@ -54,7 +63,7 @@ describe('Notification feedback across roles', () => {
   it('reports zero updates truthfully when all notifications are already read', async () => {
     read = true;
     vi.mocked(api.markAllNotifications).mockResolvedValue(0);
-    render(<Notifications />);
+    mount();
     await screen.findByRole('heading', { name: title });
     await userEvent.click(screen.getByRole('button', { name: 'Đánh dấu tất cả đã đọc' }));
     expect(await screen.findByText('Không có thông báo chưa đọc cần cập nhật.')).toBeVisible();
@@ -62,17 +71,18 @@ describe('Notification feedback across roles', () => {
   });
 
   it('clears an earlier success when the next request fails', async () => {
-    render(<Notifications />);
+    mount();
     await userEvent.click(await screen.findByRole('button', { name: `Đánh dấu đã đọc: ${title}` }));
     expect(await screen.findByText('Đã đánh dấu thông báo là đã đọc.')).toBeVisible();
     vi.mocked(api.markAllNotifications).mockRejectedValue(new Error('service unavailable'));
     await userEvent.click(screen.getByRole('button', { name: 'Đánh dấu tất cả đã đọc' }));
     expect(await screen.findByRole('alert')).toBeVisible();
-    expect(screen.queryByText('Đã đánh dấu thông báo là đã đọc.')).not.toBeInTheDocument();
+    // Toast rời khung có nhịp 180ms — chờ gọn cho chắc.
+    await waitFor(() => expect(screen.queryByText('Đã đánh dấu thông báo là đã đọc.')).not.toBeInTheDocument());
   });
 
   it('lets a keyboard user expand and collapse long content without changing read state', async () => {
-    render(<Notifications />);
+    mount();
     const toggle = await screen.findByRole('button', { name: 'Đọc đầy đủ' });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     toggle.focus();
@@ -85,7 +95,7 @@ describe('Notification feedback across roles', () => {
   });
 
   it('confirms a saved preference', async () => {
-    render(<Notifications />);
+    mount();
     const checkbox = await screen.findByRole('checkbox', { name: 'Nhiệm vụ' });
     await userEvent.click(checkbox);
     expect(await screen.findByText('Đã tắt thông báo nhiệm vụ.')).toBeVisible();
@@ -95,7 +105,7 @@ describe('Notification feedback across roles', () => {
 
   it('rolls back the preference and shows an error instead of a success after rejection', async () => {
     vi.mocked(api.setNotificationPreference).mockRejectedValue(new Error('service unavailable'));
-    render(<Notifications />);
+    mount();
     const checkbox = await screen.findByRole('checkbox', { name: 'Nhiệm vụ' });
     await userEvent.click(checkbox);
     expect(await screen.findByRole('alert')).toBeVisible();

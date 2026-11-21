@@ -229,6 +229,43 @@ try {
   results.push({ name: "Test AI Start/ready/edit/Confirm/replay; SQL fields, cross-session and instructor isolation", status: "PASS", counts: before });
   stage = "session-delivery";
   await page.goto(`${base}/instructor/sessions/${created.sessionId}`); await expect(page.getByRole("heading", { name: "Thành viên (3)", exact: true })).toBeVisible(); await expect(page.getByText("Catalog search", { exact: true })).toBeVisible(); await expect(page.getByRole("heading", { name: `Nhiệm vụ (${before.tasks})`, exact: true })).toBeVisible();
+  /* Master prompt V6 — Phase E/P1: PUT /projects/:id/slots (projects.manage,
+   * audited — mentor quản lý) là capability BE có sẵn nhưng FE chưa từng có
+   * thao tác. Mentor mở rộng sức chứa một vai trò qua SlotEditor trên trang
+   * thiết lập phiên, SQL + audit đối chiếu, rồi trả nguyên trạng qua API. */
+  {
+    const slotsBefore = (await call("instructor", `/projects/${created.projectId}/slots`)).slots;
+    assert.ok(slotsBefore.length > 0, "template project has role slots");
+    const target = slotsBefore[0], bumped = target.requiredCount + 1;
+    await page.goto(`${base}/instructor/sessions/${created.sessionId}/setup?project=${created.projectId}`);
+    const slotInput = page.getByLabel(`Số vị trí vai trò ${target.roleCode}`);
+    await slotInput.waitFor();
+    const putSlots = page.waitForResponse(r => r.url().toLowerCase().endsWith(`/projects/${created.projectId}/slots`.toLowerCase()) && r.request().method() === "PUT");
+    await slotInput.fill(String(bumped));
+    await page.getByRole("button", { name: "Lưu vị trí vai trò", exact: true }).click();
+    const putResponse = await putSlots;
+    assert.equal(putResponse.status(), 200, "PUT /projects/:id/slots via SlotEditor");
+    await page.getByText("Đã lưu cấu hình vị trí vai trò").waitFor();
+    const sqlSlots = await ds.query("SELECT roleCode, requiredCount FROM project_role_slots WHERE projectId=@0 ORDER BY roleCode", [created.projectId]);
+    assert.equal(sqlSlots.find(s => s.roleCode === target.roleCode).requiredCount, bumped, "SQL slot capacity updated");
+    const auditRow = await ds.query("SELECT COUNT(*) n FROM audit_logs WHERE action='project.slots_updated' AND targetType='project' AND targetId=@0", [created.projectId]);
+    assert.equal(Number(auditRow[0].n) >= 1, true, "slot replace audited");
+    const slotApi = await call("instructor", `/projects/${created.projectId}/slots`);
+    assert.equal(slotApi.slots.find(s => s.roleCode === target.roleCode).requiredCount, bumped, "GET slots reflects replace");
+    await call("instructor", `/projects/${created.projectId}/slots`, "PUT", { slots: slotsBefore.map(s => ({ roleCode: s.roleCode, requiredCount: s.requiredCount })) }, 200);
+    const restored = await ds.query("SELECT requiredCount FROM project_role_slots WHERE projectId=@0 AND roleCode=@1", [created.projectId, target.roleCode]);
+    assert.equal(Number(restored[0].requiredCount), target.requiredCount, "slots restored for downstream checks");
+    results.push({ name: "Instructor SlotEditor PUT /projects/:id/slots (REPLACE, audited, SQL+API roundtrip)", status: "PASS" });
+  }
+  /* Đoạn slot editor kéo dài thời gian trống giữa các lần tải trang — có thể
+   * vượt TTL access token CI (JWT_EXPIRES_IN=20s) và guard sẽ đưa trang về
+   * login. Đăng nhập lại deterministic (cùng tài khoản thật, cùng dữ liệu
+   * thật) trước khi luồng delivery tiếp tục — không thay đổi assertion gốc. */
+  await page.goto(base + "/login");
+  await page.getByLabel("Email", { exact: true }).fill(users.instructor.email);
+  await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
+  await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+  await page.waitForURL("**/instructor");
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`); await page.getByRole("link", { name: "Contract Sprint 1", exact: true }).click(); await expect(page.getByText(/Contract Sprint 1/).first()).toBeVisible();
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`);
   await page.getByRole("button", { name: "Task", exact: true }).click();
@@ -244,11 +281,14 @@ try {
   await page.locator(`a[href="/instructor/tasks/${edited.id}" i]`).click();
   await expect(page.getByText(description, { exact: true }).first()).toBeVisible(); await expect(page.getByText(criteria[0], { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto(base + "/instructor/classes"); await page.waitForURL("**/instructor/projects"); await expect(page.getByRole("heading", { name: "Thư viện dự án", exact: true })).toBeVisible();
-  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)); assert.equal((await ds.query("SELECT COUNT(*) n FROM sys.tables WHERE name IN ('classes','class_members','class_attendance')"))[0].n, 3); assert.deepEqual(errors, []);
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+  assert.equal((await ds.query("SELECT COUNT(*) n FROM sys.tables WHERE name IN ('classes','class_members','class_attendance','class_announcements','class_lessons','session_access_requests')"))[0].n, 0, "Retired class and session-sharing tables must remain absent");
+  assert.equal((await ds.query("SELECT COUNT(*) n FROM permissions WHERE code IN ('classes.view','classes.manage')"))[0].n, 0, "Retired class permissions must remain absent");
+  assert.deepEqual(errors, []);
   await page.screenshot({ path: `${evidence}/project-first-mobile.png`, fullPage: true });
   fs.mkdirSync("../phase7-local", { recursive: true });
   fs.writeFileSync("../phase7-local/academic.json", JSON.stringify({ sessions: created.sessionId, projects: created.projectId, projectCode: (await call("instructor", `/projects/${created.projectId}`)).code, sessionCode: (await call("instructor", `/sessions/${created.sessionId}`)).code, startDate, endDate, sprintId: edited.sprintId, taskId: edited.id, taskTitle: edited.title, graduateEmail: Object.values(users).find(u => u.id === assignee).email, graduateId: assignee, foreignEmail: users.foreign.email, planId: plan.planId, summary }, null, 2));
-  results.push({ name: "Session roster/snapshot/progress, delivery details and retained Class storage", status: "PASS" });
+  results.push({ name: "Session roster/snapshot/progress, delivery details and retired class/sharing storage absent", status: "PASS" });
 } catch (error) {
   results.push({ stage, status: "FAIL", error: String(error) }); await page.screenshot({ path: `${evidence}/project-first-failure.png`, fullPage: true }).catch(() => undefined); throw error;
 } finally {

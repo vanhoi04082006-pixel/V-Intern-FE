@@ -56,6 +56,7 @@ import {
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { MarginNote, StampMoc } from "@/components/workspace/notebook";
 import { Tape } from "@/components/v-intern/doodles";
+import { FilterChips } from "@/components/notebook/kit";
 import {
   Badge,
   buttonClass,
@@ -97,35 +98,23 @@ export function InternWork() {
   return (
     <>
       <StudentHeading
+        eyebrow="CÔNG VIỆC"
         title="Công việc của tôi"
         description="Theo dõi hạn nộp, tập trung vào nhiệm vụ đang làm và gửi bài để nhận phản hồi."
         action={
-          <div
-            role="group"
-            aria-label="Cách xem công việc"
-            className="student-segmented"
-          >
-            <button
-              type="button"
-              aria-pressed={view === "list"}
-              onClick={() => setView("list")}
-            >
-              <IconClipboardCheck size={15} aria-hidden="true" />
-              Danh sách
-            </button>
-            <button
-              type="button"
-              aria-pressed={view === "board"}
-              onClick={() => setView("board")}
-            >
-              <IconSquareKanban size={15} aria-hidden="true" />
-              Bảng Kanban
-            </button>
-          </div>
+          <FilterChips
+            options={[
+              { value: "list", label: "Danh sách" },
+              { value: "board", label: "Bảng Kanban" },
+            ]}
+            value={view}
+            onChange={setView}
+            ariaLabel="Cách xem công việc"
+          />
         }
       />
       <MarginNote className="-mt-5 max-w-md">
-        ghim task quan trọng lên đầu nhé ✎
+        dùng bộ lọc để chọn nhiệm vụ cần ưu tiên nhé ✎
       </MarginNote>
       {workspaceContext?.workspace.assignment && <details open className="student-help-disclosure student-project-materials"><summary>Tài liệu & gói dự án</summary><OwnProjectPackage key={workspaceContext.workspace.assignment.project.id} projectId={workspaceContext.workspace.assignment.project.id} /></details>}
 
@@ -515,8 +504,10 @@ function TaskContent({
     >
       {!managed && (
         <>
-          <header className="student-detail-hero">
+          <header className="student-detail-hero nb-sketch-card relative mt-2 p-5 sm:p-6">
+            <Tape className="-top-3 left-6" rotate={-4} />
             <div className="min-w-0">
+              <p className="eyebrow mb-1.5">NHIỆM VỤ</p>
               <p className="student-work-code">{task.code}</p>
               <h2 className="student-detail-title">{task.title}</h2>
               <div className="student-meta mt-3">
@@ -562,6 +553,7 @@ function TaskContent({
 
       {managed && (
         <div>
+          <p className="eyebrow mb-1.5">NHIỆM VỤ</p>
           <h3 className="text-section font-bold leading-relaxed text-foreground">
             {task.code} · {task.title}
           </h3>

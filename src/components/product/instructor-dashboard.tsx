@@ -22,6 +22,8 @@ import { Person } from "./identity";
 import { TaskDetail } from "./intern-work";
 import { Burndown } from './sprint-overview';
 import { ImportedReviews } from './imported-reviews';
+import { RowMenu } from './row-menu';
+export { RowMenu } from './row-menu';
 
 const date = (value: string) => new Date(value).toLocaleDateString("vi-VN");
 const percentage = (done: number, total: number) => total ? Math.round(done / total * 100) : 0;
@@ -82,20 +84,6 @@ function SessionStatus({ status }: { status: string }) {
   const tone = status === "active" ? "green" : status === "ending" ? "amber" : status === "upcoming" ? "blue" : status === "completed" ? "gray" : "gray";
   const label = { active: "Đang diễn ra", ending: "Sắp kết thúc", upcoming: "Sắp bắt đầu", completed: "Hoàn thành", cancelled: "Đã hủy" }[status] ?? status;
   return <StatusDot tone={tone as "green"}>{label}</StatusDot>;
-}
-
-export function RowMenu({ label, href, onOpen, items }: { label: string; href?: string; onOpen?: () => void; items?: { label: string; onSelect: () => void }[] }) {
-  const entries = items ?? [];
-  return (
-    <details className="relative inline-block">
-      <summary aria-label={label} className="cursor-pointer list-none rounded border border-primary px-2 py-1 text-primary transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 [&::-webkit-details-marker]:hidden">⋯</summary>
-      <div className="absolute right-0 top-full z-30 mt-1 min-w-32 rounded-control border border-primary bg-card p-1 shadow-popover">
-        {href ? <Link href={href} className="block rounded-md px-3 py-2 text-caption text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">Mở chi tiết</Link>
-        : onOpen && !entries.length ? <button className="block w-full rounded-md px-3 py-2 text-left text-caption text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={onOpen}>Mở chi tiết</button>
-        : entries.map(e => <button key={e.label} className="block w-full rounded-md px-3 py-2 text-left text-caption text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40" onClick={e.onSelect}>{e.label}</button>)}
-      </div>
-    </details>
-  );
 }
 
 function SprintProgress({ id, asOf }: { id: string; asOf: string }) {

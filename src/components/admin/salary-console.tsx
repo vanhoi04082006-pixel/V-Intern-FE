@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   IconCoins,
   IconPlus,
@@ -26,6 +26,8 @@ import {
   PageTitle,
   Pager,
   StatusDot,
+  tableClass,
+  tdClass,
   thClass,
 } from "@/components/product/primitives";
 import { useAction } from "@/components/product/use-action";
@@ -33,6 +35,9 @@ import { PerformanceMemberPicker } from "@/components/product/performance-member
 import { useInternNames } from "./use-intern-names";
 import { InkCountUp } from "@/components/v-intern/motion";
 import { RibbonBookmarkDoodle } from "@/components/v-intern/doodles";
+import { StampMoc } from "@/components/notebook/ui";
+import { linkButtonClass } from "./ui-bits";
+import { ApiError } from "@/lib/auth/api-client";
 
 export const ledgerTypeLabels: Record<SalaryLedgerRow["type"], string> = {
   kpi_earning: "Thu nhập KPI",
@@ -59,6 +64,8 @@ export function SalaryConsole() {
   const [type, setType] = useState("");
   const [kpiPeriodId, setKpiPeriodId] = useState("");
   const [adjusting, setAdjusting] = useState(false);
+  const [reversing, setReversing] = useState<SalaryLedgerRow | null>(null);
+  const [adjustmentBusy, setAdjustmentBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const action = useAction();
 
@@ -99,19 +106,36 @@ export function SalaryConsole() {
   return (
     <div className="space-y-6">
       <PageTitle
+        eyebrow="TÀI CHÍNH ẢO"
         title="Lương ảo"
         subtitle="Đơn vị ảo dùng để động viên sinh viên — không phải lương thật. Số dư luôn được tính lại từ sổ ghi, không có số dư lưu sẵn."
         action={
-          <button
-            className={buttonClass}
-            onClick={() => {
-              setNotice("");
-              setAdjusting(true);
-            }}
-          >
-            <IconPlus size={16} aria-hidden />
-            Ghi điều chỉnh
-          </button>
+          <>
+            {/* Dấu mộc đỏ "kho bạc" — tem nhỏ nghiêng trong hàng tiêu đề,
+                trang trí thuần (không tương tác, ẩn với screen reader). */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none inline-flex shrink-0 self-center"
+            >
+              <StampMoc
+                tone="red"
+                rotate={-6}
+                className="!px-2 !py-0.5 !text-[0.58rem]"
+              >
+                KHO BẠC
+              </StampMoc>
+            </span>
+            <button
+              className={buttonClass}
+              onClick={() => {
+                setNotice("");
+                setAdjusting(true);
+              }}
+            >
+              <IconPlus size={16} aria-hidden />
+              Ghi điều chỉnh
+            </button>
+          </>
         }
       />
       <div className="grid gap-4 lg:grid-cols-2">
@@ -120,11 +144,15 @@ export function SalaryConsole() {
           busy={action.busy}
           error={action.error}
           onGenerate={async (periodId) => {
-            const outcome = await generateSalaryForPeriod(periodId);
-            setNotice(
-              `Đã sinh ${outcome.generated} dòng thu nhập, bỏ qua ${outcome.skipped} dòng (đã có hoặc điểm bằng 0).`,
-            );
-            ledger.reload();
+            setNotice("");
+            await action.run(async () => {
+              const outcome = await generateSalaryForPeriod(periodId);
+              setNotice(
+                `Đã sinh ${outcome.generated} dòng thu nhập, bỏ qua ${outcome.skipped} dòng (đã có hoặc điểm bằng 0).`,
+              );
+              ledger.reload();
+              balance.reload();
+            });
           }}
         />
         <section className="product-panel min-w-0 p-6">
@@ -146,8 +174,9 @@ export function SalaryConsole() {
               <ErrorState error={balance.error} onRetry={balance.reload} />
             ) : balanceUser && balance.data ? (
               <div className="space-y-3">
-                {/* Thẻ số dư kiểu sketch-card gấp dog-ear — số tiền đếm mực. */}
-                <div className="sketch-card-sm dog-ear flex items-start gap-3 p-4">
+                {/* Thẻ số dư kiểu sketch-card gấp dog-ear — số tiền đếm mực;
+                    sticker-pop: bật nhẹ như sticker dán khi rê chuột. */}
+                <div className="sketch-card-sm dog-ear sticker-pop flex items-start gap-3 p-4">
                   <span className="grid size-10 shrink-0 place-items-center rounded-control bg-accent">
                     <IconWallet className="text-primary" size={21} aria-hidden="true" />
                   </span>
@@ -168,7 +197,7 @@ export function SalaryConsole() {
                   </div>
                 </div>
                 <p className="text-body text-muted-foreground">
-                  Thu nhập kỳ đang chọn:{" "}
+                  {kpiPeriodId ? "Thu nhập kỳ đang chọn" : "Thu nhập KPI (mọi kỳ)"}:{" "}
                   <strong className="tabular-nums text-foreground">
                     {vnd(balance.data.earnedThisPeriod, balance.data.unit)}
                   </strong>
@@ -244,11 +273,11 @@ export function SalaryConsole() {
       ) : ledger.error ? (
         <ErrorState error={ledger.error} onRetry={ledger.reload} />
       ) : ledger.data?.items.length ? (
-        <div className="overflow-x-auto border-y border-border" role="region" aria-label="Sổ lương ảo theo kỳ" tabIndex={0}>
-          <table className="product-table w-full min-w-[48rem] border-collapse text-body">
+        <div className="notebook-scroll overflow-x-auto" role="region" aria-label="Sổ lương ảo theo kỳ" tabIndex={0}>
+          <table className={`${tableClass} min-w-[48rem]`}>
             <thead>
               <tr>
-                {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải"].map((label) => (
+                {["Khi", "Sinh viên", "Loại", "Số tiền", "Diễn giải", "Thao tác"].map((label) => (
                   <th
                     key={label}
                     className={thClass}
@@ -260,28 +289,33 @@ export function SalaryConsole() {
             </thead>
             <tbody className="nb-stagger">
               {ledger.data.items.map((row) => (
-                <tr key={row.id} className="transition-colors hover:bg-background/70">
-                  <td className="whitespace-nowrap border-b border-border px-4 py-3 text-muted-foreground">
+                <tr key={row.id}>
+                  <td className={`${tdClass} whitespace-nowrap text-muted-foreground`}>
                     {new Date(row.createdAt).toLocaleString("vi-VN")}
                   </td>
-                  <td className="border-b border-border px-4 py-3 font-medium text-foreground">
+                  <td className={`${tdClass} font-medium text-foreground`}>
                     {nameOf(row.userId)}
                   </td>
-                  <td className="border-b border-border px-4 py-3">
+                  <td className={tdClass}>
                     <StatusDot tone={ledgerTypeTones[row.type]}>
                       {ledgerTypeLabels[row.type]}
                     </StatusDot>
                   </td>
                   <td
-                    className={`border-b border-border px-4 py-3 tabular-nums font-semibold ${
+                    className={`${tdClass} tabular-nums font-semibold ${
                       row.amount < 0 ? "text-destructive" : "text-success"
                     }`}
                   >
                     {row.amount > 0 ? "+" : ""}
                     {vnd(row.amount, row.unit)}
                   </td>
-                  <td className="border-b border-border px-4 py-3 text-foreground">
+                  <td className={`${tdClass} text-foreground`}>
                     {row.description}
+                  </td>
+                  <td className={tdClass}>
+                    {row.type !== "reversal" && <button type="button" className={linkButtonClass}
+                      aria-label={`Hoàn đảo ${ledgerTypeLabels[row.type]} ${vnd(row.amount, row.unit)} của ${nameOf(row.userId)}`}
+                      onClick={() => { setNotice(""); setReversing(row); }}>Hoàn đảo</button>}
                   </td>
                 </tr>
               ))}
@@ -304,13 +338,19 @@ export function SalaryConsole() {
         />
       )}
 
-      {adjusting && (
-        <Modal title="Ghi điều chỉnh lương ảo" onClose={() => setAdjusting(false)}>
+      {(adjusting || reversing) && (
+        <Modal title={reversing ? "Hoàn đảo dòng lương ảo" : "Ghi điều chỉnh lương ảo"} closeDisabled={adjustmentBusy}
+          onClose={() => { if (!adjustmentBusy) { setAdjusting(false); setReversing(null); } }}>
           <SalaryAdjustmentForm
+            onBusyChange={setAdjustmentBusy}
+            source={reversing ?? undefined}
+            sourceName={reversing ? nameOf(reversing.userId) : undefined}
             onSaved={(message) => {
               setAdjusting(false);
+              setReversing(null);
               setNotice(message);
               ledger.reload();
+              balance.reload();
             }}
           />
         </Modal>
@@ -374,26 +414,32 @@ function GenerateCard({
   );
 }
 
-function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void }) {
+function SalaryAdjustmentForm({ onSaved, source, sourceName, onBusyChange }: { onSaved: (message: string) => void; source?: SalaryLedgerRow; sourceName?: string; onBusyChange: (busy: boolean) => void }) {
   const action = useAction();
-  const [userId, setUserId] = useState("");
-  const [type, setType] = useState<(typeof salaryAdjustmentTypes)[number]>("bonus");
+  const [userId, setUserId] = useState(source?.userId ?? "");
+  const [type, setType] = useState<(typeof salaryAdjustmentTypes)[number]>(source ? "reversal" : "bonus");
   const [amount, setAmount] = useState("");
-  const [sourceId, setSourceId] = useState("");
+  const [sourceId, setSourceId] = useState(source?.id ?? "");
   const [reason, setReason] = useState("");
+  const lastRequest = useRef<{ fingerprint: string; requestId: string } | null>(null);
   const needsAmount = type === "bonus" || type === "penalty" || type === "adjustment";
   const submit = async () => {
-    if (!userId || !reason.trim()) return;
+    if (!userId) return;
+    if (!reason.trim()) throw new ApiError(400, "VALIDATION_ERROR", "Reason is required.", ["Nhập lý do điều chỉnh, không chỉ khoảng trắng."]);
     if (needsAmount && !amount) return;
     if (type === "reversal" && !sourceId.trim()) return;
-    await createSalaryAdjustment({
+    const payload = {
       userId,
       type,
       ...(needsAmount ? { amount: Number(amount) } : {}),
       ...(type === "reversal" ? { sourceId: sourceId.trim() } : {}),
       reason: reason.trim(),
-      requestId: crypto.randomUUID(),
-    });
+    };
+    const fingerprint = JSON.stringify(payload);
+    let request = lastRequest.current;
+    if (!request || request.fingerprint !== fingerprint) request = { fingerprint, requestId: crypto.randomUUID() };
+    lastRequest.current = request;
+    await createSalaryAdjustment({ ...payload, requestId: request.requestId });
     onSaved("Đã ghi điều chỉnh vào sổ lương ảo.");
   };
   return (
@@ -401,9 +447,14 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
-        void action.run(submit);
+        void action.run(async () => {
+          onBusyChange(true);
+          try { await submit(); } finally { onBusyChange(false); }
+        });
       }}
     >
+      <fieldset disabled={action.busy} className="space-y-4">
+      {source ? <p className="text-body">Hoàn đảo {ledgerTypeLabels[source.type]} {vnd(source.amount, source.unit)} của {sourceName ?? source.userId}. Hệ thống thêm dòng bù trừ và giữ nguyên dòng gốc.</p> : <>
       <PerformanceMemberPicker value={userId} onChange={setUserId} required />
       <label className="block text-body font-medium">
         Loại điều chỉnh
@@ -419,6 +470,7 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
           ))}
         </select>
       </label>
+      </>}
       {needsAmount && (
         <label className="block text-body font-medium">
           Số tiền (đơn vị ảo) <span className="text-destructive">*</span>
@@ -433,7 +485,7 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
           />
         </label>
       )}
-      {type === "reversal" && (
+      {type === "reversal" && !source && (
         <label className="block text-body font-medium">
           Mã dòng gốc cần hoàn đảo <span className="text-destructive">*</span>
           <input
@@ -464,9 +516,10 @@ function SalaryAdjustmentForm({ onSaved }: { onSaved: (message: string) => void 
       <div className="flex justify-end">
         <button className={buttonClass} disabled={action.busy} type="submit">
           <IconWallet size={16} aria-hidden />
-          {action.busy ? "Đang ghi…" : "Ghi vào sổ"}
+          {action.busy ? "Đang ghi…" : source ? "Xác nhận hoàn đảo" : "Ghi vào sổ"}
         </button>
       </div>
+      </fieldset>
     </form>
   );
 }

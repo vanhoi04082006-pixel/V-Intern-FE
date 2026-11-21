@@ -83,9 +83,14 @@ export function ScheduledInterview() {
           <IconCalendarDays size={17} aria-hidden="true" />
           Lịch phỏng vấn của bạn
         </p>
-        <h1 className="text-page font-bold tracking-tight text-foreground">
-          Sẵn sàng cho bước tiếp theo
-        </h1>
+        {/* v3: tem chương mono của bước phỏng vấn — nhãn mục lục phía trên
+            tiêu đề (khoanh cùng h1 để giữ nhịp space-y của header). */}
+        <div>
+          <p className="eyebrow mb-1.5">PHỎNG VẤN</p>
+          <h1 className="text-page font-bold tracking-tight text-foreground">
+            Sẵn sàng cho bước tiếp theo
+          </h1>
+        </div>
         <p className="max-w-2xl leading-7 text-muted-foreground">
           Vị trí được xếp từ CV và khung giờ giảng viên đã mở. Bạn không cần
           chọn lại nghề hoặc tạo tài khoản khác.

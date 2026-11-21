@@ -23,6 +23,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { useAction } from "@/components/product/use-action";
 import { InstructorPageTitle as PageTitle } from "@/components/instructor/instructor-page-title";
 import {
+  btn,
   buttonClass,
   inputClass,
   Empty,
@@ -46,6 +47,8 @@ export function RecruitmentRounds() {
   return (
     <div className="space-y-7">
       <PageTitle
+        eyebrow="TUYỂN DỤNG"
+        stamp="ĐỢT TUYỂN"
         title="Tuyển dụng & hồ sơ CV"
         subtitle="Mở đợt tuyển, khung phỏng vấn và theo dõi hành trình từ CV đến tài khoản."
         action={
@@ -243,13 +246,13 @@ function RoundWorkspace({
         </div>
       </div>
       <div
-        className="flex gap-6 border-b border-border"
+        className="nb3-tabs"
         role="tablist"
         aria-label="Quản lý đợt tuyển"
       >
         {(["schedule", "applications"] as const).map((value) => (
           <button
-            className={`border-b-2 py-3 text-body font-semibold ${tab === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
+            className="nb3-tab"
             role="tab"
             id={`round-${id}-tab-${value}`}
             aria-controls={`round-${id}-panel-${value}`}
@@ -324,7 +327,7 @@ function RoundWorkspace({
                       <strong>{slot.booked}</strong> / {slot.capacity} chỗ
                     </p>
                     <button
-                      className="text-body font-semibold text-primary disabled:text-muted-foreground"
+                      className={btn("ghost", "sm")}
                       disabled={slot.status !== "open" || action.busy}
                       onClick={() =>
                         void action.run(async () => {
@@ -511,7 +514,7 @@ function RoundCandidates({
           CV chỉ hiển thị trong phạm vi đợt tuyển bạn quản lý.
         </p>
         <button
-          className="text-body font-semibold text-primary"
+          className={btn("ghost", "sm")}
           onClick={state.reload}
         >
           Làm mới
@@ -580,7 +583,7 @@ function RoundCandidates({
           <div className="flex justify-between">
             <h2 className="font-semibold">Chi tiết hồ sơ</h2>
             <button
-              className="text-body text-primary"
+              className={btn("ghost", "sm")}
               onClick={() => setSelected(null)}
             >
               Đóng chi tiết
@@ -689,7 +692,7 @@ function RoundCandidates({
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
-              className="text-body font-semibold text-primary"
+              className={btn("ghost", "sm")}
               disabled={action.busy}
               onClick={() => void action.run(resendAccess)}
             >

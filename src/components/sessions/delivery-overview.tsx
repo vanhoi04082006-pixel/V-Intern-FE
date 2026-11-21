@@ -5,11 +5,13 @@ import { InstructorPageTitle as PageTitle } from "@/components/instructor/instru
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { AcademicPicker } from "@/components/product/academic-picker";
+import { FilterChips } from "@/components/notebook/kit";
 import {
   Empty,
   inputClass,
   Pager,
-  
+  buttonClass,
+  Modal,
   StatusDot,
 } from "@/components/product/primitives";
 import { ErrorState, LoadingState } from "@/components/shared/data-state";
@@ -22,6 +24,8 @@ import {
 import { sprintStatusLabel } from "@/lib/api/sprint-status";
 import { priorityLabels, statusLabels } from "@/lib/api/work";
 import { useResource } from "@/lib/api/use-resource";
+import { Can } from "@/components/auth/can";
+import { SprintForm } from "@/components/product/sprint-management";
 
 const taskTone: Record<string, "blue" | "amber" | "green" | "gray" | "red"> = {
   todo: "gray",
@@ -56,6 +60,8 @@ export function DeliveryOverview({
   const [memberPage, setMemberPage] = useState(1);
   const [dueFrom, setDueFrom] = useState("");
   const [dueTo, setDueTo] = useState("");
+  const [createSprint, setCreateSprint] = useState(false);
+  const [notice, setNotice] = useState("");
   const sprints = useResource(
     useCallback(
       (signal: AbortSignal) =>
@@ -144,8 +150,13 @@ export function DeliveryOverview({
     <div className="space-y-5">
       <PageTitle
         title="Sprint & Task"
+        eyebrow="SPRINT"
+        stamp="SPRINT"
+        stampTone="blue"
         subtitle="Theo dõi công việc trong các dự án và phiên thực tập bạn quản lý."
+        action={kind === "sprints" && <Can perm="sprints.manage"><button className={buttonClass} onClick={() => setCreateSprint(true)}>Tạo Sprint</button></Can>}
       />
+      {notice && <p role="status" className="border-l border-success pl-3 text-body text-success">{notice}</p>}
       <details className="border-b border-border pb-4">
         <summary className="cursor-pointer py-2 text-body font-semibold text-foreground">Phạm vi dự án và phiên{projectId || sessionId ? " (đã chọn)" : " (tất cả)"}</summary>
         <div className="pt-3">
@@ -175,26 +186,19 @@ export function DeliveryOverview({
         </div>
         </div>
       </details>
-      <div
-        role="group"
-        className="ins-view-switch flex gap-2"
-        aria-label="Loại công việc"
-      >
-        {(["sprints", "tasks"] as const).map((tab) => (
-          <button
-            key={tab}
-            aria-pressed={kind === tab}
-            className="min-h-10 border-b-2 border-transparent px-4 py-2 text-body text-muted-foreground hover:bg-accent aria-pressed:border-primary aria-pressed:text-primary"
-            onClick={() => {
-              setKind(tab);
-              setStatus("");
-              setPage(1);
-            }}
-          >
-            {tab === "sprints" ? "Sprint" : "Task"}
-          </button>
-        ))}
-      </div>
+      <FilterChips
+        options={[
+          { value: "sprints", label: "Sprint" },
+          { value: "tasks", label: "Task" },
+        ]}
+        value={kind}
+        onChange={(tab) => {
+          setKind(tab);
+          setStatus("");
+          setPage(1);
+        }}
+        ariaLabel="Loại công việc"
+      />
       <Panel
         title={kind === "sprints" ? "Danh sách Sprint" : "Danh sách nhiệm vụ"}
         action={
@@ -438,6 +442,11 @@ export function DeliveryOverview({
         )}
         {data && <Pager {...data} onChange={setPage} />}
       </Panel>
+      {createSprint && <Modal title="Tạo Sprint" onClose={() => setCreateSprint(false)}>
+        <SprintForm fixedProjectId={projectId || undefined} fixedProjectName="Dự án đã chọn trong phạm vi"
+          fixedSessionId={sessionId || undefined} fixedSessionName="Phiên đã chọn trong phạm vi"
+          onSaved={() => { setCreateSprint(false); setNotice("Đã tạo Sprint."); sprints.reload(); }} />
+      </Modal>}
     </div>
   );
 }

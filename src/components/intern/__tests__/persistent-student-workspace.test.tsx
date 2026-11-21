@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { InternEntry } from "@/components/product/intern-entry";
 import { useInternWorkspaceContext } from "../intern-workspace-context";
 import { active, principal } from "@/test/nest-fixtures";
@@ -46,8 +46,25 @@ beforeEach(() => {
 });
 afterEach(() => {
   clearSession();
+  localStorage.removeItem("vintern-theme");
+  document.documentElement.classList.remove("dark");
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+});
+
+it("offers the theme controls inside the mobile navigation drawer", async () => {
+  render(<InternEntry><Content /></InternEntry>);
+  await screen.findByText("Tổng việc: 7");
+  const opener = screen.getByRole("button", { name: "Mở menu điều hướng" });
+  opener.focus();
+  fireEvent.click(opener);
+  const drawer = screen.getByRole("dialog", { name: "Menu thực tập sinh" });
+  expect(within(drawer).getByRole("radiogroup", { name: "Chủ đề giao diện" })).toBeInTheDocument();
+  fireEvent.click(within(drawer).getByRole("radio", { name: "Chủ đề Tối" }));
+  expect(document.documentElement).toHaveClass("dark");
+  fireEvent.keyDown(document, { key: "Escape" });
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Mở menu điều hướng" })).toHaveFocus();
 });
 
 it("revalidates the persistent workspace on navigation while keeping the same shell", async () => {

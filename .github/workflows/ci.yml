@@ -46,6 +46,8 @@ jobs:
 
       - name: Test
         run: npm run test
+      - name: Runtime and workflow contract tests
+        run: node --test scripts/__tests__/*.test.mjs
 
       - name: Production dependency audit (high and critical block release)
         run: npm audit --omit=dev --audit-level=high

@@ -115,6 +115,9 @@ export function SessionList({
       ) : (
         <PageTitle
           title="Phiên thực tập"
+          eyebrow="PHIÊN THỰC TẬP"
+          stamp="LỚP"
+          stampTone="blue"
           subtitle={
             basePath === "/admin"
               ? "Các phiên trong hệ thống, đội hình và tiến độ được lưu tại backend"
@@ -205,7 +208,9 @@ export function SessionList({
             {data.data.items.map((s) => {
               const conf = sessionStatus(s.status);
               return (
-                <li key={s.id}>
+                <li key={s.id} className="card-tilt">
+                  {/* card-tilt: nghiêng 3D nhẹ khi rê — mỗi dòng phiên là một thẻ
+                      giấy tự chứa (instructor: sketch-card; admin: product-card). */}
                   {isInstructor ? (
                     <InstructorSessionRow
                       row={s}
