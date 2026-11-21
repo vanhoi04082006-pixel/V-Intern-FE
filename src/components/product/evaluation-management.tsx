@@ -825,7 +825,10 @@ function EvaluationEditor({
     <ErrorState error={detail.error} onRetry={detail.reload} />
   ) : detail.data ? (
     <ScoreEditor
-      key={`${id}-${detail.data.evaluation.status}-${detail.data.evaluation.revisionNumber}`}
+      /* Không đưa revisionNumber vào key: sau khi lưu điều chỉnh, modal kết
+       * quả phải giữ nguyên (xác nhận "điểm cũ → điểm mới") trong khi dữ liệu
+       * cha tải lại — overallScore/badge cập nhật qua prop, không remount. */
+      key={`${id}-${detail.data.evaluation.status}`}
       detail={detail.data}
       reload={() => {
         detail.reload();

@@ -272,6 +272,11 @@ try {
       [academic.graduateId],
     );
     assert.equal(Number(notified[0].n) >= 1, true, "intern notified");
+    /* Đóng modal kết quả: dialog chấm điểm cha phải phản ánh ngay điều chỉnh
+     * (overall mới + badge "Điều chỉnh #1") — không cần load lại tay. */
+    await revision.getByRole("button", { name: "Đóng", exact: true }).click();
+    await scoring.getByText(/Điểm chính thức: 85/).waitFor();
+    await scoring.getByText("Điều chỉnh #1").waitFor();
     await adminPage.screenshot({
       path: path.join(evidence, "admin-evaluation-revision.png"),
       fullPage: true,
