@@ -338,7 +338,11 @@ try {
   const report = await mutation(page, "/reports", "POST", () => page.getByRole("button", { name: "Tạo và lưu báo cáo", exact: true }).click());
   await page.getByRole("heading", { name: `Project-first report ${tag}`, exact: true }).waitFor();
   assert.equal(report.snapshot.scope.sessionId.toLowerCase(), academic.sessions.toLowerCase());
-  assert.ok(report.snapshot.members.some(m => m.userId.toLowerCase() === academic.graduateId.toLowerCase() && m.averageEvaluationScore === 80));
+  /* Spec 14 propagation, persisted report leg: the admin revision 80 -> 85
+   * happened BEFORE this snapshot was created, so the member row must carry
+   * the revised official score (same PerformanceService source as the
+   * Top-10 UI asserted above) — not the stale pre-revision value. */
+  assert.ok(report.snapshot.members.some(m => m.userId.toLowerCase() === academic.graduateId.toLowerCase() && m.averageEvaluationScore === 85));
   for (const format of ["PDF", "XLSX", "CSV"]) {
     const downloaded = page.waitForEvent("download"); await page.getByRole("button", { name: `Tải ${format}`, exact: true }).click();
     const file = await (await downloaded).path(), bytes = fs.readFileSync(file);
