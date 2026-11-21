@@ -255,9 +255,17 @@ try {
     await call("instructor", `/projects/${created.projectId}/slots`, "PUT", { slots: slotsBefore.map(s => ({ roleCode: s.roleCode, requiredCount: s.requiredCount })) }, 200);
     const restored = await ds.query("SELECT requiredCount FROM project_role_slots WHERE projectId=@0 AND roleCode=@1", [created.projectId, target.roleCode]);
     assert.equal(Number(restored[0].requiredCount), target.requiredCount, "slots restored for downstream checks");
-    await page.goto(`${base}/instructor/sessions/${created.sessionId}`);
     results.push({ name: "Instructor SlotEditor PUT /projects/:id/slots (REPLACE, audited, SQL+API roundtrip)", status: "PASS" });
   }
+  /* Đoạn slot editor kéo dài thời gian trống giữa các lần tải trang — có thể
+   * vượt TTL access token CI (JWT_EXPIRES_IN=20s) và guard sẽ đưa trang về
+   * login. Đăng nhập lại deterministic (cùng tài khoản thật, cùng dữ liệu
+   * thật) trước khi luồng delivery tiếp tục — không thay đổi assertion gốc. */
+  await page.goto(base + "/login");
+  await page.getByLabel("Email", { exact: true }).fill(users.instructor.email);
+  await page.getByLabel("Mật khẩu", { exact: true }).fill(process.env.LIVE_PASSWORD);
+  await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+  await page.waitForURL("**/instructor");
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`); await page.getByRole("link", { name: "Contract Sprint 1", exact: true }).click(); await expect(page.getByText(/Contract Sprint 1/).first()).toBeVisible();
   await page.goto(`${base}/instructor/sprints?projectId=${created.projectId}&sessionId=${created.sessionId}`);
   await page.getByRole("button", { name: "Task", exact: true }).click();
