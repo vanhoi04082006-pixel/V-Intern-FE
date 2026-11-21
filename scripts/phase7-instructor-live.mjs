@@ -227,9 +227,12 @@ try {
     await scoring
       .getByRole("button", { name: "Hiệu chỉnh điểm đã chốt", exact: true })
       .waitFor();
-    const revision = adminPage
-      .getByRole("dialog")
-      .filter({ hasText: "Lý do hiệu chỉnh (bắt buộc" });
+    await scoring
+      .getByRole("button", { name: "Hiệu chỉnh điểm đã chốt", exact: true })
+      .click();
+    const revision = adminPage.getByRole("dialog", {
+      name: "Hiệu chỉnh điểm đã chốt",
+    });
     const revisionInputs = revision.locator("input[type=number]");
     await revisionInputs.first().waitFor();
     assert.equal(await revisionInputs.count(), 4);
