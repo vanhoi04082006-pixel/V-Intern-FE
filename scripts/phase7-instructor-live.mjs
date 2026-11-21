@@ -326,7 +326,10 @@ try {
   await page.goto(`${base}/instructor/performance?projectId=${academic.projects}&sessionId=${academic.sessions}`);
   await page.getByRole("heading", { name: "Top 10 sinh viên hiệu suất tốt nhất", exact: true }).waitFor();
   const top = page.locator("section").filter({ has: page.getByRole("heading", { name: "Top 10 sinh viên hiệu suất tốt nhất", exact: true }) });
-  await top.getByText("80", { exact: true }).waitFor();
+  /* Spec 14: điểm chính thức sau điều chỉnh của admin (80 → 85, xem khối
+   * admin-revision ở trên với SQL revision row) lan truyền đúng vào số liệu
+   * hiệu suất — assert theo giá trị đã điều chỉnh, không phải giá trị cũ. */
+  await top.getByText("85", { exact: true }).waitFor();
   const download = page.waitForEvent("download"); await page.getByRole("button", { name: "Xuất CSV trang này", exact: true }).click();
   assert.equal((await download).suggestedFilename(), "v-intern-performance.csv");
   await page.goto(`${base}/instructor/reports?projectId=${academic.projects}&sessionId=${academic.sessions}`);
