@@ -4,6 +4,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * ISOLATION PREVIEW (Section 10.2): chứng minh bằng test tự động rằng
  * mock chỉ hoạt động khi build-time flag mở; không flag → apiFetch giữ nguyên
  * hành vi thật (thậm chí không thử gọi transport preview).
+ *
+ * QUY TẮC CÔ LẬP MÔI TRƯỜNG ĐẦU VÀO (fix run 44822285512):
+ * CI thường không đặt NEXT_PUBLIC_API_BASE_URL, nhưng full-stack gate
+ * (phase7-fullstack.yml) đặt job-level NEXT_PUBLIC_API_BASE_URL cho
+ * Real-Backend E2E và chạy `npm test` TRƯỚC khi boot Nest. Các test ở đây
+ * không được phụ thuộc biến ambient của runner — mọi test phải tự pin
+ * trạng thái cấu hình API mà nó muốn kiểm chứng, và phải cho cùng kết quả
+ * trong cả hai cấu hình (có/không có NEXT_PUBLIC_API_BASE_URL ambient).
  */
 describe("Preview isolation", () => {
   beforeEach(() => {
@@ -11,6 +19,10 @@ describe("Preview isolation", () => {
     window.localStorage.clear();
     vi.resetModules();
     vi.unstubAllEnvs();
+    // Mặc định của khối: môi trường “chưa cấu hình API” (base URL rỗng).
+    // vi.unstubAllEnvs trả lại giá trị ambient (full-stack CI có sẵn
+    // http://localhost:8080/api/v1) nên phải pin lại sau khi unstub.
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "");
   });
 
   it("PREVIEW_ENABLED = false khi không đặt NEXT_PUBLIC_PREVIEW (mặc định test)", async () => {
@@ -66,12 +78,35 @@ describe("Preview isolation", () => {
   it("isApiConfigured() coi preview như đã cấu hình khi gate mở", async () => {
     vi.stubEnv("NEXT_PUBLIC_PREVIEW", "1");
     vi.stubEnv("NODE_ENV", "test");
+    // Base URL vẫn rỗng (pin ở beforeEach) — gate mở phải đủ để coi như configured.
     const { isApiConfigured } = await import("@/lib/auth/api-client");
     expect(isApiConfigured()).toBe(true);
-    vi.unstubAllEnvs();
+    // Đóng gate lại nhưng GIỮ đầu vào đã pin (không dùng unstubAllEnvs vì
+    // nó trả về biến ambient của runner — chính là bug run 44822285512).
+    vi.stubEnv("NEXT_PUBLIC_PREVIEW", "0");
     vi.resetModules();
     const offline = await import("@/lib/auth/api-client");
     expect(offline.isApiConfigured()).toBe(false);
+    // Hợp đồng ngược: gate đóng + base URL có sẵn (đúng như full-stack CI)
+    // phải coi như configured — E2E thật được phép chạy trong môi trường đó.
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8080/api/v1");
+    vi.resetModules();
+    const live = await import("@/lib/auth/api-client");
+    expect(live.isApiConfigured()).toBe(true);
+  });
+
+  it("base URL đã cấu hình nhưng không thể kết nối → NETWORK_ERROR, không nhầm với API_CONFIG_MISSING", async () => {
+    // Full-stack CI đặt NEXT_PUBLIC_API_BASE_URL rồi mới chạy `npm test`
+    // (Nest chưa boot). Hợp đồng lỗi lúc đó là NETWORK_ERROR của fetch thật;
+    // nhầm thành API_CONFIG_MISSING sẽ che mất lỗi cấu hình/mạng thật.
+    // Port 1 trên 127.0.0.1 chắc chắn từ chối kết nối ngay lập tức — an toàn
+    // và deterministic ở mọi runner.
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://127.0.0.1:1/api/v1");
+    const { apiFetch } = await import("@/lib/auth/api-client");
+    await expect(apiFetch("/auth/me")).rejects.toMatchObject({
+      code: "NETWORK_ERROR",
+      name: "ApiError",
+    });
   });
 });
 
