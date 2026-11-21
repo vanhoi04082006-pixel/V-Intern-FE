@@ -199,9 +199,9 @@ E2E PASS cho phần nào chưa chạy.
 | --- | --- | --- |
 | CODE VERIFIED | **PASS** | lint 0 err / typecheck / 805 tests × 2 env configs / build / contract 25 — tại HEAD sau fix; kèm live production-mode browser check (mục 4bis): lỗi cấu hình API xử lý đúng, preview không bật được qua URL/localStorage |
 | PREVIEW VERIFIED | **PASS** | `verify:preview-isolation` (0 marker) + `verify:journey` gate v2 PASS 80/80 (tái chạy trên HEAD sau fix); auditor trước đó đã thu evidence 3 viewport × đúng role (docs/journey-v3-evidence/) |
-| REAL BACKEND VERIFIED | **PARTIAL — BE artifact verified; LIVE E2E BLOCKED** | BE @ pinned SHA: build + 876 tests xanh; live E2E cần hạ tầng GitHub Actions (mục 6) |
-| FULL-STACK CI VERIFIED | **BLOCKED — chưa có run mới** | Yêu cầu push + trigger; sandbox không credential (mục 7) |
-| PRODUCTION READY | **NO — INCOMPLETE** | Còn 2 điều kiện bắt buộc: full-stack gate xanh trên GitHub + Real Backend E2E live |
+| REAL BACKEND VERIFIED | **PASS** (cập nhật sau delivery — xem mục 12) | Full-stack gate SUCCESS: live E2E trên SQL Server 2019 + NestJS thật, toàn bộ 14 nhóm nghiệp vụ (bước 01–14) PASS |
+| FULL-STACK CI VERIFIED | **PASS** (cập nhật sau delivery — xem mục 12) | Run 44853226063 SUCCESS trên `36cab9c`; CI run 44853225965 SUCCESS |
+| PRODUCTION READY | Xem kết luận cập nhật tại mục 12 | |
 
 ---
 
@@ -240,9 +240,87 @@ E2E PASS cho phần nào chưa chạy.
 
 ---
 
-## 11. KẾT LUẬN
+## 11. KẾT LUẬN (giai đoạn sandbox — lịch sử)
 
 Fix lỗi full-stack CI đã hoàn tất và được chứng minh bằng tái lập điều kiện fail → xanh ở
 805/805 × 2 cấu hình môi trường; toàn bộ quality gates local PASS; BE pinned SHA verified.
-**Production readiness CHƯA tuyên bố** — chờ full-stack gate xanh trên GitHub và
-Real-Backend E2E live (BLOCKED hạ tầng sandbox, hướng dẫn tại mục 9).
+Giai đoạn này chưa push được (không credential) — xem mục 12 cho kết quả delivery cuối.
+
+---
+
+## 12. FINAL DELIVERY ADDENDUM — PUSH + GITHUB ACTIONS VERIFIED (2026-11-21)
+
+Sau khi được cấp credential an toàn (PAT giới hạn thời gian, dùng qua credential store tạm —
+không nhúng vào remote URL, không vào log/commit, đã xóa sau push):
+
+### 12.1. Commits đã push lên `origin/codex/product-acceptance-20261116` (fast-forward, không force)
+
+| Commit | Nội dung |
+| --- | --- |
+| `5247fac2273070791f05d3d89cb0bf8b1fb5949e` | fix(test) pin env inputs trong preview-isolation tests (+1 regression test, 804→805) + tài liệu audit này |
+| `36cab9c99123db8d531715497512a590be7f59bd` | fix(e2e) `phase7-admin-live.mjs` điều khiển task delete qua Journey v3 ConfirmDialog |
+
+### 12.2. Root cause bước "08 - Administrator workflows" fail ở run 44852133210 (trên `5247fac`)
+
+- `FE quality gates` **đã xanh ngay sau fix test** (nhiệm vụ chính của session — hoàn tất).
+- Lộ ra lỗi thật tiếp theo (bị che suốt trước đó vì gate chết sớm ở FE quality gates):
+  `phase7-admin-live.mjs` vẫn chờ **native `window.confirm()`** để xóa task, trong khi
+  Journey v3 đã chuẩn hóa xác nhận phá dữ liệu bằng `ConfirmDialog` shared component
+  (Section 5 master brief — thay `window.confirm()`). Native dialog không bao giờ xuất
+  hiện → DELETE `/tasks/:id` không được gửi → `page.waitForResponse` timeout 30s.
+- **KHÔNG phải regression UI** — hành vi mới của UI là chủ đích; script E2E lỗi thời.
+- Fix: script bấm menuitem "Xóa nhiệm vụ" → bấm nút xác nhận "Xóa nhiệm vụ" trong dialog
+  (aria-label dialog = "Xóa nhiệm vụ {code}?") → DELETE 200 `{deleted:true}` như cũ.
+  Toàn repo chỉ 1 chỗ dùng native dialog API — không domino tiếp.
+
+### 12.3. Kết quả GitHub Actions trên SHA cuối
+
+| Workflow | Run | SHA | Kết quả |
+| --- | --- | --- | --- |
+| CI | 44853225965 | `36cab9c` | **SUCCESS** — lint 0 err / typecheck / 805 tests / contract / audit / build |
+| Project-first full-stack gate | 44853226063 | `36cab9c` | **SUCCESS** — 33/33 bước, job sql2019 chạy 01:58:19Z→02:08:28Z |
+
+(Trung gian: run 44852133210 trên `5247fac` — FE quality gates xanh, fail đúng bước 08 →
+fix → run 44853226063 trên `36cab9c` xanh toàn bộ.)
+
+### 12.4. Real Backend E2E đã chạy và PASS (bên trong job sql2019, run 44853226063)
+
+SQL Server 2019 container + migrations + NestJS thật @ `cb2cf860` + Next.js production
+server + Chrome thật; database dùng một lần `VIntern_Phase715_CI_44853226063_1`; không
+mock/interception; evidence upload artifact `phase7-real-sql2019-36cab9c…`.
+
+- 01 Create disposable application fixtures — PASS
+- 02 Recruitment, interview and authentication — PASS
+- 03 Student work, submissions and concurrency — PASS
+- 04 Create outcome fixtures — PASS
+- 05 Student outcomes and certificates — PASS
+- 06 Project library, team, AI draft and publication — PASS
+- 07 Instructor evaluation, review and reports — PASS
+- 08 Administrator workflows (bao gồm task delete qua ConfirmDialog + SQL soft-delete trace) — PASS
+- Dynamic career catalog acceptance — PASS
+- Knowledge authoring acceptance — PASS
+- G2 mini-project authoring and pinned learner package — PASS
+- 09 Role navigation and routes — PASS
+- 10 Authentication acceptance — PASS
+- 11 UI, keyboard and responsive acceptance — PASS
+- 12 Negative authorization and isolation — PASS
+- 13 Create KPI and salary acceptance fixtures — PASS
+- 14 KPI, salary and UTC boundary acceptance — PASS
+
+### 12.5. Kết luận Production Readiness (đối chiếu điều kiện mục 11 master prompt V5)
+
+CI PASS ✓ · Full-stack gate PASS ✓ · 805/805 (baseline +1 regression test có giải trình) ✓ ·
+TypeScript PASS ✓ · Lint 0 error ✓ · Production build PASS ✓ · Preview isolation PASS ✓ ·
+Journey coverage PASS ✓ · Nghiệp vụ quan trọng với Backend thật PASS ✓ · Không regression
+quan trọng (UI Journey v3 giữ nguyên; UAT UI/keyboard/responsive bước 11 PASS) ✓ ·
+Git push thành công ✓ · Tài liệu có bằng chứng ✓
+
+Ghi chú không chặn: (a) 1 warning `no-img-element` (có sẵn); (b) BE 15 warnings
+`no-console` (có sẵn, exit 0); (c) 1 flake quan sát 1 lần ở local, không tái xuất hiện
+trên Actions; (d) external providers (GitHub/AI) chạy ở chế độ test-only harness theo
+thiết kế của gate.
+
+**=> V-INTERN V3 — PRODUCTION READINESS VERIFIED trên nhánh
+`codex/product-acceptance-20261116` @ `36cab9c` — commit code cuối cùng được nghiệm thu;
+commit tài liệu này chỉ bổ sung bằng chứng, không đổi production code.**
+
